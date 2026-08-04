@@ -192,12 +192,11 @@ function App() {
         ratio,
       };
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXlY4CxiKTUXJ5tuVbXw55xW_f3kzZ-RoFRs2kDgNXSctDP0iIwl8ExlwBqKZiEVUt/exec";
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
+      await fetch(SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Gönderilemedi");
       setSent(true);
       setTimeout(() => {
         setShowEmailModal(false);
@@ -370,12 +369,11 @@ function App() {
         ratio,
       };
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXlY4CxiKTUXJ5tuVbXw55xW_f3kzZ-RoFRs2kDgNXSctDP0iIwl8ExlwBqKZiEVUt/exec";
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
+      await fetch(SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Gönderilemedi");
       setSent(true);
       setTimeout(() => {
         setShowEmailModal(false);
