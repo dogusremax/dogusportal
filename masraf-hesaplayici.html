@@ -193,10 +193,15 @@ function App() {
       };
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXlY4CxiKTUXJ5tuVbXw55xW_f3kzZ-RoFRs2kDgNXSctDP0iIwl8ExlwBqKZiEVUt/exec";
       const params = new URLSearchParams(payload).toString();
-      const img = new Image();
-      img.onload = () => {};
-      img.onerror = () => {};
-      img.src = SCRIPT_URL + "?" + params;
+      let frame = document.getElementById("mailFrame");
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.id = "mailFrame";
+        frame.style.display = "none";
+        document.body.appendChild(frame);
+      }
+      frame.src = SCRIPT_URL + "?" + params;
+      await new Promise(r => setTimeout(r, 3000));
       setSent(true);
       setTimeout(() => {
         setShowEmailModal(false);
@@ -370,10 +375,15 @@ function App() {
       };
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXlY4CxiKTUXJ5tuVbXw55xW_f3kzZ-RoFRs2kDgNXSctDP0iIwl8ExlwBqKZiEVUt/exec";
       const params = new URLSearchParams(payload).toString();
-      const img = new Image();
-      img.onload = () => {};
-      img.onerror = () => {};
-      img.src = SCRIPT_URL + "?" + params;
+      let frame = document.getElementById("mailFrame");
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.id = "mailFrame";
+        frame.style.display = "none";
+        document.body.appendChild(frame);
+      }
+      frame.src = SCRIPT_URL + "?" + params;
+      await new Promise(r => setTimeout(r, 3000));
       setSent(true);
       setTimeout(() => {
         setShowEmailModal(false);
