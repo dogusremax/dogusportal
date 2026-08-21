@@ -56,6 +56,14 @@ body.pub{background:var(--pbg)}
 .links a:active{transform:scale(.98)}
 .links a .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--pbadge);color:#fff;flex-shrink:0}
 .links a .ic svg{width:18px;height:18px}
+.links a .ic img{width:20px;height:20px}
+.links a .ic.ig{background:linear-gradient(45deg,#f9ce34,#ee2a7b 50%,#6228d7)}
+.links a .ic.li{background:#0A66C2}
+.links a .ic.wa{background:#25D366}
+.links a .ic.sb{background:linear-gradient(180deg,#DC1C2E 0 50%,#003DA5 50%)}
+.links a .ic.yt{background:#FF0000}
+.links a .ic.web{background:#131a26}
+.quick a svg.wa{color:#25D366}.quick a svg.ph{color:#0A66C2}.quick a svg.ml{color:#DC1C2E}
 .links a .ar{margin-left:auto;color:#c3cad8}
 .pfoot{text-align:center;font-size:11px;color:var(--dim);padding:10px 20px 30px;margin-top:auto}
 .pfoot a{color:inherit}
@@ -101,7 +109,7 @@ body.pub{background:var(--pbg)}
       <div><label class="sm">E-posta</label><input type="email" id="email"></div>
       <div><label class="sm">Instagram kullanıcı adı</label><input type="text" id="instagram" placeholder="kullaniciadi"></div>
       <div><label class="sm">LinkedIn linki</label><input type="url" id="linkedin" placeholder="https://linkedin.com/in/..."></div>
-      <div><label class="sm">Sahibinden mağaza linki</label><input type="url" id="sahibinden" placeholder="https://..."></div>
+      <div><label class="sm">RE/MAX portföy linki (Portföylerim)</label><input type="url" id="sahibinden" placeholder="https://www.remax.com.tr/... danışman sayfan"></div>
     </div>
 
     <div class="card">
@@ -166,6 +174,8 @@ const I={
   li:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.4 2H3.6A1.6 1.6 0 0 0 2 3.6v16.8A1.6 1.6 0 0 0 3.6 22h16.8a1.6 1.6 0 0 0 1.6-1.6V3.6A1.6 1.6 0 0 0 20.4 2zM8 19H5V9h3zM6.5 7.7A1.7 1.7 0 1 1 8.2 6a1.7 1.7 0 0 1-1.7 1.7zM19 19h-3v-4.9c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6V19h-3V9h2.9v1.4a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7z"/></svg>',
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
   link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  sb:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a7 7 0 0 0-7 7c0 4.2 5 8.6 6.4 10.4l.6.6.6-.6C14 17.6 19 13.2 19 9a7 7 0 0 0-7-7zm0 3.2A3.8 3.8 0 1 1 8.2 9 3.8 3.8 0 0 1 12 5.2zM11 20h2v2h-2z"/></svg>',
+  yt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/></svg>',
   ar:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
 };
 function esc(s){ return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
@@ -175,22 +185,24 @@ function renderPublic(c){
   document.title=c.name+" · RE/MAX Doğuş";
   const ph=tel(c.phone), wa=tel(c.whatsapp||c.phone); const wa90=wa.startsWith("0")?"90"+wa.slice(1):wa;
   let q=[];
-  if(ph) q.push(`<a href="tel:${ph}">${I.phone}Ara</a>`);
-  if(wa) q.push(`<a href="https://wa.me/${wa90}" target="_blank">${I.wa}WhatsApp</a>`);
-  if(c.email) q.push(`<a href="mailto:${esc(c.email)}">${I.mail}E-posta</a>`);
+  if(ph) q.push(`<a href="tel:${ph}">${I.phone.replace("<svg",'<svg class="ph"')}Ara</a>`);
+  if(wa) q.push(`<a href="https://wa.me/${wa90}" target="_blank">${I.wa.replace("<svg",'<svg class="wa"')}WhatsApp</a>`);
+  if(c.email) q.push(`<a href="mailto:${esc(c.email)}">${I.mail.replace("<svg",'<svg class="ml"')}E-posta</a>`);
   let L=[];
-  if(c.sahibinden) L.push([I.home,"Sahibinden portföyüm",c.sahibinden]);
-  if(c.instagram) L.push([I.ig,"Instagram · @"+c.instagram.replace(/^@/,""),"https://instagram.com/"+c.instagram.replace(/^@/,"")]);
-  if(c.linkedin) L.push([I.li,"LinkedIn",c.linkedin]);
-  (c.links||[]).forEach(l=>{ if(l.url) L.push([I.link,l.label||l.url,l.url]); });
-  L.push([I.home,"Yeni Fikirtepe Burada","https://yenifikirtepeburada.com"]);
+  if(c.sahibinden) L.push([I.sb,"Portföylerim",c.sahibinden,"sb"]);
+  if(c.instagram) L.push([I.ig,"Instagram · @"+c.instagram.replace(/^@/,""),"https://instagram.com/"+c.instagram.replace(/^@/,""),"ig"]);
+  if(c.linkedin) L.push([I.li,"LinkedIn",c.linkedin,"li"]);
+  (c.links||[]).forEach(l=>{ if(!l.url) return; const u=l.url.toLowerCase();
+    const k=/youtu/.test(u)?["yt",I.yt]:/instagram/.test(u)?["ig",I.ig]:/linkedin/.test(u)?["li",I.li]:/wa\.me|whatsapp/.test(u)?["wa",I.wa]:["web",I.link];
+    L.push([k[1],l.label||l.url,l.url,k[0]]); });
+  L.push([I.home,"Yeni Fikirtepe Burada","https://yenifikirtepeburada.com","web"]);
   $("pcard").innerHTML=`
     <div class="hero"><div class="rm">RE/MAX DOĞUŞ</div>
       ${c.photo?`<img src="${c.photo}" alt="">`:`<div class="ph" style="display:inline-block"></div>`}
       <h1>${esc(c.name)}</h1><div class="t">${esc(c.title)}</div>${c.bio?`<div class="bio">${esc(c.bio)}</div>`:""}
     </div>
     <div class="quick">${q.join("")}</div>
-    <div class="links">${L.map(([ic,lb,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
+    <div class="links">${L.map(([ic,lb,u,k])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic ${k||""}">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
     <div class="vc"><button onclick="vcard()">Rehbere kaydet</button></div>
     <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy<br><a href="https://dogusportal.com/kart.html">Sen de kartını oluştur</a></div>`;
   window._card=c;
