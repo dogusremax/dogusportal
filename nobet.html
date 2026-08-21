@@ -71,6 +71,10 @@ td select{padding:7px 8px;font-size:14px;border-radius:8px}
 #status{font-size:14px;min-height:20px;color:#aab4cc;margin-top:10px;font-weight:500}
 #status.ok{color:var(--ok)} #status.err{color:#ff8a94} #status.busy{color:var(--warn)}
 .hide{display:none!important}
+.tm{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.tm .n{flex:1;min-width:0}.tm .n small{display:block;color:#8a94ad;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font-size:14px}
+.tm button.x{color:#ff8a94}
 textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#d7deee;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:10px;margin-top:8px}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes r{to{transform:rotate(360deg)}}
@@ -112,6 +116,27 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
     </div>
 
     <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label class="sm" style="margin:0">Ekip listesi</label>
+        <button class="btn ghost" style="width:auto;padding:7px 12px;font-size:13px" onclick="toggleTeam()">Düzenle</button>
+      </div>
+      <div id="teamBox" class="hide" style="margin-top:10px">
+        <div id="teamList"></div>
+        <div style="height:8px"></div>
+        <div class="row">
+          <input type="text" id="nName" placeholder="Ad Soyad" class="grow" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff">
+        </div>
+        <div style="height:6px"></div>
+        <div class="row">
+          <input type="email" id="nMail" placeholder="e-posta (birden fazlaysa virgülle)" class="grow" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff">
+          <button class="btn" style="width:auto;padding:10px 14px" onclick="addMember()">Ekle</button>
+        </div>
+        <div style="height:10px"></div>
+        <button class="btn ghost" onclick="saveTeam()">Ekibi kaydet</button>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="btns">
         <button class="btn full" onclick="buildPlan()">Plan oluştur</button>
         <button class="btn ghost" onclick="readCalendar()">Takvimden oku</button>
@@ -138,16 +163,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
 const API = "https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";   // /exec ile biten URL
 const PIN_LEN = 4;
 
-// Rotasyon sırası (takvimdeki mevcut sıra). İsim → e-posta(lar)
-const TEAM = [
-  { name:"Evşen Özazman",     emails:["evsenozazman@gmail.com"] },
-  { name:"İrem Aleyna Tetik", emails:["iremaleynatetik96@gmail.com","irem.remaxdogus@gmail.com"] },
-  { name:"Gizem Gök",         emails:["gzmmgok@gmail.com"] },
-  { name:"Orhan Özazman",     emails:["oozazman@zencan.com"] },
-  { name:"Özlem Varol",       emails:["ozlemvarol380@gmail.com"] },
-  { name:"Gamze Yetkin",      emails:["yetkin.gamze@gmail.com"] },
-  { name:"Ayşegül Alpay",     emails:["alpay65@gmail.com"] },
-];
+let TEAM = [];   // sunucudan yüklenir (Ekip kartından yönetilir)
 const OFFICE = "Ofis";
 /* ===================== */
 
@@ -179,7 +195,7 @@ $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
 async function login(){
   pin=$("pin").value.trim(); $("pinMsg").textContent="";
   try{
-    await api({action:"last",before:ymd(firstDay())});
+    const t=await api({action:"team_get"}); TEAM=t.team;
     sessionStorage.setItem("nobet_pin",pin);
     $("pinCard").classList.add("hide"); $("app").classList.remove("hide");
     renderPeople(); renderMonth();
@@ -194,6 +210,31 @@ function renderPeople(){
 }
 function toggleP(i){ const c=$("chip"+i); c.classList.toggle("off",!c.querySelector("input").checked); }
 function activeTeam(){ return TEAM.filter((t,i)=>$("chip"+i).querySelector("input").checked); }
+
+/* ---- ekip yönetimi ---- */
+function toggleTeam(){ $("teamBox").classList.toggle("hide"); renderTeam(); }
+function renderTeam(){
+  $("teamList").innerHTML=TEAM.map((t,i)=>`<div class="tm">
+    <div class="n">${t.name}<small>${t.emails.join(", ")||"e-posta yok"}</small></div>
+    <button onclick="moveM(${i},-1)" ${i===0?"disabled":""}>↑</button>
+    <button onclick="moveM(${i},1)" ${i===TEAM.length-1?"disabled":""}>↓</button>
+    <button class="x" onclick="delM(${i})">✕</button></div>`).join("")||'<div style="color:#8a94ad;font-size:13px">Liste boş.</div>';
+}
+function addMember(){
+  const name=$("nName").value.trim(), mails=$("nMail").value.split(",").map(s=>s.trim()).filter(Boolean);
+  if(!name){ setStatus("Ad Soyad gerekli.","err"); return; }
+  if(!mails.length||mails.some(m=>!/^\S+@\S+\.\S+$/.test(m))){ setStatus("Geçerli bir e-posta gir.","err"); return; }
+  if(TEAM.some(t=>t.name.toLowerCase()===name.toLowerCase())){ setStatus("Bu isim zaten listede.","err"); return; }
+  TEAM.push({name,emails:mails}); $("nName").value=""; $("nMail").value="";
+  renderTeam(); renderPeople(); setStatus(`${name} eklendi — "Ekibi kaydet" ile kalıcı yap.`,"ok");
+}
+function delM(i){ if(!confirm(`${TEAM[i].name} listeden çıkarılsın mı?`)) return; TEAM.splice(i,1); renderTeam(); renderPeople(); }
+function moveM(i,d){ const j=i+d; [TEAM[i],TEAM[j]]=[TEAM[j],TEAM[i]]; renderTeam(); renderPeople(); }
+async function saveTeam(){
+  setStatus("Ekip kaydediliyor…","busy");
+  try{ const j=await api({action:"team_set",team:TEAM}); TEAM=j.team; renderTeam(); renderPeople(); setStatus("Ekip kaydedildi.","ok"); }
+  catch(e){ setStatus(e.message,"err"); }
+}
 
 /* ---- ay ---- */
 function shiftMonth(n){ cur=new Date(cur.getFullYear(),cur.getMonth()+n,1); renderMonth(); }
