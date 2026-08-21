@@ -71,6 +71,17 @@ td select{padding:7px 8px;font-size:14px;border-radius:8px}
 #status{font-size:14px;min-height:20px;color:#aab4cc;margin-top:10px;font-weight:500}
 #status.ok{color:var(--ok)} #status.err{color:#ff8a94} #status.busy{color:var(--warn)}
 .hide{display:none!important}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:4px}
+.cal .h{font-size:10px;color:#8a94ad;text-align:center;padding:2px 0 4px;font-weight:700;text-transform:uppercase}
+.cal .c{min-height:58px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid var(--line);padding:4px 3px;font-size:10.5px;line-height:1.15;overflow:hidden}
+.cal .c.wk{background:var(--wk)}
+.cal .c.today{border-color:var(--gold)}
+.cal .c b{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:#d7deee;margin-bottom:3px}
+.cal .c .nm{display:block;font-weight:700;word-break:break-word}
+.cal .c.empty{opacity:.25}
+.cal .c.ofis .nm{color:#8a94ad;font-weight:500}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.calhead a{color:var(--gold);font-size:13px;font-weight:700;text-decoration:none}
 .tm{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .tm .n{flex:1;min-width:0}.tm .n small{display:block;color:#8a94ad;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tm button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font-size:14px}
@@ -155,6 +166,14 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
         <button class="btn danger full" onclick="clearMonth()">Bu ayın nöbetlerini sil</button>
       </div>
     </div>
+
+    <div class="card hide" id="calCard">
+      <div class="calhead">
+        <label class="sm" style="margin:0" id="calTitle">Takvimdeki hali</label>
+        <a id="gcalLink" href="#" target="_blank" rel="noopener">Google Takvim'de aç ↗</a>
+      </div>
+      <div class="cal" id="calGrid"></div>
+    </div>
   </div>
 </div>
 
@@ -236,11 +255,38 @@ async function saveTeam(){
   catch(e){ setStatus(e.message,"err"); }
 }
 
+/* ---- takvim görünümü ---- */
+const PAL={};
+function colorFor(n){ if(n===OFFICE) return null; if(!PAL[n]){ const i=TEAM.findIndex(t=>t.name===n); PAL[n]=`hsl(${(i*47+10)%360} 70% 62%)`; } return PAL[n]; }
+function renderCal(map,title){
+  const y=cur.getFullYear(), m=cur.getMonth(), days=lastDay().getDate();
+  const off=(firstDay().getDay()+6)%7;             // Pazartesi başlangıç
+  const today=ymd(new Date());
+  let html=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"].map(g=>`<div class="h">${g}</div>`).join("");
+  for(let i=0;i<off;i++) html+=`<div class="c empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const date=ymd(new Date(y,m,d)), dow=new Date(y,m,d).getDay(), n=map[date];
+    const cls=["c",(dow===0||dow===6)?"wk":"",date===today?"today":"",!n?"empty":"",n===OFFICE?"ofis":""].join(" ");
+    const col=n&&colorFor(n);
+    html+=`<div class="${cls}"><b>${d}</b>${n?`<span class="nm" style="${col?`color:${col}`:""}">${n.split(" ")[0]}</span>`:""}</div>`;
+  }
+  $("calGrid").innerHTML=html;
+  $("calTitle").textContent=title||"Takvimdeki hali";
+  $("gcalLink").href=`https://calendar.google.com/calendar/r/month/${y}/${m+1}/1`;
+  $("calCard").classList.remove("hide");
+  $("calCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function showCalendar(title){
+  const j=await api({action:"list",from:ymd(firstDay()),to:ymd(lastDay())});
+  const map={}; j.items.forEach(it=>map[it.date]=it.name);
+  renderCal(map,title); return j.items.length;
+}
+
 /* ---- ay ---- */
 function shiftMonth(n){ cur=new Date(cur.getFullYear(),cur.getMonth()+n,1); renderMonth(); }
 async function renderMonth(){
   $("monthLabel").textContent=`${AY[cur.getMonth()]} ${cur.getFullYear()}`;
-  plan=[]; $("planCard").classList.add("hide"); $("siteBox").classList.add("hide"); setStatus("");
+  plan=[]; $("planCard").classList.add("hide"); $("siteBox").classList.add("hide"); $("calCard").classList.add("hide"); setStatus("");
   $("anchor").textContent="Son nöbet okunuyor…"; lastDuty=null;
   try{
     const j=await api({action:"last",before:ymd(firstDay())});
@@ -266,16 +312,18 @@ function buildPlan(){
     plan.push({date:ymd(d), name:act[(s+i+Math.floor(i/7))%n].name});
   }
   renderPlan(); setStatus(`${days} gün planlandı. Satırları elle değiştirebilirsin.`,"ok");
+  previewCal();
 }
 function renderPlan(){
   const opts=[OFFICE,...TEAM.map(t=>t.name)];
   $("planBody").innerHTML=plan.map((p,i)=>{
     const d=new Date(p.date+"T12:00:00"), wk=d.getDay()===0||d.getDay()===6;
     return `<tr class="${wk?"wk":""}"><td class="d">${pad(d.getDate())} ${AY[d.getMonth()].slice(0,3)}<span>${GUN[d.getDay()]}</span></td>
-      <td><select onchange="plan[${i}].name=this.value;stats()">${opts.map(o=>`<option ${o===p.name?"selected":""}>${o}</option>`).join("")}</select></td></tr>`;
+      <td><select onchange="plan[${i}].name=this.value;stats();previewCal()">${opts.map(o=>`<option ${o===p.name?"selected":""}>${o}</option>`).join("")}</select></td></tr>`;
   }).join("");
   $("planCard").classList.remove("hide"); stats();
 }
+function previewCal(){ const map={}; plan.forEach(p=>map[p.date]=p.name); renderCal(map,"Önizleme (henüz takvime yazılmadı)"); }
 function stats(){
   const c={}; plan.forEach(p=>c[p.name]=(c[p.name]||0)+1);
   let warn=0; for(let i=1;i<plan.length;i++) if(plan[i].name===plan[i-1].name && plan[i].name!==OFFICE) warn++;
@@ -292,6 +340,7 @@ async function readCalendar(){
     const days=lastDay().getDate(); plan=[];
     for(let i=0;i<days;i++){ const d=ymd(new Date(cur.getFullYear(),cur.getMonth(),i+1)); plan.push({date:d,name:m[d]||OFFICE}); }
     renderPlan(); setStatus(`Takvimden ${j.items.length} nöbet okundu.`,"ok");
+    const map={}; j.items.forEach(it=>map[it.date]=it.name); renderCal(map,"Takvimdeki hali");
   }catch(e){ setStatus(e.message,"err"); }
 }
 
@@ -302,7 +351,8 @@ async function sendPlan(){
   try{
     const body=plan.map(p=>({date:p.date,name:p.name,emails:p.name===OFFICE?[]:(byName(p.name)||{}).emails||[]}));
     const j=await api({action:"create",plan:body,replace:true});
-    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi.`,"ok");
+    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi. Takvim okunuyor…`,"ok");
+    try{ await showCalendar(`Takvime yazıldı — ${AY[cur.getMonth()]} ${cur.getFullYear()}`); setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi.`,"ok"); }catch(_){}
   }catch(e){ setStatus("Hata: "+e.message,"err"); }
   $("sendBtn").disabled=false;
 }
@@ -310,7 +360,7 @@ async function sendPlan(){
 async function clearMonth(){
   if(!confirm(`${AY[cur.getMonth()]} ${cur.getFullYear()} nöbetlerinin tamamı silinecek (danışmanlara iptal maili gitmez). Emin misin?`)) return;
   setStatus("Siliniyor…","busy");
-  try{ const j=await api({action:"clear",from:ymd(firstDay()),to:ymd(lastDay())}); setStatus(`${j.deleted} nöbet silindi.`,"ok"); plan=[]; $("planCard").classList.add("hide"); }
+  try{ const j=await api({action:"clear",from:ymd(firstDay()),to:ymd(lastDay())}); setStatus(`${j.deleted} nöbet silindi.`,"ok"); plan=[]; $("planCard").classList.add("hide"); renderCal({},"Takvim boş"); }
   catch(e){ setStatus(e.message,"err"); }
 }
 
