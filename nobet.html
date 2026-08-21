@@ -255,7 +255,7 @@ const OFFICE = "Ofis";
 
 const AY = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const GUN = ["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
-let pin="", cur=new Date(), plan=[], lastDuty=null;
+let pin="", cur=new Date(), plan=[], lastDuty=null, prevCounts={};
 cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);   // varsayılan: gelecek ay
 
 const $ = id=>document.getElementById(id);
@@ -294,7 +294,7 @@ function renderPeople(){
   $("people").innerHTML=TEAM.map((t,i)=>`<label class="chip" id="chip${i}"><input type="checkbox" checked data-i="${i}" onchange="toggleP(${i})">${t.name}</label>`).join("");
   $("startSel").innerHTML=TEAM.map(t=>`<option>${t.name}</option>`).join("");
 }
-function toggleP(i){ const c=$("chip"+i); c.classList.toggle("off",!c.querySelector("input").checked); }
+function toggleP(i){ const c=$("chip"+i); c.classList.toggle("off",!c.querySelector("input").checked); const b=pickStart(); if(b) $("startSel").value=b; }
 function activeTeam(){ return TEAM.filter((t,i)=>$("chip"+i).querySelector("input").checked); }
 
 /* ---- ekip yönetimi ---- */
@@ -399,15 +399,36 @@ async function renderMonth(){
   plan=[]; $("planCard").classList.add("hide"); $("siteBox").classList.add("hide"); $("calCard").classList.add("hide"); setStatus("");
   $("anchor").textContent="Son nöbet okunuyor…"; lastDuty=null;
   try{
-    const j=await api({action:"last",before:ymd(firstDay())});
-    lastDuty=j.last;
+    const prev=new Date(cur.getFullYear(),cur.getMonth()-1,1), prevEnd=new Date(cur.getFullYear(),cur.getMonth(),0);
+    const [j,pl]=await Promise.all([api({action:"last",before:ymd(firstDay())}), api({action:"list",from:ymd(prev),to:ymd(prevEnd)})]);
+    lastDuty=j.last; prevCounts={}; pl.items.forEach(it=>{ if(it.name!==OFFICE) prevCounts[it.name]=(prevCounts[it.name]||0)+1; });
     if(lastDuty){
       const d=new Date(lastDuty.date+"T12:00:00");
-      $("anchor").innerHTML=`Önceki son nöbet: <b>${lastDuty.name}</b> · ${d.getDate()} ${AY[d.getMonth()]}`;
-      const act=activeTeam(), idx=act.findIndex(t=>t.name===lastDuty.name);
-      if(idx>=0) $("startSel").value=act[(idx+1)%act.length].name;
+      const best=pickStart();
+      const pc=Object.entries(prevCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k.split(" ")[0]} ${v}`).join(" · ");
+      $("anchor").innerHTML=`Önceki son nöbet: <b>${lastDuty.name}</b> · ${d.getDate()} ${AY[d.getMonth()]}`+(pc?`<br>Geçen ay: ${pc}`:"")+(best?`<br>Dengeli başlangıç: <b>${best}</b>`:"");
+      if(best) $("startSel").value=best;
     } else $("anchor").textContent="Önceki ayda nöbet bulunamadı — başlangıç kişisini seç.";
   }catch(e){ $("anchor").textContent="Takvim okunamadı: "+e.message; }
+}
+
+/* ---- dengeli başlangıç seçimi ---- */
+// Her olası başlangıç için ayı simüle eder; geçen ay + bu ay toplamı en dengeli olanı seçer.
+// Önceki ayın son kişisiyle ilk gün aynı olamaz.
+function simulate(act,s){ const n=act.length, days=lastDay().getDate(), c={}; act.forEach(t=>c[t.name]=0);
+  for(let i=0;i<days;i++) c[act[(s+i+Math.floor(i/7))%n].name]++; return c; }
+function pickStart(){
+  const act=activeTeam(); if(act.length<3) return null;
+  let best=null, bestScore=Infinity;
+  for(let s=0;s<act.length;s++){
+    if(lastDuty && act[s].name===lastDuty.name) continue;
+    const c=simulate(act,s);
+    const tot=act.map(t=>(prevCounts[t.name]||0)+c[t.name]);
+    const mean=tot.reduce((a,b)=>a+b,0)/tot.length;
+    const score=tot.reduce((a,b)=>a+(b-mean)**2,0);
+    if(score<bestScore-1e-9){ bestScore=score; best=act[s].name; }
+  }
+  return best;
 }
 
 /* ---- plan ---- */
@@ -437,7 +458,7 @@ function previewCal(){ const map={}; plan.forEach(p=>map[p.date]=p.name); render
 function stats(){
   const c={}; plan.forEach(p=>c[p.name]=(c[p.name]||0)+1);
   let warn=0; for(let i=1;i<plan.length;i++) if(plan[i].name===plan[i-1].name && plan[i].name!==OFFICE) warn++;
-  $("stats").innerHTML=Object.entries(c).map(([k,v])=>`<span class="stat">${k.split(" ")[0]} <b>${v}</b></span>`).join("")
+  $("stats").innerHTML=Object.entries(c).map(([k,v])=>`<span class="stat">${k.split(" ")[0]} <b>${v}</b>${k!==OFFICE&&prevCounts[k]!=null?`<small style="color:#8a94ad"> (geçen ay ${prevCounts[k]})</small>`:""}</span>`).join("")
     +(warn?`<span class="stat" style="color:#ff8a94">⚠ ${warn} ardışık gün</span>`:"");
 }
 
