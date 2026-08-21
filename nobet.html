@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1a3a">
+<title>Nöbet · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1a3a; --navy2:#122a5c; --ink:#0a0f1f; --paper:#f6f7fb;
+  --red:#e11a2c; --gold:#e4b35c; --line:rgba(255,255,255,.12);
+  --ok:#22c55e; --warn:#f59e0b; --wk:rgba(228,179,92,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;
+  background:radial-gradient(120% 80% at 50% 0%,var(--navy2) 0%,var(--navy) 45%,var(--ink) 100%) fixed;
+  color:#fff;-webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top) 0 calc(24px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#ff4b5c,var(--red));
+  display:grid;place-items:center;font-weight:800;font-size:22px;box-shadow:0 8px 20px rgba(225,26,44,.35)}
+header h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1}
+header small{display:block;color:#aab4cc;font-weight:500;font-size:12px;margin-top:3px}
+
+.card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;backdrop-filter:blur(8px)}
+.row{display:flex;gap:8px;align-items:center}
+.grow{flex:1}
+label.sm{font-size:12px;color:#aab4cc;font-weight:500;display:block;margin-bottom:6px}
+
+input,select,button{font-family:inherit;font-size:16px}
+input[type=password]{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;letter-spacing:.4em;text-align:center;font-size:22px}
+select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;appearance:none;-webkit-appearance:none}
+.month{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.month b{font-size:20px;font-weight:800;flex:1;text-align:center}
+.nav{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+
+.btn{width:100%;padding:15px;border:0;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;color:#fff;
+  background:linear-gradient(145deg,#ff4b5c,var(--red));box-shadow:0 10px 24px rgba(225,26,44,.35);transition:transform .08s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:rgba(255,255,255,.08);box-shadow:none;border:1px solid var(--line);font-weight:700}
+.btn.danger{background:rgba(225,26,44,.15);color:#ff8a94;border:1px solid rgba(225,26,44,.4);box-shadow:none;font-weight:700}
+.btn:disabled{opacity:.45;pointer-events:none}
+.btns{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.btns .full{grid-column:1/-1}
+
+.people{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chip{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid var(--line);font-size:14px;font-weight:500;cursor:pointer;user-select:none}
+.chip input{width:18px;height:18px;accent-color:var(--red)}
+.chip.off{opacity:.4;text-decoration:line-through}
+
+.anchor{font-size:13px;color:#aab4cc;margin-top:8px}
+.anchor b{color:var(--gold)}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.wk td{background:var(--wk)}
+td.d{font-family:"IBM Plex Mono",monospace;font-size:13px;white-space:nowrap;width:74px;color:#d7deee}
+td.d span{color:#8a94ad;font-size:11px;margin-left:4px}
+td select{padding:7px 8px;font-size:14px;border-radius:8px}
+.stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.stat{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.3);border:1px solid var(--line);color:#d7deee}
+.stat b{color:var(--gold)}
+
+#status{font-size:14px;min-height:20px;color:#aab4cc;margin-top:10px;font-weight:500}
+#status.ok{color:var(--ok)} #status.err{color:#ff8a94} #status.busy{color:var(--warn)}
+.hide{display:none!important}
+textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#d7deee;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:10px;margin-top:8px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes r{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">N</div>
+    <div><h1>Nöbet Takvimi</h1><small>RE/MAX Doğuş · tek tuşla Google Takvim</small></div>
+  </header>
+
+  <!-- PIN -->
+  <div class="card" id="pinCard">
+    <label class="sm">Broker PIN</label>
+    <input type="password" id="pin" inputmode="numeric" maxlength="6" autocomplete="off">
+    <div style="height:10px"></div>
+    <button class="btn" onclick="login()">Giriş</button>
+    <div id="pinMsg" style="color:#ff8a94;font-size:13px;margin-top:8px"></div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hide">
+    <div class="card">
+      <div class="month">
+        <button class="nav" onclick="shiftMonth(-1)">‹</button>
+        <b id="monthLabel"></b>
+        <button class="nav" onclick="shiftMonth(1)">›</button>
+      </div>
+      <div class="anchor" id="anchor">Son nöbet okunuyor…</div>
+    </div>
+
+    <div class="card">
+      <label class="sm">Bu ay nöbete girecekler</label>
+      <div class="people" id="people"></div>
+      <div style="height:10px"></div>
+      <label class="sm">Ayın ilk günü kim başlasın</label>
+      <select id="startSel"></select>
+    </div>
+
+    <div class="card">
+      <div class="btns">
+        <button class="btn full" onclick="buildPlan()">Plan oluştur</button>
+        <button class="btn ghost" onclick="readCalendar()">Takvimden oku</button>
+        <button class="btn ghost" onclick="copySite()">Site kodu</button>
+      </div>
+      <div id="status"></div>
+      <textarea id="siteBox" class="hide" readonly></textarea>
+    </div>
+
+    <div class="card hide" id="planCard">
+      <table><tbody id="planBody"></tbody></table>
+      <div class="stats" id="stats"></div>
+      <div style="height:12px"></div>
+      <div class="btns">
+        <button class="btn full" id="sendBtn" onclick="sendPlan()">Takvime gönder</button>
+        <button class="btn danger full" onclick="clearMonth()">Bu ayın nöbetlerini sil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== AYARLAR ====== */
+const API = "https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";   // /exec ile biten URL
+const PIN_LEN = 4;
+
+// Rotasyon sırası (takvimdeki mevcut sıra). İsim → e-posta(lar)
+const TEAM = [
+  { name:"Evşen Özazman",     emails:["evsenozazman@gmail.com"] },
+  { name:"İrem Aleyna Tetik", emails:["iremaleynatetik96@gmail.com","irem.remaxdogus@gmail.com"] },
+  { name:"Gizem Gök",         emails:["gzmmgok@gmail.com"] },
+  { name:"Orhan Özazman",     emails:["oozazman@zencan.com"] },
+  { name:"Özlem Varol",       emails:["ozlemvarol380@gmail.com"] },
+  { name:"Gamze Yetkin",      emails:["yetkin.gamze@gmail.com"] },
+  { name:"Ayşegül Alpay",     emails:["alpay65@gmail.com"] },
+];
+const OFFICE = "Ofis";
+/* ===================== */
+
+const AY = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const GUN = ["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+let pin="", cur=new Date(), plan=[], lastDuty=null;
+cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);   // varsayılan: gelecek ay
+
+const $ = id=>document.getElementById(id);
+const pad = n=>String(n).padStart(2,"0");
+const ymd = d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const firstDay = ()=>new Date(cur.getFullYear(),cur.getMonth(),1);
+const lastDay  = ()=>new Date(cur.getFullYear(),cur.getMonth()+1,0);
+const byName = n=>TEAM.find(t=>t.name===n);
+
+function setStatus(msg,cls){ const s=$("status"); s.className=cls||""; s.innerHTML=(cls==="busy"?'<span class="spin"></span>':"")+msg; }
+
+async function api(body){
+  body.pin=pin;
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+  const j=await r.json();
+  if(!j.ok) throw new Error(j.error||"Hata");
+  return j;
+}
+
+/* ---- giriş ---- */
+$("pin").addEventListener("input",e=>{ if(e.target.value.length>=PIN_LEN) login(); });
+$("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
+async function login(){
+  pin=$("pin").value.trim(); $("pinMsg").textContent="";
+  try{
+    await api({action:"last",before:ymd(firstDay())});
+    sessionStorage.setItem("nobet_pin",pin);
+    $("pinCard").classList.add("hide"); $("app").classList.remove("hide");
+    renderPeople(); renderMonth();
+  }catch(e){ $("pinMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
+}
+if(sessionStorage.getItem("nobet_pin")){ $("pin").value=sessionStorage.getItem("nobet_pin"); login(); }
+
+/* ---- ekip ---- */
+function renderPeople(){
+  $("people").innerHTML=TEAM.map((t,i)=>`<label class="chip" id="chip${i}"><input type="checkbox" checked data-i="${i}" onchange="toggleP(${i})">${t.name}</label>`).join("");
+  $("startSel").innerHTML=TEAM.map(t=>`<option>${t.name}</option>`).join("");
+}
+function toggleP(i){ const c=$("chip"+i); c.classList.toggle("off",!c.querySelector("input").checked); }
+function activeTeam(){ return TEAM.filter((t,i)=>$("chip"+i).querySelector("input").checked); }
+
+/* ---- ay ---- */
+function shiftMonth(n){ cur=new Date(cur.getFullYear(),cur.getMonth()+n,1); renderMonth(); }
+async function renderMonth(){
+  $("monthLabel").textContent=`${AY[cur.getMonth()]} ${cur.getFullYear()}`;
+  plan=[]; $("planCard").classList.add("hide"); $("siteBox").classList.add("hide"); setStatus("");
+  $("anchor").textContent="Son nöbet okunuyor…"; lastDuty=null;
+  try{
+    const j=await api({action:"last",before:ymd(firstDay())});
+    lastDuty=j.last;
+    if(lastDuty){
+      const d=new Date(lastDuty.date+"T12:00:00");
+      $("anchor").innerHTML=`Önceki son nöbet: <b>${lastDuty.name}</b> · ${d.getDate()} ${AY[d.getMonth()]}`;
+      const act=activeTeam(), idx=act.findIndex(t=>t.name===lastDuty.name);
+      if(idx>=0) $("startSel").value=act[(idx+1)%act.length].name;
+    } else $("anchor").textContent="Önceki ayda nöbet bulunamadı — başlangıç kişisini seç.";
+  }catch(e){ $("anchor").textContent="Takvim okunamadı: "+e.message; }
+}
+
+/* ---- plan ---- */
+// Kaydırmalı rotasyon: her gün bir sonraki kişi, her hafta bir kişi daha kayar.
+// Kimse üst üste gün tutmaz, kimse ay içinde aynı haftanın gününe iki kez düşmez.
+function buildPlan(){
+  const act=activeTeam(); if(act.length<3){ setStatus("En az 3 kişi seçilmeli.","err"); return; }
+  let s=act.findIndex(t=>t.name===$("startSel").value); if(s<0) s=0;
+  const n=act.length, days=lastDay().getDate(); plan=[];
+  for(let i=0;i<days;i++){
+    const d=new Date(cur.getFullYear(),cur.getMonth(),i+1);
+    plan.push({date:ymd(d), name:act[(s+i+Math.floor(i/7))%n].name});
+  }
+  renderPlan(); setStatus(`${days} gün planlandı. Satırları elle değiştirebilirsin.`,"ok");
+}
+function renderPlan(){
+  const opts=[OFFICE,...TEAM.map(t=>t.name)];
+  $("planBody").innerHTML=plan.map((p,i)=>{
+    const d=new Date(p.date+"T12:00:00"), wk=d.getDay()===0||d.getDay()===6;
+    return `<tr class="${wk?"wk":""}"><td class="d">${pad(d.getDate())} ${AY[d.getMonth()].slice(0,3)}<span>${GUN[d.getDay()]}</span></td>
+      <td><select onchange="plan[${i}].name=this.value;stats()">${opts.map(o=>`<option ${o===p.name?"selected":""}>${o}</option>`).join("")}</select></td></tr>`;
+  }).join("");
+  $("planCard").classList.remove("hide"); stats();
+}
+function stats(){
+  const c={}; plan.forEach(p=>c[p.name]=(c[p.name]||0)+1);
+  let warn=0; for(let i=1;i<plan.length;i++) if(plan[i].name===plan[i-1].name && plan[i].name!==OFFICE) warn++;
+  $("stats").innerHTML=Object.entries(c).map(([k,v])=>`<span class="stat">${k.split(" ")[0]} <b>${v}</b></span>`).join("")
+    +(warn?`<span class="stat" style="color:#ff8a94">⚠ ${warn} ardışık gün</span>`:"");
+}
+
+async function readCalendar(){
+  setStatus("Takvim okunuyor…","busy");
+  try{
+    const j=await api({action:"list",from:ymd(firstDay()),to:ymd(lastDay())});
+    if(!j.items.length){ setStatus("Bu ayda takvimde nöbet yok.","err"); return; }
+    const m={}; j.items.forEach(it=>m[it.date]=it.name);
+    const days=lastDay().getDate(); plan=[];
+    for(let i=0;i<days;i++){ const d=ymd(new Date(cur.getFullYear(),cur.getMonth(),i+1)); plan.push({date:d,name:m[d]||OFFICE}); }
+    renderPlan(); setStatus(`Takvimden ${j.items.length} nöbet okundu.`,"ok");
+  }catch(e){ setStatus(e.message,"err"); }
+}
+
+async function sendPlan(){
+  if(!plan.length) return;
+  if(!confirm(`${AY[cur.getMonth()]} ayı için ${plan.length} nöbet takvime yazılacak.\nAynı günlerdeki eski nöbetler sessizce silinir, yenileri davetiyeli gider.\nDevam?`)) return;
+  $("sendBtn").disabled=true; setStatus("Takvime yazılıyor… (≈1 dk)","busy");
+  try{
+    const body=plan.map(p=>({date:p.date,name:p.name,emails:p.name===OFFICE?[]:(byName(p.name)||{}).emails||[]}));
+    const j=await api({action:"create",plan:body,replace:true});
+    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi.`,"ok");
+  }catch(e){ setStatus("Hata: "+e.message,"err"); }
+  $("sendBtn").disabled=false;
+}
+
+async function clearMonth(){
+  if(!confirm(`${AY[cur.getMonth()]} ${cur.getFullYear()} nöbetlerinin tamamı silinecek (danışmanlara iptal maili gitmez). Emin misin?`)) return;
+  setStatus("Siliniyor…","busy");
+  try{ const j=await api({action:"clear",from:ymd(firstDay()),to:ymd(lastDay())}); setStatus(`${j.deleted} nöbet silindi.`,"ok"); plan=[]; $("planCard").classList.add("hide"); }
+  catch(e){ setStatus(e.message,"err"); }
+}
+
+// yenifikirtepeburada.com nöbetçi kartı için yapıştırılacak satırlar
+function copySite(){
+  if(!plan.length){ setStatus("Önce plan oluştur veya takvimden oku.","err"); return; }
+  const txt=plan.map(p=>`"${p.date}":"${p.name}",`).join("\n");
+  const b=$("siteBox"); b.value=txt; b.classList.remove("hide");
+  navigator.clipboard?.writeText(txt).then(()=>setStatus("Site satırları kopyalandı.","ok"),()=>setStatus("Aşağıdan kopyala.","ok"));
+}
+</script>
+</body>
+</html>
