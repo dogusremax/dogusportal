@@ -69,8 +69,20 @@ td select{padding:7px 8px;font-size:14px;border-radius:8px}
 .stat b{color:var(--gold)}
 
 #status{font-size:14px;min-height:20px;color:#aab4cc;margin-top:10px;font-weight:500}
-#status.ok{color:var(--ok)} #status.err{color:#ff8a94} #status.busy{color:var(--warn)}
+#status.ok,#evStatus.ok{color:var(--ok)} #status.err,#evStatus.err{color:#ff8a94} #status.busy,#evStatus.busy{color:var(--warn)}
 .hide{display:none!important}
+.tabs{display:flex;gap:6px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border:0;border-radius:10px;background:transparent;color:#aab4cc;font-weight:700;font-size:15px;cursor:pointer}
+.tabs button.on{background:linear-gradient(145deg,#ff4b5c,var(--red));color:#fff;box-shadow:0 6px 16px rgba(225,26,44,.35)}
+.f{display:grid;gap:10px}
+.f input[type=text],.f input[type=date],.f input[type=time],.f textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-family:inherit;color-scheme:dark}
+.f textarea{height:70px;margin:0}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:#d7deee;font-size:13px;font-weight:600;cursor:pointer}
+.seg button.on{background:rgba(228,179,92,.18);border-color:var(--gold);color:var(--gold)}
+.sw{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid var(--line);font-size:14px;font-weight:500}
+.sw input{width:20px;height:20px;accent-color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:4px}
 .cal .h{font-size:10px;color:#8a94ad;text-align:center;padding:2px 0 4px;font-weight:700;text-transform:uppercase}
 .cal .c{min-height:58px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid var(--line);padding:4px 3px;font-size:10.5px;line-height:1.15;overflow:hidden}
@@ -109,6 +121,60 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
 
   <!-- APP -->
   <div id="app" class="hide">
+    <div class="tabs">
+      <button class="on" id="tabN" onclick="showTab('N')">Nöbet</button>
+      <button id="tabE" onclick="showTab('E')">Etkinlik</button>
+    </div>
+
+    <div id="paneE" class="hide">
+      <div class="card f">
+        <div>
+          <label class="sm">Tür</label>
+          <div class="seg" id="evType">
+            <button class="on" onclick="setType(this,'Ofis Toplantısı')">Ofis Toplantısı</button>
+            <button onclick="setType(this,'Eğitim')">Eğitim</button>
+            <button onclick="setType(this,'Doğum Günü')">Doğum günü</button>
+            <button onclick="setType(this,'')">Diğer</button>
+          </div>
+        </div>
+        <div><label class="sm">Başlık</label><input type="text" id="evTitle" placeholder="Ofis Toplantısı"></div>
+        <div><label class="sm">Tarih</label><input type="date" id="evDate"></div>
+        <label class="sw">Tüm gün <input type="checkbox" id="evAll" onchange="$('evTimes').classList.toggle('hide',this.checked)"></label>
+        <div class="two" id="evTimes">
+          <div><label class="sm">Başlangıç</label><input type="time" id="evStart" value="10:00"></div>
+          <div><label class="sm">Bitiş</label><input type="time" id="evEnd" value="11:00"></div>
+        </div>
+        <div>
+          <label class="sm">Konum</label>
+          <div class="seg" id="evLocSeg">
+            <button class="on" onclick="setLoc(this,'ofis')">Ofis</button>
+            <button onclick="setLoc(this,'custom')">Başka yer</button>
+            <button onclick="setLoc(this,'none')">Yok</button>
+          </div>
+          <input type="text" id="evLoc" class="hide" placeholder="Adres" style="margin-top:8px">
+        </div>
+        <div>
+          <label class="sm">Davetliler</label>
+          <div class="seg" style="margin-bottom:6px"><button onclick="allPeople(true)">Herkes</button><button onclick="allPeople(false)">Hiçbiri</button></div>
+          <div class="people" id="evPeople"></div>
+        </div>
+        <div>
+          <label class="sm">Hatırlatma</label>
+          <div class="seg" id="evRem">
+            <button onclick="setRem(this,0)">Yok</button>
+            <button onclick="setRem(this,60)">1 saat</button>
+            <button class="on" onclick="setRem(this,720)">12 saat</button>
+            <button onclick="setRem(this,1440)">1 gün</button>
+          </div>
+        </div>
+        <div><label class="sm">Not</label><textarea id="evDesc" placeholder="İsteğe bağlı açıklama"></textarea></div>
+        <label class="sw">Davetlilere e-posta gitsin <input type="checkbox" id="evNotify" checked></label>
+        <button class="btn" id="evBtn" onclick="sendEvent()">Takvime ekle</button>
+        <div id="evStatus" style="font-size:14px;min-height:20px;color:#aab4cc;font-weight:500"></div>
+      </div>
+    </div>
+
+    <div id="paneN">
     <div class="card">
       <div class="month">
         <button class="nav" onclick="shiftMonth(-1)">‹</button>
@@ -174,6 +240,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
       </div>
       <div class="cal" id="calGrid"></div>
     </div>
+    </div><!-- /paneN -->
   </div>
 </div>
 
@@ -280,6 +347,49 @@ async function showCalendar(title){
   const j=await api({action:"list",from:ymd(firstDay()),to:ymd(lastDay())});
   const map={}; j.items.forEach(it=>map[it.date]=it.name);
   renderCal(map,title); return j.items.length;
+}
+
+/* ---- etkinlik sekmesi ---- */
+const OFFICE_ADDR="RE/MAX Doğuş, Dumlupınar, Özen Sk. Nuhoğlu Yenitepe Sitesi 2.Etap A Blok D:2, 34720 Kadıköy/İstanbul";
+let evLocMode="ofis", evRemMin=720, evKind="Ofis Toplantısı";
+function showTab(t){
+  $("paneN").classList.toggle("hide",t!=="N"); $("paneE").classList.toggle("hide",t!=="E");
+  $("tabN").classList.toggle("on",t==="N"); $("tabE").classList.toggle("on",t==="E");
+  if(t==="E"){ renderEvPeople(); if(!$("evDate").value) $("evDate").value=ymd(new Date()); }
+}
+function segOn(container,btn){ [...container.querySelectorAll("button")].forEach(b=>b.classList.remove("on")); btn.classList.add("on"); }
+function setType(b,kind){
+  segOn($("evType"),b); evKind=kind;
+  $("evTitle").placeholder=kind||"Etkinlik adı"; $("evTitle").value=kind;
+  if(kind==="Doğum Günü"){ $("evAll").checked=true; $("evTimes").classList.add("hide"); $("evTitle").value=""; $("evTitle").placeholder="Ad Soyad — Doğum Günü"; setLoc($("evLocSeg").children[2],"none"); allPeople(true); }
+  else { $("evAll").checked=false; $("evTimes").classList.remove("hide"); setLoc($("evLocSeg").children[0],"ofis"); if(kind==="Ofis Toplantısı") allPeople(true); }
+  if(kind==="Ofis Toplantısı"){ $("evStart").value="10:00"; $("evEnd").value="11:30"; }
+  if(kind==="Eğitim"){ $("evStart").value="11:00"; $("evEnd").value="13:00"; }
+}
+function setLoc(b,mode){ segOn($("evLocSeg"),b); evLocMode=mode; $("evLoc").classList.toggle("hide",mode!=="custom"); }
+function setRem(b,m){ segOn($("evRem"),b); evRemMin=m; }
+function renderEvPeople(){
+  $("evPeople").innerHTML=TEAM.map((t,i)=>`<label class="chip"><input type="checkbox" data-i="${i}" ${i<TEAM.length?"checked":""}>${t.name}</label>`).join("");
+}
+function allPeople(on){ if(!$("evPeople").children.length) renderEvPeople(); $("evPeople").querySelectorAll("input").forEach(c=>c.checked=on); }
+async function sendEvent(){
+  const s=$("evStatus"), title=$("evTitle").value.trim()||$("evTitle").placeholder, date=$("evDate").value;
+  if(!date){ s.className="err"; s.textContent="Tarih seç."; return; }
+  if(!title||title==="Etkinlik adı"){ s.className="err"; s.textContent="Başlık yaz."; return; }
+  const allDay=$("evAll").checked;
+  if(!allDay && $("evEnd").value<=$("evStart").value){ s.className="err"; s.textContent="Bitiş saati başlangıçtan sonra olmalı."; return; }
+  const emails=[]; $("evPeople").querySelectorAll("input:checked").forEach(c=>emails.push(...TEAM[+c.dataset.i].emails));
+  const location=evLocMode==="ofis"?OFFICE_ADDR:evLocMode==="custom"?$("evLoc").value.trim():"";
+  const colorId=evKind==="Doğum Günü"?"5":evKind==="Eğitim"?"10":evKind==="Ofis Toplantısı"?"9":"7";
+  const d=new Date(date+"T12:00:00");
+  if(!confirm(`"${title}"\n${d.getDate()} ${AY[d.getMonth()]} ${d.getFullYear()} ${allDay?"(tüm gün)":$("evStart").value+"–"+$("evEnd").value}\n${emails.length} davetli${$("evNotify").checked&&emails.length?" · e-posta gidecek":""}\n\nTakvime eklensin mi?`)) return;
+  $("evBtn").disabled=true; s.className="busy"; s.innerHTML='<span class="spin"></span>Takvime ekleniyor…';
+  try{
+    const j=await api({action:"event",ev:{title,date,allDay,start:$("evStart").value,end:$("evEnd").value,location,description:$("evDesc").value.trim(),emails,remindMin:evRemMin,colorId,notify:$("evNotify").checked}});
+    s.className="ok"; s.innerHTML=`✓ Eklendi${j.attendees?`, ${j.attendees} kişiye davet gitti`:""}. <a href="${j.link}" target="_blank" style="color:var(--gold)">Takvimde aç ↗</a>`;
+    $("evTitle").value=evKind; $("evDesc").value="";
+  }catch(e){ s.className="err"; s.textContent="Hata: "+e.message; }
+  $("evBtn").disabled=false;
 }
 
 /* ---- ay ---- */
