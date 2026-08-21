@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dijital Kart · RE/MAX Doğuş</title>
+<meta name="description" content="RE/MAX Doğuş gayrimenkul danışmanı dijital kartvizit">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--red:#DC1C2E;--blue:#003DA5;--ink:#131a26;--dim:#68738a;--line:#e3e7ee;--bg:#f6f7f9}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:480px;margin:0 auto;padding:18px 16px 40px}
+h1{font-family:Archivo,sans-serif;font-weight:800;letter-spacing:-.02em}
+.hide{display:none!important}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+label.sm{font-size:12px;font-weight:600;color:var(--dim);display:block;margin:0 0 5px}
+input,textarea,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;font:16px Inter,sans-serif;background:#fff;color:var(--ink)}
+textarea{height:72px;resize:vertical}
+.f{display:grid;gap:12px}
+.btn{width:100%;padding:14px;border:0;border-radius:13px;font:700 15px Archivo,sans-serif;color:#fff;background:var(--red);cursor:pointer;box-shadow:0 8px 20px -6px rgba(220,28,46,.5)}
+.btn.b{background:var(--blue);box-shadow:0 8px 20px -6px rgba(0,61,165,.5)}
+.btn.g{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:8px;align-items:center}
+.grow{flex:1}
+.status{font-size:14px;font-weight:500;color:var(--dim);min-height:20px;margin-top:8px}
+.status.ok{color:#15803d}.status.err{color:var(--red)}
+.photo-pick{display:flex;gap:12px;align-items:center}
+.photo-pick img,.photo-pick .ph{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#eef0f5;border:2px solid var(--line)}
+.themes{display:flex;gap:8px}
+.themes button{flex:1;height:40px;border-radius:10px;border:2px solid transparent;cursor:pointer}
+.themes button.on{border-color:var(--ink)}
+.link-row{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin-bottom:6px}
+.link-row button{border:1px solid var(--line);background:#fff;border-radius:10px;width:42px;color:var(--red);font-size:18px}
+.share{display:grid;gap:8px}
+.share code{display:block;padding:10px 12px;background:#f0f2f6;border-radius:10px;font-size:13px;word-break:break-all}
+#qr{display:flex;justify-content:center;padding:10px}
+#qr img,#qr canvas{border-radius:12px}
+
+/* ===== PUBLIC CARD ===== */
+body.pub{background:var(--pbg)}
+.pc{max-width:440px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.hero{position:relative;padding:56px 24px 28px;text-align:center;background:var(--phero);color:var(--pfg);border-radius:0 0 36px 36px}
+.hero .rm{position:absolute;top:16px;left:0;right:0;font:800 11px Archivo,sans-serif;letter-spacing:.22em;opacity:.75}
+.hero img,.hero .ph{width:124px;height:124px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.9);box-shadow:0 14px 34px -10px rgba(0,0,0,.5);background:#ddd}
+.hero h1{font-size:26px;margin-top:14px;line-height:1.1}
+.hero .t{font-size:13.5px;opacity:.85;margin-top:5px;font-weight:500}
+.hero .bio{font-size:14px;line-height:1.55;margin:14px auto 0;max-width:320px;opacity:.92}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 20px 6px}
+.quick a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:13px 6px;border-radius:16px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--ink);font:600 12px Inter,sans-serif;box-shadow:0 6px 18px -10px rgba(0,0,0,.2)}
+.quick a svg{width:22px;height:22px}
+.links{padding:10px 20px 24px;display:grid;gap:10px}
+.links a{display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:16px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--ink);font:600 15px Inter,sans-serif;box-shadow:0 6px 18px -10px rgba(0,0,0,.2);transition:transform .12s}
+.links a:active{transform:scale(.98)}
+.links a .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--pbadge);color:#fff;flex-shrink:0}
+.links a .ic svg{width:18px;height:18px}
+.links a .ar{margin-left:auto;color:#c3cad8}
+.pfoot{text-align:center;font-size:11px;color:var(--dim);padding:10px 20px 30px;margin-top:auto}
+.pfoot a{color:inherit}
+.vc{display:flex;justify-content:center;padding:0 20px 8px}
+.vc button{padding:12px 22px;border-radius:999px;border:0;background:var(--ink);color:#fff;font:700 14px Archivo,sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- ======= PUBLIC ======= -->
+<div id="pub" class="hide"><div class="pc" id="pcard"></div></div>
+
+<!-- ======= EDITOR ======= -->
+<div id="ed" class="wrap">
+  <h1 style="font-size:22px;margin-bottom:4px">Dijital Kartım</h1>
+  <div style="font-size:13px;color:var(--dim);margin-bottom:16px">Tek linkle paylaşılan kişisel sayfan. 2 dakikada hazır.</div>
+
+  <div class="card" id="loginCard">
+    <label class="sm">Danışman PIN</label>
+    <input type="password" id="pin" inputmode="numeric" maxlength="6" style="letter-spacing:.4em;text-align:center;font-size:22px">
+    <div style="height:10px"></div>
+    <button class="btn" onclick="login()">Giriş</button>
+    <div class="status" id="loginMsg"></div>
+  </div>
+
+  <div id="form" class="hide">
+    <div class="card f">
+      <div class="photo-pick">
+        <img id="pImg" class="hide"><div class="ph" id="pPh"></div>
+        <div class="grow">
+          <label class="sm">Profil fotoğrafı</label>
+          <input type="file" id="photo" accept="image/*" onchange="loadPhoto(this)">
+        </div>
+      </div>
+      <div id="nameWrap"><label class="sm">Ad Soyad</label><input type="text" id="name"></div>
+      <div><label class="sm">Ünvan</label><input type="text" id="title" value="Gayrimenkul Danışmanı · RE/MAX Doğuş"></div>
+      <div><label class="sm">Kısa tanıtım</label><textarea id="bio" placeholder="Fikirtepe ve Kadıköy'de konut, kentsel dönüşüm ve yatırım danışmanlığı."></textarea></div>
+    </div>
+
+    <div class="card f">
+      <div><label class="sm">Telefon</label><input type="tel" id="phone" placeholder="0532 000 00 00"></div>
+      <div><label class="sm">WhatsApp (farklıysa)</label><input type="tel" id="whatsapp" placeholder="boş bırakırsan telefon kullanılır"></div>
+      <div><label class="sm">E-posta</label><input type="email" id="email"></div>
+      <div><label class="sm">Instagram kullanıcı adı</label><input type="text" id="instagram" placeholder="kullaniciadi"></div>
+      <div><label class="sm">LinkedIn linki</label><input type="url" id="linkedin" placeholder="https://linkedin.com/in/..."></div>
+      <div><label class="sm">Sahibinden mağaza linki</label><input type="url" id="sahibinden" placeholder="https://..."></div>
+    </div>
+
+    <div class="card">
+      <label class="sm">Ek linkler (portföy, video, site…)</label>
+      <div id="links"></div>
+      <button class="btn g" onclick="addLink()">+ Link ekle</button>
+    </div>
+
+    <div class="card">
+      <label class="sm">Renk</label>
+      <div class="themes" id="themes"></div>
+      <div style="height:12px"></div>
+      <button class="btn" id="saveBtn" onclick="save()">Kaydet ve linkimi al</button>
+      <div class="status" id="msg"></div>
+    </div>
+
+    <div class="card share hide" id="shareCard">
+      <label class="sm">Kart linkin</label>
+      <code id="myUrl"></code>
+      <div class="row">
+        <button class="btn b grow" onclick="copyUrl()">Linki kopyala</button>
+        <button class="btn g grow" onclick="window.open($('myUrl').textContent,'_blank')">Önizle</button>
+      </div>
+      <div id="qr"></div>
+      <div style="font-size:12px;color:var(--dim);text-align:center">QR'ı kartvizitine, ilan afişine veya Instagram biyografine koy.</div>
+    </div>
+
+    <div class="card hide" id="brokerList"></div>
+  </div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbxzztKVNRqNhVEN-tub1svPXYTwTIDPmAiJ4MUVJHNqcicTDwflqSmIfmeFvvqOw0WaLQ/exec";
+const THEMES={
+  kirmizi:{bg:"#fbf1f2",hero:"linear-gradient(160deg,#e7283a,#9b0f1e)",fg:"#fff",badge:"#DC1C2E",chip:"#DC1C2E"},
+  lacivert:{bg:"#eef2fa",hero:"linear-gradient(160deg,#1a4fbd,#002a75)",fg:"#fff",badge:"#003DA5",chip:"#003DA5"},
+  koyu:{bg:"#f1f2f5",hero:"linear-gradient(160deg,#2a3248,#0f1422)",fg:"#fff",badge:"#131a26",chip:"#131a26"},
+  krem:{bg:"#fbf8f2",hero:"linear-gradient(160deg,#f1e6d2,#d9c6a5)",fg:"#2b2416",badge:"#8a6a2f",chip:"#c8a96a"}
+};
+const $=id=>document.getElementById(id);
+let pin="", me=null, photoData="", theme="kirmizi";
+
+async function api(body){ body.pin=pin; const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}); const j=await r.json(); if(!j.ok) throw new Error(j.error); return j; }
+
+/* ---------- PUBLIC ---------- */
+const slug=new URLSearchParams(location.search).get("d");
+if(slug){ document.body.classList.add("pub"); $("ed").classList.add("hide"); $("pub").classList.remove("hide"); loadPublic(slug); }
+
+async function loadPublic(s){
+  $("pcard").innerHTML='<div style="padding:60px;text-align:center;color:#888">Yükleniyor…</div>';
+  try{
+    const r=await fetch(API+"?action=get&slug="+encodeURIComponent(s)); const j=await r.json(); if(!j.ok) throw new Error(j.error);
+    renderPublic(j.card);
+  }catch(e){ $("pcard").innerHTML=`<div style="padding:60px;text-align:center;color:#888">Kart bulunamadı.<br><small>${e.message}</small></div>`; }
+}
+const tel=p=>(p||"").replace(/\D/g,"");
+const I={
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5.3-.5v-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.8.4 3.5 3.5 0 0 0-1.1 2.6 6 6 0 0 0 1.3 3.2c.2.2 2.2 3.4 5.4 4.7 2.6 1 3.2.8 3.8.8s1.8-.8 2.1-1.5.3-1.4.2-1.5-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+  li:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.4 2H3.6A1.6 1.6 0 0 0 2 3.6v16.8A1.6 1.6 0 0 0 3.6 22h16.8a1.6 1.6 0 0 0 1.6-1.6V3.6A1.6 1.6 0 0 0 20.4 2zM8 19H5V9h3zM6.5 7.7A1.7 1.7 0 1 1 8.2 6a1.7 1.7 0 0 1-1.7 1.7zM19 19h-3v-4.9c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6V19h-3V9h2.9v1.4a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7z"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  ar:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+};
+function esc(s){ return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function renderPublic(c){
+  const t=THEMES[c.theme]||THEMES.kirmizi, r=document.documentElement.style;
+  r.setProperty("--pbg",t.bg); r.setProperty("--phero",t.hero); r.setProperty("--pfg",t.fg); r.setProperty("--pbadge",t.badge);
+  document.title=c.name+" · RE/MAX Doğuş";
+  const ph=tel(c.phone), wa=tel(c.whatsapp||c.phone); const wa90=wa.startsWith("0")?"90"+wa.slice(1):wa;
+  let q=[];
+  if(ph) q.push(`<a href="tel:${ph}">${I.phone}Ara</a>`);
+  if(wa) q.push(`<a href="https://wa.me/${wa90}" target="_blank">${I.wa}WhatsApp</a>`);
+  if(c.email) q.push(`<a href="mailto:${esc(c.email)}">${I.mail}E-posta</a>`);
+  let L=[];
+  if(c.sahibinden) L.push([I.home,"Sahibinden portföyüm",c.sahibinden]);
+  if(c.instagram) L.push([I.ig,"Instagram · @"+c.instagram.replace(/^@/,""),"https://instagram.com/"+c.instagram.replace(/^@/,"")]);
+  if(c.linkedin) L.push([I.li,"LinkedIn",c.linkedin]);
+  (c.links||[]).forEach(l=>{ if(l.url) L.push([I.link,l.label||l.url,l.url]); });
+  L.push([I.home,"Yeni Fikirtepe Burada","https://yenifikirtepeburada.com"]);
+  $("pcard").innerHTML=`
+    <div class="hero"><div class="rm">RE/MAX DOĞUŞ</div>
+      ${c.photo?`<img src="${c.photo}" alt="">`:`<div class="ph" style="display:inline-block"></div>`}
+      <h1>${esc(c.name)}</h1><div class="t">${esc(c.title)}</div>${c.bio?`<div class="bio">${esc(c.bio)}</div>`:""}
+    </div>
+    <div class="quick">${q.join("")}</div>
+    <div class="links">${L.map(([ic,lb,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
+    <div class="vc"><button onclick="vcard()">Rehbere kaydet</button></div>
+    <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy<br><a href="https://dogusportal.com/kart.html">Sen de kartını oluştur</a></div>`;
+  window._card=c;
+}
+function vcard(){
+  const c=window._card, n=c.name.split(" "), last=n.pop(), first=n.join(" ");
+  const v=["BEGIN:VCARD","VERSION:3.0",`N:${last};${first};;;`,`FN:${c.name}`,"ORG:RE/MAX Doğuş",`TITLE:${c.title||""}`,
+    c.phone?`TEL;TYPE=CELL:${tel(c.phone)}`:"",c.email?`EMAIL:${c.email}`:"",`URL:${location.href}`,"END:VCARD"].filter(Boolean).join("\r\n");
+  const a=document.createElement("a"); a.href="data:text/vcard;charset=utf-8,"+encodeURIComponent(v); a.download=c.name.replace(/\s+/g,"_")+".vcf"; a.click();
+}
+
+/* ---------- EDITOR ---------- */
+$("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
+async function login(){
+  pin=$("pin").value.trim(); $("loginMsg").textContent="";
+  try{
+    const j=await api({action:"mine"}); me=j;
+    $("loginCard").classList.add("hide"); $("form").classList.remove("hide");
+    renderThemes();
+    if(!j.broker){ $("name").value=j.name; $("name").readOnly=true; }
+    if(j.card) fill(j.card);
+    if(j.broker) brokerList();
+  }catch(e){ $("loginMsg").className="status err"; $("loginMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
+}
+function renderThemes(){
+  $("themes").innerHTML=Object.entries(THEMES).map(([k,t])=>`<button class="${k===theme?"on":""}" style="background:${t.hero}" onclick="theme='${k}';renderThemes()" title="${k}"></button>`).join("");
+}
+function addLink(l={}){
+  const d=document.createElement("div"); d.className="link-row";
+  d.innerHTML=`<input type="text" placeholder="Başlık" value="${esc(l.label)}"><input type="url" placeholder="https://" value="${esc(l.url)}"><button onclick="this.parentNode.remove()">✕</button>`;
+  $("links").appendChild(d);
+}
+function fill(c){
+  ["name","title","bio","phone","whatsapp","email","instagram","linkedin","sahibinden"].forEach(k=>{ if(c[k]!=null) $(k).value=c[k]; });
+  theme=c.theme||"kirmizi"; renderThemes();
+  if(c.photo){ photoData=c.photo; $("pImg").src=c.photo; $("pImg").classList.remove("hide"); $("pPh").classList.add("hide"); }
+  $("links").innerHTML=""; (c.links||[]).forEach(addLink);
+  showShare(c._slug);
+}
+function loadPhoto(inp){
+  const f=inp.files[0]; if(!f) return;
+  const img=new Image(); img.onload=()=>{
+    const S=320, cv=document.createElement("canvas"); cv.width=cv.height=S; const x=cv.getContext("2d");
+    const m=Math.min(img.width,img.height); x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
+    let q=0.82, out=cv.toDataURL("image/jpeg",q); while(out.length>40000&&q>0.3){ q-=0.1; out=cv.toDataURL("image/jpeg",q); }
+    photoData=out; $("pImg").src=out; $("pImg").classList.remove("hide"); $("pPh").classList.add("hide");
+  }; img.src=URL.createObjectURL(f);
+}
+function collect(){
+  const links=[...$("links").querySelectorAll(".link-row")].map(r=>({label:r.children[0].value.trim(),url:r.children[1].value.trim()})).filter(l=>l.url);
+  const c={theme,photo:photoData,links}; ["name","title","bio","phone","whatsapp","email","instagram","linkedin","sahibinden"].forEach(k=>c[k]=$(k).value.trim()); return c;
+}
+async function save(){
+  const c=collect(); if(!c.name){ setMsg("Ad Soyad gerekli","err"); return; }
+  $("saveBtn").disabled=true; setMsg("Kaydediliyor…");
+  try{ const j=await api({action:"save",card:c}); setMsg("✓ Kaydedildi. Kartın yayında.","ok"); showShare(j.slug); }
+  catch(e){ setMsg("Hata: "+e.message,"err"); }
+  $("saveBtn").disabled=false;
+}
+function setMsg(t,c){ const m=$("msg"); m.className="status "+(c||""); m.textContent=t; }
+function showShare(slug){
+  if(!slug) return;
+  const url=location.origin+location.pathname+"?d="+slug;
+  $("myUrl").textContent=url; $("shareCard").classList.remove("hide");
+  $("qr").innerHTML=""; new QRCode($("qr"),{text:url,width:180,height:180,colorDark:"#131a26",correctLevel:QRCode.CorrectLevel.M});
+}
+function copyUrl(){ navigator.clipboard.writeText($("myUrl").textContent).then(()=>setMsg("Link kopyalandı.","ok")); }
+async function brokerList(){
+  try{ const j=await api({action:"list"}); const b=$("brokerList"); b.classList.remove("hide");
+    b.innerHTML=`<label class="sm">Tüm kartlar (broker)</label>`+(j.items.length?j.items.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);font-size:14px"><span class="grow">${esc(i.name)}<br><small style="color:var(--dim)">${i.views} görüntülenme</small></span><a href="?d=${i.slug}" target="_blank" style="color:var(--blue);font-weight:600">Aç</a></div>`).join(""):'<div style="font-size:13px;color:var(--dim)">Henüz kart yok.</div>');
+  }catch(e){}
+}
+// slug'ı kartla birlikte sakla (yeniden girişte link gösterilsin)
+const _fill=fill; fill=c=>{ c._slug=c._slug||slugify(c.name); _fill(c); };
+function slugify(s){ const m={"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","Ç":"c","Ğ":"g","İ":"i","Ö":"o","Ş":"s","Ü":"u"}; return String(s).replace(/[çğıöşüÇĞİÖŞÜ]/g,c=>m[c]).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
+</script>
+</body>
+</html>
