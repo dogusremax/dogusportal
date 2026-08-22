@@ -317,8 +317,8 @@ async function login(){
     const j=await api({action:"mine"}); me=j;
     $("loginCard").classList.add("hide"); $("form").classList.remove("hide");
     renderThemes();
-    if(!j.broker){ $("name").value=j.name; $("name").readOnly=true; if(j.email) $("email").value=j.email; }
-    if(j.card) fill(j.card);
+    if(!j.broker){ $("name").value=j.name; $("name").readOnly=true; }
+    if(j.card){ fill(j.card); if(j.exists===false){ $("shareCard").classList.add("hide"); setMsg("Bilgilerin hazır geldi; kontrol et, fotoğrafını değiştirmek istersen değiştir, Kaydet de.","ok"); } }
     if(j.stats) renderStats(j.stats, j.card);
     if(j.broker) brokerList();
   }catch(e){ $("loginMsg").className="status err"; $("loginMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
@@ -334,7 +334,7 @@ function addLink(l={}){
 function fill(c){
   ["name","title","bio","phone","whatsapp","email","instagram","linkedin","sahibinden"].forEach(k=>{ if(c[k]!=null) $(k).value=c[k]; });
   theme=c.theme||"kirmizi"; renderThemes();
-  if(c.photo){ photoData=c.photo; $("pImg").src=c.photo; $("pImg").classList.remove("hide"); $("pPh").classList.add("hide"); }
+  if(c.photo){ photoData=c.photo; $("pImg").src=c.photo; $("pImg").classList.remove("hide"); $("pPh").classList.add("hide"); } else { photoData=""; $("pImg").classList.add("hide"); $("pPh").classList.remove("hide"); }
   $("links").innerHTML=""; (c.links||[]).forEach(addLink);
   showShare(c._slug);
 }
@@ -394,9 +394,13 @@ function renderStats(s,card){
     <div style="font-size:11px;color:var(--dim);text-align:center;margin-top:4px">son 14 gün, günlük açılma</div>
     <div class="st" style="grid-template-columns:repeat(4,1fr)"><div><b>${c.ara||0}</b><span>Ara</span></div><div><b>${c.wa||0}</b><span>WhatsApp</span></div><div><b>${c.vcard||0}</b><span>Rehbere</span></div><div><b>${c.portfoy||0}</b><span>Portföy</span></div></div>`;
 }
+async function seedAll(){
+  if(!confirm("Kartı olmayan danışmanlar için ad, ünvan, telefon, e-posta ve fotoğrafla kart oluşturulsun mu? Danışman sonra girip düzenleyebilir.")) return;
+  try{ const j=await api({action:"seed"}); alert(j.created.length?("Oluşturuldu: "+j.created.join(", ")):"Herkesin kartı zaten var."); brokerList(); }catch(e){ alert(e.message); }
+}
 async function brokerList(){
   try{ const j=await api({action:"list"}); const b=$("brokerList"); b.classList.remove("hide");
-    b.innerHTML=`<label class="sm">Tüm kartlar (broker)</label>`+(j.items.length?j.items.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);font-size:14px"><span class="grow">${esc(i.name)}<br><small style="color:var(--dim)">${i.views} açılma · ${(i.stats.clicks||{}).ara||0} ara · ${(i.stats.clicks||{}).wa||0} WhatsApp · ${(i.stats.clicks||{}).vcard||0} rehber</small></span><a href="?d=${i.slug}" target="_blank" style="color:var(--blue);font-weight:600">Aç</a></div>`).join(""):'<div style="font-size:13px;color:var(--dim)">Henüz kart yok.</div>');
+    b.innerHTML=`<label class="sm">Tüm kartlar (broker)</label><button class="btn b" style="margin:6px 0 12px" onclick="seedAll()">Eksik kartları ön bilgilerle oluştur</button>`+(j.items.length?j.items.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);font-size:14px"><span class="grow">${esc(i.name)}<br><small style="color:var(--dim)">${i.views} açılma · ${(i.stats.clicks||{}).ara||0} ara · ${(i.stats.clicks||{}).wa||0} WhatsApp · ${(i.stats.clicks||{}).vcard||0} rehber</small></span><a href="?d=${i.slug}" target="_blank" style="color:var(--blue);font-weight:600">Aç</a></div>`).join(""):'<div style="font-size:13px;color:var(--dim)">Henüz kart yok.</div>');
   }catch(e){}
 }
 // slug'ı kartla birlikte sakla (yeniden girişte link gösterilsin)
