@@ -204,7 +204,7 @@ function renderPublic(c){
     <div class="quick">${q.join("")}</div>
     <div class="links">${L.map(([ic,lb,u,k])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic ${k||""}">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
     <div class="vc"><button onclick="vcard()">Rehbere kaydet</button></div>
-    <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy<br><a href="https://dogusportal.com/kart.html">Sen de kartını oluştur</a></div>`;
+    <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy</div>`;
   window._card=c;
 }
 function vcard(){
@@ -222,7 +222,7 @@ async function login(){
     const j=await api({action:"mine"}); me=j;
     $("loginCard").classList.add("hide"); $("form").classList.remove("hide");
     renderThemes();
-    if(!j.broker){ $("name").value=j.name; $("name").readOnly=true; }
+    if(!j.broker){ $("name").value=j.name; $("name").readOnly=true; if(j.email) $("email").value=j.email; }
     if(j.card) fill(j.card);
     if(j.broker) brokerList();
   }catch(e){ $("loginMsg").className="status err"; $("loginMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
