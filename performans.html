@@ -59,6 +59,7 @@ const progress=i=>`<div style="position:absolute;bottom:0;left:0;right:0;padding
 const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
 const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${t.length>1?330:360}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
 
+const nameTag=(r,n,big)=>`<div class="sans" style="display:flex;align-items:center;gap:6px;padding:${big?'7px 12px':'5px 10px'};background:rgba(5,10,48,.88);border:1px solid rgba(255,255,255,.14);border-radius:20px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="width:${big?20:17}px;height:${big?20:17}px;border-radius:50%;background:${CORAL};color:#fff;font-size:${big?11:10}px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">${n}</span><span style="font-size:${big?12:10.5}px;font-weight:700;color:#fff;">${r.name}</span></div>`;
 function pillsFor(r){
   const p=[];
   p.push(`${r.aktifGun} aktif gün`);
@@ -89,7 +90,8 @@ function build(d){
 <div style="position:absolute;left:0;right:0;bottom:0;height:262px;overflow:hidden;"><div style="position:absolute;left:0;right:0;bottom:-6px;display:flex;justify-content:center;align-items:flex-end;">
 <div style="margin-right:-34px;position:relative;z-index:1;">${top[1]?cut(top[1].id,215,150):''}</div>
 <div style="position:relative;z-index:2;">${top[0]?cut(top[0].id,255,180):''}</div>
-<div style="margin-left:-34px;position:relative;z-index:1;">${top[2]?cut(top[2].id,215,150):''}</div></div></div></div>`);
+<div style="margin-left:-34px;position:relative;z-index:1;">${top[2]?cut(top[2].id,215,150):''}</div></div></div>
+<div style="position:absolute;left:0;right:0;bottom:18px;z-index:6;display:flex;justify-content:center;align-items:flex-end;gap:6px;padding:0 8px;">${[top[1],top[0],top[2]].map((r,k)=>r?nameTag(r,[2,1,3][k],k===1):'').join('')}</div></div>`);
   top.forEach((r,i)=>slides.push(podium(i+1,r,i===1)));
   const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?3:5}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
 <span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
