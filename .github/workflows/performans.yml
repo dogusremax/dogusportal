@@ -1,0 +1,26 @@
+name: Aylık performans görselleri
+on:
+  schedule:
+    - cron: "0 3 1 * *"   # her ayın 1'i 06:00 (TR)
+  workflow_dispatch:
+    inputs:
+      ay:
+        description: "Ay (YYYY-MM, boş = önceki ay)"
+        required: false
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+      - run: node scripts/export.js "${{ github.event.inputs.ay }}"
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusportal.com"
+          git add performans
+          git diff --cached --quiet || git commit -m "Aylık performans görselleri: $(cat performans/.son)"
+          git push

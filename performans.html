@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aylık Performans Görselleri · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1}
+  select,button{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
+  select{background:#161c44;color:#fff}
+  button{background:#DC1C2E;color:#fff}
+  button.ghost{background:rgba(255,255,255,.1)}
+  button:disabled{opacity:.4;cursor:default}
+  .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+  .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
+  .card{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .card small{font-size:11px;color:rgba(255,255,255,.5)}
+  .slide{width:420px;height:525px;position:relative;overflow:hidden;border-radius:4px;flex:0 0 420px}
+  .slide img{-webkit-user-drag:none;pointer-events:none}
+  .sans{font-family:'Plus Jakarta Sans',sans-serif}
+  @media(max-width:480px){.slide{transform:scale(.82);transform-origin:top center}.card{height:440px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="assets/dogus-logo.png" alt="Doğuş">
+  <h1>Aylık Performans Görselleri</h1>
+  <select id="ay"></select>
+  <button class="ghost" onclick="load()">Yenile</button>
+  <button id="zipbtn" onclick="downloadAll()" disabled>Tümünü indir (ZIP)</button>
+</div>
+<div class="status" id="status">Yükleniyor…</div>
+<div class="grid" id="grid"></div>
+
+<script>
+// ==== AYARLAR ====
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec"; // Danışman Takip web app
+const KEY = "dogus-performans";
+const TEL = "0216 315 15 15";
+
+const NAVY="#050A30", RED="#DC1C2E", REDD="#910B19", CORAL="#FB5160", LB="#F6F3F1";
+const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
+const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+let DATA=null, TOTAL=6;
+
+const photo=id=>`assets/ekip/${id}.png`;
+const cut=(id,h)=>`<img src="${photo(id)}" style="height:${h}px;width:auto;display:block;" onerror="this.style.visibility='hidden'">`;
+const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid ${ring};overflow:hidden;flex:0 0 ${s}px;position:relative;"><img src="${photo(id)}" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%;width:auto;" onerror="this.style.display='none'"></div>`;
+const logo=(right)=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
+const progress=i=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${((i+1)/TOTAL)*100}%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">${i+1}/${TOTAL}</span></div>`;
+const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${t.length>1?330:360}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
+
+function pillsFor(r){
+  const p=[];
+  p.push(`${r.aktifGun} aktif gün`);
+  if(r.kapanis>0)p.push(`${r.kapanis} kapanış`);
+  if(r.hedefBonus>0)p.push(`Hedef bonusu +${r.hedefBonus}`);
+  if(r.counts.gosterim>0&&p.length<3)p.push(`${r.counts.gosterim} gösterim`);
+  if(r.counts.sosyal_medya>0&&p.length<3)p.push(`${r.counts.sosyal_medya} içerik`);
+  return p.slice(0,3);
+}
+
+function podium(idx,r,red){
+  const ptc=red?NAVY:CORAL;
+  const ph=pillsFor(r).map(p=>`<span class="sans" style="display:inline-block;font-size:12px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
+  return `<div class="slide" style="background:${red?RGRAD:NAVY};">
+${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
+<div style="position:absolute;right:0;bottom:0;height:440px;width:260px;overflow:hidden;"><div style="position:absolute;right:-10px;bottom:-8px;">${cut(r.id,440)}</div></div>
+<div style="position:absolute;left:36px;width:170px;bottom:60px;z-index:5;">
+<div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
+<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;"><span class="sans" style="font-size:48px;font-weight:700;letter-spacing:-2px;color:${ptc};line-height:1;">${r.puan}</span><span class="sans" style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500;">puan</span></div>
+<div style="width:200px;">${ph}</div></div>${arrow()}${progress(idx)}</div>`;
+}
+
+function build(d){
+  const s=d.siralama, top=s.slice(0,3);
+  const slides=[];
+  slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
+<h1 class="sans" style="position:absolute;left:32px;right:32px;top:108px;font-size:31px;font-weight:700;line-height:1.12;letter-spacing:-.8px;color:#fff;">${d.ayAdi} Ayı<br>Performans Sıralaması</h1>
+<div style="position:absolute;left:0;right:0;bottom:0;height:262px;overflow:hidden;"><div style="position:absolute;left:0;right:0;bottom:-6px;display:flex;justify-content:center;align-items:flex-end;">
+<div style="margin-right:-34px;position:relative;z-index:1;">${top[1]?cut(top[1].id,215):''}</div>
+<div style="position:relative;z-index:2;">${top[0]?cut(top[0].id,255):''}</div>
+<div style="margin-left:-34px;position:relative;z-index:1;">${top[2]?cut(top[2].id,215):''}</div></div></div></div>`);
+  top.forEach((r,i)=>slides.push(podium(i+1,r,i===1)));
+  const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?3:5}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+<span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
+<div style="flex:1;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span class="sans" style="font-size:13px;font-weight:${t?700:500};color:#fff;">${r.name}</span><span class="sans" style="font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.6)'};">${r.puan}</span></div>
+<div style="height:3px;background:rgba(255,255,255,.1);border-radius:2px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:2px;"></div></div></div></div>`}).join('');
+  slides.push(`<div class="slide" style="background:${NAVY};">${logo(false)}<div style="position:absolute;left:32px;right:48px;top:80px;bottom:58px;">
+<h2 class="sans" style="font-size:30px;font-weight:700;letter-spacing:-.9px;color:#fff;margin:0 0 8px;line-height:1.1;">${d.ayAdi} sıralaması</h2>${rows}</div>${arrow()}${progress(4)}</div>`);
+  slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
+<div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
+<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">Bu ay<br>podyumda<br>kim olacak?</h2>
+<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">Her ay yeni sıralama. Sürpriz hediyeler.<br>Kazanan bir ekibin parçası olmak istiyorsan bize yaz.</p>
+<div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Ekibimize katıl →</div></div>
+<p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`);
+  TOTAL=slides.length;
+  return slides;
+}
+
+function fillMonths(){
+  const sel=document.getElementById('ay'),now=new Date();
+  for(let i=1;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=MONTHS[d.getMonth()]+' '+d.getFullYear();sel.appendChild(o);}
+  const q=new URLSearchParams(location.search).get('ay'); if(q)sel.value=q;
+  sel.onchange=load;
+}
+
+async function load(){
+  const ay=document.getElementById('ay').value, st=document.getElementById('status'), grid=document.getElementById('grid');
+  st.textContent='Danışman Takip\'ten veri çekiliyor…'; grid.innerHTML=''; document.getElementById('zipbtn').disabled=true; document.body.removeAttribute('data-ready');
+  try{
+    const res=await fetch(`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
+    if(DATA.error)throw new Error(DATA.error);
+    if(!DATA.hasData){st.textContent=`${DATA.ayAdi} ${DATA.yil} için kayıt bulunamadı.`;return;}
+    const slides=build(DATA);
+    grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">PNG indir</button></div>`).join('');
+    await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+    await document.fonts.ready;
+    st.textContent=`${DATA.ayAdi} ${DATA.yil} · ${DATA.siralama.length} danışman · 1. ${DATA.siralama[0].name} (${DATA.siralama[0].puan} p)`;
+    document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
+  }catch(e){st.textContent='Hata: '+e.message;}
+}
+
+async function renderPng(i){
+  const el=document.querySelectorAll('.slide')[i];
+  const c=await html2canvas(el,{scale:1080/420,width:420,height:525,backgroundColor:null,useCORS:true,logging:false});
+  return new Promise(r=>c.toBlob(r,'image/png'));
+}
+async function downloadOne(i){const b=await renderPng(i);saveBlob(b,`${DATA.ay}_slide_${i+1}.png`);}
+async function downloadAll(){
+  const st=document.getElementById('status'),zip=new JSZip(),n=document.querySelectorAll('.slide').length;
+  for(let i=0;i<n;i++){st.textContent=`Üretiliyor ${i+1}/${n}…`;zip.file(`slide_${i+1}.png`,await renderPng(i));}
+  saveBlob(await zip.generateAsync({type:'blob'}),`performans_${DATA.ay}.zip`); st.textContent='ZIP indirildi ✓';
+}
+function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
+
+fillMonths(); load();
+</script>
+</body>
+</html>
