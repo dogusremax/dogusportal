@@ -1,4 +1,4 @@
-// GitHub Actions: dogusportal.com/performans.html sayfasını açar, 6 slaytı 1080x1350 PNG olarak performans/YYYY-MM/ altına yazar.
+// GitHub Actions: dogusportal.com/performans.html sayfasını açar, 6 slaytı 1080x1440 (3:4) PNG olarak performans/YYYY-MM/ altına yazar.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 (async () => {

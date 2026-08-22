@@ -22,7 +22,7 @@
   .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
   .card{display:flex;flex-direction:column;gap:8px;align-items:center}
   .card small{font-size:11px;color:rgba(255,255,255,.5)}
-  .slide{width:420px;height:525px;position:relative;overflow:hidden;clip-path:inset(0 round 4px);border-radius:4px;flex:0 0 420px;contain:paint}
+  .slide{width:420px;height:560px;position:relative;overflow:hidden;clip-path:inset(0 round 4px);border-radius:4px;flex:0 0 420px;contain:paint}
   .slide *{max-width:none}
   .slide img{-webkit-user-drag:none;pointer-events:none}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
@@ -57,7 +57,7 @@ const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50
 const logo=(right)=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
 const progress=i=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${((i+1)/TOTAL)*100}%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">${i+1}/${TOTAL}</span></div>`;
 const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${t.length>1?330:360}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
+const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${t.length>1?350:380}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
 
 const nameTag=(r,n,big)=>`<div class="sans" style="display:flex;align-items:center;gap:6px;padding:${big?'7px 12px':'5px 10px'};background:rgba(5,10,48,.88);border:1px solid rgba(255,255,255,.14);border-radius:20px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="width:${big?20:17}px;height:${big?20:17}px;border-radius:50%;background:${CORAL};color:#fff;font-size:${big?11:10}px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">${n}</span><span style="font-size:${big?12:10.5}px;font-weight:700;color:#fff;">${r.name}</span></div>`;
 function pillsFor(r){
@@ -75,7 +75,7 @@ function podium(idx,r,red){
   const ph=pillsFor(r).map(p=>`<span class="sans" style="display:inline-block;font-size:12px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 ${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
-<div style="position:absolute;right:-6px;bottom:-6px;width:250px;height:420px;overflow:hidden;clip-path:inset(0);">${cut(r.id,420,250)}</div>
+<div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:455px;overflow:hidden;clip-path:inset(0);">${cut(r.id,455,260)}</div>
 <div style="position:absolute;left:36px;width:170px;bottom:60px;z-index:5;">
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
 <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;"><span class="sans" style="font-size:48px;font-weight:700;letter-spacing:-2px;color:${ptc};line-height:1;">${r.puan}</span><span class="sans" style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500;">puan</span></div>
@@ -86,14 +86,14 @@ function build(d){
   const s=d.siralama, top=s.slice(0,3);
   const slides=[];
   slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:84px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Performans Sıralaması</h1></div>
-<div style="position:absolute;left:0;right:0;bottom:0;height:262px;overflow:hidden;">
-<div style="position:absolute;left:14px;bottom:-6px;z-index:1;">${top[1]?cut(top[1].id,215,145):''}</div>
-<div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;">${top[0]?cut(top[0].id,255,175):''}</div>
-<div style="position:absolute;right:14px;bottom:-6px;z-index:1;">${top[2]?cut(top[2].id,215,145):''}</div></div>
+<div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Performans Sıralaması</h1></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:295px;overflow:hidden;">
+<div style="position:absolute;left:14px;bottom:-6px;z-index:1;">${top[1]?cut(top[1].id,245,150):''}</div>
+<div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;">${top[0]?cut(top[0].id,288,180):''}</div>
+<div style="position:absolute;right:14px;bottom:-6px;z-index:1;">${top[2]?cut(top[2].id,245,150):''}</div></div>
 <div style="position:absolute;left:0;right:0;bottom:18px;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px;padding:0 10px;">${[top[1],top[0],top[2]].map((r,k)=>`<div style="display:flex;justify-content:${k===0?'flex-start':k===2?'flex-end':'center'};">${r?nameTag(r,[2,1,3][k],k===1):''}</div>`).join('')}</div></div>`);
   top.forEach((r,i)=>slides.push(podium(i+1,r,i===1)));
-  const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?3:5}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+  const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?5:7}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
 <span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
 <div style="flex:1;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span class="sans" style="font-size:13px;font-weight:${t?700:500};color:#fff;">${r.name}</span><span class="sans" style="font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.6)'};">${r.puan}</span></div>
 <div style="height:3px;background:rgba(255,255,255,.1);border-radius:2px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:2px;"></div></div></div></div>`}).join('');
@@ -134,7 +134,7 @@ async function load(){
 
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
-  const c=await html2canvas(el,{scale:1080/420,width:420,height:525,backgroundColor:null,useCORS:true,logging:false});
+  const c=await html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false});
   return new Promise(r=>c.toBlob(r,'image/png'));
 }
 async function downloadOne(i){const b=await renderPng(i);saveBlob(b,`${DATA.ay}_slide_${i+1}.png`);}
