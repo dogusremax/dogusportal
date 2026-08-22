@@ -142,8 +142,13 @@ body.pub{background:var(--pbg)}
         <button class="btn grow" style="background:#131a26;box-shadow:none" onclick="shareMail()">E-posta ile gönder</button>
       </div>
       <button class="btn g" id="nativeShare" onclick="shareNative()">Paylaş…</button>
+      <div class="row" style="margin-top:4px">
+        <button class="btn g grow" id="qrLinkBtn" onclick="qrMode('link')">Kart QR</button>
+        <button class="btn g grow" id="qrVcBtn" onclick="qrMode('vcard')">Rehbere kayıt QR</button>
+      </div>
       <div id="qr"></div>
-      <div style="font-size:12px;color:var(--dim);text-align:center">QR'ı kartvizitine, ilan afişine veya Instagram biyografine koy.</div>
+      <div style="font-size:12px;color:var(--dim);text-align:center" id="qrHint">Müşteri tarayınca kartın açılır. Kartvizit, afiş, Instagram biyografisi için.</div>
+      <button class="btn g" onclick="qrDownload()">QR'ı indir (PNG)</button>
     </div>
 
     <div class="card hide" id="brokerList"></div>
@@ -230,9 +235,7 @@ function pShare(k){
   else navigator.clipboard.writeText(url).then(()=>alert("Link kopyalandı"));
 }
 function vcard(){
-  const c=window._card, n=c.name.split(" "), last=n.pop(), first=n.join(" ");
-  const v=["BEGIN:VCARD","VERSION:3.0",`N:${last};${first};;;`,`FN:${c.name}`,"ORG:RE/MAX Doğuş",`TITLE:${c.title||""}`,
-    c.phone?`TEL;TYPE=CELL:${tel(c.phone)}`:"",c.email?`EMAIL:${c.email}`:"",`URL:${location.href}`,"END:VCARD"].filter(Boolean).join("\r\n");
+  const c=window._card, v=vcardText(c,location.href.split("#")[0]).replace(/\n/g,"\r\n");
   const a=document.createElement("a"); a.href="data:text/vcard;charset=utf-8,"+encodeURIComponent(v); a.download=c.name.replace(/\s+/g,"_")+".vcf"; a.click();
 }
 
@@ -289,7 +292,24 @@ function showShare(slug){
   if(!slug) return;
   const url=location.origin+location.pathname+"?d="+slug;
   $("myUrl").textContent=url; $("shareCard").classList.remove("hide"); if(!navigator.share) $("nativeShare").classList.add("hide");
-  $("qr").innerHTML=""; new QRCode($("qr"),{text:url,width:180,height:180,colorDark:"#131a26",correctLevel:QRCode.CorrectLevel.M});
+  myUrlCache=url; qrMode(qrCur);
+}
+let myUrlCache="", qrCur="link";
+function vcardText(c,url){
+  const n=c.name.split(" "), last=n.pop(), first=n.join(" ");
+  return ["BEGIN:VCARD","VERSION:3.0",`N:${last};${first};;;`,`FN:${c.name}`,"ORG:RE/MAX Doğuş",c.title?`TITLE:${c.title}`:"",
+    c.phone?`TEL;TYPE=CELL:${tel(c.phone)}`:"",c.email?`EMAIL:${c.email}`:"",`URL:${url}`,"END:VCARD"].filter(Boolean).join("\n");
+}
+function qrMode(m){
+  qrCur=m;
+  [["qrLinkBtn","link"],["qrVcBtn","vcard"]].forEach(([id,k])=>{ const on=m===k; const b=$(id); b.style.background=on?"var(--blue)":"#fff"; b.style.color=on?"#fff":"var(--ink)"; b.style.borderColor=on?"var(--blue)":"var(--line)"; });
+  const text=m==="link"?myUrlCache:vcardText(collect(),myUrlCache);
+  $("qrHint").textContent=m==="link"?"Müşteri tarayınca kartın açılır. Kartvizit, afiş, Instagram biyografisi için.":"Müşteri kamerayla tarayınca telefonu “Kişi ekle” der; adın, numaran, e-postan ve kart linkin rehberine kaydolur.";
+  $("qr").innerHTML=""; new QRCode($("qr"),{text,width:200,height:200,colorDark:"#131a26",correctLevel:m==="link"?QRCode.CorrectLevel.M:QRCode.CorrectLevel.L});
+}
+function qrDownload(){
+  const cv=$("qr").querySelector("canvas"), img=$("qr").querySelector("img"); const src=cv?cv.toDataURL("image/png"):img&&img.src; if(!src) return;
+  const a=document.createElement("a"); a.href=src; a.download=slugify($("name").value||"kart")+(qrCur==="link"?"-kart-qr":"-rehber-qr")+".png"; a.click();
 }
 function shareText(){ const n=$("name").value.trim(); return `Merhaba, ben ${n} — RE/MAX Doğuş Gayrimenkul Danışmanı. İletişim bilgilerim ve portföyüm: ${$("myUrl").textContent}`; }
 function shareWa(){ window.open("https://wa.me/?text="+encodeURIComponent(shareText()),"_blank"); }
