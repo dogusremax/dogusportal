@@ -22,7 +22,7 @@ a.opt b{display:block;font-size:16px}a.opt span{font-size:12px;color:rgba(255,25
 <select id="ay"></select>
 <div class="opts">
   <a class="opt" id="l-gorsel" href="#"><div class="ic" style="background:linear-gradient(160deg,#910B19,#FB5160)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg></div><div><b id="t-gorsel">Ayı Performans Sıralaması</b><span>Puan sıralaması 1-2-3 · Instagram görselleri</span></div></a>
-  <a class="opt" id="l-birinci" href="#"><div class="ic" style="background:linear-gradient(160deg,#b45309,#f59e0b)"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a2 2 0 0 0 0 4h3M17 6h3a2 2 0 0 1 0 4h-3"/></svg></div><div><b id="t-birinci">Ayın Birincileri</b><span>Ciro · İşlem · Sosyal Medya birincileri · Instagram görselleri</span></div></a>
+  <a class="opt" id="l-birinci" href="#"><div class="ic" style="background:linear-gradient(160deg,#b45309,#f59e0b)"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a2 2 0 0 0 0 4h3M17 6h3a2 2 0 0 1 0 4h-3"/></svg></div><div><b id="t-birinci">Ayı Şampiyonları</b><span>Ciro · İşlem · Sosyal Medya birincileri · Instagram görselleri</span></div></a>
   <a class="opt" id="l-genel" href="#"><div class="ic" style="background:linear-gradient(160deg,#050A30,#1a3d7a)"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/></svg></div><div><b id="t-genel">Ayı Genel Sıralaması</b><span>Tüm danışmanlar · puan, aktif gün, işlem, ciro</span></div></a>
 </div>
 <script>
@@ -30,6 +30,6 @@ const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","
 const sel=document.getElementById('ay'),now=new Date();
 for(let i=0;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=M[d.getMonth()]+' '+d.getFullYear()+(i===0?' (devam ediyor)':'');sel.appendChild(o);}
 sel.selectedIndex=1;
-function upd(){const v=sel.value,m=M[parseInt(v.slice(5))-1];document.getElementById('t-gorsel').textContent=m+' Ayı Performans Sıralaması';document.getElementById('t-genel').textContent=m+' Ayı Genel Sıralaması';document.getElementById('l-gorsel').href='performans-gorsel.html?set=puan&ay='+v;document.getElementById('t-birinci').textContent=m+' Ayının Birincileri';document.getElementById('l-birinci').href='performans-gorsel.html?set=birinci&ay='+v;document.getElementById('l-genel').href='performans-genel.html?ay='+v;}
+function upd(){const v=sel.value,m=M[parseInt(v.slice(5))-1];document.getElementById('t-gorsel').textContent=m+' Ayı Performans Sıralaması';document.getElementById('t-genel').textContent=m+' Ayı Genel Sıralaması';document.getElementById('l-gorsel').href='performans-gorsel.html?set=puan&ay='+v;document.getElementById('t-birinci').textContent=m+' Ayı Şampiyonları';document.getElementById('l-birinci').href='performans-gorsel.html?set=birinci&ay='+v;document.getElementById('l-genel').href='performans-genel.html?ay='+v;}
 sel.onchange=upd;upd();
 </script></body></html>

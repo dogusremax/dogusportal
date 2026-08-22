@@ -129,7 +129,7 @@ function build(d){
     const w=[bCiro,bIslem,bSosyal].filter(Boolean);
     const tagsB=[[bCiro,'Ciro'],[bIslem,'İşlem'],[bSosyal,'Sosyal Medya']].filter(x=>x[0]);
     slides.push(`<div class="slide" style="background:${NAVY};">${wm('1','rgba(255,255,255,.06)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:78px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Ayın Birincileri</h1></div>
+<div style="position:absolute;left:32px;right:32px;top:78px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Şampiyonları</h1></div>
 <div style="position:absolute;left:0;right:0;bottom:0;height:272px;overflow:hidden;">
 <div style="position:absolute;left:14px;bottom:-6px;z-index:1;">${w[1]?cut(w[1].id,222,150):''}</div>
 <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;">${w[0]?cut(w[0].id,258,180):''}</div>
@@ -235,7 +235,7 @@ async function downloadAll(){
 }
 function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
 
-document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Birincileri — Görseller':'Performans Sıralaması — Görseller';
+document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':'Performans Sıralaması — Görseller';
 fillMonths(); load();
 </script>
 </body>
