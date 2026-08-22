@@ -216,8 +216,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
     <div class="card">
       <div class="btns">
         <button class="btn full" onclick="buildPlan()">Plan oluştur</button>
-        <button class="btn ghost" onclick="readCalendar()">Takvimden oku</button>
-        <button class="btn ghost" onclick="copySite()">Site kodu</button>
+        <button class="btn ghost full" onclick="readCalendar()">Takvimden oku</button>
       </div>
       <div id="status"></div>
       <textarea id="siteBox" class="hide" readonly></textarea>
@@ -482,7 +481,7 @@ async function sendPlan(){
   try{
     const body=plan.map(p=>({date:p.date,name:p.name,emails:p.name===OFFICE?[]:(byName(p.name)||{}).emails||[]}));
     const j=await api({action:"create",plan:body,replace:true});
-    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi. Takvim okunuyor…`,"ok");
+    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi. yenifikirtepeburada.com nöbetçi kartı otomatik güncellenir.`,"ok");
     try{ await showCalendar(`Takvime yazıldı — ${AY[cur.getMonth()]} ${cur.getFullYear()}`); setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi.`,"ok"); }catch(_){}
   }catch(e){ setStatus("Hata: "+e.message,"err"); }
   $("sendBtn").disabled=false;
