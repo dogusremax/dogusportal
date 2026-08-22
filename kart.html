@@ -72,7 +72,21 @@ body.pub{background:var(--pbg)}
 .pfoot{text-align:center;font-size:11px;color:var(--dim);padding:10px 20px 30px;margin-top:auto}
 .pfoot a{color:inherit}
 .vc{display:flex;justify-content:center;padding:0 20px 8px}
+.vc{gap:10px}
 .vc button{padding:12px 22px;border-radius:999px;border:0;background:var(--ink);color:#fff;font:700 14px Archivo,sans-serif;cursor:pointer}
+.vc button.qrb{background:#fff;color:var(--ink);border:1.5px solid var(--ink);padding:12px 18px}
+.qm{position:fixed;inset:0;background:rgba(10,14,28,.7);display:flex;align-items:flex-end;justify-content:center;z-index:99}
+.qm .box{background:#fff;border-radius:26px 26px 0 0;padding:18px 20px calc(24px + env(safe-area-inset-bottom));width:100%;max-width:440px;text-align:center}
+.qm .seg{display:flex;gap:6px;background:#f0f2f6;border-radius:12px;padding:4px;margin-bottom:14px}
+.qm .seg button{flex:1;padding:10px;border:0;border-radius:9px;background:transparent;font:700 14px Archivo,sans-serif;color:var(--dim);cursor:pointer}
+.qm .seg button.on{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.qm #pqr{display:flex;justify-content:center;padding:6px 0 10px}
+.qm #pqr canvas,.qm #pqr img{border-radius:14px;border:6px solid #fff;box-shadow:0 8px 24px -10px rgba(0,0,0,.3)}
+.qm .hint{font-size:12.5px;color:var(--dim);line-height:1.5;margin-bottom:12px;min-height:38px}
+.qm .row{display:flex;gap:8px}
+.qm .row button{flex:1;padding:13px;border-radius:12px;border:1px solid var(--line);background:#fff;font:700 14px Archivo,sans-serif;color:var(--ink);cursor:pointer}
+.qm .row button.p{background:var(--ink);color:#fff;border-color:var(--ink)}
+.qm .x{position:absolute;top:12px;right:16px;font-size:26px;color:#fff;background:none;border:0}
 </style>
 </head>
 <body>
@@ -217,7 +231,7 @@ function renderPublic(c){
     </div>
     <div class="quick">${q.join("")}</div>
     <div class="links">${L.map(([ic,lb,u,k])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic ${k||""}">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
-    <div class="vc"><button onclick="vcard()">Rehbere kaydet</button></div>
+    <div class="vc"><button onclick="vcard()">Rehbere kaydet</button><button class="qrb" onclick="openQr()">QR</button></div>
     <div class="pshare">
       <a href="#" onclick="pShare('wa');return false"><span style="background:#25D366">${I.wa}</span>WhatsApp</a>
       <a href="#" onclick="pShare('mail');return false"><span style="background:#DC1C2E">${I.mail}</span>E-posta</a>
@@ -225,6 +239,38 @@ function renderPublic(c){
     </div>
     <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy</div>`;
   window._card=c;
+}
+let pqrMode="vcard";
+function openQr(){
+  const c=window._card; if(!c) return;
+  const m=document.createElement("div"); m.className="qm"; m.id="qm";
+  m.innerHTML=`<button class="x" onclick="closeQr()">×</button><div class="box">
+    <div class="seg"><button id="pqA" onclick="pqrSet('vcard')">Rehbere kaydet</button><button id="pqB" onclick="pqrSet('link')">Kartı aç</button></div>
+    <div id="pqr"></div><div class="hint" id="pqh"></div>
+    <div class="row"><button onclick="pqrShare()">Paylaş</button><button class="p" onclick="pqrDownload()">İndir</button></div></div>`;
+  m.addEventListener("click",e=>{ if(e.target===m) closeQr(); });
+  document.body.appendChild(m); pqrSet(pqrMode);
+}
+function closeQr(){ const m=$("qm"); if(m) m.remove(); }
+function pqrSet(mode){
+  pqrMode=mode; const c=window._card, url=location.href.split("#")[0];
+  $("pqA").classList.toggle("on",mode==="vcard"); $("pqB").classList.toggle("on",mode==="link");
+  const text=mode==="link"?url:vcardText(c,url);
+  $("pqh").textContent=mode==="vcard"?"Müşteri kamerasını tutsun → “Kişi ekle” → adın, numaran, e-postan rehberine kaydolur.":"Müşteri tarayınca bu kart açılır.";
+  $("pqr").innerHTML=""; new QRCode($("pqr"),{text,width:210,height:210,colorDark:"#131a26",correctLevel:mode==="link"?QRCode.CorrectLevel.M:QRCode.CorrectLevel.L});
+}
+function pqrBlob(){ return new Promise(r=>{ const cv=$("pqr").querySelector("canvas"); cv?cv.toBlob(r,"image/png"):r(null); }); }
+async function pqrDownload(){
+  const cv=$("pqr").querySelector("canvas"), img=$("pqr").querySelector("img"); const src=cv?cv.toDataURL("image/png"):img&&img.src; if(!src) return;
+  const a=document.createElement("a"); a.href=src; a.download=slugify(window._card.name)+(pqrMode==="link"?"-kart-qr":"-rehber-qr")+".png"; a.click();
+}
+async function pqrShare(){
+  const c=window._card, url=location.href.split("#")[0], b=await pqrBlob();
+  const f=b&&new File([b],"qr.png",{type:"image/png"});
+  const data={title:c.name+" · RE/MAX Doğuş",text:`${c.name} — RE/MAX Doğuş. Bilgiler: ${url}`};
+  if(navigator.share&&f&&navigator.canShare&&navigator.canShare({files:[f]})) navigator.share({...data,files:[f]}).catch(()=>{});
+  else if(navigator.share) navigator.share({...data,url}).catch(()=>{});
+  else pqrDownload();
 }
 function pShare(k){
   const c=window._card, url=location.href.split("#")[0];
