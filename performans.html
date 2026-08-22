@@ -22,10 +22,11 @@
   .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
   .card{display:flex;flex-direction:column;gap:8px;align-items:center}
   .card small{font-size:11px;color:rgba(255,255,255,.5)}
-  .slide{width:420px;height:525px;position:relative;overflow:hidden;border-radius:4px;flex:0 0 420px}
+  .slide{width:420px;height:525px;position:relative;overflow:hidden;clip-path:inset(0 round 4px);border-radius:4px;flex:0 0 420px;contain:paint}
+  .slide *{max-width:none}
   .slide img{-webkit-user-drag:none;pointer-events:none}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
-  @media(max-width:480px){.slide{transform:scale(.82);transform-origin:top center}.card{height:440px}}
+  @media(max-width:480px){.grid{padding:12px}.card{width:100%;overflow:hidden}.card .slide{zoom:.8}}
 </style>
 </head>
 <body>
@@ -51,7 +52,7 @@ const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağust
 let DATA=null, TOTAL=6;
 
 const photo=id=>`assets/ekip/${id}.png`;
-const cut=(id,h)=>`<img src="${photo(id)}" style="height:${h}px;width:auto;display:block;" onerror="this.style.visibility='hidden'">`;
+const cut=(id,h,w)=>`<div style="width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:contain;object-position:bottom center;display:block;" onerror="this.style.visibility='hidden'"></div>`;
 const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid ${ring};overflow:hidden;flex:0 0 ${s}px;position:relative;"><img src="${photo(id)}" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%;width:auto;" onerror="this.style.display='none'"></div>`;
 const logo=(right)=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
 const progress=i=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${((i+1)/TOTAL)*100}%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">${i+1}/${TOTAL}</span></div>`;
@@ -73,7 +74,7 @@ function podium(idx,r,red){
   const ph=pillsFor(r).map(p=>`<span class="sans" style="display:inline-block;font-size:12px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 ${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
-<div style="position:absolute;right:0;bottom:0;height:440px;width:260px;overflow:hidden;"><div style="position:absolute;right:-10px;bottom:-8px;">${cut(r.id,440)}</div></div>
+<div style="position:absolute;right:-6px;bottom:-6px;width:250px;height:430px;overflow:hidden;clip-path:inset(0);">${cut(r.id,430,250)}</div>
 <div style="position:absolute;left:36px;width:170px;bottom:60px;z-index:5;">
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
 <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;"><span class="sans" style="font-size:48px;font-weight:700;letter-spacing:-2px;color:${ptc};line-height:1;">${r.puan}</span><span class="sans" style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500;">puan</span></div>
@@ -86,9 +87,9 @@ function build(d){
   slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <h1 class="sans" style="position:absolute;left:32px;right:32px;top:108px;font-size:31px;font-weight:700;line-height:1.12;letter-spacing:-.8px;color:#fff;">${d.ayAdi} Ayı<br>Performans Sıralaması</h1>
 <div style="position:absolute;left:0;right:0;bottom:0;height:262px;overflow:hidden;"><div style="position:absolute;left:0;right:0;bottom:-6px;display:flex;justify-content:center;align-items:flex-end;">
-<div style="margin-right:-34px;position:relative;z-index:1;">${top[1]?cut(top[1].id,215):''}</div>
-<div style="position:relative;z-index:2;">${top[0]?cut(top[0].id,255):''}</div>
-<div style="margin-left:-34px;position:relative;z-index:1;">${top[2]?cut(top[2].id,215):''}</div></div></div></div>`);
+<div style="margin-right:-34px;position:relative;z-index:1;">${top[1]?cut(top[1].id,215,150):''}</div>
+<div style="position:relative;z-index:2;">${top[0]?cut(top[0].id,255,180):''}</div>
+<div style="margin-left:-34px;position:relative;z-index:1;">${top[2]?cut(top[2].id,215,150):''}</div></div></div></div>`);
   top.forEach((r,i)=>slides.push(podium(i+1,r,i===1)));
   const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?3:5}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
 <span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
