@@ -45,6 +45,7 @@
   <a href="performans.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">‹ Geri</a><h1 id="ttl">Aylık Performans Görselleri</h1>
   <select id="ay"></select>
   <button class="ghost" onclick="load()">Yenile</button>
+  <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
   <button id="zipbtn" onclick="downloadAll()" disabled>Tümünü indir (ZIP)</button>
 </div>
 <div class="status" id="status">Yükleniyor…</div>
@@ -248,6 +249,13 @@ async function render(d){
   await document.fonts.ready;
   st.textContent=`${d.ayAdi} ${d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
+  const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
+}
+async function shareAll(){
+  const st=document.getElementById('status'),n=document.querySelectorAll('.slide').length,files=[];
+  for(let i=0;i<n;i++){st.textContent=`Hazırlanıyor ${i+1}/${n}…`;const b=await renderPng(i);files.push(new File([b],`${DATA.ay}_${i+1}.png`,{type:'image/png'}));}
+  if(!navigator.canShare||!navigator.canShare({files})){st.textContent='Bu tarayıcı dosya paylaşımını desteklemiyor; ZIP indir.';return;}
+  try{await navigator.share({files,title:`${DATA.ayAdi} ${DATA.yil} · RE/MAX Doğuş`});st.textContent='Paylaşım menüsü açıldı → Instagram\'ı seç.';}catch(e){st.textContent='Paylaşım iptal edildi.';}
 }
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
