@@ -65,6 +65,10 @@ body.pub{background:var(--pbg)}
 .links a .ic.web{background:#131a26}
 .quick a svg.wa{color:#25D366}.quick a svg.ph{color:#0A66C2}.quick a svg.ml{color:#DC1C2E}
 .links a .ar{margin-left:auto;color:#c3cad8}
+.pshare{display:flex;justify-content:center;gap:18px;padding:14px 20px 4px}
+.pshare a{display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;color:var(--dim);font:600 11px Inter,sans-serif}
+.pshare a span{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.pshare a span svg{width:18px;height:18px}
 .pfoot{text-align:center;font-size:11px;color:var(--dim);padding:10px 20px 30px;margin-top:auto}
 .pfoot a{color:inherit}
 .vc{display:flex;justify-content:center;padding:0 20px 8px}
@@ -133,6 +137,11 @@ body.pub{background:var(--pbg)}
         <button class="btn b grow" onclick="copyUrl()">Linki kopyala</button>
         <button class="btn g grow" onclick="window.open($('myUrl').textContent,'_blank')">Önizle</button>
       </div>
+      <div class="row">
+        <button class="btn grow" style="background:#25D366;box-shadow:none" onclick="shareWa()">WhatsApp'ta paylaş</button>
+        <button class="btn grow" style="background:#131a26;box-shadow:none" onclick="shareMail()">E-posta ile gönder</button>
+      </div>
+      <button class="btn g" id="nativeShare" onclick="shareNative()">Paylaş…</button>
       <div id="qr"></div>
       <div style="font-size:12px;color:var(--dim);text-align:center">QR'ı kartvizitine, ilan afişine veya Instagram biyografine koy.</div>
     </div>
@@ -204,8 +213,21 @@ function renderPublic(c){
     <div class="quick">${q.join("")}</div>
     <div class="links">${L.map(([ic,lb,u,k])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic ${k||""}">${ic}</span>${esc(lb)}<span class="ar">${I.ar}</span></a>`).join("")}</div>
     <div class="vc"><button onclick="vcard()">Rehbere kaydet</button></div>
+    <div class="pshare">
+      <a href="#" onclick="pShare('wa');return false"><span style="background:#25D366">${I.wa}</span>WhatsApp</a>
+      <a href="#" onclick="pShare('mail');return false"><span style="background:#DC1C2E">${I.mail}</span>E-posta</a>
+      <a href="#" onclick="pShare('native');return false"><span style="background:#131a26">${I.link}</span>Paylaş</a>
+    </div>
     <div class="pfoot">RE/MAX Doğuş · UMT GROUP Gayrimenkul · Fikirtepe, Kadıköy</div>`;
   window._card=c;
+}
+function pShare(k){
+  const c=window._card, url=location.href.split("#")[0];
+  const txt=`${c.name} — RE/MAX Doğuş Gayrimenkul Danışmanı. İletişim ve portföy: ${url}`;
+  if(k==="wa") window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
+  else if(k==="mail") location.href="mailto:?subject="+encodeURIComponent(c.name+" — RE/MAX Doğuş")+"&body="+encodeURIComponent(txt);
+  else if(navigator.share) navigator.share({title:c.name+" · RE/MAX Doğuş",text:txt,url}).catch(()=>{});
+  else navigator.clipboard.writeText(url).then(()=>alert("Link kopyalandı"));
 }
 function vcard(){
   const c=window._card, n=c.name.split(" "), last=n.pop(), first=n.join(" ");
@@ -266,9 +288,13 @@ function setMsg(t,c){ const m=$("msg"); m.className="status "+(c||""); m.textCon
 function showShare(slug){
   if(!slug) return;
   const url=location.origin+location.pathname+"?d="+slug;
-  $("myUrl").textContent=url; $("shareCard").classList.remove("hide");
+  $("myUrl").textContent=url; $("shareCard").classList.remove("hide"); if(!navigator.share) $("nativeShare").classList.add("hide");
   $("qr").innerHTML=""; new QRCode($("qr"),{text:url,width:180,height:180,colorDark:"#131a26",correctLevel:QRCode.CorrectLevel.M});
 }
+function shareText(){ const n=$("name").value.trim(); return `Merhaba, ben ${n} — RE/MAX Doğuş Gayrimenkul Danışmanı. İletişim bilgilerim ve portföyüm: ${$("myUrl").textContent}`; }
+function shareWa(){ window.open("https://wa.me/?text="+encodeURIComponent(shareText()),"_blank"); }
+function shareMail(){ location.href="mailto:?subject="+encodeURIComponent($("name").value.trim()+" — RE/MAX Doğuş")+"&body="+encodeURIComponent(shareText()); }
+function shareNative(){ if(navigator.share) navigator.share({title:$("name").value.trim()+" · RE/MAX Doğuş",text:shareText(),url:$("myUrl").textContent}).catch(()=>{}); else copyUrl(); }
 function copyUrl(){ navigator.clipboard.writeText($("myUrl").textContent).then(()=>setMsg("Link kopyalandı.","ok")); }
 async function brokerList(){
   try{ const j=await api({action:"list"}); const b=$("brokerList"); b.classList.remove("hide");
