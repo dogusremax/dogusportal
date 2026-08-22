@@ -86,7 +86,7 @@ function build(d){
   const s=d.siralama, top=s.slice(0,3);
   const slides=[];
   slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:84px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:10px 0 0;">Performans Sıralaması</h1></div>
+<div style="position:absolute;left:32px;right:32px;top:84px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Performans Sıralaması</h1></div>
 <div style="position:absolute;left:0;right:0;bottom:0;height:262px;overflow:hidden;">
 <div style="position:absolute;left:14px;bottom:-6px;z-index:1;">${top[1]?cut(top[1].id,215,145):''}</div>
 <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;">${top[0]?cut(top[0].id,255,175):''}</div>
