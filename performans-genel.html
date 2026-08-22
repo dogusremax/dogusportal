@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Genel Sıralama · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+.top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.top img{height:30px}.top h1{font-size:16px;font-weight:700;flex:1}.top a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px}
+select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;background:#161c44;color:#fff}
+.status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+.wrap{max-width:760px;margin:0 auto;padding:10px 16px 40px}
+.row{display:flex;align-items:center;gap:12px;background:#111738;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.row.top3{border-color:rgba(251,81,96,.5)}
+.n{width:26px;text-align:center;font-weight:800;color:rgba(255,255,255,.4);font-size:15px}.row.top3 .n{color:#FB5160}
+.av{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);overflow:hidden;position:relative;flex:0 0 44px}
+.av img{position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%}
+.main{flex:1;min-width:0}.name{font-weight:700;font-size:15px}.meta{font-size:11.5px;color:rgba(255,255,255,.5);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.pts{font-weight:800;font-size:20px;color:#FB5160;white-space:nowrap}.pts small{font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
+.det{display:none;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;padding:8px 0 4px 0;width:100%}
+.det div{background:rgba(255,255,255,.05);border-radius:8px;padding:7px 9px;font-size:11px;color:rgba(255,255,255,.6)}.det b{display:block;color:#fff;font-size:14px}
+.row.open .det{display:grid}.row{flex-wrap:wrap;cursor:pointer}
+.sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:6px 0 16px}
+.sum div{background:#111738;border-radius:12px;padding:12px;font-size:11px;color:rgba(255,255,255,.5)}.sum b{display:block;font-size:20px;color:#fff;margin-bottom:2px}
+</style></head><body>
+<div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Genel Sıralama</h1><select id="ay"></select></div>
+<div class="status" id="status">Yükleniyor…</div>
+<div class="wrap"><div class="sum" id="sum"></div><div id="list"></div></div>
+<script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+const KEY="dogus-performans";
+const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const LBL={fzbo:"FZBO",etki:"Etki Çevresi",sunum1:"1. Sunum",sunum2:"2. Sunum",yetki:"Yetki",gosterim:"Gösterim",kapora:"Kapora",kibris_sunum:"Kıbrıs Sunum",emlak_nobet:"Nöbet",brosur:"Broşür",sosyal_medya:"Sosyal Medya",egitim:"Eğitim"};
+const tl=n=>'₺'+Math.round(n||0).toLocaleString('tr-TR');
+const sel=document.getElementById('ay'),now=new Date();
+for(let i=0;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=M[d.getMonth()]+' '+d.getFullYear();sel.appendChild(o);}
+const q=new URLSearchParams(location.search).get('ay');sel.value=q||sel.options[1].value;sel.onchange=load;
+async function load(){
+  const st=document.getElementById('status');st.textContent='Yükleniyor…';document.getElementById('list').innerHTML='';document.getElementById('sum').innerHTML='';
+  try{const r=await fetch(`${APPS_SCRIPT_URL}?action=aylik&ay=${sel.value}&k=${KEY}`);const d=await r.json();if(d.error)throw new Error(d.error);
+    document.getElementById('h').textContent=d.ayAdi+' Ayı Genel Sıralaması';
+    const t=d.toplam||{};document.getElementById('sum').innerHTML=`<div><b>${t.puan||0}</b>ekip puanı</div><div><b>${t.kapanis||0}</b>işlem</div><div><b>${tl(d.siralama.reduce((a,x)=>a+(x.ciro||0),0))}</b>ciro</div><div><b>${t.gosterim||0}</b>gösterim</div><div><b>${t.sosyal_medya||0}</b>sosyal medya</div><div><b>${t.aktifDanisman||0}/${d.siralama.length}</b>aktif danışman</div>`;
+    document.getElementById('list').innerHTML=d.siralama.map((x,i)=>`<div class="row ${i<3?'top3':''}" onclick="this.classList.toggle('open')"><div class="n">${i+1}</div><div class="av"><img src="assets/ekip/${x.id}.png" onerror="this.remove()"></div><div class="main"><div class="name">${x.name}</div><div class="meta"><span>${x.aktifGun} aktif gün</span><span>${x.kapanis} işlem</span><span>${tl(x.ciro)}</span></div></div><div class="pts">${x.puan}<small> p</small></div>
+<div class="det"><div>Aktivite<b>${x.aktivitePuan}p</b></div><div>İstikrar<b>+${x.istikrar}</b></div><div>Kapanış<b>+${x.kapanisPuan}</b></div><div>Hedef bonusu<b>+${x.hedefBonus}</b></div>${Object.keys(LBL).map(k=>`<div>${LBL[k]}<b>${(x.counts||{})[k]||0}</b></div>`).join('')}</div></div>`).join('');
+    st.textContent=`${d.ayAdi} ${d.yil} · satıra dokun, puan dökümü açılır`;
+  }catch(e){st.textContent='Hata: '+e.message;}
+}
+load();
+</script></body></html>

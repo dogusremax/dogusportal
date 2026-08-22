@@ -7,7 +7,7 @@ const fs = require('fs'), path = require('path');
   const out = path.join('performans', ay); fs.mkdirSync(out, { recursive: true });
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 1080 / 420 });
-  await page.goto(`https://dogusportal.com/performans.html?ay=${ay}`, { waitUntil: 'networkidle' });
+  await page.goto(`https://dogusportal.com/performans-gorsel.html?ay=${ay}`, { waitUntil: 'networkidle' });
   await page.waitForSelector('body[data-ready]', { timeout: 90000 });
   await page.waitForTimeout(1500);
   const slides = await page.$$('.slide');
