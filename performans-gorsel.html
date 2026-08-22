@@ -135,7 +135,7 @@ function ctaSlide(d){
 <div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Ekibimize katıl →</div></div>
 <p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`;
 }
-const catTag=(rs,lbl,big)=>`<div class="sans" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:${big?'7px 12px':'5px 8px'};max-width:${big?150:125}px;background:rgba(220,28,46,.92);border:1px solid rgba(255,255,255,.14);border-radius:14px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.8);">${lbl.toUpperCase()} 1.</span><span style="font-size:${big?12:10}px;font-weight:700;color:#fff;white-space:normal;text-align:center;line-height:1.15;">${rs.map(r=>r.name).join(' · ')}</span></div>`;
+const catTag=(rs,lbl,big)=>`<div class="sans" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:${big?'7px 12px':'5px 8px'};max-width:${big?160:140}px;background:rgba(220,28,46,.92);border:1px solid rgba(255,255,255,.14);border-radius:14px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.8);">${lbl.toUpperCase()} 1.</span><span style="font-size:${big?12:10}px;font-weight:700;color:#fff;white-space:normal;text-align:center;line-height:1.15;">${rs.map(r=>r.name).join(' · ')}</span></div>`;
 function build(d){
   const s=d.siralama, top=s.slice(0,3);
   { let rank=0,prev=null; s.forEach(r=>{ if(r.puan!==prev){rank++;prev=r.puan;} r._rank=rank; }); }
@@ -145,15 +145,25 @@ function build(d){
   const wCiro=H.ciro?[]:(F.ciro?[F.ciro]:bestAll(s,fC)), wIslem=H.islem?[]:(F.islem?[F.islem]:bestAll(s,fI)), wSosyal=H.sosyal?[]:(F.sosyal?[F.sosyal]:bestAll(s,fS));
   const bCiro=wCiro[0]||null, bIslem=wIslem[0]||null, bSosyal=wSosyal[0]||null;
   if(SET==='birinci'){
-    const w=[bCiro,bIslem,bSosyal].filter(Boolean);
+    // kapak: tüm kazananlar (beraberlikler dahil), tekrarsız
+    const uniq=[]; [wCiro,wIslem,wSosyal].forEach(ws=>ws.forEach(r=>{if(!uniq.find(u=>u.id===r.id))uniq.push(r);}));
+    const n=uniq.length;
+    let figs='';
+    if(n<=3){
+      const order=n===3?[uniq[1],uniq[0],uniq[2]]:uniq;
+      figs=order.map((r,k)=>{const big=n===3?k===1:(n===1);const pos=n===3?(k===0?'left:14px;':k===2?'right:14px;':'left:50%;transform:translateX(-50%);'):(n===2?(k===0?'left:50%;transform:translateX(-100%);margin-left:8px;':'left:50%;margin-left:-8px;'):'left:50%;transform:translateX(-50%);');return `<div style="position:absolute;${pos}bottom:-6px;z-index:${big?2:1};">${cut(r.id,big?258:222,big?180:150)}</div>`;}).join('');
+    } else {
+      const h=n===4?215:n===5?195:175, w=Math.round(h*.62), ov=n===4?-14:n===5?-18:-22;
+      figs=`<div style="position:absolute;left:0;right:0;bottom:-6px;display:flex;justify-content:center;align-items:flex-end;">${uniq.map((r,k)=>`<div style="position:relative;margin:0 ${ov/2}px;z-index:${k%2?1:2};">${cut(r.id,h,w)}</div>`).join('')}</div>`;
+    }
     const tagsB=[[wCiro,'Ciro'],[wIslem,'İşlem'],[wSosyal,'Sosyal Medya']].filter(x=>x[0].length);
+    const tagRow=n<=3&&tagsB.length===3&&tagsB.every(t=>t[0].length===1)
+      ?`<div style="position:absolute;left:0;right:0;bottom:18px;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px;padding:0 10px;">${[tagsB[1],tagsB[0],tagsB[2]].map((t,k)=>`<div style="display:flex;justify-content:${k===0?'flex-start':k===2?'flex-end':'center'};">${t?catTag(t[0],t[1],k===1):''}</div>`).join('')}</div>`
+      :`<div style="position:absolute;left:0;right:0;bottom:16px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tagsB.map(t=>catTag(t[0],t[1],false)).join('')}</div>`;
     slides.push(`<div class="slide" style="background:${NAVY};">${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:78px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.8px;color:#fff;margin:4px 0 0;">Şampiyonları</h1></div>
-<div style="position:absolute;left:0;right:0;bottom:0;height:272px;overflow:hidden;">
-<div style="position:absolute;left:14px;bottom:-6px;z-index:1;">${w[1]?cut(w[1].id,222,150):''}</div>
-<div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;">${w[0]?cut(w[0].id,258,180):''}</div>
-<div style="position:absolute;right:14px;bottom:-6px;z-index:1;">${w[2]?cut(w[2].id,222,150):''}</div></div>
-<div style="position:absolute;left:0;right:0;bottom:18px;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px;padding:0 10px;">${[tagsB[1],tagsB[0],tagsB[2]].map((t,k)=>`<div style="display:flex;justify-content:${k===0?'flex-start':k===2?'flex-end':'center'};">${t?catTag(t[0],t[1],k===1):''}</div>`).join('')}</div></div>`);
+<div style="position:absolute;left:0;right:0;bottom:0;height:272px;overflow:hidden;">${figs}</div>
+${tagRow}</div>`);
     if(bCiro)slides.push(catAny(wCiro,'AYIN CİRO BİRİNCİSİ',fmtTL(bCiro.ciro),`${d.ayAdi} ayı brüt hizmet bedeli`,true));
     if(bIslem)slides.push(catAny(wIslem,'AYIN İŞLEM BİRİNCİSİ',`${bIslem.kapanis} <span style="font-size:18px;letter-spacing:0;color:rgba(255,255,255,.7)">işlem</span>`,`${d.ayAdi} ayında kapanan işlem`,false));
     if(bSosyal)slides.push(catAny(wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${bSosyal.counts.sosyal_medya} <span style="font-size:18px;letter-spacing:0;color:rgba(255,255,255,.7)">içerik</span>`,`${d.ayAdi} ayında paylaşılan içerik`,true));
