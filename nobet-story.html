@@ -15,6 +15,7 @@ select{background:#161c44;color:#fff}
 button{background:#DC1C2E;color:#fff}button.ghost{background:rgba(255,255,255,.1)}button:disabled{opacity:.4}
 .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
 .stage{display:flex;justify-content:center;padding:16px}
+.story video{width:100%;height:100%;object-fit:cover;display:block}
 .story{width:405px;height:720px;min-height:720px;max-height:720px;position:relative;overflow:hidden;border-radius:6px;flex:0 0 405px;background:#050A30}
 .story img{-webkit-user-drag:none;pointer-events:none}
 .sans{font-family:'Plus Jakarta Sans',sans-serif}
@@ -26,7 +27,7 @@ button{background:#DC1C2E;color:#fff}button.ghost{background:rgba(255,255,255,.1
 <select id="who"><option value="">Bugünün nöbetçisi (otomatik)</option></select>
 <button class="ghost" onclick="load()">Yenile</button>
 <button id="sharebtn" onclick="share()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
-<button id="dlbtn" onclick="download()" disabled>PNG indir (1080×1920)</button></div>
+<button id="dlbtn" onclick="download()" disabled>İndir</button></div>
 <div class="status" id="status">Yükleniyor…</div>
 <div class="stage"><div class="story" id="story"></div></div>
 <script>
@@ -36,6 +37,7 @@ const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
 const TEL="0216 315 15 15";
 const AYLAR=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const GUNLER=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+const VIDEO={"evsen":1,"irem":1,"gizem":1,"orhan":1,"ozlem_varol":1,"gamze":1,"aysegul_alpay":1};
 const FOTO={"evsen ozazman":"evsen","irem aleyna tetik":"irem","irem tetik":"irem","gizem gok":"gizem","orhan ozazman":"orhan","ozlem varol":"ozlem_varol","gamze yetkin":"gamze","aysegul alpay":"aysegul_alpay","aysun yilmaz":"aysun"};
 const norm=s=>String(s||"").toLocaleLowerCase("tr").replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/\s+/g," ").trim();
 let CUR={name:null,date:null};
@@ -88,7 +90,15 @@ async function load(){
       st.textContent=d.date+' · Nöbetçi: '+name+(FOTO[norm(name)]?'':' (fotoğraf yok, baş harf gösteriliyor)');
     }
     CUR={name,date};
-    story.innerHTML=tpl(name,date);
+    const vid=FOTO[norm(name)];
+    if(vid&&VIDEO[vid]){
+      CUR.video=`assets/nobet-video/${vid}.mp4`;
+      story.innerHTML=`<video src="${CUR.video}" autoplay muted loop playsinline></video>`;
+      st.textContent+=' · hazır video';
+    } else {
+      CUR.video=null;
+      story.innerHTML=tpl(name,date);
+    }
     await Promise.all([...story.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
     await document.fonts.ready;
     document.getElementById('dlbtn').disabled=false;
@@ -97,8 +107,9 @@ async function load(){
   }catch(e){st.textContent='Hata: '+e.message;}
 }
 async function png(){const c=await html2canvas(document.getElementById('story'),{scale:1080/405,width:405,height:720,backgroundColor:null,useCORS:true,logging:false});return new Promise(r=>c.toBlob(r,'image/png'));}
-async function download(){const b=await png();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`nobet_${CUR.date}.png`;a.click();}
-async function share(){const b=await png();const f=new File([b],`nobet_${CUR.date}.png`,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});}catch(e){}}else document.getElementById('status').textContent='Bu tarayıcı paylaşımı desteklemiyor.';}
+async function blobFor(){if(CUR.video){const r=await fetch(CUR.video);return {b:await r.blob(),ext:'mp4',type:'video/mp4'};}return {b:await png(),ext:'png',type:'image/png'};}
+async function download(){const {b,ext}=await blobFor();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`nobet_${CUR.date}.${ext}`;a.click();}
+async function share(){const {b,ext,type}=await blobFor();const f=new File([b],`nobet_${CUR.date}.${ext}`,{type});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});}catch(e){}}else document.getElementById('status').textContent='Bu tarayıcı paylaşımı desteklemiyor.';}
 fillTeam();load();
 </script>
 </body>

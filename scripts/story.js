@@ -11,7 +11,9 @@ const fs = require('fs'), path = require('path');
   if (await page.getAttribute('body', 'data-empty')) { console.log('Bugün nöbetçi yok, story üretilmedi.'); await browser.close(); return; }
   const date = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
   fs.mkdirSync('nobet-story', { recursive: true });
-  await page.locator('#story').screenshot({ path: path.join('nobet-story', date + '.png') });
+  const vid = await page.evaluate(() => (window.CUR && CUR.video) || null);
+  if (vid) { fs.copyFileSync(path.join(...vid.split('/')), path.join('nobet-story', date + '.mp4')); console.log('✓ video story', date); }
+  else await page.locator('#story').screenshot({ path: path.join('nobet-story', date + '.png') });
   fs.writeFileSync('nobet-story/.son', date);
   console.log('✓ story', date);
   await browser.close();
