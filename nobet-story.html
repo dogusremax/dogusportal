@@ -69,7 +69,7 @@ ${figure}
 async function fillTeam(){
   const sel=document.getElementById('who');
   Object.keys(FOTO).filter((k,i,a)=>a.findIndex(x=>FOTO[x]===FOTO[k])===i).forEach(k=>{});
-  const names={"evsen":"Evşen Özazman","irem":"İrem Aleyna Tetik","gizem":"Gizem Gök","orhan":"Orhan Özazman","ozlem_varol":"Özlem Varol","gamze":"Gamze Yetkin","aysegul_alpay":"Ayşegül Alpay","aysun":"Aysun Yılmaz","Ofis":"Ofis"};
+  const names={"evsen":"Evşen Özazman","irem":"İrem Aleyna Tetik","gizem":"Gizem Gök","orhan":"Orhan Özazman","ozlem_varol":"Özlem Varol","gamze":"Gamze Yetkin","aysegul_alpay":"Ayşegül Alpay"};
   Object.values(names).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
   sel.onchange=load;
 }
