@@ -317,6 +317,63 @@ async function instagramaGonder(testMode){
     setTimeout(()=>{btn.disabled=false;btn.innerHTML=origText;btn.style.background='';},5000);
   }
 }
+
+// ==== ONIZLEME ====
+var _previewIdx=0,_previewTotal=0;
+function openPreview(){
+  var slides=document.querySelectorAll('.slide');
+  _previewTotal=slides.length; _previewIdx=0;
+  var container=document.getElementById('previewSlides');
+  container.innerHTML='';
+  var caption=SET==='birinci'
+    ?DATA.ayAdi+' '+DATA.yil+' — RE/MAX Doğuş Birincilik Sıralaması'
+    :DATA.ayAdi+' '+DATA.yil+' — RE/MAX Doğuş Aylık Performans Puanları';
+  document.getElementById('previewCaption').textContent=caption;
+  document.getElementById('status').textContent='Onizleme hazirlaniyor...';
+  var loaded=0;
+  slides.forEach(function(el,i){
+    html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false}).then(function(c){
+      var img=document.createElement('img');
+      img.src=c.toDataURL('image/jpeg',0.95);
+      img.style.cssText='min-width:100%;height:100%;object-fit:cover;flex-shrink:0;';
+      img.dataset.idx=i;
+      container.appendChild(img);
+      loaded++;
+      if(loaded===_previewTotal){
+        var imgs=Array.from(container.children);
+        imgs.sort(function(a,b){return a.dataset.idx-b.dataset.idx;});
+        container.innerHTML='';
+        imgs.forEach(function(im){container.appendChild(im);});
+        updatePreviewNav();
+        document.getElementById('status').textContent=_previewTotal+' slayt hazir. Begendiysen Yayinla butonuna bas.';
+      }
+    });
+  });
+  var dots=document.getElementById('previewDots');
+  dots.innerHTML='';
+  for(var d=0;d<_previewTotal;d++){
+    var dot=document.createElement('span');
+    dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;margin:0 3px;background:'+(d===0?'#3897f0':'#ccc');
+    dot.dataset.d=d;
+    dots.appendChild(dot);
+  }
+  document.getElementById('previewModal').style.display='flex';
+}
+function closePreview(){document.getElementById('previewModal').style.display='none';}
+function slidePreview(dir){
+  _previewIdx=Math.max(0,Math.min(_previewTotal-1,_previewIdx+dir));
+  updatePreviewNav();
+}
+function updatePreviewNav(){
+  var c=document.getElementById('previewSlides');
+  c.style.transform='translateX(-'+(_previewIdx*100)+'%)';
+  document.getElementById('previewCounter').textContent=(_previewIdx+1)+'/'+_previewTotal;
+  document.getElementById('prevSlide').style.display=_previewIdx>0?'block':'none';
+  document.getElementById('nextSlide').style.display=_previewIdx<_previewTotal-1?'block':'none';
+  var dots=document.getElementById('previewDots').children;
+  for(var i=0;i<dots.length;i++) dots[i].style.background=i===_previewIdx?'#3897f0':'#ccc';
+}
+
 </script>
 <!-- Önizleme Modalı -->
 <div id="previewModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif">
