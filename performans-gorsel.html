@@ -298,7 +298,7 @@ async function instagramaGonder(){
       ?`🏆 ${ayAd} — RE/MAX Doğuş Birincilik Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`
       :`📊 ${ayAd} — RE/MAX Doğuş Aylık Performans Puanları\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`;
     st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
-    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
       body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})
     });
     const result=await resp.json();
