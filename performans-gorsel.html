@@ -46,7 +46,8 @@
   <select id="ay"></select>
   <button class="ghost" onclick="load()">Yenile</button>
   <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
-  <button id="igapibtn" onclick="instagramaGonder()" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram'a Gönder (API)</button>
+  <button id="igapibtn" onclick="instagramaGonder(false)" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram + Facebook</button>
+  <button id="igtestbtn" onclick="instagramaGonder(true)" disabled style="background:#334155;display:none">🔍 Test (yayınlamaz)</button>
   <button id="zipbtn" onclick="downloadAll()" disabled>Tümünü indir (ZIP)</button>
 </div>
 <div class="status" id="status">Yükleniyor…</div>
@@ -253,6 +254,7 @@ async function render(d){
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
   const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
+  const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false;
 }
 async function shareAll(){
   const st=document.getElementById('status'),n=document.querySelectorAll('.slide').length,files=[];
@@ -277,10 +279,10 @@ document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları
 fillMonths(); load();
 
 // ==== INSTAGRAM API CAROUSEL GÖNDERME ====
-async function instagramaGonder(){
+async function instagramaGonder(testMode){
   const btn=document.getElementById('igapibtn'), st=document.getElementById('status');
   const origText=btn.innerHTML;
-  if(!confirm('Bu slaytları Instagram\'a carousel olarak yayınlamak istiyor musunuz?')) return;
+  if(!testMode && !confirm('Bu slaytları Instagram + Facebook\'a carousel olarak yayınlamak istiyor musunuz?')) return;
   btn.disabled=true; btn.innerHTML='⏳ Hazırlanıyor...';
   try{
     const n=document.querySelectorAll('.slide').length;
@@ -299,12 +301,14 @@ async function instagramaGonder(){
       :`📊 ${ayAd} — RE/MAX Doğuş Aylık Performans Puanları\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`;
     st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})
+      body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:'),testMode:!!testMode})
     });
     const result=await resp.json();
     if(result.success){
-      btn.innerHTML='✅ Yayınlandı!'; btn.style.background='#22c55e';
-      st.textContent='Instagram carousel başarıyla yayınlandı! Media ID: '+result.mediaId;
+      if(testMode){btn.innerHTML='✅ Test OK!'; btn.style.background='#22c55e';
+        st.textContent='Test basarili! '+result.imageCount+' gorsel GitHub\'a yuklendi. Yayinlamak icin asil butonu kullan.';}
+      else{btn.innerHTML='✅ Yayınlandı!'; btn.style.background='#22c55e';
+        st.textContent='Instagram'+(result.fbPostId?' + Facebook':'')+' carousel yayinlandi! IG: '+result.mediaId+(result.fbPostId?' | FB: '+result.fbPostId:'');}
     } else { throw new Error(result.error||'Bilinmeyen hata'); }
   }catch(err){
     if(err.message!=='min2'){st.textContent='Instagram hata: '+err.message;}
