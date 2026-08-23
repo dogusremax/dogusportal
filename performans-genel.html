@@ -27,6 +27,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 <div class="status" id="status">Yükleniyor…</div>
 <div class="wrap"><div class="sum" id="sum"></div><div id="list"></div></div>
 <script>
+if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogusportal.com';throw new Error('auth');}
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KEY="dogus-performans";
 const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
