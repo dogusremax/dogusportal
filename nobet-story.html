@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache">
+<title>Nöbetçi Story · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+.top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.top img{height:30px}.top a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px}.top h1{font-size:16px;font-weight:700;flex:1}
+select,button{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
+select{background:#161c44;color:#fff}
+button{background:#DC1C2E;color:#fff}button.ghost{background:rgba(255,255,255,.1)}button:disabled{opacity:.4}
+.status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+.stage{display:flex;justify-content:center;padding:16px}
+.story{width:405px;height:720px;min-height:720px;max-height:720px;position:relative;overflow:hidden;border-radius:6px;flex:0 0 405px;background:#050A30}
+.story img{-webkit-user-drag:none;pointer-events:none}
+.sans{font-family:'Plus Jakarta Sans',sans-serif}
+@media(max-width:440px){.story{transform:scale(.85);transform-origin:top center}.stage{height:640px;overflow:hidden}}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png"><a href="index.html">‹ Portal</a><h1>Günün Nöbetçisi — Story</h1>
+<select id="who"><option value="">Bugünün nöbetçisi (otomatik)</option></select>
+<button class="ghost" onclick="load()">Yenile</button>
+<button id="sharebtn" onclick="share()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
+<button id="dlbtn" onclick="download()" disabled>PNG indir (1080×1920)</button></div>
+<div class="status" id="status">Yükleniyor…</div>
+<div class="stage"><div class="story" id="story"></div></div>
+<script>
+const NOBET_API="https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";
+const NAVY="#050A30",RED="#DC1C2E",REDD="#910B19",CORAL="#FB5160",LB="#F6F3F1";
+const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
+const TEL="0216 315 15 15";
+const AYLAR=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const GUNLER=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+const FOTO={"evsen ozazman":"evsen","irem aleyna tetik":"irem","irem tetik":"irem","gizem gok":"gizem","orhan ozazman":"orhan","ozlem varol":"ozlem_varol","gamze yetkin":"gamze","aysegul alpay":"aysegul_alpay","aysun yilmaz":"aysun"};
+const norm=s=>String(s||"").toLocaleLowerCase("tr").replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/\s+/g," ").trim();
+let CUR={name:null,date:null};
+
+function tpl(name,dateStr){
+  const d=new Date(dateStr+"T12:00:00+03:00");
+  const tarih=d.getDate()+" "+AYLAR[d.getMonth()], gun=GUNLER[d.getDay()];
+  const id=FOTO[norm(name)];
+  const figure=id?`<div style="position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;width:330px;height:430px;overflow:hidden;"><img src="assets/ekip/${id}.png" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.5));"></div>`
+    :`<div class="sans" style="position:absolute;left:50%;transform:translateX(-50%);bottom:150px;width:220px;height:220px;border-radius:50%;background:${RGRAD};display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:800;color:#fff;box-shadow:0 24px 60px rgba(220,28,46,.4);">${(name||"D")[0]}</div>`;
+  return `
+<div style="position:absolute;inset:0;background:${NAVY};"></div>
+<div style="position:absolute;inset:0;background:radial-gradient(120% 55% at 50% 115%,rgba(220,28,46,.55),transparent 62%);"></div>
+<div class="sans" style="position:absolute;top:-40px;left:-4px;font-size:420px;font-weight:800;line-height:1;color:rgba(255,255,255,.05);letter-spacing:-16px;">D</div>
+<img src="assets/dogus-logo.png" style="position:absolute;top:44px;left:50%;transform:translateX(-50%);width:150px;z-index:5;">
+<div style="position:absolute;left:0;right:0;top:128px;text-align:center;z-index:5;">
+  <div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:14px;font-weight:700;padding:8px 20px;border-radius:22px;box-shadow:0 10px 24px rgba(220,28,46,.4);">${tarih} · ${gun}</div>
+  <div class="sans" style="font-size:12px;font-weight:800;letter-spacing:4px;color:${CORAL};margin-top:26px;">BUGÜNÜN NÖBETÇİSİ</div>
+  <div class="sans" style="font-size:${name&&name.length>14?34:42}px;font-weight:800;letter-spacing:-1.2px;color:#fff;line-height:1.05;margin-top:8px;padding:0 24px;">${name||"RE/MAX Doğuş"}</div>
+</div>
+${figure}
+<div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to top,rgba(5,10,48,.92),transparent);z-index:6;"></div>
+<div style="position:absolute;left:0;right:0;bottom:26px;z-index:7;text-align:center;">
+  <div class="sans" style="font-size:13px;font-weight:700;color:#fff;">Sorularınız için ofisimizdeyiz</div>
+  <div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px;">RE/MAX DOĞUŞ • ${TEL} • Fikirtepe, Kadıköy</div>
+</div>`;
+}
+
+async function fillTeam(){
+  const sel=document.getElementById('who');
+  Object.keys(FOTO).filter((k,i,a)=>a.findIndex(x=>FOTO[x]===FOTO[k])===i).forEach(k=>{});
+  const names={"evsen":"Evşen Özazman","irem":"İrem Aleyna Tetik","gizem":"Gizem Gök","orhan":"Orhan Özazman","ozlem_varol":"Özlem Varol","gamze":"Gamze Yetkin","aysegul_alpay":"Ayşegül Alpay","aysun":"Aysun Yılmaz","Ofis":"Ofis"};
+  Object.values(names).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  sel.onchange=load;
+}
+
+async function load(){
+  const st=document.getElementById('status'),story=document.getElementById('story');
+  document.body.removeAttribute('data-ready');document.getElementById('dlbtn').disabled=true;
+  const manual=document.getElementById('who').value;
+  try{
+    let name,date;
+    if(manual){name=manual;date=new Date().toISOString().slice(0,10);st.textContent='Elle seçildi: '+name;}
+    else{
+      st.textContent='Nöbet takviminden çekiliyor…';
+      const r=await fetch(NOBET_API+"?action=today");const d=await r.json();
+      if(!d.ok)throw new Error(d.error||'hata');
+      name=d.name;date=d.date;
+      if(!name){st.textContent=d.date+' için nöbetçi kaydı yok.';story.innerHTML='';document.body.setAttribute('data-ready','1');document.body.setAttribute('data-empty','1');return;}
+      st.textContent=d.date+' · Nöbetçi: '+name+(FOTO[norm(name)]?'':' (fotoğraf yok, baş harf gösteriliyor)');
+    }
+    CUR={name,date};
+    story.innerHTML=tpl(name,date);
+    await Promise.all([...story.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+    await document.fonts.ready;
+    document.getElementById('dlbtn').disabled=false;
+    const sb=document.getElementById('sharebtn');if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
+    document.body.setAttribute('data-ready','1');
+  }catch(e){st.textContent='Hata: '+e.message;}
+}
+async function png(){const c=await html2canvas(document.getElementById('story'),{scale:1080/405,width:405,height:720,backgroundColor:null,useCORS:true,logging:false});return new Promise(r=>c.toBlob(r,'image/png'));}
+async function download(){const b=await png();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`nobet_${CUR.date}.png`;a.click();}
+async function share(){const b=await png();const f=new File([b],`nobet_${CUR.date}.png`,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});}catch(e){}}else document.getElementById('status').textContent='Bu tarayıcı paylaşımı desteklemiyor.';}
+fillTeam();load();
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+name: Günlük nöbetçi story
+on:
+  schedule:
+    - cron: "45 4 * * *"   # her gün 07:45 (TR)
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  story:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+      - run: node scripts/story.js
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add nobet-story || true
+          git diff --cached --quiet || git commit -m "Nöbetçi story: $(cat nobet-story/.son)"
+          git push
