@@ -8,7 +8,10 @@ def norm(s):
     s=unicodedata.normalize("NFKD",s); s="".join(c for c in s if not unicodedata.combining(c))
     return re.sub(r"\s+"," ",re.sub(r"\.[a-z0-9]+$","",s)).strip()
 subprocess.run([sys.executable,"-m","pip","install","-q","gdown"],check=True)
-subprocess.run(["gdown","--folder",FOLDER,"-O","dl","--remaining-ok"],check=True)
+r=subprocess.run(["gdown","--folder",FOLDER,"-O","dl","--remaining-ok"])
+if r.returncode!=0:
+    print("KLASÖR İNDİRİLEMEDİ — klasör 'bağlantıya sahip herkes' olarak paylaşılmamış olabilir.")
+    sys.exit(2)
 out=Path("assets/nobet-video"); out.mkdir(parents=True,exist_ok=True)
 ok=0
 for f in Path("dl").rglob("*"):
