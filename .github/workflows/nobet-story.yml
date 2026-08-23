@@ -20,3 +20,8 @@ jobs:
           git add nobet-story || true
           git diff --cached --quiet || git commit -m "Nöbetçi story: $(cat nobet-story/.son)"
           git push
+      - name: Instagram'a paylaş
+        if: hashFiles('nobet-story/.media') != ''
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+        run: node scripts/ig-story.js

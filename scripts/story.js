@@ -12,8 +12,10 @@ const fs = require('fs'), path = require('path');
   const date = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
   fs.mkdirSync('nobet-story', { recursive: true });
   const vid = await page.evaluate(() => (window.CUR && CUR.video) || null);
-  if (vid) { fs.copyFileSync(path.join(...vid.split('/')), path.join('nobet-story', date + '.mp4')); console.log('✓ video story', date); }
-  else await page.locator('#story').screenshot({ path: path.join('nobet-story', date + '.png') });
+  let mediaPath, isVideo;
+  if (vid) { mediaPath = path.join('nobet-story', date + '.mp4'); fs.copyFileSync(path.join(...vid.split('/')), mediaPath); isVideo = true; console.log('✓ video story', date); }
+  else { mediaPath = path.join('nobet-story', date + '.png'); await page.locator('#story').screenshot({ path: mediaPath }); isVideo = false; }
+  fs.writeFileSync('nobet-story/.media', JSON.stringify({ date, isVideo, url: 'https://dogusportal.com/' + mediaPath.replace(/\\/g, '/') }));
   fs.writeFileSync('nobet-story/.son', date);
   console.log('✓ story', date);
   await browser.close();
