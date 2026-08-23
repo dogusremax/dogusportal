@@ -7,10 +7,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get -y -qq install ffmpeg
-      - run: python3 scripts/video-sync.py
-      - run: |
+      - run: python3 scripts/video-sync.py 2>&1 | tee sync-log.txt; echo "exit=${PIPESTATUS[0]}" >> sync-log.txt
+        shell: bash
+      - if: always()
+        run: |
           git config user.name dogus-bot
           git config user.email bot@dogusremax.com
-          git add assets/nobet-video
+          git add assets/nobet-video sync-log.txt
+          git add sync-log.txt
           git diff --cached --quiet || git commit -m "Nöbet videoları Drive'dan güncellendi"
           git push
