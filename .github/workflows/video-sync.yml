@@ -1,0 +1,16 @@
+name: Nöbet videolarını Drive'dan güncelle
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get -y -qq install ffmpeg
+      - run: python3 scripts/video-sync.py
+      - run: |
+          git config user.name dogus-bot
+          git config user.email bot@dogusremax.com
+          git add assets/nobet-video
+          git diff --cached --quiet || git commit -m "Nöbet videoları Drive'dan güncellendi"
+          git push
