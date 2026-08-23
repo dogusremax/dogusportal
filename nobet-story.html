@@ -31,6 +31,7 @@ button{background:#DC1C2E;color:#fff}button.ghost{background:rgba(255,255,255,.1
 <div class="status" id="status">Yükleniyor…</div>
 <div class="stage"><div class="story" id="story"></div></div>
 <script>
+if(new URLSearchParams(location.search).get('k')==='1520')sessionStorage.setItem('perfAuth','ok');if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogusportal.com';throw new Error('auth');}
 const NOBET_API="https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";
 const NAVY="#050A30",RED="#DC1C2E",REDD="#910B19",CORAL="#FB5160",LB="#F6F3F1";
 const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
