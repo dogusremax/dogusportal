@@ -24,4 +24,5 @@ jobs:
         if: hashFiles('nobet-story/.media') != ''
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
         run: node scripts/ig-story.js
