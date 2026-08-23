@@ -40,7 +40,7 @@ const GUNLER=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumar
 const VIDEO={"evsen":1,"irem":1,"gizem":1,"orhan":1,"ozlem_varol":1,"gamze":1,"aysegul_alpay":1};
 const FOTO={"evsen ozazman":"evsen","irem aleyna tetik":"irem","irem tetik":"irem","gizem gok":"gizem","orhan ozazman":"orhan","ozlem varol":"ozlem_varol","gamze yetkin":"gamze","aysegul alpay":"aysegul_alpay","aysun yilmaz":"aysun"};
 const norm=s=>String(s||"").toLocaleLowerCase("tr").replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/\s+/g," ").trim();
-let CUR={name:null,date:null};
+var CUR={name:null,date:null};
 
 function tpl(name,dateStr){
   const d=new Date(dateStr+"T12:00:00+03:00");
