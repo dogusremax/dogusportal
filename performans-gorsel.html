@@ -56,6 +56,7 @@
 <div class="grid" id="grid"></div>
 
 <script>
+if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogusportal.com';throw new Error('auth');}
 // ==== AYARLAR ====
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec"; // Danışman Takip web app
 const KEY = "dogus-performans";
