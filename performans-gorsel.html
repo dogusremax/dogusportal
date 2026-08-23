@@ -47,7 +47,7 @@
   <button class="ghost" onclick="load()">Yenile</button>
   <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
   <button id="igapibtn" onclick="instagramaGonder(false)" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram + Facebook</button>
-  <button id="igtestbtn" onclick="instagramaGonder(true)" disabled style="background:#334155;display:none">🔍 Test (yayınlamaz)</button>
+  <button id="igtestbtn" onclick="openPreview()" disabled style="background:#334155;display:none">🔍 Önizleme</button>
   <button id="zipbtn" onclick="downloadAll()" disabled>Tümünü indir (ZIP)</button>
 </div>
 <div class="status" id="status">Yükleniyor…</div>
@@ -318,5 +318,27 @@ async function instagramaGonder(testMode){
   }
 }
 </script>
+<!-- Önizleme Modalı -->
+<div id="previewModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif">
+  <div style="background:#fff;border-radius:16px;max-width:380px;width:92%;max-height:90vh;overflow:hidden;position:relative">
+    <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid #eee">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800">RD</div>
+      <div style="margin-left:10px;flex:1"><div style="font-size:13px;font-weight:700;color:#111">remaxdogus</div><div style="font-size:11px;color:#888">RE/MAX Doğuş</div></div>
+      <button onclick="closePreview()" style="background:none;border:none;font-size:22px;color:#888;cursor:pointer">✕</button>
+    </div>
+    <div id="previewCarousel" style="position:relative;width:100%;aspect-ratio:3/4;background:#000;overflow:hidden">
+      <div id="previewSlides" style="display:flex;transition:transform 0.3s ease;height:100%"></div>
+      <button id="prevSlide" onclick="slidePreview(-1)" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:none">‹</button>
+      <button id="nextSlide" onclick="slidePreview(1)" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer">›</button>
+      <div id="previewCounter" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:4px 10px;border-radius:20px">1/6</div>
+    </div>
+    <div id="previewDots" style="text-align:center;padding:8px 0"></div>
+    <div style="padding:10px 14px 6px"><span style="font-weight:700;font-size:13px;color:#111">remaxdogus</span> <span id="previewCaption" style="font-size:13px;color:#333"></span></div>
+    <div style="padding:8px 14px 14px;display:flex;gap:8px">
+      <button onclick="closePreview();instagramaGonder(false)" style="flex:1;padding:10px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">📸 Yayınla</button>
+      <button onclick="closePreview()" style="padding:10px 16px;background:#f1f1f1;color:#333;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">Kapat</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
