@@ -46,6 +46,7 @@
   <select id="ay"></select>
   <button class="ghost" onclick="load()">Yenile</button>
   <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
+  <button id="igapibtn" onclick="instagramaGonder()" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram'a Gönder (API)</button>
   <button id="zipbtn" onclick="downloadAll()" disabled>Tümünü indir (ZIP)</button>
 </div>
 <div class="status" id="status">Yükleniyor…</div>
@@ -251,6 +252,7 @@ async function render(d){
   st.textContent=`${d.ayAdi} ${d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
+  const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
 }
 async function shareAll(){
   const st=document.getElementById('status'),n=document.querySelectorAll('.slide').length,files=[];
@@ -273,6 +275,44 @@ function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createO
 
 document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':'Performans Sıralaması — Görseller';
 fillMonths(); load();
+
+// ==== INSTAGRAM API CAROUSEL GÖNDERME ====
+async function instagramaGonder(){
+  const btn=document.getElementById('igapibtn'), st=document.getElementById('status');
+  const origText=btn.innerHTML;
+  if(!confirm('Bu slaytları Instagram\'a carousel olarak yayınlamak istiyor musunuz?')) return;
+  btn.disabled=true; btn.innerHTML='⏳ Hazırlanıyor...';
+  try{
+    const n=document.querySelectorAll('.slide').length;
+    if(n<2){alert('Carousel için en az 2 slayt gerekli.');throw new Error('min2');}
+    const images=[];
+    for(let i=0;i<n;i++){
+      st.textContent=`Görsel hazırlanıyor ${i+1}/${n}…`;
+      const el=document.querySelectorAll('.slide')[i];
+      const c=await html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false});
+      const dataUrl=await new Promise(r=>c.toBlob(b=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(b);},'image/jpeg',0.95));
+      images.push(dataUrl.split(',')[1]);
+    }
+    const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
+    const caption=SET==='birinci'
+      ?`🏆 ${ayAd} — RE/MAX Doğuş Birincilik Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`
+      :`📊 ${ayAd} — RE/MAX Doğuş Aylık Performans Puanları\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`;
+    st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})
+    });
+    const result=await resp.json();
+    if(result.success){
+      btn.innerHTML='✅ Yayınlandı!'; btn.style.background='#22c55e';
+      st.textContent='Instagram carousel başarıyla yayınlandı! Media ID: '+result.mediaId;
+    } else { throw new Error(result.error||'Bilinmeyen hata'); }
+  }catch(err){
+    if(err.message!=='min2'){st.textContent='Instagram hata: '+err.message;}
+    btn.innerHTML=origText; btn.style.background='';
+  }finally{
+    setTimeout(()=>{btn.disabled=false;btn.innerHTML=origText;btn.style.background='';},5000);
+  }
+}
 </script>
 </body>
 </html>
