@@ -107,7 +107,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
 <div class="wrap">
   <header>
     <div class="logo">N</div>
-    <div><h1>Nöbet Takvimi</h1><small>RE/MAX Doğuş · tek tuşla Google Takvim</small></div>
+    <div><h1>Nöbet Takvimi</h1><small>RE/MAX Doğuş · tek tuşla Google Takvim</small></div><button onclick="resetApp()" style="position:absolute;top:16px;right:16px;background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer">Çıkış ↺</button>
   </header>
 
   <!-- PIN -->
@@ -286,6 +286,7 @@ async function login(){
     renderPeople(); renderMonth();
   }catch(e){ $("pinMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
 }
+function resetApp(){sessionStorage.clear();localStorage.clear();plan=[];location.reload();}
 if(sessionStorage.getItem("nobet_pin")){ $("pin").value=sessionStorage.getItem("nobet_pin"); login(); }
 
 /* ---- ekip ---- */
