@@ -45,6 +45,7 @@
   <a href="performans.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">‹ Geri</a><h1 id="ttl">Aylık Performans Görselleri</h1>
   <select id="ay"></select>
   <button class="ghost" onclick="load()">Yenile</button>
+  <button id="karnebtn" onclick="karnePaylas(false)" disabled style="display:none;background:#128C7E">WhatsApp Karnesi</button>
   <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
   <button id="igapibtn" onclick="instagramaGonder(false)" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram + Facebook</button>
   <button id="igtestbtn" onclick="openPreview()" disabled style="background:#334155;color:#fff;display:none;cursor:pointer">🔍 Önizleme</button>
@@ -260,6 +261,7 @@ async function render(d){
   st.textContent=`${d.ayAdi} ${d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
+  if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;}
   const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
   const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false;
 }
@@ -268,6 +270,48 @@ async function shareAll(){
   for(let i=0;i<n;i++){st.textContent=`Hazırlanıyor ${i+1}/${n}…`;const b=await renderPng(i);files.push(new File([b],`${DATA.ay}_${i+1}.png`,{type:'image/png'}));}
   if(!navigator.canShare||!navigator.canShare({files})){st.textContent='Bu tarayıcı dosya paylaşımını desteklemiyor; ZIP indir.';return;}
   try{await navigator.share({files,title:`${DATA.ayAdi} ${DATA.yil} · RE/MAX Doğuş`});st.textContent='Paylaşım menüsü açıldı → Instagram\'ı seç.';}catch(e){st.textContent='Paylaşım iptal edildi.';}
+}
+
+// ==== WHATSAPP KARNESİ (tek görsel, 1080x1320) ====
+function karneHtml(d){
+  const s=d.siralama, mx=Math.max(1,s[0].puan), medals=['🥇','🥈','🥉'];
+  const n=s.length, rowH=n>8?66:78, fs=n>8?17:19;
+  const rows=s.map((r,i)=>{const t=i<3,w=Math.round(r.puan/mx*100);return `
+<div style="display:flex;align-items:center;gap:13px;padding:${n>8?6:8}px 14px;background:${t?'rgba(251,81,96,.10)':'rgba(255,255,255,.04)'};border:1px solid ${t?'rgba(251,81,96,.45)':'rgba(255,255,255,.08)'};border-radius:15px;">
+<span class="sans" style="width:24px;text-align:center;font-size:19px;font-weight:800;color:${t?CORAL:'rgba(255,255,255,.4)'};">${i+1}</span>
+<div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:2.5px solid ${t?CORAL:'rgba(255,255,255,.25)'};overflow:hidden;flex:0 0 44px;position:relative;"><img src="assets/ekip/${r.id}.png" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%;" onerror="this.remove()"></div>
+<div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="sans" style="font-size:${fs}px;font-weight:${t?800:600};color:#fff;white-space:nowrap;">${r.name}</span><span style="font-size:15px;">${medals[i]||''}</span></div>
+<div style="height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:5px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:3px;"></div></div></div>
+<span class="sans" style="font-size:22px;font-weight:800;color:${t?CORAL:'rgba(255,255,255,.7)'};letter-spacing:-1px;">${r.puan}<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,.45);"> p</span></span></div>`}).join('');
+  const tk=s.reduce((a,x)=>a+(x.kapanis||0),0),tg=s.reduce((a,x)=>a+((x.counts||{}).gosterim||0),0),ts=s.reduce((a,x)=>a+((x.counts||{}).sosyal_medya||0),0);
+  const aktif=s.slice().sort((a,b)=>(b.aktifGun||0)-(a.aktifGun||0))[0];
+  const H=140+ s.length*(rowH)+70;
+  return {h:H,html:`<div id="karne" style="width:540px;height:${H}px;position:relative;overflow:hidden;background:${NAVY};font-family:'Plus Jakarta Sans',sans-serif;">
+<div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 100% 0%,rgba(220,28,46,.5),transparent 55%);"></div>
+<div class="sans" style="position:absolute;bottom:-90px;right:-20px;font-size:320px;font-weight:800;line-height:1;color:rgba(255,255,255,.04);letter-spacing:-14px;">D</div>
+<div style="position:absolute;left:24px;right:24px;top:20px;display:flex;align-items:center;justify-content:space-between;">
+<img src="assets/dogus-logo.png" style="width:104px;">
+<div style="text-align:right;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:14px;font-weight:700;padding:6px 14px;border-radius:18px;">${d.ayAdi}</div>
+<div class="sans" style="font-size:11px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.65);margin-top:6px;">HAFTALIK KARNE</div></div></div>
+<div style="position:absolute;left:24px;right:24px;top:92px;display:flex;flex-direction:column;gap:6px;">${rows}</div>
+<div class="sans" style="position:absolute;left:24px;right:24px;bottom:14px;display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,.6);flex-wrap:wrap;">
+<span>🤝 <b style="color:#fff;">${tk}</b> kapanış</span><span>🏠 <b style="color:#fff;">${tg}</b> gösterim</span><span>📱 <b style="color:#fff;">${ts}</b> içerik</span>${aktif&&aktif.aktifGun?`<span>🔥 En aktif: <b style="color:#fff;">${aktif.name.split(' ')[0]}</b></span>`:''}</div>
+</div>`};
+}
+async function karnePaylas(dl){
+  const d=applyOverrides(DATA), st=document.getElementById('status');
+  st.textContent='Karne hazırlanıyor…';
+  const k=karneHtml(d);
+  const host=document.createElement('div'); host.style.cssText='position:fixed;left:-9999px;top:0;'; host.innerHTML=k.html; document.body.appendChild(host);
+  const el=host.firstElementChild;
+  await Promise.all([...el.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+  await document.fonts.ready;
+  const c=await html2canvas(el,{scale:2,width:540,height:k.h,backgroundColor:null,useCORS:true,logging:false});
+  host.remove();
+  const b=await new Promise(r=>c.toBlob(r,'image/png'));
+  const f=new File([b],`karne_${DATA.ay}.png`,{type:'image/png'});
+  if(!dl&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});st.textContent='Paylaşım menüsü açıldı → WhatsApp\'ı seç.';return;}catch(e){}}
+  saveBlob(b,`karne_${DATA.ay}.png`); st.textContent='Karne indirildi ✓';
 }
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
