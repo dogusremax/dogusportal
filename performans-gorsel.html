@@ -38,6 +38,7 @@
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   @media(max-width:480px){.grid{padding:12px;gap:10px}.card{width:100%;height:470px;overflow:hidden;justify-content:flex-start}.card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}}
 </style>
+<script>document.addEventListener('DOMContentLoaded',()=>{if(new URLSearchParams(location.search).get('donem')==='hafta'){const st=document.createElement('style');st.textContent='.slide{height:747px!important;min-height:747px;max-height:747px}';document.head.appendChild(st);}});</script>
 </head>
 <body>
 <div class="top">
@@ -45,6 +46,7 @@
   <a href="performans.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">‹ Geri</a><h1 id="ttl">Aylık Performans Görselleri</h1>
   <select id="ay"></select>
   <button class="ghost" onclick="load()">Yenile</button>
+  <button id="storybtn" onclick="storyYayinla()" disabled style="display:none;background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)">Story olarak yayınla</button>
   <button id="karnebtn" onclick="karnePaylas(false)" disabled style="display:none;background:#128C7E">WhatsApp Karnesi</button>
   <button id="sharebtn" onclick="shareAll()" disabled style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);display:none">Instagram'da paylaş</button>
   <button id="igapibtn" onclick="instagramaGonder(false)" disabled style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:none">📸 Instagram + Facebook</button>
@@ -70,7 +72,9 @@ const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
 const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 let DATA=null, TOTAL=6;
 const SET=(new URLSearchParams(location.search).get('set')||'puan');
-const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' | 'hafta' // 'puan' | 'birinci'
+const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' | 'hafta'
+const STORY=DONEM==='hafta';
+const SH=STORY?747:560; // 'puan' | 'birinci'
 
 const photo=id=>`assets/ekip/${id}.png`;
 const cut=(id,h,w)=>`<div style="width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" onerror="this.style.visibility='hidden'"></div>`;
@@ -78,7 +82,7 @@ const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50
 const logo=(right)=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
 const progress=()=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:__PCT__%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">__N__/__T__</span></div>`;
 const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${t.length>1?350:380}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
+const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${STORY?440:(t.length>1?350:380)}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
 
 const nameTag=(r,n,big)=>`<div class="sans" style="display:flex;align-items:center;gap:6px;padding:${big?'7px 12px':'5px 10px'};background:rgba(5,10,48,.88);border:1px solid rgba(255,255,255,.14);border-radius:20px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="width:${big?20:17}px;height:${big?20:17}px;border-radius:50%;background:${CORAL};color:#fff;font-size:${big?11:10}px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">${n}</span><span style="font-size:${big?12:10.5}px;font-weight:700;color:#fff;">${r.name}</span></div>`;
 function pillsFor(r){
@@ -95,8 +99,8 @@ function podium(idx,r,red){
   const ph=pillsFor(r).map(p=>`<span class="sans" style="display:inline-block;font-size:12px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 ${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
-<div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:440px;overflow:hidden;clip-path:inset(0);">${cut(r.id,440,260)}</div>
-<div style="position:absolute;left:36px;width:170px;bottom:60px;z-index:5;">
+<div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?300:260}px;height:${STORY?600:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?600:440,STORY?300:260)}</div>
+<div style="position:absolute;left:36px;width:170px;bottom:${STORY?90:60}px;z-index:5;">
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
 <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;"><span class="sans" style="font-size:48px;font-weight:700;letter-spacing:-2px;color:${ptc};line-height:1;">${r.puan}</span><span class="sans" style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500;">puan</span></div>
 <div style="width:200px;">${ph}</div></div>${arrow()}${progress()}</div>`;
@@ -108,7 +112,7 @@ function catSlide(r,label,valueHtml,sub,red){
   const ptc=red?NAVY:CORAL;
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">1</div>${logo(false)}
-<div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:440px;overflow:hidden;clip-path:inset(0);">${cut(r.id,440,260)}</div>
+<div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?300:260}px;height:${STORY?600:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?600:440,STORY?300:260)}</div>
 <div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
@@ -176,13 +180,13 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
   const pod=(n,h,col,txt)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;"><div class="sans" style="width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.75);">?</div><div style="width:100%;height:${h}px;border-radius:14px 14px 0 0;background:${col};display:flex;align-items:flex-start;justify-content:center;padding-top:12px;box-shadow:0 -10px 30px rgba(0,0,0,.25);"><span class="sans" style="font-size:40px;font-weight:800;color:${txt};line-height:1;letter-spacing:-2px;">${n}</span></div></div>`;
   slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${DONEM==='hafta'?d.ayAdi:d.ayAdi+' Ayı'}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">${DONEM==='hafta'?'Haftalık<br>Sıralama':'Performans<br>Sıralaması'}</h1>
-<p class="sans" style="font-size:13px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">${DONEM==='hafta'?'Bu haftanın aktivite, istikrar ve hedef puanlarıyla haftanın ilk üçü.':'Aylık aktivite, istikrar ve hedef puanlarıyla ayın ilk üçü.'}</p></div>
-<div style="position:absolute;left:32px;right:32px;bottom:64px;display:flex;align-items:flex-end;gap:8px;">${pod(2,110,'rgba(5,10,48,.55)','rgba(255,255,255,.85)')}${pod(1,160,NAVY,CORAL)}${pod(3,84,'rgba(5,10,48,.45)','rgba(255,255,255,.85)')}</div>
-<div style="position:absolute;left:32px;right:32px;bottom:60px;height:4px;background:rgba(5,10,48,.7);border-radius:2px;"></div>
-<div class="sans" style="position:absolute;left:32px;bottom:30px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">${DONEM==='hafta'?'Bu haftanın aktivite, istikrar ve hedef puanlarıyla haftanın ilk üçü.':'Aylık aktivite, istikrar ve hedef puanlarıyla ayın ilk üçü.'}</p></div>
+<div style="position:absolute;left:32px;right:32px;bottom:${STORY?110:64}px;display:flex;align-items:flex-end;gap:8px;">${pod(2,STORY?170:110,'rgba(5,10,48,.55)','rgba(255,255,255,.85)')}${pod(1,STORY?240:160,NAVY,CORAL)}${pod(3,STORY?130:84,'rgba(5,10,48,.45)','rgba(255,255,255,.85)')}</div>
+<div style="position:absolute;left:32px;right:32px;bottom:${STORY?106:60}px;height:4px;background:rgba(5,10,48,.7);border-radius:2px;"></div>
+<div class="sans" style="position:absolute;left:32px;bottom:${STORY?60:30}px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
   s.filter(r=>r._rank<=3).forEach((r,i)=>slides.push(podium(r._rank,r,i%2===1)));
-  const rows=s.map((r,i)=>{const t=(r._rank||i+1)<=3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${s.length>7?3:6}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+  const rows=s.map((r,i)=>{const t=(r._rank||i+1)<=3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${STORY?(s.length>7?8:12):(s.length>7?3:6)}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
 <span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${r._rank||i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
 <div style="flex:1;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span class="sans" style="font-size:13px;font-weight:${t?700:500};color:#fff;">${r.name}</span><span class="sans" style="font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.6)'};">${r.puan}</span></div>
 <div style="height:3px;background:rgba(255,255,255,.1);border-radius:2px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:2px;"></div></div></div></div>`}).join('');
@@ -260,7 +264,7 @@ async function render(d){
   st.textContent=`${d.ayAdi} ${d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
-  if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;}
+  if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;const sb2=document.getElementById('storybtn');sb2.style.display='inline-block';sb2.disabled=false;}
   const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
   const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false;
 }
@@ -379,7 +383,7 @@ async function karnePaylas(dl){
 }
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
-  const c=await html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false});
+  const c=await html2canvas(el,{scale:1080/420,width:420,height:SH,backgroundColor:null,useCORS:true,logging:false});
   return new Promise(r=>c.toBlob(r,'image/png'));
 }
 async function downloadOne(i){const b=await renderPng(i);saveBlob(b,`${DATA.ay}_${SET}_slide_${i+1}.png`);}
@@ -393,6 +397,28 @@ function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createO
 document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':(DONEM==='hafta'?'Haftalık Sıralama — Görseller':'Performans Sıralaması — Görseller');
 fillMonths(); load();
 
+
+async function storyYayinla(){
+  const st=document.getElementById('status'),btn=document.getElementById('storybtn');
+  const n=document.querySelectorAll('.slide').length;
+  if(!confirm(n+" slayt SIRAYLA story olarak @remaxdogus'ta yayınlanacak. Onaylıyor musun?"))return;
+  btn.disabled=true;
+  try{
+    const images=[];
+    for(let i=0;i<n;i++){st.textContent=`Görsel hazırlanıyor ${i+1}/${n}…`;
+      const c=await html2canvas(document.querySelectorAll('.slide')[i],{scale:1080/420,width:420,height:SH,backgroundColor:null,useCORS:true,logging:false});
+      const du=await new Promise(r=>c.toBlob(b=>{const rd=new FileReader();rd.onload=()=>r(rd.result);rd.readAsDataURL(b);},'image/jpeg',0.95));
+      images.push(du.split(',')[1]);}
+    st.textContent='📤 Story\'ler yükleniyor ve yayınlanıyor (2-4 dk)…';
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
+      body:JSON.stringify({action:'storyYayinla',ay:DATA.ay,images,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})});
+    const r=await resp.json();
+    if(r.success){st.textContent='✅ '+r.count+' story sırayla yayınlandı!';}
+    else if(r.retry){st.textContent='Görseller yüklendi, site yayını bekleniyor — 2 dk sonra tuşa tekrar bas, kaldığı yerden yayınlar.';}
+    else throw new Error(r.error||'bilinmeyen');
+  }catch(e){st.textContent='Story hata: '+e.message;}
+  finally{btn.disabled=false;}
+}
 // ==== INSTAGRAM API CAROUSEL GÖNDERME ====
 async function instagramaGonder(testMode){
   const btn=document.getElementById('igapibtn'), st=document.getElementById('status');
@@ -406,7 +432,7 @@ async function instagramaGonder(testMode){
     for(let i=0;i<n;i++){
       st.textContent=`Görsel hazırlanıyor ${i+1}/${n}…`;
       const el=document.querySelectorAll('.slide')[i];
-      const c=await html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false});
+      const c=await html2canvas(el,{scale:1080/420,width:420,height:SH,backgroundColor:null,useCORS:true,logging:false});
       const dataUrl=await new Promise(r=>c.toBlob(b=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(b);},'image/jpeg',0.95));
       images.push(dataUrl.split(',')[1]);
     }
@@ -456,7 +482,7 @@ function openPreview(){
   document.getElementById('status').textContent='Onizleme hazirlaniyor...';
   var loaded=0;
   slides.forEach(function(el,i){
-    html2canvas(el,{scale:1080/420,width:420,height:560,backgroundColor:null,useCORS:true,logging:false}).then(function(c){
+    html2canvas(el,{scale:1080/420,width:420,height:SH,backgroundColor:null,useCORS:true,logging:false}).then(function(c){
       var img=document.createElement('img');
       img.src=c.toDataURL('image/jpeg',0.95);
       img.style.cssText='min-width:100%;height:100%;object-fit:cover;flex-shrink:0;';
