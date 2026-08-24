@@ -196,16 +196,16 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 
 
 // ==== ELLE DÜZENLEME ====
-let OVR={p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};
+let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};
 function buildPanel(){
   const opts=(sel)=>'<option value="">— otomatik —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'));
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
-function readPanel(){['p1','p2','p3','ciro','islem','sosyal'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
+function readPanel(){['p1','p2','p3','ciro','islem','sosyal'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
 function applyOvr(){readPanel();render(applyOverrides(DATA));}
-function resetOvr(){OVR={p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};buildPanel();render(DATA);}
+function resetOvr(){OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};buildPanel();render(DATA);}
 function applyOverrides(d){
   const base=d.siralama.map(r=>JSON.parse(JSON.stringify(r)));
   const byId=id=>base.find(r=>r.id===id);
@@ -272,6 +272,67 @@ async function shareAll(){
   try{await navigator.share({files,title:`${DATA.ayAdi} ${DATA.yil} · RE/MAX Doğuş`});st.textContent='Paylaşım menüsü açıldı → Instagram\'ı seç.';}catch(e){st.textContent='Paylaşım iptal edildi.';}
 }
 
+
+const SOZLER=[
+["Başarı, her gün tekrarlanan küçük çabaların toplamıdır.","Robert Collier"],
+["Bir işi yapmanın en iyi zamanı yirmi yıl önceydi. İkinci en iyi zaman şimdi.","Çin atasözü"],
+["Yapabileceğine inanırsan yolun yarısını gitmişsindir.","Theodore Roosevelt"],
+["Zafer, 'zafer benimdir' diyebilenindir.","Mustafa Kemal Atatürk"],
+["Fırsatlar iş kıyafeti giyer ve çalışmaya benzer; bu yüzden çoğu insan onları tanımaz.","Thomas Edison"],
+["Ya bir yol bul, ya bir yol aç, ya da yoldan çekil.","Sakıp Sabancı"],
+["Attığın her şutu kaçırmazsın ama atmadığın her şutu kaçırırsın.","Wayne Gretzky"],
+["Küçük işleri özenle yapan, büyük işlerin de üstesinden gelir.","Konfüçyüs"],
+["Motivasyon seni başlatır, alışkanlık devam ettirir.","Jim Ryun"],
+["Kaybetmekten korkan, kazanmayı hiç öğrenemez.","Michael Jordan"],
+["Ne kadar çok çalışırsam o kadar şanslı oluyorum.","Samuel Goldwyn"],
+["Dünle beraber gitti cancağızım, ne kadar söz varsa düne ait. Şimdi yeni şeyler söylemek lazım.","Mevlânâ"],
+["Kalite asla tesadüf değildir; her zaman akıllı bir çabanın sonucudur.","John Ruskin"],
+["Müşteri deneyimi, en güçlü reklamdır.","Jeff Bezos"],
+["Disiplin, hedefler ile başarı arasındaki köprüdür.","Jim Rohn"],
+["Çalışmadan, yorulmadan, üretmeden rahat yaşamak isteyen milletler, önce haysiyetlerini kaybederler.","Mustafa Kemal Atatürk"],
+["Bugün yapabileceklerini yarına bırakma.","Benjamin Franklin"],
+["En büyük risk, hiç risk almamaktır.","Mark Zuckerberg"],
+["İnsanlar ne söylediğini unutur, onlara nasıl hissettirdiğini asla.","Maya Angelou"],
+["Başarının sırrı, sıradan işleri olağanüstü iyi yapmaktır.","John D. Rockefeller"],
+["Rüzgârın yönünü değiştiremezsin ama yelkenlerini ayarlayabilirsin.","Aristoteles"],
+["Damlaya damlaya göl olur.","Türk atasözü"],
+["Vazgeçmeyi düşündüğün an, neden bu kadar dayandığını hatırla.","Anonim"],
+["Başarı son değil, başarısızlık ölümcül değil; devam etme cesaretidir önemli olan.","Winston Churchill"],
+["Her sabah iki seçenekle uyanırsın: uyumaya devam et ya da kalk ve hayallerinin peşinden git.","Anonim"],
+["İyi bir itibar kazanmak yirmi yıl, kaybetmek beş dakika sürer.","Warren Buffett"],
+["Emek olmadan yemek olmaz.","Türk atasözü"],
+["Hedefi olmayan gemiye hiçbir rüzgâr yardım edemez.","Montaigne"],
+["Bir mum diğer mumu tutuşturmakla ışığından bir şey kaybetmez.","Mevlânâ"],
+["Şampiyonlar salonlarda değil, kimse izlemezken yapılan antrenmanlarda yaratılır.","Muhammed Ali"],
+["Ertelemek, kolay işleri zor, zor işleri imkânsız yapar.","George Lorimer"],
+["Satış bittiğinde değil, müşteri mutlu olduğunda tamamlanır.","Anonim"],
+["Ağaç dikmenin en iyi zamanı budur; gölgesinde oturacakların kim olduğunu düşün.","Anonim"],
+["İstikrar, yeteneği yener.","Anonim"],
+["Küçük adımlar, doğru yönde atıldıkça büyük yolculuklara dönüşür.","Lao Tzu"],
+["Fırtınanın geçmesini bekleme; yağmurda yürümeyi öğren.","Vivian Greene"],
+["Bir hedef, süresi belirlenmiş bir hayaldir.","Napoleon Hill"],
+["Yarını bugünden kazanırsın.","Anonim"],
+["Cesaret, korkuya rağmen harekete geçmektir.","Nelson Mandela"],
+["En verimli yatırım, kendine yaptığındır.","Benjamin Franklin"],
+["Denemekten vazgeçmediğin sürece kaybetmiş sayılmazsın.","Mike Ditka"],
+["Mükemmellik bir eylem değil, alışkanlıktır.","Aristoteles"],
+["Sabır acıdır ama meyvesi tatlıdır.","Jean-Jacques Rousseau"],
+["Bir ekibin gücü, her üyesidir; her üyenin gücü, ekiptir.","Phil Jackson"],
+["Kervan yolda düzülür.","Türk atasözü"],
+["Hayatta en hakiki mürşit ilimdir.","Mustafa Kemal Atatürk"],
+["Kazanmak her şey değildir ama kazanmayı istemek her şeydir.","Vince Lombardi"],
+["Zor yollar, güzel yerlere çıkar.","Anonim"],
+["Herkes dünyayı değiştirmeyi düşünür, kimse kendini değiştirmeyi düşünmez.","Lev Tolstoy"],
+["Önce biz alışkanlıklarımızı yaparız, sonra alışkanlıklarımız bizi.","John Dryden"],
+["Gördüğün her başarı, bir zamanlar verilmiş cesur bir karardır.","Peter Drucker"],
+["Bir yıl sonra, bugün başlamış olmayı dileyeceksin.","Karen Lamb"]];
+function haftaSozu(d){
+  if(OVR.soz&&OVR.soz.trim())return [OVR.soz.trim(),OVR.sozKim&&OVR.sozKim.trim()?OVR.sozKim.trim():''];
+  const t=new Date(d.ay+"T12:00:00");
+  const onejan=new Date(t.getFullYear(),0,1);
+  const wk=Math.ceil((((t-onejan)/86400000)+onejan.getDay()+1)/7);
+  return SOZLER[(t.getFullYear()*52+wk)%SOZLER.length];
+}
 // ==== WHATSAPP KARNESİ (tek görsel, 1080x1320) ====
 function karneHtml(d){
   const s=d.siralama, mx=Math.max(1,s[0].puan), medals=['🥇','🥈','🥉'];
@@ -285,7 +346,8 @@ function karneHtml(d){
 <span class="sans" style="font-size:22px;font-weight:800;color:${t?CORAL:'rgba(255,255,255,.7)'};letter-spacing:-1px;">${r.puan}<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,.45);"> p</span></span></div>`}).join('');
   const tk=s.reduce((a,x)=>a+(x.kapanis||0),0),tg=s.reduce((a,x)=>a+((x.counts||{}).gosterim||0),0),ts=s.reduce((a,x)=>a+((x.counts||{}).sosyal_medya||0),0);
   const aktif=s.slice().sort((a,b)=>(b.aktifGun||0)-(a.aktifGun||0))[0];
-  const H=140+ s.length*(rowH)+70;
+  const soz=haftaSozu(d);
+  const H=140+ s.length*(rowH)+70+58;
   return {h:H,html:`<div id="karne" style="width:540px;height:${H}px;position:relative;overflow:hidden;background:${NAVY};font-family:'Plus Jakarta Sans',sans-serif;">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 100% 0%,rgba(220,28,46,.5),transparent 55%);"></div>
 <div class="sans" style="position:absolute;bottom:-90px;right:-20px;font-size:320px;font-weight:800;line-height:1;color:rgba(255,255,255,.04);letter-spacing:-14px;">D</div>
@@ -294,6 +356,11 @@ function karneHtml(d){
 <div style="text-align:right;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:14px;font-weight:700;padding:6px 14px;border-radius:18px;">${d.ayAdi}</div>
 <div class="sans" style="font-size:11px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.65);margin-top:6px;">HAFTALIK KARNE</div></div></div>
 <div style="position:absolute;left:24px;right:24px;top:92px;display:flex;flex-direction:column;gap:6px;">${rows}</div>
+<div class="sans" style="position:absolute;left:36px;right:36px;bottom:56px;text-align:center;">
+<div style="height:1px;background:rgba(255,255,255,.12);margin-bottom:12px;"></div>
+<div class="sans" style="font-size:14px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.45;">“${soz[0]}”</div>
+${soz[1]?`<div class="sans" style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:${CORAL};margin-top:5px;">— ${soz[1].toUpperCase()}</div>`:''}
+</div>
 <div class="sans" style="position:absolute;left:24px;right:24px;bottom:14px;display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,.6);flex-wrap:wrap;">
 <span>🤝 <b style="color:#fff;">${tk}</b> kapanış</span><span>🏠 <b style="color:#fff;">${tg}</b> gösterim</span><span>📱 <b style="color:#fff;">${ts}</b> içerik</span>${aktif&&aktif.aktifGun?`<span>🔥 En aktif: <b style="color:#fff;">${aktif.name.split(' ')[0]}</b></span>`:''}</div>
 </div>`};
