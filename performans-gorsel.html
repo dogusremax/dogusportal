@@ -68,7 +68,8 @@ const NAVY="#050A30", RED="#DC1C2E", REDD="#910B19", CORAL="#FB5160", LB="#F6F3F
 const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
 const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 let DATA=null, TOTAL=6;
-const SET=(new URLSearchParams(location.search).get('set')||'puan'); // 'puan' | 'birinci'
+const SET=(new URLSearchParams(location.search).get('set')||'puan');
+const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' | 'hafta' // 'puan' | 'birinci'
 
 const photo=id=>`assets/ekip/${id}.png`;
 const cut=(id,h,w)=>`<div style="width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" onerror="this.style.visibility='hidden'"></div>`;
@@ -134,8 +135,8 @@ function catAny(ws,label,val,sub,red){return ws.length===1?catSlide(ws[0],label,
 function ctaSlide(d){
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
-<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">Bu ay<br>podyumda<br>kim olacak?</h2>
-<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">Her ay yeni sıralama. Sürpriz hediyeler.<br>Kazanan bir ekibin parçası olmak istiyorsan bize yaz.</p>
+<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">${DONEM==='hafta'?'Bu hafta':'Bu ay'}<br>podyumda<br>kim olacak?</h2>
+<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">${DONEM==='hafta'?'Her hafta yeni sıralama.':'Her ay yeni sıralama. Sürpriz hediyeler.'}<br>Kazanan bir ekibin parçası olmak istiyorsan bize yaz.</p>
 <div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Ekibimize katıl →</div></div>
 <p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`;
 }
@@ -174,8 +175,8 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
   // kapak: tanıtım (fotoğrafsız, isimsiz) — podyum grafiği
   const pod=(n,h,col,txt)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;"><div class="sans" style="width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.75);">?</div><div style="width:100%;height:${h}px;border-radius:14px 14px 0 0;background:${col};display:flex;align-items:flex-start;justify-content:center;padding-top:12px;box-shadow:0 -10px 30px rgba(0,0,0,.25);"><span class="sans" style="font-size:40px;font-weight:800;color:${txt};line-height:1;letter-spacing:-2px;">${n}</span></div></div>`;
   slides.push(`<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Performans<br>Sıralaması</h1>
-<p class="sans" style="font-size:13px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">Aktivite, istikrar, hedef ve kapanış puanlarıyla ayın ilk üçü.</p></div>
+<div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${DONEM==='hafta'?d.ayAdi:d.ayAdi+' Ayı'}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">${DONEM==='hafta'?'Haftalık<br>Sıralama':'Performans<br>Sıralaması'}</h1>
+<p class="sans" style="font-size:13px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">Aktivite, istikrar, hedef ve kapanış puanlarıyla ${DONEM==='hafta'?'haftanın':'ayın'} ilk üçü.</p></div>
 <div style="position:absolute;left:32px;right:32px;bottom:64px;display:flex;align-items:flex-end;gap:8px;">${pod(2,110,'rgba(5,10,48,.55)','rgba(255,255,255,.85)')}${pod(1,160,NAVY,CORAL)}${pod(3,84,'rgba(5,10,48,.45)','rgba(255,255,255,.85)')}</div>
 <div style="position:absolute;left:32px;right:32px;bottom:60px;height:4px;background:rgba(5,10,48,.7);border-radius:2px;"></div>
 <div class="sans" style="position:absolute;left:32px;bottom:30px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -226,6 +227,12 @@ function applyOverrides(d){
 }
 function fillMonths(){
   const sel=document.getElementById('ay'),now=new Date();
+  if(DONEM==='hafta'){
+    const tr=new Date(now); const dow=(tr.getDay()+6)%7;
+    for(let i=1;i<=10;i++){const st=new Date(tr); st.setDate(tr.getDate()-dow-7*i); const en=new Date(st); en.setDate(st.getDate()+6);
+      const v=st.getFullYear()+'-'+String(st.getMonth()+1).padStart(2,'0')+'-'+String(st.getDate()).padStart(2,'0');
+      const o=document.createElement('option');o.value=v;o.textContent=st.getDate()+' '+MONTHS[st.getMonth()].slice(0,3)+' – '+en.getDate()+' '+MONTHS[en.getMonth()].slice(0,3);sel.appendChild(o);}
+  } else
   for(let i=1;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=MONTHS[d.getMonth()]+' '+d.getFullYear();sel.appendChild(o);}
   const q=new URLSearchParams(location.search).get('ay'); if(q)sel.value=q;
   sel.onchange=load;
@@ -235,7 +242,7 @@ async function load(){
   const ay=document.getElementById('ay').value, st=document.getElementById('status'), grid=document.getElementById('grid');
   st.textContent='Danışman Takip\'ten veri çekiliyor…'; grid.innerHTML=''; document.getElementById('zipbtn').disabled=true; document.body.removeAttribute('data-ready');
   try{
-    const res=await fetch(`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
+    const res=await fetch(DONEM==='hafta'?`${APPS_SCRIPT_URL}?action=haftalik&hafta=${ay}&k=${KEY}`:`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
     if(DATA.error)throw new Error(DATA.error);
     if(!DATA.hasData){st.textContent=`${DATA.ayAdi} ${DATA.yil} için kayıt bulunamadı.`;return;}
     buildPanel();
@@ -275,7 +282,7 @@ async function downloadAll(){
 }
 function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
 
-document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':'Performans Sıralaması — Görseller';
+document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':(DONEM==='hafta'?'Haftalık Sıralama — Görseller':'Performans Sıralaması — Görseller');
 fillMonths(); load();
 
 // ==== INSTAGRAM API CAROUSEL GÖNDERME ====
