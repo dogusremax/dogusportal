@@ -415,7 +415,7 @@ async function renderMonth(){
 // Her olası başlangıç için ayı simüle eder; geçen ay + bu ay toplamı en dengeli olanı seçer.
 // Önceki ayın son kişisiyle ilk gün aynı olamaz.
 function simulate(act,s){ const n=act.length, days=lastDay().getDate(), c={}; act.forEach(t=>c[t.name]=0);
-  for(let i=0;i<days;i++) c[act[(s+i)%n].name]++; return c; }
+  for(let i=0;i<days;i++) c[act[(s+i+Math.floor(i/(n+1)))%n].name]++; return c; }
 function pickStart(){
   const act=activeTeam(); if(act.length<3) return null;
   let best=null, bestScore=Infinity;
@@ -439,7 +439,7 @@ function buildPlan(){
   const n=act.length, days=lastDay().getDate(); plan=[];
   for(let i=0;i<days;i++){
     const d=new Date(cur.getFullYear(),cur.getMonth(),i+1);
-    plan.push({date:ymd(d), name:act[(s+i)%n].name});
+    plan.push({date:ymd(d), name:act[(s+i+Math.floor(i/(n+1)))%n].name});
   }
   renderPlan(); setStatus(`${days} gün planlandı. Satırları elle değiştirebilirsin.`,"ok");
   previewCal();
