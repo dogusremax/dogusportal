@@ -419,16 +419,10 @@ function simulate(act,s){ const n=act.length, days=lastDay().getDate(), c={}; ac
   for(let i=0;i<days;i++) c[act[(s+i)%n].name]++; return c; }
 function pickStart(){
   const act=activeTeam(); if(act.length<3) return null;
-  let best=null, bestScore=Infinity;
-  for(let s=0;s<act.length;s++){
-    if(lastDuty && act[s].name===lastDuty.name) continue;
-    const c=simulate(act,s);
-    const tot=act.map(t=>(prevCounts[t.name]||0)+c[t.name]);
-    const mean=tot.reduce((a,b)=>a+b,0)/tot.length;
-    const score=tot.reduce((a,b)=>a+(b-mean)**2,0);
-    if(score<bestScore-1e-9){ bestScore=score; best=act[s].name; }
-  }
-  return best;
+  if(!lastDuty) return act[0].name;
+  const idx=act.findIndex(t=>t.name===lastDuty.name);
+  if(idx<0) return act[0].name;
+  return act[(idx+1)%act.length].name;
 }
 
 /* ---- plan ---- */
