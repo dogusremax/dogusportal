@@ -280,7 +280,7 @@ $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
 async function login(){
   pin=$("pin").value.trim(); $("pinMsg").textContent="";
   try{
-    const t=await api({action:"team_get"}); TEAM=t.team; TEAM.sort((a,b)=>{if(a.name==="Ofis")return 1;if(b.name==="Ofis")return -1;return a.name.localeCompare(b.name,"tr");});
+    const t=await api({action:"team_get"}); TEAM=t.team; TEAM.sort((a,b)=>{if(a.name==="Ofis")return 1;if(b.name==="Ofis")return -1;return a.name.localeCompare(b.name,"tr");}); try{await api({action:"team_set",team:TEAM});}catch(e){}
     sessionStorage.setItem("nobet_pin",pin);
     $("pinCard").classList.add("hide"); $("app").classList.remove("hide");
     renderPeople(); renderMonth();
