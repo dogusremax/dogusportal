@@ -135,8 +135,8 @@ function catAny(ws,label,val,sub,red){return ws.length===1?catSlide(ws[0],label,
 function ctaSlide(d){
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
-<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">${DONEM==='hafta'?'Bu hafta':'Bu ay'}<br>podyumda<br>kim olacak?</h2>
-<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">${DONEM==='hafta'?'Her hafta yeni sıralama.':'Her ay yeni sıralama. Sürpriz hediyeler.'}<br>Kazanan bir ekibin parçası olmak istiyorsan bize yaz.</p>
+<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">${DONEM==='hafta'?'Önümüzdeki hafta':'Bu ay'}<br>podyumda<br>kim olacak?</h2>
+<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">${DONEM==='hafta'?'Her hafta yeni sıralama. Sürpriz hediyeler.':'Her ay yeni sıralama. Sürpriz hediyeler.'}<br>${DONEM==='hafta'?'Sen de kazanan bir ekibin parçası olmak istersen bize WhatsApp hattımızdan ulaş.':'Kazanan bir ekibin parçası olmak istiyorsan bize yaz.'}</p>
 <div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Ekibimize katıl →</div></div>
 <p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`;
 }
