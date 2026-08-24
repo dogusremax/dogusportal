@@ -83,7 +83,7 @@ const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;
 const nameTag=(r,n,big)=>`<div class="sans" style="display:flex;align-items:center;gap:6px;padding:${big?'7px 12px':'5px 10px'};background:rgba(5,10,48,.88);border:1px solid rgba(255,255,255,.14);border-radius:20px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);"><span style="width:${big?20:17}px;height:${big?20:17}px;border-radius:50%;background:${CORAL};color:#fff;font-size:${big?11:10}px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">${n}</span><span style="font-size:${big?12:10.5}px;font-weight:700;color:#fff;">${r.name}</span></div>`;
 function pillsFor(r){
   const c=r.counts||{}, p=[`${r.aktifGun} aktif gün`];
-  const cand=[[c.gosterim,'gösterim'],[c.yetki,'yetki'],[(c.sunum1||0)+(c.sunum2||0),'sunum'],[c.sosyal_medya,'içerik'],[c.egitim,'eğitim'],[c.kapora,'kapora'],[c.fzbo,'FZBO araması'],[c.etki,'etki araması'],[c.brosur,'broşür']];
+  const cand=[[c.gosterim,'gösterim'],[c.yetki,'yetki'],[(c.sunum1||0)+(c.sunum2||0),'sunum'],[c.sosyal_medya,'içerik'],[c.egitim,'eğitim'],[c.fzbo,'FZBO araması'],[c.etki,'etki araması'],[c.brosur,'broşür']];
   cand.sort((a,b)=>(b[0]||0)-(a[0]||0));
   for(const [v,l] of cand){if(p.length>=3)break;if(v>0)p.push(`${v} ${l}`);}
   if(p.length<3&&r.hedefBonus>0)p.push(`Hedef bonusu +${r.hedefBonus}`);
