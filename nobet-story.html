@@ -87,7 +87,7 @@ async function load(){
       const r=await fetch(NOBET_API+"?action=today");const d=await r.json();
       if(!d.ok)throw new Error(d.error||'hata');
       name=d.name;date=d.date;
-      if(!name){st.textContent=d.date+' için nöbetçi kaydı yok.';story.innerHTML='';document.body.setAttribute('data-ready','1');document.body.setAttribute('data-empty','1');return;}
+      if(!name||name==='Ofis'){st.textContent=d.date+(name==='Ofis'?' · Ofis günü (nöbetçi yok)':' için nöbetçi kaydı yok.');story.innerHTML='';document.body.setAttribute('data-ready','1');document.body.setAttribute('data-empty','1');return;}
       st.textContent=d.date+' · Nöbetçi: '+name+(FOTO[norm(name)]?'':' (fotoğraf yok, baş harf gösteriliyor)');
     }
     CUR={name,date};
