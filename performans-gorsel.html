@@ -347,7 +347,7 @@ function karneHtml(d){
   const tk=s.reduce((a,x)=>a+(x.kapanis||0),0),tg=s.reduce((a,x)=>a+((x.counts||{}).gosterim||0),0),ts=s.reduce((a,x)=>a+((x.counts||{}).sosyal_medya||0),0);
   const aktif=s.slice().sort((a,b)=>(b.aktifGun||0)-(a.aktifGun||0))[0];
   const soz=haftaSozu(d);
-  const H=140+ s.length*(rowH)+70+58;
+  const H=100+ s.length*(n>8?62:72)+150;
   return {h:H,html:`<div id="karne" style="width:540px;height:${H}px;position:relative;overflow:hidden;background:${NAVY};font-family:'Plus Jakarta Sans',sans-serif;">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 100% 0%,rgba(220,28,46,.5),transparent 55%);"></div>
 <div class="sans" style="position:absolute;bottom:-90px;right:-20px;font-size:320px;font-weight:800;line-height:1;color:rgba(255,255,255,.04);letter-spacing:-14px;">D</div>
