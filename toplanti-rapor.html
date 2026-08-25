@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Birebir Toplantı Raporu — RE/MAX Doğuş</title>
+<title>Performansım — RE/MAX Doğuş</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10;color:#e4e4e7;min-height:100vh}
@@ -79,7 +79,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 </head>
 <body>
 <div class="login" id="loginScreen">
-<h2>🔒 Giriş</h2>
+<h2>🔒 Performansım</h2>
 <input type="password" id="pin" placeholder="PIN" maxlength="4">
 <button onclick="doLogin()">Giriş</button>
 <p id="loginErr" style="color:#ef4444;font-size:13px"></p>
@@ -100,7 +100,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 <script>
 const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
-function logLogin(d){try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Toplantı Raporu");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}}
+function logLogin(d){try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}}
 const KEY="dogus-performans";
 const ACTS=[
 {id:"fzbo",label:"FZBO Araması",wt:15},{id:"etki",label:"Etki Çevresi",wt:10},
@@ -376,7 +376,7 @@ function showSayac(){
   box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Yükleniyor...</div>';
   document.getElementById("sayacOverlay").style.display="block";
   fetch(KAPANIS_API+"?action=getLoginLogs",{redirect:"follow"}).then(function(r){return r.json();}).then(function(data){
-    var logs=(data.logs||data.records||data||[]).filter(function(l){return (l.uygulama||"")==="Toplantı Raporu";});
+    var logs=(data.logs||data.records||data||[]).filter(function(l){return (l.uygulama||"")==="Performansım";});
     if(!logs.length){box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Henüz giriş kaydı yok</div>';return;}
     // Group by person
     var grouped={};
@@ -388,7 +388,7 @@ function showSayac(){
       if(t>grouped[n].last)grouped[n].last=t;
     });
     var sorted=Object.keys(grouped).sort(function(a,b){return grouped[b].count-grouped[a].count;});
-    var h='<h3>📊 Giriş Sayacı — Toplantı Raporu <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3>';
+    var h='<h3>📊 Giriş Sayacı — Performansım <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3>';
     h+='<div style="color:#888;font-size:11px;margin-bottom:12px">Toplam '+logs.length+' giriş</div>';
     sorted.forEach(function(name){
       var g=grouped[name];
