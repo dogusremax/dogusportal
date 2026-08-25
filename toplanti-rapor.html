@@ -70,8 +70,8 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 </head>
 <body>
 <div class="login" id="loginScreen">
-<h2>🔒 Broker Girişi</h2>
-<input type="password" id="pin" placeholder="Broker PIN" maxlength="4">
+<h2>🔒 Giriş</h2>
+<input type="password" id="pin" placeholder="PIN" maxlength="4">
 <button onclick="doLogin()">Giriş</button>
 <p id="loginErr" style="color:#ef4444;font-size:13px"></p>
 </div>
@@ -111,14 +111,28 @@ ozlem_varol:"https://lh3.googleusercontent.com/d/1ZcDqNhYVBJlARSUk46APolmWsyZLMe
 aysun:"https://lh3.googleusercontent.com/d/1qCW-9vQSnRgSNrqcUn_xIeuYP7oM2Wp9=w400"
 };
 const MN=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
-let DATA=null,ALL_DATA=[],PERIOD=1,AYLIK_CACHE={},KAPANIS_CACHE=null;
+let DATA=null,ALL_DATA=[],PERIOD=1,AYLIK_CACHE={},KAPANIS_CACHE=null,LOGGED_USER=null;
+var PINS={
+"1520":"broker",
+"1001":"aysegul_alpay",
+"1002":"evsen",
+"1003":"gamze",
+"1004":"gizem",
+"1005":"irem",
+"1006":"orhan",
+"1007":"ozlem_varol",
+"1008":"aysun"
+};
 
 function doLogin(){
-  if(document.getElementById("pin").value==="1520"){
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-    loadData();
-  }else{document.getElementById("loginErr").textContent="Hatalı PIN";}
+  var pin=document.getElementById("pin").value;
+  var user=PINS[pin];
+  if(!user){document.getElementById("loginErr").textContent="Hatalı PIN";return;}
+  LOGGED_USER=user;
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  if(user!=="broker") document.getElementById("consultantSel").style.display="none";
+  loadData();
 }
 document.getElementById("pin").addEventListener("keyup",function(e){if(e.key==="Enter")doLogin();});
 
@@ -174,7 +188,10 @@ async function loadData(){
     DATA.siralama.forEach(function(r){
       var o=document.createElement("option");o.value=r.id;o.textContent=r.name;cSel.appendChild(o);
     });
-    if(prev&&cSel.querySelector('[value="'+prev+'"]'))cSel.value=prev;
+    if(LOGGED_USER&&LOGGED_USER!=="broker"){
+      var match=DATA.siralama.find(function(r){return r.id===LOGGED_USER;});
+      if(match)cSel.value=match.id;
+    }else if(prev&&cSel.querySelector('[value="'+prev+'"]'))cSel.value=prev;
     render();
   }catch(e){document.getElementById("report").innerHTML='<div class="no-data">Hata: '+e.message+'</div>';}
 }
