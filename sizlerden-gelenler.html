@@ -123,16 +123,21 @@ function dl(){
 }
 
 async function sh(){
-  if(!cur)return;
+  if(!cur){alert('Önce danışman seç');return;}
+  if(!navigator.share){alert('Bu tarayıcı paylaşımı desteklemiyor. Safari kullanın.');return;}
   try{
     const dataUrl=cv.toDataURL('image/jpeg',0.9);
     const res=await fetch(dataUrl);
     const blob=await res.blob();
-    const file=new File([blob],'sizlerden_'+cur.n.replace(/\s+/g,'_')+'.jpg',{type:'image/jpeg'});
+    const file=new File([blob],'sizlerden.jpg',{type:'image/jpeg'});
+    if(navigator.canShare&&!navigator.canShare({files:[file]})){
+      alert('Dosya paylaşımı desteklenmiyor (boyut: '+Math.round(blob.size/1024)+'KB)');
+      return;
+    }
     await navigator.share({files:[file]});
   }catch(e){
     if(e.name==='AbortError')return;
-    dl();
+    alert('Hata: '+e.name+' — '+e.message);
   }
 }
 
