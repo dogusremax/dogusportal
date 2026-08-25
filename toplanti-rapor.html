@@ -133,37 +133,28 @@ async function loadData(){
   var months=getMonthKeys(PERIOD);
   document.getElementById("report").innerHTML='<div class="no-data">'+months.length+' aylık veri yükleniyor...</div>';
   try{
-    ALL_DATA=[];
-    for(var i=0;i<months.length;i++){
-      var resp=await fetch(API+"?action=aylik&ay="+months[i]+"&k="+KEY);
-      var d=await resp.json();
-      if(d.siralama) ALL_DATA.push(d);
-    }
+    // Tüm istekleri paralel at — hızlı yüklensin
+    var aylikPromises=months.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(function(r){return r.json();});});
+    var kapanisPromise=fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(function(r){return r.json();}).catch(function(){return null;});
+    var results=await Promise.all([Promise.all(aylikPromises),kapanisPromise]);
+    ALL_DATA=results[0].filter(function(d){return d.siralama;});
+    var kData=results[1];
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
     DATA=mergeData(ALL_DATA);
-    // Co-op kapanış eşitleme: Kapanış Formundaki co-op kayıtlarını da say
-    try{
-      var kResp=await fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"});
-      var kData=await kResp.json();
-      if(kData&&kData.records){
-        DATA.siralama.forEach(function(s){
-          var extra=0,extraCiro=0;
-          kData.records.forEach(function(r){
-            var adv=(r.advisor||"").trim();
-            var ref=String(r.ref||"");
-            // Sadece co-op partneri olarak yazılmış ama birincil danışman olmayan kayıtları ekle
-            if(adv!==s.name&&ref.indexOf("Co-op: "+s.name)>=0){
-              var dt=r.date||"";
-              if(months.some(function(m){return dt.startsWith(m);})){
-                extra++;
-                extraCiro+=Number(r.totalHB)||Number(r.amount)||0;
-              }
-            }
-          });
-          if(extra>0){s.kapanis+=extra;s.ciro+=extraCiro;}
+    if(kData&&kData.records){
+      DATA.siralama.forEach(function(s){
+        var extra=0,extraCiro=0;
+        kData.records.forEach(function(r){
+          var adv=(r.advisor||"").trim();
+          var ref=String(r.ref||"");
+          if(adv!==s.name&&ref.indexOf("Co-op: "+s.name)>=0){
+            var dt=r.date||"";
+            if(months.some(function(m){return dt.startsWith(m);})){extra++;extraCiro+=Number(r.totalHB)||Number(r.amount)||0;}
+          }
         });
-      }
-    }catch(e){}
+        if(extra>0){s.kapanis+=extra;s.ciro+=extraCiro;}
+      });
+    }
     var cSel=document.getElementById("consultantSel");
     var prev=cSel.value;
     cSel.innerHTML="";
