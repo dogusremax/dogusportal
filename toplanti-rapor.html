@@ -55,8 +55,17 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 .trend-bar .wlbl{position:absolute;bottom:-20px;width:100%;text-align:center;font-size:11px;color:#888}
 .insight{padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.5}
 .insight.good{background:#14532d;border-left:3px solid #22c55e;color:#86efac}
-.insight.warn{background:#422006;border-left:3px solid #f59e0b;color:#fcd34d}
-.insight.bad{background:#450a0a;border-left:3px solid #ef4444;color:#fca5a5}
+.insight.warn{background:#422006;border-left:3px solid #f59e0b;color:#fcd34d;cursor:pointer}
+.insight.bad{background:#450a0a;border-left:3px solid #ef4444;color:#fca5a5;cursor:pointer}
+.insight.warn::after,.insight.bad::after{content:" ▼";font-size:10px;opacity:.6}
+.insight.open::after{content:" ▲"!important}
+.roadmap{display:none;margin:0 0 12px 0;padding:14px 16px;border-radius:0 0 8px 8px;background:#1a1a2e;border:1px solid #333;font-size:12.5px;line-height:1.7;color:#ccc}
+.roadmap.show{display:block}
+.roadmap h4{margin:0 0 8px;font-size:13px;color:#fff}
+.roadmap .week{margin-bottom:10px;padding:8px 10px;background:#0f0f1e;border-radius:6px}
+.roadmap .week b{color:#60a5fa;font-size:12px}
+.roadmap ul{margin:4px 0 0 16px;padding:0}
+.roadmap ul li{margin-bottom:3px;color:#ddd}
 .no-data{color:#888;font-size:14px;text-align:center;padding:40px}
 </style>
 </head>
@@ -282,7 +291,28 @@ function render(){
   if((d.counts.sosyal_medya||0)<6*PERIOD)ins.push({t:"warn",m:"📱 Sosyal medya az ("+(d.counts.sosyal_medya||0)+"/"+(12*PERIOD)+"). Haftada 3+ paylaşım yap."});
   if(d.puan<avg)ins.push({t:"warn",m:"📊 Puanın takım ortalamasının ("+avg+") altında."});
   if(!ins.length)ins.push({t:"good",m:"Genel performans dengeli görünüyor."});
-  ins.forEach(function(i){h+='<div class="insight '+i.t+'">'+i.m+"</div>";});
+  var roadmaps={
+    aktifgun:'<h4>🗓️ Aktif Gün Artırma Planı</h4><div class="week"><b>Hafta 1-2: Alışkanlık Kur</b><ul><li>Her sabah 09:00'da uygulamayı aç, en az 1 aktivite gir</li><li>Telefonda ana ekrana ekle — göz önünde olsun</li><li>Günde 1 etki araması bile aktif gün sayar</li></ul></div><div class="week"><b>Hafta 3-4: Rutine Dönüştür</b><ul><li>Sabah: 3 FZBO arama + 2 etki</li><li>Öğlen: 1 gösterim veya sunum notu</li><li>Akşam: Sosyal medya paylaşımı</li><li>Hedef: Ayda 22+ aktif gün</li></ul></div>',
+    fzbo:'<h4>📞 FZBO Arama Taktikleri</h4><div class="week"><b>Hafta 1: Hazırlık</b><ul><li>Sahibinden/Hepsiemlak'tan bölgedeki sahipten ilanları listele</li><li>Günde 5 ilan not al: adres, fiyat, ilan tarihi</li><li>Arama scripti hazırla: "Merhaba, ilanınızı gördüm..."</li></ul></div><div class="week"><b>Hafta 2: Uygulama</b><ul><li>Her gün 09:30-11:00 arası arama bloğu — 10 arama hedefi</li><li>Ret gelirse not al, 2 hafta sonra tekrar ara</li><li>Sunum randevusu aldığında hemen sisteme gir</li></ul></div><div class="week"><b>Hafta 3-4: Takip</b><ul><li>"İlanınız hâlâ aktif mi?" diye geri dön</li><li>Değerleme teklif et — ücretsiz piyasa analizi</li><li>Haftalık hedef: 15 arama, 2 sunum randevusu</li></ul></div>',
+    gosterim:'<h4>🏠 Gösterim Artırma Planı</h4><div class="week"><b>Hafta 1: Portföy Kontrolü</b><ul><li>Mevcut yetkilerin listesini çıkar — hangisinde gösterim yapılmadı?</li><li>Fiyat güncellemesi gerekenleri belirle</li><li>Her yetki için en az 1 potansiyel alıcı eşleştir</li></ul></div><div class="week"><b>Hafta 2-4: Aksiyon</b><ul><li>Müşteri havuzundaki "ılık" kişilere gösterim teklif et</li><li>Haftada en az 2 gösterim planla — takvime yaz</li><li>Gösterim sonrası aynı gün not gir + müşteriye teşekkür mesajı</li><li>Her gösterimden sonra: "Başka ne görmek istersiniz?" sor</li></ul></div>',
+    sosyal:'<h4>📱 Sosyal Medya Haftalık Planı</h4><div class="week"><b>Pazartesi: Bilgi Paylaşımı</b><ul><li>Carousel post: "Ev alırken dikkat edilecek 5 şey" gibi</li><li>Kaydetmeye değer, bilgilendirici içerik</li></ul></div><div class="week"><b>Çarşamba: Portföy Tanıtımı</b><ul><li>Yeni yetki aldığın daireyi tanıt</li><li>3-4 fotoğraf + fiyat + konum + WhatsApp link</li></ul></div><div class="week"><b>Cuma: Reels / Video</b><ul><li>30 saniyelik bölge turu veya daire tanıtımı</li><li>Trend müzik + altyazı ekle</li><li>İlk 2 saniye dikkat çekici açılış</li></ul></div><div class="week"><b>Her gün: Story</b><ul><li>Sahada olduğunu göster — gösterim, toplantı, ofis</li><li>Anket / soru sticker'ı ile etkileşim topla</li></ul></div>',
+    puan:'<h4>📊 Puan Yükseltme Stratejisi</h4><div class="week"><b>Hızlı Kazanımlar (Bu Hafta)</b><ul><li>Sosyal medya: 3 paylaşım = 9 puan</li><li>5 etki araması = 50 puan</li><li>1 broşür dağıtımı = 5 puan</li></ul></div><div class="week"><b>Orta Vade (2-4 Hafta)</b><ul><li>FZBO aramaları artır — en yüksek puan kategorisi (15 puan/adet)</li><li>Her hafta en az 1 sunum al</li><li>İstikrar bonusu için her gün en az 1 aktivite gir</li></ul></div><div class="week"><b>Hedef</b><ul><li>Haftalık minimum: 5 FZBO + 10 etki + 2 sosyal medya + 1 gösterim</li><li>Bu formülle aylık ~200+ puan garanti</li></ul></div>'
+  };
+  var rid=0;
+  ins.forEach(function(i){
+    var key=null;
+    if(i.m.indexOf("Aktif gün")>=0)key="aktifgun";
+    else if(i.m.indexOf("FZBO")>=0)key="fzbo";
+    else if(i.m.indexOf("Gösterim")>=0)key="gosterim";
+    else if(i.m.indexOf("Sosyal medya")>=0||i.m.indexOf("sosyal medya")>=0)key="sosyal";
+    else if(i.m.indexOf("ortalaması")>=0)key="puan";
+    if(key&&roadmaps[key]){
+      h+='<div class="insight '+i.t+'" onclick="var r=document.getElementById(\'rm'+rid+'\');r.classList.toggle(\'show\');this.classList.toggle(\'open\')">'+i.m+'</div><div class="roadmap" id="rm'+rid+'">'+roadmaps[key]+'</div>';
+      rid++;
+    }else{
+      h+='<div class="insight '+i.t+'">'+i.m+'</div>';
+    }
+  });
   h+="</div>";
 
   document.getElementById("report").innerHTML=h;
