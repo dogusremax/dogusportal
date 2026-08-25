@@ -166,24 +166,11 @@ async function loadData(){
     ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
     DATA=mergeData(ALL_DATA);
-    // Kapanış verisini arka planda çek, gelince güncelle
-    var kData=KAPANIS_CACHE;
-    if(!kData){
+    // Kapanış verisi: varsa hemen uygula, yoksa arka planda çek
+    if(KAPANIS_CACHE){
+      applyKapanis(KAPANIS_CACHE,months);
+    }else{
       promises[1].then(function(d){if(d){KAPANIS_CACHE=d;applyKapanis(d,months);}});
-    }
-    if(kData&&kData.records){
-      DATA.siralama.forEach(function(s){
-        var extra=0,extraCiro=0;
-        kData.records.forEach(function(r){
-          var adv=(r.advisor||"").trim();
-          var ref=String(r.ref||"");
-          if(adv!==s.name&&ref.indexOf("Co-op: "+s.name)>=0){
-            var dt=r.date||"";
-            if(months.some(function(m){return dt.startsWith(m);})){extra++;extraCiro+=Number(r.totalHB)||Number(r.amount)||0;}
-          }
-        });
-        if(extra>0){s.kapanis+=extra;s.ciro+=extraCiro;}
-      });
     }
     var cSel=document.getElementById("consultantSel");
     var prev=cSel.value;
