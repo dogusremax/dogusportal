@@ -82,6 +82,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 </div>
 <script>
 const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
 const KEY="dogus-performans";
 const ACTS=[
 {id:"fzbo",label:"FZBO Araması",wt:15},{id:"etki",label:"Etki Çevresi",wt:10},
@@ -140,6 +141,29 @@ async function loadData(){
     }
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
     DATA=mergeData(ALL_DATA);
+    // Co-op kapanış eşitleme: Kapanış Formundaki co-op kayıtlarını da say
+    try{
+      var kResp=await fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"});
+      var kData=await kResp.json();
+      if(kData&&kData.records){
+        DATA.siralama.forEach(function(s){
+          var extra=0,extraCiro=0;
+          kData.records.forEach(function(r){
+            var adv=(r.advisor||"").trim();
+            var ref=String(r.ref||"");
+            // Sadece co-op partneri olarak yazılmış ama birincil danışman olmayan kayıtları ekle
+            if(adv!==s.name&&ref.indexOf("Co-op: "+s.name)>=0){
+              var dt=r.date||"";
+              if(months.some(function(m){return dt.startsWith(m);})){
+                extra++;
+                extraCiro+=Number(r.totalHB)||Number(r.amount)||0;
+              }
+            }
+          });
+          if(extra>0){s.kapanis+=extra;s.ciro+=extraCiro;}
+        });
+      }
+    }catch(e){}
     var cSel=document.getElementById("consultantSel");
     var prev=cSel.value;
     cSel.innerHTML="";
