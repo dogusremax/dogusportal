@@ -336,20 +336,22 @@ pu:'<h4>Puan Yukseltme Stratejisi</h4><div class="rm-week"><b>Hizli Kazanim</b><
 function applyKapanis(kData,months){
   if(!DATA||!kData||!kData.records)return;
   DATA.siralama.forEach(function(s){
-    var seen={},cnt=0,ciroSum=0;
+    var cnt=0,ciroSum=0,ppm={};
     kData.records.forEach(function(r){
-      var adv=(r.advisor||"").trim();
-      var ref=String(r.ref||"");
-      var isPrimary=adv===s.name;
-      var isCoop=ref.indexOf("Co-op: "+s.name)>=0;
-      if(!isPrimary&&!isCoop)return;
+      if((r.advisor||"").trim()!==s.name)return;
       var dt=r.date||"";
       if(!months.some(function(m){return dt.startsWith(m);}))return;
-      var key=(r.id||"")+"_"+(r.address||"").trim().substring(0,15).toLowerCase();
-      if(seen[key])return;
-      seen[key]=1;
-      cnt++;
-      ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
+      cnt++;ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
+      var ref=String(r.ref||""),cm=ref.match(/Co-op:\s*(.+)/);
+      if(cm)ppm[cm[1].trim()+"_"+dt.substring(0,7)]=1;
+    });
+    kData.records.forEach(function(r){
+      var adv=(r.advisor||"").trim(),ref=String(r.ref||"");
+      if(adv===s.name||ref.indexOf("Co-op: "+s.name)<0)return;
+      var dt=r.date||"";
+      if(!months.some(function(m){return dt.startsWith(m);}))return;
+      if(ppm[adv+"_"+dt.substring(0,7)])return;
+      cnt++;ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
     });
     if(cnt>0){s.kapanis=cnt;s.ciro=ciroSum;}
   });
