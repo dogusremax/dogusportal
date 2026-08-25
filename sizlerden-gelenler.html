@@ -158,6 +158,22 @@ async function shareImg(){
     },'image/png');
   }catch(e){download();}
 }
+
+function checkPin(e){
+  const v=document.getElementById('pinInput').value;
+  if(v.length===4){
+    if(v==='1520'){
+      document.getElementById('pinScreen').style.display='none';
+    }else{
+      document.getElementById('pinErr').style.opacity='1';
+      document.getElementById('pinInput').value='';
+      setTimeout(()=>document.getElementById('pinErr').style.opacity='0',1500);
+    }
+  }
+}
+if(new URLSearchParams(location.search).get('k')==='1520'){
+  document.getElementById('pinScreen').style.display='none';
+}
 </script>
 </body>
 </html>
