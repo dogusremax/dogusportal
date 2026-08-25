@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kira Kontratı Hazırlık Listesi — RE/MAX Doğuş</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0f1117;color:#e4e4e7;min-height:100vh;padding:20px}
+.container{max-width:600px;margin:0 auto}
+h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;text-align:center}
+.sub{text-align:center;font-size:13px;color:#888;margin-bottom:24px}
+.section{background:#1a1b23;border-radius:14px;padding:18px;margin-bottom:16px;border:1px solid #2a2b35}
+.section-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title .emoji{font-size:18px}
+.item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #222330}
+.item:last-child{border-bottom:none}
+.item input[type="checkbox"]{width:20px;height:20px;margin-top:2px;accent-color:#dc2743;cursor:pointer;flex-shrink:0}
+.item label{font-size:14px;color:#ccc;cursor:pointer;line-height:1.4}
+.item label span{display:block;font-size:12px;color:#777;margin-top:2px}
+.item.checked label{text-decoration:line-through;color:#555}
+.progress{background:#2a2b35;border-radius:10px;height:8px;margin-bottom:24px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#dc2743,#f09433);border-radius:10px;transition:width 0.3s}
+.progress-text{text-align:center;font-size:13px;color:#888;margin-bottom:8px}
+.reset-btn{display:block;margin:20px auto;padding:10px 24px;background:#2a2b35;color:#888;border:none;border-radius:10px;font-size:13px;cursor:pointer}
+.reset-btn:hover{background:#353640;color:#fff}
+.logo{text-align:center;margin-bottom:20px}
+.logo img{height:40px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo"><img src="https://dogusportal.com/img/logo-light.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'"></div>
+<h1>📋 Kira Kontratı Hazırlık Listesi</h1>
+<div class="sub">Kontrat öncesi tüm bilgi ve belgeleri tamamlayın</div>
+<div class="progress-text" id="progText">0 / 0 tamamlandı</div>
+<div class="progress"><div class="progress-bar" id="progBar" style="width:0%"></div></div>
+
+<div class="section">
+<div class="section-title"><span class="emoji">👤</span> Kiracı Bilgileri</div>
+<div class="item"><input type="checkbox" id="c1"><label for="c1">Ad Soyad, TC Kimlik No<span>Nüfus cüzdanı veya kimlik kartı fotokopisi (ön-arka)</span></label></div>
+<div class="item"><input type="checkbox" id="c2"><label for="c2">Doğum Tarihi, Anne-Baba Adı<span>Nüfusa kayıtlı olduğu il/ilçe</span></label></div>
+<div class="item"><input type="checkbox" id="c3"><label for="c3">Cep Telefonu ve E-posta<span>İletişim bilgileri</span></label></div>
+<div class="item"><input type="checkbox" id="c4"><label for="c4">Mevcut Adres<span>İkametgah belgesi</span></label></div>
+<div class="item"><input type="checkbox" id="c5"><label for="c5">Evli ise Evlilik Cüzdanı Fotokopisi<span>Bekar ise gerek yok</span></label></div>
+</div>
+
+<div class="section">
+<div class="section-title"><span class="emoji">💼</span> Kiracı İş Bilgileri</div>
+<div class="item"><input type="checkbox" id="c6"><label for="c6">Çalıştığı Yer ve Mesleği<span>İş yeri adı, pozisyon</span></label></div>
+<div class="item"><input type="checkbox" id="c7"><label for="c7">Son 3 Aylık Maaş Bordrosu<span>Esnaf ise vergi levhası</span></label></div>
+<div class="item"><input type="checkbox" id="c8"><label for="c8">İşe Başlama Tarihi<span>İş sürekliliği göstergesi</span></label></div>
+<div class="item"><input type="checkbox" id="c9"><label for="c9">İş Telefonu<span>İş yerinden teyit için</span></label></div>
+</div>
+
+<div class="section">
+<div class="section-title"><span class="emoji">🤝</span> Kefil Bilgileri (İsteniyorsa)</div>
+<div class="item"><input type="checkbox" id="c10"><label for="c10">Kefilin Ad Soyad, TC, Telefon<span>Kimlik fotokopisi</span></label></div>
+<div class="item"><input type="checkbox" id="c11"><label for="c11">Kefilin İş Yeri ve Gelir Belgesi<span>Maaş bordrosu veya vergi levhası</span></label></div>
+<div class="item"><input type="checkbox" id="c12"><label for="c12">Kefilin Adresi<span>İkametgah belgesi</span></label></div>
+</div>
+
+<div class="section">
+<div class="section-title"><span class="emoji">🏠</span> Ev Sahibi Bilgileri</div>
+<div class="item"><input type="checkbox" id="c13"><label for="c13">Ad Soyad, TC Kimlik No<span>Kimlik fotokopisi</span></label></div>
+<div class="item"><input type="checkbox" id="c14"><label for="c14">Telefon, E-posta, Adres<span>İletişim bilgileri</span></label></div>
+<div class="item"><input type="checkbox" id="c15"><label for="c15">Tapu Fotokopisi veya Tapu Kaydı<span>Ada/parsel/blok/kat/daire bilgileri</span></label></div>
+<div class="item"><input type="checkbox" id="c16"><label for="c16">IBAN Numarası<span>Kira ödemesi için banka bilgisi</span></label></div>
+<div class="item"><input type="checkbox" id="c17"><label for="c17">Vekalet varsa Vekaletname Fotokopisi<span>Vekilin kimlik bilgileri</span></label></div>
+</div>
+
+<div class="section">
+<div class="section-title"><span class="emoji">📝</span> Kontrat Bilgileri</div>
+<div class="item"><input type="checkbox" id="c18"><label for="c18">Aylık Kira Bedeli<span>TL cinsinden</span></label></div>
+<div class="item"><input type="checkbox" id="c19"><label for="c19">Depozito Tutarı<span>Genellikle 1-2 aylık kira</span></label></div>
+<div class="item"><input type="checkbox" id="c20"><label for="c20">Kira Başlangıç Tarihi ve Süresi<span>Kontrat süresi (1 yıl, 2 yıl vb.)</span></label></div>
+<div class="item"><input type="checkbox" id="c21"><label for="c21">Kira Artış Oranı<span>TÜFE veya sabit oran</span></label></div>
+<div class="item"><input type="checkbox" id="c22"><label for="c22">Ödeme Günü ve Yöntemi<span>Her ayın kaçı, havale/elden</span></label></div>
+<div class="item"><input type="checkbox" id="c23"><label for="c23">Aidat Tutarı<span>Site/bina aidatı (varsa)</span></label></div>
+<div class="item"><input type="checkbox" id="c24"><label for="c24">Demirbaş Listesi<span>Beyaz eşya, mobilya, klima vb.</span></label></div>
+<div class="item"><input type="checkbox" id="c25"><label for="c25">Özel Şartlar<span>Evcil hayvan, tadilat, erken tahliye vb.</span></label></div>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">🔄 Listeyi Sıfırla</button>
+</div>
+
+<script>
+const boxes=document.querySelectorAll('input[type=checkbox]');
+const total=boxes.length;
+
+function update(){
+  const done=document.querySelectorAll('input[type=checkbox]:checked').length;
+  document.getElementById('progText').textContent=done+' / '+total+' tamamlandı';
+  document.getElementById('progBar').style.width=Math.round(done/total*100)+'%';
+  boxes.forEach(cb=>{
+    cb.closest('.item').classList.toggle('checked',cb.checked);
+  });
+  // Save state
+  const state={};
+  boxes.forEach(cb=>{state[cb.id]=cb.checked;});
+  try{localStorage.setItem('kira_checklist',JSON.stringify(state));}catch(e){}
+}
+
+// Load saved state
+try{
+  const saved=JSON.parse(localStorage.getItem('kira_checklist')||'{}');
+  boxes.forEach(cb=>{if(saved[cb.id])cb.checked=true;});
+}catch(e){}
+
+boxes.forEach(cb=>cb.addEventListener('change',update));
+update();
+
+function resetAll(){
+  if(!confirm('Tüm işaretleri kaldırmak istiyor musunuz?'))return;
+  boxes.forEach(cb=>{cb.checked=false;});
+  try{localStorage.removeItem('kira_checklist');}catch(e){}
+  update();
+}
+</script>
+</body>
+</html>
