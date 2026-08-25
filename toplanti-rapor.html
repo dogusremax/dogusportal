@@ -103,7 +103,7 @@ ozlem_varol:"https://lh3.googleusercontent.com/d/1ZcDqNhYVBJlARSUk46APolmWsyZLMe
 aysun:"https://lh3.googleusercontent.com/d/1qCW-9vQSnRgSNrqcUn_xIeuYP7oM2Wp9=w400"
 };
 const MN=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
-let DATA=null,ALL_DATA=[],PERIOD=1;
+let DATA=null,ALL_DATA=[],PERIOD=1,AYLIK_CACHE={},KAPANIS_CACHE=null;
 
 function doLogin(){
   if(document.getElementById("pin").value==="1520"){
@@ -131,14 +131,19 @@ function getMonthKeys(n){
 
 async function loadData(){
   var months=getMonthKeys(PERIOD);
-  document.getElementById("report").innerHTML='<div class="no-data">'+months.length+' aylık veri yükleniyor...</div>';
+  document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
   try{
-    // Tüm istekleri paralel at — hızlı yüklensin
-    var aylikPromises=months.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(function(r){return r.json();});});
-    var kapanisPromise=fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(function(r){return r.json();}).catch(function(){return null;});
-    var results=await Promise.all([Promise.all(aylikPromises),kapanisPromise]);
-    ALL_DATA=results[0].filter(function(d){return d.siralama;});
-    var kData=results[1];
+    // Sadece önbellekte olmayan ayları çek
+    var toFetch=months.filter(function(m){return !AYLIK_CACHE[m];});
+    var promises=[];
+    if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(function(r){return r.json();}).then(function(d){if(d.siralama)AYLIK_CACHE[m]=d;return d;});})));
+    else promises.push(Promise.resolve([]));
+    if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(function(r){return r.json();}).catch(function(){return null;}));
+    else promises.push(Promise.resolve(KAPANIS_CACHE));
+    var results=await Promise.all(promises);
+    if(!KAPANIS_CACHE&&results[1]) KAPANIS_CACHE=results[1];
+    ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
+    var kData=KAPANIS_CACHE;
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
     DATA=mergeData(ALL_DATA);
     if(kData&&kData.records){
