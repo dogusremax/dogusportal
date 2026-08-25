@@ -92,7 +92,7 @@ function go(){
 
 function wrap(t,x,y,mw,fs,ml){
   if(!t)return;
-  const lh=fs*1.3,w=t.split(/\s+/);
+  const lh=fs*1.2,w=t.split(/\s+/);
   let l='',c=0;
   for(let i=0;i<w.length;i++){
     const ts=l+(l?' ':'')+w[i];
@@ -112,7 +112,7 @@ function render(){
   const n=document.getElementById('n1').value;
   if(n){ctx.fillStyle='#ff3131';ctx.font='bold 44px Poppins';ctx.textBaseline='middle';ctx.fillText(n,1115,1965);ctx.textBaseline='top';}
   const t=document.getElementById('t1').value;
-  if(t){ctx.fillStyle='#2e2e2e';ctx.font='38px Poppins';ctx.textBaseline='top';wrap(t,1115,2042,690,38,4);}
+  if(t){ctx.fillStyle='#2e2e2e';ctx.font='38px Poppins';ctx.textBaseline='top';wrap(t,1115,2004,690,38,6);}
 }
 
 function dl(){
