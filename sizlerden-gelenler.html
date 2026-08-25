@@ -125,13 +125,18 @@ function dl(){
 async function sh(){
   if(!cur)return;
   try{
-    cv.toBlob(async b=>{
-      const f=new File([b],'sizlerden_'+cur.n.replace(/\s+/g,'_')+'.png',{type:'image/png'});
-      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]}))
-        await navigator.share({files:[f],title:'Sizlerden Gelenler — '+cur.n});
-      else dl();
-    },'image/png');
-  }catch(e){dl();}
+    const dataUrl=cv.toDataURL('image/png');
+    const res=await fetch(dataUrl);
+    const blob=await res.blob();
+    const file=new File([blob],'sizlerden_'+cur.n.replace(/\s+/g,'_')+'.png',{type:'image/png'});
+    if(navigator.share){
+      await navigator.share({files:[file],title:'Sizlerden Gelenler'});
+    }else{
+      dl();
+    }
+  }catch(e){
+    if(e.name!=='AbortError')dl();
+  }
 }
 
 function ck(e){
