@@ -127,6 +127,11 @@ function dl(){
   a.href=cv.toDataURL('image/png');a.click();
 }
 
+function getTok(){
+  let t=localStorage.getItem('ghToken');
+  if(!t){t=prompt('GitHub token girin (bir kez sorulur):');if(t)localStorage.setItem('ghToken',t);}
+  return t;
+}
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 
 async function sh(){
@@ -143,7 +148,7 @@ async function sh(){
     const images=[du.split(',')[1]];
     btn.innerHTML='📤 Yayinlaniyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden',images,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})});
+      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden',images,ghToken:getTok()})});
     const r=await resp.json();
     if(r.success){btn.innerHTML='✅ Yayinlandi!';btn.style.background='#22c55e';}
     else if(r.retry){btn.innerHTML='⏳ 2 dk sonra tekrar bas';}
