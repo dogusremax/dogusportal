@@ -91,6 +91,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 <script>
 const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
+function logLogin(d){try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Toplantı Raporu");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}}
 const KEY="dogus-performans";
 const ACTS=[
 {id:"fzbo",label:"FZBO Araması",wt:15},{id:"etki",label:"Etki Çevresi",wt:10},
@@ -129,6 +130,8 @@ function doLogin(){
   var user=PINS[pin];
   if(!user){document.getElementById("loginErr").textContent="Hatalı PIN";return;}
   LOGGED_USER=user;
+  var nameMap={broker:"BROKER (Umut Tokkuş)",aysegul_alpay:"Ayşegül Alpay",aysun:"Aysun Yılmaz",evsen:"Evşen Özazman",gamze:"Gamze Yetkin",gizem:"Gizem Gök",irem:"İrem Aleyna Tetik",orhan:"Orhan Özazman",ozlem_varol:"Özlem Varol"};
+  logLogin(nameMap[user]||user);
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   if(user!=="broker") document.getElementById("consultantSel").style.display="none";
