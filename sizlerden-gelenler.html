@@ -148,7 +148,7 @@ async function sh(){
     const images=[du.split(',')[1]];
     btn.innerHTML='📤 Yayinlaniyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden',images,ghToken:getTok()})});
+      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden-'+Date.now(),images,ghToken:getTok()})});
     const r=await resp.json();
     if(r.success){btn.innerHTML='✅ Yayinlandi!';btn.style.background='#22c55e';}
     else if(r.retry){btn.innerHTML='⏳ 2 dk sonra tekrar bas';}
