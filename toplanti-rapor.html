@@ -221,7 +221,7 @@ function render(){
   // Stats
   h+='<div class="stats">';
   h+='<div class="stat"><div class="val" style="color:#2563eb">'+d.puan+'</div><div class="lbl">Toplam Puan</div></div>';
-  h+='<div class="stat"><div class="val" style="color:#22c55e">'+d.aktifGun+'</div><div class="lbl">Aktif Gün</div></div>';
+  h+='<div class="stat"><div class="val" style="color:#22c55e">'+d.aktifGun+'/'+(PERIOD*22)+'</div><div class="lbl">Aktif Gün</div></div>';
   h+='<div class="stat"><div class="val" style="color:#f59e0b">'+d.kapanis+'</div><div class="lbl">Kapanış</div></div>';
   h+='<div class="stat"><div class="val" style="color:#a855f7;font-size:18px">'+(d.ciro?d.ciro.toLocaleString("tr-TR"):0)+' ₺</div><div class="lbl">Ciro</div></div>';
   h+='</div>';
