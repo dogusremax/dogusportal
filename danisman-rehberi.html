@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Danışman Rehberi — RE/MAX Doğuş</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0f1117;color:#e4e4e7;min-height:100vh;padding:20px}
+.container{max-width:640px;margin:0 auto}
+h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
+.sub{text-align:center;font-size:13px;color:#888;margin-bottom:24px}
+.logo{text-align:center;margin-bottom:16px}
+.logo img{height:40px}
+.app{background:#1a1b23;border:1px solid #2a2b35;border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color 0.2s}
+.app.open{border-color:#444}
+.app-header{display:flex;align-items:center;padding:14px 16px;cursor:pointer;gap:12px}
+.app-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.app-info{flex:1}
+.app-name{font-size:15px;font-weight:600;color:#fff}
+.app-short{font-size:12px;color:#888;margin-top:2px}
+.app-toggle{color:#555;font-size:18px;transition:transform 0.2s}
+.app.open .app-toggle{transform:rotate(180deg);color:#aaa}
+.app-body{display:none;padding:0 16px 16px;line-height:1.6}
+.app.open .app-body{display:block}
+.app-body h3{font-size:13px;font-weight:700;color:#dc2743;margin:12px 0 6px;text-transform:uppercase;letter-spacing:0.5px}
+.app-body p{font-size:13px;color:#bbb;margin-bottom:8px}
+.app-body ol{font-size:13px;color:#bbb;padding-left:20px;margin-bottom:8px}
+.app-body ol li{margin-bottom:4px}
+.app-body .link{display:inline-block;margin-top:8px;padding:8px 16px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
+.app-body .link:hover{background:#1d4ed8}
+.app-body .tip{background:#1e2030;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 8px 8px 0;font-size:12px;color:#d4d4d8;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo"><img src="https://dogusportal.com/img/logo-light.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'"></div>
+<h1>📖 Danışman Rehberi</h1>
+<div class="sub">Tüm uygulamaları nasıl kullanacağını öğren</div>
+
+<div class="app" id="a1">
+<div class="app-header" onclick="toggle('a1')">
+<div class="app-icon" style="background:linear-gradient(135deg,#f09433,#dc2743)">📊</div>
+<div class="app-info"><div class="app-name">Danışman Takip</div><div class="app-short">Günlük aktivite girişi ve puan takibi</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Günlük yaptığın aramaları, sunumları, gösterimleri ve diğer aktiviteleri sisteme girersin. Sistem otomatik puan hesaplar ve seni diğer danışmanlarla karşılaştırır. Haftalık ve aylık karne oluşturulur.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>dogusportal.com'dan "Danışman Takip" kartına tıkla</li>
+<li>Şifrenle giriş yap</li>
+<li>Aktivite türünü seç (FZBO, sunum, gösterim vb.)</li>
+<li>"+" butonuna basarak aktiviteyi ekle</li>
+<li>Puanın ve sıralaman otomatik güncellenir</li>
+</ol>
+<div class="tip">💡 Her gün en az 1 aktivite gir — aktif gün bonusu (+2 puan) kaçırma!</div>
+<a class="link" href="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a2">
+<div class="app-header" onclick="toggle('a2')">
+<div class="app-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💳</div>
+<div class="app-info"><div class="app-name">Dijital Kartım</div><div class="app-short">Kişisel dijital kartvizit ve QR kod</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Müşteriye kağıt kartvizit vermek yerine QR kodunu göster veya linkini WhatsApp'tan gönder. Telefon, WhatsApp, e-posta tek tıkla erişilebilir.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Dijital Kartım" kartına tıkla</li>
+<li>Adını seç — kartın açılır</li>
+<li>QR kodu müşteriye göster veya linki kopyalayıp gönder</li>
+<li>Müşteri telefonuyla QR'ı okutur, kartın açılır</li>
+</ol>
+<a class="link" href="https://dogusportal.com/dijitalkart.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a3">
+<div class="app-header" onclick="toggle('a3')">
+<div class="app-icon" style="background:linear-gradient(135deg,#11998e,#38ef7d)">🤝</div>
+<div class="app-info"><div class="app-name">Kapanış Formu</div><div class="app-short">Satış ve kiralama kapanış kaydı</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Satış veya kiralama işlemi tamamlandığında tüm bilgileri kaydet. Paraşüt muhasebe programıyla bağlantılı — otomatik fatura oluşturulur.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Kapanış Formu" kartına tıkla, şifrenle giriş yap</li>
+<li>İşlem türünü seç (satış/kiralama)</li>
+<li>Alıcı, satıcı, fiyat, komisyon bilgilerini doldur</li>
+<li>Belgeleri yükle ve kaydet</li>
+<li>Fatura için "Fatura Oluştur" butonuna bas</li>
+</ol>
+<a class="link" href="https://dogusremax.github.io/kapanis/" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a4">
+<div class="app-header" onclick="toggle('a4')">
+<div class="app-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">📄</div>
+<div class="app-info"><div class="app-name">Matbu Evraklar</div><div class="app-short">Kira sözleşmesi ve form yazdırma</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Kira sözleşmesi, tahliye taahhütnamesi ve diğer resmi formları ekrandan doldur, profesyonel görünümlü yazdır veya PDF olarak kaydet.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Matbu Evraklar" kartına tıkla</li>
+<li>Belge türünü seç (kira sözleşmesi, tahliye vb.)</li>
+<li>Bilgileri doldur</li>
+<li>Yazdır veya PDF indir</li>
+</ol>
+<a class="link" href="https://dogusremax.github.io/matbuevraklar/" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a5">
+<div class="app-header" onclick="toggle('a5')">
+<div class="app-icon" style="background:linear-gradient(135deg,#fa709a,#fee140)">✍️</div>
+<div class="app-info"><div class="app-name">Yer Gösterme Belgesi</div><div class="app-short">Tabletten müşteriye imzalatma</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Müşteriye daire gösterimi yaptığında resmi gösterim belgesini tabletten imzalat. PDF otomatik oluşur, Drive'a kaydedilir, ilgili kişilere mail gider.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Yer Gösterme" kartına tıkla, şifrenle giriş yap</li>
+<li>Müşteri ve taşınmaz bilgilerini doldur</li>
+<li>Tableti müşteriye ver, parmağıyla imzalasın</li>
+<li>"Kaydet" butonuna bas — PDF otomatik oluşur</li>
+</ol>
+<div class="tip">💡 Gösterim öncesi bilgileri hazırla, müşteriyi bekletme!</div>
+<a class="link" href="https://dogusremax.github.io/matbuevraklar/yer-gosterme.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a6">
+<div class="app-header" onclick="toggle('a6')">
+<div class="app-icon" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">👥</div>
+<div class="app-info"><div class="app-name">Müşteri Takip</div><div class="app-short">Müşteri kaydı ve not düşme</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Arayan veya gelen müşterilerin bilgilerini kaydet, not düş, sonradan takip et. Kim aradı, ne istedi, ne zaman arandı tek yerde.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Müşteri Takip" kartına tıkla, şifrenle giriş yap</li>
+<li>"Yeni Müşteri Ekle" butonuna bas</li>
+<li>İsim, telefon, talep bilgilerini gir</li>
+<li>Görüşme notlarını düş, durumunu güncelle</li>
+</ol>
+</div>
+</div>
+
+<div class="app" id="a7">
+<div class="app-header" onclick="toggle('a7')">
+<div class="app-icon" style="background:linear-gradient(135deg,#0ea5e9,#2dd4bf)">🏝️</div>
+<div class="app-info"><div class="app-name">Kıbrıs Katalog</div><div class="app-short">Kıbrıs projelerini müşteriye göster</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Döveç, Cyprus Constructions, Northernland projelerini tek yerde göster. Fiyat, oda sayısı, teslim tarihine göre filtrele. Müşteriye WhatsApp'tan gönder.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Kıbrıs Katalog" kartına tıkla</li>
+<li>Projeleri filtrele (fiyat, oda sayısı, teslim)</li>
+<li>Beğendiğin projeyi müşteriye WhatsApp'tan paylaş</li>
+</ol>
+</div>
+</div>
+
+<div class="app" id="a8">
+<div class="app-header" onclick="toggle('a8')">
+<div class="app-icon" style="background:linear-gradient(135deg,#f97316,#eab308)">🧮</div>
+<div class="app-info"><div class="app-name">Kıbrıs Masraf Hesaplayıcı</div><div class="app-short">Resmi masraf ve vergi hesaplama</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Kuzey Kıbrıs'ta gayrimenkul alırken ödenmesi gereken vergi, harç ve KDV'yi otomatik hesaplar.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Masraf Hesaplayıcı" kartına tıkla</li>
+<li>Alım fiyatını gir, ilk alım mı ikinci alım mı seç</li>
+<li>Tüm masraflar otomatik hesaplanır</li>
+</ol>
+<a class="link" href="https://dogusportal.com/masraf-hesaplayici.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a9">
+<div class="app-header" onclick="toggle('a9')">
+<div class="app-icon" style="background:linear-gradient(135deg,#1a5e2a,#34d058)">📋</div>
+<div class="app-info"><div class="app-name">Kira Kontrat Listesi</div><div class="app-short">Kontrat öncesi hazırlık listesi</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Kira sözleşmesi yapmadan önce kiracıdan ve ev sahibinden alınması gereken tüm bilgi ve belgelerin listesi. İşaretledikçe ilerleme gösterir.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Kira Kontrat Listesi" kartına tıkla</li>
+<li>Her maddeyi tamamladıkça işaretle</li>
+<li>%100 olunca kontrat hazır</li>
+</ol>
+<a class="link" href="https://dogusportal.com/kira-kontrat-listesi.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a10">
+<div class="app-header" onclick="toggle('a10')">
+<div class="app-icon" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)">🏛️</div>
+<div class="app-info"><div class="app-name">Tapu Satış Listesi</div><div class="app-short">Tapuya gitmeden önce hazırlık</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Satış için tapuya gitmeden önce alıcı, satıcı ve taşınmaz belgeleri tam mı kontrol et. Eksik belge tapu işlemini erteler!</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Tapu Satış Listesi" kartına tıkla</li>
+<li>Satıcı, alıcı, taşınmaz belgelerini tamamladıkça işaretle</li>
+<li>Kredi veya vekalet varsa o bölümleri de doldur</li>
+<li>%100 olunca tapuya gidin</li>
+</ol>
+<a class="link" href="https://dogusportal.com/tapu-satis-listesi.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a11">
+<div class="app-header" onclick="toggle('a11')">
+<div class="app-icon" style="background:linear-gradient(135deg,#6b21a8,#a855f7)">🌍</div>
+<div class="app-info"><div class="app-name">Yabancıya Satış Listesi</div><div class="app-short">Yabancı alıcıya tapu devri hazırlık</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Yabancı uyruklu alıcıya satışta ek belgeler gerekir: pasaport tercümesi, Döviz Alım Belgesi (DAB), yeminli tercüman, ekspertiz raporu ve daha fazlası. Bu liste hepsini takip eder.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"Yabancıya Satış Listesi" kartına tıkla</li>
+<li>Ön araştırmadan başla (uyruğu uygun mu, askeri bölge kontrolü)</li>
+<li>Döviz ve DAB işlemlerini tamamla</li>
+<li>Tüm belgeleri işaretle, %100 olunca tapuya gidin</li>
+</ol>
+<div class="tip">💡 DAB (Döviz Alım Belgesi) TAPU ÖNCESİ alınmalı — sonra alınırsa işlem yapılamaz!</div>
+<a class="link" href="https://dogusportal.com/yabanci-satis-listesi.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+<div class="app" id="a12">
+<div class="app-header" onclick="toggle('a12')">
+<div class="app-icon" style="background:linear-gradient(135deg,#e11d48,#fb923c)">📸</div>
+<div class="app-info"><div class="app-name">EİDS İlan Rehberi</div><div class="app-short">Sosyal medyada ilan paylaşım kuralları</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Instagram, Facebook ve diğer platformlarda ilan paylaşırken uyulması gereken kurallar ve tasarım rehberi.</p>
+<h3>Nasıl Kullanılır?</h3>
+<ol>
+<li>"İlan Rehberi" kartına tıkla</li>
+<li>Paylaşım kurallarını oku</li>
+<li>Örnek tasarımları incele</li>
+<li>Kendi ilanını kurallara uygun paylaş</li>
+</ol>
+<a class="link" href="https://yenifikirtepeburada.com/ilan-rehberi.html" target="_blank">Uygulamayı Aç →</a>
+</div>
+</div>
+
+</div>
+
+<script>
+function toggle(id){
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>
