@@ -127,19 +127,17 @@ function dl(){
   a.href=cv.toDataURL('image/png');a.click();
 }
 
-function prepFile(){}
-
 async function sh(){
   if(!cur){alert('Once danisman sec');return;}
-  const b=await new Promise(r=>cv.toBlob(r,'image/png'));
-  const files=[new File([b],'sizlerden_gelenler.png',{type:'image/png'})];
-  if(!navigator.canShare||!navigator.canShare({files})){
-    alert('Bu tarayici dosya paylasimini desteklemiyor; Indir butonunu kullanin.');
-    return;
-  }
-  try{
-    await navigator.share({files,title:'Sizlerden Gelenler · RE/MAX Dogus'});
-  }catch(e){}
+  // Kucuk canvas'a olcekle - iOS buyuk canvas'ta toBlob'da takiliyor
+  const tmp=document.createElement('canvas');
+  tmp.width=1080;tmp.height=1920;
+  tmp.getContext('2d').drawImage(cv,0,0,1080,1920);
+  const b=await new Promise(r=>tmp.toBlob(r,'image/jpeg',0.92));
+  if(!b){alert('Gorsel olusturulamadi');return;}
+  const files=[new File([b],'sizlerden_gelenler.jpg',{type:'image/jpeg'})];
+  if(!navigator.canShare||!navigator.canShare({files})){dl();return;}
+  try{await navigator.share({files});}catch(e){}
 }
 
 function ck(e){
