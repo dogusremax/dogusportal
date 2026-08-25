@@ -66,6 +66,15 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 .rm-week b{color:#60a5fa;font-size:12px}
 .roadmap ul{margin:4px 0 0 16px;padding:0}
 .roadmap li{margin-bottom:3px;color:#ddd}
+.sayac-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:999;overflow-y:auto;padding:20px}
+.sayac-box{max-width:500px;margin:0 auto;background:#1a1a2e;border-radius:12px;padding:20px}
+.sayac-box h3{margin:0 0 16px;color:#fff;font-size:16px}
+.sayac-box .close-btn{float:right;background:none;border:none;color:#888;font-size:20px;cursor:pointer}
+.sayac-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #333;font-size:13px;color:#ccc}
+.sayac-row .name{font-weight:600;color:#fff}
+.sayac-row .count{color:#60a5fa;font-weight:700}
+.sayac-row .last{color:#888;font-size:11px}
+.sayac-detail{font-size:12px;color:#888;padding:4px 0 4px 12px;border-bottom:1px solid #222}
 </style>
 </head>
 <body>
@@ -83,7 +92,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 <button class="pbtn" data-p="3" onclick="setPeriod(3)">3 Ay</button>
 <button class="pbtn" data-p="6" onclick="setPeriod(6)">6 Ay</button>
 <button class="pbtn" data-p="12" onclick="setPeriod(12)">12 Ay</button>
-<button class="exit-btn" onclick="location.reload()">Çıkış ↺</button>
+<button class="exit-btn" id="sayacBtn" style="display:none" onclick="showSayac()">📊</button><button class="exit-btn" onclick="location.reload()">Çıkış ↺</button>
 </div>
 </div>
 <div id="report"><div class="no-data">Danışman seçin</div></div>
@@ -132,6 +141,7 @@ function doLogin(){
   LOGGED_USER=user;
   var nameMap={broker:"BROKER (Umut Tokkuş)",aysegul_alpay:"Ayşegül Alpay",aysun:"Aysun Yılmaz",evsen:"Evşen Özazman",gamze:"Gamze Yetkin",gizem:"Gizem Gök",irem:"İrem Aleyna Tetik",orhan:"Orhan Özazman",ozlem_varol:"Özlem Varol"};
   logLogin(nameMap[user]||user);
+  if(user==="broker") document.getElementById("sayacBtn").style.display="inline-block";
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   if(user!=="broker") document.getElementById("consultantSel").style.display="none";
@@ -360,6 +370,37 @@ function applyKapanis(kData,months){
   });
   render();
 }
+
+function showSayac(){
+  var box=document.getElementById("sayacBox");
+  box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Yükleniyor...</div>';
+  document.getElementById("sayacOverlay").style.display="block";
+  fetch(KAPANIS_API+"?action=getLoginLogs",{redirect:"follow"}).then(function(r){return r.json();}).then(function(data){
+    var logs=(data.logs||data.records||data||[]).filter(function(l){return (l.uygulama||"")==="Toplantı Raporu";});
+    if(!logs.length){box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Henüz giriş kaydı yok</div>';return;}
+    // Group by person
+    var grouped={};
+    logs.forEach(function(l){
+      var n=l.danisman||"?";
+      if(!grouped[n])grouped[n]={count:0,last:""};
+      grouped[n].count++;
+      var t=l.tarih||l.timestamp||"";
+      if(t>grouped[n].last)grouped[n].last=t;
+    });
+    var sorted=Object.keys(grouped).sort(function(a,b){return grouped[b].count-grouped[a].count;});
+    var h='<h3>📊 Giriş Sayacı — Toplantı Raporu <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3>';
+    h+='<div style="color:#888;font-size:11px;margin-bottom:12px">Toplam '+logs.length+' giriş</div>';
+    sorted.forEach(function(name){
+      var g=grouped[name];
+      var lastStr=g.last?new Date(g.last).toLocaleString("tr-TR"):"";
+      h+='<div class="sayac-row"><span class="name">'+name+'</span><span class="count">'+g.count+' giriş</span><span class="last">'+lastStr+'</span></div>';
+    });
+    box.innerHTML=h;
+  }).catch(function(e){
+    box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#ef4444;text-align:center;padding:20px">Veri alınamadı</div>';
+  });
+}
 </script>
+<div class="sayac-overlay" id="sayacOverlay" onclick="if(event.target===this)this.style.display='none'"><div class="sayac-box" id="sayacBox"></div></div>
 </body>
 </html>
