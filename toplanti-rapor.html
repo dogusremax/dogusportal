@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Birebir Toplantı Raporu — RE/MAX Doğuş</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0b10;--card:#141520;--border:#222;--text:#e4e4e7;--muted:#888;--accent:#2563eb;--green:#22c55e;--red:#ef4444;--gold:#f59e0b;--purple:#a855f7}
+body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px}
+.login input{padding:12px 20px;background:#1a1b23;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;text-align:center;width:200px}
+.login button{padding:12px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+.login h2{color:#fff;font-size:20px}
+.hidden{display:none}
+
+/* Dashboard */
+.dash{max-width:900px;margin:0 auto;padding:20px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.top-bar select{padding:8px 16px;background:#1a1b23;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px}
+.top-bar .ay-sel{margin-left:12px}
+
+/* Profile Header */
+.profile{display:flex;align-items:center;gap:20px;background:linear-gradient(135deg,#1a1b23,#1e2030);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.profile img{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
+.profile .initials{width:80px;height:80px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff}
+.profile .info h2{font-size:22px;color:#fff}
+.profile .info p{color:var(--muted);font-size:13px;margin-top:4px}
+.profile .rank{margin-left:auto;text-align:center}
+.profile .rank .num{font-size:42px;font-weight:800;color:var(--gold)}
+.profile .rank .lbl{font-size:12px;color:var(--muted)}
+
+/* Stat Cards */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat .val{font-size:28px;font-weight:700}
+.stat .lbl{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Activity Bars */
+.activities{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.activities h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:16px}
+.act-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.act-row .name{width:140px;color:var(--muted);text-align:right;flex-shrink:0}
+.act-row .bar-bg{flex:1;height:20px;background:#1e2030;border-radius:6px;overflow:hidden;position:relative}
+.act-row .bar-fill{height:100%;border-radius:6px;transition:width 0.6s ease}
+.act-row .bar-target{position:absolute;height:100%;border-right:2px dashed rgba(255,255,255,0.3);top:0}
+.act-row .count{width:40px;font-weight:600;color:#fff;text-align:right}
+.act-row .target{width:50px;font-size:11px;color:var(--muted)}
+
+/* Weekly Trend */
+.trend{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.trend h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:16px}
+.trend-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 10px}
+.trend-bar{flex:1;border-radius:6px 6px 0 0;transition:height 0.5s;position:relative;min-width:30px}
+.trend-bar .wlbl{position:absolute;bottom:-20px;width:100%;text-align:center;font-size:11px;color:var(--muted)}
+.trend-bar .wval{position:absolute;top:-20px;width:100%;text-align:center;font-size:12px;font-weight:600;color:#fff}
+
+/* Comparison */
+.compare{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.compare h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:16px}
+.comp-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.comp-row .cl{width:100px;color:var(--muted);text-align:right}
+.comp-row .bar-wrap{flex:1;display:flex;align-items:center;gap:8px}
+.comp-row .b1{height:12px;border-radius:4px;background:var(--accent)}
+.comp-row .b2{height:12px;border-radius:4px;background:#333}
+.comp-row .cv{font-size:12px;color:#fff;font-weight:500;width:50px}
+
+/* Analysis */
+.analysis{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.analysis h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:12px}
+.insight{padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.5}
+.insight.good{background:#14532d;border-left:3px solid var(--green);color:#86efac}
+.insight.warn{background:#422006;border-left:3px solid var(--gold);color:#fcd34d}
+.insight.bad{background:#450a0a;border-left:3px solid var(--red);color:#fca5a5}
+
+/* Closings */
+.closings{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.closings h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:12px}
+.closing-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
+.closing-item:last-child{border-bottom:none}
+.no-data{color:var(--muted);font-size:13px;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginScreen">
+<h2>🔒 Broker Girişi</h2>
+<input type="password" id="pin" placeholder="Broker PIN" maxlength="4">
+<button onclick="doLogin()">Giriş</button>
+<p id="loginErr" style="color:#ef4444;font-size:13px"></p>
+</div>
+
+<div class="dash hidden" id="dashboard">
+<div class="top-bar">
+<div>
+<select id="consultantSel" onchange="render()"></select>
+<select id="aySel" class="ay-sel" onchange="loadData()"></select>
+</div>
+<button onclick="location.reload()" style="padding:8px 16px;background:#333;border:none;color:#fff;border-radius:8px;cursor:pointer;font-size:13px">Çıkış ↺</button>
+</div>
+<div id="report"></div>
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
+const KEY='dogus-performans';
+const ACTS=[
+{id:"fzbo",label:"FZBO Araması",wt:15},{id:"etki",label:"Etki Çevresi",wt:10},{id:"sunum1",label:"1. Sunum",wt:3},
+{id:"sunum2",label:"2. Sunum",wt:2},{id:"yetki",label:"Alınan Yetki",wt:1},{id:"gosterim",label:"Gösterim",wt:2},
+{id:"kapora",label:"Kapora",wt:1},{id:"kibris_sunum",label:"Kıbrıs Sunum",wt:1},{id:"emlak_nobet",label:"Emlak Nöbet",wt:1},
+{id:"brosur",label:"Broşür",wt:5},{id:"sosyal_medya",label:"Sosyal Medya",wt:3},{id:"egitim",label:"Eğitim",wt:1}
+];
+let DATA=null;
+
+function doLogin(){
+  if(document.getElementById('pin').value==='1520'){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    initSelects();
+    loadData();
+  } else {
+    document.getElementById('loginErr').textContent='Hatalı PIN';
+  }
+}
+document.getElementById('pin').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
+
+function initSelects(){
+  const sel=document.getElementById('aySel');
+  const now=new Date();
+  for(let i=0;i<6;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    sel.innerHTML+=`<option value="${val}">${months[d.getMonth()]} ${d.getFullYear()}</option>`;
+  }
+}
+
+async function loadData(){
+  const ay=document.getElementById('aySel').value;
+  document.getElementById('report').innerHTML='<div class="no-data">Veriler yükleniyor...</div>';
+  try{
+    const resp=await fetch(API+'?action=aylik&ay='+ay+'&k='+KEY);
+    DATA=await resp.json();
+    const cSel=document.getElementById('consultantSel');
+    cSel.innerHTML='';
+    DATA.siralama.forEach(r=>{cSel.innerHTML+=`<option value="${r.id}">${r.name}</option>`;});
+    render();
+  }catch(e){
+    document.getElementById('report').innerHTML='<div class="no-data">Veri yüklenemedi: '+e.message+'</div>';
+  }
+}
+
+function render(){
+  if(!DATA||!DATA.siralama.length) return;
+  const id=document.getElementById('consultantSel').value;
+  const d=DATA.siralama.find(r=>r.id===id);
+  if(!d) return;
+  const rank=DATA.siralama.indexOf(d)+1;
+  const total=DATA.siralama.length;
+  const avg=Math.round(DATA.siralama.reduce((s,r)=>s+r.puan,0)/total);
+
+  // Profile
+  let html=`<div class="profile">
+    <div class="initials">${d.first?d.first[0]:''}${d.last?d.last[0]:''}</div>
+    <div class="info"><h2>${d.name}</h2><p>${DATA.ayAdi} ${DATA.yil} Performans Raporu</p></div>
+    <div class="rank"><div class="num">#${rank}</div><div class="lbl">${total} danışman içinde</div></div>
+  </div>`;
+
+  // Stats
+  html+=`<div class="stats">
+    <div class="stat"><div class="val" style="color:var(--accent)">${d.puan}</div><div class="lbl">Toplam Puan</div></div>
+    <div class="stat"><div class="val" style="color:var(--green)">${d.aktifGun}</div><div class="lbl">Aktif Gün</div></div>
+    <div class="stat"><div class="val" style="color:var(--gold)">${d.kapanis}</div><div class="lbl">Kapanış</div></div>
+    <div class="stat"><div class="val" style="color:var(--purple)">${d.ciro?d.ciro.toLocaleString('tr-TR'):0} ₺</div><div class="lbl">Ciro</div></div>
+  </div>`;
+
+  // Activity Bars
+  html+=`<div class="activities"><h3>📊 Aktivite Detayı — Hedef vs Gerçekleşen</h3>`;
+  const maxCount=Math.max(...ACTS.map(a=>Math.max(d.counts[a.id]||0, a.wt*4)),1);
+  ACTS.forEach(a=>{
+    const count=d.counts[a.id]||0;
+    const monthTarget=a.wt*4;
+    const pct=Math.min(100,Math.round(count/maxCount*100));
+    const tPct=Math.min(100,Math.round(monthTarget/maxCount*100));
+    const color=count>=monthTarget?'var(--green)':count>=monthTarget*0.5?'var(--gold)':'var(--red)';
+    html+=`<div class="act-row">
+      <div class="name">${a.label}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div><div class="bar-target" style="left:${tPct}%"></div></div>
+      <div class="count">${count}</div>
+      <div class="target">/ ${monthTarget}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // Team Comparison
+  html+=`<div class="compare"><h3>📈 Takım Karşılaştırma</h3>`;
+  const compItems=[
+    {label:'Toplam Puan',val:d.puan,avg:avg},
+    {label:'Aktif Gün',val:d.aktifGun,avg:Math.round(DATA.siralama.reduce((s,r)=>s+r.aktifGun,0)/total)},
+    {label:'Gösterim',val:d.counts.gosterim||0,avg:Math.round(DATA.siralama.reduce((s,r)=>s+(r.counts.gosterim||0),0)/total)},
+    {label:'Sunum',val:(d.counts.sunum1||0)+(d.counts.sunum2||0),avg:Math.round(DATA.siralama.reduce((s,r)=>s+(r.counts.sunum1||0)+(r.counts.sunum2||0),0)/total)},
+  ];
+  compItems.forEach(c=>{
+    const mx=Math.max(c.val,c.avg,1);
+    html+=`<div class="comp-row">
+      <div class="cl">${c.label}</div>
+      <div class="bar-wrap"><div class="b1" style="width:${c.val/mx*100}%"></div><div class="cv">${c.val}</div></div>
+      <div class="bar-wrap"><div class="b2" style="width:${c.avg/mx*100}%"></div><div class="cv" style="color:var(--muted)">${c.avg} ort.</div></div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // Puan Dağılımı
+  html+=`<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+    <div class="stat"><div class="val" style="color:var(--accent);font-size:20px">${d.aktivitePuan}</div><div class="lbl">Aktivite Puanı</div></div>
+    <div class="stat"><div class="val" style="color:var(--green);font-size:20px">${d.istikrar}</div><div class="lbl">İstikrar Bonusu</div></div>
+    <div class="stat"><div class="val" style="color:var(--gold);font-size:20px">${d.kapanisPuan}</div><div class="lbl">Kapanış Puanı</div></div>
+    <div class="stat"><div class="val" style="color:var(--purple);font-size:20px">${d.hedefBonus||0}</div><div class="lbl">Hedef Bonusu</div></div>
+  </div>`;
+
+  // Auto Analysis
+  html+=`<div class="analysis"><h3>💡 Analiz ve Öneriler</h3>`;
+  const insights=[];
+  // Good things
+  if(rank===1) insights.push({t:'good',m:'🏆 Bu ay birinci sıradasın, tebrikler!'});
+  else if(rank<=3) insights.push({t:'good',m:'🎯 İlk 3\'te yer alıyorsun, harika performans!'});
+  if(d.aktifGun>=20) insights.push({t:'good',m:'💪 '+d.aktifGun+' aktif gün — istikrarın çok iyi.'});
+  if((d.counts.gosterim||0)>=8) insights.push({t:'good',m:'🏠 Gösterim sayın yüksek, müşteri ilgisi güçlü.'});
+  if(d.kapanis>=2) insights.push({t:'good',m:'🤝 '+d.kapanis+' kapanış — harika iş!'});
+
+  // Warnings
+  if(d.aktifGun<15) insights.push({t:'warn',m:'📅 Aktif gün sayın düşük ('+d.aktifGun+'). Her gün en az 1 aktivite gir.'});
+  if((d.counts.fzbo||0)<30) insights.push({t:'warn',m:'📞 FZBO arama sayın hedefin altında ('+(d.counts.fzbo||0)+'/60). Arama sayısını artır.'});
+  if((d.counts.etki||0)<20) insights.push({t:'warn',m:'🤝 Etki çevresi araması düşük ('+(d.counts.etki||0)+'/40). Referans ağını genişlet.'});
+  if((d.counts.gosterim||0)<4) insights.push({t:'bad',m:'🏠 Gösterim sayın çok düşük ('+(d.counts.gosterim||0)+'/8). Müşteri portföyünü gözden geçir.'});
+  if((d.counts.sunum1||0)<6) insights.push({t:'warn',m:'📋 1. Sunum sayın hedefin altında ('+(d.counts.sunum1||0)+'/12). Portföy sunumlarını artır.'});
+  if((d.counts.sosyal_medya||0)<6) insights.push({t:'warn',m:'📱 Sosyal medya içeriği az ('+(d.counts.sosyal_medya||0)+'/12). Haftada en az 3 paylaşım yap.'});
+  if(d.puan<avg) insights.push({t:'warn',m:'📊 Puanın takım ortalamasının ('+avg+') altında. Aktivite çeşitliliğini artır.'});
+
+  if(insights.length===0) insights.push({t:'good',m:'Genel performans dengeli görünüyor.'});
+  insights.forEach(i=>{html+=`<div class="insight ${i.t}">${i.m}</div>`;});
+  html+=`</div>`;
+
+  document.getElementById('report').innerHTML=html;
+}
+</script>
+</body>
+</html>
