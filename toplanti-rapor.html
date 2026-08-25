@@ -6,7 +6,10 @@
 <title>Birebir Toplantı Raporu — RE/MAX Doğuş</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0b10;--card:#141520;--border:#222;--text:#e4e4e7;--muted:#888;--accent:#2563eb;--green:#22c55e;--red:#ef4444;--gold:#f59e0b;--purple:#a855f7}
+:root{--bg:#0a0b10;--card:#141520;--border:#222;--text:#e4e4e7;--muted:#888
+.pbtn{padding:6px 14px;background:#1a1b23;border:1px solid #333;color:#888;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit}
+.pbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+:root{;--accent:#2563eb;--green:#22c55e;--red:#ef4444;--gold:#f59e0b;--purple:#a855f7}
 body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .login{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px}
 .login input{padding:12px 20px;background:#1a1b23;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;text-align:center;width:200px}
@@ -79,6 +82,9 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--b
 .closing-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
 .closing-item:last-child{border-bottom:none}
 .no-data{color:var(--muted);font-size:13px;text-align:center;padding:20px}
+.pbtn{padding:6px 14px;background:#1a1b23;border:1px solid #333;color:#888;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit}
+.pbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.period-label{font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -94,9 +100,14 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--b
 <div class="top-bar">
 <div>
 <select id="consultantSel" onchange="render()"></select>
-<select id="aySel" class="ay-sel" onchange="loadData()"></select>
 </div>
-<button onclick="location.reload()" style="padding:8px 16px;background:#333;border:none;color:#fff;border-radius:8px;cursor:pointer;font-size:13px">Çıkış ↺</button>
+<div style="display:flex;gap:6px;align-items:center">
+<button class="pbtn active" data-p="1" onclick="setPeriod(1)">1 Ay</button>
+<button class="pbtn" data-p="3" onclick="setPeriod(3)">3 Ay</button>
+<button class="pbtn" data-p="6" onclick="setPeriod(6)">6 Ay</button>
+<button class="pbtn" data-p="12" onclick="setPeriod(12)">12 Ay</button>
+<button onclick="location.reload()" style="padding:8px 12px;background:#333;border:none;color:#fff;border-radius:8px;cursor:pointer;font-size:12px;margin-left:8px">Çıkış ↺</button>
+</div>
 </div>
 <div id="report"></div>
 </div>
@@ -110,7 +121,7 @@ const ACTS=[
 {id:"kapora",label:"Kapora",wt:1},{id:"kibris_sunum",label:"Kıbrıs Sunum",wt:1},{id:"emlak_nobet",label:"Emlak Nöbet",wt:1},
 {id:"brosur",label:"Broşür",wt:5},{id:"sosyal_medya",label:"Sosyal Medya",wt:3},{id:"egitim",label:"Eğitim",wt:1}
 ];
-let DATA=null;
+let DATA=null,ALL_DATA=[],PERIOD=1;
 const PHOTOS={
   aysegul_alpay:"https://lh3.googleusercontent.com/d/1OWki4Z752FukK9Yk2io9R4zVwdhovd8q=w400",
   evsen:"https://lh3.googleusercontent.com/d/1-J0do4DhzN_AGC0PU1hi-fu-YPIvr9AE=w400",
@@ -137,30 +148,76 @@ function doLogin(){
 }
 document.getElementById('pin').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
 
-function initSelects(){
-  const sel=document.getElementById('aySel');
-  const now=new Date();
-  for(let i=0;i<6;i++){
+function initSelects(){}
+
+function setPeriod(p){
+  PERIOD=p;
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('active',+b.dataset.p===p));
+  loadData();
+}
+
+function getMonthKeys(count){
+  const keys=[];const now=new Date();
+  for(let i=0;i<count;i++){
     const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    const months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-    sel.innerHTML+=`<option value="${val}">${months[d.getMonth()]} ${d.getFullYear()}</option>`;
+    keys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
   }
+  return keys;
 }
 
 async function loadData(){
-  const ay=document.getElementById('aySel').value;
-  document.getElementById('report').innerHTML='<div class="no-data">Veriler yükleniyor...</div>';
+  const months=getMonthKeys(PERIOD);
+  document.getElementById('report').innerHTML='<div class="no-data">'+months.length+' aylık veri yükleniyor...</div>';
   try{
-    const resp=await fetch(API+'?action=aylik&ay='+ay+'&k='+KEY);
-    DATA=await resp.json();
+    ALL_DATA=[];
+    for(const ay of months){
+      const resp=await fetch(API+'?action=aylik&ay='+ay+'&k='+KEY);
+      const d=await resp.json();
+      if(d.siralama) ALL_DATA.push(d);
+    }
+    if(!ALL_DATA.length){document.getElementById('report').innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
+    // Merge data
+    DATA=mergeData(ALL_DATA);
     const cSel=document.getElementById('consultantSel');
+    const prev=cSel.value;
     cSel.innerHTML='';
-    DATA.siralama.forEach(r=>{cSel.innerHTML+=`<option value="${r.id}">${r.name}</option>`;});
+    DATA.siralama.forEach(r=>{cSel.innerHTML+=\`<option value="\${r.id}">\${r.name}</option>\`;});
+    if(prev&&cSel.querySelector('[value="'+prev+'"]'))cSel.value=prev;
     render();
   }catch(e){
     document.getElementById('report').innerHTML='<div class="no-data">Veri yüklenemedi: '+e.message+'</div>';
   }
+}
+
+function mergeData(allData){
+  const first=allData[allData.length-1];
+  const last=allData[0];
+  const ids=first.siralama.map(r=>r.id);
+  const merged={
+    ayAdi:allData.length===1?last.ayAdi:allData[allData.length-1].ayAdi+' — '+last.ayAdi,
+    yil:last.yil,
+    siralama:ids.map(id=>{
+      const rows=allData.map(d=>d.siralama.find(r=>r.id===id)).filter(Boolean);
+      if(!rows.length)return null;
+      const r=rows[0];
+      const counts={};
+      ACTS.forEach(a=>{counts[a.id]=rows.reduce((s,row)=>s+(row.counts[a.id]||0),0);});
+      return {
+        id:r.id, name:r.name, first:r.first, last:r.last,
+        puan:rows.reduce((s,row)=>s+row.puan,0),
+        aktivitePuan:rows.reduce((s,row)=>s+row.aktivitePuan,0),
+        istikrar:rows.reduce((s,row)=>s+row.istikrar,0),
+        kapanisPuan:rows.reduce((s,row)=>s+row.kapanisPuan,0),
+        hedefBonus:rows.reduce((s,row)=>s+(row.hedefBonus||0),0),
+        aktifGun:rows.reduce((s,row)=>s+row.aktifGun,0),
+        kapanis:rows.reduce((s,row)=>s+row.kapanis,0),
+        ciro:rows.reduce((s,row)=>s+row.ciro,0),
+        counts:counts,
+        monthlyData:rows
+      };
+    }).filter(Boolean).sort((a,b)=>b.puan-a.puan)
+  };
+  return merged;
 }
 
 function render(){
@@ -178,6 +235,7 @@ function render(){
     <div class="info"><h2>${d.name}</h2><p>${DATA.ayAdi} ${DATA.yil} Performans Raporu</p></div>
     <div class="rank"><div class="num">#${rank}</div><div class="lbl">${total} danışman içinde</div></div>
   </div>`;
+  html+=\`<div class="period-label">\${DATA.ayAdi} \${DATA.yil} · \${PERIOD} aylık toplam</div>\`;
 
   // Stats
   html+=`<div class="stats">
@@ -192,7 +250,7 @@ function render(){
   const maxCount=Math.max(...ACTS.map(a=>Math.max(d.counts[a.id]||0, a.wt*4)),1);
   ACTS.forEach(a=>{
     const count=d.counts[a.id]||0;
-    const monthTarget=a.wt*4;
+    const monthTarget=a.wt*4*PERIOD;
     const pct=Math.min(100,Math.round(count/maxCount*100));
     const tPct=Math.min(100,Math.round(monthTarget/maxCount*100));
     const color=count>=monthTarget?'var(--green)':count>=monthTarget*0.5?'var(--gold)':'var(--red)';
