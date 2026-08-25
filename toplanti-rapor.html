@@ -162,12 +162,15 @@ async function loadData(){
     else promises.push(Promise.resolve([]));
     if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(function(r){return r.json();}).catch(function(){return null;}));
     else promises.push(Promise.resolve(KAPANIS_CACHE));
-    var results=await Promise.all(promises);
-    if(!KAPANIS_CACHE&&results[1]) KAPANIS_CACHE=results[1];
+    var aylikResult=await promises[0];
     ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
-    var kData=KAPANIS_CACHE;
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
     DATA=mergeData(ALL_DATA);
+    // Kapanış verisini arka planda çek, gelince güncelle
+    var kData=KAPANIS_CACHE;
+    if(!kData){
+      promises[1].then(function(d){if(d){KAPANIS_CACHE=d;applyKapanis(d,months);}});
+    }
     if(kData&&kData.records){
       DATA.siralama.forEach(function(s){
         var extra=0,extraCiro=0;
@@ -341,6 +344,29 @@ sm:'<h4>Sosyal Medya Haftalik Plan</h4><div class="rm-week"><b>Pazartesi</b><ul>
 pu:'<h4>Puan Yukseltme Stratejisi</h4><div class="rm-week"><b>Hizli Kazanim</b><ul><li>3 sosyal medya = 9p</li><li>5 etki aramasi = 50p</li><li>1 brosur = 5p</li></ul></div><div class="rm-week"><b>Orta Vade</b><ul><li>FZBO artir (15p/adet)</li><li>Haftada 1 sunum al</li><li>Her gun aktivite gir = istikrar bonusu</li></ul></div><div class="rm-week"><b>Hedef</b><ul><li>Haftalik: 5 FZBO + 10 etki + 2 sosyal + 1 gosterim</li><li>Aylik 200+ puan garanti</li></ul></div>'
   };
   return R[k]||"";
+}
+
+function applyKapanis(kData,months){
+  if(!DATA||!kData||!kData.records)return;
+  DATA.siralama.forEach(function(s){
+    var seen={},cnt=0,ciroSum=0;
+    kData.records.forEach(function(r){
+      var adv=(r.advisor||"").trim();
+      var ref=String(r.ref||"");
+      var isPrimary=adv===s.name;
+      var isCoop=ref.indexOf("Co-op: "+s.name)>=0;
+      if(!isPrimary&&!isCoop)return;
+      var dt=r.date||"";
+      if(!months.some(function(m){return dt.startsWith(m);}))return;
+      var key=(r.id||"")+"_"+(r.address||"").trim().substring(0,15).toLowerCase();
+      if(seen[key])return;
+      seen[key]=1;
+      cnt++;
+      ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
+    });
+    if(cnt>0){s.kapanis=cnt;s.ciro=ciroSum;}
+  });
+  render();
 }
 </script>
 </body>
