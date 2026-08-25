@@ -111,6 +111,19 @@ const ACTS=[
 {id:"brosur",label:"Broşür",wt:5},{id:"sosyal_medya",label:"Sosyal Medya",wt:3},{id:"egitim",label:"Eğitim",wt:1}
 ];
 let DATA=null;
+const PHOTOS={
+  aysegul_alpay:"https://lh3.googleusercontent.com/d/1OWki4Z752FukK9Yk2io9R4zVwdhovd8q=w400",
+  evsen:"https://lh3.googleusercontent.com/d/1-J0do4DhzN_AGC0PU1hi-fu-YPIvr9AE=w400",
+  gamze:"https://lh3.googleusercontent.com/d/1qQjf0VhmCwLywOD9yBsMguPlCMt7wJr9=w400",
+  gizem:"https://lh3.googleusercontent.com/d/1ppuPVDhFcBZyY4QDBMHgL7acTy6SAQdR=w400",
+  irem:"https://lh3.googleusercontent.com/d/1K6kJuM3AnValMiy41pLuqN66WQmDXLjT=w400",
+  orhan:"https://lh3.googleusercontent.com/d/1JNN6eHt1Vy4YR-_taSkZxSQ7jrhDaxge=w400",
+  ozlem_varol:"https://lh3.googleusercontent.com/d/1ZcDqNhYVBJlARSUk46APolmWsyZLMexe=w400",
+  aysun:"https://lh3.googleusercontent.com/d/1qCW-9vQSnRgSNrqcUn_xIeuYP7oM2Wp9=w400",
+  aysegul_aras:"https://lh3.googleusercontent.com/d/1cQeMhl60upaKl-7Ssrw-TfKCdor97M0q=w400",
+  derya:"https://lh3.googleusercontent.com/d/1sWcPmlDYj0Tz7HYuh6u_TNKTXY9H6AeQ=w400",
+  umut:"https://lh3.googleusercontent.com/d/1K8Ue_RzlvD5ZwA2kqKj_O9AXuI2KaBYe=w400"
+};
 
 function doLogin(){
   if(document.getElementById('pin').value==='1520'){
@@ -161,7 +174,7 @@ function render(){
 
   // Profile
   let html=`<div class="profile">
-    <div class="initials">${d.first?d.first[0]:''}${d.last?d.last[0]:''}</div>
+    ${PHOTOS[d.id]?'<img src="'+PHOTOS[d.id]+'" alt="'+d.name+'">':'<div class="initials">'+(d.first?d.first[0]:'')+(d.last?d.last[0]:'')+'</div>'}
     <div class="info"><h2>${d.name}</h2><p>${DATA.ayAdi} ${DATA.yil} Performans Raporu</p></div>
     <div class="rank"><div class="num">#${rank}</div><div class="lbl">${total} danışman içinde</div></div>
   </div>`;
