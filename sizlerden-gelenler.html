@@ -63,7 +63,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;mi
 </div>
 <div class="actions">
   <button class="btn btn-red" onclick="dl()">📥 İndir</button>
-  <button class="btn btn-ig" onclick="sh()">📤 Paylaş</button>
+  <button class="btn btn-ig" id="shBtn" onclick="sh()">📤 Instagram Story Yayinla</button>
 </div>
 <div class="tip">Story format</div>
 <div style="padding:0 16px 30px;text-align:center">
@@ -127,17 +127,33 @@ function dl(){
   a.href=cv.toDataURL('image/png');a.click();
 }
 
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+
 async function sh(){
   if(!cur){alert('Once danisman sec');return;}
-  // Kucuk canvas'a olcekle - iOS buyuk canvas'ta toBlob'da takiliyor
-  const tmp=document.createElement('canvas');
-  tmp.width=1080;tmp.height=1920;
-  tmp.getContext('2d').drawImage(cv,0,0,1080,1920);
-  const b=await new Promise(r=>tmp.toBlob(r,'image/jpeg',0.92));
-  if(!b){alert('Gorsel olusturulamadi');return;}
-  const files=[new File([b],'sizlerden_gelenler.jpg',{type:'image/jpeg'})];
-  if(!navigator.canShare||!navigator.canShare({files})){dl();return;}
-  try{await navigator.share({files});}catch(e){}
+  if(!confirm("Bu gorsel @remaxdogus'ta story olarak yayinlanacak. Onayliyor musun?"))return;
+  const btn=document.getElementById('shBtn');
+  const orig=btn.innerHTML;
+  btn.disabled=true;btn.innerHTML='⏳ Hazirlaniyor...';
+  try{
+    const tmp=document.createElement('canvas');
+    tmp.width=1080;tmp.height=1920;
+    tmp.getContext('2d').drawImage(cv,0,0,1080,1920);
+    const du=await new Promise(r=>tmp.toBlob(b=>{const rd=new FileReader();rd.onload=()=>r(rd.result);rd.readAsDataURL(b);},'image/jpeg',0.95));
+    const images=[du.split(',')[1]];
+    btn.innerHTML='📤 Yayinlaniyor...';
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
+      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden',images,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})});
+    const r=await resp.json();
+    if(r.success){btn.innerHTML='✅ Yayinlandi!';btn.style.background='#22c55e';}
+    else if(r.retry){btn.innerHTML='⏳ 2 dk sonra tekrar bas';}
+    else throw new Error(r.error||'bilinmeyen');
+  }catch(e){
+    alert('Hata: '+e.message);
+    btn.innerHTML=orig;
+  }finally{
+    setTimeout(()=>{btn.disabled=false;btn.innerHTML=orig;btn.style.background='';},5000);
+  }
 }
 
 function ck(e){
