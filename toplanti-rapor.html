@@ -100,7 +100,10 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 <script>
 const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
-function logLogin(d){try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}}
+function logLogin(d){
+  try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}
+  try{var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");logs.push({name:d,time:new Date().toISOString()});if(logs.length>500)logs=logs.slice(-500);localStorage.setItem("perf_logs",JSON.stringify(logs));}catch(e){}
+}
 const KEY="dogus-performans";
 const ACTS=[
 {id:"fzbo",label:"FZBO Araması",wt:15},{id:"etki",label:"Etki Çevresi",wt:10},
@@ -373,32 +376,26 @@ function applyKapanis(kData,months){
 
 function showSayac(){
   var box=document.getElementById("sayacBox");
-  box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Yükleniyor...</div>';
   document.getElementById("sayacOverlay").style.display="block";
-  fetch(KAPANIS_API+"?action=getLoginLogs",{redirect:"follow"}).then(function(r){return r.json();}).then(function(data){
-    var logs=(data.logs||data.records||data||[]).filter(function(l){return (l.uygulama||"")==="Performansım";});
-    if(!logs.length){box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Henüz giriş kaydı yok</div>';return;}
-    // Group by person
-    var grouped={};
-    logs.forEach(function(l){
-      var n=l.danisman||"?";
-      if(!grouped[n])grouped[n]={count:0,last:""};
-      grouped[n].count++;
-      var t=l.tarih||l.timestamp||"";
-      if(t>grouped[n].last)grouped[n].last=t;
-    });
-    var sorted=Object.keys(grouped).sort(function(a,b){return grouped[b].count-grouped[a].count;});
-    var h='<h3>📊 Giriş Sayacı — Performansım <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3>';
-    h+='<div style="color:#888;font-size:11px;margin-bottom:12px">Toplam '+logs.length+' giriş</div>';
-    sorted.forEach(function(name){
-      var g=grouped[name];
-      var lastStr=g.last?new Date(g.last).toLocaleString("tr-TR"):"";
-      h+='<div class="sayac-row"><span class="name">'+name+'</span><span class="count">'+g.count+' giriş</span><span class="last">'+lastStr+'</span></div>';
-    });
-    box.innerHTML=h;
-  }).catch(function(e){
-    box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#ef4444;text-align:center;padding:20px">Veri alınamadı</div>';
+  var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");
+  if(!logs.length){box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Henüz giriş kaydı yok</div>';return;}
+  var grouped={};
+  logs.forEach(function(l){
+    var n=l.name||"?";
+    if(!grouped[n])grouped[n]={count:0,last:"",times:[]};
+    grouped[n].count++;
+    grouped[n].times.push(l.time);
+    if(l.time>grouped[n].last)grouped[n].last=l.time;
   });
+  var sorted=Object.keys(grouped).sort(function(a,b){return grouped[b].count-grouped[a].count;});
+  var h='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3>';
+  h+='<div style="color:#888;font-size:11px;margin-bottom:12px">Toplam '+logs.length+' giriş</div>';
+  sorted.forEach(function(name){
+    var g=grouped[name];
+    var lastStr=g.last?new Date(g.last).toLocaleString("tr-TR"):"";
+    h+='<div class="sayac-row"><span class="name">'+name+'</span><span class="count">'+g.count+' giriş</span><span class="last">Son: '+lastStr+'</span></div>';
+  });
+  box.innerHTML=h;
 }
 </script>
 <div class="sayac-overlay" id="sayacOverlay" onclick="if(event.target===this)this.style.display='none'"><div class="sayac-box" id="sayacBox"></div></div>
