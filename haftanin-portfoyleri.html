@@ -8,495 +8,257 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --red:#DC2626;--orange:#F97316;--navy:#1e3a5f;--green:#059669;--blue:#2563EB;
-  --slate50:#f8fafc;--slate100:#f1f5f9;--slate200:#e2e8f0;
-  --slate300:#cbd5e1;--slate400:#94a3b8;--slate500:#64748b;--slate600:#475569;--slate700:#334155;--slate800:#1e293b;--slate900:#0f172a;
-  --radius:12px;--radius-lg:16px;
-}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--slate50);color:var(--slate800);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-.app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:80px}
-
-/* HEADER */
-.header{background:linear-gradient(135deg,var(--navy) 0%,var(--red) 100%);padding:20px 18px 16px;position:sticky;top:0;z-index:100}
-.header-row{display:flex;align-items:center;justify-content:space-between}
-.logo-row{display:flex;align-items:center;gap:10px}
-.logo-circle{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-text{font-weight:800;font-size:16px;color:#fff;letter-spacing:-.3px}
-.logo-sub{font-size:10px;color:rgba(255,255,255,0.7);font-weight:500;margin-top:1px}
-.header-count{background:rgba(255,255,255,0.2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
-
-/* FILTERS */
-.filters{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-bottom:1px solid var(--slate100)}
+:root{--red:#DC2626;--orange:#F97316;--navy:#1e3a5f;--green:#059669;--blue:#2563eb;--s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;--s400:#94a3b8;--s500:#64748b;--s600:#475569;--s800:#1e293b;--s900:#0f172a}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--s50);color:var(--s800);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100dvh}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--red));padding:22px 20px 16px;position:sticky;top:0;z-index:50}
+.hdr-row{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px}
+.hdr h1{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.hdr .sub{font-size:11px;color:rgba(255,255,255,.65);font-weight:500}
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--s200);position:sticky;top:76px;z-index:49}
+.tab{flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:700;color:var(--s400);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s}
+.tab.active{color:var(--red);border-bottom-color:var(--red)}
+.list-wrap{padding:12px 14px 80px}
+.filters{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
 .filters::-webkit-scrollbar{display:none}
-.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--slate200);background:#fff;font-size:12px;font-weight:600;color:var(--slate600);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
-.filter-chip.active{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red)}
-
-/* PORTFOLIO LIST */
-.list{padding:8px 12px}
-.portfolio-card{background:#fff;border-radius:var(--radius-lg);margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.02);overflow:hidden;display:flex;gap:0;position:relative}
-.portfolio-card .thumb{width:100px;min-height:110px;background:#e2e8f0;flex-shrink:0;position:relative;overflow:hidden}
-.portfolio-card .thumb img{width:100%;height:100%;object-fit:cover}
-.portfolio-card .thumb .no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:28px;color:var(--slate300)}
-.portfolio-card .info{flex:1;padding:10px 12px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
-.portfolio-card .info .top-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.portfolio-card .info .location{font-size:14px;font-weight:700;color:var(--slate900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.portfolio-card .info .project{font-size:12px;color:var(--slate500);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.portfolio-card .info .specs{font-size:12px;color:var(--slate600);font-weight:500;display:flex;gap:6px;flex-wrap:wrap;margin-top:1px}
-.portfolio-card .info .specs span{display:flex;align-items:center;gap:2px}
-.portfolio-card .info .price-row{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
-.portfolio-card .info .price{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
-.portfolio-card .info .consultant-name{font-size:10px;color:var(--slate400);font-weight:500;margin-top:1px}
-
-/* Status Badge */
-.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
-.badge-aktif{background:#ECFDF5;color:#059669}
-.badge-kapora{background:#FFF7ED;color:#EA580C}
-.badge-satildi{background:#FEF2F2;color:#DC2626}
-.badge-kiralandi{background:#EFF6FF;color:#2563EB}
-
-/* Usage Badge */
-.usage-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--slate100);color:var(--slate600)}
-
-/* Sahibinden Arrow */
-.sah-link{position:absolute;right:0;top:0;bottom:0;width:36px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,transparent,rgba(248,250,252,0.9));text-decoration:none;color:var(--slate400);font-size:18px;transition:color .15s}
-.sah-link:hover{color:var(--red)}
-.sah-link svg{width:18px;height:18px}
-
-/* FAB */
-.fab{position:fixed;bottom:24px;right:50%;transform:translateX(50%);width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;border:none;font-size:28px;font-weight:300;cursor:pointer;box-shadow:0 4px 16px rgba(220,38,38,0.35);z-index:200;display:flex;align-items:center;justify-content:center;transition:transform .15s}
-.fab:active{transform:translateX(50%) scale(0.92)}
-
-/* ADD FORM */
-.form-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:flex-end;justify-content:center}
-.form-overlay.hidden{display:none}
-.form-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;padding:20px 18px 32px;animation:slideUp .25s ease-out}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.form-sheet .handle{width:40px;height:4px;border-radius:4px;background:var(--slate300);margin:0 auto 16px}
-.form-sheet h2{font-size:18px;font-weight:800;color:var(--slate900);margin-bottom:16px;letter-spacing:-.3px}
-.form-sheet label{display:block;font-size:12px;font-weight:700;color:var(--slate700);margin:12px 0 4px}
-.form-sheet label:first-of-type{margin-top:0}
-.form-sheet label .opt{color:var(--slate400);font-weight:400}
-.form-sheet input,.form-sheet select,.form-sheet textarea{width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--slate200);font-size:14px;font-family:inherit;outline:none;background:var(--slate50);transition:border .2s;-webkit-appearance:none}
-.form-sheet input:focus,.form-sheet select:focus{border-color:var(--red)}
-.form-row{display:flex;gap:8px}
-.form-row>*{flex:1}
-.chip-row{display:flex;flex-wrap:wrap;gap:5px}
-.chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--slate200);background:var(--slate50);font-size:12px;font-weight:500;color:var(--slate600);cursor:pointer;font-family:inherit;transition:all .15s}
-.chip.active{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red);font-weight:700}
-
-/* Photo upload mini */
-.photo-mini{display:flex;align-items:center;gap:10px}
-.photo-mini .preview{width:64px;height:48px;border-radius:8px;background:var(--slate100);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px dashed var(--slate300);flex-shrink:0}
-.photo-mini .preview img{width:100%;height:100%;object-fit:cover}
-.photo-mini .preview .icon{font-size:20px;color:var(--slate400)}
-.photo-mini .text{font-size:11px;color:var(--slate400)}
-
-.btn{padding:14px;border-radius:var(--radius);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:16px;transition:all .15s;letter-spacing:-.2px}
-.btn:active{transform:scale(0.98)}
-.btn-submit{background:linear-gradient(135deg,var(--green),#10B981);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,0.25)}
-.btn:disabled{background:var(--slate200);color:var(--slate400);cursor:not-allowed;box-shadow:none;transform:none}
-.btn-cancel{background:transparent;color:var(--slate500);font-weight:600;font-size:13px;margin-top:8px;padding:10px}
-
-/* Empty State */
-.empty{text-align:center;padding:60px 20px;color:var(--slate400)}
+.fbtn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--s200);background:#fff;font-size:12px;font-weight:600;color:var(--s600);cursor:pointer;white-space:nowrap;font-family:inherit}
+.fbtn.on{border-color:var(--red);background:#FEF2F2;color:var(--red)}
+.search-row{margin-bottom:12px;position:relative}
+.search-row input{background:#fff;border:1.5px solid var(--s200);padding:10px 14px 10px 36px;border-radius:10px;font-size:14px;width:100%;font-family:inherit;outline:none}
+.search-row input:focus{border-color:var(--red)}
+.search-row svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--s400);fill:none;stroke-width:2}
+.empty{text-align:center;padding:60px 20px;color:var(--s400)}
 .empty .icon{font-size:48px;margin-bottom:12px}
-.empty p{font-size:14px}
-
-/* Loading */
-.loading{text-align:center;padding:40px;color:var(--slate400);font-size:13px}
-.spinner{width:32px;height:32px;border:3px solid var(--slate200);border-top-color:var(--red);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 12px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Toast */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--slate900);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;animation:fadeIn .2s}
-.toast.hidden{display:none}
-@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.pcard{background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);cursor:pointer}
+.pcard-top{display:flex;gap:12px;padding:14px}
+.pcard-img{width:80px;height:80px;border-radius:10px;object-fit:cover;background:var(--s100);flex-shrink:0}
+.pcard-img-ph{width:80px;height:80px;border-radius:10px;background:var(--s100);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--s300);flex-shrink:0}
+.pcard-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.pcard-loc{font-size:14px;font-weight:700;color:var(--s900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-specs{font-size:12px;color:var(--s500);display:flex;gap:8px}
+.pcard-price{font-size:15px;font-weight:800;color:var(--red);letter-spacing:-.3px}
+.pcard-bottom{display:flex;align-items:center;justify-content:space-between;padding:0 14px 12px;gap:8px}
+.pcard-tags{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.ptag{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.ptag.aktif{background:#ECFDF5;color:#059669}.ptag.kapora{background:#FFF7ED;color:#EA580C}
+.ptag.satildi{background:#EFF6FF;color:#2563EB}.ptag.kiralandi{background:#F5F3FF;color:#7C3AED}
+.ptag.bos{background:#F0FDF4;color:#16A34A}.ptag.kiracili{background:#FEF9C3;color:#A16207}.ptag.mulk{background:#FEE2E2;color:#DC2626}
+.pcard-arrow{width:36px;height:36px;border-radius:50%;background:var(--s50);border:1.5px solid var(--s200);display:flex;align-items:center;justify-content:center;flex-shrink:0;text-decoration:none;transition:all .15s}
+.pcard-arrow:active{background:var(--red);border-color:var(--red)}
+.pcard-arrow:active svg{stroke:#fff}
+.pcard-arrow svg{width:16px;height:16px;stroke:var(--s500);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.pcard-who{font-size:11px;color:var(--s400);font-weight:500;padding:0 14px 10px}
+.form-wrap{padding:16px 14px 80px}
+.card{background:#fff;border-radius:16px;padding:20px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);margin-bottom:12px}
+label.fl{display:block;font-size:13px;font-weight:700;color:var(--s800);margin:14px 0 6px}
+label.fl:first-child{margin-top:0}
+.opt{color:var(--s400);font-weight:400}
+input[type=text],input[type=number],input[type=url],select{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--s200);font-size:15px;font-family:inherit;outline:none;background:var(--s50);-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--red)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.cr{display:flex;gap:8px}.cr input{flex:1}.cr select{width:80px;flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:8px 14px;border-radius:30px;border:1.5px solid var(--s200);background:var(--s50);font-size:13px;font-weight:500;color:var(--s600);cursor:pointer;font-family:inherit}
+.chip:active{transform:scale(.96)}
+.chip.on{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red);font-weight:700}
+.photo-box{width:100%;height:160px;border-radius:14px;border:2px dashed var(--s200);background:var(--s50);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative}
+.photo-box img{width:100%;height:100%;object-fit:cover}
+.photo-box .ph{text-align:center}
+.photo-box .ph .i{font-size:32px;margin-bottom:6px}
+.photo-box .ph .t{font-size:12px;color:var(--s500);font-weight:600}
+.photo-box .rm{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn{padding:14px 24px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn-g{background:linear-gradient(135deg,var(--green),#10B981);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,.25)}
+.btn:disabled{background:var(--s200);color:var(--s400);cursor:not-allowed;box-shadow:none}
+.lo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+.lo.h{display:none}
+.spin{width:40px;height:40px;border:3px solid var(--s200);border-top-color:var(--red);border-radius:50%;animation:sp .7s linear infinite;margin-bottom:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lo-t{font-size:13px;font-weight:600;color:var(--s600)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:100;animation:tin .3s ease}
+.toast.h{display:none}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.detail-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.detail-overlay.h{display:none}
+.detail-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;padding:20px 18px 30px;animation:sUp .25s ease}
+@keyframes sUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.detail-sheet .cb{width:40px;height:4px;background:var(--s300);border-radius:4px;margin:0 auto 16px}
+.detail-sheet img{width:100%;border-radius:12px;margin-bottom:14px;max-height:220px;object-fit:cover}
+.detail-sheet h3{font-size:18px;font-weight:800;color:var(--s900);margin-bottom:4px}
+.detail-sheet .dp{font-size:12px;color:var(--s500);margin-bottom:12px}
+.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--s100);font-size:13px}
+.dr .dl{color:var(--s500)}.dr .dv{font-weight:600;color:var(--s800)}
+.detail-link{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px;border-radius:10px;background:var(--s50);border:1.5px solid var(--s200);text-decoration:none;color:var(--blue);font-size:13px;font-weight:700}
+.footer{text-align:center;font-size:11px;color:var(--s400);padding:16px 0 24px}
 </style>
 </head>
 <body>
-
 <div class="app">
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-row">
-      <div class="logo-row">
-        <div class="logo-circle">🏠</div>
-        <div>
-          <div class="logo-text">DOĞUŞ PORTFÖYLERİ</div>
-          <div class="logo-sub">RE/MAX Doğuş Ofis Portföyleri</div>
-        </div>
-      </div>
-      <div class="header-count" id="countBadge">0 portföy</div>
-    </div>
-  </div>
-
-  <!-- FILTERS -->
-  <div class="filters" id="filters">
-    <button class="filter-chip active" data-filter="all">Tümü</button>
-    <button class="filter-chip" data-filter="Aktif">Aktif</button>
-    <button class="filter-chip" data-filter="Kapora Alındı">Kapora</button>
-    <button class="filter-chip" data-filter="Satıldı">Satıldı</button>
-    <button class="filter-chip" data-filter="Kiralandı">Kiralandı</button>
-  </div>
+  <div class="hdr"><div class="hdr-row"><div class="hdr-icon">🏠</div><div><h1>DOĞUŞ PORTFÖYLERİ</h1><div class="sub">RE/MAX Doğuş Ofis Portföy Listesi</div></div></div></div>
+  <div class="tabs"><div class="tab active" onclick="showTab('list')">📋 Portföyler</div><div class="tab" onclick="showTab('form')">➕ Yeni Ekle</div></div>
+  <div class="lo h" id="loading"><div class="spin"></div><div class="lo-t" id="loadText">Yükleniyor...</div></div>
+  <div class="toast h" id="toast">✓ Portföy kaydedildi!</div>
+  <div class="detail-overlay h" id="detailOverlay" onclick="if(event.target===this)closeDetail()"><div class="detail-sheet" id="detailSheet"></div></div>
 
   <!-- LIST -->
-  <div class="list" id="list">
-    <div class="loading"><div class="spinner"></div>Portföyler yükleniyor...</div>
+  <div id="listView" class="list-wrap">
+    <div class="search-row"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="searchBox" placeholder="Semt, proje, danışman ara..." oninput="renderList()"></div>
+    <div class="filters" id="filterBar"></div>
+    <div id="listContainer"></div>
   </div>
 
-  <!-- FAB -->
-  <button class="fab" id="fabBtn" onclick="openForm()">+</button>
-
-  <!-- ADD FORM OVERLAY -->
-  <div class="form-overlay hidden" id="formOverlay" onclick="if(event.target===this)closeForm()">
-    <div class="form-sheet">
-      <div class="handle"></div>
-      <h2>Yeni Portföy Ekle</h2>
-
-      <label>Danışman</label>
-      <select id="fConsultant">
-        <option value="">Seçiniz...</option>
-      </select>
-
-      <div class="form-row">
-        <div>
-          <label>Semt / Mahalle</label>
-          <input type="text" id="fDistrict" placeholder="ör: Fikirtepe">
-        </div>
-        <div>
-          <label>Site / Proje <span class="opt">(ops.)</span></label>
-          <input type="text" id="fProject" placeholder="ör: Metropark">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div>
-          <label>m²</label>
-          <input type="number" id="fM2" placeholder="120" inputmode="numeric">
-        </div>
-        <div>
-          <label>Oda Sayısı</label>
-          <select id="fRooms">
-            <option>1+0</option><option>1+1</option><option>2+1</option><option selected>3+1</option>
-            <option>3.5+1</option><option>4+1</option><option>4.5+1</option><option>5+1</option><option>5+2</option><option>6+</option>
-          </select>
-        </div>
-      </div>
-
-      <label>Kullanım Durumu</label>
-      <div class="chip-row" id="usageChips"></div>
-
-      <div class="form-row">
-        <div>
-          <label>Satış Fiyatı</label>
-          <input type="number" id="fPrice" placeholder="8500000" inputmode="numeric">
-        </div>
-        <div>
-          <label>Para Birimi</label>
-          <select id="fCurrency">
-            <option>TL</option><option>USD</option><option>EUR</option><option>GBP</option>
-          </select>
-        </div>
-      </div>
-
-      <label>İlan Linki <span class="opt">(sahibinden.com vb.)</span></label>
-      <input type="url" id="fLink" placeholder="https://sahibinden.com/ilan/...">
-
-      <label>Kapak Fotoğrafı</label>
-      <div class="photo-mini">
-        <div class="preview" id="fPhotoPreview" onclick="document.getElementById('fPhotoInput').click()">
-          <span class="icon">📷</span>
-        </div>
-        <div class="text" id="fPhotoText">Fotoğraf yüklemek için dokunun</div>
-        <input type="file" id="fPhotoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
-      </div>
-
-      <label>Durum</label>
-      <div class="chip-row" id="statusChips"></div>
-
-      <button class="btn btn-submit" id="btnSubmit" onclick="submitPortfolio()" disabled>Portföyü Kaydet</button>
-      <button class="btn btn-cancel" onclick="closeForm()">İptal</button>
+  <!-- FORM -->
+  <div id="formView" class="form-wrap" style="display:none">
+    <div class="card">
+      <label class="fl">Danışman</label>
+      <select id="f_con"><option value="">Seçiniz...</option></select>
+      <label class="fl">İlan Türü</label><div class="chips" id="f_lt"></div>
+      <label class="fl">Emlak Türü</label><div class="chips" id="f_pt"></div>
     </div>
+    <div class="card">
+      <label class="fl">Semt / Mahalle</label><input type="text" id="f_dist" placeholder="ör: Fikirtepe, Merdivenköy...">
+      <label class="fl">Proje / Site Adı <span class="opt">(opsiyonel)</span></label><input type="text" id="f_proj" placeholder="ör: Metropark, DAP İzMarina...">
+      <label class="fl">Fiyat</label><div class="cr"><input type="number" id="f_price" placeholder="8500000" inputmode="numeric"><select id="f_cur"><option>TL</option><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+    </div>
+    <div class="card">
+      <div class="row"><div><label class="fl">Brüt m²</label><input type="number" id="f_m2" placeholder="120" inputmode="numeric"></div><div><label class="fl">Oda Sayısı</label><select id="f_room"><option>1+0</option><option>1+1</option><option>2+1</option><option selected>3+1</option><option>3.5+1</option><option>4+1</option><option>4.5+1</option><option>5+1</option><option>5+2</option><option>6+</option></select></div></div>
+      <label class="fl">Kullanım Durumu</label><div class="chips" id="f_us"></div>
+      <label class="fl">Portföy Durumu</label><div class="chips" id="f_st"></div>
+    </div>
+    <div class="card">
+      <label class="fl">Sahibinden.com Linki <span class="opt">(opsiyonel)</span></label><input type="url" id="f_link" placeholder="https://www.sahibinden.com/ilan/...">
+      <label class="fl">Kapak Fotoğrafı</label>
+      <div class="photo-box" id="pBox" onclick="document.getElementById('pIn').click()"><div class="ph" id="pPh"><div class="i">📷</div><div class="t">Fotoğraf yükle</div></div><img id="pPr" style="display:none"><button class="rm" id="pRm" style="display:none" onclick="event.stopPropagation();rmPhoto()">✕</button></div>
+      <input type="file" id="pIn" accept="image/*" style="display:none" onchange="doPhoto(this)">
+    </div>
+    <button class="btn btn-g" id="subBtn" onclick="submit()" disabled>✓ Portföyü Kaydet</button>
   </div>
-
-  <!-- TOAST -->
-  <div class="toast hidden" id="toast"></div>
+  <div class="footer">RE/MAX Doğuş · Portföy Yönetim Sistemi</div>
 </div>
-
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbxexVW1mv_gZ-kMqgrEH5IlSIkgeMp9J7tQWN1TJl9TA7NMw8xCV7ofSU23TPsp-lObvQ/exec';
+const API='https://script.google.com/macros/s/AKfycbxexVW1mv_gZ-kMqgrEH5IlSIkgeMp9J7tQWN1TJl9TA7NMw8xCV7ofSU23TPsp-lObvQ/exec';
+const CONS=['Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Orhan Özazman','Gamze Yetkin','Gizem Gök','İrem Aleyna Tetik','Özlem Varol'];
+const LT=['Satılık','Kiralık'], PT=['Daire','Residence','Villa','Müstakil','Dublex','Penthouse','Arsa','Dükkan','Ofis'];
+const US=['Boş','Kiracılı','Mülk Sahibi'], ST=['Aktif','Kapora Alındı','Satıldı','Kiralandı'];
 
-const CONSULTANTS = [
-  'Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Orhan Özazman',
-  'Gamze Yetkin','Gizem Gök','İrem Aleyna Tetik','Özlem Varol'
-];
-const USAGE_OPTIONS = ['Boş','Kiracılı','Mülk Sahibi'];
-const STATUS_OPTIONS = ['Aktif','Kapora Alındı','Satıldı','Kiralandı'];
-const STATUS_CLASSES = {'Aktif':'badge-aktif','Kapora Alındı':'badge-kapora','Satıldı':'badge-satildi','Kiralandı':'badge-kiralandi'};
+let data=[],filter='Tümü',fm={lt:'Satılık',pt:'Daire',us:'Boş',st:'Aktif'},pb64=null,pnm=null;
 
-// ============================================================
-// STATE
-// ============================================================
-let portfolios = [];
-let currentFilter = 'all';
-let formState = { usage: 'Boş', status: 'Aktif' };
-let photoBase64 = null;
-let photoName = null;
-
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  // Consultant select
-  const sel = document.getElementById('fConsultant');
-  CONSULTANTS.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
-
-  // Usage chips
-  renderFormChips('usageChips', USAGE_OPTIONS, 'usage');
-  // Status chips
-  renderFormChips('statusChips', STATUS_OPTIONS, 'status');
-
-  // Filters
-  document.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
-      renderList();
-    };
-  });
-
-  // Validation listeners
-  ['fConsultant','fDistrict','fM2','fPrice'].forEach(id => {
-    document.getElementById(id).addEventListener('input', validateForm);
-    document.getElementById(id).addEventListener('change', validateForm);
-  });
-
-  loadPortfolios();
+function init(){
+  const s=document.getElementById('f_con');
+  CONS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o)});
+  s.addEventListener('change',vld);
+  mkChips('f_lt',LT,'lt');mkChips('f_pt',PT,'pt');mkChips('f_us',US,'us');mkChips('f_st',ST,'st');
+  ['f_dist','f_price','f_m2'].forEach(id=>document.getElementById(id).addEventListener('input',vld));
+  mkFilters();loadData();
 }
 
-function renderFormChips(containerId, options, stateKey) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'chip' + (formState[stateKey] === opt ? ' active' : '');
-    btn.textContent = opt;
-    btn.onclick = () => {
-      formState[stateKey] = opt;
-      container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-    };
-    container.appendChild(btn);
+function mkChips(cid,opts,key){
+  const c=document.getElementById(cid);
+  opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.className='chip'+(fm[key]===o?' on':'');b.textContent=o;
+  b.onclick=()=>{fm[key]=o;c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');vld()};c.appendChild(b)});
+}
+function mkFilters(){
+  const bar=document.getElementById('filterBar');
+  ['Tümü',...ST].forEach(f=>{const b=document.createElement('button');b.className='fbtn'+(f==='Tümü'?' on':'');b.textContent=f;
+  b.onclick=()=>{filter=f;bar.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderList()};bar.appendChild(b)});
+}
+function showTab(t){document.querySelectorAll('.tab').forEach((x,i)=>x.classList.toggle('active',t==='list'?i===0:i===1));
+  document.getElementById('listView').style.display=t==='list'?'block':'none';
+  document.getElementById('formView').style.display=t==='form'?'block':'none';
+  if(t==='list')loadData();
+}
+
+async function loadData(){
+  sLoad('Portföyler yükleniyor...');
+  try{const r=await fetch(API+'?action=list');const d=await r.json();if(d.success)data=d.portfolios||[]}catch(e){console.log(e)}
+  hLoad();renderList();
+}
+
+function renderList(){
+  const q=document.getElementById('searchBox').value.toLowerCase().trim();
+  const f=data.filter(p=>{
+    if(filter!=='Tümü'&&p.durum!==filter)return false;
+    if(q&&![p.semt,p.proje,p.danışman,p.ilanTuru,p.emlakTuru].join(' ').toLowerCase().includes(q))return false;
+    return true;
   });
-}
-
-// ============================================================
-// LOAD PORTFOLIOS
-// ============================================================
-async function loadPortfolios() {
-  document.getElementById('list').innerHTML = '<div class="loading"><div class="spinner"></div>Portföyler yükleniyor...</div>';
-  try {
-    const res = await fetch(API_URL + '?action=list');
-    const data = await res.json();
-    if (data.success) {
-      portfolios = data.portfolios || [];
-      renderList();
-    } else {
-      document.getElementById('list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Veriler yüklenemedi</p></div>';
-    }
-  } catch(err) {
-    console.error(err);
-    document.getElementById('list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Bağlantı hatası</p></div>';
-  }
-}
-
-// ============================================================
-// RENDER LIST
-// ============================================================
-function renderList() {
-  const listEl = document.getElementById('list');
-  let filtered = portfolios;
-  if (currentFilter !== 'all') {
-    filtered = portfolios.filter(p => p.status === currentFilter);
-  }
-
-  document.getElementById('countBadge').textContent = filtered.length + ' portföy';
-
-  if (filtered.length === 0) {
-    listEl.innerHTML = '<div class="empty"><div class="icon">📂</div><p>Henüz portföy yok</p></div>';
-    return;
-  }
-
-  listEl.innerHTML = filtered.map(p => {
-    const badgeClass = STATUS_CLASSES[p.status] || 'badge-aktif';
-    const priceFormatted = p.price ? Number(p.price).toLocaleString('tr-TR') : '—';
-    const hasLink = p.link && p.link.startsWith('http');
-    const hasPhoto = p.photoUrl && p.photoUrl.startsWith('http');
-    // Convert Drive URL to thumbnail
-    let thumbSrc = '';
-    if (hasPhoto) {
-      const match = p.photoUrl.match(/\/d\/([^/]+)/);
-      if (match) {
-        thumbSrc = 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w200';
-      } else {
-        thumbSrc = p.photoUrl;
-      }
-    }
-
-    return `
-      <div class="portfolio-card">
-        <div class="thumb">
-          ${thumbSrc ? `<img src="${thumbSrc}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-img" style="display:none">🏠</div>` : '<div class="no-img">🏠</div>'}
-        </div>
-        <div class="info" style="padding-right:${hasLink ? '36px' : '12px'}">
-          <div class="location">${esc(p.district)}${p.project ? ' · ' + esc(p.project) : ''}</div>
-          <div class="specs">
-            <span>${esc(p.m2)}m²</span>
-            <span>·</span>
-            <span>${esc(p.rooms)}</span>
-            ${p.usage ? `<span>·</span><span class="usage-badge">${esc(p.usage)}</span>` : ''}
-          </div>
-          <div class="price-row">
-            <span class="price">${priceFormatted} ${esc(p.currency || 'TL')}</span>
-            <span class="badge ${badgeClass}">${esc(p.status)}</span>
-          </div>
-          <div class="consultant-name">${esc(p.consultant)}</div>
-        </div>
-        ${hasLink ? `<a class="sah-link" href="${esc(p.link)}" target="_blank" rel="noopener" title="İlana git"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>` : ''}
-      </div>`;
+  const c=document.getElementById('listContainer');
+  if(!f.length){c.innerHTML='<div class="empty"><div class="icon">📭</div><div>'+(data.length?'Filtre sonucu yok':'Henüz portföy yok')+'</div></div>';return}
+  c.innerHTML=f.map((p,i)=>{
+    const sc={'Aktif':'aktif','Kapora Alındı':'kapora','Satıldı':'satildi','Kiralandı':'kiralandi'}[p.durum]||'aktif';
+    const uc={'Boş':'bos','Kiracılı':'kiracili','Mülk Sahibi':'mulk'}[p.kullanim]||'bos';
+    const img=p.foto?'<img class="pcard-img" src="'+p.foto+'" loading="lazy" onerror="this.outerHTML=\'<div class=pcard-img-ph>🏠</div>\'">':'<div class="pcard-img-ph">🏠</div>';
+    const pr=Number(p.fiyat).toLocaleString('tr-TR')+' '+(p.paraBirimi||'TL');
+    const arr=p.link?'<a class="pcard-arrow" href="'+p.link+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>':'';
+    return '<div class="pcard" onclick="detail('+i+')"><div class="pcard-top">'+img+'<div class="pcard-info"><div class="pcard-loc">'+p.semt+(p.proje?' · '+p.proje:'')+'</div><div class="pcard-specs"><span>'+p.m2+'m²</span><span>'+p.oda+'</span><span>'+p.emlakTuru+'</span></div><div class="pcard-price">'+pr+'</div></div></div><div class="pcard-bottom"><div class="pcard-tags"><span class="ptag '+sc+'">'+p.durum+'</span><span class="ptag '+uc+'">'+p.kullanim+'</span><span class="ptag" style="background:var(--s100);color:var(--s600)">'+p.ilanTuru+'</span></div>'+arr+'</div><div class="pcard-who">👤 '+p.danışman+'</div></div>';
   }).join('');
 }
 
-function esc(s) { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function detail(idx){
+  const q=document.getElementById('searchBox').value.toLowerCase().trim();
+  const f=data.filter(p=>{if(filter!=='Tümü'&&p.durum!==filter)return false;if(q&&![p.semt,p.proje,p.danışman].join(' ').toLowerCase().includes(q))return false;return true});
+  const p=f[idx];if(!p)return;
+  const pr=Number(p.fiyat).toLocaleString('tr-TR')+' '+(p.paraBirimi||'TL');
+  const s=document.getElementById('detailSheet');
+  s.innerHTML='<div class="cb"></div>'
+    +(p.foto?'<img src="'+p.foto+'" onerror="this.style.display=\'none\'">':'')
+    +'<h3>'+p.semt+(p.proje?' · '+p.proje:'')+'</h3>'
+    +'<div class="dp">'+p.danışman+' · '+p.tarih+'</div>'
+    +'<div class="dr"><span class="dl">İlan Türü</span><span class="dv">'+p.ilanTuru+'</span></div>'
+    +'<div class="dr"><span class="dl">Emlak Türü</span><span class="dv">'+p.emlakTuru+'</span></div>'
+    +'<div class="dr"><span class="dl">m²</span><span class="dv">'+p.m2+' m²</span></div>'
+    +'<div class="dr"><span class="dl">Oda</span><span class="dv">'+p.oda+'</span></div>'
+    +'<div class="dr"><span class="dl">Fiyat</span><span class="dv">'+pr+'</span></div>'
+    +'<div class="dr"><span class="dl">Kullanım</span><span class="dv">'+p.kullanim+'</span></div>'
+    +'<div class="dr"><span class="dl">Durum</span><span class="dv">'+p.durum+'</span></div>'
+    +(p.link?'<a class="detail-link" href="'+p.link+'" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>Sahibinden İlanını Aç</a>':'');
+  document.getElementById('detailOverlay').classList.remove('h');
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.add('h')}
 
-// ============================================================
-// PHOTO
-// ============================================================
-function handlePhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const MAX = 800;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = h * MAX / w; w = MAX; } else { w = w * MAX / h; h = MAX; }
-      }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-      photoBase64 = dataUrl.split(',')[1];
-      photoName = 'p_' + Date.now() + '.jpg';
-      const preview = document.getElementById('fPhotoPreview');
-      preview.innerHTML = '<img src="' + dataUrl + '" alt="">';
-      document.getElementById('fPhotoText').textContent = Math.round(photoBase64.length*3/4/1024) + ' KB';
-      validateForm();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+function doPhoto(inp){
+  const file=inp.files[0];if(!file)return;
+  const rd=new FileReader();rd.onload=function(e){
+    const img=new Image();img.onload=function(){
+      const cv=document.createElement('canvas');const M=1200;let w=img.width,h=img.height;
+      if(w>M||h>M){if(w>h){h=h*M/w;w=M}else{w=w*M/h;h=M}}
+      cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+      const du=cv.toDataURL('image/jpeg',.8);pb64=du.split(',')[1];pnm='pf_'+Date.now()+'.jpg';
+      document.getElementById('pPr').src=du;document.getElementById('pPr').style.display='block';
+      document.getElementById('pPh').style.display='none';document.getElementById('pRm').style.display='flex';vld();
+    };img.src=e.target.result};rd.readAsDataURL(file);
+}
+function rmPhoto(){pb64=null;pnm=null;document.getElementById('pPr').style.display='none';document.getElementById('pPh').style.display='block';document.getElementById('pRm').style.display='none';document.getElementById('pIn').value='';vld()}
+
+function vld(){
+  document.getElementById('subBtn').disabled=!(document.getElementById('f_con').value&&document.getElementById('f_dist').value&&document.getElementById('f_price').value&&document.getElementById('f_m2').value);
 }
 
-// ============================================================
-// FORM
-// ============================================================
-function openForm() {
-  document.getElementById('formOverlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+async function submit(){
+  sLoad('Kaydediliyor...');
+  const pay={action:'add',consultant:document.getElementById('f_con').value,listingType:fm.lt,propertyType:fm.pt,
+    district:document.getElementById('f_dist').value,project:document.getElementById('f_proj').value,
+    price:document.getElementById('f_price').value,currency:document.getElementById('f_cur').value,
+    m2:document.getElementById('f_m2').value,rooms:document.getElementById('f_room').value,
+    usage:fm.us,status:fm.st,link:document.getElementById('f_link').value,photoBase64:pb64,photoName:pnm};
+  try{await fetch(API,{method:'POST',body:JSON.stringify(pay),headers:{'Content-Type':'text/plain'}})}catch(e){console.log(e)}
+  hLoad();showToast();resetForm();showTab('list');
 }
 
-function closeForm() {
-  document.getElementById('formOverlay').classList.add('hidden');
-  document.body.style.overflow = '';
+function resetForm(){
+  ['f_dist','f_proj','f_price','f_m2','f_link'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_con').value='';document.getElementById('f_cur').value='TL';document.getElementById('f_room').value='3+1';
+  fm={lt:'Satılık',pt:'Daire',us:'Boş',st:'Aktif'};
+  [['f_lt',LT,'lt'],['f_pt',PT,'pt'],['f_us',US,'us'],['f_st',ST,'st']].forEach(([cid,opts,key])=>{
+    const c=document.getElementById(cid);c.innerHTML='';mkChips2(c,opts,key)});rmPhoto();vld();
 }
+function mkChips2(c,opts,key){opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.className='chip'+(fm[key]===o?' on':'');b.textContent=o;
+  b.onclick=()=>{fm[key]=o;c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');vld()};c.appendChild(b)})}
 
-function validateForm() {
-  const ok = document.getElementById('fConsultant').value &&
-             document.getElementById('fDistrict').value &&
-             document.getElementById('fM2').value &&
-             document.getElementById('fPrice').value;
-  document.getElementById('btnSubmit').disabled = !ok;
-}
-
-async function submitPortfolio() {
-  const btn = document.getElementById('btnSubmit');
-  btn.disabled = true;
-  btn.textContent = 'Kaydediliyor...';
-
-  const payload = {
-    action: 'add',
-    consultant: document.getElementById('fConsultant').value,
-    district: document.getElementById('fDistrict').value,
-    project: document.getElementById('fProject').value,
-    m2: document.getElementById('fM2').value,
-    rooms: document.getElementById('fRooms').value,
-    usage: formState.usage,
-    price: document.getElementById('fPrice').value,
-    currency: document.getElementById('fCurrency').value,
-    link: document.getElementById('fLink').value,
-    status: formState.status,
-    photoBase64: photoBase64,
-    photoName: photoName
-  };
-
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {'Content-Type':'text/plain'}
-    });
-    const data = await res.json();
-    if (data.success) {
-      showToast('✓ Portföy kaydedildi!');
-      resetForm();
-      closeForm();
-      loadPortfolios();
-    } else {
-      showToast('Hata: ' + (data.message || ''));
-      btn.disabled = false;
-      btn.textContent = 'Portföyü Kaydet';
-    }
-  } catch(err) {
-    // CORS but might have saved
-    showToast('✓ Portföy gönderildi');
-    resetForm();
-    closeForm();
-    setTimeout(loadPortfolios, 2000);
-  }
-}
-
-function resetForm() {
-  ['fConsultant','fDistrict','fProject','fM2','fPrice','fLink'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('fRooms').value = '3+1';
-  document.getElementById('fCurrency').value = 'TL';
-  formState = { usage: 'Boş', status: 'Aktif' };
-  photoBase64 = null; photoName = null;
-  document.getElementById('fPhotoPreview').innerHTML = '<span class="icon">📷</span>';
-  document.getElementById('fPhotoText').textContent = 'Fotoğraf yüklemek için dokunun';
-  document.getElementById('fPhotoInput').value = '';
-  renderFormChips('usageChips', USAGE_OPTIONS, 'usage');
-  renderFormChips('statusChips', STATUS_OPTIONS, 'status');
-  document.getElementById('btnSubmit').textContent = 'Portföyü Kaydet';
-  validateForm();
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.remove('hidden');
-  setTimeout(() => t.classList.add('hidden'), 2500);
-}
-
-// GO
+function sLoad(t){document.getElementById('loadText').textContent=t;document.getElementById('loading').classList.remove('h')}
+function hLoad(){document.getElementById('loading').classList.add('h')}
+function showToast(){const t=document.getElementById('toast');t.classList.remove('h');setTimeout(()=>t.classList.add('h'),2500)}
 init();
 </script>
 </body>
