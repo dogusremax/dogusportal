@@ -135,6 +135,15 @@ var CACHE_KEY='perf_cache_v1';
 var AYLIK_TTL=6*60*60*1000;      // 6 saat — geçmiş aylar zaten değişmez
 var KAPANIS_TTL=10*60*1000;      // 10 dakika
 
+/* Apps Script bazen JSON yerine HTML hata sayfası döndürüyor;
+   doğrudan r.json() çağrısı o durumda "unexpected character" hatası veriyordu. */
+function guvenliJson(r){
+  return r.text().then(function(t){
+    try{ return JSON.parse(t); }
+    catch(e){ console.warn('JSON beklenirken başka içerik geldi:', String(t).slice(0,120)); return null; }
+  }).catch(function(){ return null; });
+}
+
 function cacheOku(){
   try{
     var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
@@ -220,13 +229,20 @@ async function loadData(){
     // Sadece önbellekte olmayan ayları çek
     var toFetch=months.filter(function(m){return !AYLIK_CACHE[m];});
     var promises=[];
-    if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(function(r){return r.json();}).then(function(d){if(d.siralama)AYLIK_CACHE[m]=d;return d;});})));
+    if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(guvenliJson).then(function(d){if(d&&d.siralama)AYLIK_CACHE[m]=d;return d;}).catch(function(){return null;});})));
     else promises.push(Promise.resolve([]));
-    if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(function(r){return r.json();}).catch(function(){return null;}));
+    if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(guvenliJson).catch(function(){return null;}));
     else promises.push(Promise.resolve(KAPANIS_CACHE));
     var aylikResult=await promises[0];
     ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
-    if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
+    if(!ALL_DATA.length){
+      document.getElementById("report").innerHTML =
+        '<div class="no-data">Veriye ulaşılamadı.<br><span style="font-size:13px;opacity:.75">'
+        + 'Sunucu şu an yanıt vermiyor olabilir. Birkaç saniye sonra tekrar deneyin.</span><br>'
+        + '<button onclick="loadData()" style="margin-top:14px;padding:8px 18px;border:none;border-radius:8px;'
+        + 'background:#1A56A0;color:#fff;font-size:13px;cursor:pointer">Tekrar dene</button></div>';
+      return;
+    }
     cacheYaz();
     DATA=mergeData(ALL_DATA);
     // Kapanış verisi: varsa hemen uygula, yoksa arka planda çek
@@ -246,7 +262,14 @@ async function loadData(){
       if(match)cSel.value=match.id;
     }else if(prev&&cSel.querySelector('[value="'+prev+'"]'))cSel.value=prev;
     render();
-  }catch(e){document.getElementById("report").innerHTML='<div class="no-data">Hata: '+e.message+'</div>';}
+  }catch(e){
+    console.error('loadData hatası:', e);
+    document.getElementById("report").innerHTML =
+      '<div class="no-data">Rapor yüklenemedi.<br><span style="font-size:13px;opacity:.75">'
+      + 'Sunucuya ulaşılamıyor olabilir.</span><br>'
+      + '<button onclick="loadData()" style="margin-top:14px;padding:8px 18px;border:none;border-radius:8px;'
+      + 'background:#1A56A0;color:#fff;font-size:13px;cursor:pointer">Tekrar dene</button></div>';
+  }
 }
 
 function mergeData(all){
@@ -425,7 +448,8 @@ function showSayac(){
   var box=document.getElementById("sayacBox");
   document.getElementById("sayacOverlay").style.display="block";
   box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Yükleniyor...</div>';
-  fetch(LOG_READ_URL+"?action=getLoginLogs",{redirect:"follow"}).then(function(r){return r.json();}).then(function(data){
+  fetch(LOG_READ_URL+"?action=getLoginLogs",{redirect:"follow"}).then(guvenliJson).then(function(data){
+    if(!data) return;
     var logs=(data.logs||[]).filter(function(l){return (l.uygulama||"")==="Performansım";});
     if(!logs.length){box.innerHTML='<h3>📊 Giriş Sayacı <button class="close-btn" onclick="document.getElementById(\'sayacOverlay\').style.display=\'none\'">&times;</button></h3><div style="color:#888;text-align:center;padding:20px">Henüz giriş kaydı yok</div>';return;}
     var grouped={};
