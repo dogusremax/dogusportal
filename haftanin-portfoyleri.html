@@ -3,294 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Haftanın Portföyü | RE/MAX Doğuş</title>
+<title>Doğuş Portföyleri | RE/MAX Doğuş</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --red:#DC2626;--orange:#F97316;--navy:#1e3a5f;--green:#059669;
+  --red:#DC2626;--orange:#F97316;--navy:#1e3a5f;--green:#059669;--blue:#2563EB;
   --slate50:#f8fafc;--slate100:#f1f5f9;--slate200:#e2e8f0;
-  --slate400:#94a3b8;--slate500:#64748b;--slate600:#475569;--slate800:#1e293b;--slate900:#0f172a;
-  --radius:12px;--radius-lg:16px;--radius-full:50px;
+  --slate300:#cbd5e1;--slate400:#94a3b8;--slate500:#64748b;--slate600:#475569;--slate700:#334155;--slate800:#1e293b;--slate900:#0f172a;
+  --radius:12px;--radius-lg:16px;
 }
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--slate50);color:var(--slate800);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-.app{max-width:440px;margin:0 auto;min-height:100dvh;padding:0 16px;position:relative}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:80px}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,var(--navy) 0%,var(--red) 100%);margin:0 -16px;padding:28px 22px 22px;border-radius:0 0 22px 22px;position:relative;overflow:hidden}
-.header::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06)}
-.header::before{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04)}
-.logo-row{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-.logo-circle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:21px;backdrop-filter:blur(4px)}
-.logo-text{font-weight:800;font-size:17px;color:#fff;letter-spacing:-.3px}
-.logo-sub{font-size:11px;color:rgba(255,255,255,0.7);font-weight:500;margin-top:1px}
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--red) 100%);padding:20px 18px 16px;position:sticky;top:0;z-index:100}
+.header-row{display:flex;align-items:center;justify-content:space-between}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo-circle{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-weight:800;font-size:16px;color:#fff;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.7);font-weight:500;margin-top:1px}
+.header-count{background:rgba(255,255,255,0.2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
 
-/* PROGRESS */
-.progress{display:flex;justify-content:center;align-items:center;padding:22px 0 6px;gap:0}
-.step-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;transition:all .25s;cursor:default;flex-shrink:0}
-.step-dot.active,.step-dot.done{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 2px 8px rgba(220,38,38,0.3)}
-.step-dot.done{cursor:pointer;font-size:12px}
-.step-dot.pending{background:var(--slate200);color:var(--slate400)}
-.step-line{width:22px;height:2.5px;border-radius:2px;transition:background .25s}
-.step-line.done{background:var(--red)}
-.step-line.pending{background:var(--slate200)}
-.step-title{text-align:center;font-size:13px;font-weight:700;color:var(--slate800);margin-bottom:16px}
-.step-title span{color:var(--slate400);font-weight:400}
+/* FILTERS */
+.filters{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-bottom:1px solid var(--slate100)}
+.filters::-webkit-scrollbar{display:none}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--slate200);background:#fff;font-size:12px;font-weight:600;color:var(--slate600);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
+.filter-chip.active{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red)}
 
-/* CARD */
-.card{background:#fff;border-radius:var(--radius-lg);padding:22px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.05),0 6px 16px rgba(0,0,0,0.03)}
-.card.hidden{display:none}
-label.field-label{display:block;font-size:13px;font-weight:700;color:var(--slate800);margin:14px 0 6px}
-label.field-label:first-child{margin-top:0}
-label.field-label .opt{color:var(--slate400);font-weight:400}
-input[type=text],input[type=number],select,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--slate200);font-size:15px;font-family:inherit;outline:none;background:var(--slate50);transition:border .2s;-webkit-appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--red)}
-textarea{min-height:80px;resize:vertical}
-.row{display:flex;gap:8px}
-.row>*{flex:1}
-.currency-row{display:flex;gap:8px}
-.currency-row input{flex:1}
-.currency-row select{width:80px;flex:none}
+/* PORTFOLIO LIST */
+.list{padding:8px 12px}
+.portfolio-card{background:#fff;border-radius:var(--radius-lg);margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.02);overflow:hidden;display:flex;gap:0;position:relative}
+.portfolio-card .thumb{width:100px;min-height:110px;background:#e2e8f0;flex-shrink:0;position:relative;overflow:hidden}
+.portfolio-card .thumb img{width:100%;height:100%;object-fit:cover}
+.portfolio-card .thumb .no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:28px;color:var(--slate300)}
+.portfolio-card .info{flex:1;padding:10px 12px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.portfolio-card .info .top-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.portfolio-card .info .location{font-size:14px;font-weight:700;color:var(--slate900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.portfolio-card .info .project{font-size:12px;color:var(--slate500);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.portfolio-card .info .specs{font-size:12px;color:var(--slate600);font-weight:500;display:flex;gap:6px;flex-wrap:wrap;margin-top:1px}
+.portfolio-card .info .specs span{display:flex;align-items:center;gap:2px}
+.portfolio-card .info .price-row{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
+.portfolio-card .info .price{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.portfolio-card .info .consultant-name{font-size:10px;color:var(--slate400);font-weight:500;margin-top:1px}
 
-/* CHIPS */
-.chip-row{display:flex;flex-wrap:wrap;gap:6px}
-.chip{padding:8px 14px;border-radius:var(--radius-full);border:1.5px solid var(--slate200);background:var(--slate50);font-size:13px;font-weight:500;color:var(--slate600);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.2}
-.chip:active{transform:scale(0.96)}
+/* Status Badge */
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.badge-aktif{background:#ECFDF5;color:#059669}
+.badge-kapora{background:#FFF7ED;color:#EA580C}
+.badge-satildi{background:#FEF2F2;color:#DC2626}
+.badge-kiralandi{background:#EFF6FF;color:#2563EB}
+
+/* Usage Badge */
+.usage-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--slate100);color:var(--slate600)}
+
+/* Sahibinden Arrow */
+.sah-link{position:absolute;right:0;top:0;bottom:0;width:36px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,transparent,rgba(248,250,252,0.9));text-decoration:none;color:var(--slate400);font-size:18px;transition:color .15s}
+.sah-link:hover{color:var(--red)}
+.sah-link svg{width:18px;height:18px}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:50%;transform:translateX(50%);width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;border:none;font-size:28px;font-weight:300;cursor:pointer;box-shadow:0 4px 16px rgba(220,38,38,0.35);z-index:200;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.fab:active{transform:translateX(50%) scale(0.92)}
+
+/* ADD FORM */
+.form-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.form-overlay.hidden{display:none}
+.form-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;padding:20px 18px 32px;animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.form-sheet .handle{width:40px;height:4px;border-radius:4px;background:var(--slate300);margin:0 auto 16px}
+.form-sheet h2{font-size:18px;font-weight:800;color:var(--slate900);margin-bottom:16px;letter-spacing:-.3px}
+.form-sheet label{display:block;font-size:12px;font-weight:700;color:var(--slate700);margin:12px 0 4px}
+.form-sheet label:first-of-type{margin-top:0}
+.form-sheet label .opt{color:var(--slate400);font-weight:400}
+.form-sheet input,.form-sheet select,.form-sheet textarea{width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--slate200);font-size:14px;font-family:inherit;outline:none;background:var(--slate50);transition:border .2s;-webkit-appearance:none}
+.form-sheet input:focus,.form-sheet select:focus{border-color:var(--red)}
+.form-row{display:flex;gap:8px}
+.form-row>*{flex:1}
+.chip-row{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--slate200);background:var(--slate50);font-size:12px;font-weight:500;color:var(--slate600);cursor:pointer;font-family:inherit;transition:all .15s}
 .chip.active{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red);font-weight:700}
-.chip-count{font-size:12px;color:var(--slate400);margin-top:8px}
 
-/* PHOTO UPLOAD */
-.photo-upload{width:100%;height:200px;border-radius:14px;border:2px dashed var(--slate200);background:var(--slate50);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .2s;position:relative}
-.photo-upload:active{border-color:var(--red)}
-.photo-upload img{width:100%;height:100%;object-fit:cover}
-.photo-placeholder{text-align:center}
-.photo-placeholder .icon{font-size:38px;margin-bottom:8px}
-.photo-placeholder .text{font-size:13px;color:var(--slate500);font-weight:600}
-.photo-placeholder .hint{font-size:11px;color:var(--slate400);margin-top:4px}
-.photo-upload .remove-btn{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* Photo upload mini */
+.photo-mini{display:flex;align-items:center;gap:10px}
+.photo-mini .preview{width:64px;height:48px;border-radius:8px;background:var(--slate100);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px dashed var(--slate300);flex-shrink:0}
+.photo-mini .preview img{width:100%;height:100%;object-fit:cover}
+.photo-mini .preview .icon{font-size:20px;color:var(--slate400)}
+.photo-mini .text{font-size:11px;color:var(--slate400)}
 
-/* NAV */
-.nav-row{display:flex;align-items:center;gap:10px;margin-top:18px}
-.nav-row .spacer{flex:1}
-.btn{padding:14px 28px;border-radius:var(--radius);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:-.2px;transition:all .15s}
-.btn:active{transform:scale(0.97)}
-.btn-primary{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 2px 8px rgba(220,38,38,0.25)}
+.btn{padding:14px;border-radius:var(--radius);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:16px;transition:all .15s;letter-spacing:-.2px}
+.btn:active{transform:scale(0.98)}
 .btn-submit{background:linear-gradient(135deg,var(--green),#10B981);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,0.25)}
-.btn-back{padding:14px 20px;border:1.5px solid var(--slate200);background:#fff;color:var(--slate600);font-weight:600;font-size:14px}
 .btn:disabled{background:var(--slate200);color:var(--slate400);cursor:not-allowed;box-shadow:none;transform:none}
+.btn-cancel{background:transparent;color:var(--slate500);font-weight:600;font-size:13px;margin-top:8px;padding:10px}
 
-/* SUCCESS */
-.success-card{background:#fff;border-radius:20px;padding:40px 24px 32px;text-align:center;margin-top:40px;box-shadow:0 4px 24px rgba(0,0,0,0.07)}
-.success-card .emoji{font-size:64px;margin-bottom:16px}
-.success-card h2{font-size:22px;font-weight:800;color:var(--slate900);letter-spacing:-.5px;margin-bottom:8px}
-.success-card .info{color:var(--slate500);font-size:14px;line-height:1.5;margin-bottom:20px}
-.summary-box{background:var(--slate50);border-radius:14px;padding:16px;margin-bottom:20px;text-align:left}
-.summary-box img{width:100%;border-radius:10px;margin-bottom:12px}
-.tag-row{display:flex;flex-wrap:wrap;gap:6px}
-.tag{display:inline-block;padding:4px 10px;border-radius:8px;background:linear-gradient(135deg,#FEF2F2,#FFF7ED);font-size:12px;font-weight:600;color:var(--red)}
+/* Empty State */
+.empty{text-align:center;padding:60px 20px;color:var(--slate400)}
+.empty .icon{font-size:48px;margin-bottom:12px}
+.empty p{font-size:14px}
 
-/* LOADING */
-.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
-.loading-overlay.hidden{display:none}
-.spinner{width:44px;height:44px;border:3.5px solid var(--slate200);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:16px}
+/* Loading */
+.loading{text-align:center;padding:40px;color:var(--slate400);font-size:13px}
+.spinner{width:32px;height:32px;border:3px solid var(--slate200);border-top-color:var(--red);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:14px;font-weight:600;color:var(--slate600)}
 
-.footer{text-align:center;font-size:11px;color:var(--slate400);margin-top:24px;padding-bottom:28px}
-
-/* Compress photo quality indicator */
-.photo-size{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--slate900);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;animation:fadeIn .2s}
+.toast.hidden{display:none}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
 
-<div class="app" id="app">
-
+<div class="app">
   <!-- HEADER -->
   <div class="header">
-    <div class="logo-row">
-      <div class="logo-circle">🏠</div>
-      <div>
-        <div class="logo-text">RE/MAX DOĞUŞ</div>
-        <div class="logo-sub">Haftanın Portföyü</div>
+    <div class="header-row">
+      <div class="logo-row">
+        <div class="logo-circle">🏠</div>
+        <div>
+          <div class="logo-text">DOĞUŞ PORTFÖYLERİ</div>
+          <div class="logo-sub">RE/MAX Doğuş Ofis Portföyleri</div>
+        </div>
       </div>
+      <div class="header-count" id="countBadge">0 portföy</div>
     </div>
   </div>
 
-  <!-- LOADING -->
-  <div class="loading-overlay hidden" id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">Portföy kaydediliyor...</div>
+  <!-- FILTERS -->
+  <div class="filters" id="filters">
+    <button class="filter-chip active" data-filter="all">Tümü</button>
+    <button class="filter-chip" data-filter="Aktif">Aktif</button>
+    <button class="filter-chip" data-filter="Kapora Alındı">Kapora</button>
+    <button class="filter-chip" data-filter="Satıldı">Satıldı</button>
+    <button class="filter-chip" data-filter="Kiralandı">Kiralandı</button>
   </div>
 
-  <!-- PROGRESS -->
-  <div id="formView">
-    <div class="progress" id="progressBar"></div>
-    <div class="step-title" id="stepTitle"></div>
+  <!-- LIST -->
+  <div class="list" id="list">
+    <div class="loading"><div class="spinner"></div>Portföyler yükleniyor...</div>
+  </div>
 
-    <!-- STEP 0: Danışman & Tür -->
-    <div class="card" id="step0">
-      <label class="field-label">Danışman</label>
-      <select id="consultant">
+  <!-- FAB -->
+  <button class="fab" id="fabBtn" onclick="openForm()">+</button>
+
+  <!-- ADD FORM OVERLAY -->
+  <div class="form-overlay hidden" id="formOverlay" onclick="if(event.target===this)closeForm()">
+    <div class="form-sheet">
+      <div class="handle"></div>
+      <h2>Yeni Portföy Ekle</h2>
+
+      <label>Danışman</label>
+      <select id="fConsultant">
         <option value="">Seçiniz...</option>
       </select>
 
-      <label class="field-label">İlan Türü</label>
-      <div class="chip-row" id="listingTypeChips"></div>
-
-      <label class="field-label">Emlak Türü</label>
-      <div class="chip-row" id="propertyTypeChips"></div>
-    </div>
-
-    <!-- STEP 1: Konum & Fiyat -->
-    <div class="card hidden" id="step1">
-      <label class="field-label">Mahalle / Semt</label>
-      <input type="text" id="district" placeholder="ör: Fikirtepe, Merdivenköy...">
-
-      <label class="field-label">Proje / Site Adı <span class="opt">(opsiyonel)</span></label>
-      <input type="text" id="project" placeholder="ör: Metropark, DAP İzMarina...">
-
-      <label class="field-label">Fiyat</label>
-      <div class="currency-row">
-        <input type="number" id="price" placeholder="8500000" inputmode="numeric">
-        <select id="currency">
-          <option>TL</option><option>USD</option><option>EUR</option><option>GBP</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- STEP 2: Detaylar -->
-    <div class="card hidden" id="step2">
-      <div class="row">
+      <div class="form-row">
         <div>
-          <label class="field-label">Brüt m²</label>
-          <input type="number" id="grossM2" placeholder="120" inputmode="numeric">
+          <label>Semt / Mahalle</label>
+          <input type="text" id="fDistrict" placeholder="ör: Fikirtepe">
         </div>
         <div>
-          <label class="field-label">Net m² <span class="opt">(ops.)</span></label>
-          <input type="number" id="netM2" placeholder="95" inputmode="numeric">
+          <label>Site / Proje <span class="opt">(ops.)</span></label>
+          <input type="text" id="fProject" placeholder="ör: Metropark">
         </div>
       </div>
 
-      <label class="field-label">Oda Sayısı</label>
-      <div class="chip-row" id="roomChips"></div>
-
-      <div class="row" style="margin-top:4px">
+      <div class="form-row">
         <div>
-          <label class="field-label">Bulunduğu Kat</label>
-          <input type="number" id="floor" placeholder="12" inputmode="numeric">
+          <label>m²</label>
+          <input type="number" id="fM2" placeholder="120" inputmode="numeric">
         </div>
         <div>
-          <label class="field-label">Toplam Kat</label>
-          <input type="number" id="totalFloors" placeholder="25" inputmode="numeric">
+          <label>Oda Sayısı</label>
+          <select id="fRooms">
+            <option>1+0</option><option>1+1</option><option>2+1</option><option selected>3+1</option>
+            <option>3.5+1</option><option>4+1</option><option>4.5+1</option><option>5+1</option><option>5+2</option><option>6+</option>
+          </select>
         </div>
       </div>
 
-      <label class="field-label">Bina Yaşı</label>
-      <input type="text" id="buildingAge" placeholder="ör: 0 (sıfır), 5, 10...">
+      <label>Kullanım Durumu</label>
+      <div class="chip-row" id="usageChips"></div>
 
-      <label class="field-label">Isıtma</label>
-      <select id="heating">
-        <option>Doğalgaz (Kombi)</option><option>Merkezi</option><option>Yerden Isıtma</option>
-        <option>Klima</option><option>Soba</option><option>Yok</option>
-      </select>
-    </div>
-
-    <!-- STEP 3: Özellikler -->
-    <div class="card hidden" id="step3">
-      <label class="field-label">Öne Çıkan Özellikler <span class="opt">(en fazla 6)</span></label>
-      <div class="chip-row" id="featureChips"></div>
-      <div class="chip-count" id="featureCount">0/6 seçildi</div>
-
-      <label class="field-label" style="margin-top:18px">Öne Çıkan Başlık <span class="opt">(opsiyonel)</span></label>
-      <input type="text" id="highlight" placeholder='ör: "Boğaz manzaralı köşe daire"'>
-    </div>
-
-    <!-- STEP 4: Fotoğraf -->
-    <div class="card hidden" id="step4">
-      <label class="field-label">Kapak Fotoğrafı</label>
-      <div class="photo-upload" id="photoUpload" onclick="document.getElementById('photoInput').click()">
-        <div class="photo-placeholder" id="photoPlaceholder">
-          <div class="icon">📷</div>
-          <div class="text">Fotoğraf yüklemek için dokunun</div>
-          <div class="hint">Yatay, yüksek çözünürlük önerilir</div>
+      <div class="form-row">
+        <div>
+          <label>Satış Fiyatı</label>
+          <input type="number" id="fPrice" placeholder="8500000" inputmode="numeric">
         </div>
-        <img id="photoPreview" style="display:none" alt="Kapak">
-        <button class="remove-btn" id="removePhoto" style="display:none" onclick="event.stopPropagation();removePhoto()">✕</button>
-        <div class="photo-size" id="photoSize" style="display:none"></div>
+        <div>
+          <label>Para Birimi</label>
+          <select id="fCurrency">
+            <option>TL</option><option>USD</option><option>EUR</option><option>GBP</option>
+          </select>
+        </div>
       </div>
-      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
 
-      <label class="field-label" style="margin-top:18px">Açıklama <span class="opt">(opsiyonel)</span></label>
-      <textarea id="description" placeholder="Ek notlar, sosyal medya açıklaması..."></textarea>
-    </div>
+      <label>İlan Linki <span class="opt">(sahibinden.com vb.)</span></label>
+      <input type="url" id="fLink" placeholder="https://sahibinden.com/ilan/...">
 
-    <!-- NAV -->
-    <div class="nav-row">
-      <button class="btn btn-back hidden" id="btnBack" onclick="goBack()">← Geri</button>
-      <div class="spacer"></div>
-      <button class="btn btn-primary" id="btnNext" onclick="goNext()" disabled>Devam →</button>
+      <label>Kapak Fotoğrafı</label>
+      <div class="photo-mini">
+        <div class="preview" id="fPhotoPreview" onclick="document.getElementById('fPhotoInput').click()">
+          <span class="icon">📷</span>
+        </div>
+        <div class="text" id="fPhotoText">Fotoğraf yüklemek için dokunun</div>
+        <input type="file" id="fPhotoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+      </div>
+
+      <label>Durum</label>
+      <div class="chip-row" id="statusChips"></div>
+
+      <button class="btn btn-submit" id="btnSubmit" onclick="submitPortfolio()" disabled>Portföyü Kaydet</button>
+      <button class="btn btn-cancel" onclick="closeForm()">İptal</button>
     </div>
   </div>
 
-  <!-- SUCCESS -->
-  <div id="successView" style="display:none">
-    <div class="success-card">
-      <div class="emoji">🎉</div>
-      <h2>Portföy Gönderildi!</h2>
-      <p class="info" id="successInfo"></p>
-      <div class="summary-box" id="summaryBox"></div>
-      <button class="btn btn-primary" style="width:100%" onclick="resetForm()">+ Yeni Portföy Ekle</button>
-    </div>
-  </div>
-
-  <div class="footer">RE/MAX Doğuş · Haftanın Portföyü Sistemi</div>
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
 </div>
 
 <script>
 // ============================================================
-// CONFIG — Apps Script URL'nizi buraya yapıştırın
+// CONFIG
 // ============================================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxexVW1mv_gZ-kMqgrEH5IlSIkgeMp9J7tQWN1TJl9TA7NMw8xCV7ofSU23TPsp-lObvQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxexVW1mv_gZ-kMqgrEH5IlSIkgeMp9J7tQWN1TJl9TA7NMw8xCV7ofSU23TPsp-lObvQ/exec';
 
-// ============================================================
-// DATA
-// ============================================================
 const CONSULTANTS = [
   'Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Orhan Özazman',
   'Gamze Yetkin','Gizem Gök','İrem Aleyna Tetik','Özlem Varol'
 ];
-const LISTING_TYPES = ['Satılık','Kiralık'];
-const PROPERTY_TYPES = ['Daire','Residence','Villa','Müstakil','Dublex','Penthouse','Arsa','Dükkan','Ofis'];
-const ROOMS = ['1+0','1+1','2+1','3+1','3.5+1','4+1','4.5+1','5+1','5+2','6+'];
-const FEATURES = [
-  'Deniz Manzarası','Boğaz Manzarası','Şehir Manzarası','Doğa Manzarası',
-  'Kapalı Otopark','Açık Otopark','Havuz','Fitness Salonu','Sauna',
-  'Güvenlik','Asansör','Ebeveyn Banyosu','Giyinme Odası',
-  'Teras','Balkon','Bahçe Katı','Çatı Dubleks',
-  'Metro Yakını','Metrobüs Yakını','AVM Yakını','Okul Yakını',
-  'Yapı Ruhsatlı','İskan Var','Krediye Uygun','Takas Olur'
-];
-const STEPS = [
-  {title:'Danışman & Tür', icon:'👤'},
-  {title:'Konum & Fiyat', icon:'📍'},
-  {title:'Detaylar', icon:'📐'},
-  {title:'Özellikler', icon:'✨'},
-  {title:'Fotoğraf & Açıklama', icon:'📸'}
-];
+const USAGE_OPTIONS = ['Boş','Kiracılı','Mülk Sahibi'];
+const STATUS_OPTIONS = ['Aktif','Kapora Alındı','Satıldı','Kiralandı'];
+const STATUS_CLASSES = {'Aktif':'badge-aktif','Kapora Alındı':'badge-kapora','Satıldı':'badge-satildi','Kiralandı':'badge-kiralandi'};
 
 // ============================================================
 // STATE
 // ============================================================
-let currentStep = 0;
-let state = {
-  consultant:'', listingType:'Satılık', propertyType:'Daire',
-  district:'', project:'', price:'', currency:'TL',
-  grossM2:'', netM2:'', rooms:'3+1', floor:'', totalFloors:'',
-  buildingAge:'', heating:'Doğalgaz (Kombi)',
-  features:[], highlight:'', description:''
-};
+let portfolios = [];
+let currentFilter = 'all';
+let formState = { usage: 'Boş', status: 'Aktif' };
 let photoBase64 = null;
 let photoName = null;
 
@@ -298,77 +251,129 @@ let photoName = null;
 // INIT
 // ============================================================
 function init() {
-  // Danışman select
-  const sel = document.getElementById('consultant');
-  CONSULTANTS.forEach(c => {
-    const o = document.createElement('option');
-    o.value = c; o.textContent = c;
-    sel.appendChild(o);
-  });
-  sel.addEventListener('change', e => { state.consultant = e.target.value; validate(); });
+  // Consultant select
+  const sel = document.getElementById('fConsultant');
+  CONSULTANTS.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
 
-  // Listing type chips
-  renderChips('listingTypeChips', LISTING_TYPES, 'listingType', false);
-  // Property type chips
-  renderChips('propertyTypeChips', PROPERTY_TYPES, 'propertyType', false);
-  // Room chips
-  renderChips('roomChips', ROOMS, 'rooms', false);
-  // Feature chips
-  renderFeatureChips();
+  // Usage chips
+  renderFormChips('usageChips', USAGE_OPTIONS, 'usage');
+  // Status chips
+  renderFormChips('statusChips', STATUS_OPTIONS, 'status');
 
-  // Input bindings
-  ['district','project','price','grossM2','netM2','floor','totalFloors','buildingAge','highlight','description'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', e => { state[id] = e.target.value; validate(); });
-  });
-  ['currency','heating'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', e => { state[id] = e.target.value; });
+  // Filters
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderList();
+    };
   });
 
-  renderProgress();
-  showStep(0);
+  // Validation listeners
+  ['fConsultant','fDistrict','fM2','fPrice'].forEach(id => {
+    document.getElementById(id).addEventListener('input', validateForm);
+    document.getElementById(id).addEventListener('change', validateForm);
+  });
+
+  loadPortfolios();
 }
 
-function renderChips(containerId, options, stateKey, multi) {
+function renderFormChips(containerId, options, stateKey) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'chip' + (state[stateKey] === opt ? ' active' : '');
-    btn.textContent = opt;
     btn.type = 'button';
+    btn.className = 'chip' + (formState[stateKey] === opt ? ' active' : '');
+    btn.textContent = opt;
     btn.onclick = () => {
-      state[stateKey] = opt;
+      formState[stateKey] = opt;
       container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      validate();
     };
     container.appendChild(btn);
   });
 }
 
-function renderFeatureChips() {
-  const container = document.getElementById('featureChips');
-  container.innerHTML = '';
-  FEATURES.forEach(f => {
-    const btn = document.createElement('button');
-    btn.className = 'chip' + (state.features.includes(f) ? ' active' : '');
-    btn.textContent = (state.features.includes(f) ? '✓ ' : '') + f;
-    btn.type = 'button';
-    btn.onclick = () => {
-      if (state.features.includes(f)) {
-        state.features = state.features.filter(x => x !== f);
-      } else if (state.features.length < 6) {
-        state.features.push(f);
-      }
-      renderFeatureChips();
-      document.getElementById('featureCount').textContent = state.features.length + '/6 seçildi';
-      validate();
-    };
-    container.appendChild(btn);
-  });
+// ============================================================
+// LOAD PORTFOLIOS
+// ============================================================
+async function loadPortfolios() {
+  document.getElementById('list').innerHTML = '<div class="loading"><div class="spinner"></div>Portföyler yükleniyor...</div>';
+  try {
+    const res = await fetch(API_URL + '?action=list');
+    const data = await res.json();
+    if (data.success) {
+      portfolios = data.portfolios || [];
+      renderList();
+    } else {
+      document.getElementById('list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Veriler yüklenemedi</p></div>';
+    }
+  } catch(err) {
+    console.error(err);
+    document.getElementById('list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Bağlantı hatası</p></div>';
+  }
 }
+
+// ============================================================
+// RENDER LIST
+// ============================================================
+function renderList() {
+  const listEl = document.getElementById('list');
+  let filtered = portfolios;
+  if (currentFilter !== 'all') {
+    filtered = portfolios.filter(p => p.status === currentFilter);
+  }
+
+  document.getElementById('countBadge').textContent = filtered.length + ' portföy';
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty"><div class="icon">📂</div><p>Henüz portföy yok</p></div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(p => {
+    const badgeClass = STATUS_CLASSES[p.status] || 'badge-aktif';
+    const priceFormatted = p.price ? Number(p.price).toLocaleString('tr-TR') : '—';
+    const hasLink = p.link && p.link.startsWith('http');
+    const hasPhoto = p.photoUrl && p.photoUrl.startsWith('http');
+    // Convert Drive URL to thumbnail
+    let thumbSrc = '';
+    if (hasPhoto) {
+      const match = p.photoUrl.match(/\/d\/([^/]+)/);
+      if (match) {
+        thumbSrc = 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w200';
+      } else {
+        thumbSrc = p.photoUrl;
+      }
+    }
+
+    return `
+      <div class="portfolio-card">
+        <div class="thumb">
+          ${thumbSrc ? `<img src="${thumbSrc}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-img" style="display:none">🏠</div>` : '<div class="no-img">🏠</div>'}
+        </div>
+        <div class="info" style="padding-right:${hasLink ? '36px' : '12px'}">
+          <div class="location">${esc(p.district)}${p.project ? ' · ' + esc(p.project) : ''}</div>
+          <div class="specs">
+            <span>${esc(p.m2)}m²</span>
+            <span>·</span>
+            <span>${esc(p.rooms)}</span>
+            ${p.usage ? `<span>·</span><span class="usage-badge">${esc(p.usage)}</span>` : ''}
+          </div>
+          <div class="price-row">
+            <span class="price">${priceFormatted} ${esc(p.currency || 'TL')}</span>
+            <span class="badge ${badgeClass}">${esc(p.status)}</span>
+          </div>
+          <div class="consultant-name">${esc(p.consultant)}</div>
+        </div>
+        ${hasLink ? `<a class="sah-link" href="${esc(p.link)}" target="_blank" rel="noopener" title="İlana git"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function esc(s) { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
 // ============================================================
 // PHOTO
@@ -376,212 +381,119 @@ function renderFeatureChips() {
 function handlePhoto(input) {
   const file = input.files[0];
   if (!file) return;
-
-  // Compress & convert
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX = 1200;
+      const MAX = 800;
       let w = img.width, h = img.height;
       if (w > MAX || h > MAX) {
-        if (w > h) { h = h * MAX / w; w = MAX; }
-        else { w = w * MAX / h; h = MAX; }
+        if (w > h) { h = h * MAX / w; w = MAX; } else { w = w * MAX / h; h = MAX; }
       }
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       photoBase64 = dataUrl.split(',')[1];
-      photoName = 'portfolio_' + Date.now() + '.jpg';
-
-      const preview = document.getElementById('photoPreview');
-      preview.src = dataUrl;
-      preview.style.display = 'block';
-      document.getElementById('photoPlaceholder').style.display = 'none';
-      document.getElementById('removePhoto').style.display = 'flex';
-
-      const sizeKB = Math.round(photoBase64.length * 3 / 4 / 1024);
-      const sizeEl = document.getElementById('photoSize');
-      sizeEl.textContent = sizeKB + ' KB · ' + Math.round(w) + '×' + Math.round(h);
-      sizeEl.style.display = 'block';
-
-      validate();
+      photoName = 'p_' + Date.now() + '.jpg';
+      const preview = document.getElementById('fPhotoPreview');
+      preview.innerHTML = '<img src="' + dataUrl + '" alt="">';
+      document.getElementById('fPhotoText').textContent = Math.round(photoBase64.length*3/4/1024) + ' KB';
+      validateForm();
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function removePhoto() {
-  photoBase64 = null;
-  photoName = null;
-  document.getElementById('photoPreview').style.display = 'none';
-  document.getElementById('photoPlaceholder').style.display = 'block';
-  document.getElementById('removePhoto').style.display = 'none';
-  document.getElementById('photoSize').style.display = 'none';
-  document.getElementById('photoInput').value = '';
-  validate();
-}
-
 // ============================================================
-// NAVIGATION
+// FORM
 // ============================================================
-function renderProgress() {
-  const bar = document.getElementById('progressBar');
-  bar.innerHTML = '';
-  STEPS.forEach((s, i) => {
-    const dot = document.createElement('div');
-    dot.className = 'step-dot ' + (i < currentStep ? 'done' : i === currentStep ? 'active' : 'pending');
-    dot.textContent = i < currentStep ? '✓' : s.icon;
-    if (i < currentStep) dot.onclick = () => goToStep(i);
-    bar.appendChild(dot);
-    if (i < STEPS.length - 1) {
-      const line = document.createElement('div');
-      line.className = 'step-line ' + (i < currentStep ? 'done' : 'pending');
-      bar.appendChild(line);
-    }
-  });
-  document.getElementById('stepTitle').innerHTML = STEPS[currentStep].title + ' <span>(' + (currentStep+1) + '/5)</span>';
+function openForm() {
+  document.getElementById('formOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 }
 
-function showStep(n) {
-  for (let i = 0; i < 5; i++) {
-    document.getElementById('step' + i).classList.toggle('hidden', i !== n);
-  }
-  document.getElementById('btnBack').classList.toggle('hidden', n === 0);
-  const btn = document.getElementById('btnNext');
-  if (n === 4) {
-    btn.textContent = '✓ Portföyü Gönder';
-    btn.className = 'btn btn-submit';
-  } else {
-    btn.textContent = 'Devam →';
-    btn.className = 'btn btn-primary';
-  }
-  validate();
+function closeForm() {
+  document.getElementById('formOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
-function goToStep(n) {
-  currentStep = n;
-  renderProgress();
-  showStep(n);
-  window.scrollTo({top: 0, behavior: 'smooth'});
+function validateForm() {
+  const ok = document.getElementById('fConsultant').value &&
+             document.getElementById('fDistrict').value &&
+             document.getElementById('fM2').value &&
+             document.getElementById('fPrice').value;
+  document.getElementById('btnSubmit').disabled = !ok;
 }
 
-function goNext() {
-  if (currentStep < 4) {
-    goToStep(currentStep + 1);
-  } else {
-    submitForm();
-  }
-}
-
-function goBack() {
-  if (currentStep > 0) goToStep(currentStep - 1);
-}
-
-function validate() {
-  const btn = document.getElementById('btnNext');
-  let ok = false;
-  switch(currentStep) {
-    case 0: ok = state.consultant && state.listingType && state.propertyType; break;
-    case 1: ok = state.district && state.price; break;
-    case 2: ok = state.grossM2 && state.rooms; break;
-    case 3: ok = state.features.length >= 1; break;
-    case 4: ok = !!photoBase64; break;
-  }
-  btn.disabled = !ok;
-}
-
-// ============================================================
-// SUBMIT
-// ============================================================
-async function submitForm() {
-  const loading = document.getElementById('loading');
-  loading.classList.remove('hidden');
+async function submitPortfolio() {
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Kaydediliyor...';
 
   const payload = {
-    ...state,
+    action: 'add',
+    consultant: document.getElementById('fConsultant').value,
+    district: document.getElementById('fDistrict').value,
+    project: document.getElementById('fProject').value,
+    m2: document.getElementById('fM2').value,
+    rooms: document.getElementById('fRooms').value,
+    usage: formState.usage,
+    price: document.getElementById('fPrice').value,
+    currency: document.getElementById('fCurrency').value,
+    link: document.getElementById('fLink').value,
+    status: formState.status,
     photoBase64: photoBase64,
     photoName: photoName
   };
 
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
+    const res = await fetch(API_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: {'Content-Type': 'text/plain'} // Apps Script CORS
+      headers: {'Content-Type':'text/plain'}
     });
     const data = await res.json();
-
     if (data.success) {
-      showSuccess();
+      showToast('✓ Portföy kaydedildi!');
+      resetForm();
+      closeForm();
+      loadPortfolios();
     } else {
-      alert('Hata: ' + (data.message || 'Bilinmeyen hata'));
+      showToast('Hata: ' + (data.message || ''));
+      btn.disabled = false;
+      btn.textContent = 'Portföyü Kaydet';
     }
-  } catch (err) {
-    // Offline veya CORS — yine de başarılı say (Apps Script bazen CORS sorunu yapar ama kaydeder)
-    console.log('Submit response error (muhtemelen CORS):', err);
-    showSuccess();
-  } finally {
-    loading.classList.add('hidden');
+  } catch(err) {
+    // CORS but might have saved
+    showToast('✓ Portföy gönderildi');
+    resetForm();
+    closeForm();
+    setTimeout(loadPortfolios, 2000);
   }
 }
 
-function showSuccess() {
-  document.getElementById('formView').style.display = 'none';
-  document.getElementById('successView').style.display = 'block';
-
-  document.getElementById('successInfo').innerHTML =
-    '<strong>' + state.consultant + '</strong> tarafından<br>' +
-    '<strong>' + state.district + (state.project ? ' / ' + state.project : '') + '</strong> portföyü<br>' +
-    'başarıyla kaydedildi.';
-
-  const box = document.getElementById('summaryBox');
-  const preview = document.getElementById('photoPreview');
-  box.innerHTML =
-    (preview.src ? '<img src="' + preview.src + '" alt="Kapak">' : '') +
-    '<div class="tag-row">' +
-      '<span class="tag">' + state.listingType + '</span>' +
-      '<span class="tag">' + state.propertyType + '</span>' +
-      '<span class="tag">' + state.rooms + '</span>' +
-      '<span class="tag">' + state.grossM2 + 'm²</span>' +
-      '<span class="tag">' + Number(state.price).toLocaleString('tr-TR') + ' ' + state.currency + '</span>' +
-    '</div>';
-
-  window.scrollTo({top: 0, behavior: 'smooth'});
+function resetForm() {
+  ['fConsultant','fDistrict','fProject','fM2','fPrice','fLink'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fRooms').value = '3+1';
+  document.getElementById('fCurrency').value = 'TL';
+  formState = { usage: 'Boş', status: 'Aktif' };
+  photoBase64 = null; photoName = null;
+  document.getElementById('fPhotoPreview').innerHTML = '<span class="icon">📷</span>';
+  document.getElementById('fPhotoText').textContent = 'Fotoğraf yüklemek için dokunun';
+  document.getElementById('fPhotoInput').value = '';
+  renderFormChips('usageChips', USAGE_OPTIONS, 'usage');
+  renderFormChips('statusChips', STATUS_OPTIONS, 'status');
+  document.getElementById('btnSubmit').textContent = 'Portföyü Kaydet';
+  validateForm();
 }
 
-function resetForm() {
-  state = {
-    consultant:'', listingType:'Satılık', propertyType:'Daire',
-    district:'', project:'', price:'', currency:'TL',
-    grossM2:'', netM2:'', rooms:'3+1', floor:'', totalFloors:'',
-    buildingAge:'', heating:'Doğalgaz (Kombi)',
-    features:[], highlight:'', description:''
-  };
-  photoBase64 = null; photoName = null;
-
-  // Reset inputs
-  ['consultant','district','project','price','grossM2','netM2','floor','totalFloors','buildingAge','highlight','description'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('currency').value = 'TL';
-  document.getElementById('heating').value = 'Doğalgaz (Kombi)';
-  document.getElementById('featureCount').textContent = '0/6 seçildi';
-  removePhoto();
-
-  // Reset chips
-  renderChips('listingTypeChips', LISTING_TYPES, 'listingType', false);
-  renderChips('propertyTypeChips', PROPERTY_TYPES, 'propertyType', false);
-  renderChips('roomChips', ROOMS, 'rooms', false);
-  renderFeatureChips();
-
-  document.getElementById('formView').style.display = 'block';
-  document.getElementById('successView').style.display = 'none';
-  goToStep(0);
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 2500);
 }
 
 // GO
