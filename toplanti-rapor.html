@@ -126,6 +126,40 @@ aysun:"https://lh3.googleusercontent.com/d/1qCW-9vQSnRgSNrqcUn_xIeuYP7oM2Wp9=w40
 };
 const MN=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
 let DATA=null,ALL_DATA=[],PERIOD=1,AYLIK_CACHE={},KAPANIS_CACHE=null,LOGGED_USER=null;
+
+/* ===== KALICI ÖNBELLEK =====
+   Bellek önbelleği sayfa yenilenince siliniyordu; her açılışta 12 aya kadar
+   ayrı istek gidiyor, Apps Script uykudan uyanırken uzun sürüyordu.
+   Artık localStorage'a yazılıyor: aylık veri 6 saat, kapanış verisi 10 dakika. */
+var CACHE_KEY='perf_cache_v1';
+var AYLIK_TTL=6*60*60*1000;      // 6 saat — geçmiş aylar zaten değişmez
+var KAPANIS_TTL=10*60*1000;      // 10 dakika
+
+function cacheOku(){
+  try{
+    var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
+    var simdi=Date.now();
+    if(c.aylik){
+      for(var m in c.aylik){
+        if(simdi - c.aylik[m].t < AYLIK_TTL) AYLIK_CACHE[m]=c.aylik[m].d;
+      }
+    }
+    if(c.kapanis && (simdi - c.kapanis.t) < KAPANIS_TTL) KAPANIS_CACHE=c.kapanis.d;
+  }catch(e){}
+}
+function cacheYaz(){
+  try{
+    var c={aylik:{},kapanis:null},simdi=Date.now();
+    var eski={};
+    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){}
+    for(var m in AYLIK_CACHE){
+      c.aylik[m]={t:(eski[m]&&eski[m].t)||simdi, d:AYLIK_CACHE[m]};
+    }
+    if(KAPANIS_CACHE) c.kapanis={t:simdi,d:KAPANIS_CACHE};
+    localStorage.setItem(CACHE_KEY,JSON.stringify(c));
+  }catch(e){}
+}
+cacheOku();
 var PINS={
 "1520":"broker",
 "2824":"aysegul_alpay",
@@ -170,7 +204,18 @@ function getMonthKeys(n){
 
 async function loadData(){
   var months=getMonthKeys(PERIOD);
-  document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
+  // Önbellekte tüm aylar varsa bekletme — anında çiz, arka planda tazele
+  var hepsiHazir = months.every(function(m){ return !!AYLIK_CACHE[m]; });
+  if(hepsiHazir){
+    try{
+      ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
+      DATA=mergeData(ALL_DATA);
+      if(KAPANIS_CACHE) applyKapanis(KAPANIS_CACHE,months);
+      render();
+    }catch(e){}
+  }else{
+    document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
+  }
   try{
     // Sadece önbellekte olmayan ayları çek
     var toFetch=months.filter(function(m){return !AYLIK_CACHE[m];});
@@ -182,12 +227,13 @@ async function loadData(){
     var aylikResult=await promises[0];
     ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
     if(!ALL_DATA.length){document.getElementById("report").innerHTML='<div class="no-data">Veri bulunamadı</div>';return;}
+    cacheYaz();
     DATA=mergeData(ALL_DATA);
     // Kapanış verisi: varsa hemen uygula, yoksa arka planda çek
     if(KAPANIS_CACHE){
       applyKapanis(KAPANIS_CACHE,months);
     }else{
-      promises[1].then(function(d){if(d){KAPANIS_CACHE=d;applyKapanis(d,months);}});
+      promises[1].then(function(d){if(d){KAPANIS_CACHE=d;applyKapanis(d,months);cacheYaz();}});
     }
     var cSel=document.getElementById("consultantSel");
     var prev=cSel.value;
