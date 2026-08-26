@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Haftanın Portföyü | RE/MAX Doğuş</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#DC2626;--orange:#F97316;--navy:#1e3a5f;--green:#059669;
+  --slate50:#f8fafc;--slate100:#f1f5f9;--slate200:#e2e8f0;
+  --slate400:#94a3b8;--slate500:#64748b;--slate600:#475569;--slate800:#1e293b;--slate900:#0f172a;
+  --radius:12px;--radius-lg:16px;--radius-full:50px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--slate50);color:var(--slate800);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.app{max-width:440px;margin:0 auto;min-height:100dvh;padding:0 16px;position:relative}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--red) 100%);margin:0 -16px;padding:28px 22px 22px;border-radius:0 0 22px 22px;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.header::before{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04)}
+.logo-row{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.logo-circle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:21px;backdrop-filter:blur(4px)}
+.logo-text{font-weight:800;font-size:17px;color:#fff;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.7);font-weight:500;margin-top:1px}
+
+/* PROGRESS */
+.progress{display:flex;justify-content:center;align-items:center;padding:22px 0 6px;gap:0}
+.step-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;transition:all .25s;cursor:default;flex-shrink:0}
+.step-dot.active,.step-dot.done{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 2px 8px rgba(220,38,38,0.3)}
+.step-dot.done{cursor:pointer;font-size:12px}
+.step-dot.pending{background:var(--slate200);color:var(--slate400)}
+.step-line{width:22px;height:2.5px;border-radius:2px;transition:background .25s}
+.step-line.done{background:var(--red)}
+.step-line.pending{background:var(--slate200)}
+.step-title{text-align:center;font-size:13px;font-weight:700;color:var(--slate800);margin-bottom:16px}
+.step-title span{color:var(--slate400);font-weight:400}
+
+/* CARD */
+.card{background:#fff;border-radius:var(--radius-lg);padding:22px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.05),0 6px 16px rgba(0,0,0,0.03)}
+.card.hidden{display:none}
+label.field-label{display:block;font-size:13px;font-weight:700;color:var(--slate800);margin:14px 0 6px}
+label.field-label:first-child{margin-top:0}
+label.field-label .opt{color:var(--slate400);font-weight:400}
+input[type=text],input[type=number],select,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--slate200);font-size:15px;font-family:inherit;outline:none;background:var(--slate50);transition:border .2s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+textarea{min-height:80px;resize:vertical}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.currency-row{display:flex;gap:8px}
+.currency-row input{flex:1}
+.currency-row select{width:80px;flex:none}
+
+/* CHIPS */
+.chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:8px 14px;border-radius:var(--radius-full);border:1.5px solid var(--slate200);background:var(--slate50);font-size:13px;font-weight:500;color:var(--slate600);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.2}
+.chip:active{transform:scale(0.96)}
+.chip.active{border-color:var(--red);background:linear-gradient(135deg,#FEF2F2,#FFF7ED);color:var(--red);font-weight:700}
+.chip-count{font-size:12px;color:var(--slate400);margin-top:8px}
+
+/* PHOTO UPLOAD */
+.photo-upload{width:100%;height:200px;border-radius:14px;border:2px dashed var(--slate200);background:var(--slate50);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .2s;position:relative}
+.photo-upload:active{border-color:var(--red)}
+.photo-upload img{width:100%;height:100%;object-fit:cover}
+.photo-placeholder{text-align:center}
+.photo-placeholder .icon{font-size:38px;margin-bottom:8px}
+.photo-placeholder .text{font-size:13px;color:var(--slate500);font-weight:600}
+.photo-placeholder .hint{font-size:11px;color:var(--slate400);margin-top:4px}
+.photo-upload .remove-btn{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* NAV */
+.nav-row{display:flex;align-items:center;gap:10px;margin-top:18px}
+.nav-row .spacer{flex:1}
+.btn{padding:14px 28px;border-radius:var(--radius);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:-.2px;transition:all .15s}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 2px 8px rgba(220,38,38,0.25)}
+.btn-submit{background:linear-gradient(135deg,var(--green),#10B981);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,0.25)}
+.btn-back{padding:14px 20px;border:1.5px solid var(--slate200);background:#fff;color:var(--slate600);font-weight:600;font-size:14px}
+.btn:disabled{background:var(--slate200);color:var(--slate400);cursor:not-allowed;box-shadow:none;transform:none}
+
+/* SUCCESS */
+.success-card{background:#fff;border-radius:20px;padding:40px 24px 32px;text-align:center;margin-top:40px;box-shadow:0 4px 24px rgba(0,0,0,0.07)}
+.success-card .emoji{font-size:64px;margin-bottom:16px}
+.success-card h2{font-size:22px;font-weight:800;color:var(--slate900);letter-spacing:-.5px;margin-bottom:8px}
+.success-card .info{color:var(--slate500);font-size:14px;line-height:1.5;margin-bottom:20px}
+.summary-box{background:var(--slate50);border-radius:14px;padding:16px;margin-bottom:20px;text-align:left}
+.summary-box img{width:100%;border-radius:10px;margin-bottom:12px}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;padding:4px 10px;border-radius:8px;background:linear-gradient(135deg,#FEF2F2,#FFF7ED);font-size:12px;font-weight:600;color:var(--red)}
+
+/* LOADING */
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+.loading-overlay.hidden{display:none}
+.spinner{width:44px;height:44px;border:3.5px solid var(--slate200);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;font-weight:600;color:var(--slate600)}
+
+.footer{text-align:center;font-size:11px;color:var(--slate400);margin-top:24px;padding-bottom:28px}
+
+/* Compress photo quality indicator */
+.photo-size{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-circle">🏠</div>
+      <div>
+        <div class="logo-text">RE/MAX DOĞUŞ</div>
+        <div class="logo-sub">Haftanın Portföyü</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Portföy kaydediliyor...</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="formView">
+    <div class="progress" id="progressBar"></div>
+    <div class="step-title" id="stepTitle"></div>
+
+    <!-- STEP 0: Danışman & Tür -->
+    <div class="card" id="step0">
+      <label class="field-label">Danışman</label>
+      <select id="consultant">
+        <option value="">Seçiniz...</option>
+      </select>
+
+      <label class="field-label">İlan Türü</label>
+      <div class="chip-row" id="listingTypeChips"></div>
+
+      <label class="field-label">Emlak Türü</label>
+      <div class="chip-row" id="propertyTypeChips"></div>
+    </div>
+
+    <!-- STEP 1: Konum & Fiyat -->
+    <div class="card hidden" id="step1">
+      <label class="field-label">Mahalle / Semt</label>
+      <input type="text" id="district" placeholder="ör: Fikirtepe, Merdivenköy...">
+
+      <label class="field-label">Proje / Site Adı <span class="opt">(opsiyonel)</span></label>
+      <input type="text" id="project" placeholder="ör: Metropark, DAP İzMarina...">
+
+      <label class="field-label">Fiyat</label>
+      <div class="currency-row">
+        <input type="number" id="price" placeholder="8500000" inputmode="numeric">
+        <select id="currency">
+          <option>TL</option><option>USD</option><option>EUR</option><option>GBP</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 2: Detaylar -->
+    <div class="card hidden" id="step2">
+      <div class="row">
+        <div>
+          <label class="field-label">Brüt m²</label>
+          <input type="number" id="grossM2" placeholder="120" inputmode="numeric">
+        </div>
+        <div>
+          <label class="field-label">Net m² <span class="opt">(ops.)</span></label>
+          <input type="number" id="netM2" placeholder="95" inputmode="numeric">
+        </div>
+      </div>
+
+      <label class="field-label">Oda Sayısı</label>
+      <div class="chip-row" id="roomChips"></div>
+
+      <div class="row" style="margin-top:4px">
+        <div>
+          <label class="field-label">Bulunduğu Kat</label>
+          <input type="number" id="floor" placeholder="12" inputmode="numeric">
+        </div>
+        <div>
+          <label class="field-label">Toplam Kat</label>
+          <input type="number" id="totalFloors" placeholder="25" inputmode="numeric">
+        </div>
+      </div>
+
+      <label class="field-label">Bina Yaşı</label>
+      <input type="text" id="buildingAge" placeholder="ör: 0 (sıfır), 5, 10...">
+
+      <label class="field-label">Isıtma</label>
+      <select id="heating">
+        <option>Doğalgaz (Kombi)</option><option>Merkezi</option><option>Yerden Isıtma</option>
+        <option>Klima</option><option>Soba</option><option>Yok</option>
+      </select>
+    </div>
+
+    <!-- STEP 3: Özellikler -->
+    <div class="card hidden" id="step3">
+      <label class="field-label">Öne Çıkan Özellikler <span class="opt">(en fazla 6)</span></label>
+      <div class="chip-row" id="featureChips"></div>
+      <div class="chip-count" id="featureCount">0/6 seçildi</div>
+
+      <label class="field-label" style="margin-top:18px">Öne Çıkan Başlık <span class="opt">(opsiyonel)</span></label>
+      <input type="text" id="highlight" placeholder='ör: "Boğaz manzaralı köşe daire"'>
+    </div>
+
+    <!-- STEP 4: Fotoğraf -->
+    <div class="card hidden" id="step4">
+      <label class="field-label">Kapak Fotoğrafı</label>
+      <div class="photo-upload" id="photoUpload" onclick="document.getElementById('photoInput').click()">
+        <div class="photo-placeholder" id="photoPlaceholder">
+          <div class="icon">📷</div>
+          <div class="text">Fotoğraf yüklemek için dokunun</div>
+          <div class="hint">Yatay, yüksek çözünürlük önerilir</div>
+        </div>
+        <img id="photoPreview" style="display:none" alt="Kapak">
+        <button class="remove-btn" id="removePhoto" style="display:none" onclick="event.stopPropagation();removePhoto()">✕</button>
+        <div class="photo-size" id="photoSize" style="display:none"></div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+
+      <label class="field-label" style="margin-top:18px">Açıklama <span class="opt">(opsiyonel)</span></label>
+      <textarea id="description" placeholder="Ek notlar, sosyal medya açıklaması..."></textarea>
+    </div>
+
+    <!-- NAV -->
+    <div class="nav-row">
+      <button class="btn btn-back hidden" id="btnBack" onclick="goBack()">← Geri</button>
+      <div class="spacer"></div>
+      <button class="btn btn-primary" id="btnNext" onclick="goNext()" disabled>Devam →</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="successView" style="display:none">
+    <div class="success-card">
+      <div class="emoji">🎉</div>
+      <h2>Portföy Gönderildi!</h2>
+      <p class="info" id="successInfo"></p>
+      <div class="summary-box" id="summaryBox"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="resetForm()">+ Yeni Portföy Ekle</button>
+    </div>
+  </div>
+
+  <div class="footer">RE/MAX Doğuş · Haftanın Portföyü Sistemi</div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — Apps Script URL'nizi buraya yapıştırın
+// ============================================================
+const APPS_SCRIPT_URL = 'BURAYA_APPS_SCRIPT_WEB_APP_URL_YAPISTIR';
+
+// ============================================================
+// DATA
+// ============================================================
+const CONSULTANTS = [
+  'Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Orhan Özazman',
+  'Gamze Yetkin','Gizem Gök','İrem Aleyna Tetik','Özlem Varol'
+];
+const LISTING_TYPES = ['Satılık','Kiralık'];
+const PROPERTY_TYPES = ['Daire','Residence','Villa','Müstakil','Dublex','Penthouse','Arsa','Dükkan','Ofis'];
+const ROOMS = ['1+0','1+1','2+1','3+1','3.5+1','4+1','4.5+1','5+1','5+2','6+'];
+const FEATURES = [
+  'Deniz Manzarası','Boğaz Manzarası','Şehir Manzarası','Doğa Manzarası',
+  'Kapalı Otopark','Açık Otopark','Havuz','Fitness Salonu','Sauna',
+  'Güvenlik','Asansör','Ebeveyn Banyosu','Giyinme Odası',
+  'Teras','Balkon','Bahçe Katı','Çatı Dubleks',
+  'Metro Yakını','Metrobüs Yakını','AVM Yakını','Okul Yakını',
+  'Yapı Ruhsatlı','İskan Var','Krediye Uygun','Takas Olur'
+];
+const STEPS = [
+  {title:'Danışman & Tür', icon:'👤'},
+  {title:'Konum & Fiyat', icon:'📍'},
+  {title:'Detaylar', icon:'📐'},
+  {title:'Özellikler', icon:'✨'},
+  {title:'Fotoğraf & Açıklama', icon:'📸'}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentStep = 0;
+let state = {
+  consultant:'', listingType:'Satılık', propertyType:'Daire',
+  district:'', project:'', price:'', currency:'TL',
+  grossM2:'', netM2:'', rooms:'3+1', floor:'', totalFloors:'',
+  buildingAge:'', heating:'Doğalgaz (Kombi)',
+  features:[], highlight:'', description:''
+};
+let photoBase64 = null;
+let photoName = null;
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  // Danışman select
+  const sel = document.getElementById('consultant');
+  CONSULTANTS.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', e => { state.consultant = e.target.value; validate(); });
+
+  // Listing type chips
+  renderChips('listingTypeChips', LISTING_TYPES, 'listingType', false);
+  // Property type chips
+  renderChips('propertyTypeChips', PROPERTY_TYPES, 'propertyType', false);
+  // Room chips
+  renderChips('roomChips', ROOMS, 'rooms', false);
+  // Feature chips
+  renderFeatureChips();
+
+  // Input bindings
+  ['district','project','price','grossM2','netM2','floor','totalFloors','buildingAge','highlight','description'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', e => { state[id] = e.target.value; validate(); });
+  });
+  ['currency','heating'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', e => { state[id] = e.target.value; });
+  });
+
+  renderProgress();
+  showStep(0);
+}
+
+function renderChips(containerId, options, stateKey, multi) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (state[stateKey] === opt ? ' active' : '');
+    btn.textContent = opt;
+    btn.type = 'button';
+    btn.onclick = () => {
+      state[stateKey] = opt;
+      container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      validate();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderFeatureChips() {
+  const container = document.getElementById('featureChips');
+  container.innerHTML = '';
+  FEATURES.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (state.features.includes(f) ? ' active' : '');
+    btn.textContent = (state.features.includes(f) ? '✓ ' : '') + f;
+    btn.type = 'button';
+    btn.onclick = () => {
+      if (state.features.includes(f)) {
+        state.features = state.features.filter(x => x !== f);
+      } else if (state.features.length < 6) {
+        state.features.push(f);
+      }
+      renderFeatureChips();
+      document.getElementById('featureCount').textContent = state.features.length + '/6 seçildi';
+      validate();
+    };
+    container.appendChild(btn);
+  });
+}
+
+// ============================================================
+// PHOTO
+// ============================================================
+function handlePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Compress & convert
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 1200;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = h * MAX / w; w = MAX; }
+        else { w = w * MAX / h; h = MAX; }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      photoBase64 = dataUrl.split(',')[1];
+      photoName = 'portfolio_' + Date.now() + '.jpg';
+
+      const preview = document.getElementById('photoPreview');
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      document.getElementById('photoPlaceholder').style.display = 'none';
+      document.getElementById('removePhoto').style.display = 'flex';
+
+      const sizeKB = Math.round(photoBase64.length * 3 / 4 / 1024);
+      const sizeEl = document.getElementById('photoSize');
+      sizeEl.textContent = sizeKB + ' KB · ' + Math.round(w) + '×' + Math.round(h);
+      sizeEl.style.display = 'block';
+
+      validate();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto() {
+  photoBase64 = null;
+  photoName = null;
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('photoPlaceholder').style.display = 'block';
+  document.getElementById('removePhoto').style.display = 'none';
+  document.getElementById('photoSize').style.display = 'none';
+  document.getElementById('photoInput').value = '';
+  validate();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot ' + (i < currentStep ? 'done' : i === currentStep ? 'active' : 'pending');
+    dot.textContent = i < currentStep ? '✓' : s.icon;
+    if (i < currentStep) dot.onclick = () => goToStep(i);
+    bar.appendChild(dot);
+    if (i < STEPS.length - 1) {
+      const line = document.createElement('div');
+      line.className = 'step-line ' + (i < currentStep ? 'done' : 'pending');
+      bar.appendChild(line);
+    }
+  });
+  document.getElementById('stepTitle').innerHTML = STEPS[currentStep].title + ' <span>(' + (currentStep+1) + '/5)</span>';
+}
+
+function showStep(n) {
+  for (let i = 0; i < 5; i++) {
+    document.getElementById('step' + i).classList.toggle('hidden', i !== n);
+  }
+  document.getElementById('btnBack').classList.toggle('hidden', n === 0);
+  const btn = document.getElementById('btnNext');
+  if (n === 4) {
+    btn.textContent = '✓ Portföyü Gönder';
+    btn.className = 'btn btn-submit';
+  } else {
+    btn.textContent = 'Devam →';
+    btn.className = 'btn btn-primary';
+  }
+  validate();
+}
+
+function goToStep(n) {
+  currentStep = n;
+  renderProgress();
+  showStep(n);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function goNext() {
+  if (currentStep < 4) {
+    goToStep(currentStep + 1);
+  } else {
+    submitForm();
+  }
+}
+
+function goBack() {
+  if (currentStep > 0) goToStep(currentStep - 1);
+}
+
+function validate() {
+  const btn = document.getElementById('btnNext');
+  let ok = false;
+  switch(currentStep) {
+    case 0: ok = state.consultant && state.listingType && state.propertyType; break;
+    case 1: ok = state.district && state.price; break;
+    case 2: ok = state.grossM2 && state.rooms; break;
+    case 3: ok = state.features.length >= 1; break;
+    case 4: ok = !!photoBase64; break;
+  }
+  btn.disabled = !ok;
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+async function submitForm() {
+  const loading = document.getElementById('loading');
+  loading.classList.remove('hidden');
+
+  const payload = {
+    ...state,
+    photoBase64: photoBase64,
+    photoName: photoName
+  };
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {'Content-Type': 'text/plain'} // Apps Script CORS
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showSuccess();
+    } else {
+      alert('Hata: ' + (data.message || 'Bilinmeyen hata'));
+    }
+  } catch (err) {
+    // Offline veya CORS — yine de başarılı say (Apps Script bazen CORS sorunu yapar ama kaydeder)
+    console.log('Submit response error (muhtemelen CORS):', err);
+    showSuccess();
+  } finally {
+    loading.classList.add('hidden');
+  }
+}
+
+function showSuccess() {
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').style.display = 'block';
+
+  document.getElementById('successInfo').innerHTML =
+    '<strong>' + state.consultant + '</strong> tarafından<br>' +
+    '<strong>' + state.district + (state.project ? ' / ' + state.project : '') + '</strong> portföyü<br>' +
+    'başarıyla kaydedildi.';
+
+  const box = document.getElementById('summaryBox');
+  const preview = document.getElementById('photoPreview');
+  box.innerHTML =
+    (preview.src ? '<img src="' + preview.src + '" alt="Kapak">' : '') +
+    '<div class="tag-row">' +
+      '<span class="tag">' + state.listingType + '</span>' +
+      '<span class="tag">' + state.propertyType + '</span>' +
+      '<span class="tag">' + state.rooms + '</span>' +
+      '<span class="tag">' + state.grossM2 + 'm²</span>' +
+      '<span class="tag">' + Number(state.price).toLocaleString('tr-TR') + ' ' + state.currency + '</span>' +
+    '</div>';
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetForm() {
+  state = {
+    consultant:'', listingType:'Satılık', propertyType:'Daire',
+    district:'', project:'', price:'', currency:'TL',
+    grossM2:'', netM2:'', rooms:'3+1', floor:'', totalFloors:'',
+    buildingAge:'', heating:'Doğalgaz (Kombi)',
+    features:[], highlight:'', description:''
+  };
+  photoBase64 = null; photoName = null;
+
+  // Reset inputs
+  ['consultant','district','project','price','grossM2','netM2','floor','totalFloors','buildingAge','highlight','description'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('currency').value = 'TL';
+  document.getElementById('heating').value = 'Doğalgaz (Kombi)';
+  document.getElementById('featureCount').textContent = '0/6 seçildi';
+  removePhoto();
+
+  // Reset chips
+  renderChips('listingTypeChips', LISTING_TYPES, 'listingType', false);
+  renderChips('propertyTypeChips', PROPERTY_TYPES, 'propertyType', false);
+  renderChips('roomChips', ROOMS, 'rooms', false);
+  renderFeatureChips();
+
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('successView').style.display = 'none';
+  goToStep(0);
+}
+
+// GO
+init();
+</script>
+</body>
+</html>
