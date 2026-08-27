@@ -25,4 +25,9 @@ jobs:
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
-        run: node scripts/ig-story.js
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/ig-story.js 2>&1 | tee ig-log.txt || true
+          git config user.name dogus-bot; git config user.email bot@dogusremax.com
+          git add ig-log.txt && git commit -m "ig log" && git push || true
