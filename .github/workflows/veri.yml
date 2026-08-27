@@ -1,0 +1,20 @@
+name: veri çek
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          B="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec"
+          K="k=dogus-performans"
+          mkdir -p veri
+          curl -sL "$B?action=aylik&ay=2026-08&$K" -o veri/ay08.json
+          curl -sL "$B?action=aylik&ay=2026-07&$K" -o veri/ay07.json
+          curl -sL "$B?action=haftalik&hafta=2026-08-24&$K" -o veri/h0824.json
+          curl -sL "$B?action=haftalik&hafta=2026-08-17&$K" -o veri/h0817.json
+          curl -sL "$B?action=haftalik&hafta=2026-08-10&$K" -o veri/h0810.json
+          curl -sL "$B?action=haftalik&hafta=2026-08-03&$K" -o veri/h0803.json
+          git config user.name bot; git config user.email b@b
+          git add veri && git commit -m "veri" && git push
