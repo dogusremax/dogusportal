@@ -1,7 +1,8 @@
 name: Günlük nöbetçi story
 on:
   schedule:
-    - cron: "0 6 * * *"   # her gün 09:00 (TR)
+    - cron: "40 5 * * *"   # 08:40 TR (ana)
+    - cron: "25 6 * * *"   # 09:25 TR (yedek; kilit sayesinde mükerrer atmaz)
   workflow_dispatch:
 permissions:
   contents: write
@@ -30,4 +31,4 @@ jobs:
           set -o pipefail
           node scripts/ig-story.js 2>&1 | tee ig-log.txt || true
           git config user.name dogus-bot; git config user.email bot@dogusremax.com
-          git add ig-log.txt && git commit -m "ig log" && git push || true
+          git add ig-log.txt nobet-story/.pub 2>/dev/null; git commit -m "ig log" && git push || true

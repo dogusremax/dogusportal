@@ -4,6 +4,7 @@ const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID;
 if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atlandı.'); process.exit(0); }
 const G = 'https://graph.facebook.com/v23.0';
 const media = JSON.parse(fs.readFileSync('nobet-story/.media', 'utf8'));
+try { if (fs.readFileSync('nobet-story/.pub', 'utf8').trim() === media.date) { console.log('Bugün zaten yayınlanmış, atlandı:', media.date); process.exit(0); } } catch (e) {}
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function post(p, body) {
   const r = await fetch(`${G}/${p}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, access_token: TOKEN }) });
@@ -20,4 +21,5 @@ async function post(p, body) {
   }
   const pub = await post(`${UID}/media_publish`, { creation_id: cont.id });
   console.log('✓ Instagram story yayınlandı:', pub.id, media.date);
+  fs.writeFileSync('nobet-story/.pub', media.date);
 })().catch(e => { console.error('IG paylaşım hatası:', e.message); process.exit(1); });
