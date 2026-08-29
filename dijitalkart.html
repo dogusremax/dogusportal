@@ -218,7 +218,7 @@ async function loadPublic(s){
   }catch(e){ $("pcard").innerHTML=`<div style="padding:60px;text-align:center;color:#888">Kart bulunamadı.<br><small>${e.message}</small></div>`; }
 }
 const tel=p=>(p||"").replace(/\D/g,"");
-function hit(kind){ try{ fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"hit",slug,kind}),keepalive:true}); }catch(e){} }
+function hit(kind){ try{ fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"hit",slug,kind}),keepalive:true}); }catch(e){ console.warn('Sessiz hata:', e); } }
 const I={
   phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
   wa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5.3-.5v-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.8.4 3.5 3.5 0 0 0-1.1 2.6 6 6 0 0 0 1.3 3.2c.2.2 2.2 3.4 5.4 4.7 2.6 1 3.2.8 3.8.8s1.8-.8 2.1-1.5.3-1.4.2-1.5-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>',
@@ -401,7 +401,7 @@ async function seedAll(){
 async function brokerList(){
   try{ const j=await api({action:"list"}); const b=$("brokerList"); b.classList.remove("hide");
     b.innerHTML=`<label class="sm">Tüm kartlar (broker)</label><button class="btn b" style="margin:6px 0 12px" onclick="seedAll()">Eksik kartları ön bilgilerle oluştur</button>`+(j.items.length?j.items.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);font-size:14px"><span class="grow">${esc(i.name)}<br><small style="color:var(--dim)">${i.views} açılma · ${(i.stats.clicks||{}).ara||0} ara · ${(i.stats.clicks||{}).wa||0} WhatsApp · ${(i.stats.clicks||{}).vcard||0} rehber</small></span><a href="?d=${i.slug}" target="_blank" style="color:var(--blue);font-weight:600">Aç</a></div>`).join(""):'<div style="font-size:13px;color:var(--dim)">Henüz kart yok.</div>');
-  }catch(e){}
+  }catch(e){ console.warn('Sessiz hata:', e); }
 }
 // slug'ı kartla birlikte sakla (yeniden girişte link gösterilsin)
 const _fill=fill; fill=c=>{ c._slug=c._slug||slugify(c.name); _fill(c); };
