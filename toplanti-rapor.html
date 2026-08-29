@@ -102,8 +102,8 @@ const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
 const LOG_READ_URL="https://script.google.com/macros/s/AKfycby7asL7S24asuM_OdBGjXt_meJix7AhTw7G3Kz3lPgOovEhCM4F6aBYjGA2eYsFGOKl/exec";
 function logLogin(d){
-  try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}
-  try{var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");logs.push({name:d,time:new Date().toISOString()});if(logs.length>500)logs=logs.slice(-500);localStorage.setItem("perf_logs",JSON.stringify(logs));}catch(e){}
+  try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){ console.warn('Sessiz hata:', e); }
+  try{var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");logs.push({name:d,time:new Date().toISOString()});if(logs.length>500)logs=logs.slice(-500);localStorage.setItem("perf_logs",JSON.stringify(logs));}catch(e){ console.warn('Sessiz hata:', e); }
 }
 const KEY="dogus-performans";
 const ACTS=[
@@ -154,19 +154,19 @@ function cacheOku(){
       }
     }
     if(c.kapanis && (simdi - c.kapanis.t) < KAPANIS_TTL) KAPANIS_CACHE=c.kapanis.d;
-  }catch(e){}
+  }catch(e){ console.warn('Sessiz hata:', e); }
 }
 function cacheYaz(){
   try{
     var c={aylik:{},kapanis:null},simdi=Date.now();
     var eski={};
-    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){}
+    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){ console.warn('Sessiz hata:', e); }
     for(var m in AYLIK_CACHE){
       c.aylik[m]={t:(eski[m]&&eski[m].t)||simdi, d:AYLIK_CACHE[m]};
     }
     if(KAPANIS_CACHE) c.kapanis={t:simdi,d:KAPANIS_CACHE};
     localStorage.setItem(CACHE_KEY,JSON.stringify(c));
-  }catch(e){}
+  }catch(e){ console.warn('Sessiz hata:', e); }
 }
 cacheOku();
 var PINS={
@@ -221,7 +221,7 @@ async function loadData(){
       DATA=mergeData(ALL_DATA);
       if(KAPANIS_CACHE) applyKapanis(KAPANIS_CACHE,months);
       render();
-    }catch(e){}
+    }catch(e){ console.warn('Sessiz hata:', e); }
   }else{
     document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
   }
