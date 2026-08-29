@@ -118,15 +118,15 @@ function update(){
   document.getElementById('progText').textContent=done+' / '+total+' tamamlandı';
   document.getElementById('progBar').style.width=Math.round(done/total*100)+'%';
   boxes.forEach(cb=>{cb.closest('.item').classList.toggle('checked',cb.checked);});
-  try{localStorage.setItem('yabanci_checklist',JSON.stringify(Array.from(boxes).reduce((o,cb)=>{o[cb.id]=cb.checked;return o;},{})));}catch(e){}
+  try{localStorage.setItem('yabanci_checklist',JSON.stringify(Array.from(boxes).reduce((o,cb)=>{o[cb.id]=cb.checked;return o;},{})));}catch(e){ console.warn('Sessiz hata:', e); }
 }
-try{const saved=JSON.parse(localStorage.getItem('yabanci_checklist')||'{}');boxes.forEach(cb=>{if(saved[cb.id])cb.checked=true;});}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem('yabanci_checklist')||'{}');boxes.forEach(cb=>{if(saved[cb.id])cb.checked=true;});}catch(e){ console.warn('Sessiz hata:', e); }
 boxes.forEach(cb=>cb.addEventListener('change',update));
 update();
 function resetAll(){
   if(!confirm('Tüm işaretleri kaldırmak istiyor musunuz?'))return;
   boxes.forEach(cb=>{cb.checked=false;});
-  try{localStorage.removeItem('yabanci_checklist');}catch(e){}
+  try{localStorage.removeItem('yabanci_checklist');}catch(e){ console.warn('Sessiz hata:', e); }
   update();
 }
 </script>
