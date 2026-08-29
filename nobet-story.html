@@ -111,7 +111,7 @@ async function load(){
 async function png(){const c=await html2canvas(document.getElementById('story'),{scale:1080/405,width:405,height:720,backgroundColor:null,useCORS:true,logging:false});return new Promise(r=>c.toBlob(r,'image/png'));}
 async function blobFor(){if(CUR.video){const r=await fetch(CUR.video);return {b:await r.blob(),ext:'mp4',type:'video/mp4'};}return {b:await png(),ext:'png',type:'image/png'};}
 async function download(){const {b,ext}=await blobFor();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`nobet_${CUR.date}.${ext}`;a.click();}
-async function share(){const {b,ext,type}=await blobFor();const f=new File([b],`nobet_${CUR.date}.${ext}`,{type});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});}catch(e){}}else document.getElementById('status').textContent='Bu tarayıcı paylaşımı desteklemiyor.';}
+async function share(){const {b,ext,type}=await blobFor();const f=new File([b],`nobet_${CUR.date}.${ext}`,{type});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});}catch(e){ console.warn('Sessiz hata:', e); }}else document.getElementById('status').textContent='Bu tarayıcı paylaşımı desteklemiyor.';}
 fillTeam();load();
 </script>
 </body>
