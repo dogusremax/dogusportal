@@ -98,14 +98,14 @@ function update(){
   // Save state
   const state={};
   boxes.forEach(cb=>{state[cb.id]=cb.checked;});
-  try{localStorage.setItem('kira_checklist',JSON.stringify(state));}catch(e){}
+  try{localStorage.setItem('kira_checklist',JSON.stringify(state));}catch(e){ console.warn('Sessiz hata:', e); }
 }
 
 // Load saved state
 try{
   const saved=JSON.parse(localStorage.getItem('kira_checklist')||'{}');
   boxes.forEach(cb=>{if(saved[cb.id])cb.checked=true;});
-}catch(e){}
+}catch(e){ console.warn('Sessiz hata:', e); }
 
 boxes.forEach(cb=>cb.addEventListener('change',update));
 update();
@@ -113,7 +113,7 @@ update();
 function resetAll(){
   if(!confirm('Tüm işaretleri kaldırmak istiyor musunuz?'))return;
   boxes.forEach(cb=>{cb.checked=false;});
-  try{localStorage.removeItem('kira_checklist');}catch(e){}
+  try{localStorage.removeItem('kira_checklist');}catch(e){ console.warn('Sessiz hata:', e); }
   update();
 }
 </script>
