@@ -378,7 +378,7 @@ async function karnePaylas(dl){
   host.remove();
   const b=await new Promise(r=>c.toBlob(r,'image/png'));
   const f=new File([b],`karne_${DATA.ay}.png`,{type:'image/png'});
-  if(!dl&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});st.textContent='Paylaşım menüsü açıldı → WhatsApp\'ı seç.';return;}catch(e){}}
+  if(!dl&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});st.textContent='Paylaşım menüsü açıldı → WhatsApp\'ı seç.';return;}catch(e){ console.warn('Sessiz hata:', e); }}
   saveBlob(b,`karne_${DATA.ay}.png`); st.textContent='Karne indirildi ✓';
 }
 async function renderPng(i){
