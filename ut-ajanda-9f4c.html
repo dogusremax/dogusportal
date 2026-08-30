@@ -286,8 +286,50 @@ function dikteIpucu(){
 /* ---------- veri ---------- */
 const KEY='ajanda_kayitlar_v1';
 let entries=[],tab='bugun';
-function load(){try{entries=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){entries=[]}}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(entries))}catch(e){}}
+let depoDurum={ls:'?',idb:'?',kurtarma:false,sonYazma:null};
+
+/* --- ikinci depo: IndexedDB (Safari localStorage'ı temizlese bile kalır) --- */
+function idbAc(){return new Promise(function(res,rej){
+  if(!window.indexedDB)return rej('yok');
+  var r=indexedDB.open('ajandaDB',1);
+  r.onupgradeneeded=function(){r.result.createObjectStore('kv')};
+  r.onsuccess=function(){res(r.result)};
+  r.onerror=function(){rej(r.error)};
+});}
+function idbYaz(k,v){return idbAc().then(function(db){return new Promise(function(res,rej){
+  var t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);
+  t.oncomplete=function(){res(true)};t.onerror=function(){rej(t.error)};
+});});}
+function idbOku(k){return idbAc().then(function(db){return new Promise(function(res,rej){
+  var t=db.transaction('kv','readonly'),q=t.objectStore('kv').get(k);
+  q.onsuccess=function(){res(q.result)};q.onerror=function(){rej(q.error)};
+});});}
+
+async function load(){
+  var ls=null;
+  try{ls=localStorage.getItem(KEY);depoDurum.ls='açık';}
+  catch(e){depoDurum.ls='engelli';}
+  if(ls){try{entries=JSON.parse(ls)||[]}catch(e){entries=[]}}
+  try{
+    var y=await idbOku(KEY);
+    depoDurum.idb='açık';
+    if((!entries||!entries.length)&&y){
+      var kurt=JSON.parse(y)||[];
+      if(kurt.length){
+        entries=kurt;depoDurum.kurtarma=true;
+        try{localStorage.setItem(KEY,y)}catch(e){}
+      }
+    }else if(entries.length&&!y){ idbYaz(KEY,JSON.stringify(entries)).catch(function(){}); }
+  }catch(e){depoDurum.idb='yok';}
+  if(!entries)entries=[];
+  try{depoDurum.sonYazma=localStorage.getItem(KEY+'_ts')}catch(e){}
+}
+function persist(){
+  var s=JSON.stringify(entries),ts=new Date().toISOString();
+  try{localStorage.setItem(KEY,s);localStorage.setItem(KEY+'_ts',ts);depoDurum.ls='açık';depoDurum.sonYazma=ts;}
+  catch(e){depoDurum.ls='yazamıyor';}
+  idbYaz(KEY,s).catch(function(){depoDurum.idb='yazamıyor';});
+}
 
 /* ---------- tarih ---------- */
 const AYLAR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
@@ -805,7 +847,7 @@ function render(){
     odak=b.dataset.gun;gorunum='gun';localStorage.setItem('ajanda_gorunum','gun');render();}});
   if(gorunum==='gun'||gorunum==='hafta'){
     var ev1=list.querySelector('.ev');
-    if(ev1)setTimeout(function(){
+    if(ev1&&ev1.getBoundingClientRect)setTimeout(function(){
       var y=ev1.getBoundingClientRect().top+window.scrollY-220;
       if(y>0)window.scrollTo({top:y,behavior:'smooth'});
     },60);
@@ -1005,6 +1047,13 @@ function startListening(){
 function dikteAc(not){
   openSheet(`<h2>Söyle</h2>
     <p class="kicker">${not||'Konuşur gibi söyle — tarihi, saati, kişiyi ve yeri kendisi ayıklar.'}</p>
+    <ul class="diag">
+      <li>Ana depo: <code>${depoDurum.ls}</code></li>
+      <li>Yedek depo: <code>${depoDurum.idb}</code></li>
+      <li>Son yazma: <code>${depoDurum.sonYazma?depoDurum.sonYazma.slice(0,16).replace('T',' '):'yok'}</code></li>
+      <li>Uygulama modu: <code>${window.navigator.standalone?'ana ekran':'Safari sekmesi'}</code></li>
+    </ul>
+    <div class="hintbox">${window.navigator.standalone?'Ana ekran uygulaması ile Safari sekmesi ayrı kayıt tutar. Kayıtlarını hep buradan gir.':'Safari sekmesindesin. Ana ekrana eklersen kayıtlar ayrı bir depoya geçer — birini seç, hep onu kullan.'}</div>
     <div class="hintbox">${dikteIpucu()}</div>
     <div class="field"><textarea id="typedIn" rows="3" placeholder="Yarın saat üçte Fikirtepe'de gösterim, Ahmet Bey"></textarea></div>
     <div class="actions"><button class="btn ghost" onclick="closeSheet()">Vazgeç</button>
@@ -1029,6 +1078,7 @@ function ayarlarAc(){
     ${SR&&sesModu!=='canli'?`<button class="opt" onclick="sesModu='canli';setMic('idle');closeSheet();toast('Canlı mikrofon denenecek')"><span class="ic">↻</span>Canlı mikrofonu dene</button>`:''}
     ${sesModu==='canli'?`<button class="opt" onclick="sesModu='dikte';setMic('idle');closeSheet();toast('Klavye diktesine geçildi')"><span class="ic">⌨</span>Klavye diktesine geç</button>`:''}
     <button class="opt" onclick="disaAktar()"><span class="ic">⤓</span>Kayıtları yedekle (JSON)</button>
+    <button class="opt" onclick="iceAktar()"><span class="ic">⤒</span>Yedekten geri yükle</button>
     <button class="opt danger" onclick="if(confirm('Tüm kayıtlar silinsin mi?')){entries=[];persist();closeSheet();render()}"><span class="ic">✕</span>Tüm kayıtları sil</button>
     <div class="actions"><button class="btn ghost" onclick="closeSheet()">Kapat</button></div>`);
 }
@@ -1053,6 +1103,25 @@ function gorunumSec(g){
   if(g!=='liste')odak=bugun();
   closeSheet();render();
 }
+function iceAktar(){
+  var inp=document.createElement('input');inp.type='file';inp.accept='application/json,.json';
+  inp.onchange=function(){
+    var f=inp.files&&inp.files[0];if(!f)return;
+    var fr=new FileReader();
+    fr.onload=function(){
+      try{
+        var a=JSON.parse(fr.result);
+        if(!Array.isArray(a)){toast('Dosya tanınmadı');return;}
+        var mevcut={};entries.forEach(function(e){mevcut[e.id]=1});
+        var yeni=a.filter(function(e){return e&&e.baslik&&!mevcut[e.id]});
+        entries=entries.concat(yeni);persist();closeSheet();render();
+        toast(yeni.length+' kayıt geri yüklendi');
+      }catch(e){toast('Dosya okunamadı')}
+    };
+    fr.readAsText(f);
+  };
+  inp.click();
+}
 function disaAktar(){
   const b=new Blob([JSON.stringify(entries,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
@@ -1064,7 +1133,11 @@ function disaAktar(){
 document.getElementById('q').oninput=render;
 
 /* ---------- başlat ---------- */
-function boot(){load();odak=bugun();render();setMic('idle');}
+async function boot(){
+  await load();odak=bugun();render();setMic('idle');
+  if(depoDurum.kurtarma)toast(entries.length+' kayıt yedekten geri geldi');
+  else if(depoDurum.ls!=='açık')toast('Uyarı: tarayıcı kayıt tutmuyor — Ayarlar\'a bak');
+}
 boot();
 </script>
 </body>
