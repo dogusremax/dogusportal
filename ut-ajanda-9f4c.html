@@ -324,12 +324,16 @@ async function load(){
   if(!entries)entries=[];
   try{depoDurum.sonYazma=localStorage.getItem(KEY+'_ts')}catch(e){}
 }
-function persist(){
-  var s=JSON.stringify(entries),ts=new Date().toISOString();
+function persist(damgala){
+  var s,ts=new Date().toISOString();
+  if(damgala!==false){}
+  s=JSON.stringify(entries);
   try{localStorage.setItem(KEY,s);localStorage.setItem(KEY+'_ts',ts);depoDurum.ls='açık';depoDurum.sonYazma=ts;}
   catch(e){depoDurum.ls='yazamıyor';}
   idbYaz(KEY,s).catch(function(){depoDurum.idb='yazamıyor';});
+  senkronPlanla();
 }
+function damgala(e){e.guncel=new Date().toISOString();return e;}
 
 /* ---------- tarih ---------- */
 const AYLAR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
@@ -581,6 +585,30 @@ async function sunucuCozumle(metin){
   const j=await r.json();
   if(!j.ok)throw new Error(j.hata||'sunucu');
   return j.sonuc;
+}
+/* --- Sheets senkronu --- */
+let senkronBekle=null, senkronDurum='kapalı';
+function senkronPlanla(){
+  if(!API_URL)return;
+  clearTimeout(senkronBekle);
+  senkronBekle=setTimeout(senkronEt,1200);
+}
+async function senkronEt(){
+  if(!API_URL)return;
+  try{
+    senkronDurum='gönderiliyor';
+    var r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'senkron',kayitlar:entries})});
+    var j=await r.json();
+    if(j.ok&&Array.isArray(j.kayitlar)){
+      entries=j.kayitlar;
+      var s=JSON.stringify(entries);
+      try{localStorage.setItem(KEY,s)}catch(e){}
+      idbYaz(KEY,s).catch(function(){});
+      senkronDurum='eşitlendi '+new Date().toTimeString().slice(0,5);
+      render();
+    }else senkronDurum='hata';
+  }catch(e){senkronDurum='bağlanamadı';}
 }
 async function takvimeYaz(e){
   if(!API_URL)return null;
@@ -881,9 +909,12 @@ function openDetail(id){
     <button class="opt" onclick="toWhatsapp('${id}')"><span class="ic">↗</span>WhatsApp'ta paylaş</button>
     <button class="opt danger" onclick="removeEntry('${id}')"><span class="ic">✕</span>Sil</button>`);
 }
-function toggleDone(id){const e=entries.find(x=>x.id===id);e.done=!e.done;persist();closeSheet();render();}
-function postpone(id){const e=entries.find(x=>x.id===id);const d=parseISO(e.tarih);d.setDate(d.getDate()+1);e.tarih=iso(d);persist();closeSheet();render();toast('Bir gün ertelendi');}
-function removeEntry(id){entries=entries.filter(x=>x.id!==id);persist();closeSheet();render();toast('Kayıt silindi');}
+function toggleDone(id){const e=entries.find(x=>x.id===id);e.done=!e.done;damgala(e);persist();closeSheet();render();}
+function postpone(id){const e=entries.find(x=>x.id===id);const d=parseISO(e.tarih);d.setDate(d.getDate()+1);e.tarih=iso(d);damgala(e);persist();closeSheet();render();toast('Bir gün ertelendi');}
+function removeEntry(id){
+  var e=entries.find(x=>x.id===id);
+  if(API_URL&&e){e.silindi=true;damgala(e);senkronPlanla();}
+  entries=entries.filter(x=>x.id!==id);persist();closeSheet();render();toast('Kayıt silindi');}
 function toCalendar(id){
   const e=entries.find(x=>x.id===id),d=e.tarih.replace(/-/g,'');let dates;
   if(e.saat){
@@ -933,7 +964,7 @@ function editEntry(id){
 function saveEdit(id){
   const d=readDrafts()[0],e=entries.find(x=>x.id===id);
   if(!d.baslik){toast('Başlık boş olamaz');return;}
-  const ev=e.eventId;Object.assign(e,d);e.eventId=ev;
+  const ev=e.eventId;Object.assign(e,d);e.eventId=ev;damgala(e);
   persist();closeSheet();render();toast('Kaydedildi');
 }
 function confirmDrafts(drafts,cevap){
@@ -949,7 +980,8 @@ async function saveDrafts(){
     if(!d.baslik)continue;
     const e={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
       baslik:d.baslik,tarih:d.tarih||bugun(),saat:d.saat||null,kisi:d.kisi,yer:d.yer,
-      tur:d.tur||'diğer',not:d.not||null,sure:null,done:false,eventId:null,created:new Date().toISOString()};
+      tur:d.tur||'diğer',not:d.not||null,sure:null,done:false,eventId:null,silindi:false,
+      guncel:new Date().toISOString(),created:new Date().toISOString()};
     entries.push(e);yeni.push(e);
   }
   persist();closeSheet();
@@ -1051,6 +1083,7 @@ function dikteAc(not){
       <li>Ana depo: <code>${depoDurum.ls}</code></li>
       <li>Yedek depo: <code>${depoDurum.idb}</code></li>
       <li>Son yazma: <code>${depoDurum.sonYazma?depoDurum.sonYazma.slice(0,16).replace('T',' '):'yok'}</code></li>
+      <li>Sheets senkronu: <code>${API_URL?senkronDurum:'kapalı'}</code></li>
       <li>Uygulama modu: <code>${window.navigator.standalone?'ana ekran':'Safari sekmesi'}</code></li>
     </ul>
     <div class="hintbox">${window.navigator.standalone?'Ana ekran uygulaması ile Safari sekmesi ayrı kayıt tutar. Kayıtlarını hep buradan gir.':'Safari sekmesindesin. Ana ekrana eklersen kayıtlar ayrı bir depoya geçer — birini seç, hep onu kullan.'}</div>
@@ -1135,6 +1168,7 @@ document.getElementById('q').oninput=render;
 /* ---------- başlat ---------- */
 async function boot(){
   await load();odak=bugun();render();setMic('idle');
+  if(API_URL)senkronEt();
   if(depoDurum.kurtarma)toast(entries.length+' kayıt yedekten geri geldi');
   else if(depoDurum.ls!=='açık')toast('Uyarı: tarayıcı kayıt tutmuyor — Ayarlar\'a bak');
 }
