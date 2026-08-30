@@ -276,124 +276,219 @@ const turOf=t=>TURLER[t]||TURLER['diğer'];
 
 /* ═══════════════ YERLEŞİK TÜRKÇE ÇÖZÜMLEYİCİ ═══════════════ */
 const trKucuk=s=>s.replace(/I/g,'ı').replace(/İ/g,'i').toLowerCase();
-const SAYI={'bir':1,'iki':2,'üç':3,'uc':3,'dört':4,'dort':4,'beş':5,'bes':5,'altı':6,'alti':6,
-  'yedi':7,'sekiz':8,'dokuz':9,'on':10,'onbir':11,'oniki':12,'onbir':11,'yarım':12};
+const buyukIlk=s=>s?s.charAt(0).toLocaleUpperCase('tr')+s.slice(1):s;
+const buyukMu=w=>/^[A-ZÇĞİÖŞÜ]/.test(w);
+const kirp=w=>w.replace(/[.,!?;:()]/g,'').split(/['’]/)[0];
+/* JS'te \b Türkçe harfleri tanımıyor — kendi kelime sınırımız */
+function trRe(govde,ek){return new RegExp('(^|[^a-z0-9çğıöşü])'+govde+(ek||'')+'(?![a-zçğıöşü])','i');}
+
+const SAYI_SIRA=[['on bir',11],['onbir',11],['on iki',12],['oniki',12],['on',10],['dokuz',9],
+  ['sekiz',8],['yedi',7],['altı',6],['alti',6],['beş',5],['bes',5],['dört',4],['dort',4],
+  ['üç',3],['uc',3],['iki',2],['bir',1],['yarım',12]];
 const GUNADI={'pazartesi':1,'salı':2,'sali':2,'çarşamba':3,'carsamba':3,'perşembe':4,'persembe':4,
   'cuma':5,'cumartesi':6,'pazar':0};
 
-function yerelCozumle(metin){
-  let t=trKucuk(metin), tarih=null, saat=null, tur='diğer', kisi=null, yer=null;
-  const sil=[];
+const SEMTLER=['Fikirtepe','Kadıköy','Acıbadem','Koşuyolu','Göztepe','Bostancı','Ataşehir','Üsküdar',
+ 'Maltepe','Kartal','Merdivenköy','Hasanpaşa','Rasimpaşa','Osmanağa','Caferağa','Suadiye','Erenköy',
+ 'Kozyatağı','Küçükyalı','İçerenköy','Ümraniye','Çekmeköy','Sancaktepe','Pendik','Tuzla','Beykoz',
+ 'Moda','Fenerbahçe','Bağdat','Sahrayıcedit','Yenisahra','Barbaros','Kayışdağı','Dudullu','Şile',
+ 'Girne','Lefkoşa','Gazimağusa','İskele','Bafra','Kıbrıs','Beşiktaş','Şişli','Levent','Maslak','Bahçeşehir'];
+const MEKANLAR={'ofiste':'Ofis','ofisde':'Ofis','ofis':'Ofis','tapuda':'Tapu','tapu':'Tapu',
+ 'belediyede':'Belediye','belediye':'Belediye','noterde':'Noter','noter':'Noter','bankada':'Banka',
+ 'şantiyede':'Şantiye','şantiye':'Şantiye','kafede':'Kafe','evde':'Ev','sitede':'Site'};
 
-  /* --- sorgu mu? --- */
-  if(/(ne var|neler var|program(ım|im)|neyim var|ajandam)/.test(t)){
-    let kapsam='bugun';
+const ADSTOP=new Set([...SEMTLER,...AYLAR,...GUNLER,'Bey','Bay','Hanım','Hanim','Saat','Yarın','Yarin',
+ 'Bugün','Bugun','Öbür','Obur','Sabah','Akşam','Aksam','Öğlen','Oglen','Öğleden','Haftaya','Gelecek',
+ 'Gösterim','Gösterime','Toplantı','Görüşme','Randevu','Kapanış','Ekspertiz','Sözleşme','Ofis','Ofiste',
+ 'Tapu','Tapuda','Noter','Banka','Belediye','Şantiye','Emlak','Daire','Villa','Arsa','Dükkan','Depo',
+ 'Kira','Kiralık','Satılık','Satış','Müşteri','Müşterim','Sayın','Ben','Bir','Ve','Ile','İle','Var']);
+
+/* --- kişi --- */
+function kisiBul(metin,sil){
+  var m=metin.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]{1,})\s+([A-ZÇĞİÖŞÜ][a-zçğıöşü]{1,}\s+)?(Bey|Bay|Hanım|Hanim|bey|bay|hanım|hanim)\b/);
+  if(m&&!ADSTOP.has(m[1])){
+    var ad=m[1]+(m[2]?' '+m[2].trim():'');
+    var unvan=/han/i.test(m[3])?'Hanım':'Bey';
+    sil.push(new RegExp(m[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[’\']?\\w{0,4}','g'));
+    return ad+' '+unvan;
+  }
+  var m1=metin.match(/\b([a-zçğıöşü]{3,})\s+(bey|hanım|hanim)\b/i);
+  if(m1&&!ADSTOP.has(buyukIlk(m1[1]))){
+    sil.push(new RegExp(m1[0]+'[’\']?\\w{0,4}','gi'));
+    return buyukIlk(m1[1])+' '+(/han/i.test(m1[2])?'Hanım':'Bey');
+  }
+  var kel=metin.replace(/[.,!?;:]/g,' ').split(/\s+/).filter(Boolean);
+  for(var i=0;i<kel.length-1;i++){
+    var a=kirp(kel[i]),b=kirp(kel[i+1]);
+    if(a.length>1&&b.length>1&&buyukMu(a)&&buyukMu(b)&&!ADSTOP.has(a)&&!ADSTOP.has(b)){
+      sil.push(new RegExp(a+'[’\'\\w]*\\s+'+b+'[’\'\\w]*','g'));
+      return a+' '+b;
+    }
+  }
+  var m3=metin.match(/(?:müşterim?|sayın|bayan)\s+([A-ZÇĞİÖŞÜ][a-zçğıöşü]{2,})/);
+  if(m3&&!ADSTOP.has(buyukIlk(kirp(m3[1])))){sil.push(new RegExp(m3[0],'gi'));return buyukIlk(kirp(m3[1]));}
+  var m4=metin.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]{2,})[’'](?:la|le|yla|yle|a|e|ı|i|nin|nın)\b/);
+  if(m4&&!ADSTOP.has(m4[1])){sil.push(new RegExp(m4[0].replace(/[’']/g,'[’\']'),'g'));return m4[1];}
+  return null;
+}
+
+/* --- yer --- */
+function yerBul(metin,kisi,sil){
+  var t=trKucuk(metin);
+  for(var i=0;i<SEMTLER.length;i++){
+    var s=SEMTLER[i];
+    if(t.indexOf(trKucuk(s))>-1){
+      sil.push(new RegExp(s+'[’\']?(deki|daki|de|da|te|ta|nde|nda)?','gi'));
+      return s;
+    }
+  }
+  var m2=metin.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)\s+(sitesi|sitesinde|projesi|projesinde|rezidans|avm|plaza|kule)/i);
+  if(m2){sil.push(new RegExp(m2[0],'gi'));return m2[1]+' '+buyukIlk(trKucuk(m2[2]).replace(/nde$/,''));}
+  var m=metin.match(/\b([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)[’'](?:de|da|te|ta|nde|nda)\b/);
+  if(m&&(!kisi||kisi.indexOf(m[1])<0)&&!ADSTOP.has(m[1])){
+    sil.push(new RegExp(m[0].replace(/[’']/g,'[’\']'),'g'));return m[1];
+  }
+  for(var k in MEKANLAR){
+    if(trRe(k,'').test(t)){sil.push(new RegExp(k,'gi'));return MEKANLAR[k];}
+  }
+  return null;
+}
+
+/* --- emlak niteliği --- */
+function nitelikBul(metin,sil){
+  var s='';
+  var oda=metin.match(/(\d)\s*\+\s*(\d)/);
+  if(oda){s=oda[1]+'+'+oda[2];sil.push(new RegExp(oda[0].replace(/\+/g,'\\+'),'g'));}
+  var tip=metin.match(/\b(daire|dükkan|dukkan|villa|arsa|ofis|depo|bina|rezidans|stüdyo|studyo|dubleks|müstakil|tarla|mağaza|magaza|yazlık|yalı)\w*/i);
+  if(tip){s+=(s?' ':'')+trKucuk(tip[1]);sil.push(new RegExp(tip[0],'gi'));}
+  return s||null;
+}
+
+const TUR_ISIM={'gösterim':'Gösterim','görüşme':'Görüşme','toplantı':'Toplantı','arama':'Arama','hatırlatma':'Hatırlatma','diğer':'Kayıt'};
+const TUR_EK={'gösterim':'gösterimi','görüşme':'görüşmesi','toplantı':'toplantısı','arama':'araması','hatırlatma':'hatırlatması','diğer':'kaydı'};
+
+function yerelCozumle(metin){
+  var t=trKucuk(metin), tarih=null, saat=null, tur='diğer';
+  var sil=[];
+
+  if(/(ne var|neler var|program(ım|im)|neyim var|ajandam|listele)/.test(t)){
+    var kapsam='bugun';
     if(/yarın|yarin/.test(t))kapsam='yarin';
     else if(/hafta/.test(t))kapsam='hafta';
     else if(/tüm|hepsi/.test(t))kapsam='tumu';
-    return {intent:'sorgu',sorgu:{kapsam,anahtar:null},kayitlar:[]};
+    return {intent:'sorgu',sorgu:{kapsam:kapsam,anahtar:null},kayitlar:[]};
   }
 
-  /* --- tarih --- */
-  if(/bugün|bugun/.test(t)){tarih=bugun();sil.push(/bugün|bugun/);}
-  else if(/yarın|yarin/.test(t)){tarih=yarin();sil.push(/yarın|yarin/);}
-  else if(/öbür gün|obur gun|ertesi gün/.test(t)){tarih=gunEkle(2);sil.push(/öbür gün|obur gun|ertesi gün/);}
+  /* tarih */
+  if(/bugün|bugun/.test(t)){tarih=bugun();sil.push(/bugün|bugun/gi);}
+  else if(/yarın|yarin/.test(t)){tarih=yarin();sil.push(/yarın|yarin/gi);}
+  else if(/öbür gün|obur gun|ertesi gün/.test(t)){tarih=gunEkle(2);sil.push(/öbür gün|obur gun|ertesi gün/gi);}
   if(!tarih){
-    const m=t.match(/ay(ın|in)\s+(\d{1,2})/);
-    if(m){
-      const g=+m[2],d=new Date();d.setDate(g);
-      if(iso(d)<bugun())d.setMonth(d.getMonth()+1);
-      tarih=iso(d);sil.push(/ay(ın|in)\s+\d{1,2}[’'"]?(i|ı|si|sı)?/);
+    var ma=t.match(/ay(ın|in)\s+(\d{1,2})/);
+    if(ma){var g=+ma[2],da=new Date();da.setDate(g);
+      if(iso(da)<bugun())da.setMonth(da.getMonth()+1);
+      tarih=iso(da);sil.push(/ay(ın|in)\s+\d{1,2}[’']?\w{0,3}/gi);}
+  }
+  if(!tarih){
+    var mb=t.match(/(\d{1,2})\s+(ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)/);
+    if(mb){
+      var kok=['oca','şub','mar','nis','may','haz','tem','ağu','eyl','eki','kas','ara'];
+      var kok2=['oca','sub','mar','nis','may','haz','tem','agu','eyl','eki','kas','ara'];
+      var ix=kok.indexOf(mb[2].slice(0,3)); if(ix<0)ix=kok2.indexOf(mb[2].slice(0,3));
+      if(ix>=0){var dc=new Date();dc.setMonth(ix,+mb[1]);
+        if(iso(dc)<bugun())dc.setFullYear(dc.getFullYear()+1);
+        tarih=iso(dc);sil.push(new RegExp(mb[0],'gi'));}
     }
   }
   if(!tarih){
-    const m=t.match(/(\d{1,2})\s+(ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)/);
-    if(m){
-      const idx=['ocak','şubat','mart','nisan','mayıs','haziran','temmuz','ağustos','eylül','ekim','kasım','aralık']
-        .findIndex(a=>m[2].startsWith(a.slice(0,4))||a.startsWith(m[2].slice(0,4)));
-      if(idx>=0){const d=new Date();d.setMonth(idx,+m[1]);
-        if(iso(d)<bugun())d.setFullYear(d.getFullYear()+1);
-        tarih=iso(d);sil.push(new RegExp(m[0]));}
-    }
-  }
-  if(!tarih){
-    for(const [ad,no] of Object.entries(GUNADI)){
-      if(new RegExp('\\b'+ad).test(t)){
-        const bugunNo=new Date().getDay();
-        let fark=(no-bugunNo+7)%7; if(fark===0)fark=7;
-        if(/haftaya|gelecek hafta|önümüzdeki hafta/.test(t)&&fark<7)fark+=0;
+    for(var ad in GUNADI){
+      if(trRe(ad,'\\w*').test(t)){
+        var bn=new Date().getDay(), fark=(GUNADI[ad]-bn+7)%7; if(fark===0)fark=7;
+        if(/haftaya|gelecek hafta|önümüzdeki hafta/.test(t)&&fark<3)fark+=7;
         tarih=gunEkle(fark);
-        sil.push(new RegExp('(haftaya |gelecek hafta |önümüzdeki hafta )?'+ad+'\\w*'));
+        sil.push(new RegExp('(haftaya |gelecek hafta |önümüzdeki hafta )?'+ad+'\\w*','gi'));
         break;
       }
     }
   }
   if(!tarih){
-    const m=t.match(/\b(\d{1,2})[./](\d{1,2})\b/);
-    if(m){const d=new Date();d.setMonth(+m[2]-1,+m[1]);
-      if(iso(d)<bugun())d.setFullYear(d.getFullYear()+1);
-      tarih=iso(d);sil.push(new RegExp(m[0].replace('.','\\.')));}
+    var md=t.match(/\b(\d{1,2})[./](\d{1,2})\b/);
+    if(md){var dd=new Date();dd.setMonth(+md[2]-1,+md[1]);
+      if(iso(dd)<bugun())dd.setFullYear(dd.getFullYear()+1);
+      tarih=iso(dd);sil.push(new RegExp(md[0].replace('.','\\.'),'g'));}
   }
 
-  /* --- saat --- */
-  let saatNo=null,dk=0;
-  let m=t.match(/\b(\d{1,2})[:.](\d{2})\b/);
-  if(m){saatNo=+m[1];dk=+m[2];sil.push(new RegExp(m[0].replace('.','\\.')));}
-  if(saatNo===null){
-    m=t.match(/saat\s+(\d{1,2})/)||t.match(/\b(\d{1,2})[’']?(de|da|te|ta)\b/);
-    if(m){saatNo=+m[1];sil.push(new RegExp(m[0]));}
+  /* saat */
+  var sn=null,dk=0;
+  var ms=t.match(/\b(\d{1,2})[:.](\d{2})\b/);
+  if(ms){sn=+ms[1];dk=+ms[2];sil.push(new RegExp(ms[0].replace('.','\\.'),'g'));}
+  if(sn===null){
+    var ms2=t.match(/saat\s+(\d{1,2})/)||t.match(/\b(\d{1,2})[’']?(de|da|te|ta)\b/);
+    if(ms2){sn=+ms2[1];sil.push(new RegExp(ms2[0],'gi'));}
   }
-  if(saatNo===null){
-    for(const [ad,no] of Object.entries(SAYI)){
-      const r=new RegExp('\\b'+ad+'[’\']?(de|da|te|ta)?\\b');
-      if(r.test(t)&&!/on numara/.test(t)){saatNo=no;sil.push(r);break;}
+  if(sn===null){
+    for(var q=0;q<SAYI_SIRA.length;q++){
+      var kw=SAYI_SIRA[q][0];
+      var eki=trRe(kw,"[’']?(de|da|te|ta)").test(t);
+      var onek=new RegExp('saat\\s+'+kw+'(?![a-zçğıöşü])','i').test(t);
+      var buc=new RegExp(kw+'\\s+bu[çc]uk','i').test(t);
+      if(eki||onek||buc){
+        sn=SAYI_SIRA[q][1];
+        sil.push(new RegExp(kw+"[’']?(de|da|te|ta)?","gi"));break;
+      }
     }
   }
-  if(saatNo!==null&&/buçuk|bucuk/.test(t)){dk=30;sil.push(/buçuk\w*|bucuk\w*/);}
-  const sabah=/sabah/.test(t), oglen=/öğlen|oglen|öğle/.test(t),
-        ikindi=/öğleden sonra|ogleden sonra|akşamüstü|aksamustu/.test(t), aksam=/akşam|aksam|gece/.test(t);
-  if(saatNo===null){
-    if(sabah)saatNo=9; else if(oglen)saatNo=12; else if(ikindi)saatNo=14; else if(aksam)saatNo=18;
+  if(sn!==null&&/buçuk|bucuk/.test(t)){dk=30;sil.push(/buçuk\w*|bucuk\w*/gi);}
+  var sabah=/sabah/.test(t), oglen=/öğlen|oglen|öğle\b/.test(t),
+      ikindi=/öğleden sonra|ogleden sonra|akşamüstü|aksamustu|ikindi/.test(t),
+      aksam=/akşam|aksam|gece/.test(t);
+  if(sn===null){
+    if(sabah)sn=9; else if(oglen)sn=12; else if(ikindi)sn=14; else if(aksam)sn=18;
   }else{
-    if((ikindi||aksam)&&saatNo<12)saatNo+=12;
-    else if(!sabah&&!oglen&&saatNo>=1&&saatNo<=8)saatNo+=12;   // mesai varsayımı
+    if((ikindi||aksam)&&sn<12)sn+=12;
+    else if(!sabah&&!oglen&&sn>=1&&sn<=8)sn+=12;
   }
-  sil.push(/sabah|öğleden sonra|ogleden sonra|akşamüstü|akşam|aksam|öğlen|oglen|gece|saat/);
-  if(saatNo!==null)saat=`${String(saatNo%24).padStart(2,'0')}:${String(dk).padStart(2,'0')}`;
+  sil.push(/sabah|öğleden sonra|ogleden sonra|akşamüstü|akşam|aksam|öğlen|oglen|gece|saat|ikindi/gi);
+  if(sn!==null)saat=String(sn%24).padStart(2,'0')+':'+String(dk).padStart(2,'0');
 
-  /* --- tür --- */
-  if(/göster|gosterim|gezdir/.test(t))tur='gösterim';
+  /* tür */
+  if(/göster|gosterim|gezdir|bak(acağ|acak|arız|alım)/.test(t))tur='gösterim';
   else if(/topl(a|ı)nt|kapanış|kapanis|tapu|sözleşme|sozlesme|imza|ekspertiz/.test(t))tur='toplantı';
-  else if(/\bara\b|arayacağ|arama|telefon|geri dön/.test(t))tur='arama';
+  else if(/\bara(yaca|caği|cağı|yacağ)|arama|telefon|geri dön/.test(t))tur='arama';
   else if(/hatırlat|hatirlat|unutma/.test(t))tur='hatırlatma';
-  else if(/görüş|gorus|buluş|bulus|müşteri|musteri|randevu/.test(t))tur='görüşme';
+  else if(/görüş|gorus|buluş|bulus|müşteri|musteri|randevu|sunum/.test(t))tur='görüşme';
 
-  /* --- kişi --- */
-  const km=metin.match(/([A-ZÇĞİÖŞÜa-zçğıöşü]+)\s*(bey|hanım|hanim|bay)\b/i);
-  if(km){kisi=km[1].charAt(0).toLocaleUpperCase('tr')+km[1].slice(1)+' '+
-    (/(hanım|hanim)/i.test(km[2])?'Hanım':'Bey');sil.push(new RegExp(km[0],'i'));}
+  /* kişi → yer → nitelik  (sırayla çıkar) */
+  var kisi=kisiBul(metin,sil);
+  var yer=yerBul(metin,kisi,sil);
+  var nitelik=nitelikBul(metin,sil);
 
-  /* --- yer --- */
-  const SEMT=['fikirtepe','kadıköy','kadikoy','acıbadem','acibadem','koşuyolu','kosuyolu','göztepe','goztepe',
-    'bostancı','bostanci','ataşehir','atasehir','üsküdar','uskudar','maltepe','kartal','merdivenköy','merdivenkoy',
-    'hasanpaşa','hasanpasa','ofis','tapu','belediye','şantiye','santiye','kıbrıs','kibris','girne','lefkoşa'];
-  for(const s of SEMT){
-    if(new RegExp('\\b'+s).test(t)){
-      yer=s.charAt(0).toLocaleUpperCase('tr')+s.slice(1);
-      sil.push(new RegExp('\\b'+s+'[’\']?(de|da|te|ta|deki|daki)?\\b'));break;
-    }
+  /* başlık */
+  var kalan=metin;
+  for(var q=0;q<sil.length;q++){
+    try{kalan=kalan.replace(new RegExp(sil[q].source,'gi'),' ');}catch(e){}
   }
+  kalan=kalan.replace(/\b(var|vardı|için|ile|ila|bir|ve|ben|benim|bana|olacak|olsun|yaz|ekle|kaydet|kayıt|kaydını|not|randevu|müşteri|müşterim|göstereceğim|gösterim|görüşeceğim|görüşme|buluşacağım|toplantı|arayacağım|arama|hatırlat|gideceğim|gelecek|beyin|beye|beyle)\b/gi,' ')
+       .replace(/[’',.;:!?]/g,' ').replace(/\s+/g,' ').trim();
 
-  /* --- başlık --- */
-  let b=metin;
-  sil.forEach(r=>{b=b.replace(new RegExp(r.source,'gi'),' ')});
-  b=b.replace(/\b(var|için|ile|de|da|bir|ve|ben|benim|olacak|olsun|yaz|ekle|kaydet|kaydını|kayıt)\b/gi,' ')
-     .replace(/[’',.]/g,' ').replace(/\s+/g,' ').trim();
-  b=b.split(' ').slice(0,5).join(' ');
-  if(b.length<3)b=turOf(tur).ad;
-  b=b.charAt(0).toLocaleUpperCase('tr')+b.slice(1);
+  var ozel=null;
+  if(/ekspertiz/.test(t))ozel={tek:'Ekspertiz',ek:'ekspertizi'};
+  else if(/kapanış|kapanis/.test(t))ozel={tek:'Kapanış',ek:'kapanışı'};
+  else if(/sözleşme|sozlesme|imza/.test(t))ozel={tek:'Sözleşme',ek:'sözleşmesi'};
+  else if(/kira kontrat|kontrat/.test(t))ozel={tek:'Kira kontratı',ek:'kira kontratı'};
 
-  return {intent:'ekle',kayitlar:[{baslik:b,tarih:tarih||bugun(),saat,kisi,yer,tur,not:metin}],
+  var baslik;
+  if((tur==='diğer'||tur==='hatırlatma')&&kalan.length>2){
+    baslik=buyukIlk(((nitelik?nitelik+' ':'')+kalan).split(' ').slice(0,5).join(' '));
+  }else if(nitelik){
+    baslik=buyukIlk(nitelik)+' '+(ozel?ozel.ek:TUR_EK[tur]);
+  }else{
+    baslik=ozel?ozel.tek:TUR_ISIM[tur];
+  }
+  if(!baslik||baslik.length<2)baslik=TUR_ISIM[tur];
+
+  return {intent:'ekle',
+    kayitlar:[{baslik:baslik,tarih:tarih||bugun(),saat:saat,kisi:kisi,yer:yer,tur:tur,not:metin}],
     cevap:'Şöyle anladım — gerekirse düzelt.'};
 }
 
@@ -491,6 +586,7 @@ function openDetail(id){
   const meta=[uzunTarih(e.tarih),e.saat,k.ad].filter(Boolean).join(' · ');
   openSheet(`<h2 style="color:${k.c}">${esc(e.baslik)}</h2>
     <p class="kicker">${esc(meta)}${e.kisi?' · '+esc(e.kisi):''}${e.yer?' · '+esc(e.yer):''}${e.eventId?' · takvimde':''}</p>
+    ${e.not?`<p style="margin:-10px 0 18px;font-size:14px;color:var(--ink-2);opacity:.75;font-weight:500">${esc(e.not)}</p>`:''}
     <button class="opt" onclick="toggleDone('${id}')"><span class="ic">${e.done?'↩︎':'✓'}</span>${e.done?'Yapılmadı işaretle':'Tamamlandı işaretle'}</button>
     <button class="opt" onclick="postpone('${id}')"><span class="ic">→</span>Yarına ertele</button>
     <button class="opt" onclick="editEntry('${id}')"><span class="ic">✎</span>Düzenle</button>
@@ -531,9 +627,10 @@ function draftForm(d,i){
     <div class="row2">
       <div class="field"><label>Kişi</label><input data-f="kisi" value="${esc(d.kisi||'')}"></div>
       <div class="field"><label>Yer</label><input data-f="yer" value="${esc(d.yer||'')}"></div></div>
-    <div class="field" style="margin-bottom:0"><label>Tür</label><select data-f="tur">
+    <div class="field"><label>Tür</label><select data-f="tur">
       ${Object.keys(TURLER).map(k=>`<option value="${k}" ${k===d.tur?'selected':''}>${TURLER[k].ad}</option>`).join('')}
-    </select></div></div>`;
+    </select></div>
+    <div class="field" style="margin-bottom:0"><label>Not — söylediğin cümle</label><input data-f="not" value="${esc(d.not||'')}"></div></div>`;
 }
 function readDrafts(){
   return [...sheetBody.querySelectorAll('.draft')].map(el=>{
@@ -549,7 +646,7 @@ function editEntry(id){
 function saveEdit(id){
   const d=readDrafts()[0],e=entries.find(x=>x.id===id);
   if(!d.baslik){toast('Başlık boş olamaz');return;}
-  const not=e.not,ev=e.eventId;Object.assign(e,d);e.not=not;e.eventId=ev;
+  const ev=e.eventId;Object.assign(e,d);e.eventId=ev;
   persist();closeSheet();render();toast('Kaydedildi');
 }
 function confirmDrafts(drafts,cevap){
@@ -565,7 +662,7 @@ async function saveDrafts(){
     if(!d.baslik)continue;
     const e={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
       baslik:d.baslik,tarih:d.tarih||bugun(),saat:d.saat||null,kisi:d.kisi,yer:d.yer,
-      tur:d.tur||'diğer',not:null,sure:null,done:false,eventId:null,created:new Date().toISOString()};
+      tur:d.tur||'diğer',not:d.not||null,sure:null,done:false,eventId:null,created:new Date().toISOString()};
     entries.push(e);yeni.push(e);
   }
   persist();closeSheet();
@@ -615,7 +712,7 @@ async function process(text){
   if(res.intent==='sorgu'){answerQuery(res.sorgu);return;}
   const drafts=(res.kayitlar||[]).map(d=>({
     baslik:d.baslik||text.slice(0,50),tarih:d.tarih||bugun(),saat:d.saat||'',
-    kisi:d.kisi||'',yer:d.yer||'',tur:d.tur||'diğer'}));
+    kisi:d.kisi||'',yer:d.yer||'',tur:d.tur||'diğer',not:d.not||''}));
   if(!drafts.length){toast('Anlaşılmadı, tekrar dener misin?');return;}
   confirmDrafts(drafts,res.cevap);
 }
