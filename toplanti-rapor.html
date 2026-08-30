@@ -102,8 +102,8 @@ const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
 const LOG_READ_URL="https://script.google.com/macros/s/AKfycby7asL7S24asuM_OdBGjXt_meJix7AhTw7G3Kz3lPgOovEhCM4F6aBYjGA2eYsFGOKl/exec";
 function logLogin(d){
-  try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){ console.warn('Sessiz hata:', e); }
-  try{var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");logs.push({name:d,time:new Date().toISOString()});if(logs.length>500)logs=logs.slice(-500);localStorage.setItem("perf_logs",JSON.stringify(logs));}catch(e){ console.warn('Sessiz hata:', e); }
+  try{var p=new URLSearchParams();p.append("action","logLogin");p.append("danisman",d);p.append("uygulama","Performansım");fetch(KAPANIS_API,{method:"POST",body:p,redirect:"follow"}).catch(function(){});}catch(e){}
+  try{var logs=JSON.parse(localStorage.getItem("perf_logs")||"[]");logs.push({name:d,time:new Date().toISOString()});if(logs.length>500)logs=logs.slice(-500);localStorage.setItem("perf_logs",JSON.stringify(logs));}catch(e){}
 }
 const KEY="dogus-performans";
 const ACTS=[
@@ -154,19 +154,19 @@ function cacheOku(){
       }
     }
     if(c.kapanis && (simdi - c.kapanis.t) < KAPANIS_TTL) KAPANIS_CACHE=c.kapanis.d;
-  }catch(e){ console.warn('Sessiz hata:', e); }
+  }catch(e){}
 }
 function cacheYaz(){
   try{
     var c={aylik:{},kapanis:null},simdi=Date.now();
     var eski={};
-    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){ console.warn('Sessiz hata:', e); }
+    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){}
     for(var m in AYLIK_CACHE){
       c.aylik[m]={t:(eski[m]&&eski[m].t)||simdi, d:AYLIK_CACHE[m]};
     }
     if(KAPANIS_CACHE) c.kapanis={t:simdi,d:KAPANIS_CACHE};
     localStorage.setItem(CACHE_KEY,JSON.stringify(c));
-  }catch(e){ console.warn('Sessiz hata:', e); }
+  }catch(e){}
 }
 cacheOku();
 var PINS={
@@ -202,6 +202,18 @@ function setPeriod(p){
   loadData();
 }
 
+function donemGunSayisi(){
+  var bugun=new Date(), toplam=0;
+  getMonthKeys(PERIOD).forEach(function(k){
+    var y=+k.slice(0,4), m=+k.slice(5,7);
+    var ayinGunu=new Date(y,m,0).getDate();
+    // İçinde bulunulan ay ise bugüne kadar sayar, geçmiş aylarda tam ay
+    if(y===bugun.getFullYear() && m===bugun.getMonth()+1) toplam+=bugun.getDate();
+    else toplam+=ayinGunu;
+  });
+  return toplam||30;
+}
+
 function getMonthKeys(n){
   var keys=[],now=new Date();
   for(var i=0;i<n;i++){
@@ -221,7 +233,7 @@ async function loadData(){
       DATA=mergeData(ALL_DATA);
       if(KAPANIS_CACHE) applyKapanis(KAPANIS_CACHE,months);
       render();
-    }catch(e){ console.warn('Sessiz hata:', e); }
+    }catch(e){}
   }else{
     document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
   }
@@ -314,7 +326,7 @@ function render(){
   // Stats
   h+='<div class="stats">';
   h+='<div class="stat"><div class="val" style="color:#2563eb">'+d.puan+'</div><div class="lbl">Toplam Puan</div></div>';
-  h+='<div class="stat"><div class="val" style="color:#22c55e">'+d.aktifGun+'/'+(PERIOD*22)+'</div><div class="lbl">Aktif Gün</div></div>';
+  h+='<div class="stat"><div class="val" style="color:#22c55e">'+d.aktifGun+'/'+donemGunSayisi()+'</div><div class="lbl">Aktif Gün</div></div>';
   h+='<div class="stat"><div class="val" style="color:#f59e0b">'+d.kapanis+'</div><div class="lbl">Kapanış</div></div>';
   h+='<div class="stat"><div class="val" style="color:#a855f7;font-size:18px">'+(d.ciro?d.ciro.toLocaleString("tr-TR"):0)+' ₺</div><div class="lbl">Ciro</div></div>';
   h+='</div>';
@@ -374,11 +386,12 @@ function render(){
   var ins=[];
   if(rank===1)ins.push({t:"good",m:"🏆 Bu dönem birinci sıradasın, tebrikler!"});
   else if(rank<=3)ins.push({t:"good",m:"🎯 İlk 3'te yer alıyorsun, harika!"});
-  if(d.aktifGun>=20*PERIOD)ins.push({t:"good",m:"💪 "+d.aktifGun+" aktif gün — istikrarın çok iyi."});
+  if(d.aktifGun>=15*PERIOD)ins.push({t:"good",m:"💪 "+d.aktifGun+" aktif gün — istikrarın çok iyi."});
+  else if(d.aktifGun>=10*PERIOD)ins.push({t:"good",m:"⭐ İstikrar Ödülü eşiğini geçtin ("+d.aktifGun+" gün)."});
   if((d.counts.gosterim||0)>=8*PERIOD)ins.push({t:"good",m:"🏠 Gösterim sayın yüksek."});
   if(d.kapanis>=2*PERIOD)ins.push({t:"good",m:"🤝 "+d.kapanis+" kapanış — harika iş!"});
-  if(d.aktifGun<15*PERIOD)ins.push({t:"warn",m:"📅 Aktif gün sayın düşük ("+d.aktifGun+"). Her gün en az 1 aktivite gir."});
-  if((d.counts.fzbo||0)<30*PERIOD)ins.push({t:"warn",m:"📞 FZBO arama düşük ("+(d.counts.fzbo||0)+"/"+(60*PERIOD)+"). Arama artır."});
+  if(d.aktifGun<10*PERIOD)ins.push({t:"warn",m:"📅 İstikrar Ödülü'ne "+(10*PERIOD-d.aktifGun)+" gün kaldı. Her gün en az 1 aktivite gir."});
+  if((d.counts.fzbo||0)<12*PERIOD)ins.push({t:"warn",m:"📞 FZBO araması "+(d.counts.fzbo||0)+"/"+(12*PERIOD)+" — haftada 3 arama hedefi."});
   if((d.counts.gosterim||0)<4*PERIOD)ins.push({t:"bad",m:"🏠 Gösterim çok düşük ("+(d.counts.gosterim||0)+"/"+(8*PERIOD)+"). Müşteri portföyünü gözden geçir."});
   if((d.counts.sosyal_medya||0)<6*PERIOD)ins.push({t:"warn",m:"📱 Sosyal medya az ("+(d.counts.sosyal_medya||0)+"/"+(12*PERIOD)+"). Haftada 3+ paylaşım yap."});
   if(d.puan<avg)ins.push({t:"warn",m:"📊 Puanın takım ortalamasının ("+avg+") altında."});
@@ -410,7 +423,7 @@ function toggleRM(el){
 }
 function getRoadmap(k){
   var R={
-ag:'<h4>Aktif Gün Artırma Planı</h4><div class="rm-week"><b>Hafta 1-2</b><ul><li>Her sabah uygulamayı aç, en az 1 aktivite gir</li><li>Telefonda ana ekrana ekle</li><li>Günde 1 etki araması bile aktif gün sayar</li></ul></div><div class="rm-week"><b>Hafta 3-4</b><ul><li>Sabah: 3 FZBO + 2 etki</li><li>Öğle: 1 gösterim veya sunum</li><li>Akşam: Sosyal medya</li><li>Hedef: Ayda 22+ aktif gün</li></ul></div>',
+ag:'<h4>Aktif Gün Artırma Planı</h4><div class="rm-week"><b>Hafta 1-2</b><ul><li>Her sabah uygulamayı aç, en az 1 aktivite gir</li><li>Telefonda ana ekrana ekle</li><li>Günde 1 etki araması bile aktif gün sayar</li></ul></div><div class="rm-week"><b>Hafta 3-4</b><ul><li>Sabah: 3 FZBO + 2 etki</li><li>Öğle: 1 gösterim veya sunum</li><li>Akşam: Sosyal medya</li><li>Hedef: Ayda 10+ aktif gün (İstikrar Ödülü eşiği)</li></ul></div>',
 fz:'<h4>FZBO Arama Taktikleri</h4><div class="rm-week"><b>Hafta 1: Hazırlık</b><ul><li>Sahibinden/Hepsiemlak üzerinden sahibinden ilanları listele</li><li>Günde 5 ilan not al</li><li>Arama scripti hazırla</li></ul></div><div class="rm-week"><b>Hafta 2: Uygulama</b><ul><li>Her gün 09:30-11:00 arası 10 arama</li><li>Ret gelirse not al, 2 hafta sonra tekrar ara</li><li>Randevu alınca sisteme gir</li></ul></div><div class="rm-week"><b>Hafta 3-4: Takip</b><ul><li>İlanınız hâlâ aktif mi diye ara</li><li>Değerleme teklif et</li><li>Hedef: 15 arama, 2 sunum</li></ul></div>',
 go:'<h4>Gösterim Artırma Planı</h4><div class="rm-week"><b>Hafta 1: Kontrol</b><ul><li>Yetki listeni çıkar, hangisinde gösterim yok?</li><li>Fiyat güncellemesi gerekenleri belirle</li><li>Her yetki için 1 potansiyel alıcı eşleştir</li></ul></div><div class="rm-week"><b>Hafta 2-4: Aksiyon</b><ul><li>Ilık müşterilere gösterim teklif et</li><li>Haftada en az 2 gösterim planla</li><li>Gösterim sonrası aynı gün not gir</li></ul></div>',
 sm:'<h4>Sosyal Medya Haftalık Planı</h4><div class="rm-week"><b>Pazartesi</b><ul><li>Bilgi carousel: Ev alırken dikkat edilecekler</li></ul></div><div class="rm-week"><b>Çarşamba</b><ul><li>Portföy tanıtımı: foto + fiyat + konum</li></ul></div><div class="rm-week"><b>Cuma</b><ul><li>Reels: 30sn bölge turu veya daire tanıtımı</li></ul></div><div class="rm-week"><b>Her gün</b><ul><li>Story: sahada olduğunuzu gösterin</li><li>Anket/soru stickeri ile etkileşim</li></ul></div>',
