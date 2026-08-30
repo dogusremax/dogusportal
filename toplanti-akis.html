@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bire Bir Görüşme Akışı — RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacivert:#0A1F44;
+  --lacivert-acik:#132C56;
+  --kagit:#F2EFE9;
+  --kagit-sonuk:#A9B3C6;
+  --kirmizi:#D6222E;
+  --cizgi:rgba(242,239,233,.14);
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Fraunces',Georgia,serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:var(--lacivert);color:var(--kagit);font-family:var(--sans);
+  font-size:17px;line-height:1.5;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overscroll-behavior:none;
+}
+button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--kagit);outline-offset:3px}
+
+.ekran{display:none;min-height:100dvh;flex-direction:column}
+.ekran.acik{display:flex}
+
+/* ---------- seçim ekranı ---------- */
+.giris{padding:40px 22px 28px;max-width:620px;margin:0 auto;width:100%}
+.giris h1{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.15;margin:0 0 6px}
+.giris .alt{color:var(--kagit-sonuk);margin:0 0 30px;font-size:15px}
+.kisi{
+  display:flex;align-items:baseline;gap:14px;width:100%;text-align:left;
+  padding:15px 4px;border-bottom:1px solid var(--cizgi);
+}
+.kisi:first-of-type{border-top:1px solid var(--cizgi)}
+.kisi .ad{font-size:19px;font-weight:600;flex:1}
+.kisi .ne-zaman{color:var(--kagit-sonuk);font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kisi .rozet{
+  display:inline-block;margin-left:8px;font-size:12px;font-weight:500;
+  color:var(--lacivert);background:var(--kagit-sonuk);padding:1px 7px;border-radius:2px;
+}
+.kisi:active{background:var(--lacivert-acik)}
+
+/* ---------- üst ray ---------- */
+.ust{padding:14px 20px 0;flex-shrink:0}
+.ust-satir{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ust-ad{font-size:15px;font-weight:600}
+.ust-cik{color:var(--kagit-sonuk);font-size:14px}
+.ray{display:flex;gap:3px}
+.ray span{height:3px;flex:1;background:var(--cizgi);border-radius:2px}
+.ray span.gecti{background:var(--kagit-sonuk)}
+.ray span.simdi{background:var(--kirmizi)}
+
+/* ---------- adım gövdesi ---------- */
+.govde{flex:1;overflow-y:auto;padding:26px 20px 20px;max-width:620px;margin:0 auto;width:100%;-webkit-overflow-scrolling:touch}
+.adim-basi{color:var(--kagit-sonuk);font-size:14px;font-weight:500;margin:0 0 4px}
+.adim-baslik{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.2;margin:0 0 22px}
+
+.soyle{
+  font-family:var(--serif);font-size:23px;line-height:1.4;font-weight:400;
+  border-left:3px solid var(--kirmizi);padding:2px 0 2px 16px;margin:0 0 22px;
+}
+.blok{margin:0 0 20px}
+.blok-etiket{font-size:14px;font-weight:600;color:var(--kagit-sonuk);margin:0 0 7px}
+.blok ul{margin:0;padding-left:19px}
+.blok li{margin-bottom:7px}
+.blok li::marker{color:var(--kagit-sonuk)}
+.blok p{margin:0}
+.uyari{
+  border:1px solid var(--kirmizi);border-radius:3px;padding:13px 15px;margin:0 0 20px;
+  font-size:16px;
+}
+.uyari b{color:var(--kirmizi)}
+.not-alan{
+  width:100%;background:var(--lacivert-acik);border:1px solid var(--cizgi);border-radius:3px;
+  color:var(--kagit);padding:11px 13px;font-family:var(--sans);font-size:16px;resize:vertical;
+  min-height:74px;
+}
+.not-alan::placeholder{color:rgba(169,179,198,.6)}
+
+/* ---------- alt kontrol ---------- */
+.alt{
+  flex-shrink:0;border-top:1px solid var(--cizgi);background:var(--lacivert);
+  padding:12px 20px calc(14px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:12px;max-width:620px;margin:0 auto;width:100%;
+}
+.sayac{
+  font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  min-width:88px;
+}
+.sayac.bitiyor{color:var(--kirmizi);animation:nabiz 1.6s ease-in-out infinite}
+@keyframes nabiz{50%{opacity:.45}}
+.sayac-dur{font-size:14px;color:var(--kagit-sonuk);padding:6px 2px}
+.ilerle{
+  margin-left:auto;background:var(--kagit);color:var(--lacivert);font-weight:600;
+  padding:14px 26px;border-radius:3px;
+}
+.ilerle:active{background:var(--kagit-sonuk)}
+.geri{color:var(--kagit-sonuk);font-size:14px;padding:6px 2px}
+@media (prefers-reduced-motion:reduce){.sayac.bitiyor{animation:none}}
+
+/* ---------- kapanış formu ---------- */
+.form-satir{margin-bottom:16px}
+.form-satir label{display:block;font-size:14px;font-weight:600;color:var(--kagit-sonuk);margin-bottom:6px}
+.form-satir input,.form-satir textarea{
+  width:100%;background:var(--lacivert-acik);border:1px solid var(--cizgi);border-radius:3px;
+  color:var(--kagit);padding:11px 13px;font-family:var(--sans);font-size:16px;
+}
+.form-satir textarea{min-height:70px;resize:vertical}
+.kopyala{
+  width:100%;background:var(--kirmizi);color:#fff;font-weight:600;padding:15px;border-radius:3px;
+  margin-top:6px;
+}
+.kopyala:active{opacity:.8}
+.kopya-cikti{
+  margin-top:14px;background:var(--lacivert-acik);border:1px solid var(--cizgi);border-radius:3px;
+  padding:13px;font-size:14px;white-space:pre-wrap;color:var(--kagit-sonuk);display:none;
+}
+</style>
+</head>
+<body>
+
+<!-- ================= DANIŞMAN SEÇİMİ ================= -->
+<section class="ekran acik" id="ekran-secim">
+  <div class="giris">
+    <h1>Bire bir görüşme akışı</h1>
+    <p class="alt">Kimle oturuyorsun?</p>
+    <div id="kisi-listesi"></div>
+  </div>
+</section>
+
+<!-- ================= AKIŞ ================= -->
+<section class="ekran" id="ekran-akis">
+  <div class="ust">
+    <div class="ust-satir">
+      <span class="ust-ad" id="ust-ad"></span>
+      <button class="ust-cik" id="btn-cik">Kapat</button>
+    </div>
+    <div class="ray" id="ray"></div>
+  </div>
+  <div class="govde" id="govde"></div>
+  <div class="alt">
+    <span class="sayac" id="sayac">00:00</span>
+    <button class="sayac-dur" id="btn-sayac">Başlat</button>
+    <button class="geri" id="btn-geri">Geri</button>
+    <button class="ilerle" id="btn-ilerle">Sonraki</button>
+  </div>
+</section>
+
+<script>
+/* ============ DANIŞMANLAR ============ */
+const KISILER = [
+  {ad:'Orhan Özazman', gun:'31 Ağu Pzt', saat:'10:00', rozet:'nöbetçi', ortak:'Aysun Yılmaz'},
+  {ad:'Aysun Yılmaz',  gun:'31 Ağu Pzt', saat:'10:00', rozet:'Zoom', ortak:'Orhan Özazman', bosAy:true},
+  {ad:'Özlem Varol',   gun:'1 Eyl Salı', saat:'10:00', rozet:'nöbetçi'},
+  {ad:'Gizem Gök',     gun:'1 Eyl Salı', saat:'14:00', rozet:'özel geliyor'},
+  {ad:'Ayşegül Alpay', gun:'3 Eyl Perş', saat:'10:00', rozet:'nöbetçi'},
+  {ad:'Gamze Yetkin',  gun:'3 Eyl Perş', saat:'14:00', rozet:'özel geliyor'},
+  {ad:'Evşen Özazman', gun:'4 Eyl Cuma', saat:'10:00', rozet:'nöbetçi'},
+  {ad:'İrem Aleyna Tetik', gun:'4 Eyl Cuma', saat:'14:00', rozet:'özel geliyor'}
+];
+
+/* ============ ADIMLAR ============ */
+function adimlar(k){
+  const a = [
+  {
+    dk:0, basi:'Görüşmeden önce', baslik:'Masaya oturmadan',
+    bloklar:[
+      {etiket:'Elinde olsun', liste:[
+        'toplanti-rapor.html açık, '+k.ad.split(' ')[0]+' seçili',
+        'Sahibinden ilan durumu — ilk 5 ücretsiz ilan bitti mi',
+        'İki hafta sonrası için takvimde boş 15 dakika'
+      ]},
+      {etiket:'Kafanda net olsun', liste:[
+        'Sistem 2 Ağustos\'ta başladı. Bu ilk tam ay — başlangıç fotoğrafı, karne değil.',
+        'Kimse tam zamanlı çalışmıyor. Hedefi onun verebileceği saate göre kuracaksın.'
+      ]}
+    ],
+    uyari:'<b>Aidat / Option B konusunu bu görüşmeye sokma.</b> Performans konuşması anında pazarlığa döner. Bire birler bitince ayrı ve toplu toplantıda aç.'
+  },
+  {
+    dk:5, basi:'1 · 5 dakika', baslik:'Çerçeveyi kur',
+    soyle:'Bu bir değerlendirme değil. Ağustos ilk tam ayımızdı, elimizde ilk kez gerçek veri var. Bugün oturup senin Eylül planını birlikte yapacağız.',
+    bloklar:[
+      {etiket:'Yap', liste:[
+        'Telefonunu ters çevir, kapıyı kapat',
+        'Ekranı ikinizin de göreceği şekilde çevir — karşısında değil, yanında otur'
+      ]},
+      {etiket:'Kaçın', liste:['"Bir bakalım bakalım nasıl gitmiş" — bu cümle denetim havası verir, savunmaya geçer']}
+    ]
+  },
+  {
+    dk:12, basi:'2 · 12 dakika', baslik:'Ekranı birlikte aç',
+    bloklar:[
+      {etiket:'Göster', liste:[
+        '12 aktivite tipi ve Ağustos gerçekleşmeleri',
+        'Haftalık hedef gerçekleşmeleri, hedef bonusu puanı',
+        'Jackpot (12/12) yaptığı hafta var mı'
+      ]},
+      {etiket:'Tek kural', metin:'Yorum yapma. Sadece oku. "Bu portföy girişi, bu randevu, bu sunum, bu kapanış."'}
+    ],
+    uyari:'Rakamın yanına sıfat koyma. <b>"Düşük", "iyi değil", "az"</b> dediğin an konuşma biter, savunma başlar. Veriyi kendi konuştur.'
+  },
+  {
+    dk:8, basi:'3 · 8 dakika', baslik:'Önce o konuşsun',
+    soyle:'Bu tabloya bakınca sen ne görüyorsun?',
+    bloklar:[
+      {etiket:'Sonra sus', metin:'İçinden 10\'a kadar say. Sessizliği sen doldurma — dolduran taraf konuşmanın sahibi olur.'},
+      {etiket:'Açılmazsa', liste:[
+        '"Hangi hafta iyi geçti? O hafta ne farklı yaptın?"',
+        '"En çok nerede tıkandın?"'
+      ]}
+    ]
+  },
+  {
+    dk:12, basi:'4 · 12 dakika', baslik:'Darboğazı bul',
+    bloklar:[
+      {etiket:'Huniyi sırayla yürü', metin:'Portföy girişi → randevu → sunum → kapanış. Kayıp tam olarak nerede oluyor?'},
+      {etiket:'Tek kural', metin:'Tek darboğaz seç. İkisini birden düzeltmeye kalkarsan ikisi de olmaz.'}
+    ],
+    not:'Tespit edilen tek darboğaz',
+    notAd:'darbogaz'
+  },
+  {
+    dk:15, basi:'5 · 15 dakika', baslik:'Eylül taahhüdü',
+    soyle:'Eylül\'de kaç portföy, kaç randevu, kaç kapanış? Rakamı sen söyle.',
+    bloklar:[
+      {etiket:'Rakamı aldıktan sonra', metin:'"Haftada kaç saat ayırabiliyorsun?" — hedefi bu saate göre test et. Haftada 10 saat veren birine 30 saatlik hedef kurarsan ikiniz de kaybedersiniz.'},
+      {etiket:'Bir de bunu bağla', metin:'Haftalık aktivite tabanı: haftada kaç giriş yapacak. Hedef bonusu buradan geliyor.'}
+    ],
+    not:'Portföy / randevu / kapanış — ve haftalık taban',
+    notAd:'taahhut'
+  },
+  {
+    dk:4, basi:'6 · 4 dakika', baslik:'Ofisin karşılığı',
+    soyle:'Sen bunu taahhüt ediyorsan, ofis olarak ben de şunu veriyorum.',
+    bloklar:[
+      {etiket:'Masaya koyabileceklerin', liste:[
+        'Eylül\'de açılacak bir eğitim başlığı',
+        'İlan bütçesi — Sahibinden ilk 5 bittiyse destek',
+        'Co-broke eşleşmesi',
+        'Kıbrıs veya Fikirtepe yönlendirmesi'
+      ]}
+    ],
+    not:'Ofisin vereceği destek',
+    notAd:'destek'
+  },
+  {
+    dk:4, basi:'7 · 4 dakika', baslik:'Kapanış',
+    bloklar:[
+      {etiket:'Yüksek sesle tekrar et', metin:'Darboğaz + üç rakam + ofisin desteği. Sen söyle, o onaylasın.'},
+      {etiket:'Tarihi şimdi ver', metin:'İki hafta sonra 15 dakikalık ara kontrol. Takvime bu masadayken koy, sonraya bırakma.'}
+    ],
+    soyle:'İki hafta sonra bu üç rakama bakacağız. Başka bir şeye değil.'
+  }
+  ];
+
+  /* ortak ekip bloğu — sadece Orhan ve Aysun */
+  if(k.ortak){
+    a.splice(7,0,{
+      dk:10, basi:'Ek · 10 dakika', baslik:'İkili ekip bloğu',
+      bloklar:[
+        {etiket:'Birlikte konuşun', liste:[
+          'Ortak portföy sayısı ve durumu',
+          'İş bölümü: kimde ne',
+          '50/50 paylaşımın verimi',
+          'Eylül\'de ikili olarak iki taahhüt'
+        ]}
+      ],
+      uyari:'Kimse partnerinin yanında <b>"paylaşım bana adil gelmiyor"</b> demez. Gerilim seziyorsan burada zorlama — 15\'er dakikalık ayrı kapanış ekle, 31 Ağustos 14:00 boş.',
+      not:'İş bölümü ve ikili taahhüt',
+      notAd:'ortak'
+    });
+  }
+
+  /* Aysun'a özel açılış */
+  if(k.bosAy){
+    a.splice(2,0,{
+      dk:3, basi:'Önce bu', baslik:'Boş tabloyla başlıyorsun',
+      bloklar:[
+        {etiket:'Durum', metin:'Ağustos\'ta uygulamaya hiç giriş yapılmamış. Ekranı açtığında tablo boş çıkacak — ikiniz de bunu göreceksiniz.'}
+      ],
+      soyle:'Ağustos\'ta uygulamaya giriş görünmüyor. Önce bunu konuşalım, sonra rakamlara geçeriz. Seni engelleyen ne oldu?',
+      uyari:'Bu bir <b>suçlama değil, engel arayışı.</b> Cevap "unuttum" ise sorun alışkanlık; "anlamadım" ise sorun eğitim; "vaktim yok" ise sorun hedef. Üçünün çözümü ayrı.'
+    });
+  }
+  return a;
+}
+
+/* ============ DURUM ============ */
+let kisi=null, adimListesi=[], i=0, kalan=0, timer=null, calisiyor=false;
+const notlar={};
+
+const $=id=>document.getElementById(id);
+
+/* ---------- kişi listesi ---------- */
+KISILER.forEach((k,ix)=>{
+  const b=document.createElement('button');
+  b.className='kisi';
+  b.innerHTML='<span class="ad">'+k.ad+'<span class="rozet">'+k.rozet+'</span></span>'+
+              '<span class="ne-zaman">'+k.gun+' · '+k.saat+'</span>';
+  b.onclick=()=>basla(ix);
+  $('kisi-listesi').appendChild(b);
+});
+
+function basla(ix){
+  kisi=KISILER[ix];
+  adimListesi=adimlar(kisi);
+  i=0;
+  Object.keys(notlar).forEach(x=>delete notlar[x]);
+  $('ust-ad').textContent=kisi.ad;
+  $('ekran-secim').classList.remove('acik');
+  $('ekran-akis').classList.add('acik');
+  ciz();
+}
+
+/* ---------- çizim ---------- */
+function ciz(){
+  const a=adimListesi[i];
+  const g=$('govde');
+  let h='<p class="adim-basi">'+a.basi+'</p><h2 class="adim-baslik">'+a.baslik+'</h2>';
+  if(a.soyle) h+='<p class="soyle">'+a.soyle+'</p>';
+  (a.bloklar||[]).forEach(b=>{
+    h+='<div class="blok"><p class="blok-etiket">'+b.etiket+'</p>';
+    if(b.liste){ h+='<ul>'+b.liste.map(x=>'<li>'+x+'</li>').join('')+'</ul>'; }
+    else { h+='<p>'+b.metin+'</p>'; }
+    h+='</div>';
+  });
+  if(a.uyari) h+='<div class="uyari">'+a.uyari+'</div>';
+  if(a.not){
+    h+='<div class="blok"><p class="blok-etiket">'+a.not+'</p>'+
+       '<textarea class="not-alan" id="not-'+a.notAd+'" placeholder="Buraya yaz, kapanışta özete girecek">'+
+       (notlar[a.notAd]||'')+'</textarea></div>';
+  }
+  g.innerHTML=h;
+  g.scrollTop=0;
+
+  if(a.not){
+    $('not-'+a.notAd).addEventListener('input',e=>{notlar[a.notAd]=e.target.value;});
+  }
+
+  /* ray */
+  $('ray').innerHTML=adimListesi.map((_,x)=>
+    '<span class="'+(x<i?'gecti':x===i?'simdi':'')+'"></span>').join('');
+
+  /* sayaç */
+  durdur();
+  kalan=a.dk*60;
+  yazSayac();
+  $('btn-sayac').textContent='Başlat';
+  $('btn-sayac').style.visibility = a.dk ? 'visible':'hidden';
+  $('sayac').style.visibility = a.dk ? 'visible':'hidden';
+  $('btn-geri').style.visibility = i ? 'visible':'hidden';
+  $('btn-ilerle').textContent = (i===adimListesi.length-1)?'Özeti çıkar':'Sonraki';
+}
+
+function yazSayac(){
+  const m=Math.floor(Math.abs(kalan)/60), s=Math.abs(kalan)%60;
+  $('sayac').textContent=(kalan<0?'+':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  $('sayac').classList.toggle('bitiyor', kalan<=60);
+}
+function durdur(){ clearInterval(timer); timer=null; calisiyor=false; }
+$('btn-sayac').onclick=()=>{
+  if(calisiyor){ durdur(); $('btn-sayac').textContent='Devam'; }
+  else{
+    calisiyor=true; $('btn-sayac').textContent='Durdur';
+    timer=setInterval(()=>{kalan--; yazSayac();},1000);
+  }
+};
+
+$('btn-ilerle').onclick=()=>{
+  if(i===adimListesi.length-1){ ozet(); return; }
+  i++; ciz();
+};
+$('btn-geri').onclick=()=>{ if(i){ i--; ciz(); } };
+$('btn-cik').onclick=()=>{
+  durdur();
+  $('ekran-akis').classList.remove('acik');
+  $('ekran-secim').classList.add('acik');
+};
+
+/* ---------- özet ---------- */
+function ozet(){
+  durdur();
+  const g=$('govde');
+  g.innerHTML=
+    '<p class="adim-basi">Görüşme bitti</p><h2 class="adim-baslik">Özeti çıkar</h2>'+
+    alan('Tespit edilen tek darboğaz','o-darbogaz',notlar.darbogaz||'',true)+
+    alan('Eylül taahhüdü — portföy / randevu / kapanış','o-taahhut',notlar.taahhut||'',true)+
+    alan('Haftalık aktivite tabanı','o-taban','')+
+    alan('Haftada ayırabileceği saat','o-saat','')+
+    (kisi.ortak?alan('İş bölümü ve ikili taahhüt','o-ortak',notlar.ortak||'',true):'')+
+    alan('Ofisin vereceği destek','o-destek',notlar.destek||'',true)+
+    alan('Ara kontrol tarihi (2 hafta sonra)','o-kontrol','')+
+    alan('Diğer notlar','o-diger','',true)+
+    '<button class="kopyala" id="btn-kopyala">Özeti kopyala</button>'+
+    '<div class="kopya-cikti" id="kopya-cikti"></div>';
+  $('ray').innerHTML=adimListesi.map(()=>'<span class="gecti"></span>').join('');
+  $('sayac').style.visibility='hidden';
+  $('btn-sayac').style.visibility='hidden';
+  $('btn-ilerle').style.visibility='hidden';
+  $('btn-geri').style.visibility='visible';
+  $('btn-kopyala').onclick=kopyala;
+  g.scrollTop=0;
+}
+function alan(etiket,id,deger,cok){
+  return '<div class="form-satir"><label for="'+id+'">'+etiket+'</label>'+
+    (cok?'<textarea id="'+id+'">'+deger+'</textarea>'
+        :'<input id="'+id+'" value="'+deger+'">')+'</div>';
+}
+function kopyala(){
+  const v=id=>{const e=$(id);return e?e.value.trim():'';};
+  let t='BİRE BİR GÖRÜŞME — '+kisi.ad+'\n'+kisi.gun+' '+kisi.saat+'\n\n'+
+    'Darboğaz: '+v('o-darbogaz')+'\n'+
+    'Eylül taahhüdü: '+v('o-taahhut')+'\n'+
+    'Haftalık aktivite tabanı: '+v('o-taban')+'\n'+
+    'Haftada ayırabileceği saat: '+v('o-saat')+'\n';
+  if(kisi.ortak) t+='İkili ekip: '+v('o-ortak')+'\n';
+  t+='Ofisin desteği: '+v('o-destek')+'\n'+
+     'Ara kontrol: '+v('o-kontrol')+'\n\n'+
+     'Notlar: '+v('o-diger')+'\n';
+  const c=$('kopya-cikti');
+  c.textContent=t; c.style.display='block';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(t).then(()=>{
+      $('btn-kopyala').textContent='Kopyalandı';
+      setTimeout(()=>{$('btn-kopyala').textContent='Özeti kopyala';},2200);
+    }).catch(()=>{});
+  }
+}
+
+/* klavye: masaüstünde ok tuşlarıyla ilerle */
+document.addEventListener('keydown',e=>{
+  if(!$('ekran-akis').classList.contains('acik'))return;
+  if(e.key==='ArrowRight')$('btn-ilerle').click();
+  if(e.key==='ArrowLeft')$('btn-geri').click();
+  if(e.key===' '){e.preventDefault();$('btn-sayac').click();}
+});
+</script>
+</body>
+</html>
