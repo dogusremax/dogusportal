@@ -403,7 +403,7 @@ document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları
 fillMonths(); load();
 
 
-function ghTok(){let t=localStorage.getItem('ghToken');if(!t){t=prompt('GitHub token girin (bir kez):');if(t){t=t.trim();localStorage.setItem('ghToken',t);}}return t;}
+function ghTok(){return localStorage.getItem('ghToken')||'';}  // sunucu kendi anahtarını kullanır, sayfa sormaz
 async function storyYayinla(){
   const st=document.getElementById('status'),btn=document.getElementById('storybtn');
   const n=document.querySelectorAll('.slide').length;
