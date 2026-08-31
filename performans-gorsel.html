@@ -186,12 +186,17 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div class="sans" style="position:absolute;left:32px;bottom:${STORY?60:30}px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
   s.filter(r=>r._rank<=3).forEach((r,i)=>slides.push(podium(r._rank,r,i%2===1)));
-  const rows=s.map((r,i)=>{const t=(r._rank||i+1)<=3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);return `<div style="display:flex;align-items:center;gap:12px;padding:${STORY?(s.length>7?8:12):(s.length>7?3:6)}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
-<span class="sans" style="width:16px;font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.4)'};">${r._rank||i+1}</span>${circ(r.id,s.length>7?26:30,t?CORAL:'rgba(255,255,255,.25)')}
-<div style="flex:1;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span class="sans" style="font-size:13px;font-weight:${t?700:500};color:#fff;">${r.name}</span><span class="sans" style="font-size:13px;font-weight:700;color:${t?CORAL:'rgba(255,255,255,.6)'};">${r.puan}</span></div>
-<div style="height:3px;background:rgba(255,255,255,.1);border-radius:2px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:2px;"></div></div></div></div>`}).join('');
-  slides.push(`<div class="slide" style="background:${NAVY};">${logo(false)}<div style="position:absolute;left:32px;right:48px;top:78px;bottom:62px;">
-<h2 class="sans" style="font-size:30px;font-weight:700;letter-spacing:-.9px;color:#fff;margin:0 0 8px;line-height:1.1;">${d.ayAdi} sıralaması</h2>${rows}</div>${arrow()}${progress()}</div>`);
+  const list=STORY?s.filter((r,i)=>(r._rank||i+1)<=3):s;
+  const rows=list.map((r,i)=>{const t=(r._rank||i+1)<=3,w=Math.round(r.puan/Math.max(1,s[0].puan)*100);
+    const P=STORY?22:(s.length>7?3:6), PH=STORY?64:(s.length>7?26:30), FS=STORY?20:13, PS=STORY?26:13;
+    return `<div style="display:flex;align-items:center;gap:${STORY?18:12}px;padding:${P}px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+<span class="sans" style="width:${STORY?26:16}px;font-size:${STORY?24:13}px;font-weight:800;color:${t?CORAL:'rgba(255,255,255,.4)'};">${r._rank||i+1}</span>${circ(r.id,PH,t?CORAL:'rgba(255,255,255,.25)')}
+<div style="flex:1;"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:${STORY?8:3}px;"><span class="sans" style="font-size:${FS}px;font-weight:${t?700:500};color:#fff;">${r.name}</span><span class="sans" style="font-size:${PS}px;font-weight:800;color:${t?CORAL:'rgba(255,255,255,.6)'};letter-spacing:-1px;">${r.puan}<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:0;"> puan</span></span></div>
+<div style="height:${STORY?5:3}px;background:rgba(255,255,255,.1);border-radius:3px;"><div style="width:${w}%;height:100%;background:${t?CORAL:'rgba(255,255,255,.35)'};border-radius:3px;"></div></div></div></div>`}).join('');
+  slides.push(`<div class="slide" style="background:${NAVY};">${STORY?wm('3','rgba(255,255,255,.05)'):''}${logo(false)}<div style="position:absolute;left:32px;right:48px;top:${STORY?130:78}px;bottom:62px;">
+<div class="sans" style="display:${STORY?'inline-block':'none'};background:${RGRAD};color:#fff;font-size:12px;font-weight:800;letter-spacing:1.6px;padding:6px 12px;border-radius:8px;margin-bottom:12px;">HAFTANIN İLK 3'Ü</div>
+<h2 class="sans" style="font-size:30px;font-weight:700;letter-spacing:-.9px;color:#fff;margin:0 0 ${STORY?22:8}px;line-height:1.1;">${d.ayAdi}${STORY?'':' sıralaması'}</h2>${rows}
+${STORY?`<div class="sans" style="margin-top:28px;font-size:13px;color:rgba(255,255,255,.55);line-height:1.5;">Ofisimizin bu haftaki en aktif üç danışmanı. 👏</div>`:''}</div>${arrow()}${progress()}</div>`);
   slides.push(ctaSlide(d));
   TOTAL=slides.length;
   return slides.map((h,i)=>h.replace(/__PCT__/g,String(((i+1)/TOTAL)*100)).replace(/__N__/g,String(i+1)).replace(/__T__/g,String(TOTAL)));
