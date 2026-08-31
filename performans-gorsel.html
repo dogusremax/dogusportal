@@ -403,6 +403,7 @@ document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları
 fillMonths(); load();
 
 
+function ghTok(){let t=localStorage.getItem('ghToken');if(!t){t=prompt('GitHub token girin (bir kez):');if(t){t=t.trim();localStorage.setItem('ghToken',t);}}return t;}
 async function storyYayinla(){
   const st=document.getElementById('status'),btn=document.getElementById('storybtn');
   const n=document.querySelectorAll('.slide').length;
@@ -416,7 +417,7 @@ async function storyYayinla(){
       images.push(du.split(',')[1]);}
     st.textContent='📤 Story\'ler yükleniyor ve yayınlanıyor (2-4 dk)…';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'storyYayinla',ay:DATA.ay,images,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:')})});
+      body:JSON.stringify({action:'storyYayinla',ay:DATA.ay,images,ghToken:ghTok()})});
     const r=await resp.json();
     if(r.success){st.textContent='✅ '+r.count+' story sırayla yayınlandı!';}
     else if(r.retry){st.textContent='Görseller yüklendi, site yayını bekleniyor — 2 dk sonra tuşa tekrar bas, kaldığı yerden yayınlar.';}
@@ -447,7 +448,7 @@ async function instagramaGonder(testMode){
       :DONEM==='hafta'?`📊 ${ayAd} — RE/MAX Doğuş Haftalık Performans Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`:`📊 ${ayAd} — RE/MAX Doğuş Aylık Performans Puanları\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`;
     st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:localStorage.getItem('ghToken')||prompt('GitHub token girin:'),testMode:!!testMode})
+      body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:ghTok(),testMode:!!testMode})
     });
     const result=await resp.json();
     if(result.success){
