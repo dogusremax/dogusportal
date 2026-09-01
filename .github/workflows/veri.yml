@@ -17,5 +17,7 @@ jobs:
           curl -sL "$B?action=haftalik&hafta=2026-08-17&$K" -o veri/h0817.json
           curl -sL "$B?action=haftalik&hafta=2026-08-10&$K" -o veri/h0810.json
           curl -sL "$B?action=haftalik&hafta=2026-08-03&$K" -o veri/h0803.json
+          curl -sL -X POST "$B" -H "Content-Type: text/plain" --data '{"action":"storyYayinla","ay":"probe","images":[]}' -o veri/probe.json
+          curl -sL -X POST "$B" -H "Content-Type: text/plain" --data '{"action":"nothing"}' -o veri/probe2.json
           git config user.name bot; git config user.email b@b
           git add veri && git commit -m "veri" && git push
