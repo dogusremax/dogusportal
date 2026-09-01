@@ -169,7 +169,7 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;bottom:74px;display:flex;flex-direction:column;gap:10px;">${cards}</div>
 <div class="sans" style="position:absolute;left:32px;bottom:40px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
-    if(bCiro)slides.push(catAny(wCiro,'AYIN CİRO BİRİNCİSİ',`<span style="font-size:26px;letter-spacing:-.5px;">En yüksek hizmet bedeli</span>`,`${d.ayAdi} ayının ciro lideri`,true));
+    if(bCiro)slides.push(catAny(wCiro,'AYIN CİRO BİRİNCİSİ',`<span style="font-size:26px;letter-spacing:-.5px;color:#fff;">Hizmet Bedeli</span>`,`${d.ayAdi} ayının ciro lideri`,true));
     if(bIslem)slides.push(catAny(wIslem,'AYIN İŞLEM BİRİNCİSİ',`${fI(bIslem)} <span style="font-size:18px;letter-spacing:0;color:rgba(255,255,255,.7)">işlem</span>`,`${d.ayAdi} ayında kapanan işlem`,false));
     if(bSosyal)slides.push(catAny(wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${bSosyal.counts.sosyal_medya} <span style="font-size:18px;letter-spacing:0;color:rgba(255,255,255,.7)">içerik</span>`,`${d.ayAdi} ayında paylaşılan içerik`,true));
     slides.push(ctaSlide(d));
