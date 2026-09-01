@@ -128,9 +128,9 @@ function catSlideMulti(ws,label,valueHtml,sub,red){
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">1</div>${logo(false)}
 <div style="position:absolute;left:32px;right:32px;top:92px;z-index:5;">
-<div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:10px;">${label} · ${n} KİŞİ</div>
+<div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:10px;">${label}</div>
 ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
-<div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;">${sub} · berabere</div></div>
+<div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;">${sub}</div></div>
 <div style="position:absolute;left:0;right:0;bottom:44px;height:${h+14}px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end;">${figs}</div>
 <div style="position:absolute;left:0;right:0;bottom:56px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
 ${arrow()}${progress()}</div>`;
