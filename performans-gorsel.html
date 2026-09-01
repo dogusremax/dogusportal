@@ -450,7 +450,7 @@ async function instagramaGonder(testMode){
     const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
     const caption=SET==='birinci'
       ?`🏆 ${ayAd} — RE/MAX Doğuş Birincilik Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`
-      :DONEM==='hafta'?`📊 ${ayAd} — RE/MAX Doğuş Haftalık Performans Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`:`📊 ${ayAd} — RE/MAX Doğuş Aylık Performans Puanları\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`;
+      :DONEM==='hafta'?`📊 ${ayAd} — RE/MAX Doğuş Haftalık Performans Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`:`${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bize yaz: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
     st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
       body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:ghTok(),testMode:!!testMode})
