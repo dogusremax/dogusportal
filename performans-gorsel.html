@@ -151,7 +151,7 @@ function build(d){
   const slides=[];
   const F=d.force||{},H=d.hide||{};
   const fC=x=>x.ciro||0, fI=x=>x.kapanis||0, fS=x=>(x.counts&&x.counts.sosyal_medya)||0;
-  const wCiro=H.ciro?[]:(F.ciro?[F.ciro]:bestAll(s,fC)), wIslem=H.islem?[]:(F.islem?[F.islem]:bestAll(s,fI)), wSosyal=H.sosyal?[]:(F.sosyal?[F.sosyal]:bestAll(s,fS));
+  const wCiro=H.ciro?[]:(F.ciro?[F.ciro]:bestAll(s,fC)), wIslem=H.islem?[]:(F.islem?[F.islem]:bestAll(s,fI)), wSosyal=H.sosyal?[]:(F.sosyal?[F.sosyal].concat(F.sosyal2&&F.sosyal2.id!==F.sosyal.id?[F.sosyal2]:[]):bestAll(s,fS));
   const bCiro=wCiro[0]||null, bIslem=wIslem[0]||null, bSosyal=wSosyal[0]||null;
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
@@ -204,16 +204,16 @@ ${STORY?`<div class="sans" style="margin-top:28px;font-size:13px;color:rgba(255,
 
 
 // ==== ELLE DÜZENLEME ====
-let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};
+let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};
 function buildPanel(){
   const opts=(sel)=>'<option value="">— otomatik —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span style="font-size:10px;color:#8a8fa3;">berabere / ikinci kişi</span></div>`):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
-function readPanel(){['p1','p2','p3','ciro','islem','sosyal'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
+function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
 function applyOvr(){readPanel();render(applyOverrides(DATA));}
-function resetOvr(){OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};buildPanel();render(DATA);}
+function resetOvr(){OVR={soz:'',sozKim:'',sosyal2:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};buildPanel();render(DATA);}
 function applyOverrides(d){
   const base=d.siralama.map(r=>JSON.parse(JSON.stringify(r)));
   const byId=id=>base.find(r=>r.id===id);
@@ -231,6 +231,7 @@ function applyOverrides(d){
   if(OVR.ciro){const r=byId(OVR.ciro);if(r){o.force.ciro=r;const v=num(OVR.ciroV);if(!isNaN(v))r.ciro=v;}}
   if(OVR.islem){const r=byId(OVR.islem);if(r){o.force.islem=r;const v=parseInt(OVR.islemV);if(!isNaN(v))r.kapanis=v;}}
   if(OVR.sosyal){const r=byId(OVR.sosyal);if(r){o.force.sosyal=r;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r.counts.sosyal_medya=v;}}
+  if(OVR.sosyal2){const r2=byId(OVR.sosyal2);if(r2){o.force.sosyal2=r2;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r2.counts.sosyal_medya=v;}}
   o.hide={ciro:OVR.hideCiro,islem:OVR.hideIslem,sosyal:OVR.hideSosyal};
   return o;
 }
