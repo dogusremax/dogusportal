@@ -122,8 +122,12 @@ ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spac
 function bestBy(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return null;return c.slice().sort((a,b)=>f(b)-f(a)||b.puan-a.puan)[0];}
 function bestAll(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return [];const m=Math.max(...c.map(f));return c.filter(x=>f(x)===m).sort((a,b)=>b.puan-a.puan).slice(0,3);}
 function catSlideMulti(ws,label,valueHtml,sub,red){
-  const ptc=red?NAVY:CORAL, n=ws.length, h=n===2?270:245, w=n===2?180:135;
-  const figs=ws.map((r,k)=>`<div style="position:relative;margin:0 ${n===2?-8:-6}px;z-index:${k===1?2:1};">${cut(r.id,h,w)}</div>`).join('');
+  const ptc=red?NAVY:CORAL, n=ws.length, h=n===2?270:245;
+  /* Fotoğraf oranı tek kişilik tasarımla aynı olsun (260/440 ≈ 0.59),
+     yoksa iki kişi yan yana gelince kareler yayvan görünüyordu. */
+  const ORAN = 260/440;
+  const w = Math.round(h * ORAN);
+  const figs=ws.map((r,k)=>`<div style="position:relative;margin:0 ${n===2?-8:-12}px;z-index:${k===1?2:1};">${cut(r.id,h,w)}</div>`).join('');
   const tags=ws.map(r=>`<div class="sans" style="padding:5px 9px;background:rgba(5,10,48,.9);border:1px solid rgba(255,255,255,.14);border-radius:12px;font-size:10.5px;font-weight:700;color:#fff;white-space:nowrap;">${r.name}</div>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">1</div>${logo(false)}
