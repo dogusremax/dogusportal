@@ -127,11 +127,7 @@ function dl(){
   a.href=cv.toDataURL('image/png');a.click();
 }
 
-function getTok(){
-  let t=localStorage.getItem('ghToken');
-  if(!t){t=prompt('GitHub token girin (bir kez sorulur):');if(t)localStorage.setItem('ghToken',t);}
-  return t;
-}
+function getTok(){ return localStorage.getItem('ghToken')||''; } // sunucu kendi anahtarını kullanır, sayfa sormaz
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 
 async function sh(){
