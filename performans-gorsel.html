@@ -409,6 +409,12 @@ fillMonths(); load();
 
 
 function ghTok(){return localStorage.getItem('ghToken')||'';}  // sunucu kendi anahtarını kullanır, sayfa sormaz
+function igCaption(){
+  const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
+  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nCiro, işlem ve sosyal medyada zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+  if(DONEM==='hafta') return `${DATA.ayAdi} haftasının podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+  return `${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+}
 async function storyYayinla(){
   const st=document.getElementById('status'),btn=document.getElementById('storybtn');
   const n=document.querySelectorAll('.slide').length;
@@ -447,10 +453,7 @@ async function instagramaGonder(testMode){
       const dataUrl=await new Promise(r=>c.toBlob(b=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(b);},'image/jpeg',0.95));
       images.push(dataUrl.split(',')[1]);
     }
-    const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
-    const caption=SET==='birinci'
-      ?`🏆 ${ayAd} — RE/MAX Doğuş Birincilik Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`
-      :DONEM==='hafta'?`📊 ${ayAd} — RE/MAX Doğuş Haftalık Performans Sıralaması\n\n#remax #remaxdogus #fikirtepe #kadikoy #gayrimenkul #performans`:`${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+    const caption=igCaption();
     st.textContent='📤 Instagram\'a gönderiliyor...'; btn.innerHTML='📤 Gönderiliyor...';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
       body:JSON.stringify({action:'instagramYayinla',ay:DATA.ay,set:SET,images:images,caption:caption,ghToken:ghTok(),testMode:!!testMode})
@@ -485,9 +488,7 @@ function openPreview(){
   _previewTotal=slides.length; _previewIdx=0;
   var container=document.getElementById('previewSlides');
   container.innerHTML='';
-  var caption=SET==='birinci'
-    ?DATA.ayAdi+' '+DATA.yil+' — RE/MAX Doğuş Birincilik Sıralaması'
-    :DATA.ayAdi+' '+DATA.yil+' — RE/MAX Doğuş Aylık Performans Puanları';
+  var caption=igCaption();
   document.getElementById('previewCaption').textContent=caption;
   document.getElementById('fbCaption').textContent=caption;
   document.getElementById('status').textContent='Onizleme hazirlaniyor...';
