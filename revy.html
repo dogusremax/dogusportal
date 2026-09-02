@@ -3,140 +3,162 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0A1F44">
+<meta name="theme-color" content="#FAFAFD">
 <title>Revy · RE/MAX Doğuş</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0A1F44;
-  --blue:#003DA5;
-  --red:#DC1C2E;
-  --paper:#F4F5F7;
-  --line:#DCE0E6;
-  --muted:#6F7784;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;background:var(--paper);color:var(--ink);
-  font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  font-size:16px;line-height:1.5;
-}
-.wrap{max-width:540px;margin:0 auto;padding:0 20px 56px}
+  :root{
+    --bg:#FAFAFD; --ink:#16171D; --ink-2:#41434F; --mute:#83869A;
+    --line:#E6E6EE; --card:#FFFFFF;
+    --amber:#F5A104;  --amber-bg:#FFF3DC;  --amber-bd:#FBDFA6;
+    --coral:#FF5A3C;  --coral-bg:#FFEEEA;  --coral-bd:#FFCFC4;
+    --slate:#64748B;  --slate-bg:#EFF2F6;  --slate-bd:#D3DAE4;
+    --indigo:#3355FF; --indigo-bg:#E8EDFF; --indigo-bd:#C3CFFF;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+    font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(40px + env(safe-area-inset-bottom));
+  }
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:540px;margin:0 auto}
 
-/* şerit — RE/MAX kimliği, dekor değil sayfa başlığının çizgisi */
-.serit{display:flex;height:5px;margin:0 -20px 26px}
-.serit i{flex:1}
-.serit i:nth-child(1){background:var(--blue)}
-.serit i:nth-child(2){background:#fff}
-.serit i:nth-child(3){background:var(--red)}
+  header{padding:calc(28px + env(safe-area-inset-top)) 20px 4px}
+  .baslik{
+    font-family:"Bricolage Grotesque",sans-serif;
+    font-variation-settings:'opsz' 72,'wdth' 96,'wght' 800;
+    font-size:46px;line-height:.9;letter-spacing:-.035em;color:var(--indigo);
+  }
+  .altbaslik{margin-top:11px;color:var(--mute);font-size:14.5px;font-weight:500;max-width:33ch}
 
-header{padding:26px 0 22px}
-h1{
-  margin:0;font-size:40px;font-weight:800;letter-spacing:-1.4px;line-height:1;
-}
-header p{
-  margin:9px 0 0;color:var(--muted);font-size:15px;max-width:34ch;
-}
+  nav{display:flex;gap:6px;padding:20px 16px 14px}
+  nav button{
+    flex:1;padding:11px 4px;font-size:14.5px;font-weight:600;color:var(--mute);
+    background:var(--card);border:1.5px solid var(--line);border-radius:13px;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  nav button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  nav button:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
 
-/* satılık / kiralık */
-.tur{
-  display:inline-flex;border:1px solid var(--line);border-radius:999px;
-  background:#fff;padding:3px;margin-bottom:26px;
-}
-.tur button{
-  appearance:none;border:0;background:none;cursor:pointer;
-  font-family:inherit;font-size:15px;font-weight:500;color:var(--muted);
-  padding:9px 20px;border-radius:999px;transition:background .15s,color .15s;
-}
-.tur button[aria-pressed="true"]{background:var(--ink);color:#fff;font-weight:600}
-.tur button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  main{padding:0 16px}
 
-/* ana blok */
-a{color:inherit;text-decoration:none}
-.one{
-  display:block;background:var(--ink);color:#fff;border-radius:6px;
-  padding:24px 22px 22px;position:relative;overflow:hidden;
-}
-.one:active{background:#122b57}
-.one .kicker{
-  display:block;font-size:13px;color:#93A4C4;margin-bottom:7px;
-}
-.one h2{margin:0;font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.2}
-.one p{margin:10px 0 0;font-size:15px;color:#B8C4DC;max-width:32ch}
-.one:after{
-  content:"";position:absolute;right:22px;top:26px;width:11px;height:11px;
-  border-top:2px solid #7f93b8;border-right:2px solid #7f93b8;
-  transform:rotate(45deg);
-}
-.one:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+  .kart{
+    display:grid;grid-template-columns:58px 1fr 18px;gap:14px;align-items:center;
+    padding:16px 16px;border-radius:20px;margin-bottom:10px;
+    background:var(--cbg);border:1.5px solid var(--cbd);
+    transition:transform .12s ease;
+  }
+  .kart:active{transform:scale(.985)}
+  .kart:focus-visible{outline:2.5px solid var(--c);outline-offset:2px}
 
-/* liste */
-.liste{margin-top:8px;background:#fff;border-radius:6px;border:1px solid var(--line)}
-.sat{
-  display:flex;align-items:center;gap:15px;padding:17px 20px;
-  border-bottom:1px solid var(--line);
-}
-.sat:last-child{border-bottom:0}
-.sat:active{background:#f7f8fa}
-.sat:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
-.im{width:3px;height:34px;border-radius:2px;flex:none}
-.sat .yazi{flex:1;min-width:0}
-.sat b{display:block;font-weight:600;font-size:16px}
-.sat span{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
-.sat .ok{color:#B9C0C9;font-size:19px;flex:none}
+  .ikon{
+    width:54px;height:54px;border-radius:17px;position:relative;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 30% 25%, var(--c2), var(--c) 75%);
+    box-shadow:
+      0 10px 22px -6px color-mix(in srgb, var(--c) 60%, transparent),
+      inset 0 2px 3px rgba(255,255,255,.45),
+      inset 0 -3px 6px rgba(0,0,0,.26);
+  }
+  .ikon .parlak{
+    position:absolute;top:3px;left:4px;right:4px;height:45%;
+    border-radius:14px 14px 40% 40%;
+    background:linear-gradient(to bottom, rgba(255,255,255,.42), rgba(255,255,255,.02));
+  }
+  .ikon svg{
+    width:27px;height:27px;position:relative;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.32));
+  }
 
-footer{margin-top:26px;font-size:13.5px;color:var(--muted);line-height:1.6}
+  .yazi b{
+    display:block;font-family:"Bricolage Grotesque",sans-serif;
+    font-variation-settings:'opsz' 20,'wdth' 92,'wght' 700;
+    font-size:17px;letter-spacing:-.015em;line-height:1.2;
+  }
+  .yazi span{display:block;font-size:13px;color:var(--ink-2);opacity:.72;margin-top:4px;font-weight:500}
+  .ok{color:var(--c);opacity:.55;font-size:20px;text-align:right;font-weight:700}
+
+  .one{padding:20px 16px}
+  .one .yazi b{font-size:19px}
+  .one .rozet{
+    display:inline-block;background:var(--c);color:#fff;font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:8px;margin-bottom:7px;letter-spacing:.01em;
+  }
+
+  footer{padding:22px 20px 0;color:var(--mute);font-size:13px;font-weight:500;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="serit"><i></i><i></i><i></i></div>
 
   <header>
-    <h1>Revy</h1>
-    <p>Fikirtepe, Dumlupınar ve Merdivenköy ilanları. Filtre kurmadan doğrudan listeye.</p>
+    <div class="baslik">Revy</div>
+    <div class="altbaslik">Fikirtepe, Dumlupınar ve Merdivenköy ilanları. Filtre kurmadan doğrudan listeye.</div>
   </header>
 
-  <div class="tur" role="group" aria-label="İşlem türü">
-    <button id="bSale" aria-pressed="true" onclick="tur('sale')">Satılık</button>
-    <button id="bRent" aria-pressed="false" onclick="tur('rent')">Kiralık</button>
-  </div>
+  <nav role="tablist" aria-label="İşlem türü">
+    <button id="bSale" role="tab" aria-selected="true" onclick="tur('sale')">Satılık</button>
+    <button id="bRent" role="tab" aria-selected="false" onclick="tur('rent')">Kiralık</button>
+  </nav>
 
-  <a class="one" id="k2" target="_blank" rel="noopener">
-    <span class="kicker">Portföy adayı</span>
-    <h2>Yayından kalkan sahibinden ilanlar</h2>
-    <p>Satamadan ilanı düşmüş mülk sahipleri. Aramaya buradan başla.</p>
-  </a>
+  <main>
 
-  <div class="liste">
-    <a class="sat" id="k1" target="_blank" rel="noopener">
-      <i class="im" style="background:#FA6400"></i>
+    <a class="kart one" id="k2" target="_blank" rel="noopener"
+       style="--c:var(--amber);--c2:#FFD98A;--cbg:var(--amber-bg);--cbd:var(--amber-bd)">
+      <span class="ikon"><span class="parlak"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M6 7V4h12v3"/><path d="M5 7l1 13h12l1-13"/><path d="M9 12l6 5"/><path d="M15 12l-6 5"/></svg>
+      </span>
       <span class="yazi">
-        <b>Yayında olan sahibinden ilanlar</b>
+        <span class="rozet">Portföy adayı</span>
+        <b>Yayından kalkan sahibinden</b>
+        <span>Satamadan ilanı düşmüş mülk sahipleri</span>
+      </span>
+      <span class="ok">›</span>
+    </a>
+
+    <a class="kart" id="k1" target="_blank" rel="noopener"
+       style="--c:var(--coral);--c2:#FF9E88;--cbg:var(--coral-bg);--cbd:var(--coral-bd)">
+      <span class="ikon"><span class="parlak"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 10v9h14v-9"/><path d="M10 19v-5h4v5"/></svg>
+      </span>
+      <span class="yazi">
+        <b>Yayında olan sahibinden</b>
         <span>Bölgede şu an satışta olan mülkler</span>
       </span>
       <span class="ok">›</span>
     </a>
-    <a class="sat" id="k3" target="_blank" rel="noopener">
-      <i class="im" style="background:#8A93A0"></i>
+
+    <a class="kart" id="k3" target="_blank" rel="noopener"
+       style="--c:var(--slate);--c2:#A9B4C4;--cbg:var(--slate-bg);--cbd:var(--slate-bd)">
+      <span class="ikon"><span class="parlak"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l6-4v17"/><path d="M10 10l8 3v8"/><path d="M2 21h20"/><path d="M13.5 15h1.5"/><path d="M6.5 12H8"/></svg>
+      </span>
       <span class="yazi">
         <b>Diğer ofislerin ilanları</b>
         <span>Fiyat takibi ve co-broke için</span>
       </span>
       <span class="ok">›</span>
     </a>
-    <a class="sat" id="k4" target="_blank" rel="noopener">
-      <i class="im" style="background:#003DA5"></i>
+
+    <a class="kart" id="k4" target="_blank" rel="noopener"
+       style="--c:var(--indigo);--c2:#8FA5FF;--cbg:var(--indigo-bg);--cbd:var(--indigo-bd)">
+      <span class="ikon"><span class="parlak"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M4 20h16"/></svg>
+      </span>
       <span class="yazi">
         <b>Ofisimizin ilanları</b>
         <span>RE/MAX Doğuş portföyleri</span>
       </span>
       <span class="ok">›</span>
     </a>
-  </div>
+
+  </main>
 
   <footer>Revy'ye telefonundan bir kez giriş yaptıysan bağlantılar doğrudan açılır.</footer>
 </div>
@@ -166,8 +188,8 @@ function ciz() {
 
 function tur(x) {
   t = x;
-  document.getElementById("bSale").setAttribute("aria-pressed", x === "sale");
-  document.getElementById("bRent").setAttribute("aria-pressed", x === "rent");
+  document.getElementById("bSale").setAttribute("aria-selected", x === "sale");
+  document.getElementById("bRent").setAttribute("aria-selected", x === "rent");
   ciz();
 }
 
