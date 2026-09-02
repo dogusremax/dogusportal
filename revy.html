@@ -37,14 +37,23 @@
   }
   .altbaslik{margin-top:11px;color:var(--mute);font-size:14.5px;font-weight:500;max-width:33ch}
 
-  nav{display:flex;gap:6px;padding:20px 16px 14px}
+  nav{
+    display:flex;gap:4px;margin:20px 16px 16px;padding:4px;
+    background:#ECEEF6;border-radius:17px;
+  }
   nav button{
     flex:1;padding:11px 4px;font-size:14.5px;font-weight:600;color:var(--mute);
-    background:var(--card);border:1.5px solid var(--line);border-radius:13px;
-    transition:background .15s,color .15s,border-color .15s;
+    border-radius:13px;transition:color .18s;
   }
-  nav button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-  nav button:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  nav button[aria-selected="true"]{
+    color:#fff;
+    background:radial-gradient(circle at 30% 25%, #8FA5FF, var(--indigo) 78%);
+    box-shadow:
+      0 6px 14px -5px color-mix(in srgb, var(--indigo) 55%, transparent),
+      inset 0 1.5px 2px rgba(255,255,255,.4),
+      inset 0 -2px 4px rgba(0,0,0,.22);
+  }
+  nav button:focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
 
   main{padding:0 16px}
 
