@@ -3,86 +3,142 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#003DA5">
+<meta name="theme-color" content="#0A1F44">
 <title>Revy · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
+:root{
+  --ink:#0A1F44;
+  --blue:#003DA5;
+  --red:#DC1C2E;
+  --paper:#F4F5F7;
+  --line:#DCE0E6;
+  --muted:#6F7784;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:#eef0f3;color:#16181d;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
--webkit-font-smoothing:antialiased}
-.sar{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.5;
+}
+.wrap{max-width:540px;margin:0 auto;padding:0 20px 56px}
 
-.bas{text-align:center;padding:12px 0 20px}
-.bas b{display:block;font-size:26px;color:#003DA5;letter-spacing:-.4px}
-.bas span{font-size:12px;color:#8a8f98;letter-spacing:2px;text-transform:uppercase}
+/* şerit — RE/MAX kimliği, dekor değil sayfa başlığının çizgisi */
+.serit{display:flex;height:5px;margin:0 -20px 26px}
+.serit i{flex:1}
+.serit i:nth-child(1){background:var(--blue)}
+.serit i:nth-child(2){background:#fff}
+.serit i:nth-child(3){background:var(--red)}
 
-.secim{display:flex;background:#fff;border-radius:13px;padding:5px;margin-bottom:18px;
-box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.secim button{flex:1;padding:12px;border:0;background:none;border-radius:10px;
-font-size:15px;font-weight:600;color:#6b7280;font-family:inherit}
-.secim button.aktif{background:#003DA5;color:#fff}
+header{padding:26px 0 22px}
+h1{
+  margin:0;font-size:40px;font-weight:800;letter-spacing:-1.4px;line-height:1;
+}
+header p{
+  margin:9px 0 0;color:var(--muted);font-size:15px;max-width:34ch;
+}
 
-a.kart{display:block;background:#fff;border-radius:16px;padding:17px 18px;margin-bottom:11px;
-text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(0,0,0,.06);
-border-left:4px solid #dfe2e7}
-a.kart:active{transform:scale(.99)}
-a.kart.one{border-left-color:#DC1C2E}
-a.kart.iki{border-left-color:#FA6400}
-a.kart.uc{border-left-color:#6b7280}
-a.kart.dort{border-left-color:#003DA5}
-.kart b{display:block;font-size:16px;font-weight:600;margin-bottom:4px}
-.kart span{font-size:13px;color:#6b7280;line-height:1.45}
-.kart .ok{float:right;color:#c2c7cf;font-size:20px;margin-top:6px}
+/* satılık / kiralık */
+.tur{
+  display:inline-flex;border:1px solid var(--line);border-radius:999px;
+  background:#fff;padding:3px;margin-bottom:26px;
+}
+.tur button{
+  appearance:none;border:0;background:none;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:500;color:var(--muted);
+  padding:9px 20px;border-radius:999px;transition:background .15s,color .15s;
+}
+.tur button[aria-pressed="true"]{background:var(--ink);color:#fff;font-weight:600}
+.tur button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-.ayrac{font-size:11px;color:#9aa0a8;text-transform:uppercase;letter-spacing:1.4px;
-margin:24px 0 10px;font-weight:600}
-.uyari{background:#fffbef;border:1px solid #f3e4bd;border-radius:12px;padding:13px 15px;
-font-size:13px;color:#6b5a2a;line-height:1.55;margin-top:20px}
+/* ana blok */
+a{color:inherit;text-decoration:none}
+.one{
+  display:block;background:var(--ink);color:#fff;border-radius:6px;
+  padding:24px 22px 22px;position:relative;overflow:hidden;
+}
+.one:active{background:#122b57}
+.one .kicker{
+  display:block;font-size:13px;color:#93A4C4;margin-bottom:7px;
+}
+.one h2{margin:0;font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.2}
+.one p{margin:10px 0 0;font-size:15px;color:#B8C4DC;max-width:32ch}
+.one:after{
+  content:"";position:absolute;right:22px;top:26px;width:11px;height:11px;
+  border-top:2px solid #7f93b8;border-right:2px solid #7f93b8;
+  transform:rotate(45deg);
+}
+.one:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+
+/* liste */
+.liste{margin-top:8px;background:#fff;border-radius:6px;border:1px solid var(--line)}
+.sat{
+  display:flex;align-items:center;gap:15px;padding:17px 20px;
+  border-bottom:1px solid var(--line);
+}
+.sat:last-child{border-bottom:0}
+.sat:active{background:#f7f8fa}
+.sat:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.im{width:3px;height:34px;border-radius:2px;flex:none}
+.sat .yazi{flex:1;min-width:0}
+.sat b{display:block;font-weight:600;font-size:16px}
+.sat span{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
+.sat .ok{color:#B9C0C9;font-size:19px;flex:none}
+
+footer{margin-top:26px;font-size:13.5px;color:var(--muted);line-height:1.6}
 </style>
 </head>
 <body>
-<div class="sar">
+<div class="wrap">
+  <div class="serit"><i></i><i></i><i></i></div>
 
-  <div class="bas"><b>Revy</b><span>İlan Kaynakları</span></div>
+  <header>
+    <h1>Revy</h1>
+    <p>Fikirtepe, Dumlupınar ve Merdivenköy ilanları. Filtre kurmadan doğrudan listeye.</p>
+  </header>
 
-  <div class="secim">
-    <button id="bSale" class="aktif" onclick="tur('sale')">Satılık</button>
-    <button id="bRent" onclick="tur('rent')">Kiralık</button>
+  <div class="tur" role="group" aria-label="İşlem türü">
+    <button id="bSale" aria-pressed="true" onclick="tur('sale')">Satılık</button>
+    <button id="bRent" aria-pressed="false" onclick="tur('rent')">Kiralık</button>
   </div>
 
-  <div class="ayrac">Sahibinden · Fikirtepe, Dumlupınar, Merdivenköy</div>
-
-  <a class="kart iki" id="k2" target="_blank" href="#">
-    <span class="ok">›</span>
-    <b>Yayından kalkan FSBO</b>
-    <span>Satamamış, ilanı düşmüş sahipler. Portföy buradan çıkar.</span>
+  <a class="one" id="k2" target="_blank" rel="noopener">
+    <span class="kicker">Portföy adayı</span>
+    <h2>Yayından kalkan sahibinden ilanlar</h2>
+    <p>Satamadan ilanı düşmüş mülk sahipleri. Aramaya buradan başla.</p>
   </a>
 
-  <a class="kart one" id="k1" target="_blank" href="#">
-    <span class="ok">›</span>
-    <b>Yayında olan FSBO</b>
-    <span>Bölgende şu an sahibinden satılan mülkler.</span>
-  </a>
-
-  <div class="ayrac">Diğer</div>
-
-  <a class="kart uc" id="k3" target="_blank" href="#">
-    <span class="ok">›</span>
-    <b>Bölgedeki emlakçı ilanları</b>
-    <span>Rakip ofislerin portföyleri — co-broke ve fiyat takibi.</span>
-  </a>
-
-  <a class="kart dort" id="k4" target="_blank" href="#">
-    <span class="ok">›</span>
-    <b>Ofisimizin ilanları</b>
-    <span>RE/MAX Doğuş portföyleri.</span>
-  </a>
-
-  <div class="uyari">
-    Revy'ye telefonundan bir kez giriş yaptıysan bağlantılar doğrudan açılır.
-    İlk seferde şifre isteyebilir.
+  <div class="liste">
+    <a class="sat" id="k1" target="_blank" rel="noopener">
+      <i class="im" style="background:#FA6400"></i>
+      <span class="yazi">
+        <b>Yayında olan sahibinden ilanlar</b>
+        <span>Bölgede şu an satışta olan mülkler</span>
+      </span>
+      <span class="ok">›</span>
+    </a>
+    <a class="sat" id="k3" target="_blank" rel="noopener">
+      <i class="im" style="background:#8A93A0"></i>
+      <span class="yazi">
+        <b>Diğer ofislerin ilanları</b>
+        <span>Fiyat takibi ve co-broke için</span>
+      </span>
+      <span class="ok">›</span>
+    </a>
+    <a class="sat" id="k4" target="_blank" rel="noopener">
+      <i class="im" style="background:#003DA5"></i>
+      <span class="yazi">
+        <b>Ofisimizin ilanları</b>
+        <span>RE/MAX Doğuş portföyleri</span>
+      </span>
+      <span class="ok">›</span>
+    </a>
   </div>
 
+  <footer>Revy'ye telefonundan bir kez giriş yaptıysan bağlantılar doğrudan açılır.</footer>
 </div>
 
 <script>
@@ -93,7 +149,9 @@ var BOLGE = "&city_id=40&district_id%5B%5D=470" +
             "&neighborhood_id%5B%5D=35917";
 var t = "sale";
 
-function url(ek, bolgeli) { return TEMEL + (bolgeli ? BOLGE : "") + "&transaction_type=" + t + ek; }
+function url(ek, bolgeli) {
+  return TEMEL + (bolgeli ? BOLGE : "") + "&transaction_type=" + t + ek;
+}
 
 function ciz() {
   document.getElementById("k1").href =
@@ -108,8 +166,8 @@ function ciz() {
 
 function tur(x) {
   t = x;
-  document.getElementById("bSale").className = (x === "sale" ? "aktif" : "");
-  document.getElementById("bRent").className = (x === "rent" ? "aktif" : "");
+  document.getElementById("bSale").setAttribute("aria-pressed", x === "sale");
+  document.getElementById("bRent").setAttribute("aria-pressed", x === "rent");
   ciz();
 }
 
