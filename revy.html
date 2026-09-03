@@ -101,6 +101,20 @@
   }
 
   footer{padding:22px 20px 0;color:var(--mute);font-size:13px;font-weight:500;line-height:1.6}
+
+  .mobil{
+    display:none;margin:0 16px 18px;padding:16px 18px;border-radius:18px;
+    background:var(--amber-bg);border:1.5px solid var(--amber-bd);
+  }
+  .mobil b{
+    display:block;font-family:"Bricolage Grotesque",sans-serif;
+    font-variation-settings:'opsz' 20,'wdth' 92,'wght' 700;
+    font-size:16px;margin-bottom:5px;
+  }
+  .mobil span{display:block;font-size:13.5px;color:var(--ink-2);opacity:.8;line-height:1.55}
+  body.telefon .mobil{display:block}
+  body.telefon main{opacity:.42;pointer-events:none}
+  body.telefon nav{opacity:.42;pointer-events:none}
 </style>
 </head>
 <body>
@@ -115,6 +129,12 @@
     <button id="bSale" role="tab" aria-selected="true" onclick="tur('sale')">Satılık</button>
     <button id="bRent" role="tab" aria-selected="false" onclick="tur('rent')">Kiralık</button>
   </nav>
+
+  <div class="mobil">
+    <b>Bu sayfa bilgisayardan kullanılır</b>
+    <span>Revy telefon tarayıcısında açılmıyor. Listelere ofisteki bilgisayardan
+    ya da dizüstünden girin.</span>
+  </div>
 
   <main>
 
@@ -203,6 +223,10 @@ function tur(x) {
 }
 
 ciz();
+
+if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+  document.body.classList.add("telefon");
+}
 </script>
 </body>
 </html>
