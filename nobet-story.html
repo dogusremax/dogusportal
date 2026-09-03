@@ -43,6 +43,27 @@ const FOTO={"evsen ozazman":"evsen","irem aleyna tetik":"irem","irem tetik":"ire
 const norm=s=>String(s||"").toLocaleLowerCase("tr").replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/\s+/g," ").trim();
 var CUR={name:null,date:null};
 
+function tplOfis(dateStr){
+  const d=new Date(dateStr+"T12:00:00+03:00");
+  const tarih=d.getDate()+" "+AYLAR[d.getMonth()], gun=GUNLER[d.getDay()];
+  return `
+<div style="position:absolute;inset:0;background:${NAVY};"></div>
+<div style="position:absolute;inset:0;background:radial-gradient(120% 55% at 50% 115%,rgba(220,28,46,.55),transparent 62%);"></div>
+<div class="sans" style="position:absolute;top:-40px;left:-4px;font-size:420px;font-weight:800;line-height:1;color:rgba(255,255,255,.05);letter-spacing:-16px;">D</div>
+<img src="assets/dogus-logo.png" style="position:absolute;top:44px;left:50%;transform:translateX(-50%);width:150px;z-index:5;">
+<div style="position:absolute;left:0;right:0;top:128px;text-align:center;z-index:5;">
+  <div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:14px;font-weight:700;padding:8px 20px;border-radius:22px;box-shadow:0 10px 24px rgba(220,28,46,.4);">${tarih} · ${gun}</div>
+  <div class="sans" style="font-size:12px;font-weight:800;letter-spacing:4px;color:${CORAL};margin-top:26px;">BUGÜN</div>
+  <div class="sans" style="font-size:42px;font-weight:800;letter-spacing:-1.2px;color:#fff;line-height:1.08;margin-top:8px;padding:0 24px;">Tüm ekip<br>ofiste! ☕</div>
+  <div class="sans" style="font-size:15px;color:rgba(255,255,255,.75);margin-top:16px;padding:0 40px;line-height:1.5;">Gayrimenkulünüz, yatırımınız ya da aklınızdaki soru için uğrayın — çay bizden.</div>
+</div>
+<div class="sans" style="position:absolute;left:50%;transform:translateX(-50%);bottom:150px;width:200px;height:200px;border-radius:50%;background:${RGRAD};display:flex;align-items:center;justify-content:center;font-size:76px;box-shadow:0 24px 60px rgba(220,28,46,.45);">🏠</div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to top,rgba(5,10,48,.92),transparent);z-index:6;"></div>
+<div style="position:absolute;left:0;right:0;bottom:26px;z-index:7;text-align:center;">
+  <div class="sans" style="font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">RE/MAX DOĞUŞ · FİKİRTEPE</div>
+  <div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:3px;">📞 0216 315 15 15 · 09:30 - 18:00</div>
+</div>`;
+}
 function tpl(name,dateStr){
   const d=new Date(dateStr+"T12:00:00+03:00");
   const tarih=d.getDate()+" "+AYLAR[d.getMonth()], gun=GUNLER[d.getDay()];
@@ -87,17 +108,18 @@ async function load(){
       const r=await fetch(NOBET_API+"?action=today");const d=await r.json();
       if(!d.ok)throw new Error(d.error||'hata');
       name=d.name;date=d.date;
-      if(!name||name==='Ofis'){st.textContent=d.date+(name==='Ofis'?' · Ofis günü (nöbetçi yok)':' için nöbetçi kaydı yok.');story.innerHTML='';document.body.setAttribute('data-ready','1');document.body.setAttribute('data-empty','1');return;}
+      if(!name){st.textContent=d.date+' için nöbetçi kaydı yok.';story.innerHTML='';document.body.setAttribute('data-ready','1');document.body.setAttribute('data-empty','1');return;}
       st.textContent=d.date+' · Nöbetçi: '+name+(FOTO[norm(name)]?'':' (fotoğraf yok, baş harf gösteriliyor)');
     }
     CUR={name,date};
-    const vid=FOTO[norm(name)];
+    if(name==='Ofis'){CUR.video=null;story.innerHTML=tplOfis(date);st.textContent=date+' · Ofis günü kartı';}
+    const vid=name==='Ofis'?null:FOTO[norm(name)];
     if(vid&&VIDEO[vid]){
       CUR.video=`assets/nobet-video/${vid}.mp4`;
       story.innerHTML=`<video src="${CUR.video}" autoplay muted loop playsinline></video><div class="sans" id="mutehint" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:600;padding:6px 14px;border-radius:16px;z-index:9;">🔇 Ses için dokun</div>`;
       story.onclick=()=>{const v=story.querySelector('video');if(!v)return;v.muted=!v.muted;const h=document.getElementById('mutehint');if(h)h.textContent=v.muted?'🔇 Ses için dokun':'🔊';};
       st.textContent+=' · hazır video';
-    } else {
+    } else if(name!=='Ofis') {
       CUR.video=null;
       story.innerHTML=tpl(name,date);
     }
