@@ -21,10 +21,16 @@ jobs:
           git add nobet-story || true
           git diff --cached --quiet || git commit -m "Nöbetçi story: $(cat nobet-story/.son)"
           git push
+      - name: Güncel IG token'ı al
+        if: hashFiles('nobet-story/.media') != ''
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
       - name: Instagram'a paylaş
         if: hashFiles('nobet-story/.media') != ''
         env:
-          IG_TOKEN: ${{ secrets.IG_TOKEN }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
         shell: bash
         run: |
