@@ -21,29 +21,54 @@ if (!KEY) { console.error('EVDS_API_KEY tanımlı değil.'); process.exit(1); }
 
 const iki = n => String(n).padStart(2, '0');
 
+async function istek(url, headers) {
+  const r = await fetch(url, { headers: Object.assign({
+    'User-Agent': 'Mozilla/5.0 (compatible; dogus-bot/1.0)',
+    'Accept': 'application/json'
+  }, headers || {}) });
+  const govde = await r.text();
+  return { ok: r.ok, status: r.status, govde };
+}
+
 async function evds() {
   const bugun = new Date();
   const bas = new Date(bugun.getFullYear() - 4, bugun.getMonth(), 1);
   const fmt = d => `${iki(d.getDate())}-${iki(d.getMonth() + 1)}-${d.getFullYear()}`;
-  const url = `https://evds2.tcmb.gov.tr/service/evds/series=${SERIES}`
-            + `&startDate=${fmt(bas)}&endDate=${fmt(bugun)}&type=json`;
-  const r = await fetch(url, { headers: { key: KEY } });
-  if (!r.ok) throw new Error(`EVDS HTTP ${r.status}: ${(await r.text()).slice(0, 300)}`);
-  const j = await r.json();
-  const items = j.items || j.Items || [];
-  if (!items.length) throw new Error('EVDS boş yanıt döndü. Seri kodu doğru mu? ' + JSON.stringify(j).slice(0, 300));
+  const temel = `https://evds2.tcmb.gov.tr/service/evds/series=${SERIES}`
+              + `&startDate=${fmt(bas)}&endDate=${fmt(bugun)}&type=json`;
 
-  const alan = Object.keys(items[0]).find(k => k !== 'Tarih' && k !== 'UNIXTIME' && k !== 'YEARWEEK');
-  const seri = items.map(it => {
-      const [y, m] = String(it.Tarih).split('-').map(Number);
-      const v = parseFloat(String(it[alan]).replace(',', '.'));
-      return { y, m, v };
-    })
-    .filter(x => x.y && x.m && !isNaN(x.v))
-    .sort((a, b) => (a.y * 12 + a.m) - (b.y * 12 + b.m));
+  // EVDS anahtarı hem başlıkta hem adres satırında kabul edebiliyor; ikisini de dene.
+  const denemeler = [
+    { ad: 'header',      url: temel,                                 headers: { key: KEY } },
+    { ad: 'query param', url: `${temel}&key=${encodeURIComponent(KEY)}`, headers: {} }
+  ];
 
-  if (seri.length < 24) throw new Error(`Yeterli veri yok (${seri.length} ay, en az 24 gerekli).`);
-  return seri;
+  let son = null;
+  for (const d of denemeler) {
+    const c = await istek(d.url, d.headers);
+    son = { ...c, ad: d.ad };
+    if (!c.ok) { console.error(`[${d.ad}] HTTP ${c.status}`); continue; }
+    let j;
+    try { j = JSON.parse(c.govde); }
+    catch (e) { console.error(`[${d.ad}] JSON değil. İlk 400 karakter:\n` + c.govde.slice(0, 400)); continue; }
+    const items = j.items || j.Items || [];
+    if (!items.length) { console.error(`[${d.ad}] items boş. Yanıt:\n` + JSON.stringify(j).slice(0, 400)); continue; }
+
+    console.log(`[${d.ad}] başarılı — ${items.length} kayıt. Alanlar: ${Object.keys(items[0]).join(', ')}`);
+    const alan = Object.keys(items[0]).find(k => !['Tarih','UNIXTIME','YEARWEEK'].includes(k));
+    const seri = items.map(it => {
+        const [y, m] = String(it.Tarih).split('-').map(Number);
+        const v = parseFloat(String(it[alan]).replace(',', '.'));
+        return { y, m, v };
+      })
+      .filter(x => x.y && x.m && !isNaN(x.v))
+      .sort((a, b) => (a.y * 12 + a.m) - (b.y * 12 + b.m));
+    if (seri.length < 24) throw new Error(`Yeterli veri yok (${seri.length} ay, en az 24 gerekli).`);
+    return seri;
+  }
+
+  throw new Error('EVDS\'ten veri alınamadı. Son yanıt (' + son.ad + ', HTTP ' + son.status + '):\n'
+    + String(son.govde).slice(0, 600));
 }
 
 // Resmî formül: son 12 ayın endeks ortalaması / önceki 12 ayın ortalaması - 1
