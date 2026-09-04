@@ -110,7 +110,7 @@ function itemSlide(it,i){
   const chip=red?NAVY:CORAL;
   const pills=it.pills.map(p=>`<span class="sans" style="display:inline-block;font-size:${STORY?13:12}px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
-${wm(String(i+1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
+${wm(String(i+1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(true)}
 <div style="position:absolute;right:${STORY?34:28}px;bottom:${STORY?130:96}px;opacity:.9;">${icon(it.k,STORY?96:78,red?'rgba(5,10,48,.55)':'rgba(255,255,255,.10)')}</div>
 <div style="position:absolute;left:36px;right:${STORY?60:56}px;top:${STORY?150:112}px;z-index:5;">
 <div class="sans" style="display:inline-block;background:${chip};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;">${it.et}</div>
