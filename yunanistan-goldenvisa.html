@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yunanistan Golden Visa Karuseli · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1;min-width:160px}
+  select,button{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
+  select{background:#161c44;color:#fff}
+  button{background:#DC1C2E;color:#fff}
+  button.ghost{background:rgba(255,255,255,.1);color:#fff}
+  .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+  .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
+  .card{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .card small{font-size:11px;color:rgba(255,255,255,.5)}
+  .slide{width:420px!important;height:560px!important;min-height:560px;max-height:560px;position:relative;overflow:hidden;border-radius:4px;flex:0 0 420px;-webkit-mask-image:-webkit-radial-gradient(white,black)}
+  body.story .slide{height:747px!important;min-height:747px;max-height:747px}
+  .slide *{max-width:none}
+  .slide img{-webkit-user-drag:none;pointer-events:none}
+  .sans{font-family:'Plus Jakarta Sans',sans-serif}
+  @media(max-width:480px){
+    .grid{padding:12px;gap:10px}
+    .card{width:100%;height:470px;overflow:hidden;justify-content:flex-start}
+    .card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}
+    body.story .card{height:620px}
+    body.story .card .slide{margin-bottom:-149px}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" crossorigin="anonymous" alt="Doğuş">
+  <h1>Yunanistan Golden Visa · 5 Kritik Kontrol</h1>
+  <select id="fmt" onchange="setFmt()">
+    <option value="feed">Karusel (3:4)</option>
+    <option value="story">Story (9:16)</option>
+  </select>
+  <button class="ghost" onclick="render()">Yenile</button>
+  <button id="zipbtn" onclick="downloadAll()">Tümünü indir (ZIP)</button>
+</div>
+<div class="status" id="status">Hazır. Görsellere tıklayarak tek tek PNG indirebilirsin.</div>
+<div class="grid" id="grid"></div>
+
+<script>
+const NAVY="#050A30", RED="#DC1C2E", REDD="#910B19", CORAL="#FB5160", LB="#F6F3F1";
+const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
+const TEL="0216 315 15 15";
+const LOGO="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png";
+let STORY=false, TOTAL=7;
+
+const logo=(right)=>`<img src="${LOGO}" crossorigin="anonymous" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
+const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${STORY?440:380}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
+const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+const progress=()=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:__PCT__%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">__N__/__T__</span></div>`;
+const kaydir=(op)=>`<div class="sans" style="position:absolute;left:32px;bottom:${STORY?60:34}px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,${op});display:flex;align-items:center;gap:8px;z-index:10;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,${op})" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+
+const ICO={
+  esik:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5A4.5 4.5 0 0 0 8 12a4.5 4.5 0 0 0 7.5 3.5"/><path d="M6 10.5h5M6 13.5h5"/>',
+  istisna:'<path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/>',
+  tek:'<path d="M4 21V9l8-6 8 6v12z"/><path d="M12 21v-6"/>',
+  kira:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M9.5 15.5l5 4M14.5 15.5l-5 4"/>',
+  oturum:'<rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="9" r="2.5"/><path d="M8 17h8"/>'
+};
+const icon=(k,size,bg)=>`<div style="width:${size}px;height:${size}px;border-radius:${Math.round(size*0.3)}px;background:${bg};display:flex;align-items:center;justify-content:center;flex:0 0 ${size}px;box-shadow:0 8px 18px rgba(0,0,0,.28);"><svg viewBox="0 0 24 24" width="${Math.round(size*0.5)}" height="${Math.round(size*0.5)}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg></div>`;
+
+const ITEMS=[
+  {k:'esik', kisa:'Bölgeye göre değişen eşik', et:'KONTROL 1', bas:'Eşik tutarı<br>bölgeye göre değişir',
+   ozet:'Yunanistan’da tek bir Golden Visa rakamı yok. Atina, Selanik, Mikonos, Santorini ve nüfusu yüksek adalarda eşik daha yüksek; diğer bölgelerde daha düşük. Ayrıca mülkün asgari büyüklük şartı var.',
+   pills:['Yüksek talep bölgesi mi?','Asgari m² şartı','Eşik güncel mi?']},
+  {k:'istisna', kisa:'250.000 € istisnası şartlı', et:'KONTROL 2', bas:'Düşük eşik<br>herkese açık değil',
+   ozet:'İndirimli tutar yalnızca belirli senaryolar için geçerli: ticari bir taşınmazın konuta dönüştürülmesi veya tescilli tarihi binanın restorasyonu. Dönüşüm/restorasyon tamamlanmadan hak doğmaz.',
+   pills:['Dönüşüm mü, restorasyon mu?','Ruhsat ve proje şart','Tamamlanma yükümlülüğü']},
+  {k:'tek', kisa:'Yatırım tek mülkte olmalı', et:'KONTROL 3', bas:'Yatırım<br>tek mülkte tamamlanır',
+   ozet:'Eşik tutarını birkaç küçük daireye bölerek tamamlamak kabul edilmiyor. Tutarın tek bir gayrimenkulde karşılanması gerekiyor — bu, bütçe planını baştan değiştirir.',
+   pills:['Tek tapu kuralı','Ortak alım yapısı','Tam ödeme banka üzerinden']},
+  {k:'kira', kisa:'Kısa dönem kiralama yasağı', et:'KONTROL 4', bas:'Airbnb geliri<br>hesabına girmesin',
+   ozet:'Golden Visa kapsamındaki konutun kısa dönem kiralamaya verilmesi yasak. İhlal hâlinde oturum iptali ve idari para cezası gündeme gelir. Getiri modelini uzun dönem kira üzerinden kur.',
+   pills:['Uzun dönem kira','İhlalde oturum iptali','Gerçekçi getiri hesabı']},
+  {k:'oturum', kisa:'Oturum ≠ vatandaşlık', et:'KONTROL 5', bas:'Oturum izni<br>vatandaşlık değildir',
+   ozet:'Golden Visa size Schengen alanında dolaşım ve yenilenebilir oturum sağlar; otomatik vatandaşlık ya da sınırsız çalışma hakkı vermez. Süreç maliyetini de vergi ve harçlarla birlikte hesapla.',
+   pills:['Yenileme ve aile kapsamı','Devir vergisi ve harçlar','AFM, banka, vekalet']}
+];
+
+function coverSlide(){
+  const rows=ITEMS.map(it=>`<div style="display:flex;align-items:center;gap:${STORY?14:11}px;padding:${STORY?9:7}px 12px;background:rgba(5,10,48,.28);border:1px solid rgba(255,255,255,.16);border-radius:12px;">
+${icon(it.k,STORY?34:28,'rgba(5,10,48,.85)')}
+<div class="sans" style="flex:1;font-size:${STORY?14:12.5}px;font-weight:600;color:#fff;line-height:1.25;">${it.kisa}</div></div>`).join('');
+  return `<div class="slide" style="background:${RGRAD};">${wm('5','rgba(255,255,255,.10)')}${logo(true)}
+<div style="position:absolute;left:32px;right:32px;top:${STORY?104:90}px;bottom:${STORY?92:60}px;display:flex;flex-direction:column;justify-content:space-between;">
+<div>
+<div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:22px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">Golden Visa</div>
+<h1 class="sans" style="font-size:${STORY?42:38}px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Başvurmadan önce<br>5 kritik kontrol</h1>
+<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.85);margin:10px 0 0;line-height:1.5;">Yunanistan’da kurallar değişti. Eski bilgiyle plan yapılmıyor.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:${STORY?9:6}px;">${rows}</div>
+</div>
+${kaydir('.85')}</div>`;
+}
+
+function itemSlide(it,i){
+  const red=i%2===1;
+  const chip=red?NAVY:CORAL;
+  const pills=it.pills.map(p=>`<span class="sans" style="display:inline-block;font-size:${STORY?13:12}px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;margin:0 6px 6px 0;">${p}</span>`).join('');
+  return `<div class="slide" style="background:${red?RGRAD:NAVY};">
+${wm(String(i+1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
+<div style="position:absolute;right:${STORY?34:28}px;bottom:${STORY?130:96}px;opacity:.9;">${icon(it.k,STORY?96:78,red?'rgba(5,10,48,.55)':'rgba(255,255,255,.10)')}</div>
+<div style="position:absolute;left:36px;right:${STORY?60:56}px;top:${STORY?150:112}px;z-index:5;">
+<div class="sans" style="display:inline-block;background:${chip};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;">${it.et}</div>
+<div class="sans" style="font-size:${STORY?36:32}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.05;margin-bottom:14px;">${it.bas}</div>
+<p class="sans" style="font-size:${STORY?15:13.5}px;line-height:1.6;color:rgba(255,255,255,.8);margin:0 0 ${STORY?24:18}px;">${it.ozet}</p>
+<div style="max-width:${STORY?330:280}px;">${pills}</div></div>
+${arrow()}${progress()}</div>`;
+}
+
+function ctaSlide(){
+  return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
+<div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
+<h2 class="sans" style="font-size:${STORY?38:32}px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">Golden Visa’da<br>doğru soruyla<br>başla</h2>
+<p class="sans" style="font-size:${STORY?14.5:12.5}px;line-height:1.6;color:rgba(255,255,255,.92);margin:0 0 20px;">Yunanistan Golden Visa sürecini <b style="font-weight:800;">RE/MAX Doğuş</b> olarak baştan sona planlıyoruz. Bütçenize uygun bölge ve mülk seçimi için bizi hemen arayabilirsiniz.<br><br>Bölge ve eşik seçiminden tapu ve başvuru dosyasına, kira getirisinden çıkış stratejisine kadar süreci birlikte kurguluyoruz.</p>
+<div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Hemen arayın</div></div>
+<p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`;
+}
+
+function build(){
+  const slides=[coverSlide(), ...ITEMS.map((it,i)=>itemSlide(it,i)), ctaSlide()];
+  TOTAL=slides.length;
+  return slides.map((h,i)=>h.replace(/__PCT__/g,String(((i+1)/TOTAL)*100)).replace(/__N__/g,String(i+1)).replace(/__T__/g,String(TOTAL)));
+}
+
+function render(){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  build().forEach((html,i)=>{
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML=html+`<small>Slayt ${i+1} · indirmek için tıkla</small>`;
+    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`yunanistan-goldenvisa-${i+1}.png`);
+    g.appendChild(c);
+  });
+  document.getElementById('status').textContent=`${TOTAL} slayt hazır · ${STORY?'1080×1920 story':'1080×1440 karusel'}`;
+}
+function setFmt(){STORY=document.getElementById('fmt').value==='story';document.body.classList.toggle('story',STORY);render();}
+
+async function canvasOf(el){
+  return html2canvas(el,{scale:1080/420,useCORS:true,allowTaint:false,backgroundColor:null,logging:false,width:420,height:STORY?747:560});
+}
+async function shot(el,name){
+  const s=document.getElementById('status'); s.textContent='Görsel hazırlanıyor…';
+  try{const cv=await canvasOf(el);const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download=name;a.click();s.textContent='İndirildi: '+name;}
+  catch(e){s.textContent='Hata: '+e.message;}
+}
+async function downloadAll(){
+  const s=document.getElementById('status'); const btn=document.getElementById('zipbtn'); btn.disabled=true;
+  try{
+    const zip=new JSZip(), els=[...document.querySelectorAll('.slide')];
+    for(let i=0;i<els.length;i++){
+      s.textContent=`Görseller hazırlanıyor… ${i+1}/${els.length}`;
+      const cv=await canvasOf(els[i]);
+      zip.file(`yunanistan-goldenvisa-${i+1}.png`, cv.toDataURL('image/png').split(',')[1], {base64:true});
+    }
+    const blob=await zip.generateAsync({type:'blob'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`yunanistan-goldenvisa-${STORY?'story':'karusel'}.zip`;a.click();
+    s.textContent='ZIP indirildi.';
+  }catch(e){s.textContent='Hata: '+e.message;}
+  btn.disabled=false;
+}
+render();
+</script>
+</body>
+</html>
