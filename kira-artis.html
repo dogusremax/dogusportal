@@ -68,6 +68,16 @@ Ekim 2025 = 38,36</textarea>
   </div>
 </div>
 
+<div class="panel" id="paylasKutu">
+  <label>Instagram'a paylaş — görseller sunucuda üretilir, hesaba otomatik düşer.</label>
+  <div class="row">
+    <button onclick="paylas('story')">Story paylaş</button>
+    <button onclick="paylas('gonderi')">Gönderi paylaş</button>
+    <button onclick="paylas('ikisi')">İkisini paylaş</button>
+    <button class="ghost" onclick="paylas('sadece-gorsel')">Sadece görsel üret</button>
+  </div>
+  <div id="paylasDurum" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:10px"></div>
+</div>
 <div class="status" id="status">Veriyi düzenleyip "Uygula" de. Görsele tıklayınca tek tek PNG iner.</div>
 <div class="grid" id="grid"></div>
 
@@ -195,6 +205,19 @@ async function downloadAll(){
   }catch(e){s.textContent='Hata: '+e.message;}
   btn.disabled=false;
 }
+const PAYLAS_UC='https://script.google.com/macros/s/AKfycbyHgiTqM36Z5RZ3taJIfuDxrmjl4WqYN9RE_ohjCrY7wnjm-53AxCPrzQqCLnOneIL3QQ/exec';
+const PAYLAS_K='dogus-kira';
+async function paylas(hedef){
+  const ad={story:'Story',gonderi:'Gönderi',ikisi:'Story + Gönderi','sadece-gorsel':'Sadece görsel'}[hedef];
+  if(hedef!=='sadece-gorsel' && !confirm(ad+' olarak Instagram\'da paylaşılacak. Onaylıyor musun?')) return;
+  const d=document.getElementById('paylasDurum');
+  d.textContent='Gönderiliyor…';
+  try{
+    await fetch(PAYLAS_UC+'?action=paylas&k='+PAYLAS_K+'&hedef='+hedef,{mode:'no-cors'});
+    d.innerHTML='✓ '+ad+' işlemi başlatıldı. Görseller üretilip yayınlanıyor, 5-6 dakika sürer.<br><a href="https://github.com/dogusremax/dogusportal/actions/workflows/kira-story.yml" target="_blank" style="color:#FB5160">Durumu izle →</a>';
+  }catch(e){ d.textContent='Hata: '+e.message; }
+}
+
 render();
 </script>
 </body>
