@@ -49,19 +49,19 @@
 </div>
 
 <div class="panel">
-  <label>Veri — her satır: <b>Ay Yıl = oran</b>. Sıra önemli değil, ay adına göre otomatik sıralanır: <b>en yeni ay en üstte</b>, Ocak en altta. Oranı bilinmeyen ayı boş bırak.</label>
-  <textarea id="veri">Ağustos 2026 = 31,8
-Temmuz 2026 = 31,9
-Haziran 2026 = 32,0
-Mayıs 2026 = 32,2
-Nisan 2026 = 32,4
-Mart 2026 = 32,8
-Şubat 2026 = 33,4
-Ocak 2026 = 34,0
-Aralık 2025 = 34,9
-Kasım 2025 = 35,9
-Ekim 2025 = 37,2
-Eylül 2025 = 38,4</textarea>
+  <label>Veri — her satır: <b>Ay Yıl = oran</b>. Ay adı = <b>yenileme ayı</b> (bir önceki ayın TÜFE verisiyle hesaplanır). En yeni ay otomatik olarak en üste geçer. Oranı bilinmeyen ayı boş bırak.</label>
+  <textarea id="veri">Eylül 2026 = 31,8
+Ağustos 2026 = 31,9
+Temmuz 2026 = 32,0
+Haziran 2026 = 32,2
+Mayıs 2026 = 32,4
+Nisan 2026 = 32,8
+Mart 2026 = 33,4
+Şubat 2026 = 34,0
+Ocak 2026 = 34,9
+Aralık 2025 = 35,9
+Kasım 2025 = 37,2
+Ekim 2025 = 38,4</textarea>
   <div class="row">
     <button onclick="render()">Uygula</button>
     <button class="ghost" onclick="document.getElementById('veri').value=document.getElementById('veri').value.trim();render()">Temizle</button>
@@ -128,11 +128,11 @@ function tableSlide(list){
 <div style="position:absolute;left:32px;right:32px;top:${STORY?132:100}px;bottom:${STORY?66:50}px;display:flex;flex-direction:column;">
 <div style="flex:0 0 auto;">
 <div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">AYLIK TABLO</div>
-<div class="sans" style="font-size:${STORY?30:26}px;font-weight:700;letter-spacing:-1px;margin:10px 0 ${STORY?14:10}px;color:#fff;line-height:1.1;">Son 12 ay<br>kira artış oranları</div>
+<div class="sans" style="font-size:${STORY?30:26}px;font-weight:700;letter-spacing:-1px;margin:10px 0 ${STORY?14:10}px;color:#fff;line-height:1.1;">Son 12 ay<br>yenileme oranları</div>
 </div>
 <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:${gap}px;">${rows}</div>
 </div>
-${foot('TÜFE 12 aylık ortalamalara göre değişim · Kaynak: TÜİK')}${kaydir()}</div>`;
+${foot('Yenileme ayında geçerli oran · TÜFE 12 aylık ortalama · Kaynak: TÜİK')}${kaydir()}</div>`;
 }
 
 function ctaSlide(){
