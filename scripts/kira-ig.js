@@ -3,6 +3,7 @@ const fs = require('fs');
 const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID;
 if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atlandı.'); process.exit(0); }
 
+const HEDEF = process.env.HEDEF || 'ikisi';
 const G = 'https://graph.facebook.com/v23.0';
 const m = JSON.parse(fs.readFileSync('kira-story/.media', 'utf8'));
 
@@ -58,13 +59,16 @@ Kaynak: TÜİK
 
 (async () => {
   // 1) Story
+  if (HEDEF === 'ikisi' || HEDEF === 'story') {
   await yayindaMi(m.story);
   const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: m.story });
   await hazirBekle(st.id);
   const stPub = await post(`${UID}/media_publish`, { creation_id: st.id });
   console.log('✓ Story yayınlandı:', stPub.id);
+  }
 
   // 2) Feed karusel
+  if (HEDEF === 'ikisi' || HEDEF === 'gonderi') {
   for (const u of m.feed) await yayindaMi(u);
   const cocuklar = [];
   for (const u of m.feed) {
@@ -78,6 +82,7 @@ Kaynak: TÜİK
   await hazirBekle(kap.id);
   const kapPub = await post(`${UID}/media_publish`, { creation_id: kap.id });
   console.log('✓ Karusel yayınlandı:', kapPub.id);
+  }
 
-  fs.writeFileSync('kira-story/.pub', m.donem);
+  if (HEDEF === 'ikisi') fs.writeFileSync('kira-story/.pub', m.donem);
 })().catch(e => { console.error('IG paylaşım hatası:', e.message); process.exit(1); });
