@@ -34,8 +34,8 @@ const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağus
     return bilgi;
   };
 
-  const storyDosya = `kira-story/${donem}-story.png`;
-  const bilgi = await cek('story', 1920, [storyDosya]);
+  const story = [1, 2, 3].map(n => `kira-story/${donem}-story-${n}.png`);
+  const bilgi = await cek('story', 1920, story);
 
   const feed = [1, 2, 3].map(n => `kira-story/${donem}-${n}.png`);
   await cek('feed', 1440, feed);
@@ -45,7 +45,7 @@ const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağus
   const kok = 'https://dogusportal.com/';
   fs.writeFileSync('kira-story/.media', JSON.stringify({
     donem, ay: bilgi.ay, oran: bilgi.oran,
-    story: kok + storyDosya,
+    story: story.map(f => kok + f),
     feed: feed.map(f => kok + f)
   }, null, 2));
   fs.writeFileSync('kira-story/.son', donem);
