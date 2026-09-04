@@ -25,7 +25,7 @@ async function istek(url, headers) {
   const r = await fetch(url, { headers: Object.assign({
     'User-Agent': 'Mozilla/5.0 (compatible; dogus-bot/1.0)',
     'Accept': 'application/json'
-  }, headers || {}) });
+  }, headers || {}), signal: AbortSignal.timeout(25000) });
   const govde = await r.text();
   return { ok: r.ok, status: r.status, govde };
 }
