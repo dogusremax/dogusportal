@@ -23,7 +23,7 @@ const denemeler = [
         'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',
         'Accept':'application/json,text/plain,*/*',
         'Accept-Language':'tr-TR,tr;q=0.9'
-      }, h), redirect:'follow' });
+      }, h), redirect:'follow', signal: AbortSignal.timeout(20000) });
       const t = await r.text();
       const html = /^\s*<(!doctype|html)/i.test(t);
       let tip = html ? 'HTML (arayüz)' : 'düz metin';
