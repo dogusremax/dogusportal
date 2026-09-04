@@ -14,25 +14,38 @@ jobs:
   guncelle:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: EVDS'ten çek ve hesapla
+        id: fetch
+        continue-on-error: true
         env:
           EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
-        run: node scripts/update-kira.js
+        run: |
+          mkdir -p data
+          set -o pipefail
+          node scripts/update-kira.js 2>&1 | tee data/son-calisma.log
+          echo "kod=$?" >> $GITHUB_OUTPUT
 
-      - name: Değişiklik varsa commit et
+      - name: Sonucu ve log'u kaydet
+        if: always()
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name  "dogus-bot"
             git config user.email "actions@github.com"
-            git add kira-artis.html data/kira-artis.json
-            git commit -m "Kira artış oranı güncellendi (TÜFE 12 aylık ortalama)"
+            git add -A kira-artis.html data
+            git commit -m "Kira artış oranı çalıştırma sonucu"
             git push
           else
-            echo "Değişiklik yok, commit atlanıyor."
+            echo "Değişiklik yok."
           fi
+
+      - name: Adım başarısızsa işi düşür
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "EVDS adımı hata verdi — data/son-calisma.log dosyasına bakın."
+          exit 1
