@@ -1,0 +1,55 @@
+name: Kira artış görselleri ve paylaşım
+
+on:
+  push:
+    paths:
+      - 'kira-artis.html'      # Apps Script veriyi yazınca tetiklenir
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+
+      - name: Sitenin yayınlanmasını bekle
+        run: sleep 90
+
+      - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+
+      - name: Görselleri üret
+        run: node scripts/kira-story.js
+
+      - name: Görselleri kaydet
+        run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add kira-story || true
+          git diff --cached --quiet || git commit -m "Kira artış görselleri: $(cat kira-story/.son)"
+          git push
+
+      - name: Görseller yayına çıksın
+        run: sleep 90
+
+      - name: Güncel IG token'ı al
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+
+      - name: Instagram'a paylaş
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/kira-ig.js 2>&1 | tee kira-ig-log.txt || true
+          git config user.name dogus-bot; git config user.email bot@dogusremax.com
+          git add kira-ig-log.txt kira-story/.pub 2>/dev/null || true
+          git commit -m "kira ig log" && git push || true
