@@ -49,7 +49,7 @@
 </div>
 
 <div class="panel">
-  <label>Veri — her satır: <b>Ay Yıl = oran</b>. Oranı bilinmeyen ayı boş bırak. En üstteki satır en yeni ay olarak işlenir.</label>
+  <label>Veri — her satır: <b>Ay Yıl = oran</b>. Sıra önemli değil, ay adına göre otomatik sıralanır: <b>en yeni ay en üstte</b>, Ocak en altta. Oranı bilinmeyen ayı boş bırak.</label>
   <textarea id="veri">Ocak 2026 = 32,5
 Şubat 2026 =
 Mart 2026 =
@@ -78,12 +78,21 @@ const logo=(right)=>`<div style="position:absolute;top:30px;${right?'right':'lef
 const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:32px;bottom:${STORY?46:26}px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
 const kaydir=()=>`<div class="sans" style="position:absolute;right:32px;bottom:${STORY?46:26}px;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.8);z-index:10;">KAYDIR →</div>`;
 
+const AYLAR=['ocak','şubat','mart','nisan','mayıs','haziran','temmuz','ağustos','eylül','ekim','kasım','aralık'];
 function parse(){
-  return document.getElementById('veri').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
-    const [ay,or]=l.split('=');
+  const raw=document.getElementById('veri').value.split('\n').map(l=>l.trim()).filter(Boolean).map((l,idx)=>{
+    const [ayRaw,or]=l.split('=');
+    const ay=(ayRaw||'').trim();
     const v=(or||'').trim().replace('%','').replace('.',',');
-    return {ay:(ay||'').trim(), oran:v?v:null};
+    const p=ay.toLocaleLowerCase('tr').split(/\s+/);
+    const mi=AYLAR.indexOf(p[0]);
+    const yil=parseInt(p[1],10);
+    return {ay, oran:v?v:null, idx, sira:(mi>=0&&!isNaN(yil))?(yil*12+mi):null};
   });
+  // en yeni ay en üstte, Ocak en altta
+  const bilinen=raw.filter(x=>x.sira!==null).sort((x,y)=>y.sira-x.sira);
+  const digerleri=raw.filter(x=>x.sira===null);
+  return [...bilinen,...digerleri];
 }
 
 function heroSlide(list){
