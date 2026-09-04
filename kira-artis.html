@@ -101,13 +101,16 @@ function parse(){
 
 function heroSlide(list){
   const son=list.find(x=>x.oran)||list[0];
+  const metin='%'+(son&&son.oran?son.oran:'—');
+  const n=metin.length;
+  const buyuk = n<=5 ? (STORY?132:118) : n===6 ? (STORY?116:104) : n===7 ? (STORY?102:92) : (STORY?92:84);
   return `<div class="slide" style="background:${RGRAD};">
 <div class="sans" style="position:absolute;top:-70px;right:-30px;font-size:${STORY?460:400}px;font-weight:800;line-height:1;color:rgba(255,255,255,.09);letter-spacing:-20px;">%</div>
 ${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:${STORY?150:112}px;">
 <div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;padding:8px 14px;border-radius:9px;">KİRA ARTIŞ ÜST SINIRI</div>
 <div class="sans" style="font-size:${STORY?34:30}px;font-weight:700;letter-spacing:-1px;margin-top:16px;color:#fff;">${son?son.ay:''}</div>
-<div class="sans" style="font-size:${STORY?132:118}px;font-weight:800;letter-spacing:-6px;line-height:1;margin-top:6px;color:#fff;">%${son&&son.oran?son.oran:'—'}</div>
+<div class="sans" style="font-size:${buyuk}px;font-weight:800;letter-spacing:-5px;line-height:1.05;margin-top:6px;color:#fff;text-align:center;white-space:nowrap;">${metin}</div>
 <div class="sans" style="font-size:${STORY?15:13.5}px;line-height:1.6;color:rgba(255,255,255,.9);margin-top:18px;max-width:${STORY?330:300}px;">
 Konut ve iş yeri kiralarında yenileme dönemindeki artış bu oranı aşamaz.<br><b style="font-weight:800;">TÜFE 12 aylık ortalama</b> · TBK m.344</div>
 </div>
