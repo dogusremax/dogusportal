@@ -56,7 +56,7 @@ const TEL="0216 315 15 15";
 const LOGO="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png";
 let STORY=false, TOTAL=7;
 
-const logo=(right)=>`<div style="position:absolute;top:30px;${right?'right':'left'}:32px;z-index:12;display:flex;flex-direction:column;align-items:${right?'flex-end':'flex-start'};gap:3px;"><img src="${LOGO}" crossorigin="anonymous" style="width:104px;display:block;" onerror="this.style.display='none'"><span class="sans" style="font-size:8.5px;font-weight:800;letter-spacing:2.2px;color:rgba(255,255,255,.85);">RE/MAX DOĞUŞ</span></div>`;
+const logo=(right)=>`<img src="${LOGO}" crossorigin="anonymous" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:104px;z-index:12;">`;
 const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${STORY?440:380}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
 const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
 const progress=()=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:__PCT__%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">__N__/__T__</span></div>`;
