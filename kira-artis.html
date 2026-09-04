@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kira Artış Oranı · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1;min-width:150px}
+  select,button,textarea{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px}
+  select{background:#161c44;color:#fff}
+  button{background:#DC1C2E;color:#fff;cursor:pointer}
+  button.ghost{background:rgba(255,255,255,.1)}
+  .panel{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .panel label{display:block;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px}
+  textarea{width:100%;max-width:520px;height:150px;background:#161c44;color:#fff;font-weight:500;line-height:1.7;resize:vertical}
+  .panel .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+  .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
+  .card{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .card small{font-size:11px;color:rgba(255,255,255,.5)}
+  .slide{width:420px!important;height:560px!important;min-height:560px;max-height:560px;position:relative;overflow:hidden;border-radius:4px;flex:0 0 420px}
+  body.story .slide{height:747px!important;min-height:747px;max-height:747px}
+  .sans{font-family:'Plus Jakarta Sans',sans-serif}
+  @media(max-width:480px){
+    .grid{padding:12px;gap:10px}
+    .card{width:100%;height:470px;overflow:hidden}
+    .card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}
+    body.story .card{height:620px}
+    body.story .card .slide{margin-bottom:-149px}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" crossorigin="anonymous" alt="Doğuş">
+  <h1>Kira Artış Oranı · Aylık Görsel</h1>
+  <select id="fmt" onchange="setFmt()">
+    <option value="feed">Karusel (3:4)</option>
+    <option value="story">Story (9:16)</option>
+  </select>
+  <button id="zipbtn" onclick="downloadAll()">Tümünü indir (ZIP)</button>
+</div>
+
+<div class="panel">
+  <label>Veri — her satır: <b>Ay Yıl = oran</b>. Oranı bilinmeyen ayı boş bırak. En üstteki satır en yeni ay olarak işlenir.</label>
+  <textarea id="veri">Ocak 2026 = 32,5
+Şubat 2026 =
+Mart 2026 =
+Nisan 2026 =
+Mayıs 2026 =
+Haziran 2026 =
+Temmuz 2026 =
+Ağustos 2026 =</textarea>
+  <div class="row">
+    <button onclick="render()">Uygula</button>
+    <button class="ghost" onclick="document.getElementById('veri').value=document.getElementById('veri').value.trim();render()">Temizle</button>
+  </div>
+</div>
+
+<div class="status" id="status">Veriyi düzenleyip "Uygula" de. Görsele tıklayınca tek tek PNG iner.</div>
+<div class="grid" id="grid"></div>
+
+<script>
+const NAVY="#050A30", RED="#DC1C2E", REDD="#910B19", CORAL="#FB5160", LB="#F6F3F1";
+const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
+const TEL="0216 315 15 15";
+const LOGO="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png";
+let STORY=false;
+
+const logo=r=>`<img src="${LOGO}" crossorigin="anonymous" style="position:absolute;top:30px;${r?'right':'left'}:32px;width:110px;z-index:12;">`;
+const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:32px;bottom:${STORY?46:26}px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
+const kaydir=()=>`<div class="sans" style="position:absolute;right:32px;bottom:${STORY?46:26}px;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.8);z-index:10;">KAYDIR →</div>`;
+
+function parse(){
+  return document.getElementById('veri').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+    const [ay,or]=l.split('=');
+    const v=(or||'').trim().replace('%','').replace('.',',');
+    return {ay:(ay||'').trim(), oran:v?v:null};
+  });
+}
+
+function heroSlide(list){
+  const son=list.find(x=>x.oran)||list[0];
+  return `<div class="slide" style="background:${RGRAD};">
+<div class="sans" style="position:absolute;top:-70px;right:-30px;font-size:${STORY?460:400}px;font-weight:800;line-height:1;color:rgba(255,255,255,.09);letter-spacing:-20px;">%</div>
+${logo(true)}
+<div style="position:absolute;left:32px;right:32px;top:${STORY?150:112}px;">
+<div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;padding:8px 14px;border-radius:9px;">KİRA ARTIŞ ÜST SINIRI</div>
+<div class="sans" style="font-size:${STORY?34:30}px;font-weight:700;letter-spacing:-1px;margin-top:16px;color:#fff;">${son?son.ay:''}</div>
+<div class="sans" style="font-size:${STORY?132:118}px;font-weight:800;letter-spacing:-6px;line-height:1;margin-top:6px;color:#fff;">%${son&&son.oran?son.oran:'—'}</div>
+<div class="sans" style="font-size:${STORY?15:13.5}px;line-height:1.6;color:rgba(255,255,255,.9);margin-top:18px;max-width:${STORY?330:300}px;">
+Konut ve iş yeri kiralarında yenileme dönemindeki artış bu oranı aşamaz.<br><b style="font-weight:800;">TÜFE 12 aylık ortalama</b> · TBK m.344</div>
+</div>
+${foot('Kaynak: TÜİK · RE/MAX DOĞUŞ · '+TEL)}${kaydir()}</div>`;
+}
+
+function tableSlide(list){
+  const rows=list.map((x,i)=>{
+    const dolu=!!x.oran, ilk=i===0&&dolu;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:${STORY?11:8}px ${STORY?18:15}px;border-radius:12px;background:${ilk?'rgba(220,28,46,.9)':'rgba(255,255,255,.07)'};border:1px solid rgba(255,255,255,${ilk?'.2':'.09'});">
+<span class="sans" style="font-size:${STORY?15:13}px;font-weight:600;color:${dolu?'#fff':'rgba(255,255,255,.45)'};">${x.ay}</span>
+<span class="sans" style="font-size:${STORY?18:16}px;font-weight:800;letter-spacing:-.5px;color:${dolu?'#fff':'rgba(255,255,255,.35)'};">${dolu?'%'+x.oran:'—'}</span></div>`;
+  }).join('');
+  return `<div class="slide" style="background:${NAVY};">${logo(false)}
+<div style="position:absolute;left:32px;right:32px;top:${STORY?140:104}px;">
+<div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">AYLIK TABLO</div>
+<div class="sans" style="font-size:${STORY?32:28}px;font-weight:700;letter-spacing:-1px;margin:12px 0 ${STORY?18:14}px;color:#fff;">2026 kira artış<br>oranları</div>
+<div style="display:flex;flex-direction:column;gap:${STORY?8:6}px;">${rows}</div>
+</div>
+${foot('TÜFE 12 aylık ortalamalara göre değişim · Kaynak: TÜİK')}${kaydir()}</div>`;
+}
+
+function ctaSlide(){
+  return `<div class="slide" style="background:${RGRAD};">
+<div class="sans" style="position:absolute;top:-70px;left:0px;font-size:${STORY?440:380}px;font-weight:800;line-height:1;color:rgba(255,255,255,.08);letter-spacing:-18px;">D</div>
+${logo(true)}
+<div style="position:absolute;left:34px;right:34px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
+<div class="sans" style="font-size:${STORY?36:32}px;font-weight:700;letter-spacing:-1.2px;line-height:1.05;color:#fff;margin-bottom:16px;">Kiranız doğru<br>hesaplandı mı?</div>
+<div class="sans" style="font-size:${STORY?14.5:13}px;line-height:1.6;color:rgba(255,255,255,.92);margin-bottom:14px;">
+Konutta %25’lik tavan uygulaması sona erdi; artış üst sınırı yeniden TÜFE 12 aylık ortalama oranı. Sözleşmede daha yüksek bir oran yazsa bile bu sınır aşılamaz. İş yeri kiralarında da aynı oran geçerli.</div>
+<div class="sans" style="font-size:${STORY?14.5:13}px;line-height:1.6;color:rgba(255,255,255,.92);margin-bottom:22px;">
+Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize ulaşın.</div>
+<div><div class="sans" style="display:inline-flex;padding:12px 32px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:26px;">Hemen arayın</div></div>
+<div class="sans" style="font-size:12px;color:#fff;margin-top:20px;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</div>
+</div></div>`;
+}
+
+function render(){
+  const list=parse();
+  const g=document.getElementById('grid'); g.innerHTML='';
+  [heroSlide(list),tableSlide(list),ctaSlide()].forEach((html,i)=>{
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML=html+`<small>Slayt ${i+1} · indirmek için tıkla</small>`;
+    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`kira-artis-${i+1}.png`);
+    g.appendChild(c);
+  });
+  const dolu=list.filter(x=>x.oran).length;
+  document.getElementById('status').textContent=`${dolu} ay verili · ${STORY?'1080×1920 story':'1080×1440 karusel'}`;
+}
+function setFmt(){STORY=document.getElementById('fmt').value==='story';document.body.classList.toggle('story',STORY);render();}
+
+async function canvasOf(el){
+  return html2canvas(el,{scale:1080/420,useCORS:true,backgroundColor:null,logging:false,width:420,height:STORY?747:560});
+}
+async function shot(el,name){
+  const s=document.getElementById('status'); s.textContent='Görsel hazırlanıyor…';
+  try{const cv=await canvasOf(el);const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download=name;a.click();s.textContent='İndirildi: '+name;}
+  catch(e){s.textContent='Hata: '+e.message;}
+}
+async function downloadAll(){
+  const s=document.getElementById('status'), btn=document.getElementById('zipbtn'); btn.disabled=true;
+  try{
+    const zip=new JSZip(), els=[...document.querySelectorAll('.slide')];
+    for(let i=0;i<els.length;i++){
+      s.textContent=`Hazırlanıyor… ${i+1}/${els.length}`;
+      zip.file(`kira-artis-${i+1}.png`,(await canvasOf(els[i])).toDataURL('image/png').split(',')[1],{base64:true});
+    }
+    const a=document.createElement('a');a.href=URL.createObjectURL(await zip.generateAsync({type:'blob'}));
+    a.download=`kira-artis-${STORY?'story':'karusel'}.zip`;a.click();
+    s.textContent='ZIP indirildi.';
+  }catch(e){s.textContent='Hata: '+e.message;}
+  btn.disabled=false;
+}
+render();
+</script>
+</body>
+</html>
