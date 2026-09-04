@@ -74,7 +74,7 @@ const TEL="0216 315 15 15";
 const LOGO="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png";
 let STORY=false;
 
-const logo=r=>`<img src="${LOGO}" crossorigin="anonymous" style="position:absolute;top:30px;${r?'right':'left'}:32px;width:110px;z-index:12;">`;
+const logo=(right)=>`<div style="position:absolute;top:30px;${right?'right':'left'}:32px;z-index:12;display:flex;flex-direction:column;align-items:${right?'flex-end':'flex-start'};gap:3px;"><img src="${LOGO}" crossorigin="anonymous" style="width:104px;display:block;" onerror="this.style.display='none'"><span class="sans" style="font-size:8.5px;font-weight:800;letter-spacing:2.2px;color:rgba(255,255,255,.85);">RE/MAX DOĞUŞ</span></div>`;
 const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:32px;bottom:${STORY?46:26}px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
 const kaydir=()=>`<div class="sans" style="position:absolute;right:32px;bottom:${STORY?46:26}px;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.8);z-index:10;">KAYDIR →</div>`;
 
