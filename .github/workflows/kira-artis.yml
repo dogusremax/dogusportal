@@ -1,0 +1,38 @@
+name: Kira artış oranı (TÜFE)
+
+on:
+  schedule:
+    # TÜİK TÜFE'yi ayın 3'ünde 10:00'da açıklar; tatil/hafta sonu ilk iş gününe kayar.
+    # 3-6 arası her gün 07:30 UTC = 10:30 TR. Veri değişmemişse script commit atmaz.
+    - cron: '30 7 3,4,5,6 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: EVDS'ten çek ve hesapla
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: node scripts/update-kira.js
+
+      - name: Değişiklik varsa commit et
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "dogus-bot"
+            git config user.email "actions@github.com"
+            git add kira-artis.html data/kira-artis.json
+            git commit -m "Kira artış oranı güncellendi (TÜFE 12 aylık ortalama)"
+            git push
+          else
+            echo "Değişiklik yok, commit atlanıyor."
+          fi
