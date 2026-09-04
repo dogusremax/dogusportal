@@ -125,9 +125,13 @@ function tableSlide(list){
   const gap = n<=9 ? (STORY?8:6) : (STORY?6:4);
   const rows=list.map((x,i)=>{
     const dolu=!!x.oran, ilk=i===0&&dolu;
-    return `<div style="flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:space-between;padding:0 ${STORY?18:14}px;border-radius:${STORY?12:10}px;background:${ilk?'rgba(220,28,46,.92)':'rgba(255,255,255,.07)'};border:1px solid rgba(255,255,255,${ilk?'.22':'.09'});">
-<span class="sans" style="font-size:${fs}px;font-weight:600;color:${dolu?'#fff':'rgba(255,255,255,.45)'};">${x.ay}</span>
-<span class="sans" style="font-size:${fs*1.2}px;font-weight:800;letter-spacing:-.5px;color:${dolu?'#fff':'rgba(255,255,255,.35)'};">${dolu?'%'+x.oran:'—'}</span></div>`;
+    // en son ay: daha yüksek satır, daha büyük yazı, tablo etiketiyle aynı renk
+    const buyume = ilk ? 1.45 : 1;
+    const ayFs   = ilk ? fs*1.25 : fs;
+    const oranFs = ilk ? fs*1.55 : fs*1.2;
+    return `<div style="flex:${buyume} 1 0;min-height:0;display:flex;align-items:center;justify-content:space-between;padding:0 ${STORY?18:14}px;border-radius:${STORY?14:12}px;background:${ilk?CORAL:'rgba(255,255,255,.07)'};border:${ilk?2:1}px solid rgba(255,255,255,${ilk?'.3':'.09'});box-shadow:${ilk?'0 6px 16px rgba(0,0,0,.28)':'none'};">
+<span class="sans" style="font-size:${ayFs}px;font-weight:${ilk?700:600};color:${dolu?'#fff':'rgba(255,255,255,.45)'};">${x.ay}</span>
+<span class="sans" style="font-size:${oranFs}px;font-weight:800;letter-spacing:-.5px;color:${dolu?'#fff':'rgba(255,255,255,.35)'};">${dolu?'%'+x.oran:'—'}</span></div>`;
   }).join('');
   return `<div class="slide" style="background:${NAVY};">${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:${STORY?132:100}px;bottom:${STORY?66:50}px;display:flex;flex-direction:column;">
