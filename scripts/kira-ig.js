@@ -46,16 +46,14 @@ async function yayindaMi(url) {
 }
 
 const aciklama =
-`${m.ay} ayında sözleşmesi yenilenen konut ve iş yeri kiralarında artış üst sınırı %${m.oran}.
+`${m.ay} kira artış oranı açıklandı: %${m.oran}
 
-Bu oran TÜFE'nin 12 aylık ortalamalara göre değişimidir (TBK m.344). Sözleşmede daha yüksek bir oran yazsa bile bu sınır aşılamaz.
+${m.ay} ayında sözleşmesi yenilenen konut ve iş yeri kiralarında artış bu oranı aşamaz. Oran, TÜİK'in açıkladığı TÜFE 12 aylık ortalamalara göre değişimdir (TBK m.344). Sözleşmede daha yüksek bir oran yazsa bile bu sınır geçerlidir.
 
 Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize ulaşın.
-📞 0216 315 15 15
+📞 0216 315 15 15 · RE/MAX Doğuş
 
-Kaynak: TÜİK
-
-#kira #kiraartışı #tüfe #enflasyon #kiracı #evsahibi #gayrimenkul #remaxdoğuş #fikirtepe #kadıköy #emlak #kiratespiti #kirasözleşmesi`;
+#kadıköy #kira #kiraartışı #emlak #gayrimenkul`;
 
 (async () => {
   // 1) Story
