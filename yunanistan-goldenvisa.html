@@ -65,28 +65,28 @@ const kaydir=(op)=>`<div class="sans" style="position:absolute;left:32px;bottom:
 const ICO={
   esik:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5A4.5 4.5 0 0 0 8 12a4.5 4.5 0 0 0 7.5 3.5"/><path d="M6 10.5h5M6 13.5h5"/>',
   istisna:'<path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/>',
-  tek:'<path d="M4 21V9l8-6 8 6v12z"/><path d="M12 21v-6"/>',
   kira:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M9.5 15.5l5 4M14.5 15.5l-5 4"/>',
-  oturum:'<rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="9" r="2.5"/><path d="M8 17h8"/>'
+  oturum:'<rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="9" r="2.5"/><path d="M8 17h8"/>',
+  sinir:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>'
 };
 const icon=(k,size,bg)=>`<div style="width:${size}px;height:${size}px;border-radius:${Math.round(size*0.3)}px;background:${bg};display:flex;align-items:center;justify-content:center;flex:0 0 ${size}px;box-shadow:0 8px 18px rgba(0,0,0,.28);"><svg viewBox="0 0 24 24" width="${Math.round(size*0.5)}" height="${Math.round(size*0.5)}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg></div>`;
 
 const ITEMS=[
-  {k:'esik', kisa:'Bölgeye göre değişen eşik', et:'KONTROL 1', bas:'Eşik tutarı<br>bölgeye göre değişir',
-   ozet:'Yunanistan’da tek bir Golden Visa rakamı yok. Atina, Selanik, Mikonos, Santorini ve nüfusu yüksek adalarda eşik daha yüksek; diğer bölgelerde daha düşük. Ayrıca mülkün asgari büyüklük şartı var.',
-   pills:['Yüksek talep bölgesi mi?','Asgari m² şartı','Eşik güncel mi?']},
-  {k:'istisna', kisa:'250.000 € istisnası şartlı', et:'KONTROL 2', bas:'Düşük eşik<br>herkese açık değil',
-   ozet:'İndirimli tutar yalnızca belirli senaryolar için geçerli: ticari bir taşınmazın konuta dönüştürülmesi veya tescilli tarihi binanın restorasyonu. Dönüşüm/restorasyon tamamlanmadan hak doğmaz.',
+  {k:'esik', kisa:'Eşik bölgeye göre değişiyor', et:'KONTROL 1', bas:'Tek bir<br>rakam yok',
+   ozet:'Atina, Selanik, Mikonos, Santorini ve nüfusu yüksek adalarda eşik daha yüksek; ülkenin geri kalanında daha düşük. Üstüne asgari konut büyüklüğü şartı ve yatırımın tek mülkte tamamlanması kuralı var.',
+   pills:['Bölge hangi kademede?','Asgari m² şartı','Tek mülk, tek tapu']},
+  {k:'istisna', kisa:'Düşük eşik herkese açık değil', et:'KONTROL 2', bas:'İndirimli tutar<br>şarta bağlı',
+   ozet:'Düşük kademe yalnızca iki senaryoda geçerli: ticari bir binanın konuta dönüştürülmesi veya tescilli tarihi binanın restorasyonu. Her ikisinde de iş tamamlanmadan hak doğmuyor.',
    pills:['Dönüşüm mü, restorasyon mu?','Ruhsat ve proje şart','Tamamlanma yükümlülüğü']},
-  {k:'tek', kisa:'Yatırım tek mülkte olmalı', et:'KONTROL 3', bas:'Yatırım<br>tek mülkte tamamlanır',
-   ozet:'Eşik tutarını birkaç küçük daireye bölerek tamamlamak kabul edilmiyor. Tutarın tek bir gayrimenkulde karşılanması gerekiyor — bu, bütçe planını baştan değiştirir.',
-   pills:['Tek tapu kuralı','Ortak alım yapısı','Tam ödeme banka üzerinden']},
-  {k:'kira', kisa:'Kısa dönem kiralama yasağı', et:'KONTROL 4', bas:'Airbnb geliri<br>hesabına girmesin',
-   ozet:'Golden Visa kapsamındaki konutun kısa dönem kiralamaya verilmesi yasak. İhlal hâlinde oturum iptali ve idari para cezası gündeme gelir. Getiri modelini uzun dönem kira üzerinden kur.',
-   pills:['Uzun dönem kira','İhlalde oturum iptali','Gerçekçi getiri hesabı']},
-  {k:'oturum', kisa:'Oturum ≠ vatandaşlık', et:'KONTROL 5', bas:'Oturum izni<br>vatandaşlık değildir',
-   ozet:'Golden Visa size Schengen alanında dolaşım ve yenilenebilir oturum sağlar; otomatik vatandaşlık ya da sınırsız çalışma hakkı vermez. Süreç maliyetini de vergi ve harçlarla birlikte hesapla.',
-   pills:['Yenileme ve aile kapsamı','Devir vergisi ve harçlar','AFM, banka, vekalet']}
+  {k:'kira', kisa:'Kısa dönem kiralama yasak', et:'KONTROL 3', bas:'Airbnb geliri<br>hesabına girmesin',
+   ozet:'Golden Visa kapsamındaki konut kısa dönem kiralamaya verilemiyor. İhlalde oturum iptali ve idari para cezası gündeme geliyor. Getiri modelini uzun dönem kira üzerinden kurmak zorundasın.',
+   pills:['Uzun dönem kira serbest','İhlalde oturum iptali','Gerçekçi getiri hesabı']},
+  {k:'oturum', kisa:'Oturum ≠ vatandaşlık', et:'KONTROL 4', bas:'Oturum izni<br>vatandaşlık değil',
+   ozet:'Zorunlu kalma günü yok, Schengen’de seyahat var. Ama maaşlı çalışma hakkı yok ve vatandaşlık için fiilî ikamet ile dil şartı aranıyor. Mülkü satarsan oturum yenilenmiyor.',
+   pills:['Zorunlu ikamet yok','Maaşlı çalışma yok','Satarsan oturum biter']},
+  {k:'sinir', kisa:'Türk alıcıya ek izin şartı', et:'KONTROL 5', bas:'Her bölgede<br>serbest alım yok',
+   ozet:'Yunanistan’da sınır bölgeleri ve bazı adalarda AB dışı vatandaşların alımı özel izne tabi. Türk alıcıların en çok takıldığı nokta bu; bölge seçimi baştan buna göre yapılmalı.',
+   pills:['Bölge izne tabi mi?','Ek süre ve dosya','Doğru bölge seçimi']}
 ];
 
 function coverSlide(){
@@ -98,7 +98,7 @@ ${icon(it.k,STORY?34:28,'rgba(5,10,48,.85)')}
 <div>
 <div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:22px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">Golden Visa</div>
 <h1 class="sans" style="font-size:${STORY?42:38}px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Başvurmadan önce<br>5 kritik kontrol</h1>
-<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.85);margin:10px 0 0;line-height:1.5;">Yunanistan’da kurallar değişti. Eski bilgiyle plan yapılmıyor.</p>
+<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.85);margin:10px 0 0;line-height:1.5;">Kurallar değişti. Eski bilgiyle plan yapılmıyor.</p>
 </div>
 <div style="display:flex;flex-direction:column;gap:${STORY?9:6}px;">${rows}</div>
 </div>
