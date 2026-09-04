@@ -89,7 +89,7 @@ const LOGO="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets
 let STORY=false;
 
 const logo=(right)=>`<img src="${LOGO}" crossorigin="anonymous" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:104px;z-index:12;">`;
-const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:32px;bottom:${STORY?46:26}px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
+const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:118px;bottom:${STORY?46:26}px;line-height:1.4;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
 const kaydir=()=>`<div class="sans" style="position:absolute;right:32px;bottom:${STORY?46:26}px;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.8);z-index:10;">KAYDIR →</div>`;
 
 const AYLAR=['ocak','şubat','mart','nisan','mayıs','haziran','temmuz','ağustos','eylül','ekim','kasım','aralık'];
@@ -151,7 +151,7 @@ function tableSlide(list){
 </div>
 <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:${gap}px;">${rows}</div>
 </div>
-${foot('Yenileme ayında geçerli oran · TÜFE 12 aylık ortalama · Kaynak: TÜİK')}${kaydir()}</div>`;
+${foot('Yenileme ayında geçerli oran · Kaynak: TÜİK')}${kaydir()}</div>`;
 }
 
 function ctaSlide(){
