@@ -103,7 +103,9 @@ function heroSlide(list){
   const son=list.find(x=>x.oran)||list[0];
   const metin='%'+(son&&son.oran?son.oran:'—');
   const n=metin.length;
-  const buyuk = n<=5 ? (STORY?132:118) : n===6 ? (STORY?116:104) : n===7 ? (STORY?102:92) : (STORY?92:84);
+  // Slayt genişliği her iki formatta da 420px, bu yüzden punto formata göre değil
+  // yalnızca rakam uzunluğuna göre ayarlanır.
+  const buyuk = n<=5 ? 118 : n===6 ? 104 : n===7 ? 92 : 84;
   return `<div class="slide" style="background:${RGRAD};">
 <div class="sans" style="position:absolute;top:-70px;right:-30px;font-size:${STORY?460:400}px;font-weight:800;line-height:1;color:rgba(255,255,255,.09);letter-spacing:-20px;">%</div>
 ${logo(true)}
