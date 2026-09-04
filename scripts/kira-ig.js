@@ -60,11 +60,15 @@ Kaynak: TÜİK
 (async () => {
   // 1) Story
   if (HEDEF === 'ikisi' || HEDEF === 'story') {
-  await yayindaMi(m.story);
-  const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: m.story });
-  await hazirBekle(st.id);
-  const stPub = await post(`${UID}/media_publish`, { creation_id: st.id });
-  console.log('✓ Story yayınlandı:', stPub.id);
+    const kareler = Array.isArray(m.story) ? m.story : [m.story];
+    for (const u of kareler) await yayindaMi(u);
+    for (let i = 0; i < kareler.length; i++) {
+      const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: kareler[i] });
+      await hazirBekle(st.id);
+      const stPub = await post(`${UID}/media_publish`, { creation_id: st.id });
+      console.log(`✓ Story ${i + 1}/${kareler.length} yayınlandı:`, stPub.id);
+      if (i < kareler.length - 1) await wait(5000);   // sıra bozulmasın
+    }
   }
 
   // 2) Feed karusel
