@@ -78,6 +78,13 @@ Ekim 2025 = 38,36</textarea>
   </div>
   <div id="paylasDurum" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:10px"></div>
 </div>
+<div class="panel">
+  <label>Gönderi açıklaması — kopyalayıp Instagram'a yapıştırabilirsin. Otomatik paylaşımda da bu metin kullanılır.</label>
+  <div id="aciklamaKutu" style="background:#161c44;border-radius:10px;padding:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;color:rgba(255,255,255,.9)"></div>
+  <div class="row">
+    <button class="ghost" onclick="aciklamaKopyala()">Metni kopyala</button>
+  </div>
+</div>
 <div class="status" id="status">Veriyi düzenleyip "Uygula" de. Görsele tıklayınca tek tek PNG iner.</div>
 <div class="grid" id="grid"></div>
 
@@ -172,14 +179,16 @@ Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize
 function render(){
   const list=parse();
   const g=document.getElementById('grid'); g.innerHTML='';
+  const etiket=STORY?'Story':'Gönderi';
   [heroSlide(list),tableSlide(list),ctaSlide()].forEach((html,i)=>{
     const c=document.createElement('div'); c.className='card';
-    c.innerHTML=html+`<small>Slayt ${i+1} · indirmek için tıkla</small>`;
-    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`kira-artis-${i+1}.png`);
+    c.innerHTML=html+`<small>${etiket} ${i+1}/3 · indirmek için tıkla</small>`;
+    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`kira-${STORY?'story':'gonderi'}-${i+1}.png`);
     g.appendChild(c);
   });
   const dolu=list.filter(x=>x.oran).length;
   document.getElementById('status').textContent=`${dolu} ay verili · ${STORY?'1080×1920 story':'1080×1440 karusel'}`;
+  aciklamaYaz();
 }
 function setFmt(){STORY=document.getElementById('fmt').value==='story';document.body.classList.toggle('story',STORY);render();}
 
@@ -205,6 +214,30 @@ async function downloadAll(){
   }catch(e){s.textContent='Hata: '+e.message;}
   btn.disabled=false;
 }
+function aciklamaMetni(){
+  const l=parse().filter(x=>x.oran);
+  if(!l.length) return '';
+  const ay=l[0].ay, oran=l[0].oran;
+  return `${ay} kira artış oranı açıklandı: %${oran}
+
+${ay} ayında sözleşmesi yenilenen konut ve iş yeri kiralarında artış bu oranı aşamaz. Oran, TÜİK'in açıkladığı TÜFE 12 aylık ortalamalara göre değişimdir (TBK m.344). Sözleşmede daha yüksek bir oran yazsa bile bu sınır geçerlidir.
+
+Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize ulaşın.
+📞 0216 315 15 15 · RE/MAX Doğuş
+
+#kadıköy #kira #kiraartışı #emlak #gayrimenkul`;
+}
+function aciklamaYaz(){
+  const el=document.getElementById('aciklamaKutu');
+  if(el) el.textContent=aciklamaMetni();
+}
+function aciklamaKopyala(){
+  navigator.clipboard.writeText(aciklamaMetni()).then(
+    ()=>{document.getElementById('status').textContent='Açıklama metni kopyalandı.';},
+    ()=>{document.getElementById('status').textContent='Kopyalanamadı, metni elle seçip kopyala.';}
+  );
+}
+
 const PAYLAS_UC='https://script.google.com/macros/s/AKfycbyHgiTqM36Z5RZ3taJIfuDxrmjl4WqYN9RE_ohjCrY7wnjm-53AxCPrzQqCLnOneIL3QQ/exec';
 const PAYLAS_K='dogus-kira';
 async function paylas(hedef){
