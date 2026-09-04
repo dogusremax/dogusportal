@@ -72,33 +72,36 @@ const ICO={
 const icon=(k,size,bg)=>`<div style="width:${size}px;height:${size}px;border-radius:${Math.round(size*0.3)}px;background:${bg};display:flex;align-items:center;justify-content:center;flex:0 0 ${size}px;box-shadow:0 8px 18px rgba(0,0,0,.28);"><svg viewBox="0 0 24 24" width="${Math.round(size*0.5)}" height="${Math.round(size*0.5)}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg></div>`;
 
 const ITEMS=[
-  {k:'kocan', et:'KONTROL 1',  bas:'Önce koçana bak,<br>projeye sonra',
+  {k:'kocan', kisa:'Koçan tipi ve tapu araştırması', et:'KONTROL 1',  bas:'Önce koçana bak,<br>projeye sonra',
    ozet:'KKTC’de her tapu aynı ağırlıkta değil. Koçanın tipi; satış kolaylığını, kredi ve devir sürecini, kısacası yatırımın geleceğini belirler.',
    pills:['Koçan tipi nedir?','Üzerinde ipotek var mı?','Avukat araştırması şart']},
-  {k:'firma', et:'KONTROL 2',  bas:'Projeyi değil,<br>firmayı alıyorsun',
+  {k:'firma', kisa:'Müteahhitin teslim geçmişi', et:'KONTROL 2',  bas:'Projeyi değil,<br>firmayı alıyorsun',
    ozet:'Teslim geçmişi olmayan bir firmanın cazip fiyatı, çoğu zaman riskin fiyatıdır. Geçmiş projeler bugün ne durumda, ona bak.',
    pills:['Kaç proje teslim etmiş?','Zamanında mı teslim?','Arsa firmanın mı?']},
-  {k:'belge', et:'KONTROL 3',  bas:'Sözleşmeni<br>tescil ettir',
+  {k:'belge', kisa:'Sözleşmenin tapuya tescili', et:'KONTROL 3',  bas:'Sözleşmeni<br>tescil ettir',
    ozet:'Satış sözleşmesinin Tapu Dairesi’ne kaydı, mülkü üçüncü kişilere karşı koruyan en kritik adımdır. Yasal süre kaçarsa koruma da kaçar.',
    pills:['Tapu’ya tescil','Alım izni süreci','Ödeme–teslim uyumu']},
   {k:'para',  et:'KONTROL 4',  bas:'Fiyat başka,<br>maliyet başka',
    ozet:'Listedeki rakam işin yarısı. Bütçeni sözleşme fiyatına göre değil, kapıdan girene kadarki toplam maliyete göre kur.',
    pills:['KDV ve devir harcı','Altyapı, trafo, aidat','Avukat ve masraflar']},
-  {k:'cikis', et:'KONTROL 5',  bas:'Girişi değil,<br>çıkışı planla',
+  {k:'cikis', kisa:'Kira getirisi ve çıkış planı', et:'KONTROL 5',  bas:'Girişi değil,<br>çıkışı planla',
    ozet:'Satması kolay olmayan mülk kâğıt üstünde kazandırır. Kiralanabilirliği ve ikinci el hareketliliği baştan sor.',
    pills:['Sezonluk mu, 12 ay mı?','İkinci el hareketli mi?','Gerçekçi getiri']}
 ];
 
 function coverSlide(){
-  const rows=ITEMS.map(it=>`<div style="display:flex;align-items:center;gap:${STORY?16:12}px;padding:${STORY?14:10}px 14px;background:rgba(5,10,48,.28);border:1px solid rgba(255,255,255,.16);border-radius:14px;">
-${icon(it.k,STORY?42:36,'rgba(5,10,48,.85)')}
-<div class="sans" style="flex:1;font-size:${STORY?15:13}px;font-weight:600;color:#fff;line-height:1.3;">${it.bas.replace('<br>',' ')}</div></div>`).join('');
+  const rows=ITEMS.map(it=>`<div style="display:flex;align-items:center;gap:${STORY?14:11}px;padding:${STORY?9:7}px 12px;background:rgba(5,10,48,.28);border:1px solid rgba(255,255,255,.16);border-radius:12px;">
+${icon(it.k,STORY?34:28,'rgba(5,10,48,.85)')}
+<div class="sans" style="flex:1;font-size:${STORY?14:12.5}px;font-weight:600;color:#fff;line-height:1.25;">${it.kisa}</div></div>`).join('');
   return `<div class="slide" style="background:${RGRAD};">${wm('5','rgba(255,255,255,.10)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:${STORY?110:96}px;">
+<div style="position:absolute;left:32px;right:32px;top:${STORY?104:90}px;bottom:${STORY?92:60}px;display:flex;flex-direction:column;justify-content:space-between;">
+<div>
 <div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:22px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">Kuzey Kıbrıs</div>
 <h1 class="sans" style="font-size:${STORY?42:38}px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Yatırım öncesi<br>5 kritik kontrol</h1>
-<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.85);margin:10px 0 0;line-height:1.5;">Bunları atlayan yatırımcı kazancını değil, sorununu büyütüyor.</p></div>
-<div style="position:absolute;left:32px;right:32px;bottom:${STORY?106:70}px;display:flex;flex-direction:column;gap:${STORY?10:8}px;">${rows}</div>
+<p class="sans" style="font-size:${STORY?15:13}px;color:rgba(255,255,255,.85);margin:10px 0 0;line-height:1.5;">Bunları atlayan yatırımcı, sorununu büyütüyor.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:${STORY?9:6}px;">${rows}</div>
+</div>
 ${kaydir('.85')}</div>`;
 }
 
