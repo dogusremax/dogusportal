@@ -5,6 +5,12 @@ on:
     paths:
       - 'kira-artis.html'      # Apps Script veriyi yazınca tetiklenir
   workflow_dispatch:
+    inputs:
+      hedef:
+        description: 'Ne paylaşılsın?'
+        type: choice
+        default: 'ikisi'
+        options: ['ikisi', 'story', 'gonderi', 'sadece-gorsel']
 
 permissions:
   contents: write
@@ -44,8 +50,10 @@ jobs:
           echo "IG_TOKEN=$T" >> $GITHUB_ENV
 
       - name: Instagram'a paylaş
+        if: inputs.hedef != 'sadece-gorsel'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          HEDEF: ${{ inputs.hedef || 'ikisi' }}
         shell: bash
         run: |
           set -o pipefail
