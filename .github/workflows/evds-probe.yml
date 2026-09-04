@@ -1,0 +1,32 @@
+name: EVDS teşhis
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - name: Adresleri dene
+        continue-on-error: true
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: |
+          mkdir -p data
+          node scripts/evds-probe.js 2>&1 | tee data/evds-probe.log
+      - name: Sonucu kaydet
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "dogus-bot"
+            git config user.email "actions@github.com"
+            git add -A data
+            git commit -m "EVDS teshis ciktisi"
+            git push
+          fi
