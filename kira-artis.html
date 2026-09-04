@@ -102,17 +102,22 @@ ${foot('Kaynak: TÜİK · RE/MAX DOĞUŞ · '+TEL)}${kaydir()}</div>`;
 }
 
 function tableSlide(list){
+  const n=Math.max(list.length,1);
+  const fs = n<=6 ? (STORY?16:14) : n<=9 ? (STORY?15:12.5) : n<=12 ? (STORY?13.5:11) : (STORY?12:10);
+  const gap = n<=9 ? (STORY?8:6) : (STORY?6:4);
   const rows=list.map((x,i)=>{
     const dolu=!!x.oran, ilk=i===0&&dolu;
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:${STORY?11:8}px ${STORY?18:15}px;border-radius:12px;background:${ilk?'rgba(220,28,46,.9)':'rgba(255,255,255,.07)'};border:1px solid rgba(255,255,255,${ilk?'.2':'.09'});">
-<span class="sans" style="font-size:${STORY?15:13}px;font-weight:600;color:${dolu?'#fff':'rgba(255,255,255,.45)'};">${x.ay}</span>
-<span class="sans" style="font-size:${STORY?18:16}px;font-weight:800;letter-spacing:-.5px;color:${dolu?'#fff':'rgba(255,255,255,.35)'};">${dolu?'%'+x.oran:'—'}</span></div>`;
+    return `<div style="flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:space-between;padding:0 ${STORY?18:14}px;border-radius:${STORY?12:10}px;background:${ilk?'rgba(220,28,46,.92)':'rgba(255,255,255,.07)'};border:1px solid rgba(255,255,255,${ilk?'.22':'.09'});">
+<span class="sans" style="font-size:${fs}px;font-weight:600;color:${dolu?'#fff':'rgba(255,255,255,.45)'};">${x.ay}</span>
+<span class="sans" style="font-size:${fs*1.2}px;font-weight:800;letter-spacing:-.5px;color:${dolu?'#fff':'rgba(255,255,255,.35)'};">${dolu?'%'+x.oran:'—'}</span></div>`;
   }).join('');
   return `<div class="slide" style="background:${NAVY};">${logo(false)}
-<div style="position:absolute;left:32px;right:32px;top:${STORY?140:104}px;">
+<div style="position:absolute;left:32px;right:32px;top:${STORY?132:100}px;bottom:${STORY?66:50}px;display:flex;flex-direction:column;">
+<div style="flex:0 0 auto;">
 <div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">AYLIK TABLO</div>
-<div class="sans" style="font-size:${STORY?32:28}px;font-weight:700;letter-spacing:-1px;margin:12px 0 ${STORY?18:14}px;color:#fff;">2026 kira artış<br>oranları</div>
-<div style="display:flex;flex-direction:column;gap:${STORY?8:6}px;">${rows}</div>
+<div class="sans" style="font-size:${STORY?30:26}px;font-weight:700;letter-spacing:-1px;margin:10px 0 ${STORY?14:10}px;color:#fff;line-height:1.1;">2026 kira artış oranları</div>
+</div>
+<div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:${gap}px;">${rows}</div>
 </div>
 ${foot('TÜFE 12 aylık ortalamalara göre değişim · Kaynak: TÜİK')}${kaydir()}</div>`;
 }
