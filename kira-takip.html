@@ -575,7 +575,11 @@ function detayAc(id, tip){
     (k.taahhut ? b('Tahliye taahhüdü', trTarih(k.tahliye) + ' (' + gunFark(k.tahliye) + ' gün)') : b('Tahliye taahhüdü','Yok')) +
     b('Aylık kira', k.kira) +
     (k.notlar ? b('Not', k.notlar) : '') +
+    (k.taahhut && k.tahliye && driveLinki(k.notlar)
+      ? '<div class="bilgi"><span>Taahhütname</span><b><a href="'+driveLinki(k.notlar)+
+        '" target="_blank" style="color:#003da5">Belgeyi aç</a></b></div>' : '') +
     (uyari ? '<div class="uyari">'+uyari+'</div>' : '') +
+    (k.taahhut && !k.tahliye ? hizliTahliyeKutusu(k) : '') +
     '<div class="eylemler">'+
       (waLink(k.kiraciTel,mKiraci) ? '<a class="wa" href="'+waLink(k.kiraciTel,mKiraci)+'" target="_blank">Kiracıya yaz</a>' : '') +
       (waLink(k.sahipTel,mSahip) ? '<a class="wa" style="background:#128C7E" href="'+waLink(k.sahipTel,mSahip)+'" target="_blank">Sahibine yaz</a>' : '') +
@@ -588,6 +592,37 @@ function detayAc(id, tip){
   $('#perde').classList.add('acik');
   $('#detay').classList.add('acik');
 }
+function driveLinki(notlar){
+  const m = String(notlar||'').match(/https:\/\/drive\.google\.com\/[^\s·]+/);
+  return m ? m[0] : '';
+}
+
+function hizliTahliyeKutusu(k){
+  const link = driveLinki(k.notlar);
+  return '<div style="background:#ffe9eb;border-radius:12px;padding:13px;margin-top:14px">'+
+    '<div style="font-size:13px;font-weight:700;color:#a01020;margin-bottom:9px">Tahliye tarihi girilmemiş</div>'+
+    (link ? '<a href="'+link+'" target="_blank" style="display:block;text-align:center;background:#fff;color:#a01020;'+
+            'text-decoration:none;font-size:13px;font-weight:600;padding:11px;border-radius:10px;margin-bottom:9px">'+
+            'Taahhütnameyi aç</a>' : '')+
+    '<input type="date" id="hizliTarih" style="width:100%;padding:12px;border:1px solid #f0b8bf;'+
+    'border-radius:10px;background:#fff;outline:none">'+
+    '<button onclick="hizliTahliyeKaydet(\''+k.id+'\')" style="width:100%;margin-top:9px;background:#c0392b;'+
+    'color:#fff;border:0;padding:13px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer">'+
+    'Tarihi kaydet</button></div>';
+}
+
+async function hizliTahliyeKaydet(id){
+  const t = $('#hizliTarih').value;
+  if(!t) return bildir('Tarih seçin');
+  const k = KAYITLAR.find(x=>x.id === id); if(!k) return;
+  try{
+    await istek('save', {kayit: Object.assign({}, k, {tahliye: t, taahhut: true})});
+    bildir('Tahliye tarihi kaydedildi');
+    detayKapat();
+    await yukle();
+  }catch(e){ bildir(e.message); }
+}
+
 function detayKapat(){ $('#perde').classList.remove('acik'); $('#detay').classList.remove('acik'); }
 
 async function durumDegistir(id){
