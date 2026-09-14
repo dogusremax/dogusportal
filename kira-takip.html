@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#003da5">
+<title>Kira Takip · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacivert:#003da5; --kirmizi:#dc1c2e; --yesil:#0a7d5a; --mor:#7d3c98;
+  --zemin:#f2f5fa; --kart:#ffffff; --metin:#16233d; --soluk:#6b7891;
+  --cizgi:#e4e9f2; --sari:#fff6e0;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--zemin);color:var(--metin);
+  font-family:'Plus Jakarta Sans',-apple-system,Segoe UI,Roboto,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3,.rakam{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif}
+button,input,select,textarea{font-family:inherit;font-size:16px}
+
+/* ---- Giriş ---- */
+#giris{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;padding:28px;background:linear-gradient(160deg,#003da5,#0a2a66)}
+#giris .kutu{background:#fff;border-radius:22px;padding:30px 24px;width:100%;max-width:340px;text-align:center}
+#giris h1{font-size:24px;margin:0 0 6px}
+#giris p{color:var(--soluk);font-size:13px;margin:0 0 20px}
+#pin{width:100%;text-align:center;letter-spacing:10px;font-size:26px;font-weight:700;
+  padding:14px;border:2px solid var(--cizgi);border-radius:14px;outline:none}
+#pin:focus{border-color:var(--lacivert)}
+.anaBtn{width:100%;margin-top:14px;background:var(--lacivert);color:#fff;border:0;
+  padding:15px;border-radius:14px;font-weight:700;font-size:15px;cursor:pointer}
+.anaBtn:active{transform:scale(.98)}
+
+/* ---- Üst ---- */
+header{background:var(--lacivert);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+  position:sticky;top:0;z-index:20}
+header .ust{display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-size:19px;margin:0}
+header .kim{font-size:12px;opacity:.8;margin-top:2px}
+.cikis{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:9px;padding:8px 12px;font-size:13px;cursor:pointer}
+
+nav{display:flex;background:#fff;border-bottom:1px solid var(--cizgi);position:sticky;top:0;z-index:19}
+nav button{flex:1;background:none;border:0;padding:13px 4px;font-size:13.5px;font-weight:600;
+  color:var(--soluk);border-bottom:3px solid transparent;cursor:pointer}
+nav button.aktif{color:var(--lacivert);border-bottom-color:var(--lacivert)}
+nav .rozet{display:inline-block;background:var(--kirmizi);color:#fff;font-size:10px;font-weight:700;
+  border-radius:20px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+
+main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
+.gizli{display:none !important}
+
+/* ---- Kartlar ---- */
+.kart{background:var(--kart);border-radius:16px;padding:14px;margin-bottom:11px;
+  border:1px solid var(--cizgi);border-left:4px solid var(--lacivert);cursor:pointer}
+.kart:active{background:#fafbfe}
+.kart.yenileme{border-left-color:var(--yesil)}
+.kart.tahliye{border-left-color:var(--kirmizi)}
+.kart.gecti{border-left-color:var(--mor)}
+.kart .satir{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.kart .adres{font-weight:700;font-size:15px;line-height:1.35}
+.kart .alt{font-size:12.5px;color:var(--soluk);margin-top:4px;line-height:1.6}
+.sayac{flex:none;text-align:center;border-radius:12px;padding:7px 10px;min-width:60px;background:#eef2f9}
+.sayac b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;line-height:1}
+.sayac span{font-size:10px;color:var(--soluk)}
+.sayac.acil{background:#ffe9eb}.sayac.acil b{color:var(--kirmizi)}
+.sayac.yakin{background:#fff3da}.sayac.yakin b{color:#a86b00}
+.sayac.iyi{background:#e6f5ee}.sayac.iyi b{color:var(--yesil)}
+.etiket{display:inline-block;font-size:10.5px;font-weight:700;border-radius:7px;padding:3px 7px;margin-bottom:6px}
+.et-yenileme{background:#e6f5ee;color:var(--yesil)}
+.et-tahliye{background:#ffe9eb;color:var(--kirmizi)}
+.et-gecti{background:#f3e8fa;color:var(--mor)}
+.et-pasif{background:#eef1f6;color:var(--soluk)}
+
+.bos{text-align:center;color:var(--soluk);padding:50px 20px;font-size:14px;line-height:1.7}
+.bos .ikon{font-size:40px;display:block;margin-bottom:10px}
+
+/* ---- Arama / filtre ---- */
+.arama{width:100%;padding:13px 14px;border:1px solid var(--cizgi);border-radius:13px;
+  background:#fff;outline:none;margin-bottom:10px}
+.arama:focus{border-color:var(--lacivert)}
+.filtreler{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+.filtreler button{flex:none;background:#fff;border:1px solid var(--cizgi);border-radius:20px;
+  padding:7px 13px;font-size:12.5px;font-weight:600;color:var(--soluk);cursor:pointer}
+.filtreler button.aktif{background:var(--lacivert);border-color:var(--lacivert);color:#fff}
+
+/* ---- Form ---- */
+.form label{display:block;font-size:12.5px;font-weight:600;color:var(--soluk);margin:14px 0 6px}
+.form input,.form select,.form textarea{width:100%;padding:13px;border:1px solid var(--cizgi);
+  border-radius:12px;background:#fff;outline:none}
+.form input:focus,.form select:focus,.form textarea:focus{border-color:var(--lacivert)}
+.form textarea{min-height:76px;resize:vertical}
+.ikili{display:flex;gap:10px}.ikili>div{flex:1}
+.kutucuk{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--cizgi);
+  border-radius:12px;padding:13px;margin-top:14px}
+.kutucuk input{width:20px;height:20px;flex:none}
+.kutucuk span{font-size:14px;font-weight:600}
+
+/* ---- Alt sayfa ---- */
+#perde{position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:40;opacity:0;
+  pointer-events:none;transition:opacity .2s}
+#perde.acik{opacity:1;pointer-events:auto}
+#detay{position:fixed;left:0;right:0;bottom:0;z-index:41;background:#fff;
+  border-radius:22px 22px 0 0;padding:8px 18px calc(24px + env(safe-area-inset-bottom));
+  max-height:88dvh;overflow-y:auto;transform:translateY(100%);transition:transform .26s cubic-bezier(.3,.9,.3,1)}
+#detay.acik{transform:translateY(0)}
+.tutamak{width:40px;height:4px;background:var(--cizgi);border-radius:4px;margin:6px auto 14px}
+.bilgi{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--cizgi);font-size:14px}
+.bilgi span{color:var(--soluk);flex:none}
+.bilgi b{text-align:right;font-weight:600}
+.uyari{background:var(--sari);border-radius:12px;padding:12px;font-size:12.5px;
+  color:#7a5c00;line-height:1.65;margin-top:14px}
+.eylemler{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
+.eylemler a,.eylemler button{display:block;text-align:center;text-decoration:none;border:0;
+  border-radius:13px;padding:14px 8px;font-size:13.5px;font-weight:700;color:#fff;cursor:pointer}
+.wa{background:#25D366}.ara{background:var(--lacivert)}.duz{background:#4a5a72}
+.pas{background:#eef1f6;color:var(--metin) !important}
+.tam{grid-column:1/-1}
+
+#bildirim{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(90px);
+  background:#16233d;color:#fff;padding:13px 20px;border-radius:13px;font-size:14px;
+  z-index:60;transition:transform .25s;max-width:88vw;text-align:center}
+#bildirim.acik{transform:translateX(-50%) translateY(0)}
+.yukleniyor{text-align:center;padding:50px;color:var(--soluk)}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<!-- ================= GİRİŞ ================= -->
+<div id="giris">
+  <div class="kutu">
+    <h1>Kira Takip</h1>
+    <p>Yenileme ve tahliye tarihlerini 2 ay önceden hatırlatır</p>
+    <input id="pin" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off">
+    <button class="anaBtn" onclick="girisYap()">Gir</button>
+  </div>
+</div>
+
+<!-- ================= UYGULAMA ================= -->
+<div id="uygulama" class="gizli">
+  <header>
+    <div class="ust">
+      <div>
+        <h1>Kira Takip</h1>
+        <div class="kim" id="kimBilgi"></div>
+      </div>
+      <button class="cikis" onclick="cikisYap()">Çıkış</button>
+    </div>
+  </header>
+
+  <nav>
+    <button id="sek-yaklasan" class="aktif" onclick="sekme('yaklasan')">Yaklaşanlar<span class="rozet gizli" id="rozet">0</span></button>
+    <button id="sek-liste" onclick="sekme('liste')">Tüm sözleşmeler</button>
+    <button id="sek-yeni" onclick="sekme('yeni')">Yeni kayıt</button>
+  </nav>
+
+  <main>
+    <!-- Yaklaşanlar -->
+    <section id="bol-yaklasan">
+      <div id="yaklasanListe" class="yukleniyor">Yükleniyor…</div>
+    </section>
+
+    <!-- Tüm sözleşmeler -->
+    <section id="bol-liste" class="gizli">
+      <input class="arama" id="arama" placeholder="Adres, kiracı veya mülk sahibi ara" oninput="listeCiz()">
+      <div class="filtreler">
+        <button class="aktif" data-f="aktif" onclick="filtrele(this)">Aktif</button>
+        <button data-f="taahhut" onclick="filtrele(this)">Taahhütlü</button>
+        <button data-f="pasif" onclick="filtrele(this)">Arşiv</button>
+        <button data-f="hepsi" onclick="filtrele(this)">Hepsi</button>
+      </div>
+      <div id="tumListe"></div>
+    </section>
+
+    <!-- Yeni kayıt -->
+    <section id="bol-yeni" class="gizli">
+      <div class="form">
+        <input type="hidden" id="f_id">
+        <label for="f_danisman">Danışman</label>
+        <select id="f_danisman">
+          <option>Umut Tokkuş</option><option>Ayşegül Alpay</option><option>Aysun Yılmaz</option>
+          <option>Evşen Özazman</option><option>Gamze Yetkin</option><option>Gizem Gök</option>
+          <option>İrem Aleyna Tetik</option><option>Orhan Özazman</option><option>Özlem Varol</option>
+        </select>
+
+        <label for="f_adres">Mülkün adresi</label>
+        <input id="f_adres" placeholder="Örn. Yenitepe 2. Etap A Blok D:14">
+
+        <div class="ikili">
+          <div><label for="f_sahip">Mülk sahibi</label><input id="f_sahip"></div>
+          <div><label for="f_sahipTel">Telefonu</label><input id="f_sahipTel" type="tel" inputmode="tel" placeholder="05xx"></div>
+        </div>
+        <div class="ikili">
+          <div><label for="f_kiraci">Kiracı</label><input id="f_kiraci"></div>
+          <div><label for="f_kiraciTel">Telefonu</label><input id="f_kiraciTel" type="tel" inputmode="tel" placeholder="05xx"></div>
+        </div>
+
+        <div class="ikili">
+          <div><label for="f_baslangic">Sözleşme başlangıcı</label><input id="f_baslangic" type="date"></div>
+          <div><label for="f_kira">Aylık kira</label><input id="f_kira" inputmode="numeric" placeholder="35.000 ₺"></div>
+        </div>
+
+        <div class="kutucuk">
+          <input type="checkbox" id="f_taahhut" onchange="taahhutAlani()">
+          <span>Tahliye taahhütnamesi alındı</span>
+        </div>
+        <div id="tahliyeAlani" class="gizli">
+          <label for="f_tahliye">Taahhüt edilen tahliye tarihi</label>
+          <input id="f_tahliye" type="date">
+        </div>
+
+        <label for="f_durum">Durum</label>
+        <select id="f_durum">
+          <option>Aktif</option><option>Tahliye edildi</option><option>Sona erdi</option>
+        </select>
+
+        <label for="f_notlar">Notlar</label>
+        <textarea id="f_notlar" placeholder="Depozito, demirbaş, artış anlaşması…"></textarea>
+
+        <button class="anaBtn" onclick="kaydet()" id="kaydetBtn">Kaydet</button>
+        <button class="anaBtn" style="background:#eef1f6;color:#16233d;margin-top:8px" onclick="formTemizle()">Formu temizle</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="perde" onclick="detayKapat()"></div>
+<div id="detay"><div class="tutamak"></div><div id="detayIcerik"></div></div>
+<div id="bildirim"></div>
+
+<script>
+/* ===== AYAR: Apps Script Web App URL'ini buraya yapıştır ===== */
+const API = 'BURAYA_APPS_SCRIPT_URL';
+
+let PIN = '', KULLANICI = null, KAYITLAR = [], FILTRE = 'aktif';
+
+/* ---------- yardımcılar ---------- */
+const $ = s => document.querySelector(s);
+const bugun = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+
+function gunFark(iso){
+  if(!iso) return null;
+  const p = iso.split('-');
+  return Math.round((new Date(+p[0], p[1]-1, +p[2]) - bugun()) / 86400000);
+}
+function yenilemeTarihi(iso){
+  if(!iso) return '';
+  const p = iso.split('-'), ay = p[1]-1, gun = +p[2], b = bugun();
+  let a = new Date(b.getFullYear(), ay, gun);
+  if(a < b) a = new Date(b.getFullYear()+1, ay, gun);
+  return a.getFullYear() + '-' + String(a.getMonth()+1).padStart(2,'0') + '-' + String(a.getDate()).padStart(2,'0');
+}
+const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+function trTarih(iso){ if(!iso) return '-'; const p = iso.split('-'); return +p[2] + ' ' + AYLAR[p[1]-1] + ' ' + p[0]; }
+function kacinciYil(bas, yen){ return bas && yen ? (+yen.split('-')[0] - +bas.split('-')[0]) : 0; }
+
+function telTemiz(t){
+  let s = String(t||'').replace(/\D/g,'');
+  if(s.length === 10) s = '90'+s;
+  else if(s.length === 11 && s[0] === '0') s = '90'+s.slice(1);
+  return s;
+}
+function waLink(tel, mesaj){ const t = telTemiz(tel); return t ? 'https://wa.me/'+t+'?text='+encodeURIComponent(mesaj) : ''; }
+
+function bildir(m){
+  const b = $('#bildirim'); b.textContent = m; b.classList.add('acik');
+  clearTimeout(b._t); b._t = setTimeout(()=>b.classList.remove('acik'), 2600);
+}
+
+async function istek(action, ek){
+  const r = await fetch(API, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(Object.assign({action, pin:PIN}, ek||{}))
+  });
+  const j = await r.json();
+  if(!j.ok) throw new Error(j.hata || 'Bilinmeyen hata');
+  return j;
+}
+
+/* ---------- giriş ---------- */
+$('#pin').addEventListener('keydown', e => { if(e.key === 'Enter') girisYap(); });
+
+async function girisYap(){
+  const p = $('#pin').value.trim();
+  if(!p) return bildir('PIN girin');
+  if(API === 'BURAYA_APPS_SCRIPT_URL') return bildir('Önce API adresini ekleyin');
+  PIN = p;
+  try{
+    const j = await istek('login');
+    KULLANICI = j.kullanici;
+    localStorage.setItem('kiraPin', PIN);
+    $('#giris').classList.add('gizli');
+    $('#uygulama').classList.remove('gizli');
+    $('#kimBilgi').textContent = KULLANICI.ad + (KULLANICI.rol === 'broker' ? ' · tüm ofis' : '');
+    if(KULLANICI.rol !== 'broker') $('#f_danisman').value = KULLANICI.ad;
+    yukle();
+  }catch(e){ PIN = ''; bildir('PIN hatalı'); }
+}
+
+function cikisYap(){
+  localStorage.removeItem('kiraPin');
+  location.reload();
+}
+
+async function yukle(){
+  try{
+    const j = await istek('list');
+    KAYITLAR = j.kayitlar || [];
+    yaklasanCiz();
+    listeCiz();
+  }catch(e){ $('#yaklasanListe').innerHTML = '<div class="bos"><span class="ikon">⚠️</span>Veri alınamadı.<br>' + e.message + '</div>'; }
+}
+
+/* ---------- sekmeler ---------- */
+function sekme(ad){
+  ['yaklasan','liste','yeni'].forEach(x=>{
+    $('#bol-'+x).classList.toggle('gizli', x !== ad);
+    $('#sek-'+x).classList.toggle('aktif', x === ad);
+  });
+  window.scrollTo(0,0);
+}
+function filtrele(btn){
+  document.querySelectorAll('.filtreler button').forEach(b=>b.classList.remove('aktif'));
+  btn.classList.add('aktif'); FILTRE = btn.dataset.f; listeCiz();
+}
+
+/* ---------- olay üretimi ---------- */
+function olaylar(){
+  const o = [];
+  KAYITLAR.filter(k => k.durum === 'Aktif').forEach(k=>{
+    if(k.baslangic){
+      const t = yenilemeTarihi(k.baslangic), g = gunFark(t);
+      if(g !== null && g <= 120) o.push({tip:'yenileme', k, tarih:t, gun:g, yil:kacinciYil(k.baslangic,t)});
+    }
+    if(k.taahhut && k.tahliye){
+      const g = gunFark(k.tahliye);
+      if(g !== null && g <= 120 && g >= -30) o.push({tip: g < 0 ? 'gecti' : 'tahliye', k, tarih:k.tahliye, gun:g});
+    }
+  });
+  return o.sort((a,b)=>a.gun-b.gun);
+}
+
+function sayacSinif(g){ return g < 0 ? 'acil' : g <= 30 ? 'acil' : g <= 60 ? 'yakin' : 'iyi'; }
+
+function yaklasanCiz(){
+  const liste = olaylar().filter(o => o.gun <= 90);
+  const el = $('#yaklasanListe');
+  const acil = liste.filter(o => o.gun <= 60).length;
+  const rozet = $('#rozet');
+  rozet.textContent = acil; rozet.classList.toggle('gizli', acil === 0);
+
+  if(!liste.length){
+    el.className = '';
+    el.innerHTML = '<div class="bos"><span class="ikon">✅</span>Önümüzdeki 3 ayda hatırlatılacak bir tarih yok.<br>Yeni sözleşmeleri “Yeni kayıt”tan ekleyin.</div>';
+    return;
+  }
+  el.className = '';
+  el.innerHTML = liste.map(o=>{
+    const et = o.tip === 'yenileme' ? '<span class="etiket et-yenileme">Kira yenileme · '+o.yil+'. yıl</span>'
+             : o.tip === 'tahliye'  ? '<span class="etiket et-tahliye">Tahliye taahhüdü</span>'
+                                    : '<span class="etiket et-gecti">Tahliye tarihi geçti</span>';
+    return '<div class="kart '+o.tip+'" onclick="detayAc(\''+o.k.id+'\',\''+o.tip+'\')">'+
+      '<div class="satir"><div>'+et+
+        '<div class="adres">'+(o.k.adres||'-')+'</div>'+
+        '<div class="alt">'+trTarih(o.tarih)+' · '+(o.k.kiraci||'kiracı yok')+'<br>'+(o.k.danisman||'')+'</div>'+
+      '</div>'+
+      '<div class="sayac '+sayacSinif(o.gun)+'"><b>'+(o.gun<0?Math.abs(o.gun):o.gun)+'</b><span>'+(o.gun<0?'gün geçti':'gün')+'</span></div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function listeCiz(){
+  const q = ($('#arama').value||'').toLocaleLowerCase('tr');
+  let l = KAYITLAR.slice();
+  if(FILTRE === 'aktif')   l = l.filter(k=>k.durum === 'Aktif');
+  if(FILTRE === 'pasif')   l = l.filter(k=>k.durum !== 'Aktif');
+  if(FILTRE === 'taahhut') l = l.filter(k=>k.taahhut && k.durum === 'Aktif');
+  if(q) l = l.filter(k => (k.adres+' '+k.kiraci+' '+k.sahip+' '+k.danisman).toLocaleLowerCase('tr').includes(q));
+
+  l.sort((a,b)=>{
+    const ga = a.durum==='Aktif'? gunFark(yenilemeTarihi(a.baslangic)) : 9999;
+    const gb = b.durum==='Aktif'? gunFark(yenilemeTarihi(b.baslangic)) : 9999;
+    return ga-gb;
+  });
+
+  $('#tumListe').innerHTML = l.length ? l.map(k=>{
+    const yen = yenilemeTarihi(k.baslangic), g = gunFark(yen);
+    const pasif = k.durum !== 'Aktif';
+    return '<div class="kart" onclick="detayAc(\''+k.id+'\',\'yenileme\')">'+
+      '<div class="satir"><div>'+
+        (pasif ? '<span class="etiket et-pasif">'+k.durum+'</span>' : (k.taahhut?'<span class="etiket et-tahliye">Taahhütlü</span>':''))+
+        '<div class="adres">'+(k.adres||'-')+'</div>'+
+        '<div class="alt">'+(k.kiraci||'-')+(k.kira?' · '+k.kira:'')+'<br>Yenileme: '+trTarih(yen)+'</div>'+
+      '</div>'+
+      (pasif ? '' : '<div class="sayac '+sayacSinif(g)+'"><b>'+g+'</b><span>gün</span></div>')+
+      '</div></div>';
+  }).join('') : '<div class="bos"><span class="ikon">🔍</span>Kayıt bulunamadı.</div>';
+}
+
+/* ---------- detay ---------- */
+function detayAc(id, tip){
+  const k = KAYITLAR.find(x=>x.id === id); if(!k) return;
+  const yen = yenilemeTarihi(k.baslangic);
+  const hedef = tip === 'yenileme' ? yen : k.tahliye;
+  const g = gunFark(hedef);
+
+  let uyari = '';
+  if(tip === 'yenileme' && kacinciYil(k.baslangic, yen) >= 10){
+    uyari = '10 yıllık uzama süresi doluyor. Bu yıldönümünden en az 3 ay önce yazılı bildirim yapılırsa sözleşme feshedilebilir — mülk sahibiyle konuşun.';
+  }else if(tip === 'yenileme' && g <= 60){
+    uyari = 'Yeni kira bedeli için 12 aylık TÜFE ortalamasına bakın, artış teklifini yazılı iletin.';
+  }else if(tip === 'gecti'){
+    uyari = 'Taahhütnameye dayalı icra takibi veya tahliye davası tahliye tarihinden itibaren 1 ay içinde başlatılmalı. Kalan süre: ' + (30+g) + ' gün.';
+  }else if(tip === 'tahliye' && g <= 60){
+    uyari = 'Kiracıyla temasa geçip planı netleştirin; mülk yeniden kiralanacaksa fotoğraf ve ilan hazırlığını şimdiden başlatın.';
+  }
+
+  const mKiraci = tip === 'yenileme'
+    ? 'Merhaba '+k.kiraci+', RE/MAX Doğuş\'tan '+k.danisman+'. '+k.adres+' adresindeki kira sözleşmenizin yenileme tarihi '+trTarih(yen)+'. Uygun bir zamanda görüşebilir miyiz?'
+    : 'Merhaba '+k.kiraci+', RE/MAX Doğuş\'tan '+k.danisman+'. '+k.adres+' adresi için taahhüt ettiğiniz tahliye tarihi '+trTarih(k.tahliye)+'. Planınızı konuşmak için müsait misiniz?';
+  const mSahip = 'Merhaba '+k.sahip+', RE/MAX Doğuş\'tan '+k.danisman+'. '+k.adres+' için '+(tip==='yenileme'?'kira yenileme tarihi':'tahliye taahhüt tarihi')+' '+trTarih(hedef)+'. Kısaca görüşelim mi?';
+
+  const b = (e,d) => '<div class="bilgi"><span>'+e+'</span><b>'+(d||'-')+'</b></div>';
+
+  $('#detayIcerik').innerHTML =
+    '<h2 style="margin:0 0 4px;font-size:19px">'+(k.adres||'-')+'</h2>'+
+    '<div style="color:var(--soluk);font-size:13px;margin-bottom:14px">'+k.danisman+' · '+k.durum+'</div>'+
+    b('Kiracı', k.kiraci + (k.kiraciTel ? ' · '+k.kiraciTel : '')) +
+    b('Mülk sahibi', k.sahip + (k.sahipTel ? ' · '+k.sahipTel : '')) +
+    b('Sözleşme başlangıcı', trTarih(k.baslangic)) +
+    b('Kira yenileme', trTarih(yen) + ' (' + gunFark(yen) + ' gün)') +
+    (k.taahhut ? b('Tahliye taahhüdü', trTarih(k.tahliye) + ' (' + gunFark(k.tahliye) + ' gün)') : b('Tahliye taahhüdü','Yok')) +
+    b('Aylık kira', k.kira) +
+    (k.notlar ? b('Not', k.notlar) : '') +
+    (uyari ? '<div class="uyari">'+uyari+'</div>' : '') +
+    '<div class="eylemler">'+
+      (waLink(k.kiraciTel,mKiraci) ? '<a class="wa" href="'+waLink(k.kiraciTel,mKiraci)+'" target="_blank">Kiracıya yaz</a>' : '') +
+      (waLink(k.sahipTel,mSahip) ? '<a class="wa" style="background:#128C7E" href="'+waLink(k.sahipTel,mSahip)+'" target="_blank">Sahibine yaz</a>' : '') +
+      (k.kiraciTel ? '<a class="ara" href="tel:'+k.kiraciTel+'">Kiracıyı ara</a>' : '') +
+      (k.sahipTel ? '<a class="ara" href="tel:'+k.sahipTel+'">Sahibini ara</a>' : '') +
+      '<button class="duz tam" onclick="duzenle(\''+k.id+'\')">Kaydı düzenle</button>'+
+      (k.durum === 'Aktif' ? '<button class="pas tam" onclick="durumDegistir(\''+k.id+'\')">Sözleşmeyi arşivle</button>' : '') +
+    '</div>';
+
+  $('#perde').classList.add('acik');
+  $('#detay').classList.add('acik');
+}
+function detayKapat(){ $('#perde').classList.remove('acik'); $('#detay').classList.remove('acik'); }
+
+async function durumDegistir(id){
+  if(!confirm('Bu sözleşme arşive alınsın mı? Hatırlatmalar durur.')) return;
+  try{
+    await istek('durum', {id, durum:'Sona erdi'});
+    detayKapat(); bildir('Arşive alındı'); yukle();
+  }catch(e){ bildir(e.message); }
+}
+
+/* ---------- form ---------- */
+function taahhutAlani(){ $('#tahliyeAlani').classList.toggle('gizli', !$('#f_taahhut').checked); }
+
+function duzenle(id){
+  const k = KAYITLAR.find(x=>x.id === id); if(!k) return;
+  $('#f_id').value = k.id;
+  $('#f_danisman').value = k.danisman;
+  $('#f_adres').value = k.adres; $('#f_sahip').value = k.sahip; $('#f_sahipTel').value = k.sahipTel;
+  $('#f_kiraci').value = k.kiraci; $('#f_kiraciTel').value = k.kiraciTel;
+  $('#f_baslangic').value = k.baslangic; $('#f_kira').value = k.kira;
+  $('#f_taahhut').checked = k.taahhut; taahhutAlani();
+  $('#f_tahliye').value = k.tahliye; $('#f_durum').value = k.durum; $('#f_notlar').value = k.notlar;
+  $('#kaydetBtn').textContent = 'Değişiklikleri kaydet';
+  detayKapat(); sekme('yeni');
+}
+
+function formTemizle(){
+  ['f_id','f_adres','f_sahip','f_sahipTel','f_kiraci','f_kiraciTel','f_baslangic','f_kira','f_tahliye','f_notlar']
+    .forEach(i=>$('#'+i).value = '');
+  $('#f_taahhut').checked = false; taahhutAlani();
+  $('#f_durum').value = 'Aktif';
+  $('#kaydetBtn').textContent = 'Kaydet';
+  if(KULLANICI && KULLANICI.rol !== 'broker') $('#f_danisman').value = KULLANICI.ad;
+}
+
+async function kaydet(){
+  const kayit = {
+    id: $('#f_id').value, danisman: $('#f_danisman').value,
+    adres: $('#f_adres').value.trim(), sahip: $('#f_sahip').value.trim(), sahipTel: $('#f_sahipTel').value.trim(),
+    kiraci: $('#f_kiraci').value.trim(), kiraciTel: $('#f_kiraciTel').value.trim(),
+    baslangic: $('#f_baslangic').value, sure: 1, kira: $('#f_kira').value.trim(),
+    taahhut: $('#f_taahhut').checked, tahliye: $('#f_taahhut').checked ? $('#f_tahliye').value : '',
+    durum: $('#f_durum').value, notlar: $('#f_notlar').value.trim()
+  };
+  if(!kayit.adres) return bildir('Adres gerekli');
+  if(!kayit.baslangic) return bildir('Sözleşme başlangıcı gerekli');
+  if(kayit.taahhut && !kayit.tahliye) return bildir('Tahliye tarihi gerekli');
+
+  const btn = $('#kaydetBtn'); const eski = btn.textContent;
+  btn.textContent = 'Kaydediliyor…'; btn.disabled = true;
+  try{
+    await istek('save', {kayit});
+    bildir('Kaydedildi'); formTemizle(); await yukle(); sekme('yaklasan');
+  }catch(e){ bildir(e.message); }
+  btn.textContent = eski; btn.disabled = false;
+}
+
+/* ---------- açılış ---------- */
+(function(){
+  const kayitli = localStorage.getItem('kiraPin');
+  if(kayitli){ $('#pin').value = kayitli; girisYap(); }
+})();
+</script>
+</body>
+</html>
