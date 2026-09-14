@@ -319,13 +319,23 @@ async function girisYap(){
     const j = await istek('login');
     KULLANICI = j.kullanici;
     localStorage.setItem('kiraPin', PIN);
-    $('#giris').classList.add('gizli');
-    $('#uygulama').classList.remove('gizli');
-    $('#kimBilgi').textContent = KULLANICI.ad + (KULLANICI.rol === 'broker' ? ' · tüm ofis' : '');
-    if(KULLANICI.rol !== 'broker') $('#f_danisman').value = KULLANICI.ad;
-    yukle();
+    localStorage.setItem('kiraKullanici', JSON.stringify(KULLANICI));
+    uygulamayiAc();
+    if(j.kayitlar){ KAYITLAR = j.kayitlar; onbellegeYaz(); yaklasanCiz(); listeCiz(); }
+    else yukle();
   }catch(e){ PIN = ''; hataGoster(e.message); }
   finally{ btn.textContent = 'Gir'; btn.disabled = false; }
+}
+
+function uygulamayiAc(){
+  $('#giris').classList.add('gizli');
+  $('#uygulama').classList.remove('gizli');
+  $('#kimBilgi').textContent = KULLANICI.ad + (KULLANICI.rol === 'broker' ? ' · tüm ofis' : '');
+  if(KULLANICI.rol !== 'broker') $('#f_danisman').value = KULLANICI.ad;
+}
+
+function onbellegeYaz(){
+  try{ localStorage.setItem('kiraVeri', JSON.stringify({t:Date.now(), k:KAYITLAR})); }catch(e){}
 }
 
 function hataGoster(m){
@@ -363,7 +373,7 @@ async function baglantiTest(){
 }
 
 function cikisYap(){
-  localStorage.removeItem('kiraPin');
+  ['kiraPin','kiraVeri','kiraKullanici'].forEach(x=>localStorage.removeItem(x));
   location.reload();
 }
 
@@ -371,6 +381,7 @@ async function yukle(){
   try{
     const j = await istek('list');
     KAYITLAR = j.kayitlar || [];
+    onbellegeYaz();
     yaklasanCiz();
     listeCiz();
   }catch(e){ $('#yaklasanListe').innerHTML = '<div class="bos"><span class="ikon">⚠️</span>Veri alınamadı.<br>' + e.message + '</div>'; }
@@ -570,8 +581,26 @@ async function kaydet(){
 /* ---------- açılış ---------- */
 (function(){
   const kayitli = localStorage.getItem('kiraPin');
-  if(kayitli){ $('#pin').value = kayitli; girisYap(); }
-  $('#pin').focus();
+  if(!kayitli){ $('#pin').focus(); return; }
+  PIN = kayitli;
+  $('#pin').value = kayitli;
+
+  // Önbellekte veri varsa ekranı hemen aç, tazelemeyi arkada yap
+  let acildi = false;
+  try{
+    const ob = JSON.parse(localStorage.getItem('kiraVeri') || 'null');
+    const ku = JSON.parse(localStorage.getItem('kiraKullanici') || 'null');
+    if(ob && ku && Array.isArray(ob.k)){
+      KULLANICI = ku; KAYITLAR = ob.k;
+      uygulamayiAc(); yaklasanCiz(); listeCiz();
+      acildi = true;
+      const dk = Math.round((Date.now() - ob.t) / 60000);
+      if(dk > 2) bildir('Güncelleniyor…');
+    }
+  }catch(e){}
+
+  if(acildi) yukle().catch(()=>{});
+  else girisYap();
 })();
 </script>
 </body>
