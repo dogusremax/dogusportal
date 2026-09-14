@@ -176,6 +176,7 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
       <div class="filtreler">
         <button class="aktif" data-f="aktif" onclick="filtrele(this)">Aktif</button>
         <button data-f="taahhut" onclick="filtrele(this)">Taahhütlü</button>
+        <button data-f="eksik" onclick="filtrele(this)">Tarihi eksik</button>
         <button data-f="pasif" onclick="filtrele(this)">Arşiv</button>
         <button data-f="hepsi" onclick="filtrele(this)">Hepsi</button>
       </div>
@@ -451,6 +452,7 @@ function listeCiz(){
   if(FILTRE === 'aktif')   l = l.filter(k=>k.durum === 'Aktif');
   if(FILTRE === 'pasif')   l = l.filter(k=>k.durum !== 'Aktif');
   if(FILTRE === 'taahhut') l = l.filter(k=>k.taahhut && k.durum === 'Aktif');
+  if(FILTRE === 'eksik')   l = l.filter(k=>k.taahhut && !k.tahliye && k.durum === 'Aktif');
   if(q) l = l.filter(k => (k.adres+' '+k.kiraci+' '+k.sahip+' '+k.danisman).toLocaleLowerCase('tr').includes(q));
 
   l.sort((a,b)=>{
@@ -464,7 +466,10 @@ function listeCiz(){
     const pasif = k.durum !== 'Aktif';
     return '<div class="kart" onclick="detayAc(\''+k.id+'\',\'yenileme\')">'+
       '<div class="satir"><div>'+
-        (pasif ? '<span class="etiket et-pasif">'+k.durum+'</span>' : (k.taahhut?'<span class="etiket et-tahliye">Taahhütlü</span>':''))+
+        (pasif ? '<span class="etiket et-pasif">'+k.durum+'</span>'
+               : k.taahhut ? (k.tahliye ? '<span class="etiket et-tahliye">Taahhütlü</span>'
+                                        : '<span class="etiket et-gecti">Tahliye tarihi girilmedi</span>')
+                           : '')+
         '<div class="adres">'+(k.adres||'-')+'</div>'+
         '<div class="alt">'+(k.kiraci||'-')+(k.kira?' · '+k.kira:'')+'<br>Yenileme: '+trTarih(yen)+'</div>'+
       '</div>'+
