@@ -163,7 +163,10 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
         <h1>Kira Takip</h1>
         <div class="kim" id="kimBilgi"></div>
       </div>
-      <button class="cikis" onclick="cikisYap()">Çıkış</button>
+      <div style="display:flex;gap:7px;flex:none">
+        <button class="cikis" id="yenileBtn" onclick="yukle(true)">Yenile</button>
+        <button class="cikis" onclick="cikisYap()">Çıkış</button>
+      </div>
     </div>
   </header>
 
@@ -397,14 +400,22 @@ function cikisYap(){
   location.reload();
 }
 
-async function yukle(){
+async function yukle(elle){
+  const b = $('#yenileBtn');
+  if(b){ b.textContent = '…'; b.disabled = true; }
   try{
     const j = await istek('list');
     KAYITLAR = j.kayitlar || [];
     onbellegeYaz();
     yaklasanCiz();
     listeCiz();
-  }catch(e){ $('#yaklasanListe').innerHTML = '<div class="bos"><span class="ikon">⚠️</span>Veri alınamadı.<br>' + e.message + '</div>'; }
+    if(elle) bildir(KAYITLAR.length + ' kayıt yüklendi');
+  }catch(e){
+    bildir('Güncellenemedi: ' + e.message);
+    if(!KAYITLAR.length)
+      $('#yaklasanListe').innerHTML = '<div class="bos"><span class="ikon">⚠️</span>Veri alınamadı.<br>' + e.message + '</div>';
+  }
+  if(b){ b.textContent = 'Yenile'; b.disabled = false; }
 }
 
 /* ---------- sekmeler ---------- */
@@ -653,7 +664,7 @@ async function kaydet(){
     }
   }catch(e){}
 
-  if(acildi) yukle().catch(()=>{});
+  if(acildi) yukle();
   else girisYap();
 })();
 </script>
