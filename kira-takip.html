@@ -79,6 +79,15 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
 .et-gecti{background:#f3e8fa;color:var(--mor)}
 .et-pasif{background:#eef1f6;color:var(--soluk)}
 
+.siraCubuk{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.siraCubuk select{flex:1;padding:10px 12px;border:1px solid var(--cizgi);border-radius:11px;
+  background:#fff;font-size:13px;color:var(--metin);outline:none}
+.siraCubuk span{font-size:12px;color:var(--soluk);flex:none}
+.kunye{margin-top:9px;padding-top:9px;border-top:1px solid var(--cizgi);
+  display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px;line-height:1.55}
+.kunye i{color:var(--soluk);font-style:normal}
+.kunye b{font-weight:600;word-break:break-word}
+.kunye .vurgu{color:var(--kirmizi)}
 .bos{text-align:center;color:var(--soluk);padding:50px 20px;font-size:14px;line-height:1.7}
 .bos .ikon{font-size:40px;display:block;margin-bottom:10px}
 
@@ -179,6 +188,16 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
         <button data-f="eksik" onclick="filtrele(this)">Tarihi eksik</button>
         <button data-f="pasif" onclick="filtrele(this)">Arşiv</button>
         <button data-f="hepsi" onclick="filtrele(this)">Hepsi</button>
+      </div>
+      <div class="siraCubuk">
+        <select id="sirala" onchange="listeCiz()">
+          <option value="yenileme">Yenileme tarihine göre</option>
+          <option value="tahliye">Tahliye tarihine göre</option>
+          <option value="baslangic">Sözleşme tarihine göre (yeni önce)</option>
+          <option value="danisman">Danışmana göre</option>
+          <option value="adres">Adrese göre</option>
+        </select>
+        <span id="sayim"></span>
       </div>
       <div id="tumListe"></div>
     </section>
@@ -448,34 +467,64 @@ function yaklasanCiz(){
 
 function listeCiz(){
   const q = ($('#arama').value||'').toLocaleLowerCase('tr');
+  const sira = $('#sirala') ? $('#sirala').value : 'yenileme';
   let l = KAYITLAR.slice();
+
   if(FILTRE === 'aktif')   l = l.filter(k=>k.durum === 'Aktif');
   if(FILTRE === 'pasif')   l = l.filter(k=>k.durum !== 'Aktif');
   if(FILTRE === 'taahhut') l = l.filter(k=>k.taahhut && k.durum === 'Aktif');
   if(FILTRE === 'eksik')   l = l.filter(k=>k.taahhut && !k.tahliye && k.durum === 'Aktif');
   if(q) l = l.filter(k => (k.adres+' '+k.kiraci+' '+k.sahip+' '+k.danisman).toLocaleLowerCase('tr').includes(q));
 
+  const son = '9999-12-31';
   l.sort((a,b)=>{
-    const ga = a.durum==='Aktif'? gunFark(yenilemeTarihi(a.baslangic)) : 9999;
-    const gb = b.durum==='Aktif'? gunFark(yenilemeTarihi(b.baslangic)) : 9999;
-    return ga-gb;
+    if(sira === 'danisman') return (a.danisman||'').localeCompare(b.danisman||'','tr') ||
+                                   (yenilemeTarihi(a.baslangic)||son).localeCompare(yenilemeTarihi(b.baslangic)||son);
+    if(sira === 'adres')     return (a.adres||'').localeCompare(b.adres||'','tr');
+    if(sira === 'baslangic') return (b.baslangic||'').localeCompare(a.baslangic||'');
+    if(sira === 'tahliye')   return (a.tahliye||son).localeCompare(b.tahliye||son);
+    return (yenilemeTarihi(a.baslangic)||son).localeCompare(yenilemeTarihi(b.baslangic)||son);
   });
 
-  $('#tumListe').innerHTML = l.length ? l.map(k=>{
-    const yen = yenilemeTarihi(k.baslangic), g = gunFark(yen);
+  const taahhutlu = l.filter(k=>k.taahhut).length;
+  $('#sayim').textContent = l.length + ' kayıt' + (taahhutlu ? ' · ' + taahhutlu + ' taahhütlü' : '');
+
+  if(!l.length){
+    $('#tumListe').innerHTML = '<div class="bos"><span class="ikon">🔍</span>Kayıt bulunamadı.</div>';
+    return;
+  }
+
+  $('#tumListe').innerHTML = l.map(k=>{
+    const yen = yenilemeTarihi(k.baslangic), gy = gunFark(yen);
+    const gt = k.tahliye ? gunFark(k.tahliye) : null;
     const pasif = k.durum !== 'Aktif';
-    return '<div class="kart" onclick="detayAc(\''+k.id+'\',\'yenileme\')">'+
-      '<div class="satir"><div>'+
-        (pasif ? '<span class="etiket et-pasif">'+k.durum+'</span>'
-               : k.taahhut ? (k.tahliye ? '<span class="etiket et-tahliye">Taahhütlü</span>'
-                                        : '<span class="etiket et-gecti">Tahliye tarihi girilmedi</span>')
-                           : '')+
+    const tahliyeOncelik = (sira === 'tahliye' || FILTRE === 'taahhut') && k.tahliye;
+
+    const rozet = pasif ? '<span class="etiket et-pasif">'+k.durum+'</span>'
+                : k.taahhut ? (k.tahliye ? '<span class="etiket et-tahliye">Taahhütlü · '+trTarih(k.tahliye)+'</span>'
+                                         : '<span class="etiket et-gecti">Tahliye tarihi girilmedi</span>')
+                            : '';
+
+    const sayacGun = tahliyeOncelik ? gt : gy;
+    const sayac = pasif ? '' :
+      '<div class="sayac '+sayacSinif(sayacGun)+'"><b>'+(sayacGun<0?Math.abs(sayacGun):sayacGun)+
+      '</b><span>'+(sayacGun<0?'gün geçti':'gün')+'</span></div>';
+
+    const sat = (e,d,vurgu) => d ? '<i>'+e+'</i><b'+(vurgu?' class="vurgu"':'')+'>'+d+'</b>' : '';
+
+    return '<div class="kart'+(tahliyeOncelik?' tahliye':'')+'" onclick="detayAc(\''+k.id+'\',\''+(tahliyeOncelik?'tahliye':'yenileme')+'\')">'+
+      '<div class="satir"><div>'+rozet+
         '<div class="adres">'+(k.adres||'-')+'</div>'+
-        '<div class="alt">'+(k.kiraci||'-')+(k.kira?' · '+k.kira:'')+'<br>Yenileme: '+trTarih(yen)+'</div>'+
-      '</div>'+
-      (pasif ? '' : '<div class="sayac '+sayacSinif(g)+'"><b>'+g+'</b><span>gün</span></div>')+
+        '<div class="alt">'+(k.danisman||'-')+(k.kira?' · '+k.kira+' ₺':'')+'</div>'+
+      '</div>'+sayac+'</div>'+
+      '<div class="kunye">'+
+        sat('Kiracı', (k.kiraci||'—') + (k.kiraciTel ? ' · '+k.kiraciTel : '')) +
+        sat('Mülk sahibi', (k.sahip||'—') + (k.sahipTel ? ' · '+k.sahipTel : '')) +
+        sat('Sözleşme', trTarih(k.baslangic)) +
+        sat('Yenileme', trTarih(yen) + ' · ' + gy + ' gün') +
+        (k.taahhut ? sat('Tahliye', k.tahliye ? trTarih(k.tahliye) + ' · ' + gt + ' gün' : 'tarih girilmedi', !k.tahliye) : '') +
       '</div></div>';
-  }).join('') : '<div class="bos"><span class="ikon">🔍</span>Kayıt bulunamadı.</div>';
+  }).join('');
 }
 
 /* ---------- detay ---------- */
