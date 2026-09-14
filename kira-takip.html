@@ -233,7 +233,7 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
 
 <script>
 /* ===== AYAR: Apps Script Web App URL'ini buraya yapıştır ===== */
-const API = 'BURAYA_APPS_SCRIPT_URL';
+const API = 'https://script.google.com/macros/s/AKfycbyAib-VsOPJjxW0evButcc8fuZ3A2wcv_NHrRJDHEN8wDH-cl57GPoT7x-q_X-poSr9/exec';
 
 let PIN = '', KULLANICI = null, KAYITLAR = [], FILTRE = 'aktif';
 
@@ -287,7 +287,6 @@ $('#pin').addEventListener('keydown', e => { if(e.key === 'Enter') girisYap(); }
 async function girisYap(){
   const p = $('#pin').value.trim();
   if(!p) return bildir('PIN girin');
-  if(API === 'BURAYA_APPS_SCRIPT_URL') return bildir('Önce API adresini ekleyin');
   PIN = p;
   try{
     const j = await istek('login');
