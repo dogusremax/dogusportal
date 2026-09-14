@@ -33,6 +33,11 @@ button,input,select,textarea{font-family:inherit;font-size:16px}
 .anaBtn{width:100%;margin-top:14px;background:var(--lacivert);color:#fff;border:0;
   padding:15px;border-radius:14px;font-weight:700;font-size:15px;cursor:pointer}
 .anaBtn:active{transform:scale(.98)}
+.anaBtn:disabled{opacity:.6}
+.testBtn{width:100%;margin-top:9px;background:none;border:0;color:#6b7891;
+  font-size:12.5px;text-decoration:underline;cursor:pointer;padding:6px}
+#hata{background:#ffe9eb;color:#a01020;border-radius:12px;padding:12px;
+  font-size:12.5px;line-height:1.6;margin-top:12px;text-align:left}
 
 /* ---- Üst ---- */
 header{background:var(--lacivert);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
@@ -135,7 +140,9 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
     <h1>Kira Takip</h1>
     <p>Yenileme ve tahliye tarihlerini 2 ay önceden hatırlatır</p>
     <input id="pin" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off">
-    <button class="anaBtn" onclick="girisYap()">Gir</button>
+    <button class="anaBtn" id="girBtn" onclick="girisYap()">Gir</button>
+    <div id="hata" class="gizli"></div>
+    <button class="testBtn" onclick="baglantiTest()">Bağlantıyı test et</button>
   </div>
 </div>
 
@@ -271,12 +278,24 @@ function bildir(m){
 }
 
 async function istek(action, ek){
-  const r = await fetch(API, {
-    method:'POST',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(Object.assign({action, pin:PIN}, ek||{}))
-  });
-  const j = await r.json();
+  let ham;
+  try{
+    const r = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(Object.assign({action, pin:PIN}, ek||{}))
+    });
+    ham = await r.text();
+  }catch(ag){
+    throw new Error('Sunucuya ulaşılamadı. İnternet bağlantısını kontrol edin.');
+  }
+  let j;
+  try{ j = JSON.parse(ham); }
+  catch(pe){
+    if(ham.indexOf('accounts.google.com') > -1 || ham.indexOf('<!DOCTYPE') === 0)
+      throw new Error('Dağıtım erişimi "Herkes" değil — Apps Script > Dağıtımları yönet > Erişimi olan: Herkes yapın ve yeni sürüm dağıtın.');
+    throw new Error('Sunucu beklenmedik cevap verdi: ' + ham.slice(0,90));
+  }
   if(!j.ok) throw new Error(j.hata || 'Bilinmeyen hata');
   return j;
 }
@@ -288,6 +307,9 @@ async function girisYap(){
   const p = $('#pin').value.trim();
   if(!p) return bildir('PIN girin');
   PIN = p;
+  const btn = $('#girBtn');
+  btn.textContent = 'Bağlanıyor…'; btn.disabled = true;
+  $('#hata').classList.add('gizli');
   try{
     const j = await istek('login');
     KULLANICI = j.kullanici;
@@ -297,7 +319,35 @@ async function girisYap(){
     $('#kimBilgi').textContent = KULLANICI.ad + (KULLANICI.rol === 'broker' ? ' · tüm ofis' : '');
     if(KULLANICI.rol !== 'broker') $('#f_danisman').value = KULLANICI.ad;
     yukle();
-  }catch(e){ PIN = ''; bildir('PIN hatalı'); }
+  }catch(e){ PIN = ''; hataGoster(e.message); }
+  finally{ btn.textContent = 'Gir'; btn.disabled = false; }
+}
+
+function hataGoster(m){
+  const h = $('#hata'); h.textContent = m; h.classList.remove('gizli');
+}
+
+async function baglantiTest(){
+  const h = $('#hata'); h.classList.remove('gizli');
+  h.style.background = '#eef2f9'; h.style.color = '#16233d';
+  h.textContent = 'Test ediliyor…';
+  try{
+    const r = await fetch(API, {method:'GET'});
+    const t = await r.text();
+    if(t.indexOf('Kira Takip') > -1){
+      h.style.background = '#e6f5ee'; h.style.color = '#0a7d5a';
+      h.textContent = 'Bağlantı çalışıyor. Sorun PIN veya kurulumda.';
+    }else if(t.indexOf('<!DOCTYPE') === 0 || t.indexOf('accounts.google.com') > -1){
+      h.style.background = '#ffe9eb'; h.style.color = '#a01020';
+      h.textContent = 'Dağıtım erişimi "Herkes" değil. Apps Script > Dağıtımları yönet > kalem > Erişimi olan: Herkes > yeni sürüm dağıt.';
+    }else{
+      h.style.background = '#ffe9eb'; h.style.color = '#a01020';
+      h.textContent = 'Beklenmedik cevap: ' + t.slice(0,120);
+    }
+  }catch(e){
+    h.style.background = '#ffe9eb'; h.style.color = '#a01020';
+    h.textContent = 'Adrese hiç ulaşılamadı: ' + e.message;
+  }
 }
 
 function cikisYap(){
@@ -509,6 +559,7 @@ async function kaydet(){
 (function(){
   const kayitli = localStorage.getItem('kiraPin');
   if(kayitli){ $('#pin').value = kayitli; girisYap(); }
+  $('#pin').focus();
 })();
 </script>
 </body>
