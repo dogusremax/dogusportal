@@ -280,14 +280,19 @@ function bildir(m){
 async function istek(action, ek){
   let ham;
   try{
+    const kes = new AbortController();
+    const sayac = setTimeout(()=>kes.abort(), 25000);
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify(Object.assign({action, pin:PIN}, ek||{}))
+      body: JSON.stringify(Object.assign({action, pin:PIN}, ek||{})),
+      signal: kes.signal, redirect:'follow'
     });
     ham = await r.text();
+    clearTimeout(sayac);
   }catch(ag){
-    throw new Error('Sunucuya ulaşılamadı. İnternet bağlantısını kontrol edin.');
+    if(ag.name === 'AbortError') throw new Error('Sunucu 25 saniyede cevap vermedi. Dağıtım yayında değil ya da izin ekranına takılıyor.');
+    throw new Error('Sunucuya ulaşılamadı (' + ag.message + '). Dağıtım erişimi "Herkes" mi, kontrol edin.');
   }
   let j;
   try{ j = JSON.parse(ham); }
@@ -332,8 +337,11 @@ async function baglantiTest(){
   h.style.background = '#eef2f9'; h.style.color = '#16233d';
   h.textContent = 'Test ediliyor…';
   try{
-    const r = await fetch(API, {method:'GET'});
+    const kes = new AbortController();
+    const sayac = setTimeout(()=>kes.abort(), 15000);
+    const r = await fetch(API, {method:'GET', signal:kes.signal, redirect:'follow'});
     const t = await r.text();
+    clearTimeout(sayac);
     if(t.indexOf('Kira Takip') > -1){
       h.style.background = '#e6f5ee'; h.style.color = '#0a7d5a';
       h.textContent = 'Bağlantı çalışıyor. Sorun PIN veya kurulumda.';
@@ -346,7 +354,11 @@ async function baglantiTest(){
     }
   }catch(e){
     h.style.background = '#ffe9eb'; h.style.color = '#a01020';
-    h.textContent = 'Adrese hiç ulaşılamadı: ' + e.message;
+    h.style.background = '#ffe9eb'; h.style.color = '#a01020';
+    h.innerHTML = (e.name === 'AbortError'
+      ? 'Sunucu 15 saniyede cevap vermedi.'
+      : 'Adrese ulaşılamadı: ' + e.message) +
+      '<br><br><a href="' + API + '" target="_blank" style="color:#a01020;font-weight:700">Adresi doğrudan aç</a> — orada {"ok":true} görmelisin. Google giriş ekranı çıkıyorsa dağıtım erişimi "Herkes" değildir.';
   }
 }
 
