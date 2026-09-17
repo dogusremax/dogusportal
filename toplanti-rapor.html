@@ -131,7 +131,9 @@ let DATA=null,ALL_DATA=[],PERIOD=1,AYLIK_CACHE={},KAPANIS_CACHE=null,LOGGED_USER
    Bellek önbelleği sayfa yenilenince siliniyordu; her açılışta 12 aya kadar
    ayrı istek gidiyor, Apps Script uykudan uyanırken uzun sürüyordu.
    Artık localStorage'a yazılıyor: aylık veri 6 saat, kapanış verisi 10 dakika. */
-var CACHE_KEY='perf_cache_v1';
+var CACHE_KEY='perf_cache_v2';   // v2: eski (bayat) telefon önbellekleri geçersiz
+var AYLIK_T={};                  // her ayın SUNUCUDAN çekildiği an
+function buAyKey(){var n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0");}
 var AYLIK_TTL=6*60*60*1000;      // 6 saat — geçmiş aylar zaten değişmez
 var KAPANIS_TTL=10*60*1000;      // 10 dakika
 
@@ -150,7 +152,7 @@ function cacheOku(){
     var simdi=Date.now();
     if(c.aylik){
       for(var m in c.aylik){
-        if(simdi - c.aylik[m].t < AYLIK_TTL) AYLIK_CACHE[m]=c.aylik[m].d;
+        if(simdi - c.aylik[m].t < AYLIK_TTL){ AYLIK_CACHE[m]=c.aylik[m].d; AYLIK_T[m]=c.aylik[m].t; }
       }
     }
     if(c.kapanis && (simdi - c.kapanis.t) < KAPANIS_TTL) KAPANIS_CACHE=c.kapanis.d;
@@ -159,10 +161,8 @@ function cacheOku(){
 function cacheYaz(){
   try{
     var c={aylik:{},kapanis:null},simdi=Date.now();
-    var eski={};
-    try{ eski=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}').aylik||{}; }catch(e){}
     for(var m in AYLIK_CACHE){
-      c.aylik[m]={t:(eski[m]&&eski[m].t)||simdi, d:AYLIK_CACHE[m]};
+      c.aylik[m]={t:AYLIK_T[m]||simdi, d:AYLIK_CACHE[m]};
     }
     if(KAPANIS_CACHE) c.kapanis={t:simdi,d:KAPANIS_CACHE};
     localStorage.setItem(CACHE_KEY,JSON.stringify(c));
@@ -238,10 +238,11 @@ async function loadData(){
     document.getElementById("report").innerHTML='<div class="no-data">Yükleniyor...</div>';
   }
   try{
-    // Sadece önbellekte olmayan ayları çek
-    var toFetch=months.filter(function(m){return !AYLIK_CACHE[m];});
+    // Önbellekte olmayan aylar + İÇİNDE BULUNULAN AY her açılışta sunucudan tazelenir
+    var cur=buAyKey();
+    var toFetch=months.filter(function(m){return !AYLIK_CACHE[m] || m===cur;});
     var promises=[];
-    if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(guvenliJson).then(function(d){if(d&&d.siralama)AYLIK_CACHE[m]=d;return d;}).catch(function(){return null;});})));
+    if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(guvenliJson).then(function(d){if(d&&d.siralama){AYLIK_CACHE[m]=d;AYLIK_T[m]=Date.now();}return d;}).catch(function(){return null;});})));
     else promises.push(Promise.resolve([]));
     if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(guvenliJson).catch(function(){return null;}));
     else promises.push(Promise.resolve(KAPANIS_CACHE));
