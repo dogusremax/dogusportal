@@ -185,6 +185,7 @@ function doLogin(){
   var pin=document.getElementById("pin").value;
   var user=PINS[pin];
   if(!user){document.getElementById("loginErr").textContent="Hatalı PIN";return;}
+  if(user!=="broker"){document.getElementById("loginErr").textContent="Bu uygulama şu anda danışman girişine kapalıdır.";return;}
   LOGGED_USER=user;
   var nameMap={broker:"BROKER (Umut Tokkuş)",aysegul_alpay:"Ayşegül Alpay",aysun:"Aysun Yılmaz",evsen:"Evşen Özazman",gamze:"Gamze Yetkin",gizem:"Gizem Gök",irem:"İrem Aleyna Tetik",orhan:"Orhan Özazman",ozlem_varol:"Özlem Varol"};
   logLogin(nameMap[user]||user);
