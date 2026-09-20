@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050A30">
+<title>Kira Dosyası — RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacivert:#050A30; --kirmizi:#DC1C2E; --kirmizi2:#910B19; --yesil:#0A7D5A; --wa:#25D366;
+  --zemin:#F4F6FA; --kart:#FFF; --yazi:#16203A; --soluk:#6B7689; --cizgi:#E3E8F1;
+  --golge:0 2px 10px rgba(5,10,48,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --zemin:#0C1222; --kart:#151D33; --yazi:#E9EEF8; --soluk:#94A0B8; --cizgi:#243050;
+         --golge:0 2px 12px rgba(0,0,0,.4); }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--zemin);color:var(--yazi);
+  font-family:'Plus Jakarta Sans',-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.wrap{max-width:660px;margin:0 auto}
+header{padding:22px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;margin:0;letter-spacing:-.02em}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--golge)}
+.etiket{display:block;font-size:12px;font-weight:700;color:var(--soluk);margin:0 0 5px}
+input,select{width:100%;font:inherit;font-size:16px;color:var(--yazi);background:transparent;
+  border:1px solid var(--cizgi);border-radius:11px;padding:11px 12px;outline:none;margin-bottom:10px}
+input:focus,select:focus{border-color:var(--kirmizi)}
+.ikili{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sayi{display:flex;gap:6px;margin:0 0 12px}
+.sayi button{flex:1;border:1px solid var(--cizgi);background:transparent;color:var(--yazi);
+  border-radius:10px;padding:10px;font:inherit;font-weight:700;cursor:pointer}
+.sayi button.sec{border-color:var(--kirmizi);background:rgba(220,28,46,.08);color:var(--kirmizi)}
+@media (max-width:430px){ .ikili{grid-template-columns:1fr;gap:0} }
+button{font:inherit;cursor:pointer}
+.ana{width:100%;border:none;border-radius:12px;padding:14px;font-weight:700;font-size:15px;color:#fff;
+  background:linear-gradient(135deg,var(--kirmizi2),var(--kirmizi))}
+.ana.yesil{background:var(--wa)}
+.kck{border:1px solid var(--cizgi);background:transparent;color:var(--yazi);border-radius:10px;
+  padding:9px 12px;font-size:13px;font-weight:700}
+.kck.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.satir{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--cizgi);
+  border-radius:13px;margin-bottom:9px;background:var(--kart)}
+.satir .ort{flex:1;min-width:0}
+.satir .bas{font-weight:700;font-size:14px}
+.satir .alt{font-size:12px;color:var(--soluk);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rozet{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.r-bek{background:rgba(220,28,46,.1);color:var(--kirmizi)}
+.r-ok{background:rgba(10,125,90,.12);color:var(--yesil)}
+.r-kis{background:rgba(255,170,0,.14);color:#9a6b00}
+.grup{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;margin:18px 0 9px}
+.mini{font-size:12px;color:var(--soluk);line-height:1.55}
+.bos{text-align:center;color:var(--soluk);font-size:14px;padding:26px 10px;line-height:1.6}
+.geri{display:inline-flex;gap:6px;color:var(--soluk);text-decoration:none;font-size:13px;font-weight:700;margin-top:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:var(--lacivert);color:#fff;
+  padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:30}
+.toast.gor{opacity:1}
+.veri{font-size:13px;line-height:1.7}
+.veri b{color:var(--soluk);font-weight:600}
+.belgeler{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.belgeler a{font-size:12px;font-weight:700;text-decoration:none;color:var(--yazi);
+  border:1px solid var(--cizgi);border-radius:9px;padding:6px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🗂️ Kira Dosyası</h1>
+    <button class="kck" id="cikis" style="display:none">Çıkış</button>
+  </header>
+  <div id="icerik"></div>
+  <a class="geri" href="https://dogusportal.com">← Portala dön</a>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var API = 'https://script.google.com/macros/s/AKfycbyMU_jau9MsWaYq-nT56GRZRtQrTxjaPlh5qgMifmMbX09jt3U8kVj7lhANx8zieDMqNA/exec';
+var FORM_ADRES = 'https://dogusportal.com/kira-form.html?k=';
+
+var DANISMANLAR = ['Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Gamze Yetkin','Gizem Gök',
+                   'İrem Aleyna Tetik','Orhan Özazman','Özlem Varol','Umut Tokkuş'];
+var ROL_AD = { kiraci:'Kiracı', sahip:'Ev sahibi', kefil:'Kefil' };
+function rolAdi(rol){
+  var kok = String(rol||'').replace(/\d+$/,''), m = String(rol||'').match(/(\d+)$/);
+  var ad = ROL_AD[kok] || rol;
+  return m ? m[1] + '. ' + ad : ad;
+}
+var pin = '', benim = '', $ = function(id){ return document.getElementById(id); };
+
+try { pin = sessionStorage.getItem('kd_pin') || ''; benim = localStorage.getItem('kd_dan') || ''; } catch(e){}
+
+function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
+function api(q){ return fetch(API + q).then(function(r){ return r.json(); }); }
+function apiPost(action, veri){
+  return fetch(API, { method:'POST', body:new URLSearchParams({ action:action, data:JSON.stringify(veri) }) })
+    .then(function(r){ return r.json(); });
+}
+function telWa(v){
+  var d=(v||'').replace(/\D/g,''); if(d.length===10) d='0'+d;
+  if(d.length===12 && d.indexOf('90')===0) d='0'+d.slice(2);
+  return /^05\d{9}$/.test(d) ? '9'+d : '';
+}
+
+/* ---------- giriş ---------- */
+function girisEkrani(mesaj){
+  $('cikis').style.display='none';
+  $('icerik').innerHTML =
+    '<div class="kart"><span class="etiket">Şifren</span>' +
+    '<input id="pin" type="password" inputmode="numeric" placeholder="••••">' +
+    '<span class="etiket">Danışman</span><select id="dan">' +
+    DANISMANLAR.map(function(d){ return '<option'+(d===benim?' selected':'')+'>'+d+'</option>'; }).join('') +
+    '</select><button class="ana" id="gir">Giriş</button>' +
+    (mesaj ? '<p class="mini" style="margin-top:10px;color:var(--kirmizi)">'+mesaj+'</p>' : '') + '</div>';
+  $('gir').onclick = function(){
+    pin = $('pin').value.trim(); benim = $('dan').value;
+    try { sessionStorage.setItem('kd_pin', pin); localStorage.setItem('kd_dan', benim); } catch(e){}
+    listeEkrani();
+  };
+  $('pin').addEventListener('keydown', function(e){ if(e.key==='Enter') $('gir').click(); });
+}
+
+/* ---------- dosya listesi ---------- */
+function listeEkrani(){
+  $('cikis').style.display='block';
+  $('icerik').innerHTML = '<div class="bos">Dosyalar yükleniyor…</div>';
+  api('?action=liste&pin=' + encodeURIComponent(pin) + '&danisman=' + encodeURIComponent(benim)).then(function(d){
+    if(!d.ok){ girisEkrani(d.hata || 'Şifre hatalı.'); return; }
+    var h = '<button class="ana" id="yeni">+ Yeni kira dosyası</button>' +
+            '<div class="grup">Dosyalar</div>';
+    h += d.liste.length ? d.liste.map(function(x){
+      var s = String(x.durum||'');
+      var sinif = s==='Tamamlandı' ? 'r-ok' : (s==='Bekliyor' ? 'r-bek' : 'r-kis');
+      return '<div class="satir" data-no="'+x.no+'"><div class="ort">' +
+             '<div class="bas">'+(x.adres||'Adres girilmemiş')+'</div>' +
+             '<div class="alt">'+x.no+' · '+(x.danisman||'')+' · '+(x.kiraci||'')+'</div></div>' +
+             '<span class="rozet '+sinif+'">'+s+'</span></div>';
+    }).join('') : '<div class="bos">Henüz dosya yok. Yukarıdan yeni dosya açabilirsin.</div>';
+    $('icerik').innerHTML = h;
+    $('yeni').onclick = yeniEkrani;
+    Array.prototype.forEach.call(document.querySelectorAll('.satir[data-no]'), function(el){
+      el.onclick = function(){ dosyaEkrani(el.dataset.no); };
+    });
+  }).catch(function(){ $('icerik').innerHTML = '<div class="bos">Bağlantı kurulamadı.</div>'; });
+}
+
+/* ---------- yeni dosya ---------- */
+function yeniEkrani(){
+  $('icerik').innerHTML =
+    '<div class="kart">' +
+    '<span class="etiket">Mülk adresi</span><input id="adres" placeholder="Emlak Konut 6. Etap A Blok D:10">' +
+    '<span class="etiket">Kaç kiracı?</span>' +
+    '<div class="sayi" id="kcSayi">' + [1,2,3].map(function(n){
+        return '<button type="button" data-n="'+n+'"'+(n===1?' class="sec"':'')+'>'+n+' kiracı</button>'; }).join('') + '</div>' +
+    '<div id="kcKutu"></div>' +
+    '<span class="etiket">Kaç mülk sahibi?</span>' +
+    '<div class="sayi" id="kvSayi">' + [1,2,3].map(function(n){
+        return '<button type="button" data-n="'+n+'"'+(n===1?' class="sec"':'')+'>'+n+' mülk sahibi</button>'; }).join('') + '</div>' +
+    '<div id="kvKutu"></div>' +
+    '<label class="etiket" style="display:flex;gap:9px;align-items:center;margin:4px 0 10px;font-size:14px;color:var(--yazi)">' +
+      '<input type="checkbox" id="kefilVar" style="width:20px;height:20px;margin:0;accent-color:var(--kirmizi)"> Kefil istenecek</label>' +
+    '<div class="ikili" id="kefilKutu" style="display:none">' +
+      '<div><span class="etiket">Kefil adı</span><input id="fad"></div>' +
+      '<div><span class="etiket">Kefil telefonu</span><input id="ftel" inputmode="tel"></div>' +
+    '</div>' +
+    '<button class="ana" id="ac">Dosyayı aç ve linkleri üret</button>' +
+    '<p class="mini" style="margin-top:10px">Linkler ' + '72' + ' saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
+    '</div>' +
+    '<button class="kck" id="vazgec">← Listeye dön</button>';
+  $('kefilVar').onchange = function(e){ $('kefilKutu').style.display = e.target.checked ? 'grid' : 'none'; };
+  var sayilar = { kiraci: 1, sahip: 1 };
+  function tarafSatirlari(kok, kutu, baslik, ornekAd){
+    var h = '';
+    for (var i = 1; i <= sayilar[kok]; i++) {
+      var rol = i === 1 ? kok : kok + i;
+      var on  = sayilar[kok] > 1 ? i + '. ' : '';
+      h += '<div class="ikili">' +
+             '<div><span class="etiket">' + on + baslik + ' adı</span>' +
+               '<input id="ad_' + rol + '" placeholder="' + (i === 1 ? ornekAd : '') + '"></div>' +
+             '<div><span class="etiket">' + on + baslik + ' telefonu</span>' +
+               '<input id="tel_' + rol + '" inputmode="tel" placeholder="0 (5__) ___ __ __"></div>' +
+           '</div>';
+    }
+    $(kutu).innerHTML = h;
+  }
+  function sayiBagla(kutuId, kok, baslik, ornekAd, hedefKutu){
+    Array.prototype.forEach.call($(kutuId).children, function(b){
+      b.onclick = function(){
+        sayilar[kok] = Number(b.dataset.n);
+        Array.prototype.forEach.call($(kutuId).children, function(x){ x.className = ''; });
+        b.className = 'sec';
+        tarafSatirlari(kok, hedefKutu, baslik, ornekAd);
+      };
+    });
+    tarafSatirlari(kok, hedefKutu, baslik, ornekAd);
+  }
+  sayiBagla('kcSayi', 'kiraci', 'Kiracı', 'Ayşe Yılmaz', 'kcKutu');
+  sayiBagla('kvSayi', 'sahip',  'Mülk sahibi', 'Mehmet Demir', 'kvKutu');
+  $('vazgec').onclick = listeEkrani;
+  $('ac').onclick = function(){
+    var deger = function(id){ var e = $(id); return e ? e.value.trim() : ''; };
+    var v = { danisman: benim, adres: $('adres').value.trim(),
+              kiraciAd: deger('ad_kiraci'), sahipAd: deger('ad_sahip'),
+              kiraciSayi: sayilar.kiraci, sahipSayi: sayilar.sahip,
+              kefilVar: $('kefilVar').checked };
+    if(!v.adres){ toast('Mülk adresi gerekli'); return; }
+    $('ac').disabled = true; $('ac').textContent = 'Açılıyor…';
+    var tel = {}, ad = {};
+    ['kiraci','sahip'].forEach(function(kok){
+      for (var i = 1; i <= sayilar[kok]; i++) {
+        var rol = i === 1 ? kok : kok + i;
+        ad[rol]  = deger('ad_'  + rol);
+        tel[rol] = deger('tel_' + rol);
+      }
+    });
+    if ($('kefilVar').checked) { ad.kefil = deger('fad'); tel.kefil = deger('ftel'); }
+    apiPost('dosyaAc', v).then(function(c){
+      if(!c.ok){ toast(c.hata||'Dosya açılamadı'); $('ac').disabled=false; $('ac').textContent='Dosyayı aç ve linkleri üret'; return; }
+      try{ sessionStorage.setItem('kd_tel_'+c.dosyaNo, JSON.stringify({tel:tel, ad:ad})); }catch(e){}
+      dosyaEkrani(c.dosyaNo);
+    });
+  };
+}
+
+/* ---------- dosya detayı ---------- */
+function dosyaEkrani(no){
+  $('icerik').innerHTML = '<div class="bos">Dosya açılıyor…</div>';
+  api('?action=dosya&no=' + encodeURIComponent(no) + '&pin=' + encodeURIComponent(pin)).then(function(d){
+    if(!d.ok){ toast(d.hata||'Açılamadı'); listeEkrani(); return; }
+    var kayit = {}; try{ kayit = JSON.parse(sessionStorage.getItem('kd_tel_'+no) || '{}'); }catch(e){}
+    var h = '<div class="kart"><div class="bas" style="font-weight:800;font-size:16px">' + (d.dosya.adres||'-') + '</div>' +
+            '<div class="mini" style="margin-top:4px">' + d.dosya.no + ' · ' + (d.dosya.danisman||'') + ' · Durum: ' + d.dosya.durum + '</div></div>';
+
+    (d.roller || ['kiraci','sahip','kefil']).forEach(function(rol){
+      var t = d.taraflar[rol]; if(!t) return;
+      var gonderildi = t.durum === 'Gönderildi';
+      var ad = (t.veri && t.veri.ad) || (kayit.ad && kayit.ad[rol]) || '';
+      h += '<div class="grup">' + ((d.rolAdlari && d.rolAdlari[rol]) || rolAdi(rol)) + (ad ? ' — ' + ad : '') + '</div><div class="kart">';
+      if(gonderildi){
+        h += '<div class="veri">' + Object.keys(t.veri||{}).map(function(k){
+               return '<div><b>' + k + ':</b> ' + t.veri[k] + '</div>'; }).join('') + '</div>';
+        var bl = t.belgeler||{}; var bh = '';
+        Object.keys(bl).forEach(function(k){ (bl[k]||[]).forEach(function(link,i){
+          bh += '<a href="'+link+'" target="_blank" rel="noopener">📎 '+k+(i?' '+(i+1):'')+'</a>'; }); });
+        if(bh) h += '<div class="belgeler">'+bh+'</div>';
+      } else {
+        var link = FORM_ADRES + t.token;
+        var tel = telWa((kayit.tel && kayit.tel[rol]) || '');
+        var mesaj = 'Merhaba' + (ad ? ' ' + ad : '') + ', RE/MAX Doğuş\'tan ' + (d.dosya.danisman||'') + '. ' +
+          (d.dosya.adres ? d.dosya.adres + ' için ' : '') + 'kira sözleşmesini hazırlayabilmemiz için bilgi formunu ' +
+          'doldurup kimliğinizin ön ve arka yüzünü yükleyebilir misiniz? Formu telefondan 3 dakikada doldurabilirsiniz:\n\n' +
+          link + '\n\nBağlantı 72 saat geçerlidir.';
+        h += '<p class="mini" style="margin:0 0 10px">Form henüz doldurulmadı.</p>' +
+             '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+               (tel ? '<button class="kck wa" data-wa="'+encodeURIComponent(mesaj)+'" data-tel="'+tel+'">WhatsApp\'tan gönder</button>' : '') +
+               '<button class="kck" data-kopya="'+encodeURIComponent(link)+'">Linki kopyala</button>' +
+               '<button class="kck" data-ac="'+encodeURIComponent(link)+'">Ben dolduracağım</button>' +
+               '<button class="kck" data-yenile="'+rol+'">Yeni link üret</button>' +
+             '</div>';
+      }
+      h += '</div>';
+    });
+
+    h += '<button class="kck" id="geri">← Listeye dön</button>';
+    $('icerik').innerHTML = h;
+    $('geri').onclick = listeEkrani;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'), function(b){
+      b.onclick = function(){ window.open('https://wa.me/'+b.dataset.tel+'?text='+b.dataset.wa,'_blank'); };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-kopya]'), function(b){
+      b.onclick = function(){
+        var v = decodeURIComponent(b.dataset.kopya);
+        if(navigator.clipboard) navigator.clipboard.writeText(v).then(function(){ toast('Link kopyalandı'); });
+        else { prompt('Linki kopyala:', v); }
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ac]'), function(b){
+      b.onclick = function(){ window.open(decodeURIComponent(b.dataset.ac),'_blank'); };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-yenile]'), function(b){
+      b.onclick = function(){
+        b.disabled = true; b.textContent = 'Üretiliyor…';
+        apiPost('linkYenile', { dosyaNo: no, rol: b.dataset.yenile }).then(function(c){
+          c.ok ? dosyaEkrani(no) : toast(c.hata||'Üretilemedi');
+        });
+      };
+    });
+  });
+}
+
+$('cikis').onclick = function(){
+  pin=''; try{ sessionStorage.removeItem('kd_pin'); }catch(e){}
+  girisEkrani();
+};
+
+/* açılış */
+var url = new URLSearchParams(location.search);
+if(url.get('no') && pin) dosyaEkrani(url.get('no'));
+else if(pin) listeEkrani();
+else girisEkrani();
+</script>
+</body>
+</html>

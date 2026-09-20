@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050A30">
+<title>Kira Evrak Listesi — RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacivert:#050A30; --kirmizi:#DC1C2E; --kirmizi2:#910B19;
+  --zemin:#F4F6FA; --kart:#FFFFFF; --yazi:#16203A; --soluk:#6B7689; --cizgi:#E6EAF2;
+  --yesil:#25D366; --golge:0 2px 10px rgba(5,10,48,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --zemin:#0C1222; --kart:#151D33; --yazi:#E9EEF8; --soluk:#94A0B8; --cizgi:#243050;
+         --golge:0 2px 12px rgba(0,0,0,.4); }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--zemin);color:var(--yazi);
+  font-family:'Plus Jakarta Sans',-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  padding:0 16px calc(120px + env(safe-area-inset-bottom));}
+.wrap{max-width:640px;margin:0 auto}
+header{padding:22px 0 14px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;margin:0 0 4px;letter-spacing:-.02em}
+header p{margin:0;color:var(--soluk);font-size:13px;line-height:1.5}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--golge)}
+.etiket{font-size:12px;font-weight:700;color:var(--soluk);letter-spacing:.02em;margin:0 0 6px;display:block}
+input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--yazi);background:transparent;
+  border:1px solid var(--cizgi);border-radius:11px;padding:11px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--kirmizi)}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--soluk) 50%),linear-gradient(135deg,var(--soluk) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 20px,calc(100% - 13px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:36px}
+.ikili{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){ .ikili{grid-template-columns:1fr} }
+.sekmeler{display:flex;gap:8px;background:var(--kart);border:1px solid var(--cizgi);border-radius:14px;padding:5px;margin-bottom:12px;box-shadow:var(--golge)}
+.sekme{flex:1;border:none;background:transparent;color:var(--soluk);font:inherit;font-weight:700;font-size:13px;
+  padding:10px 6px;border-radius:10px;cursor:pointer;transition:.15s}
+.sekme.aktif{background:linear-gradient(135deg,var(--kirmizi2),var(--kirmizi));color:#fff;box-shadow:0 3px 10px rgba(220,28,46,.3)}
+.grup{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
+.satir{display:flex;gap:11px;align-items:flex-start;padding:11px 12px;border:1px solid var(--cizgi);border-radius:12px;
+  background:var(--kart);margin-bottom:8px;cursor:pointer;transition:.15s}
+.satir.kapali{opacity:.42}
+.satir input{width:21px;height:21px;flex:0 0 21px;margin:1px 0 0;accent-color:var(--kirmizi)}
+.satir .ad{font-size:14px;font-weight:600;line-height:1.35}
+.satir .alt{font-size:12px;color:var(--soluk);margin-top:2px;line-height:1.4}
+.onizleme{white-space:pre-wrap;font-size:13px;line-height:1.55;color:var(--yazi);
+  background:var(--zemin);border:1px dashed var(--cizgi);border-radius:12px;padding:12px;max-height:230px;overflow:auto}
+.alt-bar{position:fixed;left:0;right:0;bottom:0;background:var(--kart);border-top:1px solid var(--cizgi);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:9px;z-index:9}
+.alt-bar .ic{max-width:640px;margin:0 auto;display:flex;gap:9px;width:100%}
+button.ana{flex:1;border:none;border-radius:13px;padding:14px;font:inherit;font-weight:700;font-size:15px;color:#fff;
+  background:var(--yesil);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+button.ikincil{border:1px solid var(--cizgi);background:transparent;color:var(--yazi);border-radius:13px;padding:14px 16px;
+  font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.uyari{font-size:12px;color:var(--soluk);margin-top:8px;line-height:1.5}
+.geri{display:inline-flex;align-items:center;gap:6px;color:var(--soluk);text-decoration:none;font-size:13px;font-weight:600;margin-top:18px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:var(--lacivert);color:#fff;
+  padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.toast.gor{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📄 Kira Evrak Listesi</h1>
+    <p>Kiracı, ev sahibi ve kefilden istenecek belgeleri seç, tek dokunuşla WhatsApp'tan gönder.</p>
+  </header>
+
+  <div class="sekmeler" id="sekmeler"></div>
+
+  <div class="kart">
+    <div class="ikili">
+      <div>
+        <span class="etiket">Alıcının adı</span>
+        <input id="ad" placeholder="Ayşe Yılmaz" autocomplete="off">
+      </div>
+      <div>
+        <span class="etiket">Cep telefonu</span>
+        <input id="tel" inputmode="tel" placeholder="0 (5__) ___ __ __">
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <span class="etiket">Alıcının e-postası (isteğe bağlı)</span>
+      <input id="aliciMail" type="email" inputmode="email" autocapitalize="off" autocomplete="off" placeholder="ayse@ornek.com">
+    </div>
+    <div style="margin-top:10px">
+      <span class="etiket">Mülk (isteğe bağlı)</span>
+      <input id="adres" placeholder="Emlak Konut 6. Etap A Blok D:10" autocomplete="off">
+    </div>
+    <div class="ikili" style="margin-top:10px">
+      <div>
+        <span class="etiket">Gönderen danışman</span>
+        <select id="danisman"></select>
+      </div>
+      <div>
+        <span class="etiket">E-posta adresin</span>
+        <input id="mail" type="email" inputmode="email" autocapitalize="off" autocomplete="off" placeholder="ad@remaxdogus.com.tr">
+      </div>
+    </div>
+  </div>
+
+  <div id="liste"></div>
+
+  <div class="kart">
+    <span class="etiket">Gidecek mesaj</span>
+    <div class="onizleme" id="onizleme"></div>
+    <div class="uyari">Mesaj WhatsApp'ta hazır açılır, göndermeden önce düzenleyebilirsin.</div>
+  </div>
+
+  <a class="geri" href="https://dogusportal.com">← Portala dön</a>
+</div>
+
+<div class="alt-bar"><div class="ic">
+  <button class="ikincil" id="kopyala">Kopyala</button>
+  <button class="ikincil" id="mailGonder" title="E-posta ile gönder">✉️ E-posta</button>
+  <button class="ana" id="gonder">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.8 14.2c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.2.2-3.5-.7-2.9-1.2-4.8-4.2-5-4.4-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 .9c.2.1.4.2.5.3.1.2.1.8-.1 1.5z"/></svg>
+    WhatsApp'tan gönder
+  </button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Danışmanlar (ad → kendi cebi) ---------- */
+var DANISMANLAR = [
+  ['Ayşegül Alpay','0532 456 79 56'],
+  ['Aysun Yılmaz','0532 363 35 54'],
+  ['Evşen Özazman','0532 518 11 67'],
+  ['Gamze Yetkin','0538 354 41 65'],
+  ['Gizem Gök','0507 097 74 31'],
+  ['İrem Aleyna Tetik','0546 281 91 77'],
+  ['Orhan Özazman','0533 436 19 95'],
+  ['Özlem Varol','0533 624 85 98'],
+  ['Umut Tokkuş','0532 472 41 48']
+];
+
+/* ---------- Evrak listeleri ---------- */
+var LISTELER = {
+  kiraci: { ad:'Kiracı', emoji:'👤', gruplar:[
+    { baslik:'Kimlik ve ikamet', maddeler:[
+      ['Kimliğin ön ve arka yüzü','Dört köşesi tam görünen, net ve okunaklı fotoğraf'],
+      ['Yerleşim yeri (ikametgah) belgesi','e-Devlet\'ten alınabilir'],
+      ['Evli ise evlilik cüzdanı fotokopisi','Bekarsa gerekmiyor']
+    ]},
+    { baslik:'Gelir ve iş', maddeler:[
+      ['Son 3 aylık maaş bordrosu','Esnaf veya şirket sahibi ise vergi levhası'],
+      ['SGK hizmet dökümü','e-Devlet\'ten "SGK Tescil ve Hizmet Dökümü"'],
+      ['İş yeri bilgisi','Çalıştığı kurum, görevi ve iş telefonu']
+    ]},
+    { baslik:'İletişim', maddeler:[
+      ['Cep telefonu ve e-posta','Sözleşmeye yazılacak'],
+      ['Bir yakınının iletişim bilgisi','Acil durumlar için, isteğe bağlı']
+    ]}
+  ]},
+  sahip: { ad:'Ev sahibi', emoji:'🏠', gruplar:[
+    { baslik:'Kimlik ve mülkiyet', maddeler:[
+      ['Kimliğin ön ve arka yüzü','Dört köşesi tam görünen, net ve okunaklı fotoğraf'],
+      ['Tapu fotokopisi','Ada, parsel, blok, kat ve daire bilgisi görünmeli'],
+      ['Vekaletle işlem yapılacaksa vekaletname','Vekilin kimlik fotokopisiyle birlikte']
+    ]},
+    { baslik:'Ödeme ve konut', maddeler:[
+      ['IBAN numarası','Kira ödemeleri banka üzerinden yapılacak'],
+      ['DASK poliçesi','Zorunlu deprem sigortası, güncel olmalı'],
+      ['Abone bilgileri','Elektrik, su ve doğalgaz tesisat numaraları'],
+      ['Aidat tutarı ve yönetim iletişimi','Site veya apartman yönetimi']
+    ]}
+  ]},
+  kefil: { ad:'Kefil', emoji:'🤝', gruplar:[
+    { baslik:'Kefil belgeleri', maddeler:[
+      ['Kimliğin ön ve arka yüzü','Dört köşesi tam görünen, net ve okunaklı fotoğraf'],
+      ['Yerleşim yeri (ikametgah) belgesi','e-Devlet\'ten alınabilir'],
+      ['Gelir belgesi','Maaş bordrosu, vergi levhası veya emekli maaş dökümü'],
+      ['Cep telefonu','Sözleşmeye yazılacak'],
+      ['Evli ise eşinin rızası','Kefalet için eş muvafakati gerekir']
+    ]}
+  ]}
+};
+
+/* ---------- Durum ---------- */
+var aktif = 'kiraci';
+var secili = {};   // 'kiraci|2' → true/false
+var $ = function(id){ return document.getElementById(id); };
+
+function anahtar(tip,g,m){ return tip+'|'+g+'|'+m; }
+
+function sekmeleriCiz(){
+  $('sekmeler').innerHTML = Object.keys(LISTELER).map(function(t){
+    return '<button class="sekme'+(t===aktif?' aktif':'')+'" data-t="'+t+'">'+LISTELER[t].emoji+' '+LISTELER[t].ad+'</button>';
+  }).join('');
+  Array.prototype.forEach.call($('sekmeler').children, function(b){
+    b.onclick = function(){ aktif = b.dataset.t; sekmeleriCiz(); listeCiz(); onizle(); };
+  });
+}
+
+function listeCiz(){
+  var L = LISTELER[aktif], h = '';
+  L.gruplar.forEach(function(g,gi){
+    h += '<div class="grup">'+g.baslik+'</div>';
+    g.maddeler.forEach(function(m,mi){
+      var k = anahtar(aktif,gi,mi);
+      if(secili[k] === undefined) secili[k] = true;
+      h += '<label class="satir'+(secili[k]?'':' kapali')+'" data-k="'+k+'">'+
+             '<input type="checkbox"'+(secili[k]?' checked':'')+'>'+
+             '<span><span class="ad">'+m[0]+'</span><span class="alt">'+m[1]+'</span></span>'+
+           '</label>';
+    });
+  });
+  $('liste').innerHTML = h;
+  Array.prototype.forEach.call($('liste').querySelectorAll('.satir'), function(el){
+    el.querySelector('input').onchange = function(e){
+      secili[el.dataset.k] = e.target.checked;
+      el.classList.toggle('kapali', !e.target.checked);
+      onizle();
+    };
+  });
+}
+
+function hitap(ad){
+  ad = (ad||'').trim();
+  return ad ? 'Merhaba ' + ad : 'Merhaba';
+}
+
+function mesaj(){
+  var L = LISTELER[aktif];
+  var dan = $('danisman').value || '';
+  var danTel = (DANISMANLAR.filter(function(d){ return d[0]===dan; })[0]||['',''])[1];
+  var adres = $('adres').value.trim();
+  var satirlar = [];
+  L.gruplar.forEach(function(g,gi){
+    var alt = [];
+    g.maddeler.forEach(function(m,mi){ if(secili[anahtar(aktif,gi,mi)]) alt.push('• ' + m[0]); });
+    if(alt.length){ satirlar.push('*' + g.baslik + '*'); satirlar.push(alt.join('\n')); satirlar.push(''); }
+  });
+  if(!satirlar.length) return '';
+  var giris = hitap($('ad').value) + ', RE/MAX Doğuş\'tan ' + (dan || '') + '. ' +
+    (adres ? adres + ' için kira ' : 'Kira ') + 'sözleşmesini hazırlayabilmemiz için sizden istediğimiz belgeler:';
+  var foto = '*Fotoğrafları çekerken:* Belgeyi düz bir zemine koyup tepeden çekin. Dört köşesi de kareye girsin, ' +
+             'yazılar net okunsun. Köşesi kesik, eğik ya da flaş parlamalı fotoğraflar resmi işlemlerde kabul edilmiyor.\n\n';
+  var mail = ($('mail').value || '').trim();
+  var kapanis = foto + 'Belgeleri bu numaraya WhatsApp\'tan' + (mail ? ' ya da ' + mail + ' adresine e-posta ile' : '') +
+    ' iletebilirsiniz. Eksik olan bir şey olursa birlikte tamamlarız.\n\n' +
+    dan + (danTel ? ' · ' + danTel : '') + (mail ? '\n' + mail : '') +
+    '\nRE/MAX Doğuş · 0216 315 15 15';
+  return giris + '\n\n' + satirlar.join('\n') + '\n' + kapanis;
+}
+
+function onizle(){
+  var m = mesaj();
+  $('onizleme').textContent = m || 'Hiç belge seçilmedi.';
+  var telOk = !!cepNo($('tel').value);
+  $('gonder').disabled = !m || !telOk;
+  $('kopyala').disabled = !m;
+  $('mailGonder').disabled = !m || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(($('aliciMail').value||'').trim());
+}
+
+/* 0 (532) 472 41 48 biçimlendirme */
+function telBicim(v){
+  var d = (v||'').replace(/\D/g,'').slice(0,11);
+  if(!d) return '';
+  if(d[0] !== '0') d = '0' + d.slice(0,10);
+  var r = d[0];
+  if(d.length>1) r += ' (' + d.slice(1,4);
+  if(d.length>=4) r += ') ';
+  if(d.length>4) r += d.slice(4,7);
+  if(d.length>7) r += ' ' + d.slice(7,9);
+  if(d.length>9) r += ' ' + d.slice(9,11);
+  return r;
+}
+/* sadece cep → 905XXXXXXXXX */
+function cepNo(v){
+  var d = (v||'').replace(/\D/g,'');
+  if(d.length===10) d = '0'+d;
+  if(d.length===12 && d.indexOf('90')===0) d = '0'+d.slice(2);
+  return /^05\d{9}$/.test(d) ? '9'+d : '';
+}
+
+function toast(t){
+  var el = $('toast'); el.textContent = t; el.classList.add('gor');
+  setTimeout(function(){ el.classList.remove('gor'); }, 1800);
+}
+
+/* ---------- Başlat ---------- */
+$('danisman').innerHTML = '<option value="">Seçiniz…</option>' +
+  DANISMANLAR.map(function(d){ return '<option>'+d[0]+'</option>'; }).join('');
+try{ var son = localStorage.getItem('ke_danisman'); if(son) $('danisman').value = son; }catch(e){}
+mailYukle();
+
+function mailYukle(){
+  var d = $('danisman').value;
+  try{ $('mail').value = localStorage.getItem('ke_mail_' + d) || ''; }catch(e){}
+}
+$('danisman').onchange = function(){
+  try{ localStorage.setItem('ke_danisman', $('danisman').value); }catch(e){}
+  mailYukle(); onizle();
+};
+$('mail').oninput = function(){
+  var d = $('danisman').value;
+  if(d){ try{ localStorage.setItem('ke_mail_' + d, $('mail').value.trim()); }catch(e){} }
+  onizle();
+};
+$('ad').oninput = onizle;
+$('adres').oninput = onizle;
+$('aliciMail').oninput = onizle;
+$('tel').oninput = function(e){ e.target.value = telBicim(e.target.value); onizle(); };
+
+$('gonder').onclick = function(){
+  var tel = cepNo($('tel').value), m = mesaj();
+  if(!tel){ toast('Geçerli bir cep numarası gir'); return; }
+  if(!$('danisman').value){ toast('Danışman seç'); return; }
+  window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(m), '_blank');
+};
+
+$('mailGonder').onclick = function(){
+  var m = mesaj(); if(!m) return;
+  var hedef = ($('aliciMail').value || '').trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(hedef)){ toast('Alıcının e-postasını gir'); return; }
+  var adres = $('adres').value.trim();
+  var konu = 'Kira sözleşmesi için gerekli belgeler' + (adres ? ' — ' + adres : '');
+  // WhatsApp kalın işaretlerini e-postada gösterme
+  var govde = m.replace(/\*/g, '');
+  location.href = 'mailto:' + encodeURIComponent(hedef) +
+    '?subject=' + encodeURIComponent(konu) + '&body=' + encodeURIComponent(govde);
+};
+
+$('kopyala').onclick = function(){
+  var m = mesaj();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(m).then(function(){ toast('Mesaj kopyalandı'); },
+      function(){ toast('Kopyalanamadı'); });
+  }else{
+    var t = document.createElement('textarea'); t.value = m; document.body.appendChild(t);
+    t.select(); try{ document.execCommand('copy'); toast('Mesaj kopyalandı'); }catch(e){ toast('Kopyalanamadı'); }
+    document.body.removeChild(t);
+  }
+};
+
+sekmeleriCiz(); listeCiz(); onizle();
+</script>
+</body>
+</html>
