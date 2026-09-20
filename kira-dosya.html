@@ -31,10 +31,6 @@ input,select{width:100%;font:inherit;font-size:16px;color:var(--yazi);background
   border:1px solid var(--cizgi);border-radius:11px;padding:11px 12px;outline:none;margin-bottom:10px}
 input:focus,select:focus{border-color:var(--kirmizi)}
 .ikili{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sayi{display:flex;gap:6px;margin:0 0 12px}
-.sayi button{flex:1;border:1px solid var(--cizgi);background:transparent;color:var(--yazi);
-  border-radius:10px;padding:10px;font:inherit;font-weight:700;cursor:pointer}
-.sayi button.sec{border-color:var(--kirmizi);background:rgba(220,28,46,.08);color:var(--kirmizi)}
 @media (max-width:430px){ .ikili{grid-template-columns:1fr;gap:0} }
 button{font:inherit;cursor:pointer}
 .ana{width:100%;border:none;border-radius:12px;padding:14px;font-weight:700;font-size:15px;color:#fff;
@@ -148,17 +144,104 @@ function listeEkrani(){
 }
 
 /* ---------- yeni dosya ---------- */
+/* Kapanış formundaki adres düzeniyle aynı */
+var SITELER = ['1071 Kadıköy','Akasya Acıbadem','Alya Life Residence','Anka Evim Kadıköy','Brooklyn Life',
+  'Brooklyn Park','Concord İstanbul','Evinpark Kadıköy','Fortis Sinanlı','İki Yaka Fikirtepe','İstanbul 216',
+  'Mina Towers','Obaköy Haldız','Optimist Residence','Pırlanta Göztepe','Renovia İstanbul','Şua Elite Concept',
+  'The Mandarins','Torkam Sitesi','Uplife Kadıköy','Emlak Konut Yenifikirtepe','Nuhoğlu Yenitepe'];
+var ETAPLI_SITELER = { 'Emlak Konut Yenifikirtepe': 19, 'Nuhoğlu Yenitepe': 2, 'Concord İstanbul': 2, 'İstanbul 216': 2 };
+var ILCELER = ['Kadıköy','Ataşehir','Üsküdar','Maltepe','Ümraniye','Çekmeköy','Tuzla','Pendik','Kartal',
+  'Beykoz','Sancaktepe','Sultanbeyli','Şile','Adalar','Kuzey Kıbrıs'];
+var MAHALLELER = ['Dumlupınar','Fikirtepe','Merdivenköy','Eğitim','Acıbadem','Caddebostan','Bostancı','Rasimpaşa',
+  'Göztepe','Erenköy','Suadiye','Kozyatağı','Bulgurlu','Örnek','Esatpaşa','İçerenköy','Altıntepe','Küçükyalı',
+  'Aydıntepe','Tepeören'];
+
+function kelimeBuyut(el){
+  var p = el.selectionStart;
+  el.value = el.value.replace(/(?:^|\s)\S/g, function(c){ return c.toLocaleUpperCase('tr'); });
+  try { el.setSelectionRange(p, p); } catch(e){}
+}
+
+function adresKur(){
+  var g = function(id){ var e = $(id); return e ? e.value.trim() : ''; };
+  var ilce = g('f-ilce'), mahalle = g('f-mahalle');
+  var siteSec = g('f-site'), site = (siteSec === '__diger') ? '' : siteSec;
+  var etap = g('f-etap'), sokak = g('f-sokak'), blok = g('f-blok'), daire = g('f-daire');
+  var p = [];
+  if (ilce && mahalle) p.push(ilce + ' / ' + mahalle);
+  else if (ilce || mahalle) p.push(ilce || mahalle);
+  if (site) {
+    var s2 = site;
+    if (etap) s2 += /^\d+$/.test(etap) ? (' ' + etap + '. Etap') : (' ' + etap);
+    p.push(s2);
+  } else if (etap) {
+    p.push(/^\d+$/.test(etap) ? (etap + '. Etap') : etap);
+  }
+  if (sokak) p.push(sokak);
+  var bd = [];
+  if (blok) bd.push(blok + ' Blok');
+  if (daire) bd.push('Daire ' + daire);
+  if (bd.length) p.push(bd.join(' '));
+  var el = $('adres');
+  if (el) el.value = p.join(' \u00b7 ');
+}
+
+function siteDegisti(){
+  var sel = $('f-site'); if (!sel) return;
+  var diger = sel.value === '__diger';
+  var adet = ETAPLI_SITELER[sel.value] || 0;
+  $('wrap-etap').style.display = adet ? 'block' : 'none';
+  var et = $('f-etap');
+  et.innerHTML = '<option value="">Etap seçin</option>';
+  for (var i = 1; i <= adet; i++) et.innerHTML += '<option value="' + i + '">' + i + '. Etap</option>';
+  $('wrap-konum').style.display = diger ? 'grid' : 'none';
+  $('wrap-sokak').style.display = diger ? 'block' : 'none';
+  if (!diger) ['f-ilce','f-mahalle','f-sokak'].forEach(function(id){ $(id).value = ''; });
+  adresKur();
+}
+
 function yeniEkrani(){
+  var secenek = function(n, birim){
+    var h = '';
+    for (var i = 1; i <= 3; i++) h += '<option value="' + i + '">' + i + ' ' + birim + '</option>';
+    return h;
+  };
   $('icerik').innerHTML =
     '<div class="kart">' +
-    '<span class="etiket">Mülk adresi</span><input id="adres" placeholder="Emlak Konut 6. Etap A Blok D:10">' +
-    '<span class="etiket">Kaç kiracı?</span>' +
-    '<div class="sayi" id="kcSayi">' + [1,2,3].map(function(n){
-        return '<button type="button" data-n="'+n+'"'+(n===1?' class="sec"':'')+'>'+n+' kiracı</button>'; }).join('') + '</div>' +
+    '<div class="ikili">' +
+      '<div style="grid-column:1 / -1"><span class="etiket">Site / Proje</span>' +
+        '<select id="f-site" onchange="siteDegisti()">' +
+          '<option value="">— Site seçin —</option>' +
+          SITELER.map(function(s){ return '<option>' + s + '</option>'; }).join('') +
+          '<option value="__diger">Diğer / listede yok — adresi elle gir</option>' +
+        '</select></div>' +
+    '</div>' +
+    '<div id="wrap-etap" style="display:none"><span class="etiket">Etap</span>' +
+      '<select id="f-etap" onchange="adresKur()"></select></div>' +
+    '<div class="ikili" id="wrap-konum" style="display:none">' +
+      '<div><span class="etiket">İlçe</span>' +
+        '<input id="f-ilce" list="dl-ilce" placeholder="Kadıköy" oninput="kelimeBuyut(this);adresKur()">' +
+        '<datalist id="dl-ilce">' + ILCELER.map(function(x){ return '<option>' + x + '</option>'; }).join('') + '</datalist></div>' +
+      '<div><span class="etiket">Mahalle / Semt</span>' +
+        '<input id="f-mahalle" list="dl-mahalle" placeholder="Dumlupınar" oninput="kelimeBuyut(this);adresKur()">' +
+        '<datalist id="dl-mahalle">' + MAHALLELER.map(function(x){ return '<option>' + x + '</option>'; }).join('') + '</datalist></div>' +
+    '</div>' +
+    '<div id="wrap-sokak" style="display:none"><span class="etiket">Sokak / Cadde</span>' +
+      '<input id="f-sokak" placeholder="Barış Sok. No:40" oninput="kelimeBuyut(this);adresKur()"></div>' +
+    '<div class="ikili">' +
+      '<div><span class="etiket">Blok</span>' +
+        '<input id="f-blok" placeholder="E" oninput="this.value=this.value.toLocaleUpperCase(\'tr\');adresKur()"></div>' +
+      '<div><span class="etiket">Daire / No</span>' +
+        '<input id="f-daire" placeholder="36" inputmode="numeric" oninput="adresKur()"></div>' +
+    '</div>' +
+    '<span class="etiket">Mülk Adresi</span>' +
+    '<input id="adres" readonly placeholder="Yukarıdaki alanları doldurun" ' +
+      'style="background:rgba(127,127,127,.08);color:var(--soluk)">' +
+    '<div class="ikili" style="margin-top:14px">' +
+      '<div><span class="etiket">Kaç kiracı?</span><select id="kcSayi">' + secenek(3, 'kiracı') + '</select></div>' +
+      '<div><span class="etiket">Kaç mülk sahibi?</span><select id="kvSayi">' + secenek(3, 'mülk sahibi') + '</select></div>' +
+    '</div>' +
     '<div id="kcKutu"></div>' +
-    '<span class="etiket">Kaç mülk sahibi?</span>' +
-    '<div class="sayi" id="kvSayi">' + [1,2,3].map(function(n){
-        return '<button type="button" data-n="'+n+'"'+(n===1?' class="sec"':'')+'>'+n+' mülk sahibi</button>'; }).join('') + '</div>' +
     '<div id="kvKutu"></div>' +
     '<label class="etiket" style="display:flex;gap:9px;align-items:center;margin:4px 0 10px;font-size:14px;color:var(--yazi)">' +
       '<input type="checkbox" id="kefilVar" style="width:20px;height:20px;margin:0;accent-color:var(--kirmizi)"> Kefil istenecek</label>' +
@@ -167,9 +250,10 @@ function yeniEkrani(){
       '<div><span class="etiket">Kefil telefonu</span><input id="ftel" inputmode="tel"></div>' +
     '</div>' +
     '<button class="ana" id="ac">Dosyayı aç ve linkleri üret</button>' +
-    '<p class="mini" style="margin-top:10px">Linkler ' + '72' + ' saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
+    '<p class="mini" style="margin-top:10px">Linkler 72 saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
     '</div>' +
     '<button class="kck" id="vazgec">← Listeye dön</button>';
+
   $('kefilVar').onchange = function(e){ $('kefilKutu').style.display = e.target.checked ? 'grid' : 'none'; };
   var sayilar = { kiraci: 1, sahip: 1 };
   function tarafSatirlari(kok, kutu, baslik, ornekAd){
@@ -179,22 +263,18 @@ function yeniEkrani(){
       var on  = sayilar[kok] > 1 ? i + '. ' : '';
       h += '<div class="ikili">' +
              '<div><span class="etiket">' + on + baslik + ' adı</span>' +
-               '<input id="ad_' + rol + '" placeholder="' + (i === 1 ? ornekAd : '') + '"></div>' +
+               '<input id="ad_' + rol + '" placeholder="' + (i === 1 ? ornekAd : '') + '" oninput="kelimeBuyut(this)"></div>' +
              '<div><span class="etiket">' + on + baslik + ' telefonu</span>' +
                '<input id="tel_' + rol + '" inputmode="tel" placeholder="0 (5__) ___ __ __"></div>' +
            '</div>';
     }
     $(kutu).innerHTML = h;
   }
-  function sayiBagla(kutuId, kok, baslik, ornekAd, hedefKutu){
-    Array.prototype.forEach.call($(kutuId).children, function(b){
-      b.onclick = function(){
-        sayilar[kok] = Number(b.dataset.n);
-        Array.prototype.forEach.call($(kutuId).children, function(x){ x.className = ''; });
-        b.className = 'sec';
-        tarafSatirlari(kok, hedefKutu, baslik, ornekAd);
-      };
-    });
+  function sayiBagla(secId, kok, baslik, ornekAd, hedefKutu){
+    $(secId).onchange = function(){
+      sayilar[kok] = Number($(secId).value) || 1;
+      tarafSatirlari(kok, hedefKutu, baslik, ornekAd);
+    };
     tarafSatirlari(kok, hedefKutu, baslik, ornekAd);
   }
   sayiBagla('kcSayi', 'kiraci', 'Kiracı', 'Ayşe Yılmaz', 'kcKutu');
@@ -202,11 +282,11 @@ function yeniEkrani(){
   $('vazgec').onclick = listeEkrani;
   $('ac').onclick = function(){
     var deger = function(id){ var e = $(id); return e ? e.value.trim() : ''; };
-    var v = { danisman: benim, adres: $('adres').value.trim(),
+    var v = { danisman: benim, adres: deger('adres'),
               kiraciAd: deger('ad_kiraci'), sahipAd: deger('ad_sahip'),
               kiraciSayi: sayilar.kiraci, sahipSayi: sayilar.sahip,
               kefilVar: $('kefilVar').checked };
-    if(!v.adres){ toast('Mülk adresi gerekli'); return; }
+    if(!v.adres){ toast('Mülk adresi gerekli — site seçin ya da adresi elle girin'); return; }
     $('ac').disabled = true; $('ac').textContent = 'Açılıyor…';
     var tel = {}, ad = {};
     ['kiraci','sahip'].forEach(function(kok){
