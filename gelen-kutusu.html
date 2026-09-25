@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a2a5e">
+<title>Gelen Kutusu · 15 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacivert:#0a2a5e; --lacivert-2:#133a7a; --kirmizi:#dc1c2e;
+  --zemin:#f3f5f9; --kart:#ffffff; --cizgi:#e3e8ef; --yazi:#0f172a; --soluk:#64748b;
+  --gelen:#ffffff; --giden:#dbeafe; --yesil:#16a34a; --sari:#f59e0b;
+  --golge:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--zemin);color:var(--yazi);
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea{font:inherit;color:inherit}
+.gizli{display:none!important}
+
+/* ── Giriş ── */
+#giris{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(160deg,var(--lacivert) 0%,#061a3d 100%)}
+.giris-kart{background:#fff;border-radius:22px;padding:32px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.logo{width:56px;height:56px;border-radius:16px;background:var(--lacivert);color:#fff;display:grid;place-items:center;
+  font-family:'Bricolage Grotesque';font-weight:700;font-size:20px;margin:0 auto 14px}
+.giris-kart h1{font-family:'Bricolage Grotesque';font-size:22px;margin-bottom:4px}
+.giris-kart p{color:var(--soluk);font-size:14px;margin-bottom:20px}
+#pinInput{width:100%;text-align:center;font-size:26px;letter-spacing:10px;padding:14px;border:2px solid var(--cizgi);border-radius:14px;outline:none}
+#pinInput:focus{border-color:var(--lacivert)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:600}
+.btn-ana{background:var(--lacivert);color:#fff;width:100%;margin-top:14px;font-size:16px}
+.btn-ana:disabled{opacity:.5}
+.hata{color:var(--kirmizi);font-size:13px;margin-top:10px;min-height:18px}
+
+/* ── Uygulama ── */
+#uygulama{display:flex;height:100vh;height:100dvh}
+.liste-panel{width:100%;max-width:400px;background:var(--kart);border-right:1px solid var(--cizgi);display:flex;flex-direction:column;min-width:0}
+.ust{padding:14px 16px 10px;background:var(--lacivert);color:#fff;padding-top:max(14px,env(safe-area-inset-top))}
+.ust-satir{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ust h2{font-family:'Bricolage Grotesque';font-size:20px;letter-spacing:-.2px}
+.ust small{opacity:.75;font-size:12px}
+.anahtar{display:flex;align-items:center;gap:8px;font-size:12px;opacity:.95}
+.tog{width:38px;height:22px;border-radius:11px;background:rgba(255,255,255,.3);position:relative;transition:.2s}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tog.acik{background:var(--yesil)}
+.tog.acik::after{left:19px}
+.sekmeler{display:flex;gap:6px;margin-top:12px}
+.sekme{flex:1;padding:8px;border-radius:10px;font-size:14px;font-weight:600;background:rgba(255,255,255,.1)}
+.sekme.aktif{background:#fff;color:var(--lacivert)}
+.ara{margin:10px 12px 6px;position:relative}
+.ara input{width:100%;padding:10px 12px 10px 36px;border-radius:12px;border:1px solid var(--cizgi);background:var(--zemin);outline:none;font-size:14px}
+.ara svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--soluk)}
+.liste{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.kisi{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #f1f4f8;cursor:pointer;align-items:center}
+.kisi:hover,.kisi.secili{background:#eef3fb}
+.avatar{width:44px;height:44px;border-radius:50%;background:#e0e7f1;color:var(--lacivert);display:grid;place-items:center;font-weight:700;flex-shrink:0;font-size:15px}
+.kisi-orta{flex:1;min-width:0}
+.kisi-ust{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.kisi-ad{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kisi-zaman{font-size:11px;color:var(--soluk);flex-shrink:0}
+.kisi-alt{display:flex;justify-content:space-between;gap:8px;margin-top:2px;align-items:center}
+.kisi-metin{font-size:13px;color:var(--soluk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rozet{background:var(--yesil);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 6px;flex-shrink:0}
+.kisi.yeni .kisi-ad{font-weight:700}
+.kisi.yeni .kisi-zaman{color:var(--yesil);font-weight:600}
+.bos{padding:40px 24px;text-align:center;color:var(--soluk);font-size:14px}
+
+/* Talepler */
+.talep{padding:14px 16px;border-bottom:1px solid #f1f4f8}
+.talep-ust{display:flex;justify-content:space-between;gap:8px}
+.talep-ad{font-weight:600}
+.etiket{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:#eef3fb;color:var(--lacivert);margin-top:4px}
+.talep-detay{font-size:13px;color:var(--soluk);margin-top:6px;white-space:pre-wrap;word-break:break-word}
+.talep-alt{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.mini{font-size:12px;padding:6px 10px;border-radius:8px;background:var(--zemin);font-weight:600}
+.mini.lacivert{background:var(--lacivert);color:#fff}
+
+/* ── Sohbet ── */
+.sohbet-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:#e9edf3}
+.sohbet-ust{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--kart);border-bottom:1px solid var(--cizgi);padding-top:max(10px,env(safe-area-inset-top))}
+.geri{width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
+.geri:hover{background:var(--zemin)}
+.sohbet-baslik{flex:1;min-width:0}
+.sohbet-ad{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sohbet-tel{font-size:12px;color:var(--soluk)}
+.ikon-btn{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--lacivert)}
+.ikon-btn:hover{background:var(--zemin)}
+.pencere{font-size:12px;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--cizgi)}
+.pencere.acik{background:#ecfdf5;color:#065f46}
+.pencere.kapali{background:#fff7ed;color:#9a3412}
+.not-alani{padding:8px 12px;background:#fffbeb;border-bottom:1px solid #fde68a}
+.not-alani textarea{width:100%;border:0;background:transparent;resize:none;outline:none;font-size:13px}
+.mesajlar{flex:1;overflow-y:auto;padding:14px 12px 8px;-webkit-overflow-scrolling:touch}
+.gun{text-align:center;margin:10px 0}
+.gun span{font-size:11px;background:rgba(255,255,255,.85);padding:4px 10px;border-radius:8px;color:var(--soluk);font-weight:600}
+.balon{max-width:82%;padding:8px 11px 6px;border-radius:14px;margin:3px 0;font-size:14.5px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.06);word-wrap:break-word;white-space:pre-wrap;position:relative}
+.balon.gelen{background:var(--gelen);border-top-left-radius:4px}
+.balon.giden{background:var(--giden);margin-left:auto;border-top-right-radius:4px}
+.balon.oto{background:#eef2f7;color:#475569}
+.balon.hatali{background:#fee2e2}
+.balon a{color:var(--lacivert-2);word-break:break-all}
+.balon-alt{display:flex;justify-content:flex-end;gap:6px;align-items:center;font-size:10.5px;color:var(--soluk);margin-top:3px}
+.kaynak{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--soluk);margin-bottom:2px}
+.tik{font-size:12px}
+.tik.okundu{color:#2563eb}
+.hata-not{font-size:11px;color:var(--kirmizi);margin-top:3px}
+.yaz{display:flex;gap:8px;padding:10px 10px;background:var(--kart);border-top:1px solid var(--cizgi);align-items:flex-end;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.yaz textarea{flex:1;resize:none;border:1px solid var(--cizgi);border-radius:20px;padding:10px 14px;max-height:140px;outline:none;font-size:15px;line-height:1.35;background:var(--zemin)}
+.gonder{width:44px;height:44px;border-radius:50%;background:var(--lacivert);color:#fff;display:grid;place-items:center;flex-shrink:0}
+.gonder:disabled{opacity:.45}
+.sablon-kutu{padding:12px;background:var(--kart);border-top:1px solid var(--cizgi);text-align:center;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.sablon-kutu p{font-size:13px;color:var(--soluk);margin-bottom:10px}
+.bos-sohbet{flex:1;display:grid;place-items:center;color:var(--soluk);text-align:center;padding:24px}
+.bos-sohbet .logo{background:#dbe3ee;color:var(--lacivert)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(100px);background:#0f172a;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;transition:.25s;z-index:50;max-width:90vw}
+.toast.goster{transform:translateX(-50%) translateY(0)}
+
+/* Mobil: tek panel */
+@media (max-width:760px){
+  .liste-panel{max-width:none;border-right:0}
+  .sohbet-panel{position:fixed;inset:0;z-index:20;transform:translateX(100%);transition:transform .22s ease}
+  body.sohbette .sohbet-panel{transform:none}
+  .bos-sohbet{display:none}
+}
+@media (min-width:761px){ .geri{display:none} }
+</style>
+</head>
+<body>
+
+<!-- Giriş -->
+<div id="giris">
+  <div class="giris-kart">
+    <div class="logo">15</div>
+    <h1>Gelen Kutusu</h1>
+    <p>0216 315 15 15 WhatsApp</p>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••">
+    <button class="btn btn-ana" id="girisBtn">Giriş</button>
+    <div class="hata" id="girisHata"></div>
+  </div>
+</div>
+
+<!-- Uygulama -->
+<div id="uygulama" class="gizli">
+  <aside class="liste-panel">
+    <div class="ust">
+      <div class="ust-satir">
+        <div><h2>Gelen Kutusu</h2><small>0216 315 15 15</small></div>
+        <button class="anahtar" id="otoBtn" title="Otomatik 'mesajınız alındı' cevabı">
+          <span>Oto cevap</span><span class="tog" id="otoTog"></span>
+        </button>
+      </div>
+      <div class="sekmeler">
+        <button class="sekme aktif" data-sekme="mesajlar">Mesajlar <span id="toplamOkunmamis"></span></button>
+        <button class="sekme" data-sekme="talepler">Form Talepleri</button>
+      </div>
+    </div>
+    <div class="ara">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="ara" type="search" placeholder="İsim, numara veya mesaj ara">
+    </div>
+    <div class="liste" id="liste"><div class="bos">Yükleniyor…</div></div>
+  </aside>
+
+  <main class="sohbet-panel" id="sohbetPanel">
+    <div class="bos-sohbet" id="bosSohbet">
+      <div><div class="logo">15</div><p>Soldan bir konuşma seçin</p></div>
+    </div>
+
+    <div id="sohbet" class="gizli" style="display:flex;flex-direction:column;height:100%">
+      <div class="sohbet-ust">
+        <button class="geri" id="geriBtn" aria-label="Geri">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="avatar" id="sAvatar"></div>
+        <div class="sohbet-baslik">
+          <div class="sohbet-ad" id="sAd"></div>
+          <div class="sohbet-tel" id="sTel"></div>
+        </div>
+        <button class="ikon-btn" id="notBtn" title="Not">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+        <a class="ikon-btn" id="araBtn" title="Ara">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+        </a>
+      </div>
+      <div class="pencere" id="pencere"></div>
+      <div class="not-alani gizli" id="notAlani">
+        <textarea id="notInput" rows="2" placeholder="Bu kişiyle ilgili not (sadece siz görürsünüz)…"></textarea>
+      </div>
+      <div class="mesajlar" id="mesajlar"></div>
+      <div class="yaz" id="yazAlani">
+        <textarea id="mesajInput" rows="1" placeholder="Mesaj yazın"></textarea>
+        <button class="gonder" id="gonderBtn" aria-label="Gönder">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg>
+        </button>
+      </div>
+      <div class="sablon-kutu gizli" id="sablonAlani">
+        <p>Son mesajın üzerinden 24 saat geçti. WhatsApp kuralı gereği önce onaylı şablonla dönüş mesajı gönderilir; müşteri cevap verince yazışma açılır.</p>
+        <button class="btn btn-ana" id="sablonBtn" style="margin-top:0">Dönüş şablonunu gönder</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ AYAR: dogus-gelen-kutusu Web App adresi ═══ */
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzOv_EaqijVkLwoyxJ9NNG6f2tETYY3Sf9JxQ824CmUgEaNoehFVbCtHk1iGqpvaZpF/exec';
+
+var durum = { pin: '', sekme: 'mesajlar', kisiler: [], talepler: [], aktif: null, konusma: null, otoCevap: 'acik' };
+var $ = function (id) { return document.getElementById(id); };
+
+function depo(k, v) {
+  try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); }
+  catch (e) { return null; }
+}
+
+function api(veri) {
+  veri.pin = durum.pin;
+  return fetch(GAS_URL, { method: 'POST', body: JSON.stringify(veri) })
+    .then(function (r) { return r.json(); });
+}
+
+function toast(m) {
+  var t = $('toast'); t.textContent = m; t.classList.add('goster');
+  clearTimeout(toast._z); toast._z = setTimeout(function () { t.classList.remove('goster'); }, 3200);
+}
+
+function kacis(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function linkle(s) {
+  return kacis(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+function telGoster(wa) {
+  wa = String(wa || '');
+  if (/^90\d{10}$/.test(wa)) return '0' + wa.slice(2, 5) + ' ' + wa.slice(5, 8) + ' ' + wa.slice(8, 10) + ' ' + wa.slice(10);
+  return '+' + wa;
+}
+function basHarf(ad, wa) {
+  if (ad) { var p = ad.trim().split(/\s+/); return ((p[0] || '')[0] + ((p[1] || '')[0] || '')).toUpperCase(); }
+  return String(wa).slice(-2);
+}
+function zaman(t) {
+  if (!t) return '';
+  var d = new Date(t), b = new Date();
+  var fark = Math.floor((new Date(b.toDateString()) - new Date(d.toDateString())) / 864e5);
+  if (fark === 0) return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  if (fark === 1) return 'Dün';
+  if (fark < 7) return d.toLocaleDateString('tr-TR', { weekday: 'short' });
+  return d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' });
+}
+function gunBaslik(t) {
+  var d = new Date(t), b = new Date();
+  var fark = Math.floor((new Date(b.toDateString()) - new Date(d.toDateString())) / 864e5);
+  if (fark === 0) return 'Bugün';
+  if (fark === 1) return 'Dün';
+  return d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/* ── Giriş ── */
+function giris(pin, sessiz) {
+  $('girisBtn').disabled = true; $('girisHata').textContent = '';
+  durum.pin = pin;
+  api({ action: 'giris' }).then(function (r) {
+    $('girisBtn').disabled = false;
+    if (!r.ok) { depo('gk_pin', null); if (!sessiz) $('girisHata').textContent = r.hata || 'Giriş başarısız'; return; }
+    depo('gk_pin', pin);
+    durum.otoCevap = r.otoCevap; otoCiz();
+    $('giris').classList.add('gizli'); $('uygulama').classList.remove('gizli');
+    listeYukle();
+    var q = new URLSearchParams(location.search).get('wa');
+    if (q) konusmaAc(q);
+    setInterval(function () { if (!document.hidden) listeYukle(true); }, 20000);
+    setInterval(function () { if (!document.hidden && durum.aktif) konusmaYukle(true); }, 10000);
+  }).catch(function () {
+    $('girisBtn').disabled = false; $('girisHata').textContent = 'Bağlantı hatası';
+  });
+}
+$('girisBtn').onclick = function () { giris($('pinInput').value.trim()); };
+$('pinInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('girisBtn').click(); });
+
+/* ── Oto cevap ── */
+function otoCiz() { $('otoTog').classList.toggle('acik', durum.otoCevap === 'acik'); }
+$('otoBtn').onclick = function () {
+  var yeni = durum.otoCevap === 'acik' ? 'kapali' : 'acik';
+  api({ action: 'otoCevap', durum: yeni }).then(function (r) {
+    if (r.ok) { durum.otoCevap = r.otoCevap; otoCiz(); toast('Otomatik cevap ' + (r.otoCevap === 'acik' ? 'açık' : 'kapalı')); }
+  });
+};
+
+/* ── Sekmeler ── */
+document.querySelectorAll('.sekme').forEach(function (b) {
+  b.onclick = function () {
+    document.querySelectorAll('.sekme').forEach(function (x) { x.classList.remove('aktif'); });
+    b.classList.add('aktif'); durum.sekme = b.dataset.sekme;
+    if (durum.sekme === 'talepler') talepYukle(); else listeCiz();
+  };
+});
+$('ara').addEventListener('input', function () { durum.sekme === 'talepler' ? talepCiz() : listeCiz(); });
+
+/* ── Liste ── */
+function listeYukle(sessiz) {
+  return api({ action: 'liste' }).then(function (r) {
+    if (!r.ok) { if (!sessiz) toast(r.hata); return; }
+    durum.kisiler = r.kisiler || [];
+    durum.otoCevap = r.otoCevap; otoCiz();
+    var top = durum.kisiler.reduce(function (s, k) { return s + (k.okunmamis || 0); }, 0);
+    $('toplamOkunmamis').textContent = top ? '(' + top + ')' : '';
+    document.title = (top ? '(' + top + ') ' : '') + 'Gelen Kutusu · 15 15';
+    if (durum.sekme === 'mesajlar') listeCiz();
+  });
+}
+
+function listeCiz() {
+  var q = $('ara').value.trim().toLocaleLowerCase('tr');
+  var l = durum.kisiler.filter(function (k) {
+    if (!q) return true;
+    return (k.isim + ' ' + k.wa + ' ' + telGoster(k.wa) + ' ' + k.sonMetin + ' ' + k.not).toLocaleLowerCase('tr').indexOf(q) > -1;
+  });
+  if (!l.length) { $('liste').innerHTML = '<div class="bos">' + (q ? 'Sonuç yok' : 'Henüz mesaj yok') + '</div>'; return; }
+  $('liste').innerHTML = l.map(function (k) {
+    return '<div class="kisi' + (k.okunmamis ? ' yeni' : '') + (durum.aktif === k.wa ? ' secili' : '') + '" data-wa="' + k.wa + '">' +
+      '<div class="avatar">' + kacis(basHarf(k.isim, k.wa)) + '</div>' +
+      '<div class="kisi-orta">' +
+        '<div class="kisi-ust"><div class="kisi-ad">' + kacis(k.isim || telGoster(k.wa)) + '</div><div class="kisi-zaman">' + zaman(k.son) + '</div></div>' +
+        '<div class="kisi-alt"><div class="kisi-metin">' + kacis(k.sonMetin) + '</div>' +
+          (k.okunmamis ? '<div class="rozet">' + k.okunmamis + '</div>' : '') + '</div>' +
+      '</div></div>';
+  }).join('');
+  $('liste').querySelectorAll('.kisi').forEach(function (el) {
+    el.onclick = function () { konusmaAc(el.dataset.wa); };
+  });
+}
+
+/* ── Talepler ── */
+function talepYukle() {
+  $('liste').innerHTML = '<div class="bos">Yükleniyor…</div>';
+  api({ action: 'talepler' }).then(function (r) {
+    if (!r.ok) { toast(r.hata); return; }
+    durum.talepler = r.talepler || []; talepCiz();
+  });
+}
+function talepCiz() {
+  var q = $('ara').value.trim().toLocaleLowerCase('tr');
+  var l = durum.talepler.filter(function (t) {
+    return !q || (t.ad + ' ' + t.tel + ' ' + t.talep + ' ' + t.detay).toLocaleLowerCase('tr').indexOf(q) > -1;
+  });
+  if (!l.length) { $('liste').innerHTML = '<div class="bos">Form talebi yok</div>'; return; }
+  $('liste').innerHTML = l.map(function (t) {
+    var mobil = /^905\d{9}$/.test(t.wa);
+    return '<div class="talep">' +
+      '<div class="talep-ust"><div class="talep-ad">' + kacis(t.ad || '—') + '</div><div class="kisi-zaman">' + zaman(t.t) + '</div></div>' +
+      '<div class="sohbet-tel">' + kacis(t.tel) + '</div>' +
+      '<span class="etiket">' + kacis(t.talep) + '</span> ' +
+      '<span class="etiket" style="background:' + (t.onay === 'Evet' ? '#ecfdf5;color:#065f46' : '#f1f5f9;color:#475569') + '">WA onay: ' + kacis(t.onay) + '</span>' +
+      (t.detay ? '<div class="talep-detay">' + kacis(t.detay) + '</div>' : '') +
+      '<div class="talep-detay">Mesaj: ' + kacis(t.durum || '—') + '</div>' +
+      '<div class="talep-alt">' +
+        '<a class="mini" href="tel:' + kacis(t.tel) + '">Ara</a>' +
+        (mobil ? '<button class="mini lacivert" data-wa="' + t.wa + '">Konuşmayı aç</button>' : '') +
+      '</div></div>';
+  }).join('');
+  $('liste').querySelectorAll('button[data-wa]').forEach(function (b) {
+    b.onclick = function () { konusmaAc(b.dataset.wa); };
+  });
+}
+
+/* ── Sohbet ── */
+function konusmaAc(wa) {
+  durum.aktif = String(wa);
+  $('bosSohbet').classList.add('gizli');
+  $('sohbet').classList.remove('gizli');
+  $('notAlani').classList.add('gizli');
+  $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>';
+  var k = durum.kisiler.find(function (x) { return x.wa === durum.aktif; });
+  baslikCiz(k ? k.isim : '', durum.aktif);
+  document.body.classList.add('sohbette');
+  history.replaceState(null, '', '?wa=' + durum.aktif);
+  konusmaYukle().then(function () { listeYukle(true); });
+}
+
+function baslikCiz(isim, wa) {
+  $('sAvatar').textContent = basHarf(isim, wa);
+  $('sAd').textContent = isim || telGoster(wa);
+  $('sTel').textContent = isim ? telGoster(wa) : '';
+  $('araBtn').href = 'tel:+' + wa;
+}
+
+function konusmaYukle(sessiz) {
+  var wa = durum.aktif;
+  return api({ action: 'konusma', wa: wa }).then(function (r) {
+    if (wa !== durum.aktif) return;
+    if (!r.ok) { if (!sessiz) toast(r.hata); return; }
+    var oncekiSayi = durum.konusma && durum.konusma.wa === wa ? durum.konusma.mesajlar.length : -1;
+    durum.konusma = r;
+    baslikCiz(r.isim, r.wa);
+    if (document.activeElement !== $('notInput')) $('notInput').value = r.not || '';
+    pencereCiz(r);
+    if (r.mesajlar.length !== oncekiSayi) mesajCiz(r.mesajlar);
+  });
+}
+
+function pencereCiz(r) {
+  var p = $('pencere');
+  if (r.pencere) {
+    var kalan = 24 - (Date.now() - new Date(r.sonGelen).getTime()) / 36e5;
+    p.className = 'pencere acik';
+    p.textContent = 'Yazışma açık · ' + Math.max(0, Math.floor(kalan)) + ' saat ' + Math.max(0, Math.floor((kalan % 1) * 60)) + ' dk içinde serbest cevap yazabilirsiniz';
+    $('yazAlani').classList.remove('gizli'); $('sablonAlani').classList.add('gizli');
+  } else {
+    p.className = 'pencere kapali';
+    p.textContent = r.sonGelen ? '24 saatlik yazışma süresi doldu' : 'Bu kişi henüz 15 15\'e yazmadı';
+    $('yazAlani').classList.add('gizli'); $('sablonAlani').classList.remove('gizli');
+  }
+}
+
+function tikCiz(d) {
+  if (d === 'okundu') return '<span class="tik okundu">✓✓</span>';
+  if (d === 'iletildi') return '<span class="tik">✓✓</span>';
+  if (d === 'gönderildi') return '<span class="tik">✓</span>';
+  if (d === 'başarısız') return '<span class="tik" style="color:var(--kirmizi)">!</span>';
+  return '<span class="tik">🕓</span>';
+}
+
+function mesajCiz(ms) {
+  var alt = $('mesajlar');
+  var enAltta = alt.scrollHeight - alt.scrollTop - alt.clientHeight < 80;
+  var html = '', sonGun = '';
+  ms.forEach(function (m) {
+    var g = new Date(m.t).toDateString();
+    if (g !== sonGun) { html += '<div class="gun"><span>' + gunBaslik(m.t) + '</span></div>'; sonGun = g; }
+    var giden = m.yon === 'giden';
+    var sinif = 'balon ' + (giden ? 'giden' : 'gelen') + (m.kaynak === 'oto-cevap' ? ' oto' : '') + (m.durum === 'başarısız' ? ' hatali' : '');
+    var etiket = giden && m.kaynak && m.kaynak !== 'panel' ? '<div class="kaynak">' + (m.kaynak === 'oto-cevap' ? 'Otomatik cevap' : m.kaynak === 'form' ? 'Site formu' : kacis(m.kaynak)) + '</div>' : '';
+    var medya = m.medya && String(m.medya).indexOf('http') === 0 ? '<div><a href="' + kacis(m.medya) + '" target="_blank" rel="noopener">Dosyayı aç ↗</a></div>' : '';
+    html += '<div class="' + sinif + '">' + etiket + linkle(m.metin) + medya +
+      (m.hata ? '<div class="hata-not">' + kacis(m.hata) + '</div>' : '') +
+      '<div class="balon-alt">' + new Date(m.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) +
+      (giden ? ' ' + tikCiz(m.durum) : '') + '</div></div>';
+  });
+  alt.innerHTML = html || '<div class="bos">Henüz mesaj yok</div>';
+  if (enAltta || alt.dataset.wa !== durum.aktif) alt.scrollTop = alt.scrollHeight;
+  alt.dataset.wa = durum.aktif;
+}
+
+/* Gönder */
+var girdi = $('mesajInput');
+girdi.addEventListener('input', function () { girdi.style.height = 'auto'; girdi.style.height = Math.min(girdi.scrollHeight, 140) + 'px'; });
+girdi.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey && window.matchMedia('(min-width:761px)').matches) { e.preventDefault(); gonder(); }
+});
+$('gonderBtn').onclick = gonder;
+
+function gonder() {
+  var metin = girdi.value.trim();
+  if (!metin || !durum.aktif) return;
+  $('gonderBtn').disabled = true;
+  api({ action: 'gonder', wa: durum.aktif, metin: metin }).then(function (r) {
+    $('gonderBtn').disabled = false;
+    if (!r.ok) { toast(r.hata || 'Gönderilemedi'); if (r.kod === 'PENCERE') konusmaYukle(); return; }
+    girdi.value = ''; girdi.style.height = 'auto';
+    konusmaYukle().then(function () { $('mesajlar').scrollTop = $('mesajlar').scrollHeight; });
+  }).catch(function () { $('gonderBtn').disabled = false; toast('Bağlantı hatası'); });
+}
+
+$('sablonBtn').onclick = function () {
+  if (!confirm('Dönüş şablonu gönderilsin mi?')) return;
+  $('sablonBtn').disabled = true;
+  api({ action: 'sablon', wa: durum.aktif }).then(function (r) {
+    $('sablonBtn').disabled = false;
+    toast(r.ok ? 'Şablon gönderildi' : ('Gönderilemedi: ' + r.hata));
+    konusmaYukle();
+  }).catch(function () { $('sablonBtn').disabled = false; toast('Bağlantı hatası'); });
+};
+
+/* Not */
+$('notBtn').onclick = function () { $('notAlani').classList.toggle('gizli'); if (!$('notAlani').classList.contains('gizli')) $('notInput').focus(); };
+$('notInput').addEventListener('blur', function () {
+  if (!durum.aktif) return;
+  api({ action: 'not', wa: durum.aktif, not: $('notInput').value }).then(function (r) { if (r.ok) toast('Not kaydedildi'); });
+});
+
+/* Geri (mobil) */
+$('geriBtn').onclick = function () {
+  document.body.classList.remove('sohbette');
+  durum.aktif = null; durum.konusma = null;
+  history.replaceState(null, '', location.pathname);
+  listeCiz();
+};
+
+/* Açılış */
+(function () {
+  var q = new URLSearchParams(location.search).get('k');
+  var kayitli = q || depo('gk_pin');
+  if (kayitli) giris(kayitli, true);
+  else $('pinInput').focus();
+})();
+</script>
+</body>
+</html>
