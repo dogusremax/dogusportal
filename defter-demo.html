@@ -67,17 +67,23 @@ header::after{
   background:linear-gradient(90deg,var(--kirmizi) 0 38%,#fff 38% 62%,var(--mavi-ac) 62% 100%);
   opacity:.9;
 }
+header{text-align:center}
 .ust-satir{
   display:flex;align-items:center;justify-content:space-between;gap:14px;
   position:relative;
 }
-.alt-satir{
-  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
-  margin-top:13px;position:relative;
+.menu-btn{
+  width:40px;height:40px;border-radius:13px;flex-shrink:0;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -2px 5px rgba(0,0,0,.18),0 3px 8px -4px rgba(0,0,0,.4);
+  transition:transform .13s ease,background .18s ease;
 }
+.menu-btn svg{width:21px;height:21px}
+.menu-btn:active{transform:scale(.93);background:rgba(255,255,255,.22)}
 header h1{
   font-size:23px;font-weight:700;letter-spacing:.09em;line-height:1;color:#fff;
-  text-shadow:0 2px 6px rgba(0,0,0,.3);flex-shrink:0;
+  text-shadow:0 2px 6px rgba(0,0,0,.3);margin-top:16px;position:relative;
 }
 .logo{
   height:29px;width:auto;display:block;flex-shrink:0;position:relative;
@@ -85,13 +91,12 @@ header h1{
   animation:pop .5s ease backwards .12s;
 }
 .kim{
-  font-size:12.5px;color:rgba(255,255,255,.94);font-weight:700;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  text-align:right;min-width:0;
+  font-size:12.5px;color:rgba(255,255,255,.94);font-weight:700;margin-top:9px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;
 }
 .tarih{
   font-size:10.5px;color:rgba(255,255,255,.6);text-transform:uppercase;
-  letter-spacing:.14em;font-weight:700;white-space:nowrap;
+  letter-spacing:.14em;font-weight:700;margin-top:5px;position:relative;
 }
 
 main{padding:16px var(--pad) 0}
@@ -310,6 +315,46 @@ nav .nokta{
   box-shadow:0 -20px 50px -20px rgba(19,26,38,.5);
 }
 .perde.acik .sayfa{transform:translateY(0)}
+
+.perde.yan{align-items:stretch;justify-content:flex-end}
+.cekmece{
+  width:min(86%,340px);background:var(--bg);height:100%;overflow-y:auto;
+  padding:calc(22px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+  transform:translateX(30px);
+  transition:transform .26s cubic-bezier(.3,.85,.35,1);
+  box-shadow:-24px 0 50px -20px rgba(19,26,38,.5);
+}
+.perde.yan.acik .cekmece{transform:translateX(0)}
+.cekmece .ust{margin-bottom:20px}
+.cekmece .basl{font-size:19px;font-weight:700;letter-spacing:-.035em}
+.cekmece .altb{font-size:12px;color:var(--muted);margin-top:3px}
+.menu-oge{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  padding:14px;border-radius:16px;margin-bottom:9px;
+  background:var(--card);border:1px solid var(--line);
+  box-shadow:0 1px 3px rgba(19,26,38,.05);
+  transition:transform .12s ease,border-color .15s;
+}
+.menu-oge:active{transform:scale(.985)}
+.menu-oge .sim{
+  width:38px;height:38px;border-radius:12px;flex-shrink:0;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 30% 20%,var(--mavi-ac),var(--mavi) 75%);
+  box-shadow:0 2px 0 var(--mavi-koyu),0 8px 14px -7px rgba(0,61,165,.6),inset 0 1px 2px rgba(255,255,255,.3);
+}
+.menu-oge .sim.kirmizi{
+  background:radial-gradient(circle at 30% 20%,var(--kirmizi-ac),var(--kirmizi) 75%);
+  box-shadow:0 2px 0 var(--kirmizi-koyu),0 8px 14px -7px rgba(220,28,46,.55),inset 0 1px 2px rgba(255,255,255,.3);
+}
+.menu-oge .sim svg{width:19px;height:19px;stroke-width:2.1}
+.menu-oge .yazi{flex:1;min-width:0}
+.menu-oge .yazi b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.02em}
+.menu-oge .yazi i{font-style:normal;display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.menu-oge .durum{
+  font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;flex-shrink:0;
+  background:var(--line-soft);color:var(--muted);
+}
+.menu-oge .durum.acik{background:var(--yesil-bg);color:var(--yesil)}
 .sayfaUst{
   position:sticky;top:0;z-index:2;background:var(--bg);
   padding:18px 0 13px;display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -414,12 +459,13 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 <header>
   <div class="ust-satir">
     <img class="logo" src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş">
-    <h1 class="disp">AJANDA</h1>
+    <button class="menu-btn" onclick="menuAc()" aria-label="Menü">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </div>
-  <div class="alt-satir">
-    <span class="tarih" id="tarihYazi"></span>
-    <span class="kim" id="kim"></span>
-  </div>
+  <h1 class="disp">AJANDA</h1>
+  <div class="kim" id="kim"></div>
+  <div class="tarih" id="tarihYazi"></div>
 </header>
 
 <main>
@@ -491,6 +537,17 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 <div class="perde" id="perdeRapor"><div class="sayfa">
   <div class="sayfaUst"><h3 class="disp">Mal sahibine rapor</h3><button class="kapat" onclick="kapat('perdeRapor')">Kapat</button></div>
   <div id="raporGovde"></div>
+</div></div>
+
+<div class="perde yan" id="perdeMenu"><div class="cekmece">
+  <div class="ust" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+    <div>
+      <div class="basl disp">Ajanda</div>
+      <div class="altb" id="menuKim"></div>
+    </div>
+    <button class="kapat" onclick="kapat('perdeMenu')">Kapat</button>
+  </div>
+  <div id="menuGovde"></div>
 </div></div>
 
 <div class="perde" id="perdeSenkron"><div class="sayfa">
@@ -1046,6 +1103,73 @@ function kisiKaydetTikla(id){
 function kisiSilTikla(id){
   if(!confirm('Bu kişi listenden kaldırılsın mı? Geçmişi silinmez, sadece görünmez olur.'))return;
   api('kisiArsivle',id).then(function(){ kapat('perdeKisi'); ekran(DURUM.ekran); });
+}
+
+
+/* ---------- MENÜ ---------- */
+var SIM={
+ ad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5v-1a4 4 0 0 1 4-4h5a4 4 0 0 1 4 4v1"/></svg>',
+ senk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14-4.5L4 9"/><path d="M4 13a8 8 0 0 0 14 4.5l2-2.5"/><path d="M4 4v5h5M20 20v-5h-5"/></svg>',
+ oto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.2V12l3.2 2"/></svg>',
+ dosya:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4h5l2 2.6h4A1.5 1.5 0 0 1 19 8.1v10.4A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5z"/></svg>',
+ ekle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="3" width="11" height="18" rx="2.6"/><path d="M12 8.5v5M9.5 11h5"/></svg>'
+};
+
+function menuAc(){
+  var t=DURUM.temel||{};
+  E('menuKim').textContent=t.ad||t.eposta||'';
+  var h='';
+  h+='<button class="menu-oge" onclick="adDegistir()">'+
+     '<span class="sim">'+SIM.ad+'</span>'+
+     '<span class="yazi"><b>Adım</b><i>'+kacis(t.ad||'belirlenmedi')+'</i></span></button>';
+
+  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');senkronAyarAc()">'+
+     '<span class="sim">'+SIM.senk+'</span>'+
+     '<span class="yazi"><b>Matbu Evraklar bağlantısı</b><i>'+
+     (t.matbuKurulu?'Bağlı · '+kacis(t.matbuDanisman):'Kurulmadı')+'</i></span>'+
+     '<span class="durum'+(t.matbuKurulu?' acik':'')+'">'+(t.matbuKurulu?'Bağlı':'Kapalı')+'</span></button>';
+
+  if(t.matbuKurulu){
+    h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');senkronCalistir()">'+
+       '<span class="sim">'+SIM.senk+'</span>'+
+       '<span class="yazi"><b>Şimdi aktar</b><i>'+
+       (t.sonMatbuSenkron?'Son aktarım '+kacis(t.sonMatbuSenkron):'Henüz aktarılmadı')+'</i></span></button>';
+
+    h+='<button class="menu-oge" onclick="otoDegistirMenu('+(t.otoSenkron?'false':'true')+')">'+
+       '<span class="sim">'+SIM.oto+'</span>'+
+       '<span class="yazi"><b>Her sabah otomatik aktar</b><i>07:00\'de yeni kayıtları çeker</i></span>'+
+       '<span class="durum'+(t.otoSenkron?' acik':'')+'">'+(t.otoSenkron?'Açık':'Kapalı')+'</span></button>';
+  }
+
+  if(t.dosyaUrl&&t.dosyaUrl!=='#'){
+    h+='<a class="menu-oge" href="'+kacis(t.dosyaUrl)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
+       '<span class="sim">'+SIM.dosya+'</span>'+
+       '<span class="yazi"><b>Ham veri dosyam</b><i>Kendi Drive\'ındaki e-tablo</i></span></a>';
+  }
+
+  h+='<div class="bolum"><h2 class="disp">Yardım</h2><span class="cizgi"></span></div>';
+  h+='<div class="kart"><div class="ust"><span class="sim" style="width:38px;height:38px;border-radius:12px;color:#fff;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,var(--kirmizi-ac),var(--kirmizi) 75%);box-shadow:0 2px 0 var(--kirmizi-koyu),inset 0 1px 2px rgba(255,255,255,.3)">'+SIM.ekle+'</span>'+
+     '<div style="flex:1;margin-left:12px"><div class="ad disp" style="font-size:14.5px">Ana ekrana ekle</div>'+
+     '<div class="sonnot" style="-webkit-line-clamp:4;margin-top:4px">iPhone: Safari → Paylaş → Ana Ekrana Ekle.<br>Android: Chrome → ⋮ → Ana ekrana ekle.</div></div></div></div>';
+
+  E('menuGovde').innerHTML=h;
+  ac('perdeMenu');
+}
+
+function adDegistir(){
+  var t=DURUM.temel||{};
+  var ad=prompt('Adın:',t.ad||'');
+  if(ad===null)return;
+  ad=ad.trim(); if(!ad)return;
+  api('ayarKaydet',{ad:ad}).then(function(){
+    api('baslat').then(function(b){DURUM.temel=b;E('kim').textContent=b.ad;menuAc()});
+  });
+}
+
+function otoDegistirMenu(ac){
+  api('otomatikSenkron',ac).then(function(){
+    api('baslat').then(function(b){DURUM.temel=b;menuAc()});
+  });
 }
 
 /* ---------- MATBU SENKRON ---------- */
