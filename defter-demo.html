@@ -382,6 +382,28 @@ label.alan input,label.alan textarea,label.alan select{
   transition:border-color .15s,box-shadow .15s;
 }
 label.alan textarea{min-height:92px;resize:vertical}
+label.alan.sesli{position:relative}
+label.alan.sesli textarea{padding-right:56px;min-height:110px}
+.mik{
+  position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  background:radial-gradient(circle at 30% 20%,var(--mavi-ac),var(--mavi) 75%);
+  box-shadow:0 3px 0 var(--mavi-koyu),0 8px 15px -7px rgba(0,61,165,.6),inset 0 1px 2px rgba(255,255,255,.3);
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.mik svg{width:19px;height:19px;stroke-width:2.1}
+.mik:active{transform:translateY(3px);box-shadow:0 0 0 var(--mavi-koyu)}
+.mik.dinliyor{
+  background:radial-gradient(circle at 30% 20%,var(--kirmizi-ac),var(--kirmizi) 75%);
+  box-shadow:0 3px 0 var(--kirmizi-koyu),0 0 0 0 rgba(220,28,46,.55),inset 0 1px 2px rgba(255,255,255,.3);
+  animation:nabiz 1.4s ease-out infinite;
+}
+@keyframes nabiz{
+  0%{box-shadow:0 3px 0 var(--kirmizi-koyu),0 0 0 0 rgba(220,28,46,.5),inset 0 1px 2px rgba(255,255,255,.3)}
+  70%{box-shadow:0 3px 0 var(--kirmizi-koyu),0 0 0 14px rgba(220,28,46,0),inset 0 1px 2px rgba(255,255,255,.3)}
+  100%{box-shadow:0 3px 0 var(--kirmizi-koyu),0 0 0 0 rgba(220,28,46,0),inset 0 1px 2px rgba(255,255,255,.3)}
+}
+.mik-not{font-size:11px;color:var(--soft);margin-top:6px;display:block;font-weight:400;letter-spacing:0;text-transform:none}
 label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
   outline:none;border-color:var(--mavi);box-shadow:0 0 0 3px rgba(0,61,165,.12);
 }
@@ -1103,7 +1125,7 @@ function kisiFormu(k,dokunuslar,gosterimler){
   h+='<label class="alan"><span>E-posta</span><input id="fMail" type="email" value="'+kacis(k.eposta)+'" placeholder="ornek@mail.com"></label>';
   h+='<label class="alan"><span>Ne arıyor</span><input id="fArayis" value="'+kacis(k.arayis)+'" placeholder="3+1, Fikirtepe, otoparklı"></label>';
   h+='<label class="alan"><span>Nereden geldi</span><input id="fKaynak" value="'+kacis(k.kaynak)+'" placeholder="Portal / tabela / tavsiye"></label>';
-  h+='<label class="alan"><span>Aklında kalsın</span><textarea id="fNotlar" placeholder="Eşi Ataşehir&#39;de çalışıyor. Asansörsüz istemiyor.">'+kacis(k.notlar)+'</textarea></label>';
+  h+='<label class="alan sesli"><span>Aklında kalsın</span><textarea id="fNotlar" placeholder="Eşi Ataşehir&#39;de çalışıyor. Asansörsüz istemiyor.">'+kacis(k.notlar)+'</textarea>'+mikDugmesi('fNotlar')+'</label>';
   h+='<div class="ikili"><label class="alan"><span>Sonraki adım</span><input id="fAdim" value="'+kacis(k.sonrakiAdim)+'" placeholder="Teklifi ilet"></label>'+
      '<label class="alan"><span>Ne zaman</span><input id="fTarih" type="date" value="'+kacis(String(k.sonrakiTarih||'').split(' ')[0])+'"></label></div>';
   h+='<div class="ikili"><label class="alan"><span>Komisyon (kapandıysa)</span><input id="fKom" class="mono" inputmode="numeric" value="'+kacis(k.komisyon)+'" placeholder="180000"></label>'+
@@ -1155,6 +1177,71 @@ function kisiSilTikla(id){
     obSil('bugun');obSil('soguyan'); kapat('perdeKisi'); ekran(DURUM.ekran); });
 }
 
+
+
+/* ---------- SESLİ NOT ---------- */
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var TANIYICI=null, DINLENEN=null;
+
+function sesVar(){ return !!SR; }
+
+function mikDugmesi(alanId){
+  if(!sesVar()) return '<span class="mik-not">Klavyedeki mikrofon tuşuyla yazdırabilirsin.</span>';
+  return '<button type="button" class="mik" id="mik_'+alanId+'" onclick="sesAlYaz(\''+alanId+'\')" aria-label="Konuşarak yaz">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">'+
+    '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/>'+
+    '<path d="M12 18v3"/></svg></button>';
+}
+
+function sesDurdur(){
+  if(TANIYICI){ try{TANIYICI.stop()}catch(e){} }
+  if(DINLENEN){ var b=E('mik_'+DINLENEN); if(b)b.classList.remove('dinliyor'); }
+  TANIYICI=null; DINLENEN=null;
+}
+
+function sesAlYaz(alanId){
+  if(!sesVar())return;
+  if(DINLENEN===alanId){ sesDurdur(); return; }
+  sesDurdur();
+
+  var alan=E(alanId); if(!alan)return;
+  var btn=E('mik_'+alanId);
+  var baslangic=alan.value;
+
+  var t;
+  try{ t=new SR(); }catch(e){ alert('Mikrofon açılamadı.'); return; }
+  t.lang='tr-TR';
+  t.continuous=true;
+  t.interimResults=true;
+
+  t.onstart=function(){ if(btn)btn.classList.add('dinliyor'); };
+  t.onresult=function(ev){
+    var kesin='', gecici='';
+    for(var i=ev.resultIndex;i<ev.results.length;i++){
+      var m=ev.results[i][0].transcript;
+      if(ev.results[i].isFinal)kesin+=m; else gecici+=m;
+    }
+    if(kesin){
+      baslangic=(baslangic?baslangic.replace(/\s+$/,'')+' ':'')+kesin.trim();
+      alan.value=baslangic;
+    }else{
+      alan.value=(baslangic?baslangic.replace(/\s+$/,'')+' ':'')+gecici;
+    }
+    alan.scrollTop=alan.scrollHeight;
+  };
+  t.onerror=function(ev){
+    sesDurdur();
+    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
+      alert('Mikrofon izni verilmemiş. Tarayıcı ayarlarından bu siteye mikrofon izni ver.');
+    }
+  };
+  t.onend=function(){
+    if(DINLENEN===alanId){ if(btn)btn.classList.remove('dinliyor'); TANIYICI=null; DINLENEN=null; }
+  };
+
+  TANIYICI=t; DINLENEN=alanId;
+  try{ t.start(); }catch(e){ sesDurdur(); }
+}
 
 /* ---------- MENÜ — Uygulama kutusu ---------- */
 var SIM={
@@ -1492,7 +1579,7 @@ function gosterimCiz(){
      ILGI.map(function(i){
        return '<button class="cip'+(g.ilgi===i?' secili':'')+'" onclick="gosterimAlanAl();DURUM.gosterim.ilgi=\''+i+'\';gosterimCiz()">'+i+'</button>';
      }).join('')+'</div>';
-  h+='<label class="alan"><span>Ne dedi</span><textarea id="gGeri" placeholder="Manzarayı beğendi, mutfağı küçük buldu. Fiyatta 300 bin indirim isterse alırım dedi.">'+kacis(g.geriBildirim||'')+'</textarea></label>';
+  h+='<label class="alan sesli"><span>Ne dedi</span><textarea id="gGeri" placeholder="Manzarayı beğendi, mutfağı küçük buldu. Fiyatta 300 bin indirim isterse alırım dedi.">'+kacis(g.geriBildirim||'')+'</textarea>'+mikDugmesi('gGeri')+'</label>';
   h+='<button class="kaydet" onclick="gosterimKaydet()">Gösterimi kaydet</button>';
   E('gosterimGovde').innerHTML=h;
 }
@@ -1569,7 +1656,7 @@ function dokunusCiz(){
   h+='<div class="cipler" style="margin-bottom:4px">'+TURLER.map(function(t){
       return '<button class="cip'+(d.tur===t?' secili':'')+'" onclick="dokunusAlanlariAl();DURUM.dokunus.tur=\''+t+'\';dokunusCiz()">'+t+'</button>';
     }).join('')+'</div>';
-  h+='<label class="alan"><span>Ne konuşuldu</span><textarea id="dOzet" placeholder="Bahçelievler&#39;deki daireyi sordu, bütçesini 7M&#39;e çıkarabilirmiş.">'+kacis(d.ozet||'')+'</textarea></label>';
+  h+='<label class="alan sesli"><span>Ne konuşuldu</span><textarea id="dOzet" placeholder="Bahçelievler&#39;deki daireyi sordu, bütçesini 7M&#39;e çıkarabilirmiş.">'+kacis(d.ozet||'')+'</textarea>'+mikDugmesi('dOzet')+'</label>';
   h+='<label class="alan"><span>Hangi portföy hakkında (varsa)</span><select id="dPortfoy" onchange="DURUM.dokunus.portfoyId=this.value">'+
      '<option value="">— genel görüşme —</option>'+
      (DURUM.portfoySecenek||[]).map(function(p){
@@ -1637,7 +1724,7 @@ function hedefKaydet(){
 
 /* ---------- Perde ---------- */
 function ac(id){E(id).classList.add('acik');document.body.style.overflow='hidden'}
-function kapat(id){E(id).classList.remove('acik');document.body.style.overflow=''}
+function kapat(id){sesDurdur();E(id).classList.remove('acik');document.body.style.overflow=''}
 document.querySelectorAll('.perde').forEach(function(p){
   p.addEventListener('click',function(e){if(e.target===p)kapat(p.id)});
 });
