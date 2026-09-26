@@ -24,6 +24,11 @@ body{
 button,select{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 
 header{text-align:center;margin-bottom:18px}
+.ust-logo{
+  position:fixed;top:16px;right:18px;height:30px;width:auto;z-index:20;
+  filter:drop-shadow(0 2px 5px rgba(19,26,38,.25));
+}
+@media (max-width:560px){.ust-logo{height:24px;top:12px;right:12px}}
 h1{font-size:21px;font-weight:700;letter-spacing:-.035em}
 .alt{font-size:12.5px;color:var(--dim);margin-top:5px}
 
@@ -105,6 +110,7 @@ iframe{width:100%;height:100%;border:0;display:block;background:#fff}
 </head>
 <body>
 
+<img class="ust-logo" src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'">
 <header>
   <h1>Defter — Telefon Önizleme</h1>
   <div class="alt">Uygulamanın telefonda nasıl göründüğü</div>

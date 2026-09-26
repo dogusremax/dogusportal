@@ -65,13 +65,22 @@ header{
   background:linear-gradient(180deg,var(--kirmizi) 0 50%,var(--mavi) 50% 100%);
   box-shadow:0 3px 8px -2px rgba(220,28,46,.5);
 }
-.marka .kim{
-  font-size:12px;color:var(--muted);text-align:right;font-weight:700;
-  max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+.marka .logo{
+  height:30px;width:auto;flex-shrink:0;
+  filter:drop-shadow(0 2px 4px rgba(19,26,38,.22));
+  animation:pop .5s ease backwards .12s;
+}
+.altbilgi{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;margin-top:8px;
+}
+.kim{
+  font-size:12px;color:var(--muted);font-weight:700;
+  text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .tarih{
   font-size:11px;color:var(--soft);text-transform:uppercase;
-  letter-spacing:.14em;margin-top:7px;font-weight:700;
+  letter-spacing:.14em;font-weight:700;white-space:nowrap;
 }
 
 main{padding:16px var(--pad) 0}
@@ -394,9 +403,12 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 <header>
   <div class="marka">
     <h1 class="disp">Defter</h1>
-    <div class="kim" id="kim"></div>
+    <img class="logo" src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'">
   </div>
-  <div class="tarih" id="tarihYazi"></div>
+  <div class="altbilgi">
+    <span class="tarih" id="tarihYazi"></span>
+    <span class="kim" id="kim"></span>
+  </div>
 </header>
 
 <main>
