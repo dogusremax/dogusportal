@@ -355,6 +355,7 @@ nav .nokta{
   background:var(--line-soft);color:var(--muted);
 }
 .menu-oge .durum.acik{background:var(--yesil-bg);color:var(--yesil)}
+.menu-oge .ok{color:var(--soft);font-size:16px;flex-shrink:0;font-weight:700}
 .sayfaUst{
   position:sticky;top:0;z-index:2;background:var(--bg);
   padding:18px 0 13px;display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -564,7 +565,7 @@ function _gtr(n){var d=new Date();d.setDate(d.getDate()+n);
   return (d.getDate()<10?'0':'')+d.getDate()+'.'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'.'+d.getFullYear()}
 
 var DEMO={
- ayar:{ad:'Örnek Danışman',hedef:2400000,matbuKurulu:false,matbuDanisman:'',sonMatbuSenkron:'',otoSenkron:false},
+ ayar:{ad:'Örnek Danışman',hedef:2400000,pin:'',matbuKurulu:false,matbuDanisman:'',sonMatbuSenkron:'',otoSenkron:false},
  kisiler:[
   {id:'k1',ad:'Ahmet Yılmaz',telefon:'0532 411 22 33',eposta:'',tip:'Alıcı',durum:'Teklif',butce:'7.2M',arayis:'3+1, Fikirtepe, otoparklı, asansörlü',kaynak:'Portal',notlar:'Eşi Ataşehir\'de çalışıyor, kızı 2. sınıfta. Asansörsüz kesinlikle istemiyor.',sonrakiAdim:'Teklife dönüşü al',sonrakiTarih:_g(-4),sonTemas:_g(-4),komisyon:'',kapanisTarihi:''},
   {id:'k2',ad:'Selin Aksoy',telefon:'0555 887 61 40',eposta:'',tip:'Yatırımcı',durum:'Yer gösterimi',butce:'5.8M',arayis:'2+1, yüksek kat, kira getirisi iyi olsun',kaynak:'Tabela',notlar:'Yatırım amaçlı alıyor. Karar veren ağabeyi.',sonrakiAdim:'Ağabeyiyle gezme ayarla',sonrakiTarih:_g(-1),sonTemas:_g(-2),komisyon:'',kapanisTarihi:''},
@@ -654,11 +655,11 @@ function api(fn){
 function _demo(fn,a){
   var akt=function(k){return k.durum!=='Kazanıldı'&&k.durum!=='Kaybedildi'};
 
-  if(fn==='baslat') return {eposta:'demo',ad:DEMO.ayar.ad,hedef:DEMO.ayar.hedef,dosyaUrl:'#',
+  if(fn==='baslat') return {eposta:'demo',ad:DEMO.ayar.ad,hedef:DEMO.ayar.hedef,dosyaUrl:'#',pin:DEMO.ayar.pin||'',
     matbuKurulu:DEMO.ayar.matbuKurulu,matbuDanisman:DEMO.ayar.matbuDanisman,
     sonMatbuSenkron:DEMO.ayar.sonMatbuSenkron,otoSenkron:DEMO.ayar.otoSenkron};
 
-  if(fn==='ayarKaydet'){ if(a[0].ad)DEMO.ayar.ad=a[0].ad; if(a[0].hedef!==undefined)DEMO.ayar.hedef=+a[0].hedef; return true; }
+  if(fn==='ayarKaydet'){ if(a[0].pin!==undefined)DEMO.ayar.pin=a[0].pin; if(a[0].ad)DEMO.ayar.ad=a[0].ad; if(a[0].hedef!==undefined)DEMO.ayar.hedef=+a[0].hedef; return true; }
 
   if(fn==='matbuKur'){
     DEMO.ayar.matbuKurulu=true; DEMO.ayar.matbuDanisman=a[2]||'Örnek Danışman';
@@ -1106,68 +1107,70 @@ function kisiSilTikla(id){
 }
 
 
-/* ---------- MENÜ ---------- */
+/* ---------- MENÜ — Uygulama kutusu ---------- */
 var SIM={
- ad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5v-1a4 4 0 0 1 4-4h5a4 4 0 0 1 4 4v1"/></svg>',
- senk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14-4.5L4 9"/><path d="M4 13a8 8 0 0 0 14 4.5l2-2.5"/><path d="M4 4v5h5M20 20v-5h-5"/></svg>',
- oto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.2V12l3.2 2"/></svg>',
- dosya:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4h5l2 2.6h4A1.5 1.5 0 0 1 19 8.1v10.4A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5z"/></svg>',
- ekle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="3" width="11" height="18" rx="2.6"/><path d="M12 8.5v5M9.5 11h5"/></svg>'
+ takip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><rect x="6" y="11" width="3.2" height="6.2" rx="1"/><rect x="10.4" y="7" width="3.2" height="10.2" rx="1"/><rect x="14.8" y="13.4" width="3.2" height="3.8" rx="1"/></svg>',
+ kapanis:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 11.5 5 9.2a2 2 0 0 1 1.4-3.4h11.2A2 2 0 0 1 19 9.2l-2.5 2.3"/><path d="M12 11.5v7"/><path d="M8.6 18.5h6.8"/></svg>',
+ gosterme:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5c2.2-2.6 4-2.6 6.2 0"/><path d="M4.5 13.5 9 5.2a1.4 1.4 0 0 1 2.4 0l2.2 4"/><path d="M13.5 19.5h6"/><path d="M15.8 12.6l3.1 3.1-2.4 2.4-3.1-3.1z"/></svg>',
+ evrak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7.4A1.4 1.4 0 0 0 6 4.9v14.2a1.4 1.4 0 0 0 1.4 1.4h9.2a1.4 1.4 0 0 0 1.4-1.4V7.5z"/><path d="M14 3.5v4h4"/><path d="M9 12h6M9 15.5h4"/></svg>',
+ kibris:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s6-5.1 6-9.4a6 6 0 1 0-12 0c0 4.3 6 9.4 6 9.4z"/><circle cx="12" cy="10.8" r="2.2"/></svg>',
+ masraf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="3.5" width="13" height="17" rx="2.2"/><path d="M8.8 7.6h6.4"/><path d="M9 11.6h.01M12 11.6h.01M15 11.6h.01M9 14.8h.01M12 14.8h.01M15 14.8h.01M9 17.6h.01M12 17.6h.01M15 17.6h.01"/></svg>',
+ musteri:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.6" cy="8.6" r="3.2"/><path d="M3.8 19.2v-1a4 4 0 0 1 4-4h3.6a4 4 0 0 1 4 4v1"/><path d="M16.8 6.4h4.4M19 4.2v4.4"/></svg>',
+ pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.2" width="14" height="9.3" rx="2.2"/><path d="M8.4 10.2V7.6a3.6 3.6 0 0 1 7.2 0v2.6"/><path d="M12 14v2"/></svg>'
 };
+
+var UYGULAMALAR=[
+ {ad:'Danışman Takip', alt:'Günlük aktivite ve puan', sim:'takip', renk:'kirmizi',
+  url:'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec', pinli:true},
+ {ad:'Kapanış Formu', alt:'Satış ve kiralama kaydı', sim:'kapanis', renk:'mavi',
+  url:'https://dogusremax.github.io/kapanis/', pinli:true},
+ {ad:'Yer Gösterme Belgesi', alt:'Tabletten imzalatma', sim:'gosterme', renk:'mavi',
+  url:'https://dogusremax.github.io/matbuevraklar/yer-gosterme.html', pinli:true},
+ {ad:'Matbu Evraklar', alt:'Sözleşme ve form yazdırma', sim:'evrak', renk:'mavi',
+  url:'https://dogusremax.github.io/matbuevraklar/', pinli:true},
+ {ad:'Kıbrıs Katalog', alt:'Kıbrıs projeleri', sim:'kibris', renk:'mavi',
+  url:'https://script.google.com/macros/s/AKfycbwnyN9V87vndjSd2KIohl2XO6h_gn72W8fGSvjHoaCjDETSbrAmOJQH3Dgx0OLrc8dO/exec', pinli:false},
+ {ad:'Masraf Hesaplayıcı', alt:'Kıbrıs vergi ve harç', sim:'masraf', renk:'mavi',
+  url:'https://dogusportal.com/masraf-hesaplayici.html', pinli:false},
+ {ad:'Müşteri Takip', alt:'Müşteri kaydı ve eşleştirme', sim:'musteri', renk:'mavi',
+  url:'https://script.google.com/macros/s/AKfycbxO_8XnwUg88hl54DVwovsWRQmPF7_4kLuNNCsUXCrgDAEjZigdC_26ITobSAaAU2lG/exec', pinli:true}
+];
+
+function _uygUrl(u){
+  var pin=(DURUM.temel||{}).pin;
+  if(!u.pinli||!pin) return u.url;
+  return u.url+(u.url.indexOf('?')>-1?'&':'?')+'pin='+encodeURIComponent(pin);
+}
 
 function menuAc(){
   var t=DURUM.temel||{};
   E('menuKim').textContent=t.ad||t.eposta||'';
   var h='';
-  h+='<button class="menu-oge" onclick="adDegistir()">'+
-     '<span class="sim">'+SIM.ad+'</span>'+
-     '<span class="yazi"><b>Adım</b><i>'+kacis(t.ad||'belirlenmedi')+'</i></span></button>';
 
-  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');senkronAyarAc()">'+
-     '<span class="sim">'+SIM.senk+'</span>'+
-     '<span class="yazi"><b>Matbu Evraklar bağlantısı</b><i>'+
-     (t.matbuKurulu?'Bağlı · '+kacis(t.matbuDanisman):'Kurulmadı')+'</i></span>'+
-     '<span class="durum'+(t.matbuKurulu?' acik':'')+'">'+(t.matbuKurulu?'Bağlı':'Kapalı')+'</span></button>';
+  h+='<button class="menu-oge" onclick="pinAyarla()">'+
+     '<span class="sim'+(t.pin?'':' kirmizi')+'">'+SIM.pin+'</span>'+
+     '<span class="yazi"><b>Şifrem</b><i>'+(t.pin?'Kayıtlı · uygulamalara taşınıyor':'Bir kez gir, hep hatırlansın')+'</i></span>'+
+     '<span class="durum'+(t.pin?' acik':'')+'">'+(t.pin?'Kayıtlı':'Yok')+'</span></button>';
 
-  if(t.matbuKurulu){
-    h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');senkronCalistir()">'+
-       '<span class="sim">'+SIM.senk+'</span>'+
-       '<span class="yazi"><b>Şimdi aktar</b><i>'+
-       (t.sonMatbuSenkron?'Son aktarım '+kacis(t.sonMatbuSenkron):'Henüz aktarılmadı')+'</i></span></button>';
+  h+='<div class="bolum"><h2 class="disp">Uygulamalar</h2><span class="cizgi"></span></div>';
 
-    h+='<button class="menu-oge" onclick="otoDegistirMenu('+(t.otoSenkron?'false':'true')+')">'+
-       '<span class="sim">'+SIM.oto+'</span>'+
-       '<span class="yazi"><b>Her sabah otomatik aktar</b><i>07:00\'de yeni kayıtları çeker</i></span>'+
-       '<span class="durum'+(t.otoSenkron?' acik':'')+'">'+(t.otoSenkron?'Açık':'Kapalı')+'</span></button>';
-  }
-
-  if(t.dosyaUrl&&t.dosyaUrl!=='#'){
-    h+='<a class="menu-oge" href="'+kacis(t.dosyaUrl)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
-       '<span class="sim">'+SIM.dosya+'</span>'+
-       '<span class="yazi"><b>Ham veri dosyam</b><i>Kendi Drive\'ındaki e-tablo</i></span></a>';
-  }
-
-  h+='<div class="bolum"><h2 class="disp">Yardım</h2><span class="cizgi"></span></div>';
-  h+='<div class="kart"><div class="ust"><span class="sim" style="width:38px;height:38px;border-radius:12px;color:#fff;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,var(--kirmizi-ac),var(--kirmizi) 75%);box-shadow:0 2px 0 var(--kirmizi-koyu),inset 0 1px 2px rgba(255,255,255,.3)">'+SIM.ekle+'</span>'+
-     '<div style="flex:1;margin-left:12px"><div class="ad disp" style="font-size:14.5px">Ana ekrana ekle</div>'+
-     '<div class="sonnot" style="-webkit-line-clamp:4;margin-top:4px">iPhone: Safari → Paylaş → Ana Ekrana Ekle.<br>Android: Chrome → ⋮ → Ana ekrana ekle.</div></div></div></div>';
+  h+=UYGULAMALAR.map(function(u){
+    return '<a class="menu-oge" href="'+kacis(_uygUrl(u))+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
+      '<span class="sim'+(u.renk==='kirmizi'?' kirmizi':'')+'">'+SIM[u.sim]+'</span>'+
+      '<span class="yazi"><b>'+kacis(u.ad)+'</b><i>'+kacis(u.alt)+'</i></span>'+
+      '<span class="ok">↗</span></a>';
+  }).join('');
 
   E('menuGovde').innerHTML=h;
   ac('perdeMenu');
 }
 
-function adDegistir(){
+function pinAyarla(){
   var t=DURUM.temel||{};
-  var ad=prompt('Adın:',t.ad||'');
-  if(ad===null)return;
-  ad=ad.trim(); if(!ad)return;
-  api('ayarKaydet',{ad:ad}).then(function(){
-    api('baslat').then(function(b){DURUM.temel=b;E('kim').textContent=b.ad;menuAc()});
-  });
-}
-
-function otoDegistirMenu(ac){
-  api('otomatikSenkron',ac).then(function(){
+  var pin=prompt('Uygulamalarda kullandığın şifren:', t.pin||'');
+  if(pin===null)return;
+  pin=String(pin).replace(/\D/g,'').trim();
+  api('ayarKaydet',{pin:pin}).then(function(){
     api('baslat').then(function(b){DURUM.temel=b;menuAc()});
   });
 }
