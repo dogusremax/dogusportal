@@ -1095,7 +1095,12 @@ function _demo(fn,a){
 
   if(fn==='belgelerim'){
     if(!DEMO.ayar.matbuKurulu)return {hata:'Önce menüden Matbu Evraklar bağlantısını kur.'};
-    return {faturalar:_kop(MATBU.faturalar),evraklar:_kop(MATBU.evraklar),zaman:_simdi()};
+    var ev=_kop(MATBU.evraklar);
+    MATBU.faturalar.forEach(function(f){
+      ev.push({tarih:f.tarih,tur:'Fatura',ad:f.musteri+(f.no?' · '+f.no:''),link:f.link,kaynak:'Fatura'});
+    });
+    ev.sort(function(a,b){return a.tarih<b.tarih?1:-1});
+    return {evraklar:ev,zaman:_simdi()};
   }
 
   if(fn==='hedefDurumu'){
@@ -1880,11 +1885,11 @@ function sesAlYaz(alanId){
 
 
 /* ---------- BELGELER ---------- */
-var BG={sekme:'fatura',q:'',veri:null};
+var BG={q:'',veri:null};
 
-function belgeAc(sekme){
-  BG.sekme=sekme||'fatura'; BG.q='';
-  E('belgeBaslik').textContent = BG.sekme==='fatura' ? 'Faturalarım' : 'Evraklarım';
+function belgeAc(){
+  BG.q='';
+  E('belgeBaslik').textContent='Evraklarım';
   ac('perdeBelge');
   var c=obOku('belge');
   if(c){BG.veri=c;belgeCiz()} else E('belgeGovde').innerHTML='<div class="yukleniyor">yükleniyor…</div>';
@@ -1894,54 +1899,31 @@ function belgeAc(sekme){
   });
 }
 
-function belgeSekme(s){BG.sekme=s;E('belgeBaslik').textContent=s==='fatura'?'Faturalarım':'Evraklarım';belgeCiz()}
 function belgeAra(v){BG.q=v;belgeCiz()}
 
 function belgeCiz(){
-  var v=BG.veri||{faturalar:[],evraklar:[]};
-  var h='<div class="cipler" style="margin-bottom:4px">'+
-    '<button class="cip'+(BG.sekme==='fatura'?' secili':'')+'" onclick="belgeSekme(\'fatura\')">Faturalar ('+(v.faturalar||[]).length+')</button>'+
-    '<button class="cip'+(BG.sekme==='evrak'?' secili':'')+'" onclick="belgeSekme(\'evrak\')">Evraklar ('+(v.evraklar||[]).length+')</button>'+
-    '</div>';
-  h+='<input class="arama" id="belgeQ" placeholder="Ara — müşteri, adres, evrak türü" value="'+kacis(BG.q)+'" oninput="belgeAra(this.value)">';
-
+  var e=((BG.veri||{}).evraklar)||[];
+  var h='<input class="arama" id="belgeQ" placeholder="Ara — müşteri, adres, evrak türü" value="'+kacis(BG.q)+'" oninput="belgeAra(this.value)">';
   var q=trKucuk(BG.q).trim();
-  if(BG.sekme==='fatura'){
-    var l=(v.faturalar||[]).filter(function(f){
-      return !q || trKucuk([f.musteri,f.no,f.baslik,f.taraf].join(' ')).indexOf(q)>-1;
-    });
-    h+= l.length ? l.map(function(f){
-      var ic='<div class="ust"><div style="flex:1;min-width:0">'+
-        '<div class="ad disp" style="font-size:15px">'+kacis(f.musteri||'—')+'</div>'+
-        '<div class="tel">'+(f.tarih?okunurTarih(f.tarih):'')+(f.no?' · '+kacis(f.no):'')+(f.taraf?' · '+kacis(f.taraf):'')+'</div>'+
-        (f.baslik?'<div class="sonnot" style="-webkit-line-clamp:2;margin-top:5px">'+kacis(f.baslik)+'</div>':'')+
-        '</div><span class="rozet mono">'+paraYaz(f.toplam)+' ₺</span></div>'+
-        (f.durum?'<div class="tel" style="margin-top:7px">'+kacis(f.durum)+'</div>':'');
-      return f.link
-        ? '<a class="kart" href="'+kacis(f.link)+'" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit">'+ic+'</a>'
-        : '<div class="kart">'+ic+'</div>';
-    }).join('') : '<div class="bos"><p>'+(q?'Eşleşen fatura yok.':'Fatura kaydın görünmüyor.')+'</p></div>';
+  var l=e.filter(function(x){ return !q || trKucuk([x.ad,x.tur,x.kaynak].join(' ')).indexOf(q)>-1 });
+
+  if(!l.length){
+    h+='<div class="bos"><div class="baslik disp">'+(q?'Eşleşen evrak yok':'Evrak kaydın görünmüyor')+'</div>'+
+       '<p>Matbu\'dan çıkardığın sözleşmeler, yetki belgeleri, tapular ve faturalar burada birikir.</p></div>';
   }else{
-    var e=(v.evraklar||[]).filter(function(x){
-      return !q || trKucuk([x.ad,x.tur,x.kaynak].join(' ')).indexOf(q)>-1;
+    var sonAy='';
+    l.forEach(function(x){
+      var ay=x.tarih?x.tarih.slice(0,7):'';
+      if(ay!==sonAy){
+        sonAy=ay;
+        var et=ay?AYLAR[+ay.slice(5,7)-1]+' '+ay.slice(0,4):'Tarihsiz';
+        h+='<div class="bolum"><h2 class="disp">'+kacis(et)+'</h2><span class="cizgi"></span></div>';
+      }
+      h+='<a class="menu-oge" href="'+kacis(x.link)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
+        '<span class="sim'+(x.tur==='Fatura'?' kirmizi':'')+'">'+(x.tur==='Fatura'?SIM.fatura:SIM.dosya)+'</span>'+
+        '<span class="yazi"><b>'+kacis(x.tur||'Belge')+'</b><i>'+kacis(x.ad||'')+'</i></span>'+
+        '<span class="ok">↗</span></a>';
     });
-    if(!e.length){
-      h+='<div class="bos"><p>'+(q?'Eşleşen evrak yok.':'Evrak kaydın görünmüyor.')+'</p></div>';
-    }else{
-      var sonAy='';
-      e.forEach(function(x){
-        var ay=x.tarih?x.tarih.slice(0,7):'';
-        if(ay!==sonAy){
-          sonAy=ay;
-          var et=ay?AYLAR[+ay.slice(5,7)-1]+' '+ay.slice(0,4):'Tarihsiz';
-          h+='<div class="bolum"><h2 class="disp">'+kacis(et)+'</h2><span class="cizgi"></span></div>';
-        }
-        h+='<a class="menu-oge" href="'+kacis(x.link)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
-          '<span class="sim">'+SIM.dosya+'</span>'+
-          '<span class="yazi"><b>'+kacis(x.tur||'Belge')+'</b><i>'+kacis(x.ad||'')+'</i></span>'+
-          '<span class="ok">↗</span></a>';
-      });
-    }
   }
   E('belgeGovde').innerHTML=h;
 }
@@ -1993,14 +1975,9 @@ function menuAc(){
      '<span class="yazi"><b>Şifrem</b><i>'+(t.pin?'Kayıtlı · uygulamalara taşınıyor':'Bir kez gir, hep hatırlansın')+'</i></span>'+
      '<span class="durum'+(t.pin?' acik':'')+'">'+(t.pin?'Kayıtlı':'Yok')+'</span></button>';
 
-  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');belgeAc(\'fatura\')">'+
-     '<span class="sim">'+SIM.fatura+'</span>'+
-     '<span class="yazi"><b>Faturalarım</b><i>Müşteriye kesilen faturalar</i></span>'+
-     '<span class="ok">›</span></button>';
-
-  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');belgeAc(\'evrak\')">'+
+  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');belgeAc()">'+
      '<span class="sim">'+SIM.dosya+'</span>'+
-     '<span class="yazi"><b>Evraklarım</b><i>Drive\'daki tüm belgelerin</i></span>'+
+     '<span class="yazi"><b>Evraklarım</b><i>Sözleşme, tapu, fatura — hepsi</i></span>'+
      '<span class="ok">›</span></button>';
 
   h+='<div class="bolum"><h2 class="disp">Uygulamalar</h2><span class="cizgi"></span></div>';
