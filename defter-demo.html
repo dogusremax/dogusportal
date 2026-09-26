@@ -649,6 +649,11 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
   <div id="gosterimGovde"></div>
 </div></div>
 
+<div class="perde" id="perdeBelge"><div class="sayfa">
+  <div class="sayfaUst"><h3 class="disp" id="belgeBaslik">Belgelerim</h3><button class="kapat" onclick="kapat('perdeBelge')">Kapat</button></div>
+  <div id="belgeGovde"></div>
+</div></div>
+
 <div class="perde" id="perdeRandevu"><div class="sayfa">
   <div class="sayfaUst"><h3 class="disp" id="randevuBaslik">Kayıt</h3><button class="kapat" onclick="kapat('perdeRandevu')">Kapat</button></div>
   <div id="randevuGovde"></div>
@@ -743,6 +748,28 @@ var MATBU={
   {id:'r3',baslik:'Arama',tarih:_g(1),saat:'10:00',kisi:'Kadir Şentürk',kisiId:'k5',yer:'',tur:'arama',not:'Kredi onayını sor',bitti:''},
   {id:'r4',baslik:'Ekspertiz',tarih:_g(2),saat:'11:00',kisi:'',kisiId:'',yer:'Nuhoğlu',tur:'toplantı',not:'',bitti:''},
   {id:'r5',baslik:'2+1 gösterimi',tarih:_g(-1),saat:'15:00',kisi:'Selin Aksoy',kisiId:'k2',yer:'Fikirtepe',tur:'gösterim',not:'',bitti:'EVET'}
+ ],
+ faturalar:[
+  {tarih:_g(-38),musteri:'Serkan Öz',taraf:'Alıcı/Kiracı',toplam:302400,no:'UT02026000000031',
+   baslik:'DUMLUPINAR MAH. PRESTİJ CAD. YENİ FİKİRTEPE KONUTLARI 5. ETAP C BLOK D:71 KADIKÖY SATILIK',durum:'e-Arşiv — Resmileşti',link:'#'},
+  {tarih:_g(-12),musteri:'Mehmet Tuğrak',taraf:'Alıcı/Kiracı',toplam:237600,no:'UT02026000000033',
+   baslik:'SİTE MAH. ATAY CAD. NO:47 KOMŞU FİNANS EVLERİ C BLOK D:5 ÜMRANİYE SATILIK',durum:'e-Arşiv — Resmileşti',link:'#'},
+  {tarih:_g(-61),musteri:'Oğuzhan Kahraman',taraf:'Alıcı/Kiracı',toplam:54720,no:'UT02026000000029',
+   baslik:'BARBAROS MAH. ANGEL CITY SİTESİ D:70 ATAŞEHİR KİRALIK',durum:'e-Arşiv — Resmileşti',link:'#'},
+  {tarih:_g(-95),musteri:'İzel Akçay',taraf:'Alıcı/Kiracı',toplam:100800,no:'UT02026000000027',
+   baslik:'DUMLUPINAR MAH. NUHOĞLU YENİTEPE 2. ETAP B BLOK D:40 KADIKÖY KİRALIK',durum:'e-Arşiv — Resmileşti',link:'#'}
+ ],
+ evraklar:[
+  {tarih:_g(-3),tur:'Yer Gösterme Belgesi',ad:'Burak Arıcan — Yeni Fikirtepe 5. Etap C Blok',link:'#',kaynak:'Matbu'},
+  {tarih:_g(-4),tur:'Satılık Yetkilendirme Sözleşmesi',ad:'Nagihan Sahillioğlu',link:'#',kaynak:'Matbu'},
+  {tarih:_g(-9),tur:'Yetki Sözleşmesi',ad:'Komşu Finans Evleri C Blok D:5',link:'#',kaynak:'Yetki'},
+  {tarih:_g(-12),tur:'Tapu',ad:'Komşu Finans Evleri C Blok D:5',link:'#',kaynak:'Kapanış'},
+  {tarih:_g(-12),tur:'Fatura',ad:'Komşu Finans Evleri C Blok D:5',link:'#',kaynak:'Kapanış'},
+  {tarih:_g(-25),tur:'Kiralık Yetkilendirme Sözleşmesi',ad:'Dilaver Kaya',link:'#',kaynak:'Matbu'},
+  {tarih:_g(-38),tur:'Tapu',ad:'Yeni Fikirtepe 5. Etap C Blok D:71',link:'#',kaynak:'Kapanış'},
+  {tarih:_g(-40),tur:'Kira Sözleşmesi',ad:'Hakan Olam - 6.Etap - D:14',link:'#',kaynak:'Matbu'},
+  {tarih:_g(-61),tur:'Kontrat',ad:'Ataşehir Angel City D:70',link:'#',kaynak:'Kapanış'},
+  {tarih:_g(-72),tur:'Tahliye Taahhütnamesi',ad:'Yalçın Ersarı',link:'#',kaynak:'Matbu'}
  ],
  kapanislar:[
   {tarih:_g(-38),tur:'Satılık',adres:'Yeni Fikirtepe 5. Etap C Blok D:71',tutar:8400000,toplamHB:252000,musteri:'Serkan Öz',malSahibi:'Murat Demirtaş'},
@@ -1064,6 +1091,11 @@ function _demo(fn,a){
     var hedef2=_anah(ad), bul='';
     DEMO.kisiler.forEach(function(k){if(!bul&&_anah(k.ad)===hedef2)bul=k.id});
     return bul;
+  }
+
+  if(fn==='belgelerim'){
+    if(!DEMO.ayar.matbuKurulu)return {hata:'Önce menüden Matbu Evraklar bağlantısını kur.'};
+    return {faturalar:_kop(MATBU.faturalar),evraklar:_kop(MATBU.evraklar),zaman:_simdi()};
   }
 
   if(fn==='hedefDurumu'){
@@ -1846,6 +1878,74 @@ function sesAlYaz(alanId){
   try{ t.start(); }catch(e){ sesDurdur(); }
 }
 
+
+/* ---------- BELGELER ---------- */
+var BG={sekme:'fatura',q:'',veri:null};
+
+function belgeAc(sekme){
+  BG.sekme=sekme||'fatura'; BG.q='';
+  E('belgeBaslik').textContent = BG.sekme==='fatura' ? 'Faturalarım' : 'Evraklarım';
+  ac('perdeBelge');
+  var c=obOku('belge');
+  if(c){BG.veri=c;belgeCiz()} else E('belgeGovde').innerHTML='<div class="yukleniyor">yükleniyor…</div>';
+  api('belgelerim').then(function(v){
+    if(v.hata){E('belgeGovde').innerHTML='<div class="bos"><div class="baslik disp">Bağlantı yok</div><p>'+kacis(v.hata)+'</p></div>';return}
+    obYaz('belge',v); BG.veri=v; belgeCiz();
+  });
+}
+
+function belgeSekme(s){BG.sekme=s;E('belgeBaslik').textContent=s==='fatura'?'Faturalarım':'Evraklarım';belgeCiz()}
+function belgeAra(v){BG.q=v;belgeCiz()}
+
+function belgeCiz(){
+  var v=BG.veri||{faturalar:[],evraklar:[]};
+  var h='<div class="cipler" style="margin-bottom:4px">'+
+    '<button class="cip'+(BG.sekme==='fatura'?' secili':'')+'" onclick="belgeSekme(\'fatura\')">Faturalar ('+(v.faturalar||[]).length+')</button>'+
+    '<button class="cip'+(BG.sekme==='evrak'?' secili':'')+'" onclick="belgeSekme(\'evrak\')">Evraklar ('+(v.evraklar||[]).length+')</button>'+
+    '</div>';
+  h+='<input class="arama" id="belgeQ" placeholder="Ara — müşteri, adres, evrak türü" value="'+kacis(BG.q)+'" oninput="belgeAra(this.value)">';
+
+  var q=trKucuk(BG.q).trim();
+  if(BG.sekme==='fatura'){
+    var l=(v.faturalar||[]).filter(function(f){
+      return !q || trKucuk([f.musteri,f.no,f.baslik,f.taraf].join(' ')).indexOf(q)>-1;
+    });
+    h+= l.length ? l.map(function(f){
+      var ic='<div class="ust"><div style="flex:1;min-width:0">'+
+        '<div class="ad disp" style="font-size:15px">'+kacis(f.musteri||'—')+'</div>'+
+        '<div class="tel">'+(f.tarih?okunurTarih(f.tarih):'')+(f.no?' · '+kacis(f.no):'')+(f.taraf?' · '+kacis(f.taraf):'')+'</div>'+
+        (f.baslik?'<div class="sonnot" style="-webkit-line-clamp:2;margin-top:5px">'+kacis(f.baslik)+'</div>':'')+
+        '</div><span class="rozet mono">'+paraYaz(f.toplam)+' ₺</span></div>'+
+        (f.durum?'<div class="tel" style="margin-top:7px">'+kacis(f.durum)+'</div>':'');
+      return f.link
+        ? '<a class="kart" href="'+kacis(f.link)+'" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit">'+ic+'</a>'
+        : '<div class="kart">'+ic+'</div>';
+    }).join('') : '<div class="bos"><p>'+(q?'Eşleşen fatura yok.':'Fatura kaydın görünmüyor.')+'</p></div>';
+  }else{
+    var e=(v.evraklar||[]).filter(function(x){
+      return !q || trKucuk([x.ad,x.tur,x.kaynak].join(' ')).indexOf(q)>-1;
+    });
+    if(!e.length){
+      h+='<div class="bos"><p>'+(q?'Eşleşen evrak yok.':'Evrak kaydın görünmüyor.')+'</p></div>';
+    }else{
+      var sonAy='';
+      e.forEach(function(x){
+        var ay=x.tarih?x.tarih.slice(0,7):'';
+        if(ay!==sonAy){
+          sonAy=ay;
+          var et=ay?AYLAR[+ay.slice(5,7)-1]+' '+ay.slice(0,4):'Tarihsiz';
+          h+='<div class="bolum"><h2 class="disp">'+kacis(et)+'</h2><span class="cizgi"></span></div>';
+        }
+        h+='<a class="menu-oge" href="'+kacis(x.link)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">'+
+          '<span class="sim">'+SIM.dosya+'</span>'+
+          '<span class="yazi"><b>'+kacis(x.tur||'Belge')+'</b><i>'+kacis(x.ad||'')+'</i></span>'+
+          '<span class="ok">↗</span></a>';
+      });
+    }
+  }
+  E('belgeGovde').innerHTML=h;
+}
+
 /* ---------- MENÜ — Uygulama kutusu ---------- */
 var SIM={
  takip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><rect x="6" y="11" width="3.2" height="6.2" rx="1"/><rect x="10.4" y="7" width="3.2" height="10.2" rx="1"/><rect x="14.8" y="13.4" width="3.2" height="3.8" rx="1"/></svg>',
@@ -1855,6 +1955,8 @@ var SIM={
  kibris:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s6-5.1 6-9.4a6 6 0 1 0-12 0c0 4.3 6 9.4 6 9.4z"/><circle cx="12" cy="10.8" r="2.2"/></svg>',
  masraf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="3.5" width="13" height="17" rx="2.2"/><path d="M8.8 7.6h6.4"/><path d="M9 11.6h.01M12 11.6h.01M15 11.6h.01M9 14.8h.01M12 14.8h.01M15 14.8h.01M9 17.6h.01M12 17.6h.01M15 17.6h.01"/></svg>',
  musteri:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.6" cy="8.6" r="3.2"/><path d="M3.8 19.2v-1a4 4 0 0 1 4-4h3.6a4 4 0 0 1 4 4v1"/><path d="M16.8 6.4h4.4M19 4.2v4.4"/></svg>',
+ fatura:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11v17l-2.2-1.6-2.2 1.6-2.2-1.6-2.2 1.6-2.2-1.6z"/><path d="M9.4 8h5.2M9.4 11.6h5.2M9.4 15.2h3"/></svg>',
+ dosya:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4h5l2 2.6h4A1.5 1.5 0 0 1 19 8.1v10.4A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5z"/></svg>',
  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.2" width="14" height="9.3" rx="2.2"/><path d="M8.4 10.2V7.6a3.6 3.6 0 0 1 7.2 0v2.6"/><path d="M12 14v2"/></svg>'
 };
 
@@ -1890,6 +1992,16 @@ function menuAc(){
      '<span class="sim'+(t.pin?'':' kirmizi')+'">'+SIM.pin+'</span>'+
      '<span class="yazi"><b>Şifrem</b><i>'+(t.pin?'Kayıtlı · uygulamalara taşınıyor':'Bir kez gir, hep hatırlansın')+'</i></span>'+
      '<span class="durum'+(t.pin?' acik':'')+'">'+(t.pin?'Kayıtlı':'Yok')+'</span></button>';
+
+  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');belgeAc(\'fatura\')">'+
+     '<span class="sim">'+SIM.fatura+'</span>'+
+     '<span class="yazi"><b>Faturalarım</b><i>Müşteriye kesilen faturalar</i></span>'+
+     '<span class="ok">›</span></button>';
+
+  h+='<button class="menu-oge" onclick="kapat(\'perdeMenu\');belgeAc(\'evrak\')">'+
+     '<span class="sim">'+SIM.dosya+'</span>'+
+     '<span class="yazi"><b>Evraklarım</b><i>Drive\'daki tüm belgelerin</i></span>'+
+     '<span class="ok">›</span></button>';
 
   h+='<div class="bolum"><h2 class="disp">Uygulamalar</h2><span class="cizgi"></span></div>';
 
