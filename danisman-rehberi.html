@@ -36,7 +36,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 
 /* ===== ÜST ===== */
 header{text-align:center;padding:42px 20px 26px;animation:rise .5s ease backwards}
-.logo-img{display:block;height:56px;width:auto;margin:0 auto}
+.logo-img{display:block;height:34px;width:auto;margin:0 auto}
+.logo-sar{display:inline-flex;padding:11px 18px;border-radius:18px;
+  background:radial-gradient(circle at 30% 20%,#243043,#0e1521 78%);
+  box-shadow:0 4px 0 #05090f,0 16px 26px -12px rgba(19,26,38,.6),inset 0 1px 2px rgba(255,255,255,.2)}
 h1{
   font-weight:700;font-size:25px;
   letter-spacing:-.035em;margin-top:16px;
@@ -171,7 +174,7 @@ footer a{color:var(--text-dim);text-decoration:none}
 <body>
 
 <header>
-  <img class="logo-img" src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'">
+  <span class="logo-sar"><img class="logo-img" src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş"></span>
   <h1>Danışman Rehberi</h1>
   <div class="tagline">Uygulamaları nasıl kullanırsın</div>
 </header>

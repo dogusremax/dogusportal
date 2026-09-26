@@ -65,11 +65,18 @@ header{
   background:linear-gradient(180deg,var(--kirmizi) 0 50%,var(--mavi) 50% 100%);
   box-shadow:0 3px 8px -2px rgba(220,28,46,.5);
 }
-.marka .logo{
-  height:30px;width:auto;flex-shrink:0;
-  filter:drop-shadow(0 2px 4px rgba(19,26,38,.22));
+.logo-cip{
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  padding:7px 11px;border-radius:14px;
+  background:radial-gradient(circle at 30% 20%,#243043,#0e1521 78%);
+  box-shadow:
+    0 3px 0 #05090f,
+    0 12px 20px -10px rgba(19,26,38,.7),
+    inset 0 1px 2px rgba(255,255,255,.2),
+    inset 0 -2px 5px rgba(0,0,0,.4);
   animation:pop .5s ease backwards .12s;
 }
+.logo-cip img{height:20px;width:auto;display:block}
 .altbilgi{
   display:flex;align-items:baseline;justify-content:space-between;
   gap:12px;margin-top:8px;
@@ -403,7 +410,7 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 <header>
   <div class="marka">
     <h1 class="disp">Defter</h1>
-    <img class="logo" src="https://raw.githubusercontent.com/dogusremax/dogusportal/main/assets/dogus-logo.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'">
+    <span class="logo-cip"><img src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş"></span>
   </div>
   <div class="altbilgi">
     <span class="tarih" id="tarihYazi"></span>
