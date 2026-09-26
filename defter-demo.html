@@ -50,40 +50,46 @@ button{border:0;background:none;cursor:pointer}
 
 /* ===== BAŞLIK ===== */
 header{
-  padding:calc(20px + env(safe-area-inset-top)) var(--pad) 14px;
-  background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);
-  border-bottom:1px solid var(--line-soft);
+  padding:calc(20px + env(safe-area-inset-top)) var(--pad) 20px;
+  background:
+    radial-gradient(circle at 22% 0%,rgba(255,255,255,.14),transparent 55%),
+    linear-gradient(170deg,var(--mavi) 0%,var(--mavi-koyu) 100%);
+  border-radius:0 0 26px 26px;
+  box-shadow:
+    0 14px 30px -18px rgba(0,42,115,.9),
+    inset 0 -3px 10px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.22);
+  position:relative;overflow:hidden;
   animation:iner .5s ease backwards;
+}
+header::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:4px;
+  background:linear-gradient(90deg,var(--kirmizi) 0 38%,#fff 38% 62%,var(--mavi-ac) 62% 100%);
+  opacity:.9;
 }
 header{text-align:center}
 header h1{
-  font-size:25px;font-weight:700;letter-spacing:-.04em;line-height:1;
-  display:inline-flex;align-items:center;gap:9px;margin-top:12px;
+  font-size:25px;font-weight:700;letter-spacing:-.04em;line-height:1;color:#fff;
+  display:inline-flex;align-items:center;gap:9px;margin-top:14px;position:relative;
+  text-shadow:0 2px 6px rgba(0,0,0,.28);
 }
 header h1::before{
   content:'';width:6px;height:23px;border-radius:99px;
-  background:linear-gradient(180deg,var(--kirmizi) 0 50%,var(--mavi) 50% 100%);
-  box-shadow:0 3px 8px -2px rgba(220,28,46,.5);
+  background:linear-gradient(180deg,var(--kirmizi) 0 50%,#fff 50% 100%);
+  box-shadow:0 3px 8px -2px rgba(220,28,46,.6);
 }
-.logo-cip{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:8px 13px;border-radius:15px;
-  background:radial-gradient(circle at 30% 20%,#243043,#0e1521 78%);
-  box-shadow:
-    0 3px 0 #05090f,
-    0 12px 20px -10px rgba(19,26,38,.7),
-    inset 0 1px 2px rgba(255,255,255,.2),
-    inset 0 -2px 5px rgba(0,0,0,.4);
+.logo{
+  height:30px;width:auto;display:block;margin:0 auto;position:relative;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));
   animation:pop .5s ease backwards .12s;
 }
-.logo-cip img{height:22px;width:auto;display:block}
 .kim{
-  font-size:13px;color:var(--muted);font-weight:700;margin-top:7px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:13px;color:rgba(255,255,255,.92);font-weight:700;margin-top:8px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;
 }
 .tarih{
-  font-size:10.5px;color:var(--soft);text-transform:uppercase;
-  letter-spacing:.14em;font-weight:700;margin-top:4px;
+  font-size:10.5px;color:rgba(255,255,255,.62);text-transform:uppercase;
+  letter-spacing:.14em;font-weight:700;margin-top:5px;position:relative;
 }
 
 main{padding:16px var(--pad) 0}
@@ -404,7 +410,7 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 <div style="background:#151A20;color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.06em;text-align:center;padding:7px 12px">DEMO — Portföy sekmesinden «Bağlantıyı kur» → «Aktar» dene</div>
 
 <header>
-  <span class="logo-cip"><img src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş"></span>
+  <img class="logo" src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş">
   <h1 class="disp">Defter</h1>
   <div class="kim" id="kim"></div>
   <div class="tarih" id="tarihYazi"></div>
