@@ -183,6 +183,7 @@ main{padding:16px var(--pad) 0}
     inset 0 -4px 7px rgba(0,0,0,.2);
   transition:transform .12s ease,box-shadow .12s ease;
 }
+.kaydet.ince{padding:13px;font-size:15px;border-radius:14px;margin-top:0;margin-bottom:14px}
 .kaydet:active{transform:translateY(4px);box-shadow:0 0 0 var(--mavi-koyu),0 6px 14px -10px rgba(0,61,165,.7),inset 0 2px 3px rgba(255,255,255,.3)}
 
 .ikincil{
@@ -406,7 +407,7 @@ label.alan.sesli textarea{padding-right:56px;min-height:110px}
 /* --- Takvim --- */
 .soylebar{position:relative;margin-bottom:10px}
 .soylebar textarea{
-  width:100%;padding:15px 58px 15px 16px;border-radius:18px;min-height:56px;resize:none;
+  width:100%;padding:15px 58px 15px 16px;border-radius:18px;min-height:78px;resize:none;
   border:1px solid var(--line);background:var(--card);font-size:15px;line-height:1.45;
   box-shadow:0 1px 3px rgba(19,26,38,.05);
 }
@@ -424,7 +425,7 @@ label.alan.sesli textarea{padding-right:56px;min-height:110px}
 .gezinti .etiket-orta small{display:block;font-weight:400;font-size:11px;color:var(--soft);margin-top:2px}
 
 .rv{
-  display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border-radius:16px;
+  display:flex;gap:11px;align-items:center;padding:13px 14px;border-radius:16px;
   background:var(--card);border:1px solid var(--line);margin-bottom:9px;width:100%;text-align:left;
   box-shadow:0 1px 3px rgba(19,26,38,.05);position:relative;overflow:hidden;
   animation:yukari .35s ease backwards;
@@ -433,13 +434,13 @@ label.alan.sesli textarea{padding-right:56px;min-height:110px}
 .rv.tamam{opacity:.5}
 .rv.tamam .rv-ad{text-decoration:line-through}
 .rv .rv-saat{
-  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--rvc,var(--mavi));
-  min-width:44px;padding-left:4px;
+  display:block;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;
+  color:var(--rvc,var(--mavi));min-width:46px;padding-left:5px;flex-shrink:0;
 }
 .rv .rv-saat.yok{color:var(--soft);font-weight:400}
-.rv .rv-orta{flex:1;min-width:0}
-.rv-ad{font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
-.rv-alt{font-size:12.5px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv .rv-orta{flex:1;min-width:0;display:block}
+.rv-ad{display:block;font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+.rv-alt{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rv-tik{
   width:26px;height:26px;border-radius:9px;flex-shrink:0;border:2px solid var(--line);
   display:flex;align-items:center;justify-content:center;color:transparent;font-size:14px;font-weight:700;
@@ -553,7 +554,7 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
 </head>
 <body>
 
-<div style="background:#151A20;color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.06em;text-align:center;padding:7px 12px">DEMO — Portföy sekmesinden «Bağlantıyı kur» → «Aktar» dene</div>
+<div style="background:#151A20;color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.06em;text-align:center;padding:calc(7px + env(safe-area-inset-top)) 12px 7px">DEMO — Portföy sekmesinden «Bağlantıyı kur» → «Aktar» dene</div>
 
 <header>
   <div class="ust-satir">
@@ -589,7 +590,7 @@ label.alan input:focus,label.alan textarea:focus,label.alan select:focus{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg>
       </button>
     </div>
-    <button class="kaydet" id="soyleBtn" onclick="soyleCozumle()">Kaydet</button>
+    <button class="kaydet ince" id="soyleBtn" onclick="soyleCozumle()">Kaydet</button>
     <div id="taslak"></div>
     <div class="cipler" id="gorunumCipler"></div>
     <div class="gezinti" id="gezinti"></div>
