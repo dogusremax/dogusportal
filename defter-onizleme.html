@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#f6f7f9">
+<title>Defter — Telefon Önizleme</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e3e7ee;
+  --text:#131a26; --dim:#68738a; --soft:#8b95a8;
+  --blue:#003DA5;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:Arial,Helvetica,'Liberation Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:22px 16px 34px;
+}
+button,select{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+
+header{text-align:center;margin-bottom:18px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.035em}
+.alt{font-size:12.5px;color:var(--dim);margin-top:5px}
+
+.kontrol{
+  display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  margin-bottom:20px;
+}
+.cip{
+  padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);font-size:13px;font-weight:600;color:var(--dim);
+  box-shadow:0 1px 2px rgba(19,26,38,.04);
+  transition:background .15s,color .15s,border-color .15s;
+}
+.cip:hover{border-color:#cfd7e6}
+.cip.secili{background:var(--text);color:#fff;border-color:var(--text)}
+.cip .px{font-weight:400;opacity:.6;margin-left:5px;font-size:11.5px}
+
+/* ===== TELEFON ===== */
+.sahne{display:flex;justify-content:center;width:100%}
+.telefon{
+  position:relative;flex-shrink:0;
+  background:#10141c;
+  border-radius:52px;
+  padding:11px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.14) inset,
+    0 40px 80px -30px rgba(19,26,38,.55),
+    0 10px 30px -12px rgba(19,26,38,.3);
+  transition:width .25s ease,height .25s ease;
+}
+.telefon::before,.telefon::after{
+  content:'';position:absolute;right:-2px;width:2px;border-radius:0 2px 2px 0;background:#2a313d;
+}
+.telefon::before{top:132px;height:58px}
+.telefon::after{top:202px;height:58px}
+.yan-sol{position:absolute;left:-2px;top:118px;width:2px;height:34px;border-radius:2px 0 0 2px;background:#2a313d}
+
+.ekran{
+  position:relative;width:100%;height:100%;
+  background:#fff;border-radius:42px;overflow:hidden;
+}
+.ada{
+  position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:96px;height:26px;border-radius:999px;background:#10141c;z-index:3;
+  pointer-events:none;
+}
+.telefon.se .ekran{border-radius:24px}
+.telefon.se{border-radius:36px;padding:9px}
+.telefon.se .ada{display:none}
+.telefon.se .centik{
+  position:absolute;top:0;left:0;right:0;height:9px;background:#10141c;z-index:3;
+}
+.cizgi{
+  position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
+  width:36%;height:4px;border-radius:99px;background:rgba(19,26,38,.28);z-index:3;
+  pointer-events:none;
+}
+.telefon.se .cizgi{display:none}
+
+iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+
+.dip{
+  margin-top:22px;text-align:center;font-size:12.5px;color:var(--dim);
+  line-height:1.6;max-width:430px;
+}
+.dip a{color:var(--blue);font-weight:600;text-decoration:none}
+.yenile{
+  margin-top:14px;display:inline-flex;align-items:center;gap:7px;
+  padding:11px 19px;border-radius:12px;background:var(--blue);color:#fff;
+  font-size:13.5px;font-weight:700;
+  box-shadow:0 8px 18px -8px rgba(0,61,165,.55);
+}
+@media (max-width:520px){
+  .telefon{transform-origin:top center}
+  .kontrol{gap:6px}
+  .cip{padding:7px 12px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Defter — Telefon Önizleme</h1>
+  <div class="alt">Uygulamanın telefonda nasıl göründüğü</div>
+</header>
+
+<div class="kontrol" id="kontrol"></div>
+
+<div class="sahne">
+  <div class="telefon" id="telefon">
+    <span class="yan-sol"></span>
+    <div class="ekran">
+      <div class="ada" id="ada"></div>
+      <div class="cizgi"></div>
+      <iframe id="cerceve" title="Defter demo" src="defter-demo.html"></iframe>
+    </div>
+  </div>
+</div>
+
+<button class="yenile" onclick="yenile()">Önizlemeyi yenile</button>
+
+<div class="dip">
+  Bu çerçeve gerçek telefon ekran ölçüleriyle aynı. Dokunmatik jestler ve
+  «Ana Ekrana Ekle» dışındaki her şeyi buradan deneyebilirsin.<br>
+  <a href="defter-demo.html" target="_blank" rel="noopener">Tam ekran aç →</a>
+</div>
+
+<script>
+var CIHAZLAR=[
+  {ad:'iPhone SE',    w:375, h:667, se:true},
+  {ad:'iPhone 13 mini',w:375,h:812},
+  {ad:'iPhone 15',    w:393, h:852},
+  {ad:'iPhone 15 Pro Max', w:430, h:932},
+  {ad:'Android',      w:412, h:915}
+];
+var secili=2;
+
+function ciz(){
+  document.getElementById('kontrol').innerHTML=CIHAZLAR.map(function(c,i){
+    return '<button class="cip'+(i===secili?' secili':'')+'" onclick="sec('+i+')">'+
+      c.ad+'<span class="px">'+c.w+'×'+c.h+'</span></button>';
+  }).join('');
+  uygula();
+}
+
+function sec(i){ secili=i; ciz(); }
+
+function uygula(){
+  var c=CIHAZLAR[secili];
+  var t=document.getElementById('telefon');
+  var cerceve=22, dikey=190;           // gövde dolgusu + üst/alt boşluk
+  var enB=window.innerWidth-32;
+  var boyB=window.innerHeight-dikey;
+  var olcek=Math.min(1,(enB)/(c.w+cerceve),(boyB)/(c.h+cerceve));
+  t.classList.toggle('se',!!c.se);
+  t.style.width=(c.w+cerceve)+'px';
+  t.style.height=(c.h+cerceve)+'px';
+  t.style.transform='scale('+olcek.toFixed(3)+')';
+  document.querySelector('.sahne').style.height=((c.h+cerceve)*olcek)+'px';
+  document.querySelector('.sahne').style.alignItems='flex-start';
+  t.style.transformOrigin='top center';
+  document.getElementById('ada').style.display=c.se?'none':'block';
+}
+
+function yenile(){
+  var f=document.getElementById('cerceve');
+  f.src='defter-demo.html?t='+Date.now();
+}
+
+window.addEventListener('resize',uygula);
+ciz();
+</script>
+</body>
+</html>
