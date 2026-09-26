@@ -744,6 +744,12 @@ var MATBU={
   {id:'r4',baslik:'Ekspertiz',tarih:_g(2),saat:'11:00',kisi:'',kisiId:'',yer:'Nuhoğlu',tur:'toplantı',not:'',bitti:''},
   {id:'r5',baslik:'2+1 gösterimi',tarih:_g(-1),saat:'15:00',kisi:'Selin Aksoy',kisiId:'k2',yer:'Fikirtepe',tur:'gösterim',not:'',bitti:'EVET'}
  ],
+ kapanislar:[
+  {tarih:_g(-38),tur:'Satılık',adres:'Yeni Fikirtepe 5. Etap C Blok D:71',tutar:8400000,toplamHB:252000,musteri:'Serkan Öz',malSahibi:'Murat Demirtaş'},
+  {tarih:_g(-95),tur:'Kiralık',adres:'Nuhoğlu Yenitepe 2. Etap B Blok D:40',tutar:70000,toplamHB:84000,musteri:'İzel Akçay',malSahibi:'Dilaver Kaya'},
+  {tarih:_g(-12),tur:'Satılık',adres:'Komşu Finans Evleri C Blok D:5',tutar:6750000,toplamHB:198000,musteri:'Mehmet Tuğrak',malSahibi:'Nagihan Sahillioğlu'},
+  {tarih:_g(-61),tur:'Kiralık',adres:'Ataşehir Angel City D:70',tutar:38000,toplamHB:45600,musteri:'Oğuzhan Kahraman',malSahibi:'Murat Tekeli'}
+ ],
  gosterimler:[
   {tarih:_gtr(-3),musteriAd:'Burak Arıcan',musteriTel:'0 (533) 471 09 27',musteriMail:'burakarican9@gmail.com',
    adres:'Dumlupınar Mah. Prestij Cad. Yeni Fikirtepe Konutları 5. Etap C Blok D:71 Kadıköy/İstanbul',fiyat:'8.400.000',pdf:'#'},
@@ -1062,10 +1068,18 @@ function _demo(fn,a){
 
   if(fn==='hedefDurumu'){
     var yil=String(new Date().getFullYear());
+    if(DEMO.ayar.matbuKurulu){
+      var bu=MATBU.kapanislar.filter(function(k){return String(k.tarih).indexOf(yil)===0});
+      var ciro=bu.reduce(function(s,k){return s+(+k.toplamHB||0)},0);
+      var hac=bu.reduce(function(s,k){return s+(+k.tutar||0)},0);
+      return {kaynak:'kapanis',hedef:DEMO.ayar.hedef,toplam:ciro,hacim:hac,adet:bu.length,yil:yil,
+        kapanislar:bu.map(function(k){return {ad:k.musteri||k.malSahibi||k.adres,adres:k.adres,tur:k.tur,
+          kapanisTarihi:k.tarih,komisyon:String(k.toplamHB),tutar:k.tutar}})};
+    }
     var kz=DEMO.kisiler.filter(function(k){return k.durum==='Kazanıldı'&&String(k.kapanisTarihi).indexOf(yil)===0});
     var tp=kz.reduce(function(x,k){return x+(+String(k.komisyon).replace(/\D/g,'')||0)},0);
     kz=_kop(kz).sort(function(x,y){return String(y.kapanisTarihi).localeCompare(String(x.kapanisTarihi))});
-    return {hedef:DEMO.ayar.hedef,toplam:tp,adet:kz.length,yil:yil,kapanislar:kz};
+    return {kaynak:'elle',hedef:DEMO.ayar.hedef,toplam:tp,hacim:0,adet:kz.length,yil:yil,kapanislar:kz};
   }
 
   return null;
@@ -2290,25 +2304,43 @@ E('aramaP').addEventListener('input',function(){
 
 /* ---------- HEDEF ---------- */
 function hedefYukle(){
-  api('hedefDurumu').then(function(h){
-    E('hedefGiris').value=h.hedef||'';
-    E('hedefRakam').textContent=paraYaz(h.toplam)+' ₺';
-    var yuzde=h.hedef?Math.min(100,Math.round(h.toplam/h.hedef*100)):0;
-    E('hedefAlt').textContent=h.hedef?h.yil+' hedefinin %'+yuzde+'\'i · '+h.adet+' kapanış'
-      :h.yil+' · '+h.adet+' kapanış · hedef belirlenmedi';
-    E('hedefBar').style.width=yuzde+'%';
-    E('kapanisListe').innerHTML=h.kapanislar.length
-      ? h.kapanislar.map(function(k){
-          return '<div class="kart"><div class="ust"><div><div class="ad disp">'+kacis(k.ad)+'</div>'+
-            '<div class="tel">'+okunurTarih(k.kapanisTarihi)+'</div></div>'+
-            '<span class="rozet mono">'+paraYaz(k.komisyon)+' ₺</span></div></div>';
-        }).join('')
-      : '<div class="bos"><div class="baslik disp">Bu yıl henüz kapanış yok</div><p>Bir kişiyi «Kazanıldı» yapıp komisyonu yazdığında burada görünür.</p></div>';
-  });
+  var c=obOku('hedef');
+  if(c)hedefCiz(c); else E('kapanisListe').innerHTML='<div class="yukleniyor">yükleniyor…</div>';
+  api('hedefDurumu').then(function(h){ obYaz('hedef',h); hedefCiz(h); });
+}
+
+function hedefCiz(h){
+  E('hedefGiris').value=h.hedef||'';
+  E('hedefRakam').textContent=paraYaz(h.toplam)+' ₺';
+  var yuzde=h.hedef?Math.min(100,Math.round(h.toplam/h.hedef*100)):0;
+  E('hedefAlt').textContent=h.hedef?h.yil+' hedefinin %'+yuzde+'\'i · '+h.adet+' kapanış'
+    :h.yil+' · '+h.adet+' kapanış · hedef belirlenmedi';
+  E('hedefBar').style.width=yuzde+'%';
+
+  var ust='';
+  if(h.kaynak==='kapanis'){
+    ust='<div class="kart" style="margin-bottom:12px"><div class="sayaclar" style="border-top:0;padding-top:0;margin-top:0">'+
+      '<div class="sayac"><b class="mono">'+h.adet+'</b><span>kapanış</span></div>'+
+      '<div class="sayac"><b class="mono">'+paraYaz(h.hacim)+'</b><span>işlem hacmi ₺</span></div>'+
+      '<div class="sayac"><b class="mono">'+(h.adet?paraYaz(Math.round(h.toplam/h.adet)):'—')+'</b><span>ortalama ₺</span></div>'+
+      '</div><div class="dip" style="padding:10px 0 0">Rakamlar Kapanış Formu\'ndan geliyor · hizmet bedeli (brüt)</div></div>';
+  }
+
+  E('kapanisListe').innerHTML = ust + (h.kapanislar.length
+    ? h.kapanislar.map(function(k){
+        var alt=k.adres?kacis(k.adres):okunurTarih(k.kapanisTarihi);
+        return '<div class="kart"><div class="ust"><div style="flex:1;min-width:0">'+
+          '<div class="ad disp">'+kacis(k.ad)+'</div>'+
+          '<div class="sonnot" style="-webkit-line-clamp:1;margin-top:3px">'+alt+'</div>'+
+          '<div class="tel">'+okunurTarih(k.kapanisTarihi)+(k.tur?' · '+kacis(k.tur):'')+'</div></div>'+
+          '<span class="rozet mono">'+paraYaz(k.komisyon)+' ₺</span></div></div>';
+      }).join('')
+    : '<div class="bos"><div class="baslik disp">Bu yıl henüz kapanış yok</div><p>'+
+      (h.kaynak==='kapanis'?'Kapanış Formu\'nda bu yıla ait kaydın görünmüyor.':'Bir kişiyi «Kazanıldı» yapıp komisyonu yazdığında burada görünür.')+'</p></div>');
 }
 
 function hedefKaydet(){
-  api('ayarKaydet',{hedef:E('hedefGiris').value.replace(/\D/g,'')||'0'}).then(hedefYukle);
+  api('ayarKaydet',{hedef:E('hedefGiris').value.replace(/\D/g,'')||'0'}).then(function(){obSil('hedef');hedefYukle()});
 }
 
 /* ---------- Perde ---------- */
