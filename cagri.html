@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Çağrı Aktar</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --lacivert:#0B1550; --lacivert2:#1B2A6B;
+    --kirmizi:#DC1C2E; --kirmizi2:#A5121F;
+    --kart:#FFFFFF; --cizgi:#E6EAF3;
+    --gri:#6D7692; --soluk:#A3ABC2;
+    --golge:0 1px 2px rgba(11,21,80,.05), 0 8px 22px rgba(11,21,80,.07);
+    --yazi:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0}
+  html,body{height:100%}
+  body{
+    font:600 16px/1.45 var(--yazi);
+    color:var(--lacivert);
+    background:linear-gradient(180deg,#E9EDF7 0%,#F5F7FC 38%,#F7F9FD 100%);
+    padding:calc(env(safe-area-inset-top,0px) + 20px) 18px
+            calc(env(safe-area-inset-bottom,0px) + 20px);
+    display:flex; flex-direction:column;
+  }
+  body::before{
+    content:""; position:fixed; inset:0 0 auto; height:46%; z-index:-1;
+    background:radial-gradient(85% 100% at 50% 0%, rgba(220,28,46,.10), transparent 70%);
+  }
+
+  /* ---- arayan kartı ---- */
+  .cagri{
+    background:var(--kart); border-radius:22px; padding:22px 20px 20px;
+    box-shadow:var(--golge); text-align:center; position:relative; overflow:hidden;
+  }
+  .cagri::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:3px;
+    background:linear-gradient(90deg,var(--kirmizi),var(--lacivert));
+  }
+  .cagri .etiket{
+    font-size:10px; font-weight:800; letter-spacing:2.6px; color:var(--soluk);
+  }
+  .cagri .num{
+    font-size:29px; font-weight:800; letter-spacing:-.2px; margin-top:11px;
+    font-variant-numeric:tabular-nums;
+  }
+  .cagri .sa{
+    display:inline-flex; align-items:center; gap:6px; margin-top:12px;
+    background:#F1F4FA; color:var(--gri); font-size:13px; font-weight:700;
+    padding:6px 13px; border-radius:20px; font-variant-numeric:tabular-nums;
+  }
+
+  /* ---- nöbetçi ---- */
+  .nobet{
+    display:flex; align-items:center; gap:15px; width:100%; border:0; cursor:pointer;
+    background:linear-gradient(135deg,#E5233A 0%,var(--kirmizi) 42%,var(--kirmizi2) 100%);
+    color:#fff; border-radius:22px; padding:19px 20px; text-align:left;
+    font:inherit; margin-top:16px;
+    box-shadow:0 2px 6px rgba(165,18,31,.22), 0 14px 30px rgba(220,28,46,.26);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .nobet:active{transform:scale(.978); box-shadow:0 2px 8px rgba(165,18,31,.3)}
+  .nobet .rozet{
+    width:50px;height:50px;flex:none;border-radius:16px;
+    background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.26);
+    display:flex;align-items:center;justify-content:center;
+    font-size:21px;font-weight:800;letter-spacing:-.5px;
+  }
+  .nobet .alt{font-size:10px;font-weight:800;letter-spacing:2.2px;opacity:.92;display:block}
+  .nobet .ad{font-size:20px;font-weight:800;margin-top:4px;line-height:1.1;display:block;
+             letter-spacing:-.3px}
+  .nobet .ok{margin-left:auto;font-size:26px;font-weight:600;opacity:.8}
+
+  .bos{
+    margin-top:16px; background:var(--kart); border:1px dashed var(--cizgi);
+    border-radius:22px; padding:20px; text-align:center;
+    font-size:14px; font-weight:600; color:var(--gri); line-height:1.6;
+  }
+
+  /* ---- diğer danışmanlar ---- */
+  .baslik{
+    font-size:11px; font-weight:800; letter-spacing:2.2px; color:var(--soluk);
+    margin:26px 4px 12px;
+  }
+  .izgara{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .kisi{
+    display:flex; align-items:center; gap:11px; border:1px solid var(--cizgi);
+    background:var(--kart); border-radius:16px; padding:13px 12px; cursor:pointer;
+    font:inherit; color:var(--lacivert); text-align:left; min-width:0;
+    box-shadow:0 1px 2px rgba(11,21,80,.04);
+    transition:transform .12s ease, border-color .12s ease;
+  }
+  .kisi:active{transform:scale(.97); border-color:#C9D1E4}
+  .kisi .bh{
+    width:34px;height:34px;flex:none;border-radius:11px;
+    background:linear-gradient(135deg,#EEF1F9,#DFE5F2); color:var(--lacivert2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:800;
+  }
+  .kisi .isim{
+    font-size:13.5px; font-weight:700; line-height:1.25; letter-spacing:-.1px;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+
+  .durum{margin-top:auto;padding-top:22px;text-align:center;
+         font-size:12px;font-weight:600;color:var(--soluk)}
+  .iskelet{opacity:.45}
+</style>
+</head>
+<body>
+
+<div class="cagri">
+  <div class="etiket">GELEN ÇAĞRI</div>
+  <div class="num" id="num">—</div>
+  <div class="sa" id="sa"></div>
+</div>
+
+<div id="nobetAlan"></div>
+
+<div id="digerAlan"></div>
+
+<div class="durum" id="durum"></div>
+
+<script>
+var SERVIS = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+var ANAHTAR = 'cagri_veri_v1';
+
+/* ---------- arayanın numarası ---------- */
+function bicimle(ham){
+  var d = String(ham || '').replace(/\D/g,'');
+  if(d.length === 12 && d.slice(0,2) === '90') d = '0' + d.slice(2);
+  if(d.length === 10) d = '0' + d;
+  if(d.length !== 11) return String(ham || '').trim();
+  return d.slice(0,4)+' '+d.slice(4,7)+' '+d.slice(7,9)+' '+d.slice(9);
+}
+var arayan = bicimle(new URLSearchParams(location.search).get('tel') || '');
+var saat = new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+document.getElementById('num').textContent = arayan || 'Numara okunamadı';
+document.getElementById('sa').textContent = '🕐 ' + saat;
+
+/* ---------- WhatsApp'ı aç ---------- */
+function gonder(ad, tel, nobetMi){
+  var ilkAd = String(ad).split(' ')[0] || ad;
+  var mesaj = 'Selam ' + ilkAd + ', ' +
+              (nobetMi ? 'nöbet çağrısı geldi!' : 'çağrı geldi!') +
+              ' Takibi sende.\n\n📞 ' + arayan + '\n🕐 ' + saat;
+  var hedef = String(tel).replace(/\D/g,'');
+  if(hedef.length === 11 && hedef.charAt(0) === '0') hedef = '90' + hedef.slice(1);
+  if(hedef.length === 10) hedef = '90' + hedef;
+  location.href = 'whatsapp://send?phone=' + hedef + '&text=' + encodeURIComponent(mesaj);
+}
+
+function basHarfler(ad){
+  var p = String(ad).trim().split(/\s+/);
+  return (p[0] ? p[0].charAt(0) : '') + (p[1] ? p[1].charAt(0) : '');
+}
+
+/* ---------- ekranı çiz ---------- */
+function ciz(v, taze){
+  var bugun = new Date().toISOString().slice(0,10);
+  var gecerli = v && v.tarih === bugun;
+  var kisiler = (v && v.kisiler) || [];
+  var nobetci = gecerli ? (v.nobetci || '') : '';
+
+  var nAlan = document.getElementById('nobetAlan');
+  nAlan.className = gecerli ? '' : 'iskelet';
+  nAlan.innerHTML = '';
+
+  var nobetKisi = null;
+  if(nobetci){
+    nobetKisi = kisiler.filter(function(x){ return x.ad === nobetci; })[0] || null;
+  }
+
+  if(nobetKisi){
+    var b = document.createElement('button');
+    b.className = 'nobet';
+    b.innerHTML =
+      '<span class="rozet">' + basHarfler(nobetKisi.ad) + '</span>' +
+      '<span><span class="alt">GÜNÜN NÖBETÇİSİ</span>' +
+      '<span class="ad">' + nobetKisi.ad + '</span></span>' +
+      '<span class="ok">›</span>';
+    b.onclick = function(){ gonder(nobetKisi.ad, nobetKisi.tel, true); };
+    nAlan.appendChild(b);
+  } else if(gecerli){
+    nAlan.innerHTML = '<div class="bos">Bugün ofis nöbeti.<br>Aşağıdan danışman seç.</div>';
+  }
+
+  var dAlan = document.getElementById('digerAlan');
+  dAlan.innerHTML = '';
+  var digerleri = kisiler.filter(function(x){ return !nobetKisi || x.ad !== nobetKisi.ad; });
+  if(digerleri.length){
+    var h = document.createElement('div');
+    h.className = 'baslik';
+    h.textContent = nobetKisi ? 'DİĞER DANIŞMANLAR' : 'DANIŞMANLAR';
+    dAlan.appendChild(h);
+
+    var g = document.createElement('div');
+    g.className = 'izgara';
+    digerleri.forEach(function(x){
+      var k = document.createElement('button');
+      k.className = 'kisi';
+      k.innerHTML = '<span class="bh">' + basHarfler(x.ad) + '</span>' +
+                    '<span class="isim">' + x.ad + '</span>';
+      k.onclick = function(){ gonder(x.ad, x.tel, false); };
+      g.appendChild(k);
+    });
+    dAlan.appendChild(g);
+  }
+
+  document.getElementById('durum').textContent =
+    gecerli ? '' : (taze ? '' : 'nöbetçi güncelleniyor…');
+}
+
+/* ---------- önce önbellek, sonra tazeleme ---------- */
+var yerel = null;
+try{ yerel = JSON.parse(localStorage.getItem(ANAHTAR) || 'null'); }catch(e){}
+if(yerel) ciz(yerel, false);
+else document.getElementById('durum').textContent = 'liste yükleniyor…';
+
+fetch(SERVIS + '?action=cagriVeri', {redirect:'follow'})
+  .then(function(r){ return r.json(); })
+  .then(function(v){
+    if(!v || !v.ok) throw new Error('veri yok');
+    try{ localStorage.setItem(ANAHTAR, JSON.stringify(v)); }catch(e){}
+    ciz(v, true);
+  })
+  .catch(function(){
+    if(!yerel) document.getElementById('durum').textContent =
+      'Liste alınamadı — bağlantını kontrol et.';
+  });
+</script>
+</body>
+</html>
