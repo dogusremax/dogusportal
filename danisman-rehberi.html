@@ -30,6 +30,8 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 .app-body .link{display:inline-block;margin-top:8px;padding:8px 16px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
 .app-body .link:hover{background:#1d4ed8}
 .app-body .tip{background:#1e2030;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 8px 8px 0;font-size:12px;color:#d4d4d8;margin-top:8px}
+.app-body b{color:#e4e4e7;font-weight:600}
+.yeni{display:inline-block;background:#10574C;color:#5FC9A9;font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:5px;vertical-align:middle;margin-left:6px}
 </style>
 </head>
 <body>
@@ -37,6 +39,59 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <div class="logo"><img src="https://dogusportal.com/img/logo-light.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'"></div>
 <h1>📖 Danışman Rehberi</h1>
 <div class="sub">Tüm uygulamaları nasıl kullanacağını öğren</div>
+
+<div class="app" id="a13">
+<div class="app-header" onclick="toggle('a13')">
+<div class="app-icon" style="background:linear-gradient(135deg,#10574C,#5FC9A9)">📓</div>
+<div class="app-info"><div class="app-name">Defter <span class="yeni">YENİ</span></div><div class="app-short">Kendi müşteri ve portföy defterin</div></div>
+<div class="app-toggle">▼</div>
+</div>
+<div class="app-body">
+<h3>Ne İşe Yarar?</h3>
+<p>Defter senin kendi defterin — ofis takip aracı değil. Kimse puan vermiyor, kimse rapor çekmiyor. Tek amacı her sabah şu soruyu cevaplamak: <b>bugün kimi arayacağım ve geçen sefer ne konuşmuştuk?</b></p>
+<p>Veri senin kendi Google hesabında durur. Telefonda tarayıcıdan açılır, ana ekrana eklenince normal uygulama gibi çalışır.</p>
+
+<h3>Dört Ekran</h3>
+<p><b>◎ Bugün</b> — Sonraki adım tarihi gelmiş kişiler. Kırmızı şeritliler gecikmiş, en üstte. Her kartta Ara / WhatsApp / Konuştum. Altta 15 gündür dokunulmamış müşteriler.</p>
+<p><b>☰ Kişiler</b> — Tüm müşterilerin. Kartta bütçe, ne aradığı, kişisel notların, gezdiği portföyler ve tüm görüşme geçmişi.</p>
+<p><b>⌂ Portföy</b> — Elindeki mülkler. Her kartta kaç gösterim, kaç sıcak ilgi, son gösterim ne zaman. İçinde kimlere gösterdiğin ve o mülk hakkında kimlerle ne konuştuğun.</p>
+<p><b>▲ Hedef</b> — Kendi yazdığın yıllık komisyon hedefi ve kapanışların.</p>
+
+<h3>Günlük Döngü</h3>
+<p>Uygulamanın tamamı tek bir alışkanlığa bağlı: her görüşmeden sonra <b>Konuştum</b>'a bas, 10 saniye harca.</p>
+<ol>
+<li>Türü seç — Arama, WhatsApp, Ziyaret, Not</li>
+<li>Ne konuşuldu — iki cümle yeter</li>
+<li>Hangi portföy hakkında — mülkle ilgiliyse seç</li>
+<li>Sonraki adım — "2 yeni daire gönder"</li>
+<li>Ne zaman dönülecek — Yarın / 3 gün / 1 hafta / 2 hafta / 1 ay</li>
+</ol>
+<div class="tip">💡 Bunu yaparsan ertesi sabah Bugün ekranı dolu gelir. Yapmazsan boş kalır — tüm mesele bu.</div>
+
+<h3>Yer Gösterimi</h3>
+<p>Portföy kartından <b>Yer gösterimi ekle</b>: kimi gezdirdin, ilgi düzeyi (Sıcak / Orta / Soğuk), müşteri ne dedi. Kayıt hem portföyün listesine hem kişinin geçmişine düşer.</p>
+
+<h3>Mal Sahibine Rapor</h3>
+<p>Portföy kartından <b>Mal sahibine rapor hazırla</b>. Son 7, 14 veya 30 günün gösterim özetini hazır metne çevirir, WhatsApp'a tek tuşla gider.</p>
+<div class="tip">💡 Haftada bir gönderirsen mal sahibinin "ne oldu benim ev" aramaları kesilir. Yetki yenilemede de elinde kanıt olur.</div>
+
+<h3>Matbu'dan Aktarım</h3>
+<p>Portföy sekmesinin üstündeki <b>Aktar</b> düğmesi, Matbu Evraklar'daki kendi kayıtlarını çeker:</p>
+<ol>
+<li>Yetkilendirme sözleşmesi çıkardığın her mülk portföy kartı olur — mal sahibi adı, telefonu, adres ve yetki bitiş tarihi hazır gelir</li>
+<li>Yer gösterme belgesi doldurduğun her müşteri kişi olarak eklenir ve gezdirilen mülkle eşleşir</li>
+<li>Kendi yazdığın başlık, fiyat ve notlara dokunulmaz — sadece boş alanlar dolar</li>
+<li>Kaç kez çalıştırırsan çalıştır aynı kayıt tekrar eklenmez</li>
+</ol>
+<p>Bir gösterimin adresi portföylerinden hiçbirine benzemezse atılmaz, sana sorulur: mevcut portföye bağla ya da yeni portföy aç.</p>
+
+<h3>Veri Nerede</h3>
+<p>Defter dosyası senin kendi Drive'ında. Yetki sözleşmeleri ve yer gösterme belgeleri ofis kaydıdır, zaten Matbu'da duruyor. Defter'e özel olan senin yorumların: ilgi düzeyi, müşterinin ne dediği, sonraki adım ve kişisel notların.</p>
+
+<div class="tip">⚠️ Aşağıdaki bağlantı <b>demo</b> — örnek müşterilerle dolu, değişiklikler kaydedilmez. Gerçek sürüm kurulduğunda kendi linkin verilecek.</div>
+<a class="link" href="https://dogusportal.com/defter-demo.html" target="_blank">Demoyu Aç →</a>
+</div>
+</div>
 
 <div class="app" id="a1">
 <div class="app-header" onclick="toggle('a1')">
