@@ -928,6 +928,33 @@ function telTemiz(t){
   return s;
 }
 
+
+/* ---------- ÖNBELLEK — dönüşte boş ekran beklemesin ---------- */
+var OB_SURE=15*60*1000;   // 15 dakika
+function obYaz(k,v){
+  try{localStorage.setItem('ajanda_'+k,JSON.stringify({t:Date.now(),v:v}))}catch(e){}
+}
+function obOku(k){
+  try{
+    var s=localStorage.getItem('ajanda_'+k);
+    if(!s)return null;
+    var o=JSON.parse(s);
+    if(!o||Date.now()-o.t>OB_SURE)return null;
+    return o.v;
+  }catch(e){return null}
+}
+function obSil(k){try{localStorage.removeItem('ajanda_'+k)}catch(e){}}
+
+function basligiCiz(b){
+  E('kim').textContent=b.ad?b.ad:(b.eposta||'');
+  E('dipNot').innerHTML='Bu defter senin Google hesabında duruyor.<br>'+
+    '<span style="color:var(--muted)">Demo sürümde ham veri dosyası yok.</span>';
+}
+function acilisiBitir(){
+  E('yukleniyor').classList.add('gizli');
+  E('fab').classList.remove('gizli');
+}
+
 var DURUM={ekran:'bugun'};
 var SEC={durum:'Aktif',q:''};
 var SECP={durum:'Hepsi',q:''};
@@ -935,16 +962,25 @@ var SECP={durum:'Hepsi',q:''};
 window.addEventListener('load', function(){
   var d=new Date();
   E('tarihYazi').textContent=GUNLER[d.getDay()]+' · '+d.getDate()+' '+AYLAR[d.getMonth()];
+  var onceki=obOku('temel');
+  if(onceki){
+    DURUM.temel=onceki;
+    basligiCiz(onceki);
+    acilisiBitir();
+    ekran(obOku('ekran')||'bugun');
+  }
   api('baslat').then(function(b){
     DURUM.temel=b;
-    E('kim').textContent=b.ad?b.ad:(b.eposta||'');
-    E('dipNot').innerHTML='Bu defter senin Google hesabında duruyor.<br>'+
-      '<span style="color:var(--muted)">Demo sürümde ham veri dosyası yok.</span>';
-    /* demo: ad sorulmaz */
-    E('yukleniyor').classList.add('gizli');
-    E('fab').classList.remove('gizli');
-    ekran('bugun');
-  }).catch(function(e){ E('yukleniyor').textContent='Açılamadı: '+e.message; });
+    obYaz('temel',b);
+    basligiCiz(b);
+    if(!onceki){
+      /* demo: ad sorulmaz */
+      acilisiBitir();
+      ekran(obOku('ekran')||'bugun');
+    }
+  }).catch(function(e){
+    if(!onceki) E('yukleniyor').textContent='Açılamadı: '+e.message;
+  });
 });
 
 function adSor(){
@@ -954,6 +990,7 @@ function adSor(){
 
 function ekran(hangi){
   DURUM.ekran=hangi;
+  obYaz('ekran',hangi);
   [['bugun','Bugun'],['kisiler','Kisiler'],['portfoy','Portfoy'],['hedef','Hedef']].forEach(function(x){
     E('ekran'+x[1]).classList.toggle('gizli',x[0]!==hangi);
     E('nav'+x[1]).classList.toggle('aktif',x[0]===hangi);
@@ -970,25 +1007,35 @@ function fabTikla(){
 }
 
 /* ---------- BUGÜN ---------- */
+function bugunCiz(liste){
+  E('navNokta').classList.toggle('gizli',liste.length===0);
+  if(!liste.length){
+    E('bugunListe').innerHTML='<div class="bos"><div class="baslik disp">Bugün beklemede kimse yok</div>'+
+      '<p>Birini aradığında sonraki adımı yazarsan, o gün burada karşına çıkar.</p></div>';
+  }else{
+    E('bugunListe').innerHTML='<div class="bolum"><h2 class="disp">Bugün konuşulacaklar</h2>'+
+      '<span class="cizgi"></span><span class="sayi">'+liste.length+'</span></div>'+
+      liste.map(bugunKarti).join('');
+  }
+}
+function soguyanCiz(liste){
+  E('soguyanBaslik').classList.toggle('gizli',!liste.length);
+  E('soguyanSayi').textContent=liste.length;
+  E('soguyanListe').innerHTML=liste.slice(0,20).map(function(k){
+    return kisiSatiri(k,'<span class="rozet sari mono">'+(k.sessizGun?k.sessizGun+' gün sessiz':'hiç dokunulmadı')+'</span>');
+  }).join('');
+}
 function bugunYukle(){
-  E('bugunListe').innerHTML='<div class="yukleniyor">yükleniyor…</div>';
+  var cb=obOku('bugun'), cs=obOku('soguyan');
+  if(cb){bugunCiz(cb)} else {E('bugunListe').innerHTML='<div class="yukleniyor">yükleniyor…</div>'}
+  if(cs){soguyanCiz(cs)}
   api('bugun').then(function(liste){
-    E('navNokta').classList.toggle('gizli',liste.length===0);
-    if(!liste.length){
-      E('bugunListe').innerHTML='<div class="bos"><div class="baslik disp">Bugün beklemede kimse yok</div>'+
-        '<p>Birini aradığında sonraki adımı yazarsan, o gün burada karşına çıkar.</p></div>';
-    }else{
-      E('bugunListe').innerHTML='<div class="bolum"><h2 class="disp">Bugün konuşulacaklar</h2>'+
-        '<span class="cizgi"></span><span class="sayi">'+liste.length+'</span></div>'+
-        liste.map(bugunKarti).join('');
-    }
+    obYaz('bugun',liste);
+    bugunCiz(liste);
   });
   api('soguyanlar').then(function(liste){
-    E('soguyanBaslik').classList.toggle('gizli',!liste.length);
-    E('soguyanSayi').textContent=liste.length;
-    E('soguyanListe').innerHTML=liste.slice(0,20).map(function(k){
-      return kisiSatiri(k,'<span class="rozet sari mono">'+(k.sessizGun?k.sessizGun+' gün sessiz':'hiç dokunulmadı')+'</span>');
-    }).join('');
+    obYaz('soguyan',liste);
+    soguyanCiz(liste);
   });
 }
 
@@ -1098,12 +1145,14 @@ function kisiKaydetTikla(id){
     sonrakiTarih:E('fTarih').value,komisyon:E('fKom').value.replace(/\D/g,''),
     kapanisTarihi:E('fKapanis').value};
   if(!k.ad){alert('Ad boş kalamaz.');return}
-  api('kisiKaydet',k).then(function(){ kapat('perdeKisi'); ekran(DURUM.ekran); });
+  api('kisiKaydet',k).then(function(){
+    obSil('bugun');obSil('soguyan'); kapat('perdeKisi'); ekran(DURUM.ekran); });
 }
 
 function kisiSilTikla(id){
   if(!confirm('Bu kişi listenden kaldırılsın mı? Geçmişi silinmez, sadece görünmez olur.'))return;
-  api('kisiArsivle',id).then(function(){ kapat('perdeKisi'); ekran(DURUM.ekran); });
+  api('kisiArsivle',id).then(function(){
+    obSil('bugun');obSil('soguyan'); kapat('perdeKisi'); ekran(DURUM.ekran); });
 }
 
 
@@ -1459,6 +1508,7 @@ function gosterimKaydet(){
   var g=DURUM.gosterim;
   if(!g.kisiId){alert('Kimi gezdirdiğini seç. Kişi listende yoksa önce Kişiler ekranından ekle.');return}
   api('gosterimEkle',g).then(function(){
+    obSil('bugun');obSil('soguyan');
     kapat('perdeGosterim');
     portfoyAc(g.portfoyId);
   });
@@ -1552,6 +1602,7 @@ function dokunusKaydet(){
   var durum=E('dDurum')?E('dDurum').value:'';
   api('dokunusEkle',{kisiId:d.kisiId,portfoyId:d.portfoyId||'',tur:d.tur,ozet:d.ozet||'',
     sonrakiTarih:d.tarih||'',sonrakiAdim:d.adim||'',durum:durum||''}).then(function(){
+    obSil('bugun');obSil('soguyan');
     kapat('perdeDokunus'); kapat('perdeKisi'); ekran(DURUM.ekran);
   });
 }
