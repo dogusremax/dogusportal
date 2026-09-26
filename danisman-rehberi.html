@@ -2,60 +2,207 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Danışman Rehberi — RE/MAX Doğuş</title>
+<meta name="description" content="RE/MAX Doğuş ofis uygulamalarının kullanım rehberi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0f1117;color:#e4e4e7;min-height:100vh;padding:20px}
-.container{max-width:640px;margin:0 auto}
-h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
-.sub{text-align:center;font-size:13px;color:#888;margin-bottom:24px}
-.logo{text-align:center;margin-bottom:16px}
-.logo img{height:40px}
-.app{background:#1a1b23;border:1px solid #2a2b35;border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color 0.2s}
-.app.open{border-color:#444}
-.app-header{display:flex;align-items:center;padding:14px 16px;cursor:pointer;gap:12px}
-.app-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.app-info{flex:1}
-.app-name{font-size:15px;font-weight:600;color:#fff}
-.app-short{font-size:12px;color:#888;margin-top:2px}
-.app-toggle{color:#555;font-size:18px;transition:transform 0.2s}
-.app.open .app-toggle{transform:rotate(180deg);color:#aaa}
-.app-body{display:none;padding:0 16px 16px;line-height:1.6}
-.app.open .app-body{display:block}
-.app-body h3{font-size:13px;font-weight:700;color:#dc2743;margin:12px 0 6px;text-transform:uppercase;letter-spacing:0.5px}
-.app-body p{font-size:13px;color:#bbb;margin-bottom:8px}
-.app-body ol{font-size:13px;color:#bbb;padding-left:20px;margin-bottom:8px}
-.app-body ol li{margin-bottom:4px}
-.app-body .link{display:inline-block;margin-top:8px;padding:8px 16px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
-.app-body .link:hover{background:#1d4ed8}
-.app-body .tip{background:#1e2030;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 8px 8px 0;font-size:12px;color:#d4d4d8;margin-top:8px}
-.app-body b{color:#e4e4e7;font-weight:600}
-.yeni{display:inline-block;background:#10574C;color:#5FC9A9;font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:5px;vertical-align:middle;margin-left:6px}
+:root{
+  --bg:#f6f7f9;
+  --card:#ffffff;
+  --line:#e3e7ee;
+  --line-soft:#eef1f6;
+  --remax-red:#DC1C2E;
+  --remax-blue:#003DA5;
+  --text:#131a26;
+  --text-dim:#68738a;
+  --text-soft:#8b95a8;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+img{max-width:100%;height:auto}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(40px + env(safe-area-inset-bottom));
+}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+
+/* ===== ÜST ===== */
+header{text-align:center;padding:42px 20px 26px;animation:rise .5s ease backwards}
+.logo-img{display:block;height:56px;width:auto;margin:0 auto}
+h1{
+  font-family:'Archivo',sans-serif;font-weight:800;font-size:25px;
+  letter-spacing:-.02em;margin-top:16px;
+}
+.tagline{
+  margin-top:9px;font-size:12px;font-weight:600;color:var(--text-dim);
+  letter-spacing:.16em;text-transform:uppercase;
+}
+
+main{max-width:620px;margin:0 auto;padding:0 16px}
+
+/* ===== ARAMA ===== */
+.ara-sar{position:sticky;top:0;z-index:10;padding:8px 0 14px;background:linear-gradient(var(--bg) 72%,rgba(246,247,249,0))}
+.ara{position:relative}
+.ara input{
+  width:100%;padding:14px 16px 14px 44px;border-radius:15px;
+  border:1px solid var(--line);background:var(--card);font-size:15px;
+  color:var(--text);box-shadow:0 1px 3px rgba(19,26,38,.04);
+  transition:border-color .15s,box-shadow .15s;
+}
+.ara input::placeholder{color:var(--text-soft)}
+.ara input:focus{outline:none;border-color:var(--remax-blue);box-shadow:0 0 0 3px rgba(0,61,165,.1)}
+.ara svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-soft)}
+.bos-sonuc{text-align:center;color:var(--text-dim);font-size:14px;padding:34px 10px;display:none}
+
+/* ===== KART ===== */
+.app{
+  background:var(--card);border:1px solid var(--line);border-radius:20px;
+  margin-bottom:12px;overflow:hidden;
+  box-shadow:0 1px 3px rgba(19,26,38,.04);
+  transition:border-color .18s ease,box-shadow .18s ease;
+  animation:rise .45s ease backwards;
+}
+.app.open{border-color:#cfd7e6;box-shadow:0 14px 34px -14px rgba(19,26,38,.16)}
+@media (hover:hover){.app:hover{border-color:#cfd7e6}}
+
+.app-header{display:flex;align-items:center;padding:16px;gap:14px;width:100%;text-align:left}
+.app-header:active{transform:scale(.995)}
+
+/* 3D ikon — portal diliyle aynı */
+.icon3d{
+  width:48px;height:48px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;line-height:1;position:relative;
+  background:radial-gradient(circle at 30% 25%,var(--c2),var(--c1) 75%);
+  box-shadow:
+    0 9px 20px -7px color-mix(in srgb,var(--c1) 62%,transparent),
+    inset 0 2px 3px rgba(255,255,255,.4),
+    inset 0 -3px 6px rgba(0,0,0,.26);
+  transition:transform .18s ease;
+}
+.icon3d::after{
+  content:'';position:absolute;top:3px;left:4px;right:4px;height:44%;
+  border-radius:11px 11px 40% 40%;
+  background:linear-gradient(to bottom,rgba(255,255,255,.4),rgba(255,255,255,.02));
+  pointer-events:none;
+}
+.app.open .icon3d{transform:scale(1.04) rotate(-2deg)}
+
+.app-info{flex:1;min-width:0}
+.app-name{
+  font-family:'Archivo',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:-.01em;line-height:1.25;
+}
+.app-short{font-size:12.5px;color:var(--text-dim);margin-top:3px;line-height:1.45}
+.app-toggle{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--line-soft);color:var(--text-dim);
+  transition:transform .22s ease,background .18s ease,color .18s ease;
+}
+.app-toggle svg{width:14px;height:14px}
+.app.open .app-toggle{transform:rotate(180deg);background:var(--remax-blue);color:#fff}
+
+/* Akordeon — yumuşak açılış */
+.app-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.3,.8,.4,1)}
+.app.open .app-wrap{grid-template-rows:1fr}
+.app-body{overflow:hidden}
+.app-inner{padding:2px 16px 18px;border-top:1px solid var(--line-soft);margin-top:2px}
+
+.app-inner h3{
+  font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;
+  color:var(--remax-blue);margin:18px 0 7px;
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.app-inner h3:first-child{margin-top:16px}
+.app-inner p{font-size:14px;color:#3d4757;line-height:1.65;margin-bottom:9px}
+.app-inner b{font-weight:600;color:var(--text)}
+.app-inner ol{font-size:14px;color:#3d4757;padding-left:19px;margin-bottom:9px;line-height:1.6}
+.app-inner ol li{margin-bottom:5px}
+.app-inner ol li::marker{color:var(--text-soft);font-weight:600}
+
+.tip{
+  background:#fff8ec;border:1px solid #f6e3c3;border-left:3px solid #e8a33d;
+  border-radius:0 12px 12px 0;padding:11px 13px;
+  font-size:13px;color:#6b4d1c;line-height:1.55;margin:10px 0;
+}
+.tip.uyari{background:#fdf0f1;border-color:#f5cdd1;border-left-color:var(--remax-red);color:#8a2430}
+
+.link{
+  display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+  padding:12px 20px;background:var(--remax-blue);color:#fff;
+  border-radius:13px;text-decoration:none;font-size:14px;font-weight:600;
+  box-shadow:0 8px 18px -8px rgba(0,61,165,.55);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.link:active{transform:scale(.97)}
+@media (hover:hover){.link:hover{box-shadow:0 12px 24px -8px rgba(0,61,165,.6);transform:translateY(-1px)}}
+.link svg{width:15px;height:15px}
+
+.yeni{
+  display:inline-block;background:#e4efec;color:#0d5548;
+  font-size:9.5px;font-weight:700;letter-spacing:.08em;
+  padding:3px 7px;border-radius:6px;vertical-align:2px;margin-left:7px;
+}
+
+footer{text-align:center;padding:34px 20px 10px;font-size:11.5px;color:var(--text-soft)}
+footer a{color:var(--text-dim);text-decoration:none}
+
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.app:nth-of-type(1){animation-delay:.04s}
+.app:nth-of-type(2){animation-delay:.07s}
+.app:nth-of-type(3){animation-delay:.1s}
+.app:nth-of-type(4){animation-delay:.13s}
+.app:nth-of-type(5){animation-delay:.16s}
+.app:nth-of-type(6){animation-delay:.19s}
+.app:nth-of-type(7){animation-delay:.22s}
+.app:nth-of-type(8){animation-delay:.25s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="container">
-<div class="logo"><img src="https://dogusportal.com/img/logo-light.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'"></div>
-<h1>📖 Danışman Rehberi</h1>
-<div class="sub">Tüm uygulamaları nasıl kullanacağını öğren</div>
 
-<div class="app" id="a13">
-<div class="app-header" onclick="toggle('a13')">
-<div class="app-icon" style="background:linear-gradient(135deg,#10574C,#5FC9A9)">📓</div>
-<div class="app-info"><div class="app-name">Defter <span class="yeni">YENİ</span></div><div class="app-short">Kendi müşteri ve portföy defterin</div></div>
-<div class="app-toggle">▼</div>
+<header>
+  <img class="logo-img" src="https://dogusportal.com/img/logo-light.png" alt="RE/MAX Doğuş" onerror="this.style.display='none'">
+  <h1>Danışman Rehberi</h1>
+  <div class="tagline">Uygulamaları nasıl kullanırsın</div>
+</header>
+
+<main>
+
+<div class="ara-sar">
+  <div class="ara">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Uygulama ara — defter, kira, tapu…" autocomplete="off">
+  </div>
 </div>
-<div class="app-body">
+
+<div id="liste">
+
+<div class="app" data-ara="defter müşteri portföy crm takip günlük">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#0d5548;--c2:#5FC9A9">📓</div>
+<div class="app-info"><div class="app-name">Defter<span class="yeni">YENİ</span></div><div class="app-short">Kendi müşteri ve portföy defterin</div></div>
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Defter senin kendi defterin — ofis takip aracı değil. Kimse puan vermiyor, kimse rapor çekmiyor. Tek amacı her sabah şu soruyu cevaplamak: <b>bugün kimi arayacağım ve geçen sefer ne konuşmuştuk?</b></p>
 <p>Veri senin kendi Google hesabında durur. Telefonda tarayıcıdan açılır, ana ekrana eklenince normal uygulama gibi çalışır.</p>
 
 <h3>Dört Ekran</h3>
-<p><b>◎ Bugün</b> — Sonraki adım tarihi gelmiş kişiler. Kırmızı şeritliler gecikmiş, en üstte. Her kartta Ara / WhatsApp / Konuştum. Altta 15 gündür dokunulmamış müşteriler.</p>
-<p><b>☰ Kişiler</b> — Tüm müşterilerin. Kartta bütçe, ne aradığı, kişisel notların, gezdiği portföyler ve tüm görüşme geçmişi.</p>
-<p><b>⌂ Portföy</b> — Elindeki mülkler. Her kartta kaç gösterim, kaç sıcak ilgi, son gösterim ne zaman. İçinde kimlere gösterdiğin ve o mülk hakkında kimlerle ne konuştuğun.</p>
-<p><b>▲ Hedef</b> — Kendi yazdığın yıllık komisyon hedefi ve kapanışların.</p>
+<p><b>Bugün</b> — Sonraki adım tarihi gelmiş kişiler. Kırmızı şeritliler gecikmiş, en üstte. Her kartta Ara / WhatsApp / Konuştum. Altta 15 gündür dokunulmamış müşteriler.</p>
+<p><b>Kişiler</b> — Tüm müşterilerin. Kartta bütçe, ne aradığı, kişisel notların, gezdiği portföyler ve tüm görüşme geçmişi.</p>
+<p><b>Portföy</b> — Elindeki mülkler. Her kartta kaç gösterim, kaç sıcak ilgi, son gösterim ne zaman. İçinde kimlere gösterdiğin ve o mülk hakkında kimlerle ne konuştuğun.</p>
+<p><b>Hedef</b> — Kendi yazdığın yıllık komisyon hedefi ve kapanışların.</p>
 
 <h3>Günlük Döngü</h3>
 <p>Uygulamanın tamamı tek bir alışkanlığa bağlı: her görüşmeden sonra <b>Konuştum</b>'a bas, 10 saniye harca.</p>
@@ -66,14 +213,14 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Sonraki adım — "2 yeni daire gönder"</li>
 <li>Ne zaman dönülecek — Yarın / 3 gün / 1 hafta / 2 hafta / 1 ay</li>
 </ol>
-<div class="tip">💡 Bunu yaparsan ertesi sabah Bugün ekranı dolu gelir. Yapmazsan boş kalır — tüm mesele bu.</div>
+<div class="tip">Bunu yaparsan ertesi sabah Bugün ekranı dolu gelir. Yapmazsan boş kalır — tüm mesele bu.</div>
 
 <h3>Yer Gösterimi</h3>
 <p>Portföy kartından <b>Yer gösterimi ekle</b>: kimi gezdirdin, ilgi düzeyi (Sıcak / Orta / Soğuk), müşteri ne dedi. Kayıt hem portföyün listesine hem kişinin geçmişine düşer.</p>
 
 <h3>Mal Sahibine Rapor</h3>
 <p>Portföy kartından <b>Mal sahibine rapor hazırla</b>. Son 7, 14 veya 30 günün gösterim özetini hazır metne çevirir, WhatsApp'a tek tuşla gider.</p>
-<div class="tip">💡 Haftada bir gönderirsen mal sahibinin "ne oldu benim ev" aramaları kesilir. Yetki yenilemede de elinde kanıt olur.</div>
+<div class="tip">Haftada bir gönderirsen mal sahibinin "ne oldu benim ev" aramaları kesilir. Yetki yenilemede de elinde kanıt olur.</div>
 
 <h3>Matbu'dan Aktarım</h3>
 <p>Portföy sekmesinin üstündeki <b>Aktar</b> düğmesi, Matbu Evraklar'daki kendi kayıtlarını çeker:</p>
@@ -88,18 +235,18 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <h3>Veri Nerede</h3>
 <p>Defter dosyası senin kendi Drive'ında. Yetki sözleşmeleri ve yer gösterme belgeleri ofis kaydıdır, zaten Matbu'da duruyor. Defter'e özel olan senin yorumların: ilgi düzeyi, müşterinin ne dediği, sonraki adım ve kişisel notların.</p>
 
-<div class="tip">⚠️ Aşağıdaki bağlantı <b>demo</b> — örnek müşterilerle dolu, değişiklikler kaydedilmez. Gerçek sürüm kurulduğunda kendi linkin verilecek.</div>
-<a class="link" href="https://dogusportal.com/defter-demo.html" target="_blank">Demoyu Aç →</a>
-</div>
+<div class="tip uyari">Aşağıdaki bağlantı <b>demo</b> — örnek müşterilerle dolu, değişiklikler kaydedilmez. Gerçek sürüm kurulduğunda kendi linkin verilecek.</div>
+<a class="link" href="https://dogusportal.com/defter-demo.html" target="_blank" rel="noopener">Demoyu Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a1">
-<div class="app-header" onclick="toggle('a1')">
-<div class="app-icon" style="background:linear-gradient(135deg,#f09433,#dc2743)">📊</div>
+<div class="app" data-ara="danışman takip aktivite puan karne fzbo sunum gösterim">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#dc2743;--c2:#f09433">📊</div>
 <div class="app-info"><div class="app-name">Danışman Takip</div><div class="app-short">Günlük aktivite girişi ve puan takibi</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Günlük yaptığın aramaları, sunumları, gösterimleri ve diğer aktiviteleri sisteme girersin. Sistem otomatik puan hesaplar ve seni diğer danışmanlarla karşılaştırır. Haftalık ve aylık karne oluşturulur.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -110,18 +257,18 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>"+" butonuna basarak aktiviteyi ekle</li>
 <li>Puanın ve sıralaman otomatik güncellenir</li>
 </ol>
-<div class="tip">💡 Her gün en az 1 aktivite gir — aktif gün bonusu (+2 puan) kaçırma!</div>
-<a class="link" href="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec" target="_blank">Uygulamayı Aç →</a>
-</div>
+<div class="tip">Her gün en az 1 aktivite gir — aktif gün bonusu (+2 puan) kaçırma!</div>
+<a class="link" href="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a2">
-<div class="app-header" onclick="toggle('a2')">
-<div class="app-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💳</div>
+<div class="app" data-ara="dijital kartım kartvizit qr kod">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#764ba2;--c2:#667eea">💳</div>
 <div class="app-info"><div class="app-name">Dijital Kartım</div><div class="app-short">Kişisel dijital kartvizit ve QR kod</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Müşteriye kağıt kartvizit vermek yerine QR kodunu göster veya linkini WhatsApp'tan gönder. Telefon, WhatsApp, e-posta tek tıkla erişilebilir.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -131,17 +278,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>QR kodu müşteriye göster veya linki kopyalayıp gönder</li>
 <li>Müşteri telefonuyla QR'ı okutur, kartın açılır</li>
 </ol>
-<a class="link" href="https://dogusportal.com/dijitalkart.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusportal.com/dijitalkart.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a3">
-<div class="app-header" onclick="toggle('a3')">
-<div class="app-icon" style="background:linear-gradient(135deg,#11998e,#38ef7d)">🤝</div>
+<div class="app" data-ara="kapanış formu satış kiralama komisyon fatura paraşüt">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#0f9b7e;--c2:#38ef7d">🤝</div>
 <div class="app-info"><div class="app-name">Kapanış Formu</div><div class="app-short">Satış ve kiralama kapanış kaydı</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Satış veya kiralama işlemi tamamlandığında tüm bilgileri kaydet. Paraşüt muhasebe programıyla bağlantılı — otomatik fatura oluşturulur.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -152,17 +299,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Belgeleri yükle ve kaydet</li>
 <li>Fatura için "Fatura Oluştur" butonuna bas</li>
 </ol>
-<a class="link" href="https://dogusremax.github.io/kapanis/" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusremax.github.io/kapanis/" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a4">
-<div class="app-header" onclick="toggle('a4')">
-<div class="app-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">📄</div>
+<div class="app" data-ara="matbu evraklar kira sözleşmesi tahliye yetki form pdf">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#0a8ecf;--c2:#00f2fe">📄</div>
 <div class="app-info"><div class="app-name">Matbu Evraklar</div><div class="app-short">Kira sözleşmesi ve form yazdırma</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Kira sözleşmesi, tahliye taahhütnamesi ve diğer resmi formları ekrandan doldur, profesyonel görünümlü yazdır veya PDF olarak kaydet.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -172,17 +319,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Bilgileri doldur</li>
 <li>Yazdır veya PDF indir</li>
 </ol>
-<a class="link" href="https://dogusremax.github.io/matbuevraklar/" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusremax.github.io/matbuevraklar/" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a5">
-<div class="app-header" onclick="toggle('a5')">
-<div class="app-icon" style="background:linear-gradient(135deg,#fa709a,#fee140)">✍️</div>
+<div class="app" data-ara="yer gösterme belgesi imza tablet gösterim">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#f0507e;--c2:#fee140">✍️</div>
 <div class="app-info"><div class="app-name">Yer Gösterme Belgesi</div><div class="app-short">Tabletten müşteriye imzalatma</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Müşteriye daire gösterimi yaptığında resmi gösterim belgesini tabletten imzalat. PDF otomatik oluşur, Drive'a kaydedilir, ilgili kişilere mail gider.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -192,18 +339,18 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Tableti müşteriye ver, parmağıyla imzalasın</li>
 <li>"Kaydet" butonuna bas — PDF otomatik oluşur</li>
 </ol>
-<div class="tip">💡 Gösterim öncesi bilgileri hazırla, müşteriyi bekletme!</div>
-<a class="link" href="https://dogusremax.github.io/matbuevraklar/yer-gosterme.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<div class="tip">Gösterim öncesi bilgileri hazırla, müşteriyi bekletme! Kaydettiğin belge Defter'e de otomatik akar.</div>
+<a class="link" href="https://dogusremax.github.io/matbuevraklar/yer-gosterme.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a6">
-<div class="app-header" onclick="toggle('a6')">
-<div class="app-icon" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">👥</div>
+<div class="app" data-ara="müşteri takip kayıt not eşleştirme">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#8b6bc4;--c2:#fbc2eb">👥</div>
 <div class="app-info"><div class="app-name">Müşteri Takip</div><div class="app-short">Müşteri kaydı ve not düşme</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Arayan veya gelen müşterilerin bilgilerini kaydet, not düş, sonradan takip et. Kim aradı, ne istedi, ne zaman arandı tek yerde.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -213,16 +360,16 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>İsim, telefon, talep bilgilerini gir</li>
 <li>Görüşme notlarını düş, durumunu güncelle</li>
 </ol>
-</div>
+</div></div></div>
 </div>
 
-<div class="app" id="a7">
-<div class="app-header" onclick="toggle('a7')">
-<div class="app-icon" style="background:linear-gradient(135deg,#0ea5e9,#2dd4bf)">🏝️</div>
+<div class="app" data-ara="kıbrıs katalog döveç northernland proje">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#0284c7;--c2:#2dd4bf">🏝️</div>
 <div class="app-info"><div class="app-name">Kıbrıs Katalog</div><div class="app-short">Kıbrıs projelerini müşteriye göster</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Döveç, Cyprus Constructions, Northernland projelerini tek yerde göster. Fiyat, oda sayısı, teslim tarihine göre filtrele. Müşteriye WhatsApp'tan gönder.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -231,16 +378,16 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Projeleri filtrele (fiyat, oda sayısı, teslim)</li>
 <li>Beğendiğin projeyi müşteriye WhatsApp'tan paylaş</li>
 </ol>
-</div>
+</div></div></div>
 </div>
 
-<div class="app" id="a8">
-<div class="app-header" onclick="toggle('a8')">
-<div class="app-icon" style="background:linear-gradient(135deg,#f97316,#eab308)">🧮</div>
+<div class="app" data-ara="kıbrıs masraf hesaplayıcı vergi harç kdv">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#ea580c;--c2:#fbbf24">🧮</div>
 <div class="app-info"><div class="app-name">Kıbrıs Masraf Hesaplayıcı</div><div class="app-short">Resmi masraf ve vergi hesaplama</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Kuzey Kıbrıs'ta gayrimenkul alırken ödenmesi gereken vergi, harç ve KDV'yi otomatik hesaplar.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -249,17 +396,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Alım fiyatını gir, ilk alım mı ikinci alım mı seç</li>
 <li>Tüm masraflar otomatik hesaplanır</li>
 </ol>
-<a class="link" href="https://dogusportal.com/masraf-hesaplayici.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusportal.com/masraf-hesaplayici.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a9">
-<div class="app-header" onclick="toggle('a9')">
-<div class="app-icon" style="background:linear-gradient(135deg,#1a5e2a,#34d058)">📋</div>
+<div class="app" data-ara="kira kontrat listesi hazırlık kiracı ev sahibi belge">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#15803d;--c2:#4ade80">📋</div>
 <div class="app-info"><div class="app-name">Kira Kontrat Listesi</div><div class="app-short">Kontrat öncesi hazırlık listesi</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Kira sözleşmesi yapmadan önce kiracıdan ve ev sahibinden alınması gereken tüm bilgi ve belgelerin listesi. İşaretledikçe ilerleme gösterir.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -268,17 +415,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Her maddeyi tamamladıkça işaretle</li>
 <li>%100 olunca kontrat hazır</li>
 </ol>
-<a class="link" href="https://dogusportal.com/kira-kontrat-listesi.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusportal.com/kira-kontrat-listesi.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a10">
-<div class="app-header" onclick="toggle('a10')">
-<div class="app-icon" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)">🏛️</div>
+<div class="app" data-ara="tapu satış listesi belge hazırlık kredi vekalet">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#1e40af;--c2:#60a5fa">🏛️</div>
 <div class="app-info"><div class="app-name">Tapu Satış Listesi</div><div class="app-short">Tapuya gitmeden önce hazırlık</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Satış için tapuya gitmeden önce alıcı, satıcı ve taşınmaz belgeleri tam mı kontrol et. Eksik belge tapu işlemini erteler!</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -288,17 +435,17 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Kredi veya vekalet varsa o bölümleri de doldur</li>
 <li>%100 olunca tapuya gidin</li>
 </ol>
-<a class="link" href="https://dogusportal.com/tapu-satis-listesi.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://dogusportal.com/tapu-satis-listesi.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a11">
-<div class="app-header" onclick="toggle('a11')">
-<div class="app-icon" style="background:linear-gradient(135deg,#6b21a8,#a855f7)">🌍</div>
+<div class="app" data-ara="yabancıya satış dab döviz pasaport tercüman ekspertiz">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#7e22ce;--c2:#c084fc">🌍</div>
 <div class="app-info"><div class="app-name">Yabancıya Satış Listesi</div><div class="app-short">Yabancı alıcıya tapu devri hazırlık</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Yabancı uyruklu alıcıya satışta ek belgeler gerekir: pasaport tercümesi, Döviz Alım Belgesi (DAB), yeminli tercüman, ekspertiz raporu ve daha fazlası. Bu liste hepsini takip eder.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -308,18 +455,18 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Döviz ve DAB işlemlerini tamamla</li>
 <li>Tüm belgeleri işaretle, %100 olunca tapuya gidin</li>
 </ol>
-<div class="tip">💡 DAB (Döviz Alım Belgesi) TAPU ÖNCESİ alınmalı — sonra alınırsa işlem yapılamaz!</div>
-<a class="link" href="https://dogusportal.com/yabanci-satis-listesi.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<div class="tip uyari">DAB (Döviz Alım Belgesi) TAPU ÖNCESİ alınmalı — sonra alınırsa işlem yapılamaz!</div>
+<a class="link" href="https://dogusportal.com/yabanci-satis-listesi.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
-<div class="app" id="a12">
-<div class="app-header" onclick="toggle('a12')">
-<div class="app-icon" style="background:linear-gradient(135deg,#e11d48,#fb923c)">📸</div>
+<div class="app" data-ara="eids ilan rehberi sosyal medya instagram paylaşım">
+<button class="app-header" onclick="ac(this)">
+<div class="icon3d" style="--c1:#be123c;--c2:#fb923c">📸</div>
 <div class="app-info"><div class="app-name">EİDS İlan Rehberi</div><div class="app-short">Sosyal medyada ilan paylaşım kuralları</div></div>
-<div class="app-toggle">▼</div>
-</div>
-<div class="app-body">
+<span class="app-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+</button>
+<div class="app-wrap"><div class="app-body"><div class="app-inner">
 <h3>Ne İşe Yarar?</h3>
 <p>Instagram, Facebook ve diğer platformlarda ilan paylaşırken uyulması gereken kurallar ve tasarım rehberi.</p>
 <h3>Nasıl Kullanılır?</h3>
@@ -329,16 +476,50 @@ h1{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px
 <li>Örnek tasarımları incele</li>
 <li>Kendi ilanını kurallara uygun paylaş</li>
 </ol>
-<a class="link" href="https://yenifikirtepeburada.com/ilan-rehberi.html" target="_blank">Uygulamayı Aç →</a>
-</div>
+<a class="link" href="https://yenifikirtepeburada.com/ilan-rehberi.html" target="_blank" rel="noopener">Uygulamayı Aç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></div></div>
 </div>
 
 </div>
+
+<div class="bos-sonuc" id="bos">Aradığın uygulama bulunamadı.</div>
+
+<footer>
+  <a href="https://dogusportal.com">← Uygulama Merkezi</a>
+</footer>
+
+</main>
 
 <script>
-function toggle(id){
-  document.getElementById(id).classList.toggle('open');
+function ac(btn){
+  var kart=btn.parentElement;
+  var acik=kart.classList.contains('open');
+  document.querySelectorAll('.app.open').forEach(function(k){k.classList.remove('open')});
+  if(!acik){
+    kart.classList.add('open');
+    setTimeout(function(){
+      var ust=kart.getBoundingClientRect().top;
+      if(ust<70||ust>window.innerHeight-180){
+        window.scrollTo({top:window.scrollY+ust-78,behavior:'smooth'});
+      }
+    },60);
+  }
 }
+
+var kutu=document.getElementById('q');
+kutu.addEventListener('input',function(){
+  var q=this.value.toLocaleLowerCase('tr-TR').trim();
+  var gorunen=0;
+  document.querySelectorAll('#liste .app').forEach(function(k){
+    var m=(k.dataset.ara+' '+k.querySelector('.app-name').textContent+' '+k.querySelector('.app-short').textContent)
+      .toLocaleLowerCase('tr-TR');
+    var uyar=!q||m.indexOf(q)>-1;
+    k.style.display=uyar?'':'none';
+    if(uyar)gorunen++;
+    if(!uyar)k.classList.remove('open');
+  });
+  document.getElementById('bos').style.display=gorunen?'none':'block';
+});
 </script>
 </body>
 </html>
