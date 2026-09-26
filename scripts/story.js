@@ -1,5 +1,5 @@
 // Her sabah: bugünün nöbetçi story'sini 1080x1920 PNG üretir → nobet-story/YYYY-MM-DD.png
-// Nöbetçi yoksa hiçbir şey üretmez (exit 0). Instagram yayını Meta token'ı eklenince buraya bağlanacak.
+// Nöbetçi yoksa ya da ofis nöbeti günüyse hiçbir şey üretmez (exit 0). Instagram yayını Meta token'ı eklenince buraya bağlanacak.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 (async () => {
@@ -8,7 +8,12 @@ const fs = require('fs'), path = require('path');
   await page.goto('https://dogusportal.com/nobet-story.html?k=1520', { waitUntil: 'networkidle' });
   await page.waitForSelector('body[data-ready]', { timeout: 90000 });
   await page.waitForTimeout(1200);
-  if (await page.getAttribute('body', 'data-empty')) { console.log('Bugün nöbetçi yok, story üretilmedi.'); await browser.close(); return; }
+  // Önceki günün .media dosyası kalırsa yanlışlıkla paylaşılmasın
+  const atla = msg => { try { fs.unlinkSync('nobet-story/.media'); } catch (e) {} console.log(msg); };
+  if (await page.getAttribute('body', 'data-empty')) { atla('Bugün nöbetçi yok, story üretilmedi.'); await browser.close(); return; }
+  // Ofis nöbeti günleri iptal: story üretilmez, Instagram'a hiçbir şey paylaşılmaz
+  const kim = await page.evaluate(() => (window.CUR && CUR.name) || '');
+  if (/^ofis/i.test(kim.trim())) { atla('Bugün ofis nöbeti, story üretilmedi ve paylaşılmayacak.'); await browser.close(); return; }
   const date = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
   fs.mkdirSync('nobet-story', { recursive: true });
   const vid = await page.evaluate(() => (window.CUR && CUR.video) || null);

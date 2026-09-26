@@ -4,6 +4,8 @@ const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID;
 if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atlandı.'); process.exit(0); }
 const G = 'https://graph.facebook.com/v23.0';
 const media = JSON.parse(fs.readFileSync('nobet-story/.media', 'utf8'));
+const bugun = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+if (media.date !== bugun) { console.log('Medya bugüne ait değil, paylaşım atlandı:', media.date); process.exit(0); }
 try { if (fs.readFileSync('nobet-story/.pub', 'utf8').trim() === media.date) { console.log('Bugün zaten yayınlanmış, atlandı:', media.date); process.exit(0); } } catch (e) {}
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function post(p, body) {
