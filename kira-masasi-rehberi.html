@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050A30">
+<meta name="robots" content="noindex">
+<title>Kira Masası Rehberi — RE/MAX Doğuş</title>
+<link rel="icon" href="assets/dogus-logo.png">
+<style>
+:root{
+  --lacivert:#050A30; --lacivert2:#0E1A5C; --kirmizi:#DC1C2E; --kirmizi2:#A5101F; --yesil:#0A7D5A; --wa:#25D366;
+  --zemin:#EEF1F7; --kart:#FFFFFF; --yazi:#141B34; --soluk:#6A7389; --cizgi:#E2E6EF; --dolgu:#F5F7FB;
+  --golge:0 1px 2px rgba(5,10,48,.04),0 8px 24px rgba(5,10,48,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --zemin:#0A0F1F; --kart:#131A30; --yazi:#E9EEF8; --soluk:#95A0B7; --cizgi:#232C48; --dolgu:#1A2240;
+         --golge:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;
+  padding:0 16px calc(40px + env(safe-area-inset-bottom));line-height:1.55}
+.wrap{max-width:760px;margin:0 auto}
+header{position:relative;margin:0 -16px 20px;padding:calc(18px + env(safe-area-inset-top)) 20px 28px;color:#fff;overflow:hidden;
+  background:radial-gradient(120% 140% at 100% 0%,#1B2A7A 0%,var(--lacivert2) 35%,var(--lacivert) 100%);
+  border-radius:0 0 26px 26px;box-shadow:0 10px 30px rgba(5,10,48,.25)}
+header::after{content:"";position:absolute;right:-40px;bottom:-60px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,28,46,.35),transparent 70%)}
+.hic{max-width:760px;margin:0 auto;position:relative;z-index:1}
+.logo{height:40px;display:block;margin-bottom:18px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
+.marka{font-size:11px;font-weight:700;letter-spacing:.18em;opacity:.7;text-transform:uppercase}
+h1{font-size:28px;margin:4px 0 8px;letter-spacing:-.02em}
+header p{margin:0;opacity:.82;font-size:14.5px;max-width:560px}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--golge)}
+.ozet{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.ozet div{background:var(--dolgu);border-radius:14px;padding:12px;font-size:13px}
+.ozet b{display:block;font-size:22px;color:var(--kirmizi);margin-bottom:2px}
+@media (max-width:520px){ .ozet{grid-template-columns:1fr} }
+h2{display:flex;align-items:center;gap:10px;font-size:19px;margin:30px 2px 12px}
+h2::before{content:"";width:4px;height:20px;border-radius:3px;background:var(--kirmizi)}
+.adim{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:start}
+@media (max-width:640px){ .adim{grid-template-columns:1fr} }
+.no{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--kirmizi2),var(--kirmizi));color:#fff;font-weight:700;font-size:14px;margin-right:8px;flex:0 0 30px}
+.adim h3{display:flex;align-items:center;margin:0 0 8px;font-size:17px}
+.adim p{margin:0 0 8px;font-size:14.5px}
+.adim ul{margin:6px 0 0;padding-left:20px;font-size:14px}
+.adim li{margin-bottom:4px}
+.ekran{border-radius:22px;overflow:hidden;border:6px solid #0B1230;box-shadow:0 10px 26px rgba(5,10,48,.22);background:#0B1230}
+.ekran img{display:block;width:100%;height:auto}
+.ekranlar{display:grid;gap:12px}
+.a4{border-radius:6px;overflow:hidden;border:1px solid var(--cizgi);box-shadow:0 8px 22px rgba(5,10,48,.15);background:#fff}
+.a4 img{display:block;width:100%}
+.a4ler{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+@media (max-width:520px){ .a4ler{grid-template-columns:1fr} }
+.a4ler figcaption{font-size:12px;color:var(--soluk);text-align:center;margin-top:6px}
+.not{display:flex;gap:10px;background:rgba(220,28,46,.07);border:1px solid rgba(220,28,46,.2);border-radius:14px;
+  padding:12px 14px;font-size:13.5px;margin-top:10px}
+.ipucu{background:rgba(10,125,90,.08);border-color:rgba(10,125,90,.25)}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;border-radius:14px;padding:13px 18px;
+  color:#fff;background:linear-gradient(135deg,var(--kirmizi2),var(--kirmizi));box-shadow:0 8px 20px rgba(220,28,46,.28);margin:6px 8px 0 0}
+.btn.ikinci{background:var(--kart);color:var(--yazi);border:1.5px solid var(--cizgi);box-shadow:none}
+.sss details{border-bottom:1px solid var(--cizgi);padding:12px 2px}
+.sss details:last-child{border-bottom:none}
+.sss summary{cursor:pointer;font-weight:700;font-size:14.5px}
+.sss p{margin:8px 0 0;font-size:14px;color:var(--soluk)}
+.alt{text-align:center;color:var(--soluk);font-size:12.5px;margin-top:24px}
+.alt a{color:var(--soluk)}
+</style>
+</head>
+<body>
+<header><div class="hic">
+  <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+  <div class="marka">RE/MAX Doğuş · Danışman Rehberi</div>
+  <h1>Kira Masası</h1>
+  <p>Kiracı, ev sahibi ve kefilden bilgileri ve belgeleri telefondan topla; sözleşmeyi tek tuşla dolu hazırla.</p>
+</div></header>
+
+<div class="wrap">
+
+<div class="kart">
+  <b style="font-size:15px">Kısaca nasıl çalışır?</b>
+  <div class="ozet">
+    <div><b>1</b>Dosyayı aç, taraflara form linklerini WhatsApp'tan gönder.</div>
+    <div><b>2</b>Taraflar bilgilerini ve belgelerini telefondan yüklesin.</div>
+    <div><b>3</b>"Sözleşmeyi hazırla" de — sözleşme ve belge ekleri dolu gelsin.</div>
+  </div>
+  <div style="margin-top:14px">
+    <a class="btn" href="kira-dosya.html">Kira Masası'nı aç →</a>
+    <a class="btn ikinci" href="kira-form.html?onizle=kiraci">Müşteri formunu gör</a>
+  </div>
+</div>
+
+<h2>Adım adım</h2>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">1</span>Giriş yap</h3>
+    <p>Portalda <b>Kira Masası</b> kutusuna dokun. Şifreni gir, listeden adını seç ve <b>Giriş</b>'e bas.</p>
+    <p>Açılan ekranda senin kira dosyaların ve her birinin durumu görünür: <b>Bekliyor</b>, <b>1/3</b> (kaç form geldi) ya da <b>Tamamlandı</b>.</p>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/02-liste.jpg" alt="Dosya listesi" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">2</span>Yeni dosya aç</h3>
+    <p><b>+ Yeni kira dosyası</b>'na bas ve doldur:</p>
+    <ul>
+      <li>Site, blok, daire — adres kendiliğinden oluşur</li>
+      <li>Kaç kiracı, kaç mülk sahibi (3'e kadar)</li>
+      <li>Her birinin <b>adı ve telefonu</b></li>
+      <li>Kefil gerekiyorsa <b>Kefil istenecek</b>'i işaretle, adını ve telefonunu yaz</li>
+    </ul>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/03-yeni-dosya.jpg" alt="Yeni dosya formu" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">3</span>İstenecek belgeleri seç</h3>
+    <p>Formun altında her kişi için belge listesi var; hepsi işaretli gelir. <b>İstemediğin belgenin işaretini kaldır</b> — müşteri o belgeyi formda hiç görmez.</p>
+    <p>Sonra <b>Dosyayı aç ve linkleri üret</b>'e bas.</p>
+    <div class="not ipucu">💡 Kimlik tek seçenektir: işaretliyse ön ve arka yüz birlikte istenir.</div>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/04-belge-secimi.jpg" alt="Belge seçimi" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">4</span>Linkleri gönder</h3>
+    <p>Her kişinin kartında dört düğme var:</p>
+    <ul>
+      <li><b>WhatsApp'tan gönder</b> — hazır mesajla linki doğrudan gönderir</li>
+      <li><b>Linki kopyala</b> — başka yerden göndermek için</li>
+      <li><b>Ben dolduracağım</b> — müşteri yanındaysa formu sen doldur</li>
+      <li><b>Yeni link üret</b> — süresi dolduysa (linkler 72 saat geçerli)</li>
+    </ul>
+    <div class="not">⚠️ Belge seçimini linki göndermeden <b>önce</b> yap. Sonradan değiştirirsen yeni linki tekrar gönder.</div>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/05-linkler.jpg" alt="Link gönderme" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">5</span>Müşteri formu doldurur</h3>
+    <p>Müşteri linki açınca senin adınla hazırlanmış kurumsal bir form görür. Bilgilerini yazar, belgelerini telefonundan yükler.</p>
+    <ul>
+      <li><b>Kimliği tara</b>: kamera çerçeveyle açılır, bulanık veya karanlıksa uyarır</li>
+      <li>Yarıda bırakırsa kaldığı yerden devam eder</li>
+      <li>T.C. no ve IBAN yanlışsa form göndermeye izin vermez</li>
+    </ul>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/06-musteri-form.jpg" alt="Müşteri formu" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">6</span>Formların gelişini takip et</h3>
+    <p>Her form geldiğinde ofise mail düşer. Kira Masası'nda dosyanın durumu güncellenir; dosyayı açınca gelen bilgileri ve yüklenen belgeleri görürsün.</p>
+    <p>Formlar gelince dosyanın en altındaki <b>Sözleşmeyi hazırla</b>'ya bas.</p>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/09-sozlesmeyi-hazirla.jpg" alt="Sözleşmeyi hazırla" loading="lazy"></div></div>
+</div>
+
+<div class="kart adim">
+  <div>
+    <h3><span class="no">7</span>Kira koşullarını son anda doldur</h3>
+    <p>Matbu Evraklar'da <b>Kira Sözleşmesi</b> açılır; kiraya veren, kiracı, kefil bilgileri ve IBAN <b>dolu gelir</b>. Senin dolduracakların:</p>
+    <ul>
+      <li>Mahalle / ilçe / şehir, cinsi, mevcut durumu, kullanım amacı</li>
+      <li>Kira bedeli (rakam ve yazı), ödeme günleri, başlangıç–bitiş</li>
+      <li>Depozito ve Ek-A demirbaşlar</li>
+    </ul>
+    <div class="not ipucu">✋ Kefalet beyanı kilitlidir — kefil imzada kendi el yazısıyla doldurur (TBK m. 583).</div>
+  </div>
+  <div class="ekranlar"><div class="ekran"><img src="assets/kira-rehber/11-matbu-kosullar.jpg" alt="Kira koşulları" loading="lazy"></div></div>
+</div>
+
+<div class="kart">
+  <h3 style="display:flex;align-items:center;margin:0 0 8px;font-size:17px"><span class="no">8</span>Yazdır ya da PDF kaydet</h3>
+  <p style="margin:0;font-size:14.5px">Sözleşme sayfalarının arkasına <b>belge ekleri</b> kendiliğinden eklenir:</p>
+  <ul style="font-size:14px;margin:6px 0 0;padding-left:20px">
+    <li><b>Kimlikler:</b> sayfada 3 kişi, ön ve arka yüz yan yana</li>
+    <li><b>Diğer belgeler</b> (tapu, DASK, bordro, Findeks, gelir belgesi…): A5 boyunda, sayfada 2 tane alt alta</li>
+  </ul>
+  <div class="a4ler">
+    <figure style="margin:0"><div class="a4"><img src="assets/kira-rehber/12-sozlesme-s1.jpg" alt="Sözleşme 1. sayfa" loading="lazy"></div><figcaption>Sözleşme — dolu gelir</figcaption></figure>
+    <figure style="margin:0"><div class="a4"><img src="assets/kira-rehber/13-ek-kimlik.jpg" alt="Kimlik ekleri" loading="lazy"></div><figcaption>Kimlikler — sayfada 3</figcaption></figure>
+    <figure style="margin:0"><div class="a4"><img src="assets/kira-rehber/14-ek-a5.jpg" alt="Belge ekleri A5" loading="lazy"></div><figcaption>Belgeler — A5, sayfada 2</figcaption></figure>
+  </div>
+</div>
+
+<h2>Sık sorulanlar</h2>
+<div class="kart sss">
+  <details><summary>Müşteri linki açamıyor, "süresi dolmuş" diyor.</summary>
+    <p>Linkler 72 saat geçerli. Dosyayı aç, o kişinin kartında <b>Yeni link üret</b>'e bas ve yeni linki gönder.</p></details>
+  <details><summary>Müşteri teknolojiyle arası iyi değil.</summary>
+    <p>Yanındaysan <b>Ben dolduracağım</b>'a bas; formu kendi telefonundan doldur, kimliği kamerayla tara.</p></details>
+  <details><summary>Müşteriye giden formu önceden görmek istiyorum.</summary>
+    <p>Kira Masası'nın en üstünde <b>Müşteriye giden formları önizle</b> var. Kiracı, ev sahibi ve kefil formlarını linksiz açar; hiçbir şey kaydedilmez.</p></details>
+  <details><summary>Birden fazla kiracı veya ev sahibi var.</summary>
+    <p>Yeni dosyada "Kaç kiracı? / Kaç mülk sahibi?" ile 3'e kadar seç; herkese ayrı link gider, sözleşmeye hepsi aktarılır.</p></details>
+  <details><summary>Sözleşmede belge yerinde "Belge yüklenemedi" yazıyor.</summary>
+    <p>Belgenin Drive bağlantısında sorun var demektir. Dosyayı Kira Masası'nda açıp belgeyi kontrol et; çözülmezse Umut Tokkuş'a haber ver.</p></details>
+  <details><summary>Aynı dosya için "Sözleşmeyi hazırla"ya tekrar bastım, yazdıklarım gider mi?</summary>
+    <p>Gitmez. Kira bedeli, tarihler ve depozito korunur; sadece taraf bilgileri ve belgeler güncellenir.</p></details>
+</div>
+
+<div class="alt">RE/MAX Doğuş · <a href="danisman-rehberi.html">Tüm danışman rehberi</a> · <a href="https://dogusportal.com">Portala dön</a></div>
+</div>
+</body>
+</html>
