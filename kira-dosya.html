@@ -453,6 +453,23 @@ function sozlesmeyeAktar(d){
       A[(i > 1 ? onek + k + '_' + i : onek + k)] = v;
     });
   };
+  /* Yüklenen belgeler sözleşmenin arkasına basılır: kiraya veren → kiracı → kefil sırasıyla */
+  var ekler = [], SIRA = { sahip: 1, kiraci: 2, kefil: 3 };
+  roller.slice().sort(function(a, b){
+    var ka = String(a).replace(/\d+$/,''), kb = String(b).replace(/\d+$/,'');
+    return (SIRA[ka]||9) - (SIRA[kb]||9) || String(a).localeCompare(String(b));
+  }).forEach(function(rol){
+    var t = d.taraflar[rol]; if (!t || !t.belgeler) return;
+    var kisi = ((d.rolAdlari && d.rolAdlari[rol]) || rolAdi(rol)).toLocaleUpperCase('tr') + (t.veri && t.veri.ad ? ' — ' + t.veri.ad : '');
+    belgeListesi(rol).map(function(a){ return a.k; })
+      .concat(Object.keys(t.belgeler).filter(function(k){ return !belgeListesi(rol).some(function(a){ return a.k === k; }); }))
+      .forEach(function(k){
+        (t.belgeler[k] || []).forEach(function(link){
+          var m = String(link).match(/\/d\/([\w-]{20,})/) || String(link).match(/[?&]id=([\w-]{20,})/);
+          if (m) ekler.push({ kisi: kisi, belge: belgeAdi(rol, k), alan: k, id: m[1] });
+        });
+      });
+  });
   roller.forEach(function(rol){
     var t = d.taraflar[rol]; if (!t) return;
     var v = t.veri || {}, kok = String(rol).replace(/\d+$/,'');
@@ -469,7 +486,7 @@ function sozlesmeyeAktar(d){
   var adres = d.dosya.adres || '';
   A.mAdres = adres;
   var dm = adres.match(/Daire\s*([\w-]+)/i); if (dm) A.daireNo = dm[1];
-  var veri = { dosyaNo: d.dosya.no, kv: Math.max(kv,1), kc: Math.max(kc,1), alanlar: A };
+  var veri = { dosyaNo: d.dosya.no, kv: Math.max(kv,1), kc: Math.max(kc,1), alanlar: A, ekler: ekler };
   var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(veri)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   window.open(MATBU_ADRES + '#kira=' + b64, '_blank');
 }
@@ -521,7 +538,7 @@ function dosyaGoster(no, d){
     h += '<div class="kart" style="margin-top:18px">' +
            '<div style="font-weight:700;font-size:15px;margin-bottom:4px">📄 Kira sözleşmesi</div>' +
            '<p class="mini" style="margin:0 0 12px">' + gelen + '/' + toplam + ' form geldi. Gelen bilgiler Matbu Evraklar\'da ' +
-           'Kira Sözleşmesi\'ne dolu aktarılır; kira bedeli, tarihler, depozito ve demirbaşları orada son anda doldurursun.</p>' +
+           'Kira Sözleşmesi\'ne dolu aktarılır, yüklenen belgeler sözleşmenin arkasına basılır; kira bedeli, tarihler, depozito ve demirbaşları orada son anda doldurursun.</p>' +
            '<button class="ana" id="sozlesme"' + (gelen ? '' : ' disabled') + '>Sözleşmeyi hazırla</button>' +
          '</div>';
     h += '<button class="kck" id="geri">← Listeye dön</button>';
