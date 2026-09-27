@@ -131,10 +131,26 @@ var pin = '', benim = '', $ = function(id){ return document.getElementById(id); 
 try { pin = sessionStorage.getItem('kd_pin') || ''; benim = localStorage.getItem('kd_dan') || ''; } catch(e){}
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
-function api(q){ return fetch(API + q).then(function(r){ return r.json(); }); }
+/* Apps Script bazen yavaş/hatalı cevap verir: 25 sn zaman aşımı, JSON değilse anlaşılır hata */
+function istek(url, secenek){
+  var ctrl = window.AbortController ? new AbortController() : null;
+  var zm = setTimeout(function(){ if (ctrl) ctrl.abort(); }, 25000);
+  if (ctrl) { secenek = secenek || {}; secenek.signal = ctrl.signal; }
+  return fetch(url, secenek).then(function(r){ return r.text(); }).then(function(t){
+    clearTimeout(zm);
+    try { return JSON.parse(t); } catch(e){ throw new Error('Sunucudan beklenmeyen cevap geldi'); }
+  }, function(e){ clearTimeout(zm); throw new Error(e && e.name === 'AbortError' ? 'Sunucu 25 sn içinde cevap vermedi' : 'Bağlantı kurulamadı'); });
+}
+function api(q){ return istek(API + q); }
 function apiPost(action, veri){
-  return fetch(API, { method:'POST', body:new URLSearchParams({ action:action, data:JSON.stringify(veri) }) })
-    .then(function(r){ return r.json(); });
+  return istek(API, { method:'POST', body:new URLSearchParams({ action:action, data:JSON.stringify(veri) }) });
+}
+function hataGoster(mesaj, tekrar){
+  $('icerik').innerHTML = '<div class="kart" style="text-align:center"><div style="font-size:30px">⚠️</div>' +
+    '<p style="margin:8px 0 14px;font-weight:700">' + mesaj + '</p>' +
+    '<button class="ana" id="tekrar">Tekrar dene</button>' +
+    '<button class="kck" id="hlist" style="margin-top:10px">← Listeye dön</button></div>';
+  $('tekrar').onclick = tekrar; $('hlist').onclick = listeEkrani;
 }
 function telWa(v){
   var d=(v||'').replace(/\D/g,''); if(d.length===10) d='0'+d;
@@ -370,6 +386,9 @@ function yeniEkrani(){
         haricYaz(c.dosyaNo, rol, x);
       });
       dosyaEkrani(c.dosyaNo);
+    }).catch(function(e){
+      toast(e.message + ' — listeyi yenileyip dosyanın açılıp açılmadığına bak');
+      $('ac').disabled = false; $('ac').textContent = 'Dosyayı aç ve linkleri üret';
     });
   };
 }
@@ -452,7 +471,10 @@ function dosyaCiz(no){
   Promise.all([
     api('?action=dosya&no=' + encodeURIComponent(no) + '&pin=' + encodeURIComponent(pin)),
     alanlariYukle()
-  ]).then(function(r){ dosyaGoster(no, r[0]); });
+  ]).then(function(r){
+    try { dosyaGoster(no, r[0]); }
+    catch(e){ console.error(e); hataGoster('Dosya gösterilemedi (' + (e && e.message || e) + ')', function(){ dosyaEkrani(no); }); }
+  }).catch(function(e){ hataGoster('Dosya açılamadı: ' + e.message, function(){ dosyaEkrani(no); }); });
 }
 var SON_DOSYA = null;
 var MATBU_ADRES = 'https://dogusremax.github.io/matbuevraklar/';
