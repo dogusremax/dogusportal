@@ -260,12 +260,21 @@ function yeniEkrani(){
       '<div><span class="etiket">Kefil adı</span><input id="fad"></div>' +
       '<div><span class="etiket">Kefil telefonu</span><input id="ftel" inputmode="tel"></div>' +
     '</div>' +
+    '<div id="yeniBelge"></div>' +
     '<button class="ana" id="ac">Dosyayı aç ve linkleri üret</button>' +
     '<p class="mini" style="margin-top:10px">Linkler 72 saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
     '</div>' +
     '<button class="kck" id="vazgec">← Listeye dön</button>';
 
-  $('kefilVar').onchange = function(e){ $('kefilKutu').style.display = e.target.checked ? 'grid' : 'none'; };
+  function yeniBelgeCiz(){
+    var h = '<span class="etiket" style="margin-top:6px">İstenecek belgeler — istemediğinin işaretini kaldır</span>';
+    ['kiraci','sahip'].concat($('kefilVar').checked ? ['kefil'] : []).forEach(function(r){
+      h += '<div class="mini" style="font-weight:700;margin:8px 0 4px">' + ROL_AD[r] + '</div>' + belgeSecimHtml(r, [], 'data-ysec');
+    });
+    $('yeniBelge').innerHTML = h;
+  }
+  alanlariYukle().then(yeniBelgeCiz);
+  $('kefilVar').onchange = function(e){ $('kefilKutu').style.display = e.target.checked ? 'grid' : 'none'; yeniBelgeCiz(); };
   var sayilar = { kiraci: 1, sahip: 1 };
   function tarafSatirlari(kok, kutu, baslik, ornekAd){
     var h = '';
@@ -311,6 +320,11 @@ function yeniEkrani(){
     apiPost('dosyaAc', v).then(function(c){
       if(!c.ok){ toast(c.hata||'Dosya açılamadı'); $('ac').disabled=false; $('ac').textContent='Dosyayı aç ve linkleri üret'; return; }
       try{ sessionStorage.setItem('kd_tel_'+c.dosyaNo, JSON.stringify({tel:tel, ad:ad})); }catch(e){}
+      (c.roller || Object.keys(c.linkler || {})).forEach(function(rol){
+        var kok = String(rol).replace(/\d+$/,''), x = [];
+        Array.prototype.forEach.call(document.querySelectorAll('[data-ysec="'+kok+'"]'), function(o){ if(!o.checked) x.push(o.value); });
+        haricYaz(c.dosyaNo, rol, x);
+      });
       dosyaEkrani(c.dosyaNo);
     });
   };
@@ -319,10 +333,33 @@ function yeniEkrani(){
 /* ---------- dosya detayı ---------- */
 /* ---------- belge seçimi: istenmeyen belgeler linke &x= olarak eklenir ---------- */
 var ALANLAR = null;
+/* Apps Script'e ulaşılamazsa kullanılan yedek belge listesi (Kod.gs ALANLAR ile aynı) */
+var BELGE_YEDEK = {
+  kiraci: [{k:'kimlikOn',e:'Kimlik — ön yüz'},{k:'kimlikArka',e:'Kimlik — arka yüz'},
+           {k:'esKimlikOn',e:'Eşinizin kimliği — ön yüz',ko:1},{k:'esKimlikArka',e:'Eşinizin kimliği — arka yüz',ko:1},
+           {k:'bordro',e:'Maaş bordrosu / vergi levhası'},{k:'findeks',e:'Findeks raporu'},{k:'evlilik',e:'Evlilik cüzdanı',ko:1}],
+  sahip:  [{k:'kimlikOn',e:'Kimlik — ön yüz'},{k:'kimlikArka',e:'Kimlik — arka yüz'},{k:'tapu',e:'Tapu'},
+           {k:'dask',e:'DASK poliçesi'},{k:'vekalet',e:'Vekaletname',ko:1}],
+  kefil:  [{k:'kimlikOn',e:'Kimlik — ön yüz'},{k:'kimlikArka',e:'Kimlik — arka yüz'},
+           {k:'esKimlikOn',e:'Eşinizin kimliği — ön yüz',ko:1},{k:'esKimlikArka',e:'Eşinizin kimliği — arka yüz',ko:1},
+           {k:'ikametgah',e:'Yerleşim yeri belgesi'},{k:'gelirBelge',e:'Gelir belgesi'}]
+};
 function alanlariYukle(){
   if(ALANLAR) return Promise.resolve(ALANLAR);
-  return api('?action=alanlar').then(function(j){ ALANLAR = (j && j.alanlar) || {}; return ALANLAR; })
-    .catch(function(){ ALANLAR = {}; return ALANLAR; });
+  var yedek = function(){ ALANLAR = {}; Object.keys(BELGE_YEDEK).forEach(function(r){
+    ALANLAR[r] = BELGE_YEDEK[r].map(function(a){ return {k:a.k, e:a.e, belge:true, ko:a.ko}; }); }); return ALANLAR; };
+  return api('?action=alanlar').then(function(j){
+    if(j && j.alanlar && j.alanlar.kiraci){ ALANLAR = j.alanlar; return ALANLAR; }
+    return yedek();
+  }).catch(yedek);
+}
+function belgeSecimHtml(rol, haric, attr){
+  var bl = belgeListesi(rol);
+  if(!bl.length) return '';
+  return '<div class="bsec">' + bl.map(function(a){
+    return '<label><input type="checkbox" '+attr+'="'+rol+'" value="'+a.k+'"'+(haric.indexOf(a.k)>-1?'':' checked')+'> '+a.e+
+           (a.ko ? ' <span class="mini">(gerekirse)</span>' : '') + '</label>';
+  }).join('') + '</div>';
 }
 function belgeListesi(rol){
   var kok = String(rol||'').replace(/\d+$/,'');
@@ -368,12 +405,8 @@ function dosyaCiz(no){
           (d.dosya.adres ? d.dosya.adres + ' için ' : '') + 'kira sözleşmesini hazırlayabilmemiz için bilgi formunu ' +
           'doldurup kimliğinizin ön ve arka yüzünü yükleyebilir misiniz? Formu telefondan 3 dakikada doldurabilirsiniz:\n\n' +
           link + '\n\nBağlantı 72 saat geçerlidir.';
-        var bl2 = belgeListesi(rol);
-        if(bl2.length) h += '<span class="etiket">İstenecek belgeler</span><div class="bsec">' +
-          bl2.map(function(a){
-            return '<label><input type="checkbox" data-bsec="'+rol+'" value="'+a.k+'"'+(haric.indexOf(a.k)>-1?'':' checked')+'> '+a.e+
-                   (a.ko ? ' <span class="mini">(evliyse)</span>' : '') + '</label>';
-          }).join('') + '</div>';
+        var bsh = belgeSecimHtml(rol, haric, 'data-bsec');
+        if(bsh) h += '<span class="etiket">İstenecek belgeler — istemediğinin işaretini kaldır</span>' + bsh;
         h += '<p class="mini" style="margin:0 0 10px">Form henüz doldurulmadı.</p>' +
              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
                (tel ? '<button class="kck wa" data-wa="'+encodeURIComponent(mesaj)+'" data-tel="'+tel+'">WhatsApp\'tan gönder</button>' : '') +
