@@ -366,7 +366,7 @@ function yeniEkrani(){
       try{ sessionStorage.setItem('kd_tel_'+c.dosyaNo, JSON.stringify({tel:tel, ad:ad})); }catch(e){}
       (c.roller || Object.keys(c.linkler || {})).forEach(function(rol){
         var kok = String(rol).replace(/\d+$/,''), x = [];
-        Array.prototype.forEach.call(document.querySelectorAll('[data-ysec="'+kok+'"]'), function(o){ if(!o.checked) x.push(o.value); });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-ysec="'+kok+'"]'), function(o){ if(!o.checked) x = x.concat(o.value.split(',')); });
         haricYaz(c.dosyaNo, rol, x);
       });
       dosyaEkrani(c.dosyaNo);
@@ -403,11 +403,24 @@ function alanlariGetir(){
     return yedek();
   }).catch(yedek);
 }
+/* Kimliğin ön ve arka yüzü tek seçenek: "kimlikOn,kimlikArka" birlikte istenir / istenmez */
+function belgeSecenekleri(rol){
+  var liste = [], idx = {};
+  belgeListesi(rol).forEach(function(a){
+    var m = String(a.k).match(/^(.*kimlik.*?)(On|Arka)$/i);
+    if (!m) { liste.push({ k: a.k, e: a.e, ko: a.ko }); return; }
+    if (idx[m[1]]) { idx[m[1]].k += ',' + a.k; return; }
+    idx[m[1]] = { k: a.k, e: String(a.e).replace(/\s*[—-]\s*(ön|arka) yüz\s*$/i, '') + ' (ön + arka)', ko: a.ko };
+    liste.push(idx[m[1]]);
+  });
+  return liste;
+}
 function belgeSecimHtml(rol, haric, attr){
-  var bl = belgeListesi(rol);
+  var bl = belgeSecenekleri(rol);
   if(!bl.length) return '';
   return '<div class="bsec">' + bl.map(function(a){
-    return '<label><input type="checkbox" '+attr+'="'+rol+'" value="'+a.k+'"'+(haric.indexOf(a.k)>-1?'':' checked')+'> '+a.e+
+    var istenmez = a.k.split(',').some(function(k){ return haric.indexOf(k) > -1; });
+    return '<label><input type="checkbox" '+attr+'="'+rol+'" value="'+a.k+'"'+(istenmez?'':' checked')+'> '+a.e+
            (a.ko ? ' <span class="mini">(gerekirse)</span>' : '') + '</label>';
   }).join('') + '</div>';
 }
@@ -547,7 +560,7 @@ function dosyaGoster(no, d){
     Array.prototype.forEach.call(document.querySelectorAll('[data-bsec]'), function(c){
       c.onchange = function(){
         var r = c.dataset.bsec, x = [];
-        Array.prototype.forEach.call(document.querySelectorAll('[data-bsec="'+r+'"]'), function(o){ if(!o.checked) x.push(o.value); });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-bsec="'+r+'"]'), function(o){ if(!o.checked) x = x.concat(o.value.split(',')); });
         haricYaz(no, r, x);
         dosyaGoster(no, SON_DOSYA);   /* yeniden çekmeden, anında */
       };
