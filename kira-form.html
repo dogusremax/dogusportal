@@ -134,6 +134,8 @@ var API = 'https://script.google.com/macros/s/AKfycbyMU_jau9MsWaYq-nT56GRZRtQrTx
 
 var token = new URLSearchParams(location.search).get('k') || '';
 /* Önizleme: kira-form.html?onizle=kiraci | sahip | kefil — linksiz, süresiz; hiçbir şey kaydedilmez */
+/* Danışmanın istemediği belgeler: &x=kimlikArka,findeks — formda gösterilmez */
+var HARIC = (new URLSearchParams(location.search).get('x') || '').split(',').filter(Boolean);
 var ONIZLE = token ? '' : (new URLSearchParams(location.search).get('onizle') || '');
 var TANIM = null, BELGELER = {}, gonderiliyor = false;
 var $ = function (id) { return document.getElementById(id); };
@@ -176,6 +178,11 @@ function mesajGoster(tip, metin) {
 
 /* ---------- formu çiz ---------- */
 function ciz(d) {
+  if (HARIC.length) {
+    var kalan = d.alanlar.filter(function (a) { return !(a.belge && HARIC.indexOf(a.k) > -1); });
+    /* içi boşalan grup başlıklarını at */
+    d.alanlar = kalan.filter(function (a, i) { return !a.grup || (kalan[i + 1] && !kalan[i + 1].grup); });
+  }
   TANIM = d;
   var h = '<div class="ust"><div class="marka">RE/MAX DOĞUŞ</div>' +
     '<h1>' + d.rolAdi + ' Bilgi Formu</h1>' +
@@ -658,6 +665,7 @@ function gonder() {
       else if (v) { el.classList.remove('hata'); }
     }
   });
+  HARIC.forEach(function (k) { belgeler[k] = ['İstenmedi']; });   /* arka uçtaki zorunlu kontrolü için */
   if (!$('kvkk').checked) eksik.push('Aydınlatma metni onayı');
   if (eksik.length) { uyar('Şunlar eksik: ' + eksik.join(', ')); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 

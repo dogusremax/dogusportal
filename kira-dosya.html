@@ -38,6 +38,9 @@ button{font:inherit;cursor:pointer}
 .ana.yesil{background:var(--wa)}
 .kck{border:1px solid var(--cizgi);background:transparent;color:var(--yazi);border-radius:10px;
   padding:9px 12px;font-size:13px;font-weight:700}
+.bsec{display:flex;flex-direction:column;gap:7px;margin:0 0 12px;padding:10px 12px;border:1px solid var(--cizgi);border-radius:11px}
+.bsec label{display:flex;gap:9px;align-items:center;font-size:14px;cursor:pointer}
+.bsec input{width:19px;height:19px;margin:0;flex:0 0 19px;accent-color:var(--kirmizi)}
 .kck.wa{background:var(--wa);border-color:var(--wa);color:#fff}
 .satir{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--cizgi);
   border-radius:13px;margin-bottom:9px;background:var(--kart)}
@@ -314,8 +317,29 @@ function yeniEkrani(){
 }
 
 /* ---------- dosya detayı ---------- */
+/* ---------- belge seçimi: istenmeyen belgeler linke &x= olarak eklenir ---------- */
+var ALANLAR = null;
+function alanlariYukle(){
+  if(ALANLAR) return Promise.resolve(ALANLAR);
+  return api('?action=alanlar').then(function(j){ ALANLAR = (j && j.alanlar) || {}; return ALANLAR; })
+    .catch(function(){ ALANLAR = {}; return ALANLAR; });
+}
+function belgeListesi(rol){
+  var kok = String(rol||'').replace(/\d+$/,'');
+  return ((ALANLAR||{})[kok] || []).filter(function(a){ return a.belge; });
+}
+function belgeAdi(rol, k){
+  var b = belgeListesi(rol).filter(function(a){ return a.k === k; })[0];
+  return b ? b.e : k;
+}
+function haricOku(no, rol){ try{ return JSON.parse(localStorage.getItem('kd_haric_'+no+'_'+rol) || '[]'); }catch(e){ return []; } }
+function haricYaz(no, rol, x){ try{ localStorage.setItem('kd_haric_'+no+'_'+rol, JSON.stringify(x)); }catch(e){} }
+
 function dosyaEkrani(no){
   $('icerik').innerHTML = '<div class="bos">Dosya açılıyor…</div>';
+  alanlariYukle().then(function(){ dosyaCiz(no); });
+}
+function dosyaCiz(no){
   api('?action=dosya&no=' + encodeURIComponent(no) + '&pin=' + encodeURIComponent(pin)).then(function(d){
     if(!d.ok){ toast(d.hata||'Açılamadı'); listeEkrani(); return; }
     var kayit = {}; try{ kayit = JSON.parse(sessionStorage.getItem('kd_tel_'+no) || '{}'); }catch(e){}
@@ -332,15 +356,24 @@ function dosyaEkrani(no){
                return '<div><b>' + k + ':</b> ' + t.veri[k] + '</div>'; }).join('') + '</div>';
         var bl = t.belgeler||{}; var bh = '';
         Object.keys(bl).forEach(function(k){ (bl[k]||[]).forEach(function(link,i){
-          bh += '<a href="'+link+'" target="_blank" rel="noopener">📎 '+k+(i?' '+(i+1):'')+'</a>'; }); });
+          var ad = belgeAdi(rol, k);
+          if(!/^https?:/.test(link)) { bh += '<span class="mini">— ' + ad + ': istenmedi</span>'; return; }
+          bh += '<a href="'+link+'" target="_blank" rel="noopener">📎 '+ad+(i?' '+(i+1):'')+'</a>'; }); });
         if(bh) h += '<div class="belgeler">'+bh+'</div>';
       } else {
-        var link = FORM_ADRES + t.token;
+        var haric = haricOku(no, rol);
+        var link = FORM_ADRES + t.token + (haric.length ? '&x=' + haric.join(',') : '');
         var tel = telWa((kayit.tel && kayit.tel[rol]) || '');
         var mesaj = 'Merhaba' + (ad ? ' ' + ad : '') + ', RE/MAX Doğuş\'tan ' + (d.dosya.danisman||'') + '. ' +
           (d.dosya.adres ? d.dosya.adres + ' için ' : '') + 'kira sözleşmesini hazırlayabilmemiz için bilgi formunu ' +
           'doldurup kimliğinizin ön ve arka yüzünü yükleyebilir misiniz? Formu telefondan 3 dakikada doldurabilirsiniz:\n\n' +
           link + '\n\nBağlantı 72 saat geçerlidir.';
+        var bl2 = belgeListesi(rol);
+        if(bl2.length) h += '<span class="etiket">İstenecek belgeler</span><div class="bsec">' +
+          bl2.map(function(a){
+            return '<label><input type="checkbox" data-bsec="'+rol+'" value="'+a.k+'"'+(haric.indexOf(a.k)>-1?'':' checked')+'> '+a.e+
+                   (a.ko ? ' <span class="mini">(evliyse)</span>' : '') + '</label>';
+          }).join('') + '</div>';
         h += '<p class="mini" style="margin:0 0 10px">Form henüz doldurulmadı.</p>' +
              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
                (tel ? '<button class="kck wa" data-wa="'+encodeURIComponent(mesaj)+'" data-tel="'+tel+'">WhatsApp\'tan gönder</button>' : '') +
@@ -354,6 +387,14 @@ function dosyaEkrani(no){
 
     h += '<button class="kck" id="geri">← Listeye dön</button>';
     $('icerik').innerHTML = h;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bsec]'), function(c){
+      c.onchange = function(){
+        var r = c.dataset.bsec, x = [];
+        Array.prototype.forEach.call(document.querySelectorAll('[data-bsec="'+r+'"]'), function(o){ if(!o.checked) x.push(o.value); });
+        haricYaz(no, r, x);
+        dosyaEkrani(no);
+      };
+    });
     $('geri').onclick = listeEkrani;
     Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'), function(b){
       b.onclick = function(){ window.open('https://wa.me/'+b.dataset.tel+'?text='+b.dataset.wa,'_blank'); };
