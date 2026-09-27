@@ -442,6 +442,37 @@ function dosyaCiz(no){
   ]).then(function(r){ dosyaGoster(no, r[0]); });
 }
 var SON_DOSYA = null;
+var MATBU_ADRES = 'https://dogusremax.github.io/matbuevraklar/';
+/* Form verilerini Matbu Evraklar'daki Kira Sözleşmesi alan adlarına çevirir */
+function sozlesmeyeAktar(d){
+  var A = {}, kv = 0, kc = 0;
+  var roller = (d.roller || []).slice();
+  var ekle = function(onek, i, alanlar){
+    Object.keys(alanlar).forEach(function(k){
+      var v = alanlar[k]; if (!v) return;
+      A[(i > 1 ? onek + k + '_' + i : onek + k)] = v;
+    });
+  };
+  roller.forEach(function(rol){
+    var t = d.taraflar[rol]; if (!t) return;
+    var v = t.veri || {}, kok = String(rol).replace(/\d+$/,'');
+    if (kok === 'sahip') {
+      kv++;
+      ekle('kv', kv, { Isim: v.ad || (kv === 1 ? d.dosya.sahip : ''), Tc: v.tc, Adres: v.adres, Tel: v.tel, Iban: v.iban, HesapAdi: v.ad });
+    } else if (kok === 'kiraci') {
+      kc++;
+      ekle('kc', kc, { Isim: v.ad || (kc === 1 ? d.dosya.kiraci : ''), Tc: v.tc, Adres: v.adres, Is: v.isadres, Tel: v.tel });
+    } else if (kok === 'kefil') {
+      ekle('kf', 1, { Isim: v.ad, Tc: v.tc, Tel: v.tel, Is: v.isadres, Adres: v.adres });
+    }
+  });
+  var adres = d.dosya.adres || '';
+  A.mAdres = adres;
+  var dm = adres.match(/Daire\s*([\w-]+)/i); if (dm) A.daireNo = dm[1];
+  var veri = { dosyaNo: d.dosya.no, kv: Math.max(kv,1), kc: Math.max(kc,1), alanlar: A };
+  var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(veri)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  window.open(MATBU_ADRES + '#kira=' + b64, '_blank');
+}
 function dosyaGoster(no, d){
   (function(){
     SON_DOSYA = d;
@@ -485,8 +516,17 @@ function dosyaGoster(no, d){
       h += '</div>';
     });
 
+    var gelen = 0, toplam = 0;
+    (d.roller || []).forEach(function(r){ var t = d.taraflar[r]; if(!t) return; toplam++; if(t.durum === 'Gönderildi') gelen++; });
+    h += '<div class="kart" style="margin-top:18px">' +
+           '<div style="font-weight:700;font-size:15px;margin-bottom:4px">📄 Kira sözleşmesi</div>' +
+           '<p class="mini" style="margin:0 0 12px">' + gelen + '/' + toplam + ' form geldi. Gelen bilgiler Matbu Evraklar\'da ' +
+           'Kira Sözleşmesi\'ne dolu aktarılır; kira bedeli, tarihler, depozito ve demirbaşları orada son anda doldurursun.</p>' +
+           '<button class="ana" id="sozlesme"' + (gelen ? '' : ' disabled') + '>Sözleşmeyi hazırla</button>' +
+         '</div>';
     h += '<button class="kck" id="geri">← Listeye dön</button>';
     $('icerik').innerHTML = h;
+    if ($('sozlesme')) $('sozlesme').onclick = function(){ sozlesmeyeAktar(d); };
     Array.prototype.forEach.call(document.querySelectorAll('[data-bsec]'), function(c){
       c.onchange = function(){
         var r = c.dataset.bsec, x = [];
