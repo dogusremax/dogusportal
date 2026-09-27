@@ -96,7 +96,7 @@ button{font-family:inherit;cursor:pointer}
       <button class="kck" id="cikis" style="display:none">Çıkış</button>
     </div>
     <div class="baslik">
-      <div class="marka">RE/MAX Doğuş · Danışman</div>
+      <div class="marka" id="marka">RE/MAX Doğuş</div>
       <h1>Kira Masası</h1>
       <p>Taraflara form linki gönder, bilgileri ve belgeleri tek yerde topla.</p>
     </div>
@@ -143,7 +143,9 @@ function telWa(v){
 }
 
 /* ---------- giriş ---------- */
+function markaYaz(){ var m = $('marka'); if (m) m.textContent = 'RE/MAX Doğuş' + (pin && benim ? ' · ' + benim : ''); }
 function girisEkrani(mesaj){
+  pin = ''; markaYaz();
   $('cikis').style.display='none';
   $('icerik').innerHTML =
     '<div class="kart"><span class="etiket">Şifren</span>' +
@@ -163,6 +165,7 @@ function girisEkrani(mesaj){
 /* ---------- dosya listesi ---------- */
 var LISTE_ANAHTAR = function(){ return 'kd_liste_' + benim; };
 function listeEkrani(){
+  markaYaz();
   $('cikis').style.display='block';
   alanlariYukle();   /* belge listesini arkada hazırla */
   var onbellek = null;

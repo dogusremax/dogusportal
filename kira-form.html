@@ -164,7 +164,7 @@ function onizlemeAc(rol) {
     .then(function (r) { return r.json(); })
     .then(function (j) {
       if (!j.ok || !j.alanlar[rol]) { $('durum').textContent = 'Önizleme açılamadı: rol kiraci, sahip ya da kefil olmalı.'; return; }
-      ciz({ ok: true, rol: rol, rolAdi: (j.roller || {})[rol] || rol, dosyaNo: 'ÖNİZLEME', adres: '',
+      ciz({ ok: true, rol: rol, rolAdi: (j.roller || {})[rol] || rol, dosyaNo: 'ÖNİZLEME', adres: '', danisman: (function () { try { return localStorage.getItem('kd_dan') || ''; } catch (e) { return ''; } })(),
             alanlar: j.alanlar[rol], kvkk: j.kvkk, ofisTel: '0216 315 15 15' });
       var bar = document.createElement('div');
       bar.className = 'onizbar';
@@ -193,7 +193,7 @@ function ciz(d) {
     d.alanlar = kalan.filter(function (a, i) { return !a.grup || (kalan[i + 1] && !kalan[i + 1].grup); });
   }
   TANIM = d;
-  var h = '<div class="ust"><img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><div class="marka">RE/MAX Doğuş</div>' +
+  var h = '<div class="ust"><img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><div class="marka">RE/MAX Doğuş' + (d.danisman ? ' · ' + d.danisman : '') + '</div>' +
     '<h1>' + d.rolAdi + ' Bilgi Formu</h1>' +
     '<p>' + (d.adres ? d.adres + ' için kira sözleşmesi hazırlanıyor. ' : '') +
     'Bilgilerinizi doldurup belgelerinizi yükleyin, sözleşmeyi biz hazırlayalım.</p></div>';
@@ -250,7 +250,8 @@ function ciz(d) {
        '<label class="onay"><input type="checkbox" id="kvkk">' +
        '<span>Aydınlatma metnini okudum, bilgilerimin ve belgelerimin kira sözleşmesinin hazırlanması amacıyla işlenmesine onay veriyorum.</span></label>' +
        '</div>' +
-       '<p class="mini">Sorunuz olursa danışmanınıza ya da ' + (d.ofisTel || '') + ' numarasına ulaşabilirsiniz.<br>Dosya no: ' + d.dosyaNo + '</p>';
+       '<p class="mini">Sorunuz olursa ' + (d.danisman ? 'danışmanınız ' + d.danisman : 'danışmanınız') +
+       ' ya da ofisimiz (' + (d.ofisTel || '') + ') ile iletişime geçebilirsiniz.<br>Dosya no: ' + d.dosyaNo + '</p>';
 
   $('wrap').innerHTML = h;
   $('altbar').style.display = 'block';
