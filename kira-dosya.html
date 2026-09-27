@@ -161,11 +161,22 @@ function girisEkrani(mesaj){
 }
 
 /* ---------- dosya listesi ---------- */
+var LISTE_ANAHTAR = function(){ return 'kd_liste_' + benim; };
 function listeEkrani(){
   $('cikis').style.display='block';
-  $('icerik').innerHTML = '<div class="bos">Dosyalar yükleniyor…</div>';
+  alanlariYukle();   /* belge listesini arkada hazırla */
+  var onbellek = null;
+  try { onbellek = JSON.parse(localStorage.getItem(LISTE_ANAHTAR()) || 'null'); } catch(e){}
+  if (onbellek) listeCiz(onbellek, true);
+  else $('icerik').innerHTML = '<div class="bos">Dosyalar yükleniyor…</div>';
   api('?action=liste&pin=' + encodeURIComponent(pin) + '&danisman=' + encodeURIComponent(benim)).then(function(d){
-    if(!d.ok){ girisEkrani(d.hata || 'Şifre hatalı.'); return; }
+    if(!d.ok){ try{ localStorage.removeItem(LISTE_ANAHTAR()); }catch(e){} girisEkrani(d.hata || 'Şifre hatalı.'); return; }
+    try { localStorage.setItem(LISTE_ANAHTAR(), JSON.stringify(d)); } catch(e){}
+    if (!$('yeni') && onbellek) return;           /* kullanıcı başka ekrana geçti */
+    listeCiz(d, false);
+  }).catch(function(){ if(!onbellek) $('icerik').innerHTML = '<div class="bos">Bağlantı kurulamadı.</div>'; });
+}
+function listeCiz(d, eski){
     var h = '<button class="ana" id="yeni">+ Yeni kira dosyası</button>' +
             '<div class="grup">Dosyalar</div>';
     h += d.liste.length ? d.liste.map(function(x){
@@ -176,12 +187,12 @@ function listeEkrani(){
              '<div class="alt">'+x.no+' · '+(x.danisman||'')+' · '+(x.kiraci||'')+'</div></div>' +
              '<span class="rozet '+sinif+'">'+s+'</span></div>';
     }).join('') : '<div class="bos">Henüz dosya yok. Yukarıdan yeni dosya açabilirsin.</div>';
+    if (eski) h += '<p class="mini" id="tazeleniyor" style="text-align:center">Güncelleniyor…</p>';
     $('icerik').innerHTML = h;
     $('yeni').onclick = yeniEkrani;
     Array.prototype.forEach.call(document.querySelectorAll('.satir[data-no]'), function(el){
       el.onclick = function(){ dosyaEkrani(el.dataset.no); };
     });
-  }).catch(function(){ $('icerik').innerHTML = '<div class="bos">Bağlantı kurulamadı.</div>'; });
 }
 
 /* ---------- yeni dosya ---------- */
@@ -374,8 +385,14 @@ var BELGE_YEDEK = {
            {k:'esKimlikOn',e:'Eşinizin kimliği — ön yüz',ko:1},{k:'esKimlikArka',e:'Eşinizin kimliği — arka yüz',ko:1},
            {k:'ikametgah',e:'Yerleşim yeri belgesi'},{k:'gelirBelge',e:'Gelir belgesi'}]
 };
+var _alanSoz = null;
 function alanlariYukle(){
   if(ALANLAR) return Promise.resolve(ALANLAR);
+  if(_alanSoz) return _alanSoz;
+  _alanSoz = alanlariGetir();
+  return _alanSoz;
+}
+function alanlariGetir(){
   var yedek = function(){ ALANLAR = {}; Object.keys(BELGE_YEDEK).forEach(function(r){
     ALANLAR[r] = BELGE_YEDEK[r].map(function(a){ return {k:a.k, e:a.e, belge:true, ko:a.ko}; }); }); return ALANLAR; };
   return api('?action=alanlar').then(function(j){
@@ -413,10 +430,18 @@ function haricYaz(no, rol, x){ try{ localStorage.setItem('kd_haric_'+no+'_'+rol,
 
 function dosyaEkrani(no){
   $('icerik').innerHTML = '<div class="bos">Dosya açılıyor…</div>';
-  alanlariYukle().then(function(){ dosyaCiz(no); });
+  dosyaCiz(no);
 }
 function dosyaCiz(no){
-  api('?action=dosya&no=' + encodeURIComponent(no) + '&pin=' + encodeURIComponent(pin)).then(function(d){
+  Promise.all([
+    api('?action=dosya&no=' + encodeURIComponent(no) + '&pin=' + encodeURIComponent(pin)),
+    alanlariYukle()
+  ]).then(function(r){ dosyaGoster(no, r[0]); });
+}
+var SON_DOSYA = null;
+function dosyaGoster(no, d){
+  (function(){
+    SON_DOSYA = d;
     if(!d.ok){ toast(d.hata||'Açılamadı'); listeEkrani(); return; }
     var kayit = {}; try{ kayit = JSON.parse(sessionStorage.getItem('kd_tel_'+no) || '{}'); }catch(e){}
     var h = '<div class="kart"><div class="bas" style="font-weight:800;font-size:16px">' + (d.dosya.adres||'-') + '</div>' +
@@ -464,7 +489,7 @@ function dosyaCiz(no){
         var r = c.dataset.bsec, x = [];
         Array.prototype.forEach.call(document.querySelectorAll('[data-bsec="'+r+'"]'), function(o){ if(!o.checked) x.push(o.value); });
         haricYaz(no, r, x);
-        dosyaEkrani(no);
+        dosyaGoster(no, SON_DOSYA);   /* yeniden çekmeden, anında */
       };
     });
     $('geri').onclick = listeEkrani;
@@ -489,7 +514,7 @@ function dosyaCiz(no){
         });
       };
     });
-  });
+  })();
 }
 
 $('cikis').onclick = function(){
