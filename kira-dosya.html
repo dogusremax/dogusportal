@@ -488,20 +488,23 @@ function sozlesmeyeAktar(d){
       A[(i > 1 ? onek + k + '_' + i : onek + k)] = v;
     });
   };
-  /* Yüklenen belgeler sözleşmenin arkasına basılır: kiraya veren → kiracı → kefil sırasıyla */
-  var ekler = [], SIRA = { sahip: 1, kiraci: 2, kefil: 3 };
+  /* Yüklenen belgeler Matbu'da kimlik ve Ek Belgeler alanlarına yerleşir: kiraya veren → kiracı → kefil sırasıyla.
+     onek/no: hangi tarafın kaçıncı kişisi (sözleşmedeki kv/kc/kf sırasıyla aynı) */
+  var ekler = [], SIRA = { sahip: 1, kiraci: 2, kefil: 3 }, ONEK = { sahip: 'kv', kiraci: 'kc', kefil: 'kf' }, SIRANO = {}, say = {};
+  roller.forEach(function(rol){ var k = String(rol).replace(/\d+$/,''); say[k] = (say[k] || 0) + 1; SIRANO[rol] = say[k]; });
   roller.slice().sort(function(a, b){
     var ka = String(a).replace(/\d+$/,''), kb = String(b).replace(/\d+$/,'');
     return (SIRA[ka]||9) - (SIRA[kb]||9) || String(a).localeCompare(String(b));
   }).forEach(function(rol){
     var t = d.taraflar[rol]; if (!t || !t.belgeler) return;
     var kisi = ((d.rolAdlari && d.rolAdlari[rol]) || rolAdi(rol)).toLocaleUpperCase('tr') + (t.veri && t.veri.ad ? ' — ' + t.veri.ad : '');
+    var kok = String(rol).replace(/\d+$/,'');
     belgeListesi(rol).map(function(a){ return a.k; })
       .concat(Object.keys(t.belgeler).filter(function(k){ return !belgeListesi(rol).some(function(a){ return a.k === k; }); }))
       .forEach(function(k){
         (t.belgeler[k] || []).forEach(function(link){
           var m = String(link).match(/\/d\/([\w-]{20,})/) || String(link).match(/[?&]id=([\w-]{20,})/);
-          if (m) ekler.push({ kisi: kisi, belge: belgeAdi(rol, k), alan: k, id: m[1] });
+          if (m) ekler.push({ kisi: kisi, belge: belgeAdi(rol, k), alan: k, id: m[1], onek: ONEK[kok], no: SIRANO[rol] });
         });
       });
   });
