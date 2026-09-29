@@ -54,6 +54,9 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
 .dan-head span { font-size: 12.5px; color: var(--text-dim); white-space: nowrap; }
 .tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
 .tag { font: 600 11.5px 'Inter', sans-serif; padding: 3px 9px; border-radius: 999px; background: rgba(0,61,165,.08); color: var(--remax-blue); border: 0; cursor: pointer; }
+.aktar-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.aktar { font: 600 12px 'Inter', sans-serif; padding: 7px 11px; border-radius: 9px; background: var(--remax-red); color: #fff; text-decoration: none; }
+.aktar.done { background: #e8f6ee; color: #1a7f45; }
 .reply { margin-top: 10px; padding: 10px 12px; background: var(--bg); border-radius: 10px; font-size: 13px; line-height: 1.5; color: var(--text-dim); white-space: pre-line; }
 .reply b { color: var(--text); font-size: 12px; display: block; margin-bottom: 2px; }
 .list { display: grid; gap: 10px; }
@@ -113,6 +116,8 @@ const VERI = 'data/google-yorumlar.json';
 const DANISMAN = 'data/danismanlar.json';
 const YORUM_LINKI = 'https://dogusportal.com/yorum';
 let veri = null, danismanlar = [], filtre = 0;
+let aktarildi = [];
+try { aktarildi = JSON.parse(localStorage.getItem('gy-aktarildi') || '[]'); } catch {}
 let secili = new URLSearchParams(location.search).get('d') || '';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -194,18 +199,42 @@ function ciz() {
     const ne = r.tarihYaklasik && r.once ? r.once : once(r.tarih);
     const ipucu = r.tarihYaklasik ? 'Google yalnızca yaklaşık tarih gösteriyor' : tarih(r.tarih);
     const etiket = (r.danismanlar || []).filter(id => danismanlar.some(d => d.id === id)).map(id => `<button class="tag" data-d="${esc(id)}">${esc(adi(id))}</button>`).join('');
+    const aktar = (r.danismanlar || []).map(id => danismanlar.find(d => d.id === id)).filter(d => d && d.remax).map(d => {
+      const k = r.id + '|' + d.id, ok = aktarildi.includes(k);
+      return `<a class="aktar${ok ? ' done' : ''}" href="${esc(d.remax)}" target="_blank" rel="noopener" data-kopya="${esc(r.id)}" data-k="${esc(k)}">${ok ? '✓ Aktarıldı · ' : "RE/MAX'e aktar · "}${esc(d.ad.split(' ')[0])}</a>`;
+    }).join('');
     return `<article class="rv">
       <div class="rv-head">${av}<div class="who">${ad}<div class="when" title="${esc(ipucu)}">${esc(ne)}</div></div>${yeni}</div>
       <div class="stars" style="margin-top:8px">${yildiz(r.puan)}</div>
       ${r.metin ? `<p>${esc(r.metin)}</p>` : '<p class="empty">Yalnızca puan verildi</p>'}
       ${r.yanit ? `<div class="reply"><b>RE/MAX Doğuş yanıtı</b>${esc(r.yanit)}</div>` : ''}
       ${etiket ? `<div class="tags">${etiket}</div>` : ''}
+      ${aktar ? `<div class="aktar-row">${aktar}</div>` : ''}
       ${r.link ? `<div class="rv-foot"><a href="${esc(r.link)}" target="_blank" rel="noopener">Google'da aç ›</a></div>` : ''}
     </article>`;
   }).join('') : '<div class="state">Bu seçimde yorum yok.</div>';
 }
 
+// RE/MAX'e aktar: yorumu panoya kopyala, danışmanın remax.com.tr sayfası yeni sekmede açılır (link varsayılan davranışı)
+function kopyala(metin) {
+  const ta = document.createElement('textarea');
+  ta.value = metin; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0;top:0';
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, metin.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch {}
+  ta.remove();
+  if (!ok && navigator.clipboard) navigator.clipboard.writeText(metin).catch(() => {});
+}
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3500); }
 document.addEventListener('click', e => {
+  const a = e.target.closest('[data-kopya]');
+  if (a) {
+    const r = (veri.yorumlar || []).find(y => y.id === a.dataset.kopya);
+    if (r) kopyala(r.metin);
+    if (!aktarildi.includes(a.dataset.k)) { aktarildi.push(a.dataset.k); try { localStorage.setItem('gy-aktarildi', JSON.stringify(aktarildi)); } catch {} }
+    a.classList.add('done'); a.textContent = '✓ Aktarıldı · ' + a.textContent.split('· ').pop();
+    toast("Yorum kopyalandı. RE/MAX'te \"Yorum Yaz\"a tıklayıp yapıştırın.");
+    return;
+  }
   const d = e.target.closest('[data-d]'); if (d) return sec(d.dataset.d);
   const f = e.target.closest('[data-f]'); if (f) { filtre = +f.dataset.f; ciz(); }
 });
