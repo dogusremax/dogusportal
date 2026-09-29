@@ -15,11 +15,21 @@ const DOSYA = 'data/google-yorumlar.json';
       'X-Goog-FieldMask': 'displayName,rating,userRatingCount,googleMapsUri,reviews',
     },
   });
-  if (!r.ok) { console.error('Places API hatası', r.status, await r.text()); process.exit(1); }
-  const p = await r.json();
-
   let eski = { yorumlar: [] };
   try { eski = JSON.parse(fs.readFileSync(DOSYA, 'utf8')); } catch {}
+
+  if (!r.ok) {
+    // Hatayı veri dosyasına da yaz (loglar giriş gerektiriyor); anahtar metinden temizlenir
+    const metin = (await r.text()).split(KEY).join('***');
+    console.error('Places API hatası', r.status, metin);
+    let mesaj = metin;
+    try { mesaj = JSON.parse(metin).error?.message || metin; } catch {}
+    fs.writeFileSync(DOSYA, JSON.stringify({ ...eski, hata: { zaman: new Date().toISOString(), durum: r.status, mesaj: mesaj.slice(0, 500) } }, null, 1));
+    return;
+  }
+  const p = await r.json();
+  const hataVardi = !!eski.hata;
+  delete eski.hata;
 
   // Danışman eşleştirme (data/danismanlar.json'daki desenler, Türkçe küçük harfe çevrilmiş metinde aranır)
   const norm = s => (s || '').replace(/ș/g, 'ş').replace(/Ș/g, 'Ş').replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
@@ -73,7 +83,7 @@ const DOSYA = 'data/google-yorumlar.json';
 
   // Sadece içerik değiştiyse yaz (her saat boş commit olmasın)
   const degisti = JSON.stringify({ ...yeni, guncelleme: 0 }) !== JSON.stringify({ ...eski, guncelleme: 0 });
-  if (!degisti) { console.log('Değişiklik yok.'); return; }
+  if (!degisti && !hataVardi) { console.log('Değişiklik yok.'); return; }
   fs.mkdirSync('data', { recursive: true });
   fs.writeFileSync(DOSYA, JSON.stringify(yeni, null, 1));
   console.log(`Kaydedildi: ${yeni.puan}★, ${yeni.toplam} değerlendirme, ${yorumlar.length} yorum arşivde.`);
