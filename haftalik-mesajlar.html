@@ -75,6 +75,8 @@ if(new URLSearchParams(location.search).get('k')==='1520')sessionStorage.setItem
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KEY = "dogus-performans";
+// Gönderim merkezi dogus-whatsapp-service üzerinden (Meta bağlantısı ve numaralar orada)
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 
 // Meta'da onaylatılan şablonlar — metinler scripts/whatsapp-rehber.md ile BİREBİR aynı olmalı
 const SABLON = {
@@ -360,7 +362,7 @@ function butonlar() {
 
 function pin() {
   let p = store.get('hm_pin', '');
-  if (!p) { p = (prompt('Gönderim PIN\'i (Apps Script ayarlarındaki ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
+  if (!p) { p = (prompt('Gönderim PIN\'i (dogus-whatsapp-service ayarlarındaki ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
   return p;
 }
 async function gonder(test) {
@@ -372,9 +374,11 @@ async function gonder(test) {
   const go = document.getElementById('gobtn'), tb = document.getElementById('testbtn');
   go.disabled = tb.disabled = true; durum(test ? 'Test mesajı gönderiliyor…' : 'Gönderiliyor…');
   try {
-    const r = await fetch(APPS_SCRIPT_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({
-      action: 'whatsappGonder', pin: p, test: !!test, mod: MOD, hafta: document.getElementById('hafta').value,
-      mesajlar: liste.map(m => ({ id: m.d.id, ad: m.d.name, sablon: m.sablon, params: params(m) })) }) });
+    // Servis diğer uygulamalar gibi form alanı okur: action + veri (JSON)
+    const f = new URLSearchParams(); f.append('action', 'haftalikMesaj');
+    f.append('veri', JSON.stringify({ pin: p, test: !!test, mod: MOD, hafta: document.getElementById('hafta').value,
+      mesajlar: liste.map(m => ({ id: m.d.id, ad: m.d.name, sablon: m.sablon, params: params(m) })) }));
+    const r = await fetch(WA_SERVICE_URL, { method: 'POST', redirect: 'follow', body: f });
     const j = JSON.parse(await r.text());
     if (!j.success) { if (/pin/i.test(j.error || '')) store.set('hm_pin', ''); throw new Error(j.error || 'Gönderilemedi'); }
     if (test) { alert('Test mesajı gönderildi ✓ Telefonunu kontrol et.'); butonlar(); return; }
