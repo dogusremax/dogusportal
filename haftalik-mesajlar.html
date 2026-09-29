@@ -42,6 +42,7 @@
   .sec{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;white-space:nowrap}
   .sec input{width:18px;height:18px;padding:0;accent-color:#25D366}
   .bubble{background:#e7fed8;color:#111b21;border-radius:10px 10px 10px 2px;padding:10px 12px;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;overflow-wrap:anywhere}
+  .bubble .alt{margin-top:6px;font-size:12px;color:#667781}
   .bubble .v{background:rgba(250,204,21,.35);border-radius:3px}
   .edit{display:none;flex-direction:column;gap:8px}
   .card.editing .edit{display:flex}
@@ -78,7 +79,8 @@ const KEY = "dogus-performans";
 // Gönderim merkezi dogus-whatsapp-service üzerinden (Meta bağlantısı ve numaralar orada)
 const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 
-// Meta'da onaylatılan şablonlar — metinler scripts/whatsapp-rehber.md ile BİREBİR aynı olmalı
+// Meta'da onaylatılan şablonlar — metinler scripts/whatsapp-appscript.js (haftalikSablonlariOlustur) ile BİREBİR aynı olmalı
+// Hepsinin altında "RE/MAX Doğuş" alt bilgisi var (şablonda FOOTER)
 const SABLON = {
   carsamba_hatirlatma:
 `Merhaba {{1}} 👋
@@ -91,7 +93,7 @@ _"{{2}}"_
 🎯 Hafta sonuna kadar: {{4}}
 
 Aktivitelerini uygulamaya girmeyi unutma 👉 dogusportal.com
-İyi akşamlar, RE/MAX Doğuş`,
+İyi akşamlar!`,
   haftalik_karne:
 `Günaydın {{1}} ☀️
 *{{2}} haftalık karnen* 📋
@@ -110,7 +112,8 @@ Aktivitelerini uygulamaya girmeyi unutma 👉 dogusportal.com
 🎯 *Bu haftanın planı:* {{9}}
 
 {{10}}
-RE/MAX Doğuş`,
+
+Yeni hafta senin, bol kazançlı bir hafta dileriz! 🚀`,
   destek_mesaji:
 `Merhaba {{1}} 🌿
 {{2}}
@@ -120,7 +123,7 @@ _"{{3}}"_
 {{4}}
 
 Bir telefon kadar yakınız, iyi ki varsın 💙
-U.T / M.T · RE/MAX Doğuş`,
+— U.T / M.T`,
 };
 // Düzenleme kutularında görünen alan adları (null = düzenlenmez)
 const ALAN = {
@@ -275,7 +278,8 @@ function onizleme(sablon, p) {
   const parca = SABLON[sablon].split(/(\{\{\d+\}\})/);
   return parca.map(x => { const k = x.match(/^\{\{(\d+)\}\}$/); return k ? `\u0001${esc(p[k[1] - 1])}\u0002` : esc(x); }).join('')
     .replace(/\*([^*\n]+)\*/g, '<b>$1</b>').replace(/(^|[\s"(\u0001])_([^_\n]+?)_(?=[\s".,!)\u0002]|$)/g, '$1<i>$2</i>')
-    .replace(/\u0001/g, '<span class="v">').replace(/\u0002/g, '</span>').replace(/\n/g, '<br>');
+    .replace(/\u0001/g, '<span class="v">').replace(/\u0002/g, '</span>').replace(/\n/g, '<br>') +
+    '<div class="alt">RE/MAX Doğuş</div>';
 }
 
 function haftaSecenekleri() {
@@ -362,7 +366,7 @@ function butonlar() {
 
 function pin() {
   let p = store.get('hm_pin', '');
-  if (!p) { p = (prompt('Gönderim PIN\'i (dogus-whatsapp-service ayarlarındaki ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
+  if (!p) { p = (prompt('Gönderim PIN\'i (dogus-whatsapp-service Script Properties → ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
   return p;
 }
 async function gonder(test) {
@@ -374,11 +378,10 @@ async function gonder(test) {
   const go = document.getElementById('gobtn'), tb = document.getElementById('testbtn');
   go.disabled = tb.disabled = true; durum(test ? 'Test mesajı gönderiliyor…' : 'Gönderiliyor…');
   try {
-    // Servis diğer uygulamalar gibi form alanı okur: action + veri (JSON)
-    const f = new URLSearchParams(); f.append('action', 'haftalikMesaj');
-    f.append('veri', JSON.stringify({ pin: p, test: !!test, mod: MOD, hafta: document.getElementById('hafta').value,
-      mesajlar: liste.map(m => ({ id: m.d.id, ad: m.d.name, sablon: m.sablon, params: params(m) })) }));
-    const r = await fetch(WA_SERVICE_URL, { method: 'POST', redirect: 'follow', body: f });
+    // Servis JSON gövdeyi okur (parsePostPayload); düz metin olarak gider, CORS ön kontrolü olmaz
+    const r = await fetch(WA_SERVICE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({
+      action: 'haftalikMesaj', pin: p, test: !!test, mod: MOD, hafta: document.getElementById('hafta').value,
+      mesajlar: liste.map(m => ({ id: m.d.id, ad: m.d.name, sablon: m.sablon, params: params(m) })) }) });
     const j = JSON.parse(await r.text());
     if (!j.success) { if (/pin/i.test(j.error || '')) store.set('hm_pin', ''); throw new Error(j.error || 'Gönderilemedi'); }
     if (test) { alert('Test mesajı gönderildi ✓ Telefonunu kontrol et.'); butonlar(); return; }
