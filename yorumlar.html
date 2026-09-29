@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9">
+<title>Google Yorumları · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7f9; --line: #e3e7ee; --card: #fff;
+  --remax-red: #DC1C2E; --remax-blue: #003DA5;
+  --text: #131a26; --text-dim: #68738a; --star: #f5a623;
+}
+* { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+main { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+.top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.top a.back { color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 600; }
+.top h1 { font-family: 'Archivo', sans-serif; font-size: 20px; font-weight: 800; flex: 1; letter-spacing: -0.01em; }
+.live { font-size: 11.5px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: #1fa855; box-shadow: 0 0 0 0 rgba(31,168,85,.5); animation: pulse 2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(31,168,85,0); } 100% { box-shadow: 0 0 0 0 rgba(31,168,85,0); } }
+
+.summary { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.score { font-family: 'Archivo', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; }
+.score-meta { flex: 1; min-width: 150px; }
+.stars { color: var(--star); letter-spacing: 1px; font-size: 18px; }
+.stars .off { color: #d8dde6; }
+.count { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+.bars { flex: 1 1 200px; display: grid; gap: 4px; }
+.bar { display: grid; grid-template-columns: 112px 1fr 22px; gap: 8px; align-items: center; font-size: 11.5px; color: var(--text-dim); }
+.bar div { height: 7px; background: #eef1f5; border-radius: 4px; overflow: hidden; }
+.bar div span { display: block; height: 100%; background: var(--star); border-radius: 4px; }
+.bar em { font-style: normal; text-align: right; }
+.bars-note { font-size: 10.5px; color: var(--text-dim); opacity: .8; }
+
+.actions { display: flex; gap: 8px; margin: 12px 0 18px; flex-wrap: wrap; }
+.btn { flex: 1; min-width: 140px; padding: 11px 14px; border-radius: 12px; font: 600 13px 'Inter', sans-serif; text-align: center; text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--text); }
+.btn.primary { background: var(--remax-blue); border-color: var(--remax-blue); color: #fff; }
+
+.filters { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; }
+.chip { padding: 7px 13px; border-radius: 999px; font: 600 12.5px 'Inter', sans-serif; border: 1px solid var(--line); background: var(--card); color: var(--text-dim); cursor: pointer; white-space: nowrap; }
+.chip.on { background: var(--text); border-color: var(--text); color: #fff; }
+
+.sec-title { font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin: 4px 0 8px; }
+.dan { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.dan .chip b { font-weight: 700; color: var(--text); margin-left: 4px; }
+.dan .chip.on b { color: #fff; }
+.dan-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 2px 0 10px; }
+.dan-head h2 { font-family: 'Archivo', sans-serif; font-size: 17px; font-weight: 800; }
+.dan-head span { font-size: 12.5px; color: var(--text-dim); white-space: nowrap; }
+.tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.tag { font: 600 11.5px 'Inter', sans-serif; padding: 3px 9px; border-radius: 999px; background: rgba(0,61,165,.08); color: var(--remax-blue); border: 0; cursor: pointer; }
+.reply { margin-top: 10px; padding: 10px 12px; background: var(--bg); border-radius: 10px; font-size: 13px; line-height: 1.5; color: var(--text-dim); white-space: pre-line; }
+.reply b { color: var(--text); font-size: 12px; display: block; margin-bottom: 2px; }
+.list { display: grid; gap: 10px; }
+.rv { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.rv-head { display: flex; gap: 10px; align-items: center; }
+.av { width: 38px; height: 38px; border-radius: 50%; background: #e8edf5; flex: none; object-fit: cover; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--remax-blue); font-size: 15px; }
+.who { flex: 1; min-width: 0; }
+.who a, .who b { font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.when { font-size: 12px; color: var(--text-dim); }
+.rv .stars { font-size: 14px; }
+.new { font-size: 10.5px; font-weight: 700; color: #fff; background: var(--remax-red); padding: 3px 7px; border-radius: 6px; letter-spacing: .04em; }
+.rv p { margin-top: 10px; font-size: 14px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+.rv p.empty { color: var(--text-dim); font-style: italic; }
+.rv-foot { margin-top: 10px; }
+.rv-foot a { font-size: 12px; color: var(--remax-blue); text-decoration: none; font-weight: 600; }
+
+.state { text-align: center; padding: 48px 20px; color: var(--text-dim); font-size: 14px; line-height: 1.6; background: var(--card); border: 1px dashed var(--line); border-radius: 16px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+footer { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 24px; opacity: .75; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="back" href="https://dogusportal.com/">‹ Portal</a>
+    <h1>Google Yorumları</h1>
+    <span class="live"><i></i><span id="upd">yükleniyor…</span></span>
+  </div>
+
+  <section class="summary" id="summary" hidden>
+    <div class="score" id="score">–</div>
+    <div class="score-meta">
+      <div class="stars" id="scoreStars"></div>
+      <div class="count" id="count"></div>
+    </div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <div class="actions">
+    <a class="btn primary" id="mapsBtn" href="https://search.google.com/local/reviews?placeid=ChIJdblFqvvHyhQR_agtjpCfYW0" target="_blank" rel="noopener">Google'da tümünü gör</a>
+    <button class="btn" id="askBtn" type="button">Yorum linkini kopyala</button>
+  </div>
+
+  <div class="sec-title">Danışmana göre</div>
+  <div class="dan" id="dan"></div>
+  <div class="dan-head"><h2 id="danTitle">Tüm yorumlar</h2><span id="danMeta"></span></div>
+  <div class="filters" id="filters"></div>
+  <div class="list" id="list"></div>
+
+  <footer>Veriler Google'dan saatte bir otomatik alınır · RE/MAX Doğuş</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const VERI = 'data/google-yorumlar.json';
+const DANISMAN = 'data/danismanlar.json';
+const YORUM_LINKI = 'https://dogusportal.com/yorum';
+let veri = null, danismanlar = [], filtre = 0;
+let secili = new URLSearchParams(location.search).get('d') || '';
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const yildiz = n => { const r = Math.round(n); return '★'.repeat(r) + '<span class="off">' + '★'.repeat(5 - r) + '</span>'; };
+const once = iso => {
+  if (!iso) return '';
+  const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60) return 'az önce';
+  const d = [[31536000,'yıl'],[2592000,'ay'],[604800,'hafta'],[86400,'gün'],[3600,'saat'],[60,'dakika']];
+  for (const [n, t] of d) if (s >= n) return Math.floor(s / n) + ' ' + t + ' önce';
+};
+const tarih = iso => iso ? new Date(iso).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+const adi = id => (danismanlar.find(d => d.id === id) || {}).ad || id;
+
+async function yukle() {
+  try {
+    const [r, d] = await Promise.all([
+      fetch(VERI + '?t=' + Date.now(), { cache: 'no-store' }),
+      danismanlar.length ? null : fetch(DANISMAN + '?t=' + Date.now(), { cache: 'no-store' }),
+    ]);
+    if (!r.ok) throw new Error(r.status);
+    if (d && d.ok) danismanlar = await d.json();
+    veri = await r.json();
+    ciz();
+  } catch (e) {
+    if (!veri) {
+      document.getElementById('upd').textContent = 'bekleniyor';
+      document.getElementById('list').innerHTML = '<div class="state">Henüz yorum verisi yok.<br>Google bağlantısı kurulunca yorumlar burada otomatik listelenecek.</div>';
+    }
+  }
+}
+
+function sec(id) {
+  secili = id; filtre = 0;
+  const u = new URL(location); id ? u.searchParams.set('d', id) : u.searchParams.delete('d');
+  history.replaceState(null, '', u);
+  ciz(); window.scrollTo({ top: document.getElementById('dan').offsetTop - 10, behavior: 'smooth' });
+}
+
+function ciz() {
+  const hepsi = (veri.yorumlar || []).filter(r => r.puan >= 4 && (r.danismanlar || []).length).slice().sort((a, b) => (b.tarih || '').localeCompare(a.tarih || ''));
+  document.getElementById('summary').hidden = false;
+  document.getElementById('score').textContent = (veri.puan || 0).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  document.getElementById('scoreStars').innerHTML = yildiz(veri.puan || 0);
+  document.getElementById('count').textContent = (veri.toplam || 0).toLocaleString('tr-TR') + ' Google değerlendirmesi';
+  document.getElementById('upd').textContent = 'güncellendi ' + once(veri.guncelleme);
+  if (veri.mapsUrl) document.getElementById('mapsBtn').href = veri.mapsUrl;
+
+  // Danışman sekmeleri: yorum sayısına göre
+  const dSay = {};
+  hepsi.forEach(r => (r.danismanlar || []).forEach(id => dSay[id] = (dSay[id] || 0) + 1));
+  const sirali = Object.keys(dSay).sort((a, b) => dSay[b] - dSay[a] || adi(a).localeCompare(adi(b), 'tr'));
+  const chip = (id, t, n) => `<button class="chip${secili === id ? ' on' : ''}" data-d="${id}">${esc(t)}<b>${n}</b></button>`;
+  document.getElementById('dan').innerHTML = chip('', 'Tümü', hepsi.length)
+    + sirali.map(id => chip(id, adi(id), dSay[id])).join('');
+  const enCok = dSay[sirali[0]] || 1;
+  document.getElementById('bars').innerHTML = sirali.map(id =>
+    `<div class="bar" data-d="${id}" style="cursor:pointer">${esc(adi(id).split(' ')[0])}<div><span style="width:${dSay[id] / enCok * 100}%"></span></div><em>${dSay[id]}</em></div>`
+  ).join('') + `<div class="bars-note">Danışmanlarımıza gelen ${hepsi.length} olumlu yorum</div>`;
+
+  const kume = secili ? hepsi.filter(r => (r.danismanlar || []).includes(secili)) : hepsi;
+  const ort = kume.length ? kume.reduce((a, r) => a + r.puan, 0) / kume.length : 0;
+  document.getElementById('danTitle').textContent = secili ? adi(secili) : 'Tüm yorumlar';
+  document.getElementById('danMeta').textContent = kume.length ? `${kume.length} yorum · ort. ${ort.toLocaleString('tr-TR', { maximumFractionDigits: 1 })}★ · yeniden eskiye` : '';
+
+  const kSay = [0, 0, 0, 0, 0, 0]; kume.forEach(r => kSay[r.puan]++);
+  const secenek = [[0, 'Tüm puanlar'], ...[5, 4, 3, 2, 1].filter(n => kSay[n]).map(n => [n, n + '★ · ' + kSay[n]])];
+  document.getElementById('filters').innerHTML = secenek.length > 2 ? secenek.map(([n, t]) =>
+    `<button class="chip${filtre === n ? ' on' : ''}" data-f="${n}">${t}</button>`).join('') : '';
+
+  const liste = filtre ? kume.filter(r => r.puan === filtre) : kume;
+  const ikiGun = Date.now() - 2 * 86400000;
+  document.getElementById('list').innerHTML = liste.length ? liste.map(r => {
+    const av = r.foto
+      ? `<img class="av" src="${esc(r.foto)}" alt="" referrerpolicy="no-referrer" loading="lazy">`
+      : `<div class="av">${esc((r.yazar || '?').trim()[0] || '?').toUpperCase()}</div>`;
+    const ad = r.yazarUrl ? `<a href="${esc(r.yazarUrl)}" target="_blank" rel="noopener">${esc(r.yazar)}</a>` : `<b>${esc(r.yazar)}</b>`;
+    const yeni = !r.tarihYaklasik && new Date(r.tarih || r.ilkGorulme) > ikiGun ? '<span class="new">YENİ</span>' : '';
+    const ne = r.tarihYaklasik && r.once ? r.once : once(r.tarih);
+    const ipucu = r.tarihYaklasik ? 'Google yalnızca yaklaşık tarih gösteriyor' : tarih(r.tarih);
+    const etiket = (r.danismanlar || []).filter(id => danismanlar.some(d => d.id === id)).map(id => `<button class="tag" data-d="${esc(id)}">${esc(adi(id))}</button>`).join('');
+    return `<article class="rv">
+      <div class="rv-head">${av}<div class="who">${ad}<div class="when" title="${esc(ipucu)}">${esc(ne)}</div></div>${yeni}</div>
+      <div class="stars" style="margin-top:8px">${yildiz(r.puan)}</div>
+      ${r.metin ? `<p>${esc(r.metin)}</p>` : '<p class="empty">Yalnızca puan verildi</p>'}
+      ${r.yanit ? `<div class="reply"><b>RE/MAX Doğuş yanıtı</b>${esc(r.yanit)}</div>` : ''}
+      ${etiket ? `<div class="tags">${etiket}</div>` : ''}
+      ${r.link ? `<div class="rv-foot"><a href="${esc(r.link)}" target="_blank" rel="noopener">Google'da aç ›</a></div>` : ''}
+    </article>`;
+  }).join('') : '<div class="state">Bu seçimde yorum yok.</div>';
+}
+
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-d]'); if (d) return sec(d.dataset.d);
+  const f = e.target.closest('[data-f]'); if (f) { filtre = +f.dataset.f; ciz(); }
+});
+document.getElementById('askBtn').addEventListener('click', async () => {
+  const t = document.getElementById('toast');
+  try { await navigator.clipboard.writeText(YORUM_LINKI); t.textContent = 'Kopyalandı: ' + YORUM_LINKI; }
+  catch { t.textContent = YORUM_LINKI; }
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200);
+});
+
+yukle();
+setInterval(yukle, 3 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) yukle(); });
+</script>
+</body>
+</html>
