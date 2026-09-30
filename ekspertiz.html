@@ -232,7 +232,7 @@ function E(id){ return document.getElementById(id); }
 function kacis(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 function bugun(){ return new Date().toLocaleDateString('sv-SE'); }
 function danismanAdi(){
-  try { var t = JSON.parse(localStorage.getItem('ajanda_temel') || 'null'); return (t && t.v && t.v.ad) || ''; } catch (e) { return ''; }
+  try { var t = JSON.parse(localStorage.getItem('ajandaC_temel') || localStorage.getItem('ajanda_temel') || 'null'); return (t && t.v && t.v.ad) || ''; } catch (e) { return ''; }
 }
 function tumAlanlar(){
   var l = [];
@@ -453,7 +453,7 @@ function kayitSil(id){
 }
 
 function toast(t){ var e = E('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.z); toast.z = setTimeout(function () { e.classList.remove('on'); }, 1800); }
-function geriGit(){ if (history.length > 1 && document.referrer) history.back(); else location.href = 'defter-demo.html'; }
+function geriGit(){ if (history.length > 1 && document.referrer) history.back(); else location.href = 'ajanda.html'; }
 
 /* ---------- açılış: son yarım kalan formdan devam ---------- */
 KAYITLAR = oku();
