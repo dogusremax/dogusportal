@@ -701,7 +701,7 @@ var DEMO={
  portfoyler:[
   {id:'p1',baslik:'Yeni Fikirtepe 5. Etap C Blok D:71',adres:'Dumlupınar Mah. Prestij Cad. Yeni Fikirtepe Konutları 5. Etap C Blok D:71 Kadıköy',tip:'Satılık daire',oda:'3+1',m2:'145',fiyat:'8.400.000',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Yayında',ilanLink:'',pdfLink:'',kaynak:'Elle eklendi',sonSenkron:'',notlar:'Mal sahibi 9.5M istiyordu, 8.4M\'e ikna ettim.'},
   {id:'p2',baslik:'Nuhoğlu 2. Etap B Blok D:40',adres:'Dumlupınar Mah. Nuhoğlu Yenitepe 2. Etap B Blok Daire 40 Kadıköy',tip:'Kiralık daire',oda:'2+1',m2:'95',fiyat:'70.000',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Yayında',ilanLink:'',pdfLink:'',kaynak:'Elle eklendi',sonSenkron:'',notlar:'Boş, anahtar bende.'},
-  {id:'p4',baslik:'Yeni Fikirtepe 6. Etap A Blok D:47',adres:'Dumlupınar Mah. Barış Sok. Yeni Fikirtepe Konutları 6. Etap A Blok Daire 47 Kadıköy',tip:'Satılık daire',oda:'4+1',m2:'186',fiyat:'11.800.000',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Rezerve',ilanLink:'',pdfLink:'',kaynak:'Elle eklendi',sonSenkron:'',notlar:'Zeynep Hanım pazarlıkta.'}
+  {id:'p4',baslik:'Yeni Fikirtepe 6. Etap A Blok D:47',adres:'Dumlupınar Mah. Barış Sok. Yeni Fikirtepe Konutları 6. Etap A Blok Daire 47 Kadıköy',tip:'Satılık daire',oda:'4+1',m2:'186',fiyat:'11.800.000',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Rezerve',ilanLink:'https://www.remax.com.tr/tr/portfoy/P63708353',pdfLink:'',kaynak:'Elle eklendi',sonSenkron:'',notlar:'Zeynep Hanım pazarlıkta.'}
  ],
  randevular:[
   {id:'r1',baslik:'3+1 gösterimi',tarih:_g(0),saat:'14:00',kisi:'Ahmet Yılmaz',kisiId:'k1',yer:'Fikirtepe',tur:'gösterim',not:'',bitti:''},
@@ -779,7 +779,10 @@ var MATBU={
  ],
  gosterimler:[
   {tarih:_gtr(-3),musteriAd:'Burak Arıcan',musteriTel:'0 (533) 471 09 27',musteriMail:'burakarican9@gmail.com',
-   adres:'Dumlupınar Mah. Prestij Cad. Yeni Fikirtepe Konutları 5. Etap C Blok D:71 Kadıköy/İstanbul',fiyat:'8.400.000',pdf:'#'},
+   adres:'Dumlupınar Mah. Prestij Cad. Yeni Fikirtepe Konutları 5. Etap C Blok D:71 Kadıköy/İstanbul',fiyat:'8.400.000',pdf:'#',
+   ilan:'https://www.remax.com.tr/tr/portfoy/P63712045'},
+  {tarih:_gtr(-1),musteriAd:'Mert Özdemir',musteriTel:'0 (534) 612 55 08',musteriMail:'',
+   adres:'FIKIRTEPE 6.ETAP A-47',fiyat:'11.800.000',pdf:'#',ilan:'P63708353'},
   {tarih:_gtr(-3),musteriAd:'Burak Arıcan',musteriTel:'0 (533) 471 09 27',musteriMail:'burakarican9@gmail.com',
    adres:'Site Mah. Atay Cad. No:47 Komşu Finans Evleri C Blok Daire 5 Ümraniye/İstanbul',fiyat:'6.750.000',pdf:'#'},
   {tarih:_gtr(-8),musteriAd:'Oğuzhan Kahraman',musteriTel:'0 (541) 216 74 19',musteriMail:'kahraman.oguzhan07@gmail.com',
@@ -805,6 +808,9 @@ function _anah(s){return String(s==null?'':s)
 function _telAnah(t){var s=String(t||'').replace(/\D/g,'');if(s.length>10)s=s.slice(-10);return s}
 function _esl(a,b){var x=_anah(a),y=_anah(b);if(!x||!y)return false;if(x===y)return true;
   if(x.length>=12&&y.indexOf(x)>-1)return true;if(y.length>=12&&x.indexOf(y)>-1)return true;return false}
+function _ilanNo(v){v=String(v||'').trim();if(!v)return '';var m=v.match(/P\d{5,}/i);if(m)return m[0].toUpperCase();
+  m=v.match(/\d{6,}/g);return m?m[m.length-1]:''}
+function _ilanEsl(a,b){var x=_ilanNo(a),y=_ilanNo(b);if(!x||!y)return false;return x===y||x.replace(/^P/,'')===y.replace(/^P/,'')}
 function _trT(s){var m=String(s||'').match(/(\d{2})\.(\d{2})\.(\d{4})/);return m?m[3]+'-'+m[2]+'-'+m[1]:''}
 function _yb(imza,sure){var p=String(imza||'').split('.');if(p.length!==3)return '';
   var d=new Date(+p[2],+p[1]-1,+p[0]);var m=String(sure||'').match(/(\d+)\s*(ay|yıl|hafta)/i);
@@ -875,11 +881,16 @@ function _demo(fn,a){
         if(String(kisi.sonTemas||'')<tarih)kisi.sonTemas=tarih;
       }
 
-      var pf=null; DEMO.portfoyler.forEach(function(p){if(!pf&&_esl(p.adres,g.adres))pf=p});
+      // 1) önce ilan linki / ilan no ile, 2) bulunamazsa adresle eşleştir
+      var pf=null,ilanla=false;
+      if(g.ilan)DEMO.portfoyler.forEach(function(p){if(!pf&&_ilanEsl(p.ilanLink,g.ilan)){pf=p;ilanla=true}});
+      if(!pf)DEMO.portfoyler.forEach(function(p){if(!pf&&_esl(p.adres,g.adres))pf=p});
       if(!pf){
-        s.eslesmeyen.push({disAnahtar:dis,kisiId:kisi.id,kisiAd:kisi.ad,adres:g.adres,tarih:tarih,fiyat:g.fiyat||''});
+        s.eslesmeyen.push({disAnahtar:dis,kisiId:kisi.id,kisiAd:kisi.ad,adres:g.adres,tarih:tarih,fiyat:g.fiyat||'',ilan:g.ilan||''});
         return;
       }
+      if(ilanla)s.notlar.push(kisi.ad+' → '+pf.baslik+': ilan numarasıyla eşleşti');
+      else if(g.ilan&&!pf.ilanLink){pf.ilanLink=g.ilan;pf.sonSenkron=_simdi();s.notlar.push(pf.baslik+': ilan linki yer gösterme belgesinden eklendi')}
       DEMO.gosterimler.push({id:'g'+Math.random(),portfoyId:pf.id,kisiId:kisi.id,tarih:tarih,
         ilgi:'',geriBildirim:'',kaynak:'Yer gösterme belgesi',disAnahtar:dis});
       varOlan[dis]=true; s.yeniGosterim++;
@@ -900,7 +911,7 @@ function _demo(fn,a){
   if(fn==='eslesmeyendenPortfoy'){
     var o=a[0];
     var p={id:'p'+Math.floor(Math.random()*99999),baslik:o.adres.slice(0,60),adres:o.adres,tip:'',oda:'',m2:'',
-      fiyat:o.fiyat||'',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Yayında',ilanLink:'',pdfLink:'',
+      fiyat:o.fiyat||'',malSahibi:'',malSahibiTel:'',yetkiBitis:'',durum:'Yayında',ilanLink:o.ilan||'',pdfLink:'',
       kaynak:'Yer gösterme belgesi',sonSenkron:_simdi(),notlar:''};
     DEMO.portfoyler.push(p);
     if(o.kisiId)_demo('eslesmeyeniBagla',[{portfoyId:p.id,kisiId:o.kisiId,tarih:o.tarih,disAnahtar:o.disAnahtar}]);
@@ -2184,7 +2195,9 @@ function portfoyFormu(p,gosterimler,konusmalar){
   h+='<div class="ikili"><label class="alan"><span>Mal sahibi</span><input id="pSahip" value="'+kacis(p.malSahibi)+'" placeholder="Murat Demirtaş"></label>'+
      '<label class="alan"><span>Telefonu</span><input id="pSahipTel" class="mono" inputmode="tel" value="'+kacis(p.malSahibiTel)+'"></label></div>';
   h+='<label class="alan"><span>Yetki bitiş tarihi</span><input id="pYetki" type="date" value="'+kacis(p.yetkiBitis)+'"></label>';
-  h+='<label class="alan"><span>İlan linki</span><input id="pLink" value="'+kacis(p.ilanLink)+'" placeholder="https://"></label>';
+  h+='<label class="alan"><span>İlan linki / ilan no</span><input id="pLink" value="'+kacis(p.ilanLink)+'" placeholder="remax.com.tr linki veya P63708353" autocapitalize="off"></label>';
+  if(p.ilanLink){var _u=/^https?:\/\//i.test(p.ilanLink)?p.ilanLink:(_ilanNo(p.ilanLink)?'https://www.remax.com.tr/tr/portfoy/'+(/^P/i.test(_ilanNo(p.ilanLink))?'':'P')+_ilanNo(p.ilanLink):'');
+    if(_u)h+='<a href="'+kacis(_u)+'" target="_blank" rel="noopener" style="display:inline-block;margin:-4px 0 12px;font-size:13px;font-weight:600;color:var(--pine)">İlanı aç ↗'+(_ilanNo(p.ilanLink)?' · '+kacis(_ilanNo(p.ilanLink)):'')+'</a>';}
   h+='<label class="alan"><span>Notlar</span><textarea id="pNotlar" placeholder="Fiyat beklentisi piyasanın üstünde. Eylül&#39;e kadar satmazsa kiraya verecek.">'+kacis(p.notlar)+'</textarea></label>';
   h+='<button class="kaydet" onclick="portfoyKaydetTikla(\''+(p.id||'')+'\')">'+(yeni?'Portföyü ekle':'Değişiklikleri kaydet')+'</button>';
 
