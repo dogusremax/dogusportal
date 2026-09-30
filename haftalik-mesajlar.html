@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex">
+<title>Haftalık Mesajlar · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1;min-width:160px}
+  select,button,input{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px}
+  button{cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45;cursor:default}
+  select{background:#161c44;color:#fff;cursor:pointer}
+  button.ghost{background:rgba(255,255,255,.1)}
+  .seg{display:flex;background:#161c44;border-radius:10px;padding:3px}
+  .seg button{background:transparent;color:rgba(255,255,255,.6);padding:7px 12px}
+  .seg button.on{background:#DC1C2E;color:#fff}
+  .onay{position:sticky;top:0;z-index:5;background:#0b0f2a;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .onay .st{flex:1;min-width:200px;font-size:13px;color:rgba(255,255,255,.7)}
+  .onay .go{background:#25D366;color:#0b2e17;font-weight:800;padding:12px 18px;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding:14px 20px 40px}
+  .card{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .card.off{opacity:.45}
+  .card.ok{border-color:rgba(37,211,102,.6)}
+  .card.err{border-color:rgba(248,113,113,.7)}
+  .head{display:flex;align-items:center;gap:10px}
+  .av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);overflow:hidden;position:relative;flex:0 0 40px;border:2px solid rgba(255,255,255,.2)}
+  .av img{position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%}
+  .head b{font-size:14px;display:block}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+  .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)}
+  .tag.red{background:rgba(220,28,46,.25);color:#ff8a95}
+  .tag.green{background:rgba(37,211,102,.2);color:#6ee7a0}
+  .tag.blue{background:rgba(96,165,250,.2);color:#93c5fd}
+  .tag.warn{background:rgba(248,113,113,.2);color:#fca5a5}
+  .sec{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;white-space:nowrap}
+  .sec input{width:18px;height:18px;padding:0;accent-color:#25D366}
+  .bubble{background:#e7fed8;color:#111b21;border-radius:10px 10px 10px 2px;padding:10px 12px;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;overflow-wrap:anywhere}
+  .bubble .alt{margin-top:6px;font-size:12px;color:#667781}
+  .bubble .v{background:rgba(250,204,21,.35);border-radius:3px}
+  .edit{display:none;flex-direction:column;gap:8px}
+  .card.editing .edit{display:flex}
+  .edit label{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px}
+  .edit textarea{width:100%;min-height:44px;resize:vertical;background:#161c44;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;font:13px/1.45 'Plus Jakarta Sans',sans-serif}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .acts button{padding:8px 12px;font-size:12px}
+  .edited{font-size:11px;color:#fbbf24;flex:1}
+  .empty{padding:40px 20px;text-align:center;color:rgba(255,255,255,.55)}
+  @media(max-width:480px){.top,.onay{padding-left:16px;padding-right:16px}.grid{padding:12px 16px 40px;grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="assets/dogus-logo.png" alt="Doğuş">
+  <a href="performans.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">‹ Geri</a>
+  <h1>Haftalık WhatsApp Mesajları</h1>
+  <div class="seg"><button id="m-pazartesi" onclick="setMod('pazartesi')">Pazartesi · Karne</button><button id="m-carsamba" onclick="setMod('carsamba')">Çarşamba · Hatırlatma</button></div>
+  <select id="hafta" onchange="load()"></select>
+  <button class="ghost" onclick="load()">Yenile</button>
+</div>
+<div class="onay">
+  <div class="st" id="status">Yükleniyor…</div>
+  <button class="ghost" id="testbtn" onclick="gonder(true)" disabled title="İlk seçili mesajı sadece test numarasına yollar">Bana test gönder</button>
+  <button class="go" id="gobtn" onclick="gonder(false)" disabled>✅ Onayla ve gönder</button>
+</div>
+<div class="grid" id="grid"></div>
+
+<script>
+if(new URLSearchParams(location.search).get('k')==='1520')sessionStorage.setItem('perfAuth','ok');if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogusportal.com';throw new Error('auth');}
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+const KEY = "dogus-performans";
+// Gönderim merkezi dogus-whatsapp-service üzerinden (Meta bağlantısı ve numaralar orada)
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+
+// Meta'da onaylatılan şablonlar — metinler scripts/whatsapp-appscript.js (haftalikSablonlariOlustur) ile BİREBİR aynı olmalı
+// Hepsinin altında "RE/MAX Doğuş" alt bilgisi var (şablonda FOOTER)
+const SABLON = {
+  carsamba_hatirlatma:
+`Merhaba {{1}} 👋
+Hafta ortasına geldik, *Çarşamba* akşamı! 🗓️
+
+_"{{2}}"_
+
+📊 {{3}}
+
+🎯 Hafta sonuna kadar: {{4}}
+
+Aktivitelerini uygulamaya girmeyi unutma 👉 dogusportal.com
+İyi akşamlar!`,
+  haftalik_karne:
+`Günaydın {{1}} ☀️
+*{{2}} haftalık karnen* 📋
+
+🏅 Sıralama: {{3}}
+⭐ Puan: {{4}}
+📅 Aktif gün: {{5}}
+
+✅ *İyi yaptıkların:* {{6}}
+
+⚠️ *Geliştirmen gerekenler:* {{7}}
+
+💬 *Broker yorumu:* _{{8}}_
+— U.T / M.T
+
+🎯 *Bu haftanın planı:* {{9}}
+
+{{10}}
+
+Yeni hafta senin, bol kazançlı bir hafta dileriz! 🚀`,
+  destek_mesaji:
+`Merhaba {{1}} 🌿
+{{2}}
+
+_"{{3}}"_
+
+{{4}}
+
+Bir telefon kadar yakınız, iyi ki varsın 💙
+— U.T / M.T`,
+};
+// Düzenleme kutularında görünen alan adları (null = düzenlenmez)
+const ALAN = {
+  carsamba_hatirlatma: [null, 'Motivasyon cümlesi', 'Listedeki durumu', 'Hafta sonuna kadar'],
+  haftalik_karne: [null, null, 'Sıralama', 'Puan', 'Aktif gün', 'İyi yaptıkları', 'Geliştirmesi gerekenler', 'Broker yorumu', 'Bu haftanın planı', 'Kapanış satırı'],
+  destek_mesaji: [null, 'Açılış', 'Cümle', 'Mesaj'],
+};
+
+// Haftalık hedefler (toplanti-rapor.html'deki aylık eşiklerin haftaya bölünmüş hali)
+const HEDEF = { aktifGun: 4, fzbo: 3, etki: 5, gosterim: 2, sunum: 1, sosyal_medya: 3 };
+const ETIKET = { fzbo: 'FZBO araması', etki: 'etki çevresi araması', gosterim: 'gösterim', sunum: 'sunum', sosyal_medya: 'sosyal medya paylaşımı' };
+
+// Kişiye özel ayarlar
+//  mod 'destek': sıralama/puan/eksik yok; destek mesajı gider, ofis ortalamasına katılmaz
+//  takim: birlikte çalıştığı takım arkadaşı (mesajda takdir cümlesi çıkar)
+const OZEL = {
+  aysun: { mod: 'destek', takim: 'orhan' },
+  orhan: { takim: 'aysun' },
+};
+
+const MOTIVASYON = [
+  'Haftanın yarısı geride, sonucu belirleyecek yarısı önünde.',
+  'Bugün attığın bir telefon, gelecek ayın kapanışı olabilir.',
+  'Portföy sabırla büyür, ama her gün bir adımla.',
+  'Kazanan hafta, çarşamba akşamı verilen kararla başlar.',
+  'Listede yer değiştirmek için 3 gün fazlasıyla yeter.',
+  'Müşteri seni hatırlasın diye bugün bir kez daha görün.',
+  'Disiplin motivasyonun bittiği yerde devreye girer.',
+  'Küçük ama her gün yapılan iş, büyük ama bir kez yapılan işi yener.',
+  'Kapanışlar tesadüf değil; arama, sunum ve takip toplamıdır.',
+  'Fikirtepe’de her gün yeni bir kapı açılıyor, bir tanesi senin olsun.',
+  'Bu hafta kendinle yarış: geçen haftaki seni geç.',
+  'Bir sunum daha, bir gösterim daha. Fark buradan çıkar.',
+];
+const DESTEK_CUMLE = [
+  'Önce sen, sonra her şey. Biz buradayız.',
+  'Her gün biraz daha güçlü, adım adım.',
+  'Uzakta olsan da ofisin bir köşesi hep senin.',
+  'Bazen en büyük başarı, kendine iyi bakmaktır.',
+];
+
+// ---------- yardımcılar ----------
+const sayi = (c, k) => k === 'sunum' ? (c.sunum1 || 0) + (c.sunum2 || 0) : (c[k] || 0);
+const haftaNo = t => Math.floor((t - new Date(t.getFullYear(), 0, 1)) / 6048e5);
+const ozel = d => OZEL[d.id] || {};
+const adi = (L, id) => (L.find(x => x.id === id) || {}).first || '';
+const toplamAkt = c => Object.values(c || {}).reduce((s, v) => s + (v || 0), 0);
+const iso = d => d.toLocaleDateString('sv-SE');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+// Meta kuralı: değişkende satır sonu, sekme ve 4'ten fazla ardışık boşluk olamaz, boş olamaz
+const temiz = s => String(s || '').replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ').trim() || '-';
+function pazartesiOf(t) { const d = new Date(t); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d; }
+function bugunTR() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul' })); }
+
+function destek(d, L, gun, cumle) {
+  const ark = adi(L, ozel(d).takim), akt = toplamAkt(d.counts);
+  const katki = akt ? `Bu hafta uygulamada ${akt} aktiviten görünüyor, uzaktan bile işin içinde olman hepimize güç veriyor. Emeğine sağlık 👏` : 'Uzaktan da olsa ekibin bir parçası olman hepimize güç veriyor.';
+  const takim = ark ? ` 🤝 ${ark} ile paslaştığınız işler emin ellerde.` : '';
+  return { sablon: 'destek_mesaji', p: [d.first, gun === 'carsamba' ? 'Hafta ortasına geldik, seni düşündük.' : 'Yeni bir hafta başladı, haftan güzel geçsin.', cumle, katki + takim] };
+}
+
+// ---------- ÇARŞAMBA ----------
+function carsamba(veri, tarih) {
+  const L = veri.siralama;
+  const mot = MOTIVASYON[haftaNo(tarih) % MOTIVASYON.length];
+  return L.map((d, i) => {
+    const sira = i + 1;
+    if (ozel(d).mod === 'destek') return { d, sira, ...destek(d, L, 'carsamba', DESTEK_CUMLE[haftaNo(tarih) % DESTEK_CUMLE.length]) };
+    const ust = L[i - 1], sessiz = d.puan === 0 && d.aktifGun === 0;
+    let durum;
+    if (sessiz) {
+      durum = 'Bu hafta henüz aktivite girişin görünmüyor. Girmeyi unuttuğun bir şey varsa bu akşam ekle.';
+    } else if (sira === 1) {
+      const ikinci = L.slice(1).find(x => ozel(x).mod !== 'destek');
+      durum = `Şu an *1. sıradasın* (${d.puan} puan) 🏆${ikinci ? ` Arkandaki fark ${d.puan - ikinci.puan} puan.` : ''} Tempoyu koru, hafta sonuna kadar bırakma!`;
+    } else {
+      const fark = ust.puan - d.puan + 1, alt = L.slice(i + 1).find(x => ozel(x).mod !== 'destek');
+      if (fark <= 60) durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). ${ust.first} ile aranda ${fark} puan var, *${Math.ceil(fark / 10)} etki araması* bu farkı kapatır! 🎯`;
+      else if (alt && alt.puan > 0) durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). Arkandaki ${alt.first} ile farkın ${d.puan - alt.puan} puan, yerini sağlamlaştır ve kendi rekorunu kovala! 💪`;
+      else durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). Haftanın geri kalanında her gün bir aktivite, seni bir üst lige taşır! 💪`;
+    }
+    if (ozel(d).takim) durum += ` 🤝 Takım arkadaşın ${adi(L, ozel(d).takim)} ile paslaştığınız işler de bu emeğin parçası.`;
+    const eksik = Object.keys(ETIKET).filter(k => sayi(d.counts, k) < HEDEF[k]).slice(0, 2).map(k => `${ETIKET[k]} ${sayi(d.counts, k)}/${HEDEF[k]}`);
+    const hedef = sessiz ? 'yarın tek bir etki araması bile seni listeye taşır 📲' : eksik.length ? eksik.join(', ') : 'haftalık hedeflerinin hepsi tamam, harikasın 👏';
+    return { d, sira, sablon: 'carsamba_hatirlatma', p: [d.first, mot, durum, hedef] };
+  });
+}
+
+// ---------- PAZARTESİ KARNE ----------
+function pazartesi(veri, onceki) {
+  const L = veri.siralama, n = L.length;
+  const say = L.filter(x => ozel(x).mod !== 'destek'), ort = Math.round(say.reduce((s, x) => s + x.puan, 0) / Math.max(1, say.length));
+  const eski = {}; (onceki && onceki.siralama ? onceki.siralama : []).forEach((x, i) => eski[x.id] = { sira: i + 1, puan: x.puan });
+  return L.map((d, i) => {
+    const sira = i + 1;
+    if (ozel(d).mod === 'destek') return { d, sira, ...destek(d, L, 'pazartesi', DESTEK_CUMLE[(haftaNo(new Date(veri.ay)) + 1) % DESTEK_CUMLE.length]) };
+    const c = d.counts, e = eski[d.id];
+    const trend = (!e || d.puan === 0) ? '' : e.sira > sira ? ` ⬆️ (geçen hafta ${e.sira}.)` : e.sira < sira ? ` ⬇️ (geçen hafta ${e.sira}.)` : ' ➡️ (sıranı korudun)';
+
+    const iyi = [], eksik = [];
+    if (d.kapanis) iyi.push(`${d.kapanis} kapanış 🤝`);
+    if (d.aktifGun >= HEDEF.aktifGun) iyi.push(`${d.aktifGun} gün aktif, istikrar tam`);
+    Object.keys(ETIKET).forEach(k => { const v = sayi(c, k); if (v >= HEDEF[k]) iyi.push(`${v} ${ETIKET[k]}`); else eksik.push({ k, v, h: HEDEF[k] }); });
+    if (e && d.puan > e.puan && e.puan > 0) iyi.push(`puanını %${Math.round((d.puan / e.puan - 1) * 100)} artırdın`);
+    if (d.aktifGun < HEDEF.aktifGun) eksik.unshift({ k: 'aktifGun', v: d.aktifGun, h: HEDEF.aktifGun });
+    const eksikYaz = x => x.k === 'aktifGun' ? `aktif gün ${x.v}/${x.h}` : `${ETIKET[x.k]} ${x.v}/${x.h}`;
+
+    let yorum;
+    if (d.aktifGun === 0 && d.puan === 0) yorum = `${d.first}, geçen hafta seni listede göremedik. Her şey yolunda mı? Bir kahve içip konuşalım, bu hafta birlikte planlayalım.`;
+    else if (sira === 1) yorum = `Haftanın lideri sensin ${d.first}! Ekibe örnek oluyorsun. Bu hafta da çıtayı sen belirliyorsun, emeğine sağlık.`;
+    else if (d.kapanis) yorum = `Kapanış yapmak her şeyin özeti, tebrikler ${d.first}! Şimdi yeni portföy ve aramalarla gelecek kapanışların zeminini hazırlayalım.`;
+    else if (d.aktivitePuan >= ort) yorum = `Sahada emek veriyorsun ${d.first}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim; kapanış yakın.`;
+    else if (e && d.puan > e.puan) yorum = `Yükselişin gözümüzden kaçmadı ${d.first}! Doğru yoldasın, istikrarı koruyalım.`;
+    else yorum = `${d.first}, potansiyelin bu listenin çok üstünde. Küçük ama her gün yapılan adımlarla bu hafta farkı birlikte göreceğiz.`;
+    if (ozel(d).takim) yorum += ` ${adi(L, ozel(d).takim)} ile takım çalışman için de ayrıca teşekkürler, birbirinize verdiğiniz destek çok kıymetli.`;
+
+    const GOREV = {
+      aktifGun: 'Her gün en az 1 aktivite gir (etki araması bile sayılır)',
+      fzbo: 'Salı ve Perşembe 09:30–11:00 arası 3 FZBO araması',
+      etki: 'Her sabah çevrenden 1 kişiyi ara (haftada 5)',
+      gosterim: 'Ilık müşterilerine 2 gösterim randevusu planla',
+      sunum: 'En az 1 mal sahibiyle sunum randevusu al',
+      sosyal_medya: 'Pzt-Çar-Cuma birer paylaşım',
+    };
+    const plan = (eksik.length ? eksik : [{ k: 'sunum' }, { k: 'fzbo' }]).slice(0, 3).map((x, j) => `${j + 1}) ${GOREV[x.k]}`).join(' · ');
+    const story = sira <= 3 ? 'Instagram story’sinde sen de varsın 📸 Tebrikler!' : 'Bu haftanın ilk 3’ü Instagram’da 📸 Gelecek hafta orada sen ol! 🚀';
+    return { d, sira, sablon: 'haftalik_karne', p: [
+      d.first, veri.ayAdi, `*${sira}/${n}*${trend}`, `*${d.puan}* (ofis ortalaması ${ort})`, String(d.aktifGun),
+      iyi.length ? iyi.join(', ') : 'bu hafta yeni bir sayfa açıyoruz',
+      eksik.length ? eksik.slice(0, 3).map(eksikYaz).join(', ') : 'tüm haftalık hedeflerini tutturdun 👏',
+      yorum, plan, story] };
+  });
+}
+
+// ---------- sayfa ----------
+let MOD, LISTE = [];
+const store = {
+  get(k, def) { try { const v = localStorage.getItem(k); return v === null ? def : JSON.parse(v); } catch (e) { return def; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+const anahtar = () => `hm_${MOD}_${document.getElementById('hafta').value}`;
+const duzeltmeler = () => store.get(anahtar() + '_duz', {});
+const secimler = () => store.get(anahtar() + '_sec', {});
+const sonuclar = () => store.get(anahtar() + '_son', {});
+// Kişinin gönderilecek değişkenleri: otomatik metin + elle düzeltmeler
+const params = m => (duzeltmeler()[m.d.id] || m.p).map(temiz);
+const secili = m => secimler()[m.d.id] !== false;
+const gitti = m => { const s = sonuclar()[m.d.id]; return !!(s && s.ok); };
+function metin(sablon, p) { return SABLON[sablon].replace(/\{\{(\d+)\}\}/g, (_, i) => p[i - 1]); }
+function onizleme(sablon, p) {
+  // WhatsApp biçimi: *kalın* _italik_; değişken kısımlar sarı vurgulu
+  const parca = SABLON[sablon].split(/(\{\{\d+\}\})/);
+  return parca.map(x => { const k = x.match(/^\{\{(\d+)\}\}$/); return k ? `\u0001${esc(p[k[1] - 1])}\u0002` : esc(x); }).join('')
+    .replace(/\*([^*\n]+)\*/g, '<b>$1</b>').replace(/(^|[\s"(\u0001])_([^_\n]+?)_(?=[\s".,!)\u0002]|$)/g, '$1<i>$2</i>')
+    .replace(/\u0001/g, '<span class="v">').replace(/\u0002/g, '</span>').replace(/\n/g, '<br>') +
+    '<div class="alt">RE/MAX Doğuş</div>';
+}
+
+function haftaSecenekleri() {
+  // Pazartesi karnesi biten haftayı, Çarşamba hatırlatması içinde bulunulan haftayı anlatır
+  const bu = pazartesiOf(bugunTR()), sel = document.getElementById('hafta');
+  sel.innerHTML = '';
+  for (let i = MOD === 'pazartesi' ? 1 : 0, j = 0; j < 8; i++, j++) {
+    const p = new Date(bu); p.setDate(p.getDate() - 7 * i);
+    const s = new Date(p); s.setDate(s.getDate() + 6);
+    const f = x => x.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+    sel.add(new Option(`${f(p)} – ${f(s)}${j === 0 ? (MOD === 'pazartesi' ? ' (geçen hafta)' : ' (bu hafta)') : ''}`, iso(p)));
+  }
+}
+function setMod(m) {
+  MOD = m;
+  document.getElementById('m-pazartesi').classList.toggle('on', m === 'pazartesi');
+  document.getElementById('m-carsamba').classList.toggle('on', m === 'carsamba');
+  haftaSecenekleri(); load();
+}
+
+async function haftalik(h) {
+  const r = await fetch(`${APPS_SCRIPT_URL}?action=haftalik&hafta=${h}&k=${KEY}`, { redirect: 'follow' });
+  const t = await r.text();
+  try { return JSON.parse(t); } catch (e) { throw new Error('Veri okunamadı'); }
+}
+async function load() {
+  const grid = document.getElementById('grid'), h = document.getElementById('hafta').value;
+  durum('Veriler çekiliyor…'); grid.innerHTML = ''; LISTE = []; butonlar();
+  try {
+    let veri, onceki = null;
+    if (MOD === 'pazartesi') {
+      const p = new Date(h + 'T12:00:00'); p.setDate(p.getDate() - 7);
+      [veri, onceki] = await Promise.all([haftalik(h), haftalik(iso(p)).catch(() => null)]);
+    } else veri = await haftalik(h);
+    if (!veri || !veri.siralama || !veri.siralama.length) { grid.innerHTML = '<div class="empty">Bu hafta için henüz veri yok.</div>'; durum(''); return; }
+    LISTE = MOD === 'pazartesi' ? pazartesi(veri, onceki) : carsamba(veri, new Date(h + 'T12:00:00'));
+    ciz();
+  } catch (e) {
+    console.warn(e); durum('Veri çekilemedi. İnterneti kontrol edip Yenile\'ye bas.');
+  }
+}
+
+function ciz() {
+  const grid = document.getElementById('grid'), son = sonuclar(), duz = duzeltmeler();
+  grid.innerHTML = '';
+  LISTE.forEach(m => {
+    const d = m.d, id = d.id, p = params(m), s = son[id];
+    const el = document.createElement('div');
+    el.className = 'card' + (secili(m) ? '' : ' off') + (s && s.ok ? ' ok' : s ? ' err' : '');
+    el.innerHTML = `
+      <div class="head"><div class="av"><img src="assets/ekip/${id}.png" onerror="this.remove()"></div>
+        <div style="flex:1;min-width:0"><b>${esc(d.name)}</b><div class="tags">
+          ${ozel(d).mod === 'destek' ? '<span class="tag blue">destek modu</span>' : `<span class="tag red">${m.sira}. sıra</span><span class="tag">${d.puan} p</span><span class="tag">${d.aktifGun} aktif gün</span>`}
+          ${s && s.ok ? `<span class="tag green">gönderildi ✓ ${esc(s.saat || '')}</span>` : s ? '<span class="tag warn">gönderilemedi</span>' : ''}</div></div>
+        <label class="sec"><input type="checkbox" ${secili(m) ? 'checked' : ''} ${s && s.ok ? 'disabled' : ''}> gönder</label></div>
+      <div class="bubble">${onizleme(m.sablon, p)}</div>
+      ${s && !s.ok ? `<div style="font-size:12px;color:#fca5a5">⚠️ ${esc(s.hata || 'Bilinmeyen hata')}</div>` : ''}
+      <div class="edit">${ALAN[m.sablon].map((a, i) => a ? `<label>${a}</label><textarea data-i="${i}">${esc(p[i])}</textarea>` : '').join('')}</div>
+      <div class="acts"><span class="edited">${duz[id] ? '✎ düzenlendi' : ''}</span>
+        ${s && s.ok ? '' : '<button class="ghost ed">Düzenle</button>'}${duz[id] && !(s && s.ok) ? '<button class="ghost rs" title="Otomatik metne dön">↺</button>' : ''}<button class="ghost cp" title="Metni kopyala">Kopyala</button></div>`;
+    el.querySelector('.sec input').onchange = ev => { const x = secimler(); x[id] = ev.target.checked; store.set(anahtar() + '_sec', x); ciz(); };
+    const ed = el.querySelector('.ed');
+    if (ed) ed.onclick = () => { el.classList.toggle('editing'); ed.textContent = el.classList.contains('editing') ? 'Kapat' : 'Düzenle'; };
+    el.querySelectorAll('.edit textarea').forEach(ta => ta.addEventListener('input', () => {
+      const x = duzeltmeler(), yeni = (x[id] || m.p).slice(); yeni[+ta.dataset.i] = ta.value; x[id] = yeni; store.set(anahtar() + '_duz', x);
+      el.querySelector('.bubble').innerHTML = onizleme(m.sablon, yeni.map(temiz)); el.querySelector('.edited').textContent = '✎ düzenlendi';
+    }));
+    const rs = el.querySelector('.rs'); if (rs) rs.onclick = () => { const x = duzeltmeler(); delete x[id]; store.set(anahtar() + '_duz', x); ciz(); };
+    el.querySelector('.cp').onclick = async () => { try { await navigator.clipboard.writeText(metin(m.sablon, params(m))); el.querySelector('.cp').textContent = 'Kopyalandı ✓'; } catch (e) {} };
+    grid.appendChild(el);
+  });
+  butonlar();
+}
+
+function durum(t) { document.getElementById('status').textContent = t; }
+function butonlar() {
+  const bekleyen = LISTE.filter(m => secili(m) && !gitti(m)), gid = LISTE.filter(gitti).length;
+  const go = document.getElementById('gobtn');
+  go.disabled = !bekleyen.length;
+  go.textContent = bekleyen.length ? `✅ Onayla ve ${bekleyen.length} kişiye gönder` : (gid ? (gid === LISTE.length ? '✅ Hepsi gönderildi' : '✅ Seçilenler gönderildi') : '✅ Onayla ve gönder');
+  document.getElementById('testbtn').disabled = !bekleyen.length;
+  if (LISTE.length) durum(`${LISTE.length} mesaj hazır · ${gid} gönderildi. Kontrol et, gerekirse düzenle, onayla.`);
+}
+
+function pin() {
+  let p = store.get('hm_pin', '');
+  if (!p) { p = (prompt('Gönderim PIN\'i (dogus-whatsapp-service Script Properties → ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
+  return p;
+}
+async function gonder(test) {
+  const bekleyen = LISTE.filter(m => secili(m) && !gitti(m));
+  if (!bekleyen.length) return;
+  const liste = test ? bekleyen.slice(0, 1) : bekleyen;
+  if (!confirm(test ? `${liste[0].d.first} için hazırlanan mesaj SADECE test numarasına gidecek. Devam?` : `${liste.length} danışmana WhatsApp mesajı gönderilecek:\n\n${liste.map(m => '• ' + m.d.name).join('\n')}\n\nOnaylıyor musun?`)) return;
+  const p = pin(); if (!p) return;
+  const go = document.getElementById('gobtn'), tb = document.getElementById('testbtn');
+  go.disabled = tb.disabled = true; durum(test ? 'Test mesajı gönderiliyor…' : 'Gönderiliyor…');
+  try {
+    // Servis JSON gövdeyi okur (parsePostPayload); düz metin olarak gider, CORS ön kontrolü olmaz
+    const r = await fetch(WA_SERVICE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({
+      action: 'haftalikMesaj', pin: p, test: !!test, mod: MOD, hafta: document.getElementById('hafta').value,
+      mesajlar: liste.map(m => ({ id: m.d.id, ad: m.d.name, sablon: m.sablon, params: params(m) })) }) });
+    const j = JSON.parse(await r.text());
+    if (!j.success) { if (/pin/i.test(j.error || '')) store.set('hm_pin', ''); throw new Error(j.error || 'Gönderilemedi'); }
+    if (test) { alert('Test mesajı gönderildi ✓ Telefonunu kontrol et.'); butonlar(); return; }
+    const x = sonuclar(), saat = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    (j.sonuclar || []).forEach(s => { x[s.id] = s.ok ? { ok: true, saat } : { ok: false, hata: s.hata }; });
+    store.set(anahtar() + '_son', x); ciz();
+    const hata = (j.sonuclar || []).filter(s => !s.ok).length;
+    if (hata) alert(`${hata} mesaj gönderilemedi. Kırmızı kartlardaki hatayı kontrol et.`);
+  } catch (e) {
+    console.warn(e); alert('Gönderim başarısız: ' + e.message); butonlar();
+  }
+}
+
+// Pazartesi-Salı karne, Çarşamba ve sonrası hatırlatma açılır (?mod= ile zorlanabilir)
+const qm = new URLSearchParams(location.search).get('mod');
+setMod(qm === 'carsamba' || qm === 'pazartesi' ? qm : ([1, 2].includes(bugunTR().getDay()) ? 'pazartesi' : 'carsamba'));
+</script>
+</body>
+</html>
