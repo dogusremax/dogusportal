@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#003DA5">
+<meta name="color-scheme" content="light">
+<title>Oda Rezervasyon · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7f9; --kart:#fff; --line:#e3e7ee; --text:#131a26; --dim:#68738a;
+  --blue:#003DA5; --navy:#0b1f4d; --red:#DC1C2E;
+  --bos:#eef6f1; --bosCizgi:#cfe7d8; --yesil:#1a7f45;
+  --dolu:#eaf0fb; --doluCizgi:#003DA5; --benim:#fff3e6; --benimCizgi:#d9731a;
+  --slot:46px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:15px;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.disp{font-family:'Archivo',sans-serif;font-stretch:110%}
+.gizli{display:none!important}
+
+/* Başlık */
+header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+  padding:calc(14px + env(safe-area-inset-top)) 16px 16px;position:sticky;top:0;z-index:20}
+.ust{display:flex;align-items:center;gap:10px}
+.geri{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.14);display:grid;place-items:center;color:#fff;text-decoration:none;flex:none}
+.ust h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.01em;flex:1}
+.kim{font-size:12px;opacity:.85;text-align:right;line-height:1.3}
+.kim button{color:#fff;opacity:.8;font-size:11px;text-decoration:underline;padding:0}
+
+.odalar{display:flex;background:rgba(255,255,255,.12);border-radius:12px;padding:4px;margin-top:14px}
+.odalar button{flex:1;padding:9px 6px;border-radius:9px;color:#fff;font-weight:600;font-size:14px;opacity:.85}
+.odalar button.on{background:#fff;color:var(--blue);opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+
+.gunler{display:flex;gap:8px;overflow-x:auto;padding:14px 16px 4px;scrollbar-width:none}
+.gunler::-webkit-scrollbar{display:none}
+.gun{flex:none;width:56px;padding:8px 0 9px;border-radius:14px;background:var(--kart);border:1px solid var(--line);text-align:center;position:relative}
+.gun .g1{font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.gun .g2{font-family:'Archivo';font-size:21px;font-weight:800;margin-top:2px}
+.gun .nok{position:absolute;left:50%;bottom:5px;width:5px;height:5px;border-radius:50%;background:var(--blue);transform:translateX(-50%)}
+.gun.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.gun.on .g1{color:rgba(255,255,255,.8)} .gun.on .nok{background:#fff}
+.gun.pazar .g1{color:var(--red)} .gun.on.pazar .g1{color:#ffd0d4}
+
+main{padding:0 16px}
+.gunBaslik{display:flex;justify-content:space-between;align-items:baseline;margin:16px 2px 10px}
+.gunBaslik h2{margin:0;font-size:17px;font-weight:800}
+.gunBaslik span{font-size:12px;color:var(--dim)}
+
+/* Zaman çizelgesi */
+.cizelge{position:relative;background:var(--kart);border:1px solid var(--line);border-radius:16px;padding:6px 10px 6px 58px}
+.satir{height:var(--slot);position:relative}
+.satir .saat{position:absolute;left:-50px;top:-7px;width:42px;text-align:right;font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums;font-weight:600}
+.satir .saat.yarim{opacity:.45;font-weight:500}
+.satir::before{content:"";position:absolute;left:0;right:0;top:0;border-top:1px solid var(--line)}
+.satir.yarimCizgi::before{border-top-style:dashed;opacity:.7}
+.bosBtn{position:absolute;inset:3px 0;border-radius:10px;border:1.5px dashed transparent;display:flex;align-items:center;padding:0 12px;
+  font-size:13px;color:var(--yesil);font-weight:600;width:100%;text-align:left}
+.bosBtn:active{background:var(--bos);border-color:var(--bosCizgi)}
+.bosBtn .art{opacity:.45;transition:opacity .15s;font-weight:500}
+@media (hover:hover){.bosBtn:hover{background:var(--bos);border-color:var(--bosCizgi)}.bosBtn:hover .art{opacity:1}}
+.bosBtn.gecmis{color:#b8bfcc;pointer-events:none;font-weight:500}
+.son{height:0}
+.son .saat{top:-7px}
+
+.blok{position:absolute;left:0;right:0;border-radius:11px;padding:8px 12px;background:var(--dolu);border-left:4px solid var(--doluCizgi);
+  overflow:hidden;text-align:left;z-index:2;display:flex;flex-direction:column;justify-content:center}
+.blok.benim{background:var(--benim);border-left-color:var(--benimCizgi)}
+.blok .b1{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blok .b2{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.blok .etk{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(0,61,165,.12);color:var(--blue);margin-left:6px;vertical-align:1px}
+.blok.benim .etk{background:rgba(217,115,26,.15);color:#a8540c}
+.simdi{position:absolute;left:-8px;right:0;height:0;border-top:2px solid var(--red);z-index:3;pointer-events:none}
+.simdi::before{content:"";position:absolute;left:-4px;top:-5px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+
+.lejant{display:flex;gap:14px;font-size:11.5px;color:var(--dim);margin:10px 4px 0;flex-wrap:wrap}
+.lejant i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* Benim rezervasyonlarım */
+.bolum{margin:26px 2px 10px;font-size:15px;font-weight:800}
+.rez{display:flex;align-items:center;gap:12px;background:var(--kart);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.rez .tg{flex:none;width:46px;text-align:center;border-right:1px solid var(--line);padding-right:10px}
+.rez .tg b{display:block;font-family:'Archivo';font-size:20px;line-height:1}
+.rez .tg span{font-size:10.5px;color:var(--dim);text-transform:uppercase;font-weight:700}
+.rez .ic{flex:1;min-width:0}
+.rez .ic div:first-child{font-weight:700;font-size:14px}
+.rez .ic div:last-child{font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rez button{color:var(--red);font-size:13px;font-weight:600;padding:6px 4px}
+.bosNot{font-size:13px;color:var(--dim);padding:4px 4px 0}
+
+/* Alt panel */
+.perde{position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.perde.acik{opacity:1;pointer-events:auto}
+.panel{background:#fff;width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));
+  transform:translateY(30px);transition:transform .22s;max-height:88vh;overflow:auto}
+.perde.acik .panel{transform:none}
+.tutamak{width:40px;height:4px;border-radius:4px;background:#d5dae3;margin:0 auto 12px}
+.panel h3{margin:0;font-size:19px;font-weight:800}
+.panel .alt{color:var(--dim);font-size:13px;margin-top:3px}
+.etiket{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px}
+.cipler{display:flex;flex-wrap:wrap;gap:8px}
+.cip{padding:9px 14px;border-radius:22px;border:1.5px solid var(--line);font-size:14px;font-weight:600;background:#fff}
+.cip.on{border-color:var(--blue);background:var(--blue);color:#fff}
+.cip:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.panel input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;outline:none}
+.panel input:focus{border-color:var(--blue)}
+.ana{width:100%;margin-top:20px;padding:15px;border-radius:14px;background:var(--blue);color:#fff;font-weight:700;font-size:16px;
+  box-shadow:0 8px 18px -8px rgba(0,61,165,.6)}
+.ana:disabled{opacity:.5}
+.ana.kirmizi{background:var(--red);box-shadow:0 8px 18px -8px rgba(220,28,46,.55)}
+.ikincil{width:100%;margin-top:8px;padding:12px;color:var(--dim);font-weight:600}
+.ozet{background:var(--bg);border-radius:14px;padding:14px;margin-top:14px;font-size:14px;line-height:1.6}
+.ozet b{display:inline-block;min-width:74px;color:var(--dim);font-weight:600}
+
+/* Giriş */
+.giris{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(160deg,var(--navy),var(--blue))}
+.giris .kutu{background:#fff;border-radius:22px;padding:28px 22px;width:100%;max-width:340px;text-align:center;box-shadow:0 24px 60px -20px rgba(0,0,0,.45)}
+.giris .ikon{width:62px;height:62px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#5b2bb5,#a77bff);box-shadow:0 10px 22px -8px rgba(91,43,181,.7)}
+.giris h1{margin:0;font-size:22px;font-weight:800}
+.giris p{margin:6px 0 20px;color:var(--dim);font-size:13.5px}
+.giris input{width:100%;text-align:center;letter-spacing:.6em;font-size:24px;padding:12px;border:1.5px solid var(--line);border-radius:14px;outline:none}
+.giris input:focus{border-color:var(--blue)}
+.hata{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+
+.bildirim{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#131a26;color:#fff;
+  padding:12px 18px;border-radius:14px;font-size:14px;font-weight:500;opacity:0;transition:.25s;z-index:80;max-width:calc(100% - 32px);text-align:center}
+.bildirim.acik{opacity:1;transform:translate(-50%,0)}
+.onizleme{background:#fff4d6;color:#7a5600;font-size:12.5px;padding:9px 16px;text-align:center;border-bottom:1px solid #f0dca0}
+.yukleniyor{opacity:.55;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ -->
+<div class="giris" id="girisEkrani">
+  <div class="kutu">
+    <div class="ikon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><circle cx="15" cy="12" r="1"/></svg></div>
+    <h1 class="disp">Oda Rezervasyon</h1>
+    <p>Danışman PIN'inle giriş yap</p>
+    <input id="pinGir" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <div class="hata" id="girisHata"></div>
+    <button class="ana" id="girisBtn" onclick="girisYap()">Giriş</button>
+  </div>
+</div>
+
+<!-- ANA -->
+<div id="uygulama" class="gizli">
+  <div class="onizleme gizli" id="onizlemeBant">Önizleme modu — kayıtlar sadece bu cihazda, kimseyle paylaşılmıyor.</div>
+  <header>
+    <div class="ust">
+      <a class="geri" href="https://dogusportal.com/" aria-label="Portala dön"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <h1 class="disp">Oda Rezervasyon</h1>
+      <div class="kim"><div id="kimAd"></div><button onclick="cikis()">Çıkış</button></div>
+    </div>
+    <div class="odalar" id="odalar"></div>
+  </header>
+
+  <div class="gunler" id="gunler"></div>
+
+  <main>
+    <div class="gunBaslik"><h2 class="disp" id="gunBaslik"></h2><span id="gunOzet"></span></div>
+    <div class="cizelge" id="cizelge"></div>
+    <div class="lejant">
+      <span><i style="background:var(--bos);border:1px dashed var(--yesil)"></i>Boş — dokun, rezerve et</span>
+      <span><i style="background:var(--dolu);border-left:3px solid var(--blue)"></i>Dolu</span>
+      <span><i style="background:var(--benim);border-left:3px solid var(--benimCizgi)"></i>Senin</span>
+    </div>
+
+    <div class="bolum disp">Rezervasyonlarım</div>
+    <div id="benimListe"></div>
+  </main>
+</div>
+
+<!-- PANEL -->
+<div class="perde" id="perde" onclick="if(event.target===this)paneliKapat()">
+  <div class="panel" id="panel"></div>
+</div>
+<div class="bildirim" id="bildirim"></div>
+
+<script>
+/* Apps Script /exec adresi. Boşken sayfa önizleme modunda çalışır. */
+var API = '';
+
+var ODALAR = ['Toplantı Odası', 'Nöbet Odası'];
+var SAAT_BAS = '09:00', SAAT_BIT = '20:00', ADIM = 30, GUN_SAYISI = 14;
+var SURELER = [30, 60, 90, 120];
+var TURLER = ['Görüşme', 'Kontrat', 'Sunum', 'Tapu hazırlık', 'Toplantı', 'Diğer'];
+var GUN_KISA = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+var GUN_UZUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+var AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+/* Önizleme modunda kullanılan PIN listesi (canlıda kontrol sunucuda yapılır) */
+var ONIZLEME_KISILER = {'1520':'Umut Tokkuş','2824':'Ayşegül Alpay','3847':'Aysun Yılmaz','4657':'Evşen Özazman','3286':'Gamze Yetkin','2679':'Gizem Gök','9935':'İrem Aleyna Tetik','7912':'Orhan Özazman','2535':'Özlem Varol'};
+
+var D = { pin:'', kisi:'', broker:false, oda:ODALAR[0], tarih:'', liste:[], sec:null };
+
+function $(id){ return document.getElementById(id); }
+function kac(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function dk(s){ var p=String(s).split(':'); return (+p[0])*60+(+p[1]||0); }
+function saatStr(m){ return (m<600?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60); }
+function iso(d){ return d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate(); }
+function tarihObj(s){ var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function bugun(){ return iso(new Date()); }
+function simdiDk(){ var d=new Date(); return d.getHours()*60+d.getMinutes(); }
+function uzunTarih(s){ var d=tarihObj(s); return d.getDate()+' '+AY[d.getMonth()]+' '+GUN_UZUN[d.getDay()]; }
+function sureStr(m){ return m<60? m+' dk' : (m%60? (Math.floor(m/60)+',5 saat') : (m/60)+' saat'); }
+function sakla(k,v){ try{ v===null?localStorage.removeItem(k):localStorage.setItem(k,v); }catch(e){} }
+function oku(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+function bildir(m){ var b=$('bildirim'); b.textContent=m; b.classList.add('acik'); clearTimeout(b._t); b._t=setTimeout(function(){b.classList.remove('acik');},2800); }
+
+/* ---------- Sunucu ---------- */
+var onizlemeVeri = null;
+function onizlemeBaslat(){
+  var t0=bugun(), t1=iso(new Date(Date.now()+86400000));
+  onizlemeVeri=[
+    {id:'o1',oda:'Toplantı Odası',tarih:t0,bas:'11:00',bit:'12:00',kisi:'Gizem Gök',tur:'Görüşme',not:'Mal sahibi ile fiyat görüşmesi'},
+    {id:'o2',oda:'Toplantı Odası',tarih:t0,bas:'15:30',bit:'17:00',kisi:'Evşen Özazman',tur:'Kontrat',not:'Kira kontratı — Nuhoğlu'},
+    {id:'o3',oda:'Nöbet Odası',tarih:t0,bas:'14:00',bit:'15:00',kisi:'Orhan Özazman',tur:'Sunum',not:''},
+    {id:'o4',oda:'Toplantı Odası',tarih:t1,bas:'10:00',bit:'11:30',kisi:'Özlem Varol',tur:'Tapu hazırlık',not:''}
+  ];
+}
+function cakisiyorMu(liste,oda,tarih,bas,bit,haric){
+  var b=dk(bas),s=dk(bit);
+  return liste.filter(function(r){ return r.id!==haric && r.oda===oda && r.tarih===tarih && dk(r.bas)<s && b<dk(r.bit); })[0]||null;
+}
+function onizlemeIstek(action,v){
+  return new Promise(function(res){ setTimeout(function(){
+    var kisi=ONIZLEME_KISILER[D.pin||v.pin];
+    if(action==='liste') return res({ok:true,liste:onizlemeVeri.slice()});
+    if(!kisi) return res({ok:false,hata:'Hatalı PIN'});
+    if(action==='giris') return res({ok:true,kisi:kisi,broker:(v.pin||D.pin)==='1520'});
+    if(action==='ekle'){
+      var c=cakisiyorMu(onizlemeVeri,v.oda,v.tarih,v.bas,v.bit);
+      if(c) return res({ok:false,hata:'Bu saat az önce doldu: '+c.bas+'–'+c.bit+' '+c.kisi,liste:onizlemeVeri.slice()});
+      onizlemeVeri.push({id:'o'+Date.now(),oda:v.oda,tarih:v.tarih,bas:v.bas,bit:v.bit,kisi:kisi,tur:v.tur||'',not:v.not||''});
+      return res({ok:true,liste:onizlemeVeri.slice()});
+    }
+    if(action==='iptal'){
+      var r=onizlemeVeri.filter(function(x){return x.id===v.id;})[0];
+      if(!r) return res({ok:false,hata:'Rezervasyon bulunamadı'});
+      if(r.kisi!==kisi && D.pin!=='1520') return res({ok:false,hata:'Sadece kendi rezervasyonunu iptal edebilirsin'});
+      onizlemeVeri=onizlemeVeri.filter(function(x){return x.id!==v.id;});
+      return res({ok:true,liste:onizlemeVeri.slice()});
+    }
+    res({ok:false,hata:'Bilinmeyen işlem'});
+  },250); });
+}
+
+function istek(action,v){
+  v=v||{};
+  if(!API) return onizlemeIstek(action,v);
+  var kes=new AbortController(), sayac=setTimeout(function(){kes.abort();},25000);
+  var p = action==='liste'
+    ? fetch(API+'?bas='+bugun(),{method:'GET',redirect:'follow',signal:kes.signal})
+    : fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify(Object.assign({action:action,pin:D.pin},v)),redirect:'follow',signal:kes.signal});
+  return p.then(function(r){ return r.text(); }).then(function(t){
+    clearTimeout(sayac);
+    try{ return JSON.parse(t); }catch(e){ return {ok:false,hata:'Sunucudan beklenmeyen cevap'}; }
+  }).catch(function(e){
+    clearTimeout(sayac);
+    return {ok:false,hata: e.name==='AbortError'?'Sunucu cevap vermedi, tekrar dene':'Bağlantı yok, tekrar dene'};
+  });
+}
+
+/* ---------- Giriş ---------- */
+function girisYap(pin){
+  pin = pin || $('pinGir').value.trim();
+  if(pin.length<4){ $('girisHata').textContent='4 haneli PIN gir'; return; }
+  $('girisBtn').disabled=true; $('girisHata').textContent='';
+  istek('giris',{pin:pin}).then(function(r){
+    $('girisBtn').disabled=false;
+    if(!r.ok){ $('girisHata').textContent=r.hata||'Giriş yapılamadı'; sakla('oda_pin',null); $('girisEkrani').classList.remove('gizli'); $('uygulama').classList.add('gizli'); return; }
+    D.pin=pin; D.kisi=r.kisi; D.broker=!!r.broker; sakla('oda_pin',pin);
+    $('girisEkrani').classList.add('gizli'); $('uygulama').classList.remove('gizli');
+    $('kimAd').textContent=D.kisi;
+    yenile();
+  });
+}
+function cikis(){ sakla('oda_pin',null); D.pin=''; $('pinGir').value=''; $('uygulama').classList.add('gizli'); $('girisEkrani').classList.remove('gizli'); }
+$('pinGir').addEventListener('keyup',function(e){ if(e.key==='Enter'||this.value.length===4) girisYap(); });
+
+/* ---------- Veri ---------- */
+var yukleniyor=false;
+function yenile(sessiz){
+  if(yukleniyor) return; yukleniyor=true;
+  if(!sessiz) $('cizelge').classList.add('yukleniyor');
+  istek('liste').then(function(r){
+    yukleniyor=false; $('cizelge').classList.remove('yukleniyor');
+    if(r.ok){ D.liste=r.liste||[]; if(r.odalar&&r.odalar.length) ODALAR=r.odalar; ciz(); }
+    else if(!sessiz) bildir(r.hata||'Liste alınamadı');
+  });
+}
+setInterval(function(){ if(D.pin && !document.hidden && !$('perde').classList.contains('acik')) yenile(true); },45000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden && D.pin) yenile(true); });
+
+/* ---------- Çizim ---------- */
+function ciz(){ odalarCiz(); gunlerCiz(); cizelgeCiz(); benimCiz(); }
+
+function odalarCiz(){
+  if(ODALAR.indexOf(D.oda)<0) D.oda=ODALAR[0];
+  $('odalar').innerHTML=ODALAR.map(function(o){
+    return '<button class="'+(o===D.oda?'on':'')+'" onclick="D.oda=\''+kac(o)+'\';ciz()">'+kac(o)+'</button>';
+  }).join('');
+}
+
+function gunlerCiz(){
+  if(!D.tarih || D.tarih<bugun()) D.tarih=bugun();
+  var h='', d=new Date(); d.setHours(0,0,0,0);
+  for(var i=0;i<GUN_SAYISI;i++){
+    var t=iso(d), var_=D.liste.some(function(r){return r.oda===D.oda&&r.tarih===t;});
+    h+='<button class="gun'+(t===D.tarih?' on':'')+(d.getDay()===0?' pazar':'')+'" onclick="D.tarih=\''+t+'\';ciz()" id="gun_'+t+'">'+
+       '<div class="g1">'+(i===0?'Bugün':GUN_KISA[d.getDay()])+'</div><div class="g2">'+d.getDate()+'</div>'+(var_?'<span class="nok"></span>':'')+'</button>';
+    d.setDate(d.getDate()+1);
+  }
+  $('gunler').innerHTML=h;
+  var s=$('gun_'+D.tarih); if(s&&s.scrollIntoView) s.scrollIntoView({block:'nearest',inline:'center'});
+}
+
+function gununRezleri(){
+  return D.liste.filter(function(r){return r.oda===D.oda&&r.tarih===D.tarih;})
+    .sort(function(a,b){return dk(a.bas)-dk(b.bas);});
+}
+
+function cizelgeCiz(){
+  var rezler=gununRezleri(), bas=dk(SAAT_BAS), bit=dk(SAAT_BIT), slotH=46;
+  var bugunMu=D.tarih===bugun(), simdi=simdiDk();
+  $('gunBaslik').textContent=uzunTarih(D.tarih);
+  var doluDk=rezler.reduce(function(t,r){return t+dk(r.bit)-dk(r.bas);},0);
+  $('gunOzet').textContent= rezler.length? (rezler.length+' rezervasyon · '+sureStr(doluDk)+' dolu') : 'Bütün gün boş';
+
+  var h='';
+  for(var m=bas;m<bit;m+=ADIM){
+    var yarim=m%60!==0;
+    var dolu=rezler.some(function(r){return dk(r.bas)<=m&&m<dk(r.bit);});
+    var gecmis=bugunMu && m+ADIM<=simdi;
+    h+='<div class="satir'+(yarim?' yarimCizgi':'')+'"><span class="saat'+(yarim?' yarim':'')+'">'+saatStr(m)+'</span>';
+    if(!dolu) h+='<button class="bosBtn'+(gecmis?' gecmis':'')+'" onclick="yeniAc('+m+')">'+(gecmis?'Geçti':'<span class="art">+ '+saatStr(m)+' rezerve et</span>')+'</button>';
+    h+='</div>';
+  }
+  h+='<div class="satir son"><span class="saat">'+SAAT_BIT+'</span></div>';
+
+  rezler.forEach(function(r){
+    var top=6+(dk(r.bas)-bas)/ADIM*slotH+3, yuk=(dk(r.bit)-dk(r.bas))/ADIM*slotH-6;
+    var benim=r.kisi===D.kisi;
+    h+='<button class="blok'+(benim?' benim':'')+'" style="top:'+top+'px;height:'+yuk+'px;left:58px;right:10px" onclick="detayAc(\''+kac(r.id)+'\')">'+
+       '<div class="b1">'+kac(benim?'Sen':r.kisi)+(r.tur?'<span class="etk">'+kac(r.tur)+'</span>':'')+'</div>'+
+       '<div class="b2">'+r.bas+'–'+r.bit+(r.not&&yuk>50?' · '+kac(r.not):'')+'</div></button>';
+  });
+  if(bugunMu && simdi>=bas && simdi<=bit){
+    h+='<div class="simdi" style="top:'+(6+(simdi-bas)/ADIM*slotH)+'px;left:50px;right:10px"></div>';
+  }
+  $('cizelge').innerHTML=h;
+}
+
+function benimCiz(){
+  var t=bugun(), s=simdiDk();
+  var l=D.liste.filter(function(r){ return r.kisi===D.kisi && (r.tarih>t || (r.tarih===t && dk(r.bit)>s)); })
+    .sort(function(a,b){return (a.tarih+a.bas).localeCompare(b.tarih+b.bas);});
+  $('benimListe').innerHTML = l.length ? l.map(function(r){
+    var d=tarihObj(r.tarih);
+    return '<div class="rez"><div class="tg"><b>'+d.getDate()+'</b><span>'+GUN_KISA[d.getDay()]+'</span></div>'+
+      '<div class="ic"><div>'+r.bas+'–'+r.bit+' · '+kac(r.oda)+'</div><div>'+kac(r.tur||'')+(r.not?' · '+kac(r.not):'')+'</div></div>'+
+      '<button onclick="iptalEt(\''+kac(r.id)+'\')">İptal</button></div>';
+  }).join('') : '<div class="bosNot">Yaklaşan rezervasyonun yok. Yukarıdan boş bir saate dokun.</div>';
+}
+
+/* ---------- Panel ---------- */
+function paneliAc(h){ $('panel').innerHTML='<div class="tutamak"></div>'+h; $('perde').classList.add('acik'); }
+function paneliKapat(){ $('perde').classList.remove('acik'); D.sec=null; }
+
+function uygunSureler(m){
+  var rezler=gununRezleri(), bit=dk(SAAT_BIT);
+  return SURELER.map(function(s){
+    var son=m+s, ok=son<=bit && !rezler.some(function(r){return dk(r.bas)<son && m<dk(r.bit);});
+    return {s:s,ok:ok};
+  });
+}
+
+function yeniAc(m){
+  var su=uygunSureler(m), ilk=su.filter(function(x){return x.ok;})[0];
+  if(!ilk){ bildir('Bu saatten sonra yer yok'); return; }
+  D.sec={bas:m, sure:(su[1]&&su[1].ok)?60:ilk.s, tur:'Görüşme', not:''};
+  panelCiz();
+}
+function panelCiz(){
+  var s=D.sec, su=uygunSureler(s.bas);
+  var h='<h3 class="disp">'+kac(D.oda)+'</h3><div class="alt">'+uzunTarih(D.tarih)+' · '+saatStr(s.bas)+'–'+saatStr(s.bas+s.sure)+'</div>';
+  h+='<div class="etiket">Süre</div><div class="cipler">'+su.map(function(x){
+    return '<button class="cip'+(x.s===s.sure?' on':'')+'" '+(x.ok?'':'disabled')+' onclick="D.sec.sure='+x.s+';panelCiz()">'+sureStr(x.s)+'</button>';
+  }).join('')+'</div>';
+  h+='<div class="etiket">Ne için</div><div class="cipler">'+TURLER.map(function(t){
+    return '<button class="cip'+(t===s.tur?' on':'')+'" onclick="D.sec.tur=\''+t+'\';panelCiz()">'+t+'</button>';
+  }).join('')+'</div>';
+  h+='<div class="etiket">Not (isteğe bağlı)</div><input id="notGir" maxlength="120" placeholder="Müşteri adı, mülk…" value="'+kac(s.not)+'" oninput="D.sec.not=this.value">';
+  h+='<button class="ana" id="kaydetBtn" onclick="rezerveEt()">Rezerve et</button><button class="ikincil" onclick="paneliKapat()">Vazgeç</button>';
+  paneliAc(h);
+}
+
+function rezerveEt(){
+  var s=D.sec; if(!s) return;
+  var btn=$('kaydetBtn'); btn.disabled=true; btn.textContent='Kaydediliyor…';
+  istek('ekle',{oda:D.oda,tarih:D.tarih,bas:saatStr(s.bas),bit:saatStr(s.bas+s.sure),tur:s.tur,not:s.not}).then(function(r){
+    if(r.liste) D.liste=r.liste;
+    if(!r.ok){ btn.disabled=false; btn.textContent='Rezerve et'; bildir(r.hata||'Kaydedilemedi'); ciz(); if(D.sec) panelCiz(); return; }
+    paneliKapat(); ciz(); bildir('Rezerve edildi ✓ '+saatStr(s.bas)+'–'+saatStr(s.bas+s.sure));
+  });
+}
+
+function detayAc(id){
+  var r=D.liste.filter(function(x){return x.id===id;})[0]; if(!r) return;
+  var benim=r.kisi===D.kisi, yetki=benim||D.broker;
+  var h='<h3 class="disp">'+(benim?'Senin rezervasyonun':kac(r.kisi))+'</h3><div class="alt">'+kac(r.oda)+'</div>';
+  h+='<div class="ozet"><div><b>Gün</b>'+uzunTarih(r.tarih)+'</div><div><b>Saat</b>'+r.bas+'–'+r.bit+' ('+sureStr(dk(r.bit)-dk(r.bas))+')</div>'+
+     (r.tur?'<div><b>Ne için</b>'+kac(r.tur)+'</div>':'')+(r.not?'<div><b>Not</b>'+kac(r.not)+'</div>':'')+
+     (!benim?'<div><b>Kim</b>'+kac(r.kisi)+'</div>':'')+'</div>';
+  if(yetki) h+='<button class="ana kirmizi" id="iptalBtn" onclick="iptalEt(\''+kac(r.id)+'\',true)">'+(benim?'Rezervasyonu iptal et':'Broker olarak iptal et')+'</button>';
+  h+='<button class="ikincil" onclick="paneliKapat()">Kapat</button>';
+  paneliAc(h);
+}
+
+function iptalEt(id,panelden){
+  if(!confirm('Bu rezervasyon iptal edilsin mi?')) return;
+  var btn=$('iptalBtn'); if(panelden&&btn){btn.disabled=true;btn.textContent='İptal ediliyor…';}
+  istek('iptal',{id:id}).then(function(r){
+    if(r.liste) D.liste=r.liste;
+    if(!r.ok){ if(btn){btn.disabled=false;btn.textContent='Rezervasyonu iptal et';} bildir(r.hata||'İptal edilemedi'); ciz(); return; }
+    paneliKapat(); ciz(); bildir('İptal edildi');
+  });
+}
+
+/* ---------- Başlat ---------- */
+(function(){
+  if(!API){ onizlemeBaslat(); $('onizlemeBant').classList.remove('gizli'); }
+  var p=oku('oda_pin'); if(p) girisYap(p); else setTimeout(function(){ try{$('pinGir').focus();}catch(e){} },300);
+})();
+</script>
+</body>
+</html>
