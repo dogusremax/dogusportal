@@ -24,6 +24,8 @@ const DOSYA = 'data/google-yorumlar.json';
     console.error('Places API hatası', r.status, metin);
     let mesaj = metin;
     try { mesaj = JSON.parse(metin).error?.message || metin; } catch {}
+    // Aynı hata zaten kayıtlıysa dosyaya tekrar yazma (her saat boş hata commit'i olmasın)
+    if (eski.hata && eski.hata.durum === r.status && eski.hata.mesaj === mesaj.slice(0, 500)) { console.log('Aynı hata sürüyor, kayıt değişmedi.'); return; }
     fs.writeFileSync(DOSYA, JSON.stringify({ ...eski, hata: { zaman: new Date().toISOString(), durum: r.status, mesaj: mesaj.slice(0, 500) } }, null, 1));
     return;
   }
