@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#003DA5">
+<title>Ekspertiz Formu · RE/MAX Doğuş</title>
+<style>
+:root{
+  --kirmizi:#DC1C2E;--kirmizi-koyu:#A3121F;
+  --mavi:#003DA5;--mavi-koyu:#002A73;--mavi-ac:#2C6BD8;
+  --bg:#f4f6f9;--card:#fff;--line:#e3e7ee;--line-soft:#eef1f6;
+  --ink:#131a26;--muted:#68738a;--soft:#8b95a8;
+  --mavi-bg:#eaf1fb;--yesil:#0f9b6c;--yesil-bg:#e7f6f0;--amber:#E8A33D;--amber-bg:#fff6e8;
+  --r:18px;--pad:16px;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,Helvetica,'Liberation Sans',sans-serif;
+  -webkit-font-smoothing:antialiased;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer}
+.gizli{display:none!important}
+
+/* başlık */
+header{padding:calc(14px + env(safe-area-inset-top)) var(--pad) 16px;color:#fff;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 22% 0%,rgba(255,255,255,.14),transparent 55%),linear-gradient(170deg,var(--mavi),var(--mavi-koyu));
+  border-radius:0 0 24px 24px;box-shadow:0 14px 30px -18px rgba(0,42,115,.9)}
+header::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;
+  background:linear-gradient(90deg,var(--kirmizi) 0 38%,#fff 38% 62%,var(--mavi-ac) 62% 100%)}
+.ust{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ust img{height:26px}
+.geri{color:rgba(255,255,255,.85);font-size:14px;display:flex;align-items:center;gap:4px}
+.ust .btn-sade{background:rgba(255,255,255,.14);color:#fff;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:700}
+header h1{font-size:22px;letter-spacing:-.02em;margin-top:12px}
+header .alt{font-size:13px;color:rgba(255,255,255,.75);margin-top:2px}
+.ilerleme{margin-top:12px;height:7px;background:rgba(255,255,255,.18);border-radius:4px;overflow:hidden}
+.ilerleme i{display:block;height:100%;width:0;background:#fff;border-radius:4px;transition:width .3s}
+.ilerleme-yazi{font-size:12px;color:rgba(255,255,255,.8);margin-top:6px}
+
+main{padding:14px var(--pad) 0;max-width:720px;margin:0 auto}
+.bolum{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden;
+  box-shadow:0 1px 0 rgba(19,26,38,.03)}
+.bolum-bas{width:100%;display:flex;align-items:center;gap:12px;padding:14px;text-align:left}
+.bolum-bas .no{width:34px;height:34px;border-radius:11px;flex:0 0 34px;display:grid;place-items:center;font-weight:800;font-size:14px;
+  color:#fff;background:linear-gradient(160deg,var(--mavi-ac),var(--mavi));box-shadow:inset 0 -2px 4px rgba(0,0,0,.2)}
+.bolum.tamam .bolum-bas .no{background:linear-gradient(160deg,#27c08a,var(--yesil))}
+.bolum-bas b{display:block;font-size:15px}
+.bolum-bas small{display:block;color:var(--muted);font-size:12px}
+.bolum-bas .ok{margin-left:auto;color:var(--soft);transition:transform .2s}
+.bolum.acik .bolum-bas .ok{transform:rotate(90deg)}
+.bolum-ic{display:none;padding:2px 14px 16px;border-top:1px solid var(--line-soft)}
+.bolum.acik .bolum-ic{display:block}
+
+.alan{margin-top:14px}
+.alan>label,.alan>.etiket{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.ikili{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea{width:100%;background:#fff;border:1.5px solid var(--line);
+  border-radius:12px;padding:11px 12px;outline:0;transition:border-color .15s}
+input:focus,textarea:focus{border-color:var(--mavi-ac)}
+textarea{min-height:84px;resize:vertical}
+.birim{position:relative}.birim input{padding-right:44px}
+.birim span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--soft);font-size:13px;font-weight:700}
+.cipler{display:flex;flex-wrap:wrap;gap:7px}
+.cip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:14px;line-height:1.2;transition:all .12s}
+.cip.sec{background:var(--mavi);border-color:var(--mavi);color:#fff;box-shadow:0 4px 10px -6px rgba(0,61,165,.9)}
+.coklu .cip.sec::before{content:'✓ ';font-weight:700}
+.puan{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+.puan:last-child{border-bottom:0}
+.puan span{font-size:14px}
+.yildiz{display:flex;gap:2px}
+.yildiz button{font-size:24px;line-height:1;color:#d4d9e2;padding:2px}
+.yildiz button.dolu{color:var(--amber)}
+.mik{display:flex;gap:8px;align-items:flex-start}
+.mik textarea{flex:1}
+.mik button{flex:0 0 46px;height:46px;border-radius:12px;background:var(--mavi-bg);color:var(--mavi);display:grid;place-items:center}
+.mik button.dinliyor{background:var(--kirmizi);color:#fff;animation:nabiz 1s infinite}
+@keyframes nabiz{50%{box-shadow:0 0 0 6px rgba(220,28,46,.2)}}
+
+/* alt çubuk */
+.alt-cubuk{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center}
+.alt-cubuk button{flex:1;max-width:220px;border-radius:14px;padding:12px 8px;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px}
+.b-wa{background:#25D366;color:#073b1f}
+.b-mavi{background:var(--mavi);color:#fff}
+.b-gri{background:var(--line-soft);color:var(--ink)}
+
+/* kayıtlar paneli */
+.perde{position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--bg);width:100%;max-width:720px;max-height:82vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px var(--pad) calc(20px + env(safe-area-inset-bottom))}
+.panel h2{font-size:18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.kayit{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;display:flex;gap:10px;align-items:center}
+.kayit div{flex:1;min-width:0}.kayit b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kayit small{color:var(--muted);font-size:12px}
+.kayit .sil{color:var(--kirmizi);font-size:13px;padding:6px}
+.kayit.aktif{border-color:var(--mavi-ac);box-shadow:0 0 0 2px var(--mavi-bg)}
+.secenek{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px;margin-bottom:8px}
+.secenek b{display:block;font-size:15px}.secenek small{color:var(--muted);font-size:12.5px}
+.bos{color:var(--muted);text-align:center;padding:24px 0}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.toast.on{opacity:1}
+
+/* yazdırma raporu */
+#rapor{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;padding:0}
+  header,main,.alt-cubuk,.perde,.toast{display:none!important}
+  #rapor{display:block;font-size:11.5px;color:#111}
+  .r-bas{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--mavi);padding-bottom:8px;margin-bottom:10px}
+  .r-bas img{height:34px}.r-bas h1{font-size:18px;color:var(--mavi)}
+  .r-bas small{display:block;color:#555;text-align:right}
+  .r-bol{margin-bottom:9px;break-inside:avoid}
+  .r-bol h3{font-size:12px;color:#fff;background:var(--mavi);padding:4px 8px;border-radius:4px;margin-bottom:5px}
+  .r-tab{width:100%;border-collapse:collapse}
+  .r-tab td{padding:3px 6px;border-bottom:1px solid #e5e5e5;vertical-align:top}
+  .r-tab td:first-child{width:34%;color:#555}
+  .r-alt{margin-top:14px;border-top:1px solid #ccc;padding-top:6px;color:#666;font-size:10px;display:flex;justify-content:space-between}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="ust">
+    <a class="geri" href="#" onclick="geriGit();return false">‹ Ajanda</a>
+    <img src="https://dogusportal.com/assets/dogus-logo.png" alt="RE/MAX Doğuş">
+    <button class="btn-sade" onclick="kayitlariAc()">Kayıtlar</button>
+  </div>
+  <h1>EKSPERTİZ FORMU</h1>
+  <div class="alt" id="baslikAlt">Yeni ekspertiz</div>
+  <div class="ilerleme"><i id="ilerleme"></i></div>
+  <div class="ilerleme-yazi" id="ilerlemeYazi"></div>
+</header>
+<main id="form"></main>
+
+<div class="alt-cubuk">
+  <button class="b-gri" onclick="yeni()">＋ Yeni</button>
+  <button class="b-mavi" onclick="yazdir()">🖨 PDF</button>
+  <button class="b-wa" onclick="paylas()">WhatsApp</button>
+</div>
+<div class="perde gizli" id="perde" onclick="if(event.target===this)kayitlariKapat()"><div class="panel" id="panel"></div></div>
+<div class="toast" id="toast"></div>
+<div id="rapor"></div>
+
+<script>
+/* ============================================================
+   EKSPERTİZ FORMU — danışman mülke gittiğinde doldurur.
+   Alanlar Sahibinden/Hepsiemlak ilan alanları + ekspertiz kontrol
+   başlıklarından derlendi. Kayıtlar yalnızca bu cihazda tutulur
+   (localStorage); WhatsApp özeti ve PDF raporu üretilir.
+   gizli:1 alanlar müşteriye giden özete girmez (mal sahibi, fiyat, iç notlar).
+   ============================================================ */
+
+// tür: yazi | tel | sayi | tarih | tek (tek seçim) | coklu | puan | not (mikrofonlu) | ikili (iki alan yan yana)
+var BOLUMLER = [
+ { id:'genel', ad:'Genel bilgiler', alt:'Adres, mal sahibi, işlem', alanlar:[
+   {id:'tarih', ad:'Ekspertiz tarihi', tur:'tarih'},
+   {id:'danisman', ad:'Danışman', tur:'yazi'},
+   {id:'adres', ad:'Adres', tur:'yazi', ph:'Mahalle, sokak, no', onemli:1, gizli:1},
+   {tur:'ikili', alanlar:[{id:'site', ad:'Site / proje', tur:'yazi', ph:'ör. Nuhoğlu Yenitepe'},{id:'blokDaire', ad:'Blok / daire', tur:'yazi', ph:'ör. B Blok D:40', gizli:1}]},
+   {tur:'ikili', alanlar:[{id:'malSahibi', ad:'Mal sahibi', tur:'yazi', onemli:1, gizli:1},{id:'malSahibiTel', ad:'Telefon', tur:'tel', ph:'05xx xxx xx xx', gizli:1}]},
+   {id:'islem', ad:'İşlem', tur:'tek', sec:['Satılık','Kiralık','Satılık / Kiralık'], onemli:1},
+   {id:'tip', ad:'Mülk tipi', tur:'tek', sec:['Daire','Rezidans','Dubleks','Bahçe katı','Çatı dubleksi','Dükkan / işyeri','Ofis','Müstakil ev'], onemli:1}
+ ]},
+ { id:'temel', ad:'Temel özellikler', alt:'m², oda, kat, yaş, ısınma', alanlar:[
+   {tur:'ikili', alanlar:[{id:'brut', ad:'Brüt m²', tur:'sayi', birim:'m²', onemli:1},{id:'net', ad:'Net m²', tur:'sayi', birim:'m²', onemli:1}]},
+   {id:'oda', ad:'Oda sayısı', tur:'tek', sec:['1+0','1+1','2+1','3+1','3+2','4+1','4+2','5+1','6+'], onemli:1},
+   {id:'banyo', ad:'Banyo sayısı', tur:'tek', sec:['1','2','3','4+'], onemli:1},
+   {id:'balkon', ad:'Balkon', tur:'tek', sec:['Yok','1','2','3+']},
+   {tur:'ikili', alanlar:[{id:'kat', ad:'Bulunduğu kat', tur:'yazi', ph:'ör. 5, Giriş, Bahçe', onemli:1},{id:'katSayisi', ad:'Binadaki kat sayısı', tur:'sayi', onemli:1}]},
+   {id:'yas', ad:'Bina yaşı', tur:'tek', sec:['0 (yeni)','1-5','6-10','11-15','16-20','21-30','31+'], onemli:1},
+   {id:'cephe', ad:'Cephe', tur:'coklu', sec:['Kuzey','Güney','Doğu','Batı']},
+   {id:'isinma', ad:'Isınma', tur:'tek', sec:['Doğalgaz kombi','Merkezi (pay ölçer)','Merkezi','Yerden ısıtma','Klima','Soba','Yok'], onemli:1},
+   {id:'kullanim', ad:'Kullanım durumu', tur:'tek', sec:['Boş','Mal sahibi oturuyor','Kiracılı'], onemli:1},
+   {id:'esya', ad:'Eşya durumu', tur:'tek', sec:['Eşyasız','Beyaz eşyalı','Eşyalı']}
+ ]},
+ { id:'ic', ad:'İç özellikler', alt:'Mutfak, zemin, doğrama, donanım', alanlar:[
+   {id:'mutfak', ad:'Mutfak', tur:'coklu', sec:['Kapalı mutfak','Amerikan mutfak','Ankastre set','Granit / çimstone tezgah','Mutfak doğalgazı']},
+   {id:'zemin', ad:'Zemin', tur:'coklu', sec:['Laminat parke','Masif parke','Seramik','Granit / mermer']},
+   {id:'dograma', ad:'Doğrama ve kapı', tur:'coklu', sec:['PVC doğrama','Alüminyum doğrama','Isıcam','Çelik kapı','Panel kapı']},
+   {id:'icOzellik', ad:'Oda ve banyo', tur:'coklu', sec:['Ebeveyn banyosu','Giyinme odası','Vestiyer','Kiler','Ayrı WC','Duşakabin','Küvet / jakuzi','Gömme dolap','Çamaşır odası','Teras','Fransız balkon']},
+   {id:'donanim', ad:'Donanım', tur:'coklu', sec:['Klima','Görüntülü diafon','Akıllı ev','Alarm','Spot aydınlatma / asma tavan','Şömine','Beyaz eşya','Termosifon / şofben']}
+ ]},
+ { id:'dis', ad:'Bina ve site', alt:'Asansör, otopark, güvenlik, sosyal alan', alanlar:[
+   {id:'bina', ad:'Bina', tur:'coklu', sec:['Asansör','Kapalı otopark','Açık otopark','Isı yalıtımı (mantolama)','Jeneratör','Hidrofor','Su deposu','Yangın merdiveni','Engelli erişimi','Kapıcı / görevli']},
+   {id:'siteOzellik', ad:'Site imkânları', tur:'coklu', sec:['Site içinde','7/24 güvenlik','Kamera sistemi','Havuz','Spor salonu','Çocuk parkı','Yürüyüş alanı','Sosyal tesis']},
+   {id:'deprem', ad:'Deprem / yapı', tur:'tek', sec:['2018 yönetmeliği sonrası','2000 sonrası','2000 öncesi','Bilinmiyor']}
+ ]},
+ { id:'konum', ad:'Konum ve manzara', alt:'Ulaşım, çevre, manzara', alanlar:[
+   {id:'manzara', ad:'Manzara', tur:'coklu', sec:['Deniz','Boğaz','Şehir','Park / yeşil','Site içi','Yok']},
+   {id:'ulasim', ad:'Ulaşım', tur:'coklu', sec:['Metro','Marmaray','Metrobüs','Otobüs durağı','Ana cadde üzeri','E-5 / otoyol yakın']},
+   {id:'metroMesafe', ad:'Raylı sisteme uzaklık', tur:'tek', sec:['0-5 dk yürüme','5-10 dk','10-20 dk','Araçla']},
+   {id:'yakin', ad:'Yakınında', tur:'coklu', sec:['Okul','Hastane','AVM','Market','Park','Cami','Sahil']},
+   {id:'konumNot', ad:'Konum notu', tur:'yazi', ph:'ör. sessiz sokak, köşe parsel'}
+ ]},
+ { id:'durum', ad:'Durum ve bakım', alt:'1–5 arası puanla, sorunları işaretle', alanlar:[
+   {id:'puanlar', ad:'Genel durum', tur:'puan', sec:['Genel bakım','Mutfak','Banyo','Zemin','Boya / duvar','Doğrama','Tesisat (su / elektrik)']},
+   {id:'sorun', ad:'Tespit edilen sorunlar', tur:'coklu', sec:['Nem / rutubet','Küf','Duvar çatlağı','Su kaçağı izi','Tadilat gerekli','Boya gerekli','Koku','Gürültü','Sorun yok']},
+   {id:'durumNot', gizli:1, ad:'Durum notu', tur:'not', ph:'Gözlemlerini yaz ya da mikrofona konuş'}
+ ]},
+ { id:'hukuk', ad:'Tapu ve mali durum', alt:'Tapu, iskân, kredi, aidat', alanlar:[
+   {id:'tapu', ad:'Tapu türü', tur:'tek', sec:['Kat mülkiyeti','Kat irtifakı','Hisseli','Arsa tapulu','Bilinmiyor'], onemli:1},
+   {id:'iskan', ad:'İskân', tur:'tek', sec:['Var','Yok','Bilinmiyor']},
+   {id:'kredi', ad:'Krediye uygun', tur:'tek', sec:['Uygun','Uygun değil','Bilinmiyor'], onemli:1},
+   {id:'serh', gizli:1, ad:'Tapu şerhi', tur:'tek', sec:['Temiz','İpotek var','Haciz / şerh var','Bilinmiyor']},
+   {id:'donusum', ad:'Kentsel dönüşüm', tur:'tek', sec:['Dönüşüm sonrası yeni yapı','Riskli yapı / süreçte','Yok','Bilinmiyor']},
+   {tur:'ikili', alanlar:[{id:'aidat', ad:'Aidat', tur:'sayi', birim:'₺'},{id:'kira', ad:'Mevcut kira', tur:'sayi', birim:'₺'}]},
+   {id:'dask', ad:'DASK', tur:'tek', sec:['Var','Yok','Bilinmiyor']},
+   {id:'takas', ad:'Takas', tur:'tek', sec:['Olabilir','Olmaz']}
+ ]},
+ { id:'fiyat', ad:'Fiyat ve yetki', alt:'Beklenti, öneri, yetki durumu', alanlar:[
+   {tur:'ikili', alanlar:[{id:'beklenti', ad:'Mal sahibi beklentisi', tur:'sayi', birim:'₺', onemli:1, gizli:1},{id:'oneri', ad:'Danışman önerisi', tur:'sayi', birim:'₺', gizli:1}]},
+   {id:'pazarlik', gizli:1, ad:'Pazarlık payı', tur:'tek', sec:['Var','Az','Yok']},
+   {id:'yetki', gizli:1, ad:'Yetki', tur:'tek', sec:['Alındı','Alınacak','Alınmadı'], onemli:1},
+   {id:'fiyatNot', gizli:1, ad:'Fiyat notu', tur:'yazi', ph:'ör. bölgede benzer daire 8,5 M'}
+ ]},
+ { id:'foto', ad:'Fotoğraf listesi', alt:'Çektiklerini işaretle', alanlar:[
+   {id:'fotolar', gizli:1, ad:'Çekilen fotoğraflar', tur:'coklu', sec:['Dış cephe','Bina girişi','Salon','Mutfak','Banyo(lar)','Yatak odaları','Balkon / teras','Manzara','Otopark / site alanları','Kat planı']}
+ ]},
+ { id:'notlar', ad:'Notlar', alt:'Mal sahibinin anlattıkları, izlenim', alanlar:[
+   {id:'not', gizli:1, ad:'Genel not', tur:'not', ph:'Satış nedeni, acil mi, taşınma tarihi…'}
+ ]}
+];
+
+/* ---------- durum ---------- */
+var ANAHTAR = 'ekspertiz_kayitlar';
+var KAYITLAR = [], AKTIF = null, ACIK = { genel: 1 };
+function oku(){ try { return JSON.parse(localStorage.getItem(ANAHTAR) || '[]'); } catch (e) { return []; } }
+function yaz(){ try { localStorage.setItem(ANAHTAR, JSON.stringify(KAYITLAR)); } catch (e) { toast('Kaydedilemedi: tarayıcı depolaması kapalı'); } }
+function E(id){ return document.getElementById(id); }
+function kacis(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+function bugun(){ return new Date().toLocaleDateString('sv-SE'); }
+function danismanAdi(){
+  try { var t = JSON.parse(localStorage.getItem('ajanda_temel') || 'null'); return (t && t.v && t.v.ad) || ''; } catch (e) { return ''; }
+}
+function tumAlanlar(){
+  var l = [];
+  BOLUMLER.forEach(function (b) { b.alanlar.forEach(function (a) { if (a.tur === 'ikili') a.alanlar.forEach(function (x) { l.push([b, x]); }); else l.push([b, a]); }); });
+  return l;
+}
+function dolu(v){ return Array.isArray(v) ? v.length > 0 : (v && typeof v === 'object') ? Object.keys(v).length > 0 : (v != null && String(v).trim() !== ''); }
+
+function yeniKayit(){
+  return { id: 'E' + Date.now(), olusturma: Date.now(), guncelleme: Date.now(), v: { tarih: bugun(), danisman: danismanAdi() } };
+}
+function yeni(){
+  if (AKTIF && !kayitBos(AKTIF) && !confirm('Yeni ekspertiz açılsın mı? Mevcut form kayıtlarda duruyor.')) return;
+  AKTIF = yeniKayit(); ACIK = { genel: 1 }; ciz(); window.scrollTo(0, 0);
+}
+function kayitBos(k){ return !Object.keys(k.v).some(function (x) { return x !== 'tarih' && x !== 'danisman' && dolu(k.v[x]); }); }
+function kaydet(){
+  AKTIF.guncelleme = Date.now();
+  var i = KAYITLAR.findIndex(function (k) { return k.id === AKTIF.id; });
+  if (kayitBos(AKTIF)) { if (i > -1) KAYITLAR.splice(i, 1); }
+  else if (i > -1) KAYITLAR[i] = AKTIF; else KAYITLAR.unshift(AKTIF);
+  yaz(); ilerleme();
+}
+
+/* ---------- çizim ---------- */
+function alanHtml(a){
+  var v = AKTIF.v[a.id];
+  if (a.tur === 'ikili') return '<div class="ikili">' + a.alanlar.map(alanHtml).join('') + '</div>';
+  var h = '<div class="alan">';
+  if (a.tur === 'tek' || a.tur === 'coklu') {
+    h += '<div class="etiket">' + a.ad + (a.tur === 'coklu' ? ' <span style="text-transform:none;font-weight:400">· birden fazla</span>' : '') + '</div><div class="cipler ' + a.tur + '">' +
+      a.sec.map(function (s) {
+        var sec = a.tur === 'tek' ? v === s : (v || []).indexOf(s) > -1;
+        return '<button type="button" class="cip' + (sec ? ' sec' : '') + '" data-a="' + a.id + '" data-t="' + a.tur + '" data-s="' + kacis(s) + '">' + kacis(s) + '</button>';
+      }).join('') + '</div>';
+  } else if (a.tur === 'puan') {
+    h += '<div class="etiket">' + a.ad + '</div>' + a.sec.map(function (s) {
+      var p = (v || {})[s] || 0;
+      return '<div class="puan"><span>' + s + '</span><div class="yildiz">' + [1,2,3,4,5].map(function (n) {
+        return '<button type="button" class="' + (n <= p ? 'dolu' : '') + '" data-p="' + a.id + '" data-k="' + kacis(s) + '" data-n="' + n + '" aria-label="' + n + '">★</button>';
+      }).join('') + '</div></div>';
+    }).join('');
+  } else if (a.tur === 'not') {
+    h += '<label for="f_' + a.id + '">' + a.ad + '</label><div class="mik"><textarea id="f_' + a.id + '" data-a="' + a.id + '" placeholder="' + kacis(a.ph || '') + '">' + kacis(v) + '</textarea>' +
+      (SR ? '<button type="button" onclick="dinle(\'' + a.id + '\',this)" aria-label="Konuşarak yaz"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>' : '') + '</div>';
+  } else {
+    var tip = a.tur === 'sayi' ? 'number" inputmode="decimal' : a.tur === 'tel' ? 'tel' : a.tur === 'tarih' ? 'date' : 'text';
+    var inp = '<input id="f_' + a.id + '" type="' + tip + '" data-a="' + a.id + '" value="' + kacis(v) + '" placeholder="' + kacis(a.ph || '') + '">';
+    h += '<label for="f_' + a.id + '">' + a.ad + '</label>' + (a.birim ? '<div class="birim">' + inp + '<span>' + a.birim + '</span></div>' : inp);
+  }
+  return h + '</div>';
+}
+function bolumDolu(b){
+  var l = []; b.alanlar.forEach(function (a) { if (a.tur === 'ikili') l = l.concat(a.alanlar); else l.push(a); });
+  var n = l.filter(function (a) { return dolu(AKTIF.v[a.id]); }).length;
+  return [n, l.length];
+}
+function ciz(){
+  E('form').innerHTML = BOLUMLER.map(function (b, i) {
+    var d = bolumDolu(b);
+    return '<section class="bolum' + (ACIK[b.id] ? ' acik' : '') + (d[0] === d[1] ? ' tamam' : '') + '" id="b_' + b.id + '">' +
+      '<button type="button" class="bolum-bas" onclick="bolumAc(\'' + b.id + '\')"><span class="no">' + (d[0] === d[1] ? '✓' : i + 1) + '</span>' +
+      '<span><b>' + b.ad + '</b><small>' + b.alt + ' · <span class="sayac">' + d[0] + '/' + d[1] + '</span></small></span><span class="ok">›</span></button>' +
+      '<div class="bolum-ic">' + b.alanlar.map(alanHtml).join('') + '</div></section>';
+  }).join('');
+  ilerleme();
+}
+function bolumAc(id){ ACIK[id] = !ACIK[id]; E('b_' + id).classList.toggle('acik', !!ACIK[id]); }
+function bolumGuncelle(bid){
+  var b = BOLUMLER.filter(function (x) { return x.id === bid; })[0], d = bolumDolu(b), el = E('b_' + bid);
+  el.classList.toggle('tamam', d[0] === d[1]);
+  el.querySelector('.sayac').textContent = d[0] + '/' + d[1];
+  el.querySelector('.no').textContent = d[0] === d[1] ? '✓' : (BOLUMLER.indexOf(b) + 1);
+}
+function ilerleme(){
+  var onemli = tumAlanlar().filter(function (x) { return x[1].onemli; });
+  var n = onemli.filter(function (x) { return dolu(AKTIF.v[x[1].id]); }).length;
+  E('ilerleme').style.width = Math.round(n / onemli.length * 100) + '%';
+  E('ilerlemeYazi').textContent = 'Temel alanlar: ' + n + '/' + onemli.length + (n === onemli.length ? ' ✓ ilan için yeterli' : '');
+  var v = AKTIF.v;
+  E('baslikAlt').textContent = [v.site, v.blokDaire].filter(Boolean).join(' · ') || v.adres || 'Yeni ekspertiz';
+}
+function bolumBul(aid){
+  var s = null;
+  BOLUMLER.forEach(function (b) { b.alanlar.forEach(function (a) { (a.tur === 'ikili' ? a.alanlar : [a]).forEach(function (x) { if (x.id === aid) s = b.id; }); }); });
+  return s;
+}
+
+/* ---------- etkileşim ---------- */
+E('form').addEventListener('click', function (e) {
+  var c = e.target.closest('.cip');
+  if (c) {
+    var id = c.dataset.a, s = c.dataset.s;
+    if (c.dataset.t === 'tek') {
+      AKTIF.v[id] = AKTIF.v[id] === s ? '' : s;
+      c.parentNode.querySelectorAll('.cip').forEach(function (x) { x.classList.toggle('sec', x.dataset.s === AKTIF.v[id]); });
+    } else {
+      var l = (AKTIF.v[id] || []).slice(), i = l.indexOf(s);
+      if (i > -1) l.splice(i, 1); else l.push(s);
+      AKTIF.v[id] = l; c.classList.toggle('sec', i < 0);
+    }
+    kaydet(); bolumGuncelle(bolumBul(id)); return;
+  }
+  var y = e.target.closest('[data-p]');
+  if (y) {
+    var p = Object.assign({}, AKTIF.v[y.dataset.p] || {}), k = y.dataset.k, n = +y.dataset.n;
+    p[k] = p[k] === n ? 0 : n; if (!p[k]) delete p[k];
+    AKTIF.v[y.dataset.p] = p;
+    y.parentNode.querySelectorAll('button').forEach(function (b) { b.classList.toggle('dolu', +b.dataset.n <= (p[k] || 0)); });
+    kaydet(); bolumGuncelle(bolumBul(y.dataset.p));
+  }
+});
+E('form').addEventListener('input', function (e) {
+  var id = e.target.dataset && e.target.dataset.a; if (!id) return;
+  AKTIF.v[id] = e.target.value; kaydet(); bolumGuncelle(bolumBul(id));
+});
+
+/* ---------- sesli not ---------- */
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition, TANIYICI = null;
+function dinle(id, btn){
+  if (TANIYICI) { TANIYICI.stop(); return; }
+  var r = new SR(); r.lang = 'tr-TR'; r.continuous = true; r.interimResults = false;
+  var ta = E('f_' + id);
+  r.onresult = function (ev) {
+    for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) {
+      ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + ev.results[i][0].transcript.trim();
+    }
+    AKTIF.v[id] = ta.value; kaydet(); bolumGuncelle(bolumBul(id));
+  };
+  r.onend = function () { TANIYICI = null; btn.classList.remove('dinliyor'); };
+  r.onerror = function () { toast('Mikrofon kullanılamadı'); };
+  TANIYICI = r; btn.classList.add('dinliyor'); r.start(); toast('Dinliyorum… bitince tekrar dokun');
+}
+
+/* ---------- çıktı ---------- */
+function tl(n){ return n ? Number(n).toLocaleString('tr-TR') + ' ₺' : ''; }
+function deger(a, v){
+  if (!dolu(v)) return '';
+  if (a.tur === 'coklu') return v.join(', ');
+  if (a.tur === 'puan') return Object.keys(v).map(function (k) { return k + ' ' + '★'.repeat(v[k]); }).join(' · ');
+  if (a.birim === '₺') return tl(v);
+  if (a.birim) return v + ' ' + a.birim;
+  if (a.tur === 'tarih') return new Date(v + 'T12:00').toLocaleDateString('tr-TR');
+  return String(v);
+}
+function ozetMetni(musteri){
+  var v = AKTIF.v, s = [];
+  s.push(musteri ? '🏠 *' + (v.site || 'Portföyümüzden bir mülk') + '*'
+                 : '🏠 *EKSPERTİZ — ' + ([v.site, v.blokDaire].filter(Boolean).join(' ') || v.adres || 'Mülk') + '*');
+  var ust = [v.islem, v.tip, v.oda, v.net ? v.net + ' m² net' : (v.brut ? v.brut + ' m² brüt' : ''), v.kat ? v.kat + '. kat' : ''].filter(Boolean).join(' · ');
+  if (ust) s.push(ust);
+  if (v.beklenti && !musteri) s.push('💰 Beklenti: *' + tl(v.beklenti) + '*' + (v.oneri ? ' · Öneri: ' + tl(v.oneri) : ''));
+  BOLUMLER.forEach(function (b) {
+    var satir = [];
+    b.alanlar.forEach(function (a) { (a.tur === 'ikili' ? a.alanlar : [a]).forEach(function (x) {
+      if (musteri && (x.gizli || x.id === 'tarih')) return;
+      var d = deger(x, v[x.id]); if (d) satir.push('• ' + x.ad + ': ' + d);
+    }); });
+    if (satir.length) s.push('\n*' + b.ad + '*\n' + satir.join('\n'));
+  });
+  s.push('\n_RE/MAX Doğuş · ' + (v.danisman || '') + (musteri ? ' · 0216 315 15 15' : '') + '_');
+  return s.join('\n');
+}
+function paylas(){
+  if (kayitBos(AKTIF)) { toast('Önce formu doldur'); return; }
+  E('panel').innerHTML = '<h2>Kime gönderiyorsun?</h2>' +
+    '<button class="secenek" onclick="gonder(false)"><b>🏢 Ofise / brokera</b><small>Tam rapor: mal sahibi, telefon, fiyat, yetki ve notlar dahil</small></button>' +
+    '<button class="secenek" onclick="gonder(true)"><b>👤 Müşteriye</b><small>Sadece mülk özellikleri. Açık adres, daire no, mal sahibi, fiyat notları ve iç notlar çıkarılır</small></button>' +
+    '<button class="b-gri" style="width:100%;border-radius:12px;padding:11px;margin-top:4px" onclick="kayitlariKapat()">Vazgeç</button>';
+  E('perde').classList.remove('gizli');
+}
+function gonder(musteri){
+  kayitlariKapat();
+  var m = ozetMetni(musteri);
+  if (navigator.share) { navigator.share({ text: m }).catch(function () {}); return; }
+  window.open('https://wa.me/?text=' + encodeURIComponent(m), '_blank');
+}
+function yazdir(){
+  if (kayitBos(AKTIF)) { toast('Önce formu doldur'); return; }
+  var v = AKTIF.v;
+  var h = '<div class="r-bas"><img src="https://dogusportal.com/assets/dogus-logo.png" alt=""><div><h1>Ekspertiz Raporu</h1>' +
+    '<small>' + kacis([v.site, v.blokDaire].filter(Boolean).join(' · ') || v.adres || '') + '</small></div></div>';
+  BOLUMLER.forEach(function (b) {
+    var satir = '';
+    b.alanlar.forEach(function (a) { (a.tur === 'ikili' ? a.alanlar : [a]).forEach(function (x) {
+      var d = deger(x, v[x.id]); if (d) satir += '<tr><td>' + x.ad + '</td><td>' + kacis(d).replace(/\n/g, '<br>') + '</td></tr>';
+    }); });
+    if (satir) h += '<div class="r-bol"><h3>' + b.ad + '</h3><table class="r-tab">' + satir + '</table></div>';
+  });
+  h += '<div class="r-alt"><span>RE/MAX Doğuş · ' + kacis(v.danisman || '') + '</span><span>' + new Date().toLocaleDateString('tr-TR') + '</span></div>';
+  E('rapor').innerHTML = h;
+  setTimeout(function () { window.print(); }, 150);
+}
+
+/* ---------- kayıtlar ---------- */
+function kayitlariAc(){
+  KAYITLAR = oku();
+  var h = '<h2>Kayıtlı ekspertizler <button class="b-gri" style="border-radius:10px;padding:6px 10px;font-size:13px" onclick="kayitlariKapat()">Kapat</button></h2>';
+  if (!KAYITLAR.length) h += '<div class="bos">Henüz kayıt yok. Doldurduğun formlar burada saklanır (bu cihazda).</div>';
+  KAYITLAR.forEach(function (k) {
+    var v = k.v, ad = [v.site, v.blokDaire].filter(Boolean).join(' · ') || v.adres || 'Adsız ekspertiz';
+    h += '<div class="kayit' + (AKTIF && AKTIF.id === k.id ? ' aktif' : '') + '"><div onclick="kayitAc(\'' + k.id + '\')"><b>' + kacis(ad) + '</b><small>' +
+      kacis([v.oda, v.net ? v.net + ' m²' : '', v.islem].filter(Boolean).join(' · ')) + ' · ' + new Date(k.guncelleme).toLocaleDateString('tr-TR') +
+      '</small></div><button class="sil" onclick="kayitSil(\'' + k.id + '\')">Sil</button></div>';
+  });
+  E('panel').innerHTML = h; E('perde').classList.remove('gizli');
+}
+function kayitlariKapat(){ E('perde').classList.add('gizli'); }
+function kayitAc(id){
+  var k = KAYITLAR.filter(function (x) { return x.id === id; })[0]; if (!k) return;
+  AKTIF = JSON.parse(JSON.stringify(k)); ACIK = { genel: 1 }; kayitlariKapat(); ciz(); window.scrollTo(0, 0);
+}
+function kayitSil(id){
+  if (!confirm('Bu ekspertiz silinsin mi?')) return;
+  KAYITLAR = KAYITLAR.filter(function (x) { return x.id !== id; }); yaz();
+  if (AKTIF && AKTIF.id === id) { AKTIF = yeniKayit(); ciz(); }
+  kayitlariAc();
+}
+
+function toast(t){ var e = E('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.z); toast.z = setTimeout(function () { e.classList.remove('on'); }, 1800); }
+function geriGit(){ if (history.length > 1 && document.referrer) history.back(); else location.href = 'defter-demo.html'; }
+
+/* ---------- açılış: son yarım kalan formdan devam ---------- */
+KAYITLAR = oku();
+AKTIF = KAYITLAR.length && Date.now() - KAYITLAR[0].guncelleme < 12 * 3600 * 1000 ? JSON.parse(JSON.stringify(KAYITLAR[0])) : yeniKayit();
+ciz();
+</script>
+</body>
+</html>
