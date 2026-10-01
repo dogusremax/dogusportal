@@ -12,6 +12,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 img{max-width:100%;height:auto}
+/* Broker'a özel kartlar */
+body:not(.broker) .app[data-broker]{display:none!important}
+.app[data-broker]{position:relative}
+.app[data-broker]::after{content:"BROKER";position:absolute;top:14px;right:40px;font:700 9px/1 'Inter',sans-serif;letter-spacing:.06em;color:#003DA5;background:#eaf0fb;padding:4px 6px;border-radius:6px}
+.broker-link{display:inline-block;margin-top:10px;font-size:11px;color:#9aa3b5;text-decoration:none;opacity:.7;cursor:pointer;background:none;border:0;font-family:inherit}
 :root {
   --bg: #f6f7f9;
   --line: #e3e7ee;
@@ -191,7 +196,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Müşteri ve talep yönetimi</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://dogusportal.com/nobet.html" target="_blank" rel="noopener">
+    <a class="app" data-broker href="https://dogusportal.com/nobet.html" target="_blank" rel="noopener">
       <div class="icon3d" style="--c1:#9a1020;--c2:#ff5a6a">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
@@ -271,7 +276,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
 
-    <a class="app" href="https://dogusportal.com/toplanti-rapor.html">
+    <a class="app" data-broker href="https://dogusportal.com/toplanti-rapor.html">
       <div class="icon3d" style="--c1:#0f766e;--c2:#14b8a6">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
@@ -280,7 +285,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Performans analizi ve yol haritası</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="#" onclick="perfPinOpen('https://dogusportal.com/nobet-story.html');return false;">
+    <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/nobet-story.html');return false;">
       <div class="icon3d" style="--c1:#910b19;--c2:#fb5160">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>
@@ -308,7 +313,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
 
-    <a class="app" href="#" onclick="perfPinOpen('https://dogusportal.com/kira-takip.html');return false;">
+    <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/kira-takip.html');return false;">
       <div class="icon3d" style="--c1:#0a7d5a;--c2:#34d399">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M12 12v4"/><path d="M12 9h.01"/></svg>
@@ -326,7 +331,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Kişisel sayfan, QR ve tek link</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://dogusremax.github.io/kariyer/" target="_blank" rel="noopener">
+    <a class="app" data-broker href="https://dogusremax.github.io/kariyer/" target="_blank" rel="noopener">
       <div class="icon3d" style="--c1:#b07a1e;--c2:#ffd374">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
@@ -344,7 +349,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">FSBO ve bölge ilan listeleri</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://dogusportal.com/sizlerden-gelenler.html" target="_blank" rel="noopener">
+    <a class="app" data-broker href="https://dogusportal.com/sizlerden-gelenler.html" target="_blank" rel="noopener">
       <div class="icon3d" style="--c1:#dc1c2e;--c2:#ff6b7a">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
@@ -379,13 +384,14 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 
 <footer>
   RE/MAX Doğuş<span class="sep">·</span>UMT GROUP Gayrimenkul<span class="sep">·</span>Fikirtepe, Kadıköy
+  <br><button class="broker-link" id="brokerLink" onclick="brokerToggle()">Broker</button>
 </footer>
 
 <!-- PIN Modalı — Aylık Performans -->
 <div id="pinModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;font-family:'Inter',-apple-system,sans-serif">
   <div style="background:#fff;border-radius:20px;padding:40px 32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;max-width:320px;width:90%;animation:rise .3s ease">
     <div style="font-size:48px;margin-bottom:12px">🔒</div>
-    <div style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:4px">Aylık Performans</div>
+    <div id="pinTitle" style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:4px">Aylık Performans</div>
     <div style="font-size:13px;color:#888;margin-bottom:24px">Broker erişimi gerekli</div>
     <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off"
       style="width:100%;box-sizing:border-box;text-align:center;font-size:32px;letter-spacing:14px;padding:14px;border:2px solid #ddd;border-radius:12px;outline:none;font-family:inherit">
@@ -396,10 +402,14 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 </div>
 <script>
 var _perfUrl='';
-function perfPinOpen(url){if(sessionStorage.getItem('perfAuth')==='ok'){window.open(url,'_blank');return;}_perfUrl=url;var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
+function perfPinOpen(url,baslik){if(url&&sessionStorage.getItem('perfAuth')==='ok'){window.open(url,'_blank');return;}_perfUrl=url;document.getElementById('pinTitle').textContent=baslik||'Broker girişi';var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
 function perfPinClose(){document.getElementById('pinModal').style.display='none';_perfUrl='';}
-function perfPinCheck(){var p=document.getElementById('pinInput').value;if(p==='1520'){sessionStorage.setItem('perfAuth','ok');document.getElementById('pinModal').style.display='none';window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}}
+function perfPinCheck(){var p=document.getElementById('pinInput').value;if(p==='1520'){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}}
 document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===4)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});
+// Broker modu: gizli kartları göster, bu cihazda hatırla
+function brokerAc(){try{localStorage.setItem('dogusBroker','ok');}catch(e){}sessionStorage.setItem('perfAuth','ok');document.body.classList.add('broker');var l=document.getElementById('brokerLink');if(l)l.textContent='Broker modundan çık';}
+function brokerToggle(){if(document.body.classList.contains('broker')){try{localStorage.removeItem('dogusBroker');}catch(e){}sessionStorage.removeItem('perfAuth');document.body.classList.remove('broker');document.getElementById('brokerLink').textContent='Broker';}else perfPinOpen(null,'Broker girişi');}
+try{if(localStorage.getItem('dogusBroker')==='ok')brokerAc();}catch(e){}
 // Google Yorumları kartı: canlı puan
 fetch('data/google-yorumlar.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.toplam)return;var el=document.getElementById('gYorumDesc');if(el)el.textContent='★ '+d.puan.toLocaleString('tr-TR',{minimumFractionDigits:1})+' · '+d.toplam+' yorum';}).catch(function(){});
 </script>
