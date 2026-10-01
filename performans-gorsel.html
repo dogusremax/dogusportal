@@ -154,28 +154,30 @@ function build(d){
   { let rank=0,prev=null; s.forEach(r=>{ if(r.puan!==prev){rank++;prev=r.puan;} r._rank=rank; }); }
   const slides=[];
   const F=d.force||{},H=d.hide||{};
-  const fC=x=>x.ciro||0, fI=x=>x.kapanis||0, fS=x=>(x.counts&&x.counts.sosyal_medya)||0;
+  const fC=x=>x.ciro||0, fI=x=>x.kapanis||0, fS=x=>(x.counts&&x.counts.sosyal_medya)||0, fY=x=>x.yorum||0;
   const wCiro=H.ciro?[]:(F.ciro?[F.ciro]:bestAll(s,fC)), wIslem=H.islem?[]:(F.islem?[F.islem]:bestAll(s,fI)), wSosyal=H.sosyal?[]:(F.sosyal?[F.sosyal].concat(F.sosyal2&&F.sosyal2.id!==F.sosyal.id?[F.sosyal2]:[]):bestAll(s,fS));
-  const bCiro=wCiro[0]||null, bIslem=wIslem[0]||null, bSosyal=wSosyal[0]||null;
+  const wYorum=H.yorum?[]:(F.yorum?[F.yorum]:bestAll(s,fY));
+  const bCiro=wCiro[0]||null, bIslem=wIslem[0]||null, bSosyal=wSosyal[0]||null, bYorum=wYorum[0]||null;
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
-    const ico={ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>'};
-    const cats=[['AYIN CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],['AYIN İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal']];
-    const cards=cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(4px);">
-<div style="width:44px;height:44px;border-radius:13px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 44px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
-<div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:13px;color:rgba(255,255,255,.7);margin-top:2px;">${c[1]}</div></div>
-<div class="sans" style="width:34px;height:34px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:rgba(255,255,255,.6);">?</div></div>`).join('');
+    const ico={ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>',yorum:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/>'};
+    const cats=[['AYIN CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],['AYIN İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
+    const cards=cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:9px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(4px);">
+<div style="width:38px;height:38px;border-radius:11px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 38px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
+<div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">${c[1]}</div></div>
+<div class="sans" style="width:30px;height:30px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:rgba(255,255,255,.6);">?</div></div>`).join('');
     slides.push(`<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 80% 110%,rgba(220,28,46,.45),transparent 60%);"></div>
 ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Şampiyonları</h1>
-<p class="sans" style="font-size:13px;color:rgba(255,255,255,.6);margin:10px 0 0;line-height:1.5;">${d.ayAdi} ayında üç kategoride zirveye çıkan danışmanlarımız.</p></div>
-<div style="position:absolute;left:32px;right:32px;bottom:74px;display:flex;flex-direction:column;gap:10px;">${cards}</div>
+<p class="sans" style="font-size:13px;color:rgba(255,255,255,.6);margin:10px 0 0;line-height:1.5;">${d.ayAdi} ayında dört kategoride zirveye çıkan danışmanlarımız.</p></div>
+<div style="position:absolute;left:32px;right:32px;bottom:70px;display:flex;flex-direction:column;gap:8px;">${cards}</div>
 <div class="sans" style="position:absolute;left:32px;bottom:40px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
     if(bCiro)slides.push(catAny(wCiro,'AYIN CİRO BİRİNCİSİ','',`${d.ayAdi} ayının ciro lideri`,true));
     if(bIslem)slides.push(catAny(wIslem,'AYIN İŞLEM BİRİNCİSİ','',`${d.ayAdi} ayında en çok işlem kapatan`,false));
     if(bSosyal)slides.push(catAny(wSosyal,'SOSYAL MEDYA BİRİNCİSİ','',`${d.ayAdi} ayında en çok içerik üreten`,true));
+    if(bYorum)slides.push(catAny(wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','',`${d.ayAdi} ayında müşterilerinden en çok Google yorumu alan`,false));
     slides.push(ctaSlide(d));
     TOTAL=slides.length;
     return slides.map((h,i)=>h.replace(/__PCT__/g,String(((i+1)/TOTAL)*100)).replace(/__N__/g,String(i+1)).replace(/__T__/g,String(TOTAL)));
@@ -208,16 +210,16 @@ ${STORY?`<div class="sans" style="margin-top:28px;font-size:13px;color:rgba(255,
 
 
 // ==== ELLE DÜZENLEME ====
-let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};
+let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',yorum:'',yorumV:'',hideCiro:false,hideIslem:false,hideSosyal:false,hideYorum:false};
 function buildPanel(){
   const opts=(sel)=>'<option value="">— otomatik —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span style="font-size:10px;color:#8a8fa3;">berabere / ikinci kişi</span></div>`):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span style="font-size:10px;color:#8a8fa3;">berabere / ikinci kişi</span></div>`+row('Yorum','yorum','yorumV','adet','hideYorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
-function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
+function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2','yorum'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','yorumV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
 function applyOvr(){readPanel();render(applyOverrides(DATA));}
-function resetOvr(){OVR={soz:'',sozKim:'',sosyal2:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',hideCiro:false,hideIslem:false,hideSosyal:false};buildPanel();render(DATA);}
+function resetOvr(){OVR={soz:'',sozKim:'',sosyal2:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',yorum:'',yorumV:'',hideCiro:false,hideIslem:false,hideSosyal:false,hideYorum:false};buildPanel();render(DATA);}
 function applyOverrides(d){
   const base=d.siralama.map(r=>JSON.parse(JSON.stringify(r)));
   const byId=id=>base.find(r=>r.id===id);
@@ -236,7 +238,8 @@ function applyOverrides(d){
   if(OVR.islem){const r=byId(OVR.islem);if(r){o.force.islem=r;const v=parseInt(OVR.islemV);if(!isNaN(v))r.kapanis=v;}}
   if(OVR.sosyal){const r=byId(OVR.sosyal);if(r){o.force.sosyal=r;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r.counts.sosyal_medya=v;}}
   if(OVR.sosyal2){const r2=byId(OVR.sosyal2);if(r2){o.force.sosyal2=r2;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r2.counts.sosyal_medya=v;}}
-  o.hide={ciro:OVR.hideCiro,islem:OVR.hideIslem,sosyal:OVR.hideSosyal};
+  if(OVR.yorum){const r=byId(OVR.yorum);if(r){o.force.yorum=r;const v=parseInt(OVR.yorumV);if(!isNaN(v))r.yorum=v;}}
+  o.hide={ciro:OVR.hideCiro,islem:OVR.hideIslem,sosyal:OVR.hideSosyal,yorum:OVR.hideYorum};
   return o;
 }
 function fillMonths(){
@@ -252,6 +255,15 @@ function fillMonths(){
   sel.onchange=load;
 }
 
+/* Müşteri memnuniyeti: o ay portala giren (4★+, danışmana bağlı) Google yorumlarının sayısı */
+async function yorumSay(d, ay){
+  try{
+    const v=await (await fetch('data/google-yorumlar.json?cb='+Date.now(),{cache:'no-store'})).json();
+    const say={};
+    (v.yorumlar||[]).filter(y=>String(y.tarih||'').slice(0,7)===ay).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
+    d.siralama.forEach(r=>r.yorum=say[r.id]||0);
+  }catch(e){ console.warn('Google yorumları okunamadı:', e); }
+}
 async function load(){
   const ay=document.getElementById('ay').value, st=document.getElementById('status'), grid=document.getElementById('grid');
   st.textContent='Danışman Takip\'ten veri çekiliyor…'; grid.innerHTML=''; document.getElementById('zipbtn').disabled=true; document.body.removeAttribute('data-ready');
@@ -259,6 +271,7 @@ async function load(){
     const res=await fetch(DONEM==='hafta'?`${APPS_SCRIPT_URL}?action=haftalik&hafta=${ay}&k=${KEY}`:`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
     if(DATA.error)throw new Error(DATA.error);
     if(!DATA.hasData){st.textContent=`${DATA.ayAdi} ${DATA.yil} için kayıt bulunamadı.`;return;}
+    if(DONEM!=='hafta') await yorumSay(DATA, ay);
     buildPanel();
     await render(DATA);
   }catch(e){st.textContent='Hata: '+e.message;}
@@ -411,7 +424,7 @@ fillMonths(); load();
 function ghTok(){return localStorage.getItem('ghToken')||'';}  // sunucu kendi anahtarını kullanır, sayfa sormaz
 function igCaption(){
   const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
-  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nCiro, işlem ve sosyal medyada zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nCiro, işlem, sosyal medya ve müşteri memnuniyetinde zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   if(DONEM==='hafta') return `${DATA.ayAdi} haftasının podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   return `${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
 }
