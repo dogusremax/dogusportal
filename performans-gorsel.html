@@ -28,6 +28,7 @@
   .ovr select{width:100%;min-width:0;padding:7px 8px;font-size:12px}
   .ovr input{width:100%;min-width:0;padding:7px 8px;border-radius:8px;border:0;background:#161c44;color:#fff;font:600 12px 'Plus Jakarta Sans',sans-serif}
   .ovr .ek{grid-column:3/5;font-size:10.5px;color:#8a8fa3;line-height:1.2}
+  .ovr.ikili{grid-template-columns:82px minmax(0,1fr) minmax(0,1fr)}
   .ovr.genis{grid-column:1/-1;grid-template-columns:82px minmax(0,1fr) 160px}
   .ovr .off{width:100%;padding:7px 0;background:rgba(255,255,255,.1);font-size:11px}
   .ovr .off.on{background:#DC1C2E}
@@ -110,20 +111,20 @@ ${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(fal
 
 
 const fmtTL=n=>{n=n||0;if(n>=1e6)return '₺'+(n/1e6).toLocaleString('tr-TR',{maximumFractionDigits:1})+' M';if(n>=1e3)return '₺'+Math.round(n/1e3).toLocaleString('tr-TR')+' B';return '₺'+Math.round(n).toLocaleString('tr-TR');};
-function catSlide(r,label,valueHtml,sub,red){
+function catSlide(r,label,valueHtml,sub,red,no){
   const ptc=red?NAVY:CORAL;
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
-<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">1</div>${logo(false)}
+<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
 <div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?340:260}px;height:${STORY?545:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?545:440,STORY?340:260)}</div>
 <div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
-<div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;">${label}</div>
+<div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
 ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:8px;">${sub}</div></div>${arrow()}${progress()}</div>`;
 }
 function bestBy(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return null;return c.slice().sort((a,b)=>f(b)-f(a)||b.puan-a.puan)[0];}
 function bestAll(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return [];const m=Math.max(...c.map(f));return c.filter(x=>f(x)===m).sort((a,b)=>b.puan-a.puan).slice(0,3);}
-function catSlideMulti(ws,label,valueHtml,sub,red){
+function catSlideMulti(ws,label,valueHtml,sub,red,no){
   const ptc=red?NAVY:CORAL, n=ws.length, h=n===2?270:245;
   /* Fotoğraf oranı tek kişilik tasarımla aynı olsun (260/440 ≈ 0.59),
      yoksa iki kişi yan yana gelince kareler yayvan görünüyordu. */
@@ -132,7 +133,7 @@ function catSlideMulti(ws,label,valueHtml,sub,red){
   const figs=ws.map((r,k)=>`<div style="position:relative;margin:0 ${n===2?-8:-12}px;z-index:${k===1?2:1};">${cut(r.id,h,w)}</div>`).join('');
   const tags=ws.map(r=>`<div class="sans" style="padding:5px 9px;background:rgba(5,10,48,.9);border:1px solid rgba(255,255,255,.14);border-radius:12px;font-size:10.5px;font-weight:700;color:#fff;white-space:nowrap;">${r.name}</div>`).join('');
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
-<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">1</div>${logo(false)}
+<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
 <div style="position:absolute;left:32px;right:32px;top:92px;z-index:5;">
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:10px;">${label}</div>
 ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
@@ -141,7 +142,28 @@ ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spac
 <div style="position:absolute;left:0;right:0;bottom:56px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
 ${arrow()}${progress()}</div>`;
 }
-function catAny(ws,label,val,sub,red){return ws.length===1?catSlide(ws[0],label,val,sub,red):catSlideMulti(ws,label,val,sub,red);}
+function catAny(ws,label,val,sub,red,no){return ws.length===1?catSlide(ws[0],label,val,sub,red,no):catSlideMulti(ws.slice(0,3),label,val,sub,red,no);}
+/* Tüm kategorilerin ilk üçü tek slaytta — kats: [{ad, ikon, satirlar:[{rs:[...], m:'🥇', v:'2 işlem'}]}] */
+function ilkUclerSlide(d,kats){
+  const satir=x=>{
+    const n=x.rs.length;
+    const av=x.rs.slice(0,3).map((r,i)=>`<div style="margin-left:${i?-12:0}px;position:relative;z-index:${3-i};">${circ(r.id,26,'rgba(255,255,255,.35)')}</div>`).join('');
+    const ad=n===1?x.rs[0].name:x.rs.slice(0,3).map(r=>r.name.split(' ')[0]).join(' · ')+(n>3?' +'+(n-3):'');
+    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-top:1px solid rgba(255,255,255,.07);">
+<span style="font-size:14px;line-height:1;flex:0 0 18px;">${x.m}</span><div style="display:flex;flex:0 0 auto;">${av}</div>
+<div style="min-width:0;flex:1;"><div class="sans" style="font-size:11px;font-weight:700;color:#fff;line-height:1.15;${n>1?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${ad}</div><div class="sans" style="font-size:9.5px;color:rgba(255,255,255,.6);margin-top:1px;white-space:nowrap;">${x.v}</div></div></div>`;
+  };
+  const kutu=k=>`<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px 10px 5px;min-width:0;">
+<div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><div style="width:22px;height:22px;border-radius:7px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 22px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${k.ikon}</svg></div><div class="sans" style="font-size:9.5px;font-weight:800;letter-spacing:1.2px;color:${CORAL};">${k.ad}</div></div>
+${k.satirlar.length?k.satirlar.map(satir).join(''):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">Bu ay kayıt yok</div>'}</div>`;
+  return `<div class="slide" style="background:${NAVY};">
+<div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
+${logo(true)}
+<div style="position:absolute;left:28px;right:28px;top:30px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:15px;font-weight:700;padding:5px 11px;border-radius:8px;">${d.ayAdi} Ayı</div>
+<h2 class="sans" style="font-size:28px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:6px 0 0;line-height:1.05;">İlk Üçler</h2></div>
+<div style="position:absolute;left:24px;right:24px;top:118px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">${kats.map(kutu).join('')}</div>
+${progress()}</div>`;
+}
 function ctaSlide(d){
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
@@ -160,6 +182,19 @@ function build(d){
   const wCiro=H.ciro?[]:(F.ciro?[F.ciro]:bestAll(s,fC)), wIslem=H.islem?[]:(F.islem?[F.islem]:bestAll(s,fI)), wSosyal=H.sosyal?[]:(F.sosyal?[F.sosyal].concat(F.sosyal2&&F.sosyal2.id!==F.sosyal.id?[F.sosyal2]:[]):bestAll(s,fS));
   const wYorum=H.yorum?[]:(F.yorum?[F.yorum]:bestAll(s,fY));
   const bCiro=wCiro[0]||null, bIslem=wIslem[0]||null, bSosyal=wSosyal[0]||null, bYorum=wYorum[0]||null;
+  // 2. ve 3.: birincilerden sonraki iki değer grubu (elle seçildiyse o kişiler; '-' = gösterme)
+  const fmtN=n=>Number(n||0).toLocaleString('tr-TR',{maximumFractionDigits:2});
+  const ruFor=(key,f,ws,fmt)=>{
+    const f2=F['ru_'+key+'_2'], f3=F['ru_'+key+'_3'];
+    if(f2||f3) return [[f2,'🥈'],[f3,'🥉']].filter(x=>x[0]&&x[0]!=='-').map(x=>({rs:[x[0]],m:x[1],v:fmt(x[0])}));
+    // beraberlikte aynı madalyada birlikte gösterilir
+    const rest=s.filter(x=>f(x)>0&&!ws.includes(x)).sort((a,b)=>f(b)-f(a)||b.puan-a.puan);
+    const gruplar=[];
+    rest.forEach(x=>{ const g=gruplar[gruplar.length-1]; if(g&&f(g.rs[0])===f(x)) g.rs.push(x); else gruplar.push({rs:[x]}); });
+    return gruplar.slice(0,2).map((g,i)=>({rs:g.rs,m:i?'🥉':'🥈',v:fmt(g.rs[0])}));
+  };
+  const ruCiro=ruFor('ciro',fC,wCiro,x=>fmtTL(fC(x))), ruIslem=ruFor('islem',fI,wIslem,x=>fmtN(fI(x))+' işlem'),
+        ruSosyal=ruFor('sosyal',fS,wSosyal,x=>fS(x)+' içerik'), ruYorum=ruFor('yorum',fY,wYorum,x=>fY(x)+' yorum');
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
     const ico={ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>',yorum:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/>'};
@@ -180,6 +215,12 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
     if(bIslem)slides.push(catAny(wIslem,'AYIN İŞLEM BİRİNCİSİ','',`${d.ayAdi} ayında en çok işlem kapatan`,false));
     if(bSosyal)slides.push(catAny(wSosyal,'SOSYAL MEDYA BİRİNCİSİ','',`${d.ayAdi} ayında en çok içerik üreten`,true));
     if(bYorum)slides.push(catAny(wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','',`${d.ayAdi} ayında müşterilerinden en çok Google yorumu alan`,false));
+    // Tüm kategorilerin 1-2-3'ü tek liste slaytında (gizlenen kategori listede de yok)
+    const ilk=(ws,ru,fmt)=>ws.length?[{rs:ws,m:'🥇',v:fmt(ws[0])}].concat(ru):[];
+    const kats=[['CİRO','ciro',wCiro,ruCiro,x=>fmtTL(fC(x))],['İŞLEM','islem',wIslem,ruIslem,x=>fmtN(fI(x))+' işlem'],
+      ['SOSYAL MEDYA','sosyal',wSosyal,ruSosyal,x=>fS(x)+' içerik'],['MÜŞTERİ MEMNUNİYETİ','yorum',wYorum,ruYorum,x=>fY(x)+' yorum']]
+      .filter(k=>!H[k[1]]).map(k=>({ad:k[0],ikon:ico[k[1]],satirlar:ilk(k[2],k[3],k[4])}));
+    if(kats.some(k=>k.satirlar.length))slides.push(ilkUclerSlide(d,kats));
     slides.push(ctaSlide(d));
     TOTAL=slides.length;
     return slides.map((h,i)=>h.replace(/__PCT__/g,String(((i+1)/TOTAL)*100)).replace(/__N__/g,String(i+1)).replace(/__T__/g,String(TOTAL)));
@@ -215,11 +256,14 @@ ${STORY?`<div class="sans" style="margin-top:28px;font-size:13px;color:rgba(255,
 let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',yorum:'',yorumV:'',hideCiro:false,hideIslem:false,hideSosyal:false,hideYorum:false};
 function buildPanel(){
   const opts=(sel)=>'<option value="">— otomatik —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
+  const optsRu=(sel)=>'<option value="">— otomatik —</option><option value="-" '+(sel==='-'?'selected':'')+'>— gösterme —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
+  const ruRow=(lbl,k)=>`<div class="ovr ikili"><label>${lbl} 2-3.</label><select id="o-ru_${k}_2" title="2.">${optsRu(OVR['ru_'+k+'_2'])}</select><select id="o-ru_${k}_3" title="3.">${optsRu(OVR['ru_'+k+'_3'])}</select></div>`;
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span class="ek">berabere / ikinci kişi</span></div>`+row('Yorum','yorum','yorumV','adet','hideYorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr genis"><label>Söz</label><input id="o-soz" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+ruRow('Ciro','ciro')+row('İşlem','islem','islemV','adet','hideIslem')+ruRow('İşlem','islem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span class="ek">berabere / ikinci kişi</span></div>`+ruRow('S.Medya','sosyal')+row('Yorum','yorum','yorumV','adet','hideYorum')+ruRow('Yorum','yorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr genis"><label>Söz</label><input id="o-soz" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
-function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2','yorum'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','yorumV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
+const RU_KEYS=['ciro','islem','sosyal','yorum'].flatMap(k=>['ru_'+k+'_2','ru_'+k+'_3']);
+function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2','yorum'].concat(RU_KEYS).forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','yorumV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
 function applyOvr(){readPanel();render(applyOverrides(DATA));}
 function resetOvr(){OVR={soz:'',sozKim:'',sosyal2:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciroV:'',islem:'',islemV:'',sosyal:'',sosyal2:'',sosyalV:'',yorum:'',yorumV:'',hideCiro:false,hideIslem:false,hideSosyal:false,hideYorum:false};buildPanel();render(DATA);}
 function applyOverrides(d){
@@ -241,6 +285,7 @@ function applyOverrides(d){
   if(OVR.sosyal){const r=byId(OVR.sosyal);if(r){o.force.sosyal=r;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r.counts.sosyal_medya=v;}}
   if(OVR.sosyal2){const r2=byId(OVR.sosyal2);if(r2){o.force.sosyal2=r2;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r2.counts.sosyal_medya=v;}}
   if(OVR.yorum){const r=byId(OVR.yorum);if(r){o.force.yorum=r;const v=parseInt(OVR.yorumV);if(!isNaN(v))r.yorum=v;}}
+  RU_KEYS.forEach(k=>{const v=OVR[k];if(v==='-')o.force[k]='-';else if(v){const r=byId(v);if(r)o.force[k]=r;}});
   o.hide={ciro:OVR.hideCiro,islem:OVR.hideIslem,sosyal:OVR.hideSosyal,yorum:OVR.hideYorum};
   return o;
 }
