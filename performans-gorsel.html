@@ -82,7 +82,7 @@ const SH=STORY?747:560; // 'puan' | 'birinci'
 const photo=id=>`assets/ekip/${id}.png`;
 const cut=(id,h,w)=>`<div style="width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" onerror="this.style.visibility='hidden'"></div>`;
 const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid ${ring};overflow:hidden;flex:0 0 ${s}px;position:relative;"><img src="${photo(id)}" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%;width:auto;" onerror="this.style.display='none'"></div>`;
-const logo=(right)=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;${right?'right':'left'}:32px;width:110px;z-index:12;">`;
+const logo=()=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;right:32px;width:110px;z-index:12;">`;   // logo her slaytta sağ üstte
 const progress=()=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:__PCT__%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">__N__/__T__</span></div>`;
 const arrow=()=>`<div style="position:absolute;right:0;top:0;bottom:0;width:48px;z-index:9;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
 const wm=(t,c)=>`<div class="sans" style="position:absolute;top:-50px;left:18px;font-size:${STORY?440:(t.length>1?350:380)}px;font-weight:800;line-height:1;color:${c};letter-spacing:-16px;">${t}</div>`;
@@ -155,7 +155,6 @@ function ilkUclerSlide(d,kats){
 ${k.satirlar.length?(k.genis?yatay(k):k.satirlar.map(x=>satir(x,k.satirlar.reduce((t,g)=>t+g.rs.length,0)>3)).join('')):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">Bu ay kayıt yok</div>'}</div>`;
   return `<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
-${logo(true)}
 <div style="position:absolute;left:28px;right:28px;top:26px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${d.ayAdi} Ayı</div>
 <h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:0;line-height:1.05;">İlk Üçler</h2></div>
 <div style="position:absolute;left:24px;right:24px;top:78px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
