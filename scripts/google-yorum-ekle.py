@@ -6,11 +6,16 @@ cekilen.json: scripts/google-yorum-tarayici.js çıktısı ({"puan","toplam","yu
 Araç çıktısı dosyaya kaydedildiyse ([{"type":"text","text":"..."}] biçimi) o da kabul edilir.
 
 Kurallar: sadece 4★ ve üzeri, data/danismanlar.json'daki danışmanlardan en az birinin adı geçen
-yorumlar listeye girer. Görülen tüm yorum id'leri data/google-yorum-gorulen.json'a yazılır.
+yorumlar listeye girer. Metninde danışman adı geçmeyen yorumlarda yorumu yazanın adı kapanış
+formundaki mal sahibi / alıcı-kiracı adlarıyla eşleştirilir (önce ad+soyad, yoksa soyad) ve
+kapanışı yapan danışman aktifse yorum ona yazılır. Eşleşmeyen yeni (30 günden genç) isimsiz
+yorumlar görülen listesine yazılmaz; kapanış formu sonradan doldurulursa sonraki çalışmada eşleşir.
+Görülen tüm yorum id'leri data/google-yorum-gorulen.json'a yazılır.
 """
-import json, re, sys, datetime
+import json, re, sys, datetime, urllib.request
 
 VERI, GORULEN, DANISMAN = 'data/google-yorumlar.json', 'data/google-yorum-gorulen.json', 'data/danismanlar.json'
+KAPANIS_URL = 'https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec?action=getRecords'
 
 def norm(s):
     return (s or '').replace('ș', 'ş').replace('Ș', 'Ş').replace('İ', 'i').replace('I', 'ı').lower()
@@ -22,6 +27,46 @@ def yaklasik_tarih(once, simdi):
     n = 1 if m.group(1) == 'bir' else int(m.group(1))
     gun = {'dakika': 1 / 1440, 'saat': 1 / 24, 'gün': 1, 'hafta': 7, 'ay': 30.4, 'yıl': 365}[m.group(2)]
     return simdi - datetime.timedelta(days=n * gun)
+
+def sade(s):
+    """İsim karşılaştırması için: küçük harf, Türkçe karakterler ASCII, sadece harf kelimeleri."""
+    s = norm(s).translate(str.maketrans('çğıöşüâî', 'cgiosuai'))
+    return [k for k in re.findall(r'[a-z]+', s) if len(k) > 1]
+
+def kapanislari_al():
+    try:
+        return json.load(urllib.request.urlopen(KAPANIS_URL, timeout=90)).get('records') or []
+    except Exception as e:
+        print('UYARI: kapanış formu okunamadı, isimsiz yorumlar eşleştirilemedi:', e)
+        return []
+
+def kapanistan_danisman(yazar, tarih, kapanislar, desenler):
+    """Yorumu yazanı kapanış formundaki müşteri adlarıyla eşleştirip aktif danışman id'lerini döndürür."""
+    y = sade(yazar)
+    if not y:
+        return []
+    tam, soyad = [], []
+    for k in kapanislar:
+        try:
+            kt = datetime.datetime.strptime(str(k.get('date', ''))[:10], '%Y-%m-%d')
+        except ValueError:
+            continue
+        if not (tarih - datetime.timedelta(days=120) <= kt <= tarih + datetime.timedelta(days=3)):
+            continue
+        for ad in (k.get('ownerName'), k.get('buyerName')):
+            a = sade(ad)
+            if not a:
+                continue
+            if len(y) > 1 and all(t in a for t in y):
+                tam.append(k)
+            elif len(y[-1]) >= 4 and y[-1] == a[-1]:
+                soyad.append(k)
+    # Ad+soyad eşleşmesinde işlemdeki tüm danışmanlar yazılır; sadece soyad eşleşiyorsa
+    # tek danışman çıkmalı, yoksa belirsiz sayılır.
+    danismanlar = {norm(k.get('advisor', '')) for k in (tam or soyad)}
+    if not tam and len(danismanlar) != 1:
+        return []
+    return [i for i, p in desenler if any(p.search(d) for d in danismanlar)]
 
 def main():
     cekilen = json.load(open(sys.argv[1]))
@@ -39,20 +84,35 @@ def main():
     simdi = datetime.datetime.utcnow()
     ts = lambda t: t.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    eklenen = []
+    kapanislar = None
+    eklenen, bekleyen = [], []
     for y in cekilen.get('yeni', []):
         if y['id'] in gorulen:
             continue
-        gorulen.add(y['id'])
-        danismanlar = [i for i, p in desenler if p.search(norm(y.get('metin')))]
-        if y.get('puan', 0) < 4 or not danismanlar:
+        if y.get('puan', 0) < 4:
+            gorulen.add(y['id'])
             continue
-        t = ts(yaklasik_tarih(y.get('once'), simdi))
+        tarih = yaklasik_tarih(y.get('once'), simdi)
+        danismanlar = [i for i, p in desenler if p.search(norm(y.get('metin')))]
+        eslesme = 'metin'
+        if not danismanlar:
+            if kapanislar is None:
+                kapanislar = kapanislari_al()
+            danismanlar = kapanistan_danisman(y.get('yazar'), tarih, kapanislar, desenler)
+            eslesme = 'kapanis'
+        if not danismanlar:
+            if simdi - tarih < datetime.timedelta(days=30):
+                bekleyen.append(y)          # görülen'e yazma: kapanış formu doldurulunca tekrar denenecek
+            else:
+                gorulen.add(y['id'])
+            continue
+        gorulen.add(y['id'])
+        t = ts(tarih)
         kayit = {
             'id': y['id'], 'yazar': y.get('yazar', ''), 'yazarUrl': y.get('yazarUrl', ''), 'foto': y.get('foto', ''),
             'puan': y['puan'], 'metin': y.get('metin', ''), 'yanit': y.get('yanit', ''),
             'tarih': t, 'tarihYaklasik': True, 'once': (y.get('once') or '').replace(' düzenlendi', ''),
-            'danismanlar': danismanlar, 'kaynak': 'tarayici', 'ilkGorulme': ts(simdi),
+            'danismanlar': danismanlar, 'eslesme': eslesme, 'kaynak': 'tarayici', 'ilkGorulme': ts(simdi),
         }
         veri['yorumlar'].append(kayit)
         eklenen.append(kayit)
@@ -71,7 +131,10 @@ def main():
     print(f"Google: {veri['puan']}★ · {veri['toplam']} yorum | yüklenen {cekilen.get('yuklenen')} | "
           f"yeni görülen {len(cekilen.get('yeni', []))} | listeye eklenen {len(eklenen)}")
     for k in eklenen:
-        print(' +', ', '.join(ad[i] for i in k['danismanlar']), '|', k['yazar'], '|', k['metin'][:80].replace('\n', ' '))
+        print(' +', ', '.join(ad[i] for i in k['danismanlar']), '|', k['yazar'], '|', k['metin'][:80].replace('\n', ' '),
+              '| (kapanış formundan eşleşti)' if k['eslesme'] == 'kapanis' else '')
+    for y in bekleyen:
+        print(' ? eşleşmedi, sonraki çalışmada tekrar denenecek |', y.get('yazar'), '|', (y.get('metin') or '(metinsiz)')[:80].replace('\n', ' '))
 
 if __name__ == '__main__':
     main()
