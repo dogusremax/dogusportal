@@ -145,23 +145,19 @@ ${arrow()}${progress()}</div>`;
 function catAny(ws,label,val,sub,red,no){return ws.length===1?catSlide(ws[0],label,val,sub,red,no):catSlideMulti(ws.slice(0,3),label,val,sub,red,no);}
 /* Tüm kategorilerin ilk üçü tek slaytta — kats: [{ad, ikon, satirlar:[{rs:[...], m:'🥇', v:'2 işlem'}]}] */
 function ilkUclerSlide(d,kats){
-  const satir=x=>{
-    const n=x.rs.length;
-    const av=x.rs.slice(0,3).map((r,i)=>`<div style="margin-left:${i?-12:0}px;position:relative;z-index:${3-i};">${circ(r.id,26,'rgba(255,255,255,.35)')}</div>`).join('');
-    const ad=n===1?x.rs[0].name:x.rs.slice(0,3).map(r=>r.name.split(' ')[0]).join(' · ')+(n>3?' +'+(n-3):'');
-    return `<div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-top:1px solid rgba(255,255,255,.07);">
-<span style="font-size:14px;line-height:1;flex:0 0 18px;">${x.m}</span><div style="display:flex;flex:0 0 auto;">${av}</div>
-<div style="min-width:0;flex:1;"><div class="sans" style="font-size:12px;font-weight:700;color:#fff;line-height:1.2;${n>1?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${ad}</div></div></div>`;
-  };
+  // Beraberlikte her kişi kendi satırında (aynı madalya), isimler Türkçe alfabetik; kalabalık kutuda satırlar sıkışır
+  const satir=(x,sik)=>x.rs.slice().sort((p,q)=>p.name.localeCompare(q.name,'tr')).map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:${sik?2.5:5}px 0;border-top:1px solid rgba(255,255,255,${i?'.03':'.08'});">
+<span style="font-size:${sik?12:13}px;line-height:1;flex:0 0 17px;">${x.m}</span>${circ(r.id,sik?20:24,'rgba(255,255,255,.35)')}
+<div class="sans" style="min-width:0;flex:1;font-size:${sik?11.5:12}px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.name}</div></div>`).join('');
   const kutu=k=>`<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px 10px 5px;min-width:0;">
 <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><div style="width:22px;height:22px;border-radius:7px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 22px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${k.ikon}</svg></div><div class="sans" style="font-size:9.5px;font-weight:800;letter-spacing:1.2px;color:${CORAL};">${k.ad}</div></div>
-${k.satirlar.length?k.satirlar.map(satir).join(''):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">Bu ay kayıt yok</div>'}</div>`;
+${k.satirlar.length?k.satirlar.map(x=>satir(x,k.satirlar.reduce((t,g)=>t+g.rs.length,0)>4)).join(''):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">Bu ay kayıt yok</div>'}</div>`;
   return `<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
 ${logo(true)}
-<div style="position:absolute;left:28px;right:28px;top:30px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:15px;font-weight:700;padding:5px 11px;border-radius:8px;">${d.ayAdi} Ayı</div>
-<h2 class="sans" style="font-size:28px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:6px 0 0;line-height:1.05;">İlk Üçler</h2></div>
-<div style="position:absolute;left:24px;right:24px;top:118px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">${kats.map(kutu).join('')}</div>
+<div style="position:absolute;left:28px;right:28px;top:28px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:14px;font-weight:700;padding:4px 10px;border-radius:8px;">${d.ayAdi} Ayı</div>
+<h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:5px 0 0;line-height:1.05;">İlk Üçler</h2></div>
+<div style="position:absolute;left:24px;right:24px;top:100px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">${kats.map(kutu).join('')}</div>
 ${progress()}</div>`;
 }
 function ctaSlide(d){
