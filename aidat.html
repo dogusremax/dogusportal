@@ -228,6 +228,8 @@ function danismanCiz(){
     '<div class="et">'+(temiz?'Borcunuz yok':'Güncel borcunuz')+'</div>' +
     '<div class="tut">'+(temiz? (h.bakiye<0? tl(-h.bakiye)+' alacak' : '0 TL') : tl(h.bakiye))+'</div>' +
     '<div class="alt">'+(h.bekleyen>0? tl(h.bekleyen)+' onay bekliyor · ' : '')+'Son ödeme her ayın '+VERI.sonGun+"'u</div>" +
+    (!temiz && h.hesaplar.filter(function(x){return x.bakiye>0;}).length>1 ? '<div class="alt" style="margin-top:8px">'+
+      h.hesaplar.filter(function(x){return x.bakiye>0;}).map(function(x){ return esc(hesapKalemleri(x.hesap))+': <b>'+tl(x.bakiye)+'</b>'; }).join('<br>')+'</div>' : '') +
     (temiz? '' : '<button class="dugme" onclick="odemeAc()">Havale / EFT ile öde</button>') +
   '</div>';
 
@@ -249,7 +251,7 @@ function odemeListesi(liste, iptalli){
   if (!liste.length) return '<div class="bos">Henüz ödeme yok.</div>';
   return liste.map(function(o){
     var r = o.durum==='Onaylandı'?['r-odendi','Onaylandı']:o.durum==='Bekliyor'?['r-bekliyor','Onay bekliyor']:['r-red','Reddedildi'];
-    return '<div class="satir"><div class="bilgi"><b>'+tl(o.tutar)+'</b><span>'+tarihTR(o.tarih||o.bildirim)+(o.dekont?' · <a href="'+esc(o.dekont)+'" target="_blank">dekont</a>':'')+(o.not?' · '+esc(o.not):'')+'</span></div>' +
+    return '<div class="satir"><div class="bilgi"><b>'+tl(o.tutar)+(o.hesap==='Şahsi'?' · Revy':'')+'</b><span>'+tarihTR(o.tarih||o.bildirim)+(o.dekont?' · <a href="'+esc(o.dekont)+'" target="_blank">dekont</a>':'')+(o.not?' · '+esc(o.not):'')+'</span></div>' +
       '<span class="rozet '+r[0]+'">'+r[1]+'</span>' +
       (iptalli && o.durum==='Bekliyor' ? '<button class="mini kirmizi" onclick="iptal(\''+o.id+'\')">Geri al</button>' : '') + '</div>';
   }).join('');
@@ -262,31 +264,43 @@ function iptal(id){
 
 /* ---- Ödeme ekranı ---- */
 var DEKONT = null, KOPYA = [];
+var HESAP_AD = { 'Şirket':'Şirket hesabı', 'Şahsi':'Revy hesabı' };
+function hesapKalemleri(h){ return VERI.kalemler.filter(function(k){ return k.hesap===h; }).map(function(k){ return k.ad; }).join(' + ') || HESAP_AD[h]; }
 function odemeAc(){
   KOPYA = [];
-  var h = VERI.hesap, b = VERI.banka;
+  var h = VERI.hesap;
   var acik = h.aylar.filter(function(m){ return m.kalan>0; }).map(function(m){ return ayAd(m.donem).split(' ')[0]; }).reverse();
-  var aciklama = VERI.ben.kod + ' ' + (acik.length ? acik.join('-').toUpperCase() : '') ;
-  aciklama = aciklama.trim();
-  var odenecek = Math.max(0, h.bakiye - h.bekleyen);
+  var aciklama = (VERI.ben.kod + ' ' + (acik.length ? acik.join('-').toUpperCase() : '')).trim();
+  var odenecekler = h.hesaplar.map(function(x){
+    var b = VERI.bankalar.filter(function(y){ return y.hesap===x.hesap; })[0] || {};
+    return { hesap:x.hesap, tutar:Math.max(0, x.bakiye - x.bekleyen), banka:b };
+  }).filter(function(x){ return x.tutar > 0; });
   DEKONT = null;
-  var bankaEksik = !b.iban;
-  $('sayfa').innerHTML = '<div class="kulp"></div><h2 class="disp">Havale / EFT</h2>' +
-    '<p class="acik">Banka uygulamanızdan aşağıdaki hesaba gönderin. Açıklamaya kodunuzu yazarsanız ödeme birkaç dakika içinde <b>kendiliğinden</b> düşer.</p>' +
-    (bankaEksik ? '<div class="uyari">IBAN henüz tanımlanmadı. Broker ile görüşün.</div>' : '') +
-    '<div class="adim"><i>1</i>Bankanızdan gönderin</div>' +
-    kopyaKutu('Alıcı', b.alici || '—', b.alici) +
-    kopyaKutu('IBAN'+(b.banka?' · '+esc(b.banka):''), ibanBicim(b.iban)||'—', String(b.iban||'').replace(/\s/g,'')) +
-    kopyaKutu('Tutar', tl(odenecek), String(odenecek)) +
-    kopyaKutu('Açıklama (mutlaka yazın)', aciklama, aciklama) +
-    '<div class="uyari">Açıklamadaki <b>'+esc(VERI.ben.kod)+'</b> kodu ödemenin size ait olduğunu gösterir. Kod yazılırsa bildirim yapmanıza gerek yok.</div>' +
-    '<div class="adim"><i>2</i>Kodu yazmayı unuttuysanız bildirin</div>' +
-    '<div class="ikili"><div><label>Gönderilen tutar</label><input id="oTutar" inputmode="numeric" value="'+odenecek+'"></div>' +
+  var iki = odenecekler.length > 1;
+  var html = '<div class="kulp"></div><h2 class="disp">Havale / EFT</h2>' +
+    '<p class="acik">Banka uygulamanızdan gönderin. Açıklamaya kodunuzu yazarsanız ödeme birkaç dakika içinde <b>kendiliğinden</b> düşer.</p>' +
+    (iki ? '<div class="uyari"><b>İki ayrı havale</b> yapmanız gerekiyor: biri şirket hesabına, biri Revy hesabına.</div>' : '');
+  odenecekler.forEach(function(x, i){
+    var b = x.banka;
+    html += '<div class="adim"><i>'+(i+1)+'</i>'+esc(hesapKalemleri(x.hesap))+'</div>' +
+      (!b.iban ? '<div class="uyari">Bu hesabın IBAN’ı henüz tanımlanmadı. Broker ile görüşün.</div>' : '') +
+      kopyaKutu('Alıcı', b.alici || '—', b.alici) +
+      kopyaKutu('IBAN'+(b.banka?' · '+esc(b.banka):''), ibanBicim(b.iban)||'—', String(b.iban||'').replace(/\s/g,'')) +
+      kopyaKutu('Tutar', tl(x.tutar), String(x.tutar)) +
+      kopyaKutu('Açıklama (mutlaka yazın)', aciklama, aciklama);
+  });
+  html += '<div class="uyari">Açıklamadaki <b>'+esc(VERI.ben.kod)+'</b> kodu ödemenin size ait olduğunu gösterir. Kod yazılırsa bildirim yapmanıza gerek yok.</div>' +
+    '<div class="adim"><i>'+(odenecekler.length+1)+'</i>Kodu yazmayı unuttuysanız bildirin</div>' +
+    (iki ? '<label>Hangi hesaba gönderdiniz?</label><select id="oHesap" onchange="$(\'oTutar\').value=this.selectedOptions[0].dataset.t">' +
+      odenecekler.map(function(x){ return '<option value="'+x.hesap+'" data-t="'+x.tutar+'">'+esc(hesapKalemleri(x.hesap))+'</option>'; }).join('') + '</select>' : '') +
+    '<div class="ikili"><div><label>Gönderilen tutar</label><input id="oTutar" inputmode="numeric" value="'+(odenecekler[0]?odenecekler[0].tutar:'')+'"></div>' +
     '<div><label>Ödeme tarihi</label><input id="oTarih" type="date" value="'+bugun()+'"></div></div>' +
-    '<label>Dekont (isteğe bağlı, onayı hızlandırır)</label>' +
+    '<label>Dekont (isteğe bağlı)</label>' +
     '<label class="dosya" id="dosyaKutu" style="margin:0"><input type="file" id="oDosya" accept="image/*,application/pdf" class="gizli">📎 <span id="dosyaYazi">Fotoğraf veya PDF seçin</span></label>' +
     '<label>Not</label><input id="oNot" placeholder="Örn. Ekim aidatı">' +
-    '<div style="height:16px"></div><button class="dugme mavi" id="oGonder" onclick="odemeGonder()">Ödemeyi yaptım, bildir</button>';
+    '<div style="height:16px"></div><button class="dugme mavi" id="oGonder" onclick="odemeGonder()">Bildir</button>';
+  if (!iki && odenecekler[0]) html += '<input type="hidden" id="oHesap" value="'+odenecekler[0].hesap+'">';
+  $('sayfa').innerHTML = html;
   $('oDosya').onchange = dosyaSec;
   ac();
 }
@@ -318,7 +332,7 @@ function odemeGonder(){
   var tutar = $('oTutar').value.replace(/\D/g,'');
   if (!+tutar) { toast('Tutarı girin'); return; }
   var b = $('oGonder'); b.disabled = true; b.textContent = 'Gönderiliyor…';
-  var veri = { tutar:+tutar, tarih:$('oTarih').value, not:$('oNot').value, dekont:DEKONT };
+  var veri = { tutar:+tutar, tarih:$('oTarih').value, not:$('oNot').value, dekont:DEKONT, hesap: $('oHesap') ? $('oHesap').value : 'Şirket' };
   if (ODEME_HEDEF) veri.danisman = ODEME_HEDEF;
   istek('odemeBildir', veri).then(function(r){
     if(!r.ok){ toast(r.hata||'Hata'); b.disabled=false; b.textContent='Tekrar dene'; return; }
@@ -350,7 +364,7 @@ function brokerCiz(){
     if ((p.eslesmeyen||[]).length) {
       html += '<div class="kart"><h3>Kodu tanınmayan havaleler</h3>';
       p.eslesmeyen.forEach(function(h){
-        html += '<div class="satir" style="flex-wrap:wrap"><div class="bilgi"><b>'+esc(h.gonderen||'?')+' · '+tl(h.tutar)+'</b><span>'+esc(h.tarih)+' · "'+esc(h.aciklama)+'"</span></div>' +
+        html += '<div class="satir" style="flex-wrap:wrap"><div class="bilgi"><b>'+esc(h.gonderen||'?')+' · '+tl(h.tutar)+'</b><span>'+(h.hesap==='Şahsi'?'Halkbank':'Enpara')+' · '+esc(h.tarih)+' · "'+esc(h.aciklama)+'"</span></div>' +
           '<div style="display:flex;gap:6px;width:100%;margin-top:6px"><select id="ata_'+h.sorgu+'" style="flex:1;padding:8px">'+p.danismanlar.map(function(d){return '<option>'+esc(d.ad)+'</option>';}).join('')+'</select>' +
           '<button class="mini yesil" onclick="havaleAta(\''+h.sorgu+'\')">Ata</button><button class="mini" onclick="havaleAta(\''+h.sorgu+'\',1)">Aidat değil</button></div></div>';
       });
@@ -369,7 +383,7 @@ function brokerCiz(){
   }
   if (SEKME === 'ayar') {
     html += '<div class="kart"><h3>Aylık tutarlar (KDV dahil)</h3>';
-    VERI.kalemler.forEach(function(k,i){ html += '<label>'+esc(k.ad)+'</label><input class="kTut" data-ad="'+esc(k.ad)+'" inputmode="numeric" value="'+(k.tutar||'')+'" placeholder="0">'; });
+    VERI.kalemler.forEach(function(k,i){ html += '<label>'+esc(k.ad)+' <span style="font-weight:500">· '+(k.hesap==='Şahsi'?'Halkbank':'Enpara Şirket')+'</span></label><input class="kTut" data-ad="'+esc(k.ad)+'" inputmode="numeric" value="'+(k.tutar||'')+'" placeholder="0">'; });
     html += '<div style="height:12px"></div><button class="dugme mavi" onclick="kalemKaydet()">Tutarları kaydet</button>' +
       '<p class="acik" style="margin:10px 0 0">Değişiklik bir sonraki yazılan aydan itibaren geçerli olur.</p></div>';
     html += '<div class="kart"><h3>'+ayAd(p.buAy)+'</h3>' + (p.buAyYazildi
@@ -426,7 +440,8 @@ function brokerOdeme(ad, tutar){
   ODEME_HEDEF = ad; DEKONT = null;
   $('sayfa').innerHTML = '<div class="kulp"></div><h2 class="disp">Ödeme gir</h2><p class="acik">'+esc(ad)+' — elden veya hesabınızda gördüğünüz ödeme. Direkt onaylı kaydolur.</p>' +
     '<div class="ikili"><div><label>Tutar</label><input id="oTutar" inputmode="numeric" value="'+tutar+'"></div><div><label>Tarih</label><input id="oTarih" type="date" value="'+bugun()+'"></div></div>' +
-    '<label>Not</label><input id="oNot" placeholder="Örn. Elden / Garanti havale">' +
+    '<label>Hesap</label><select id="oHesap"><option value="Şirket">'+esc(hesapKalemleri('Şirket'))+'</option><option value="Şahsi">'+esc(hesapKalemleri('Şahsi'))+'</option></select>' +
+    '<label>Not</label><input id="oNot" placeholder="Örn. Elden / Enpara havale">' +
     '<div style="height:16px"></div><button class="dugme mavi" id="oGonder" onclick="odemeGonder()">Kaydet</button>';
 }
 function borcSil(id, ad){
@@ -455,11 +470,11 @@ function onizleme(v){
   if(!OZ){
     var d = function(m){ return '2026-'+m; };
     OZ = { kisiler:[['Umut Tokkuş','1520','broker','DGSUMUT',''],['Ayşegül Alpay','2824','danışman','DGSA7K3','5321112233'],['Gizem Gök','2679','danışman','DGSM4PZ','']],
-      kalem:[['Ofis Aidatı',18000],['Sahibinden.com',2100],['Revy',750]], borc:[], odeme:[] };
-    ['09','10'].forEach(function(m){ ['Ayşegül Alpay','Gizem Gök'].forEach(function(a){ OZ.kalem.forEach(function(k){ OZ.borc.push({id:Math.random().toString(36).slice(2,8),donem:d(m),ad:a,kalem:k[0],tutar:k[1],ac:'Aylık'}); }); }); });
-    OZ.odeme.push({id:'o1',ad:'Ayşegül Alpay',tutar:20850,tarih:'2026-09-08',bildirim:'2026-09-08',not:'Eylül',dekont:'',durum:'Onaylandı'});
-    OZ.esl=[{sorgu:'4865472739',tarih:'2026-10-02 01.51',gonderen:'UMUT TOKKUŞ',tutar:100,aciklama:'DGstest'}];
-    OZ.odeme.push({id:'o2',ad:'Gizem Gök',tutar:20850,tarih:'2026-10-01',bildirim:'2026-10-01',not:'Eylül aidat',dekont:'',durum:'Bekliyor'});
+      kalem:[['Ofis Aidatı',18000,'Şirket'],['Sahibinden.com',2100,'Şirket'],['Revy',750,'Şahsi']], borc:[], odeme:[] };
+    ['09','10'].forEach(function(m){ ['Ayşegül Alpay','Gizem Gök'].forEach(function(a){ OZ.kalem.forEach(function(k){ OZ.borc.push({id:Math.random().toString(36).slice(2,8),donem:d(m),ad:a,kalem:k[0],tutar:k[1],ac:'Aylık',hesap:k[2]}); }); }); });
+    OZ.odeme.push({id:'o1',ad:'Ayşegül Alpay',tutar:20100,hesap:'Şirket',tarih:'2026-09-08',bildirim:'2026-09-08',not:'Eylül',dekont:'',durum:'Onaylandı'});
+    OZ.esl=[{sorgu:'4865472739',tarih:'2026-10-02 01.51',gonderen:'UMUT TOKKUŞ',tutar:100,aciklama:'DGstest',hesap:'Şahsi'}];
+    OZ.odeme.push({id:'o2',ad:'Gizem Gök',hesap:'Şirket',tutar:20100,tarih:'2026-10-01',bildirim:'2026-10-01',not:'Eylül aidat',dekont:'',durum:'Bekliyor'});
   }
   var ben = OZ.kisiler.filter(function(k){return k[1]===v.pin;})[0];
   if(!ben) return {ok:false,hata:'PIN hatalı'};
@@ -468,9 +483,13 @@ function onizleme(v){
     var o = OZ.odeme.filter(function(x){return x.ad===ad;});
     var on = o.filter(function(x){return x.durum==='Onaylandı';}).reduce(function(s,x){return s+x.tutar;},0);
     var bek = o.filter(function(x){return x.durum==='Bekliyor';}).reduce(function(s,x){return s+x.tutar;},0);
-    var top = b.reduce(function(s,x){return s+x.tutar;},0), kal=on, ay={};
-    b.forEach(function(x){ var k=Math.min(x.tutar,kal); kal-=k; var m=ay[x.donem]||(ay[x.donem]={donem:x.donem,kalemler:[],toplam:0,odenen:0}); m.kalemler.push({id:x.id,kalem:x.kalem,tutar:x.tutar,aciklama:x.ac}); m.toplam+=x.tutar; m.odenen+=k; });
-    return {ad:ad,bakiye:top-on,bekleyen:bek,aylar:Object.keys(ay).sort().reverse().map(function(k){var m=ay[k]; m.kalan=m.toplam-m.odenen; m.durum=m.kalan<=0?'odendi':m.odenen>0?'kismi':'acik'; return m;}),
+    var hs=['Şirket','Şahsi'].map(function(H){ var bo=b.filter(function(x){return x.hesap===H;}).reduce(function(s,x){return s+x.tutar;},0);
+      var oh=o.filter(function(x){return (x.hesap||'Şirket')===H;}); var onn=oh.filter(function(x){return x.durum==='Onaylandı';}).reduce(function(s,x){return s+x.tutar;},0);
+      return {hesap:H,bakiye:bo-onn,bekleyen:oh.filter(function(x){return x.durum==='Bekliyor';}).reduce(function(s,x){return s+x.tutar;},0)}; });
+    var havuz={'Şirket':0,'Şahsi':0}; o.filter(function(x){return x.durum==='Onaylandı';}).forEach(function(x){havuz[x.hesap||'Şirket']+=x.tutar;});
+    var top = b.reduce(function(s,x){return s+x.tutar;},0), ay={};
+    b.forEach(function(x){ var k=Math.min(x.tutar,havuz[x.hesap||'Şirket']); havuz[x.hesap||'Şirket']-=k; var m=ay[x.donem]||(ay[x.donem]={donem:x.donem,kalemler:[],toplam:0,odenen:0}); m.kalemler.push({id:x.id,kalem:x.kalem,tutar:x.tutar,aciklama:x.ac}); m.toplam+=x.tutar; m.odenen+=k; });
+    return {ad:ad,bakiye:top-on,bekleyen:bek,hesaplar:hs,aylar:Object.keys(ay).sort().reverse().map(function(k){var m=ay[k]; m.kalan=m.toplam-m.odenen; m.durum=m.kalan<=0?'odendi':m.odenen>0?'kismi':'acik'; return m;}),
       odemeler:o.slice().reverse()};
   };
   var panel = function(){
@@ -480,9 +499,9 @@ function onizleme(v){
   };
   var broker = ben[2]==='broker';
   switch(v.islem){
-    case 'giris': var r={ok:true,ben:{ad:ben[0],rol:ben[2],kod:ben[3]},banka:{alici:'UMT GROUP GAYRİMENKUL',iban:'TR000000000000000000000000',banka:'Örnek Banka'},sonGun:10,
-      kalemler:OZ.kalem.map(function(k){return {ad:k[0],tutar:k[1]};})}; if(broker) r.panel=panel(); else r.hesap=hesap(ben[0]); return r;
-    case 'odemeBildir': var ad=broker&&v.danisman?v.danisman:ben[0]; OZ.odeme.push({id:'o'+Date.now(),ad:ad,tutar:v.tutar,tarih:v.tarih,bildirim:v.tarih,not:v.not,dekont:v.dekont?'#':'',durum:broker?'Onaylandı':'Bekliyor'});
+    case 'giris': var r={ok:true,ben:{ad:ben[0],rol:ben[2],kod:ben[3]},bankalar:[{hesap:'Şirket',alici:'UMT GROUP GAYRİMENKUL',iban:'TR000000000000000000000000',banka:'Enpara Şirketim'},{hesap:'Şahsi',alici:'UMUT TOKKUŞ',iban:'TR720001200134100001109829',banka:'Halkbank'}],sonGun:10,
+      kalemler:OZ.kalem.map(function(k){return {ad:k[0],tutar:k[1],hesap:k[2]};})}; if(broker) r.panel=panel(); else r.hesap=hesap(ben[0]); return r;
+    case 'odemeBildir': var ad=broker&&v.danisman?v.danisman:ben[0]; OZ.odeme.push({id:'o'+Date.now(),ad:ad,hesap:v.hesap,tutar:v.tutar,tarih:v.tarih,bildirim:v.tarih,not:v.not,dekont:v.dekont?'#':'',durum:broker?'Onaylandı':'Bekliyor'});
       return {ok:true,hesap:broker?null:hesap(ad),panel:broker?panel():null};
     case 'odemeIptal': OZ.odeme.forEach(function(o){ if(o.id===v.id) o.durum='İptal'; }); return {ok:true,hesap:hesap(ben[0])};
     case 'onayla': OZ.odeme.forEach(function(o){ if(o.id===v.id) o.durum=v.red?'Reddedildi':'Onaylandı'; }); return {ok:true,panel:panel()};
