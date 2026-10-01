@@ -125,7 +125,7 @@ ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spac
 function bestBy(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return null;return c.slice().sort((a,b)=>f(b)-f(a)||b.puan-a.puan)[0];}
 function bestAll(arr,f){const c=arr.filter(x=>f(x)>0);if(!c.length)return [];const m=Math.max(...c.map(f));return c.filter(x=>f(x)===m).sort((a,b)=>b.puan-a.puan).slice(0,3);}
 function catSlideMulti(ws,label,valueHtml,sub,red,no){
-  const ptc=red?NAVY:CORAL, n=ws.length, h=n===2?270:245;
+  const ptc=red?NAVY:CORAL, n=ws.length, h=n===2?345:268;   // tek kişilik slayttaki gibi alt kenara yaslı, büyük
   /* Fotoğraf oranı tek kişilik tasarımla aynı olsun (260/440 ≈ 0.59),
      yoksa iki kişi yan yana gelince kareler yayvan görünüyordu. */
   const ORAN = 260/440;
@@ -138,7 +138,7 @@ function catSlideMulti(ws,label,valueHtml,sub,red,no){
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:10px;">${label}</div>
 ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;">${sub}</div></div>
-<div style="position:absolute;left:0;right:0;bottom:44px;height:${h+14}px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end;">${figs}</div>
+<div style="position:absolute;left:0;right:0;bottom:-6px;height:${h}px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end;">${figs}</div>
 <div style="position:absolute;left:0;right:0;bottom:56px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
 ${arrow()}${progress()}</div>`;
 }
