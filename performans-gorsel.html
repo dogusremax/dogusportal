@@ -149,9 +149,9 @@ function ilkUclerSlide(d,kats){
     const n=x.rs.length;
     const av=x.rs.slice(0,3).map((r,i)=>`<div style="margin-left:${i?-12:0}px;position:relative;z-index:${3-i};">${circ(r.id,26,'rgba(255,255,255,.35)')}</div>`).join('');
     const ad=n===1?x.rs[0].name:x.rs.slice(0,3).map(r=>r.name.split(' ')[0]).join(' · ')+(n>3?' +'+(n-3):'');
-    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-top:1px solid rgba(255,255,255,.07);">
+    return `<div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-top:1px solid rgba(255,255,255,.07);">
 <span style="font-size:14px;line-height:1;flex:0 0 18px;">${x.m}</span><div style="display:flex;flex:0 0 auto;">${av}</div>
-<div style="min-width:0;flex:1;"><div class="sans" style="font-size:11px;font-weight:700;color:#fff;line-height:1.15;${n>1?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${ad}</div><div class="sans" style="font-size:9.5px;color:rgba(255,255,255,.6);margin-top:1px;white-space:nowrap;">${x.v}</div></div></div>`;
+<div style="min-width:0;flex:1;"><div class="sans" style="font-size:12px;font-weight:700;color:#fff;line-height:1.2;${n>1?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${ad}</div></div></div>`;
   };
   const kutu=k=>`<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px 10px 5px;min-width:0;">
 <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><div style="width:22px;height:22px;border-radius:7px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 22px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${k.ikon}</svg></div><div class="sans" style="font-size:9.5px;font-weight:800;letter-spacing:1.2px;color:${CORAL};">${k.ad}</div></div>
