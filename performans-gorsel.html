@@ -22,12 +22,14 @@
   .panel{margin:0 20px 6px;background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px}
   .panel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
   .panel-head b{font-size:14px}.panel-head span{flex:1;font-size:12px;color:rgba(255,255,255,.5);min-width:200px}
-  .panel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
-  .ovr{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border-radius:10px;padding:8px 10px}
-  .ovr label{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);width:78px;flex:0 0 78px;text-transform:uppercase;letter-spacing:.5px}
-  .ovr select{flex:1;min-width:110px;padding:7px 8px;font-size:12px}
-  .ovr input{width:78px;padding:7px 8px;border-radius:8px;border:0;background:#161c44;color:#fff;font:600 12px 'Plus Jakarta Sans',sans-serif}
-  .ovr .off{width:auto;padding:7px 9px;background:rgba(255,255,255,.1);font-size:11px}
+  .panel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
+  .ovr{display:grid;grid-template-columns:82px minmax(0,1fr) 72px 64px;align-items:center;gap:8px;min-width:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:8px 10px}
+  .ovr label{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ovr select{width:100%;min-width:0;padding:7px 8px;font-size:12px}
+  .ovr input{width:100%;min-width:0;padding:7px 8px;border-radius:8px;border:0;background:#161c44;color:#fff;font:600 12px 'Plus Jakarta Sans',sans-serif}
+  .ovr .ek{grid-column:3/5;font-size:10.5px;color:#8a8fa3;line-height:1.2}
+  .ovr.genis{grid-column:1/-1;grid-template-columns:82px minmax(0,1fr) 160px}
+  .ovr .off{width:100%;padding:7px 0;background:rgba(255,255,255,.1);font-size:11px}
   .ovr .off.on{background:#DC1C2E}
   .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
   .card{display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -214,7 +216,7 @@ let OVR={soz:'',sozKim:'',p1:'',p2:'',p3:'',pts1:'',pts2:'',pts3:'',ciro:'',ciro
 function buildPanel(){
   const opts=(sel)=>'<option value="">— otomatik —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span style="font-size:10px;color:#8a8fa3;">berabere / ikinci kişi</span></div>`+row('Yorum','yorum','yorumV','adet','hideYorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr" style="grid-column:1/-1;"><label>Söz</label><input id="o-soz" style="flex:1;width:auto;" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+row('İşlem','islem','islemV','adet','hideIslem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span class="ek">berabere / ikinci kişi</span></div>`+row('Yorum','yorum','yorumV','adet','hideYorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr genis"><label>Söz</label><input id="o-soz" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
 function readPanel(){['p1','p2','p3','ciro','islem','sosyal','sosyal2','yorum'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value;});['pts1','pts2','pts3','ciroV','islemV','sosyalV','yorumV','soz','sozKim'].forEach(k=>{const e=document.getElementById('o-'+k);if(e)OVR[k]=e.value.trim();});}
