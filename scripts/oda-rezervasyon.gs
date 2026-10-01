@@ -20,7 +20,7 @@ var BASLANGIC = '09:00', BITIS = '20:00';
 // Bu dosya herkese açık sitede durur: gerçek PIN'leri buraya YAZMAYIN.
 // Apps Script editörüne yapıştırdıktan sonra PIN'leri orada doldurun.
 var KISILER = {
-  '1520': 'Umut Tokkuş',
+  'BROKER_PIN': 'Umut Tokkuş',
   'PIN1': 'Ayşegül Alpay',
   'PIN2': 'Aysun Yılmaz',
   'PIN3': 'Evşen Özazman',
@@ -30,7 +30,7 @@ var KISILER = {
   'PIN7': 'Orhan Özazman',
   'PIN8': 'Özlem Varol'
 };
-var BROKER_PIN = '1520';
+var BROKER_PIN = 'BROKER_PIN'; // Apps Script editöründe gerçek PIN'i yazın
 var BASLIK = ['id', 'oda', 'tarih', 'bas', 'bit', 'kisi', 'tur', 'not', 'olusturma'];
 
 function kurulum() { _sayfa(); }

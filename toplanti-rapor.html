@@ -80,7 +80,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 <body>
 <div class="login" id="loginScreen">
 <h2>🔒 Performansım</h2>
-<input type="password" id="pin" placeholder="PIN" maxlength="4">
+<input type="password" id="pin" placeholder="PIN" maxlength="6" inputmode="numeric">
 <button onclick="doLogin()">Giriş</button>
 <p id="loginErr" style="color:#ef4444;font-size:13px"></p>
 </div>
@@ -97,6 +97,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0b10
 </div>
 <div id="report"><div class="no-data">Danışman seçin</div></div>
 </div>
+<script src="assets/broker.js"></script>
 <script>
 const API="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KAPANIS_API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
@@ -170,11 +171,11 @@ function cacheYaz(){
 }
 cacheOku();
 // Sadece broker girer; danışman PIN'leri bu sayfada tutulmaz.
-var BROKER_PIN="1520";
 
 function doLogin(){
   var pin=document.getElementById("pin").value;
-  if(pin!==BROKER_PIN){document.getElementById("loginErr").textContent="Hatalı PIN. Bu uygulama şu anda danışman girişine kapalıdır.";return;}
+  brokerDogrula(pin).then(function(ok){
+  if(!ok){document.getElementById("loginErr").textContent="Hatalı PIN. Bu uygulama şu anda danışman girişine kapalıdır.";return;}
   var user="broker";
   LOGGED_USER=user;
   logLogin("BROKER (Umut Tokkuş)");
@@ -183,6 +184,7 @@ function doLogin(){
   document.getElementById("dashboard").classList.remove("hidden");
   if(user!=="broker") document.getElementById("consultantSel").style.display="none";
   loadData();
+  });
 }
 document.getElementById("pin").addEventListener("keyup",function(e){if(e.key==="Enter")doLogin();});
 

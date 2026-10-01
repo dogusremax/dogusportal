@@ -23,7 +23,8 @@
 // ═══════════════════════════════════════════════════════════════════
 
 var HAFTALIK_SABLONLAR = { carsamba_hatirlatma: 4, haftalik_karne: 10, destek_mesaji: 4 };
-var HAFTALIK_SAYFA = 'https://dogusportal.com/haftalik-mesajlar.html?k=1520';
+// k= yerine broker PIN'inizi yazın (Apps Script editöründe; bu dosyaya değil)
+var HAFTALIK_SAYFA = 'https://dogusportal.com/haftalik-mesajlar.html?k=BROKER_PIN';
 
 // ─── 1) Şablonları oluştur (bir kez) ────────────────────────────────
 // Metinler haftalik-mesajlar.html içindeki SABLON ile BİREBİR aynı olmalı.

@@ -8,6 +8,7 @@ const fs = require('fs'), path = require('path');
   for (const set of ['puan', 'birinci']) {
     const out = path.join('performans', ay, set); fs.mkdirSync(out, { recursive: true });
     const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 1080 / 420 });
+    await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
     await page.goto(`https://dogusportal.com/performans-gorsel.html?set=${set}&ay=${ay}`, { waitUntil: 'networkidle' });
     await page.waitForSelector('body[data-ready]', { timeout: 90000 });
     await page.waitForTimeout(1500);

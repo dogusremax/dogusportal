@@ -5,7 +5,8 @@ const fs = require('fs'), path = require('path');
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 900, height: 900 }, deviceScaleFactor: 1080 / 405 });
-  await page.goto('https://dogusportal.com/nobet-story.html?k=1520', { waitUntil: 'networkidle' });
+  await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
+  await page.goto('https://dogusportal.com/nobet-story.html', { waitUntil: 'networkidle' });
   await page.waitForSelector('body[data-ready]', { timeout: 90000 });
   await page.waitForTimeout(1200);
   // Önceki günün .media dosyası kalırsa yanlışlıkla paylaşılmasın

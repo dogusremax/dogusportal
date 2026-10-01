@@ -387,13 +387,14 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
   <br><button class="broker-link" id="brokerLink" onclick="brokerToggle()">Broker</button>
 </footer>
 
+<script src="assets/broker.js"></script>
 <!-- PIN Modalı — Aylık Performans -->
 <div id="pinModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;font-family:'Inter',-apple-system,sans-serif">
   <div style="background:#fff;border-radius:20px;padding:40px 32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;max-width:320px;width:90%;animation:rise .3s ease">
     <div style="font-size:48px;margin-bottom:12px">🔒</div>
     <div id="pinTitle" style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:4px">Aylık Performans</div>
     <div style="font-size:13px;color:#888;margin-bottom:24px">Broker erişimi gerekli</div>
-    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off"
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="PIN" autocomplete="off"
       style="width:100%;box-sizing:border-box;text-align:center;font-size:32px;letter-spacing:14px;padding:14px;border:2px solid #ddd;border-radius:12px;outline:none;font-family:inherit">
     <div id="pinError" style="color:#e74c3c;font-size:13px;margin-top:8px;min-height:20px"></div>
     <button onclick="perfPinCheck()" style="width:100%;padding:14px;margin-top:4px;background:linear-gradient(135deg,#003DA5,#004e92);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">Giriş</button>
@@ -404,8 +405,8 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 var _perfUrl='';
 function perfPinOpen(url,baslik){if(url&&sessionStorage.getItem('perfAuth')==='ok'){window.open(url,'_blank');return;}_perfUrl=url;document.getElementById('pinTitle').textContent=baslik||'Broker girişi';var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
 function perfPinClose(){document.getElementById('pinModal').style.display='none';_perfUrl='';}
-function perfPinCheck(){var p=document.getElementById('pinInput').value;if(p==='1520'){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}}
-document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===4)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});
+function perfPinCheck(){var p=document.getElementById('pinInput').value;brokerDogrula(p).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}});}
+document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===6)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});
 // Broker modu: gizli kartları göster, bu cihazda hatırla
 function brokerAc(){try{localStorage.setItem('dogusBroker','ok');}catch(e){}sessionStorage.setItem('perfAuth','ok');document.body.classList.add('broker');var l=document.getElementById('brokerLink');if(l)l.textContent='Broker modundan çık';}
 function brokerToggle(){if(document.body.classList.contains('broker')){try{localStorage.removeItem('dogusBroker');}catch(e){}sessionStorage.removeItem('perfAuth');document.body.classList.remove('broker');document.getElementById('brokerLink').textContent='Broker';}else perfPinOpen(null,'Broker girişi');}
