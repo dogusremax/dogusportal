@@ -127,7 +127,7 @@ textarea{min-height:60px;resize:vertical}
 </head>
 <body>
 
-<div id="onizlemeBant" class="bant gizli">Önizleme modu — veriler örnektir, kaydedilmez. (Broker: 1520 · Danışman: 2824)</div>
+<div id="onizlemeBant" class="bant gizli">Önizleme modu — veriler örnektir, kaydedilmez. (Broker: 1520 · Danışman: 1111)</div>
 
 <header>
   <div class="ust">
@@ -469,7 +469,7 @@ var OZ = null;
 function onizleme(v){
   if(!OZ){
     var d = function(m){ return '2026-'+m; };
-    OZ = { kisiler:[['Umut Tokkuş','1520','broker','DGSUMUT',''],['Ayşegül Alpay','2824','danışman','DGSA7K3','5321112233'],['Gizem Gök','2679','danışman','DGSM4PZ','']],
+    OZ = { kisiler:[['Umut Tokkuş','1520','broker','DGSUMUT',''],['Ayşegül Alpay','1111','danışman','DGSA7K3','5321112233'],['Gizem Gök','2222','danışman','DGSM4PZ','']],
       kalem:[['Ofis Aidatı',18000,'Şirket'],['Sahibinden.com',2100,'Şirket'],['Revy',750,'Şahsi']], borc:[], odeme:[] };
     ['09','10'].forEach(function(m){ ['Ayşegül Alpay','Gizem Gök'].forEach(function(a){ OZ.kalem.forEach(function(k){ OZ.borc.push({id:Math.random().toString(36).slice(2,8),donem:d(m),ad:a,kalem:k[0],tutar:k[1],ac:'Aylık',hesap:k[2]}); }); }); });
     OZ.odeme.push({id:'o1',ad:'Ayşegül Alpay',tutar:20100,hesap:'Şirket',tarih:'2026-09-08',bildirim:'2026-09-08',not:'Eylül',dekont:'',durum:'Onaylandı'});

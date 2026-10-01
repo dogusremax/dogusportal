@@ -17,16 +17,18 @@
 var ODALAR = ['Toplantı Odası', 'Nöbet Odası'];
 var BASLANGIC = '09:00', BITIS = '20:00';
 
+// Bu dosya herkese açık sitede durur: gerçek PIN'leri buraya YAZMAYIN.
+// Apps Script editörüne yapıştırdıktan sonra PIN'leri orada doldurun.
 var KISILER = {
   '1520': 'Umut Tokkuş',
-  '2824': 'Ayşegül Alpay',
-  '3847': 'Aysun Yılmaz',
-  '4657': 'Evşen Özazman',
-  '3286': 'Gamze Yetkin',
-  '2679': 'Gizem Gök',
-  '9935': 'İrem Aleyna Tetik',
-  '7912': 'Orhan Özazman',
-  '2535': 'Özlem Varol'
+  'PIN1': 'Ayşegül Alpay',
+  'PIN2': 'Aysun Yılmaz',
+  'PIN3': 'Evşen Özazman',
+  'PIN4': 'Gamze Yetkin',
+  'PIN5': 'Gizem Gök',
+  'PIN6': 'İrem Aleyna Tetik',
+  'PIN7': 'Orhan Özazman',
+  'PIN8': 'Özlem Varol'
 };
 var BROKER_PIN = '1520';
 var BASLIK = ['id', 'oda', 'tarih', 'bas', 'bit', 'kisi', 'tur', 'not', 'olusturma'];
