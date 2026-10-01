@@ -7,8 +7,9 @@ Araç çıktısı dosyaya kaydedildiyse ([{"type":"text","text":"..."}] biçimi)
 
 Kurallar: sadece 4★ ve üzeri, data/danismanlar.json'daki danışmanlardan en az birinin adı geçen
 yorumlar listeye girer. Metninde danışman adı geçmeyen yorumlarda yorumu yazanın adı kapanış
-formundaki mal sahibi / alıcı-kiracı adlarıyla eşleştirilir (önce ad+soyad, yoksa soyad) ve
-kapanışı yapan danışman aktifse yorum ona yazılır. Eşleşmeyen yeni (30 günden genç) isimsiz
+formundaki mal sahibi / alıcı-kiracı adlarıyla eşleştirilir (önce ad+soyad, yoksa soyad); yorum,
+müşterinin tarafını temsil eden (o taraftan hizmet bedeli alan) danışman aktifse ona yazılır. Aynı
+tarafı birden çok danışman sahipleniyorsa (co-op) atama yapılmaz, raporda "taraf belirsiz" çıkar. Eşleşmeyen yeni (30 günden genç) isimsiz
 yorumlar görülen listesine yazılmaz; kapanış formu sonradan doldurulursa sonraki çalışmada eşleşir.
 Görülen tüm yorum id'leri data/google-yorum-gorulen.json'a yazılır.
 """
@@ -41,10 +42,14 @@ def kapanislari_al():
         return []
 
 def kapanistan_danisman(yazar, tarih, kapanislar, desenler):
-    """Yorumu yazanı kapanış formundaki müşteri adlarıyla eşleştirip aktif danışman id'lerini döndürür."""
+    """Yorumu yazanı kapanış formundaki müşteri adlarıyla eşleştirir; (danışman id'leri, neden) döndürür.
+    Tek danışmanlı işlemde müşteri o danışmanındır. Müşteri birden fazla danışmanın kaydındaysa (co-op)
+    yorum, müşterinin tarafını temsil eden, yani kaydında o taraftan hizmet bedeli alan danışmana yazılır;
+    bu da tek danışmana inmiyorsa taraf belirsizdir, atama yapılmaz."""
     y = sade(yazar)
     if not y:
-        return []
+        return [], 'eşleşmedi'
+    bedel = lambda v: float(re.sub(r'[^0-9.]', '', str(v or '')) or 0)
     tam, soyad = [], []
     for k in kapanislar:
         try:
@@ -53,20 +58,26 @@ def kapanistan_danisman(yazar, tarih, kapanislar, desenler):
             continue
         if not (tarih - datetime.timedelta(days=120) <= kt <= tarih + datetime.timedelta(days=3)):
             continue
-        for ad in (k.get('ownerName'), k.get('buyerName')):
+        hb_sahip, hb_alici = bedel(k.get('hbOwner')), bedel(k.get('hbBuyer'))
+        for ad, hb in ((k.get('ownerName'), hb_sahip), (k.get('buyerName'), hb_alici)):
             a = sade(ad)
             if not a:
                 continue
             if len(y) > 1 and all(t in a for t in y):
-                tam.append(k)
+                tam.append((k, hb))
             elif len(y[-1]) >= 4 and y[-1] == a[-1]:
-                soyad.append(k)
-    # Ad+soyad eşleşmesinde işlemdeki tüm danışmanlar yazılır; sadece soyad eşleşiyorsa
-    # tek danışman çıkmalı, yoksa belirsiz sayılır.
-    danismanlar = {norm(k.get('advisor', '')) for k in (tam or soyad)}
-    if not tam and len(danismanlar) != 1:
-        return []
-    return [i for i, p in desenler if any(p.search(d) for d in danismanlar)]
+                soyad.append((k, hb))
+    eslesen = tam or soyad
+    danismanlar = {norm(k.get('advisor', '')) for k, _ in eslesen}
+    if len(danismanlar) > 1:   # co-op: müşterinin tarafından bedel alan danışman
+        danismanlar = {norm(k.get('advisor', '')) for k, hb in eslesen if hb > 0}
+        if len(danismanlar) != 1:
+            return [], 'taraf belirsiz (co-op: ' + ', '.join(sorted({k.get('advisor', '') for k, _ in eslesen})) + ')'
+    if not danismanlar:
+        return [], 'eşleşmedi'
+    d = danismanlar.pop()
+    ids = [i for i, p in desenler if p.search(d)]
+    return ids, ('' if ids else 'danışman aktif değil')
 
 def main():
     cekilen = json.load(open(sys.argv[1]))
@@ -98,10 +109,10 @@ def main():
         if not danismanlar:
             if kapanislar is None:
                 kapanislar = kapanislari_al()
-            danismanlar = kapanistan_danisman(y.get('yazar'), tarih, kapanislar, desenler)
+            danismanlar, y['_neden'] = kapanistan_danisman(y.get('yazar'), tarih, kapanislar, desenler)
             eslesme = 'kapanis'
         if not danismanlar:
-            if simdi - tarih < datetime.timedelta(days=30):
+            if simdi - tarih < datetime.timedelta(days=30) and y.get('_neden') != 'danışman aktif değil':
                 bekleyen.append(y)          # görülen'e yazma: kapanış formu doldurulunca tekrar denenecek
             else:
                 gorulen.add(y['id'])
@@ -134,7 +145,7 @@ def main():
         print(' +', ', '.join(ad[i] for i in k['danismanlar']), '|', k['yazar'], '|', k['metin'][:80].replace('\n', ' '),
               '| (kapanış formundan eşleşti)' if k['eslesme'] == 'kapanis' else '')
     for y in bekleyen:
-        print(' ? eşleşmedi, sonraki çalışmada tekrar denenecek |', y.get('yazar'), '|', (y.get('metin') or '(metinsiz)')[:80].replace('\n', ' '))
+        print(' ?', y.get('_neden', 'eşleşmedi') + ', sonraki çalışmada tekrar denenecek |', y.get('yazar'), '|', (y.get('metin') or '(metinsiz)')[:80].replace('\n', ' '))
 
 if __name__ == '__main__':
     main()
