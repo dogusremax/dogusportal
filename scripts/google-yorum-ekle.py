@@ -95,10 +95,12 @@ def main():
     simdi = datetime.datetime.utcnow()
     ts = lambda t: t.strftime('%Y-%m-%dT%H:%M:%SZ')
 
+    mevcut = {y['id'] for y in veri['yorumlar']}
     kapanislar = None
     eklenen, bekleyen = [], []
     for y in cekilen.get('yeni', []):
-        if y['id'] in gorulen:
+        if y['id'] in gorulen or y['id'] in mevcut:   # elle eklenmiş olabilir
+            gorulen.add(y['id'])
             continue
         if y.get('puan', 0) < 4:
             gorulen.add(y['id'])
