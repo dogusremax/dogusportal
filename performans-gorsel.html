@@ -197,7 +197,7 @@ function build(d){
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
     const ico={perf:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>',yorum:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/>'};
-    const cats=[['AYIN PERFORMANS BİRİNCİSİ','En yüksek aylık puan','perf'],['AYIN CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],['AYIN İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
+    const cats=[['AYIN CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],['AYIN İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],['AYIN PERFORMANS BİRİNCİSİ','En yüksek aylık puan','perf'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
     const cards=cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(4px);">
 <div style="width:34px;height:34px;border-radius:10px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 34px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
 <div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">${c[1]}</div></div>
@@ -211,13 +211,13 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div class="sans" style="position:absolute;left:32px;bottom:40px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
     // Birinci slaytları; renk sırayla kırmızı / lacivert
-    const birinciler=[[wPerf,'AYIN PERFORMANS BİRİNCİSİ',`${d.ayAdi} ayında en yüksek puanı alan`],[wCiro,'AYIN CİRO BİRİNCİSİ',`${d.ayAdi} ayının ciro lideri`],
-      [wIslem,'AYIN İŞLEM BİRİNCİSİ',`${d.ayAdi} ayında en çok işlem kapatan`],[wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${d.ayAdi} ayında en çok içerik üreten`],
+    const birinciler=[[wCiro,'AYIN CİRO BİRİNCİSİ',`${d.ayAdi} ayının ciro lideri`],[wIslem,'AYIN İŞLEM BİRİNCİSİ',`${d.ayAdi} ayında en çok işlem kapatan`],
+      [wPerf,'AYIN PERFORMANS BİRİNCİSİ',`${d.ayAdi} ayında en yüksek puanı alan`],[wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${d.ayAdi} ayında en çok içerik üreten`],
       [wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ',`${d.ayAdi} ayında müşterilerinden en çok Google yorumu alan`]].filter(b=>b[0].length);
     birinciler.forEach((b,i)=>slides.push(catAny(b[0],b[1],'',b[2],i%2===0)));
     // Tüm kategorilerin 1-2-3'ü tek liste slaytında (gizlenen kategori listede de yok)
     const ilk=(ws,ru,fmt)=>ws.length?[{rs:ws,m:'🥇',v:fmt(ws[0])}].concat(ru):[];
-    const kats=[['PERFORMANS','perf',wPerf,ruPerf,x=>fP(x)+' puan'],['CİRO','ciro',wCiro,ruCiro,x=>fmtTL(fC(x))],['İŞLEM','islem',wIslem,ruIslem,x=>fmtN(fI(x))+' işlem'],
+    const kats=[['CİRO','ciro',wCiro,ruCiro,x=>fmtTL(fC(x))],['İŞLEM','islem',wIslem,ruIslem,x=>fmtN(fI(x))+' işlem'],['PERFORMANS','perf',wPerf,ruPerf,x=>fP(x)+' puan'],
       ['SOSYAL MEDYA','sosyal',wSosyal,ruSosyal,x=>fS(x)+' içerik'],['MÜŞTERİ MEMNUNİYETİ','yorum',wYorum,ruYorum,x=>fY(x)+' yorum']]
       .filter(k=>!H[k[1]]).map(k=>({ad:k[0],ikon:ico[k[1]],satirlar:ilk(k[2],k[3],k[4]),genis:k[1]==='perf'}));
     if(kats.some(k=>k.satirlar.length))slides.push(ilkUclerSlide(d,kats));
@@ -259,7 +259,7 @@ function buildPanel(){
   const optsRu=(sel)=>'<option value="">— otomatik —</option><option value="-" '+(sel==='-'?'selected':'')+'>— gösterme —</option>'+DATA.siralama.map(r=>`<option value="${r.id}" ${sel===r.id?'selected':''}>${r.name}</option>`).join('');
   const ruRow=(lbl,k)=>`<div class="ovr ikili"><label>${lbl} 2-3.</label><select id="o-ru_${k}_2" title="2.">${optsRu(OVR['ru_'+k+'_2'])}</select><select id="o-ru_${k}_3" title="3.">${optsRu(OVR['ru_'+k+'_3'])}</select></div>`;
   const row=(lbl,key,vkey,ph,hideKey)=>`<div class="ovr"><label>${lbl}</label><select id="o-${key}">${opts(OVR[key])}</select><input id="o-${vkey}" placeholder="${ph}" value="${OVR[vkey]}">${hideKey?`<button class="off ${OVR[hideKey]?'on':''}" onclick="OVR.${hideKey}=!OVR.${hideKey};buildPanel()">${OVR[hideKey]?'Gizli':'Göster'}</button>`:''}</div>`;
-  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Performans','perf','perfV','puan','hidePerf')+ruRow('Performans','perf')+row('Ciro','ciro','ciroV','₺','hideCiro')+ruRow('Ciro','ciro')+row('İşlem','islem','islemV','adet','hideIslem')+ruRow('İşlem','islem')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span class="ek">berabere / ikinci kişi</span></div>`+ruRow('S.Medya','sosyal')+row('Yorum','yorum','yorumV','adet','hideYorum')+ruRow('Yorum','yorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr genis"><label>Söz</label><input id="o-soz" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
+  document.getElementById('panel-grid').innerHTML=SET==='birinci'?(row('Ciro','ciro','ciroV','₺','hideCiro')+ruRow('Ciro','ciro')+row('İşlem','islem','islemV','adet','hideIslem')+ruRow('İşlem','islem')+row('Performans','perf','perfV','puan','hidePerf')+ruRow('Performans','perf')+row('S.Medya','sosyal','sosyalV','adet','hideSosyal')+`<div class="ovr"><label>S.Medya 2.</label><select id="o-sosyal2">${opts(OVR.sosyal2)}</select><span class="ek">berabere / ikinci kişi</span></div>`+ruRow('S.Medya','sosyal')+row('Yorum','yorum','yorumV','adet','hideYorum')+ruRow('Yorum','yorum')):(row('1.','p1','pts1','puan')+row('2.','p2','pts2','puan')+row('3.','p3','pts3','puan'))+(DONEM==='hafta'?`<div class="ovr genis"><label>Söz</label><input id="o-soz" placeholder="boş = otomatik haftalık söz" value="${OVR.soz}"><input id="o-sozKim" placeholder="yazar" value="${OVR.sozKim}"></div>`:'');
   document.getElementById('panel').style.display='block';
 }
 const RU_KEYS=['perf','ciro','islem','sosyal','yorum'].flatMap(k=>['ru_'+k+'_2','ru_'+k+'_3']);
@@ -472,7 +472,7 @@ fillMonths(); load();
 function ghTok(){return localStorage.getItem('ghToken')||'';}  // sunucu kendi anahtarını kullanır, sayfa sormaz
 function igCaption(){
   const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
-  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nPerformans, ciro, işlem, sosyal medya ve müşteri memnuniyetinde zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nCiro, işlem, performans, sosyal medya ve müşteri memnuniyetinde zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   if(DONEM==='hafta') return `${DATA.ayAdi} haftasının podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   return `${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
 }
