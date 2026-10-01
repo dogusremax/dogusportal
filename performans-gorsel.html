@@ -237,7 +237,7 @@ function applyOverrides(d){
   const o={...d,siralama:ordered,force:{}};
   const num=x=>parseFloat(String(x).replace(/[^\d.,]/g,'').replace(',','.'));
   if(OVR.ciro){const r=byId(OVR.ciro);if(r){o.force.ciro=r;const v=num(OVR.ciroV);if(!isNaN(v))r.ciro=v;}}
-  if(OVR.islem){const r=byId(OVR.islem);if(r){o.force.islem=r;const v=parseInt(OVR.islemV);if(!isNaN(v))r.kapanis=v;}}
+  if(OVR.islem){const r=byId(OVR.islem);if(r){o.force.islem=r;const v=num(OVR.islemV);if(!isNaN(v))r.kapanis=v;}}
   if(OVR.sosyal){const r=byId(OVR.sosyal);if(r){o.force.sosyal=r;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r.counts.sosyal_medya=v;}}
   if(OVR.sosyal2){const r2=byId(OVR.sosyal2);if(r2){o.force.sosyal2=r2;const v=parseInt(OVR.sosyalV);if(!isNaN(v))r2.counts.sosyal_medya=v;}}
   if(OVR.yorum){const r=byId(OVR.yorum);if(r){o.force.yorum=r;const v=parseInt(OVR.yorumV);if(!isNaN(v))r.yorum=v;}}

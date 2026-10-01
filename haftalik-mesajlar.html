@@ -224,7 +224,7 @@ function pazartesi(veri, onceki) {
     const trend = (!e || d.puan === 0) ? '' : e.sira > sira ? ` ⬆️ (geçen hafta ${e.sira}.)` : e.sira < sira ? ` ⬇️ (geçen hafta ${e.sira}.)` : ' ➡️ (sıranı korudun)';
 
     const iyi = [], eksik = [];
-    if (d.kapanis) iyi.push(`${d.kapanis} kapanış 🤝`);
+    if (d.kapanis) iyi.push(`${Number(d.kapanis).toLocaleString('tr-TR',{maximumFractionDigits:2})} kapanış 🤝`);
     if (d.aktifGun >= HEDEF.aktifGun) iyi.push(`${d.aktifGun} gün aktif, istikrar tam`);
     Object.keys(ETIKET).forEach(k => { const v = sayi(c, k); if (v >= HEDEF[k]) iyi.push(`${v} ${ETIKET[k]}`); else eksik.push({ k, v, h: HEDEF[k] }); });
     if (e && d.puan > e.puan && e.puan > 0) iyi.push(`puanını %${Math.round((d.puan / e.puan - 1) * 100)} artırdın`);

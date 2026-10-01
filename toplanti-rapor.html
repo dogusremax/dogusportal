@@ -329,7 +329,7 @@ function render(){
   h+='<div class="stats">';
   h+='<div class="stat"><div class="val" style="color:#2563eb">'+d.puan+'</div><div class="lbl">Toplam Puan</div></div>';
   h+='<div class="stat"><div class="val" style="color:#22c55e">'+d.aktifGun+'/'+donemGunSayisi()+'</div><div class="lbl">Aktif Gün</div></div>';
-  h+='<div class="stat"><div class="val" style="color:#f59e0b">'+d.kapanis+'</div><div class="lbl">Kapanış</div></div>';
+  h+='<div class="stat"><div class="val" style="color:#f59e0b">'+fmtIslem(d.kapanis)+'</div><div class="lbl">Kapanış</div></div>';
   h+='<div class="stat"><div class="val" style="color:#a855f7;font-size:18px">'+(d.ciro?d.ciro.toLocaleString("tr-TR"):0)+' ₺</div><div class="lbl">Ciro</div></div>';
   h+='</div>';
 
@@ -391,7 +391,7 @@ function render(){
   if(d.aktifGun>=15*PERIOD)ins.push({t:"good",m:"💪 "+d.aktifGun+" aktif gün — istikrarın çok iyi."});
   else if(d.aktifGun>=10*PERIOD)ins.push({t:"good",m:"⭐ İstikrar Ödülü eşiğini geçtin ("+d.aktifGun+" gün)."});
   if((d.counts.gosterim||0)>=8*PERIOD)ins.push({t:"good",m:"🏠 Gösterim sayın yüksek."});
-  if(d.kapanis>=2*PERIOD)ins.push({t:"good",m:"🤝 "+d.kapanis+" kapanış — harika iş!"});
+  if(d.kapanis>=2*PERIOD)ins.push({t:"good",m:"🤝 "+fmtIslem(d.kapanis)+" kapanış — harika iş!"});
   if(d.aktifGun<10*PERIOD)ins.push({t:"warn",m:"📅 İstikrar Ödülü'ne "+(10*PERIOD-d.aktifGun)+" gün kaldı. Her gün en az 1 aktivite gir."});
   if((d.counts.fzbo||0)<12*PERIOD)ins.push({t:"warn",m:"📞 FZBO araması "+(d.counts.fzbo||0)+"/"+(12*PERIOD)+" — haftada 3 arama hedefi."});
   if((d.counts.gosterim||0)<4*PERIOD)ins.push({t:"bad",m:"🏠 Gösterim çok düşük ("+(d.counts.gosterim||0)+"/"+(8*PERIOD)+"). Müşteri portföyünü gözden geçir."});
@@ -434,6 +434,9 @@ pu:'<h4>Puan Yükseltme Stratejisi</h4><div class="rm-week"><b>Hızlı Kazanım<
   return R[k]||"";
 }
 
+/* Co-op kapanış (ofis içi / dış firma) her danışmana 0,5 işlem sayılır */
+function islemAgirligi(r){return /co-?op/i.test(String((r&&r.ref)||""))?0.5:1;}
+function fmtIslem(n){return Number(n||0).toLocaleString("tr-TR",{maximumFractionDigits:2});}
 function applyKapanis(kData,months){
   if(!DATA||!kData||!kData.records)return;
   DATA.siralama.forEach(function(s){
@@ -442,7 +445,7 @@ function applyKapanis(kData,months){
       if((r.advisor||"").trim()!==s.name)return;
       var dt=r.date||"";
       if(!months.some(function(m){return dt.startsWith(m);}))return;
-      cnt++;ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
+      cnt+=islemAgirligi(r);ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
       var ref=String(r.ref||""),cm=ref.match(/Co-op:\s*(.+)/);
       if(cm)ppm[cm[1].trim()+"_"+dt.substring(0,7)]=1;
     });
@@ -452,7 +455,7 @@ function applyKapanis(kData,months){
       var dt=r.date||"";
       if(!months.some(function(m){return dt.startsWith(m);}))return;
       if(ppm[adv+"_"+dt.substring(0,7)])return;
-      cnt++;ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
+      cnt+=0.5;ciroSum+=Number(r.totalHB)||Number(r.amount)||0;
     });
     if(cnt>0){s.kapanis=cnt;s.ciro=ciroSum;}
   });
