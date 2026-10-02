@@ -202,18 +202,14 @@ function carsambaHam(veri, tarih) {
   return L.map((d, i) => {
     const sira = i + 1;
     if (ozel(d).mod === 'destek') return { d, sira, ...destek(d, L, 'carsamba', DESTEK_CUMLE[haftaNo(tarih) % DESTEK_CUMLE.length]) };
-    const ust = L[i - 1], sessiz = d.puan === 0 && d.aktifGun === 0;
+    const sessiz = d.puan === 0 && d.aktifGun === 0;
     let durum;
     if (sessiz) {
       durum = 'Bu hafta henüz aktivite girişin görünmüyor. Girmeyi unuttuğun bir şey varsa bu akşam ekle.';
     } else if (sira === 1) {
-      const ikinci = L.slice(1).find(x => ozel(x).mod !== 'destek');
-      durum = `Şu an *1. sıradasın* (${d.puan} puan) 🏆${ikinci ? ` Arkandaki fark ${d.puan - ikinci.puan} puan.` : ''} Tempoyu koru, hafta sonuna kadar bırakma!`;
+      durum = 'Şu an *1. sıradasın* 🏆 Tempoyu koru, bırakma!';
     } else {
-      const fark = ust.puan - d.puan + 1, alt = L.slice(i + 1).find(x => ozel(x).mod !== 'destek');
-      if (fark <= 60) durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). ${ust.first} ile aranda ${fark} puan var, *${Math.ceil(fark / 10)} etki araması* bu farkı kapatır! 🎯`;
-      else if (alt && alt.puan > 0) durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). Arkandaki ${alt.first} ile farkın ${d.puan - alt.puan} puan, yerini sağlamlaştır ve kendi rekorunu kovala! 💪`;
-      else durum = `Şu an *${sira}. sıradasın* (${d.puan} puan). Haftanın geri kalanında her gün bir aktivite, seni bir üst lige taşır! 💪`;
+      durum = `Şu an *${sira}. sıradasın*. Her gün yapacağın gerçek bir iş seni yukarı taşır! 💪`;
     }
     if (ozel(d).takim) durum += ` 🤝 Takım arkadaşın ${adi(L, ozel(d).takim)} ile paslaştığınız işler de bu emeğin parçası.`;
     const eksik = Object.keys(ETIKET).filter(k => sayi(d.counts, k) < HEDEF[k]).slice(0, 2).map(k => `${ETIKET[k]} ${sayi(d.counts, k)}/${HEDEF[k]}`);
