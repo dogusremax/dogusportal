@@ -10,14 +10,6 @@ jobs:
           B="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec"
           K="k=dogus-performans"
           mkdir -p veri
-          curl -sL "$B?action=aylik&ay=2026-08&$K" -o veri/ay08.json
-          curl -sL "$B?action=aylik&ay=2026-07&$K" -o veri/ay07.json
-          curl -sL "$B?action=aylik&ay=2026-06&$K" -o veri/ay06.json
-          curl -sL "$B?action=haftalik&hafta=2026-08-24&$K" -o veri/h0824.json
-          curl -sL "$B?action=haftalik&hafta=2026-08-17&$K" -o veri/h0817.json
-          curl -sL "$B?action=haftalik&hafta=2026-08-10&$K" -o veri/h0810.json
-          curl -sL "$B?action=haftalik&hafta=2026-08-03&$K" -o veri/h0803.json
-                              curl -sL "$B?action=igToken&k=dogus-performans" | head -c 24 > veri/igtok.txt
-          curl -sL --post302 -X POST "$B" -H "Content-Type: text/plain" --data '{"action":"storyYayinla","ay":"probe","images":[],"testMode":true}' -o veri/probe.json || true
+          curl -sL "$B?action=aylik&ay=2026-09&$K" -o veri/ay09.json
           git config user.name bot; git config user.email b@b
-          git add veri && git commit -m "veri" && git push
+          git add veri && git commit -m "veri: eylul" && git push
