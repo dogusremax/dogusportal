@@ -119,8 +119,16 @@ button.ana:disabled{opacity:.5;cursor:not-allowed}
   display:flex;gap:10px;align-items:flex-start}
 .devam button{margin-left:auto;background:transparent;border:1px solid rgba(10,125,90,.45);color:var(--yesil);
   border-radius:9px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;flex:0 0 auto}
-.uyari{background:rgba(220,28,46,.08);border:1px solid rgba(220,28,46,.25);color:var(--kirmizi);
-  border-radius:13px;padding:11px;font-size:13px;line-height:1.5;margin-bottom:12px;display:none}
+.uyari{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:30;
+  max-width:588px;margin:0 auto;background:#B3121F;color:#fff;border-radius:14px;padding:13px 15px;
+  font-size:14px;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none}
+.durum .tekrarBtn{margin-top:16px;border:none;border-radius:12px;padding:12px 20px;font:inherit;font-weight:700;
+  color:#fff;background:var(--kirmizi);cursor:pointer}
+.durum .yukleme{width:34px;height:34px;border-radius:50%;border:3px solid var(--cizgi);border-top-color:var(--kirmizi);
+  margin:0 auto 14px;animation:don .8s linear infinite}
+@keyframes don{to{transform:rotate(360deg)}}
+.belge .not{display:block;font-size:12px;color:var(--soluk);margin-top:9px;line-height:1.45}
+.onizleme .yuk.hata{background:rgba(179,18,31,.82);cursor:pointer;flex-direction:column;gap:2px;text-align:center;padding:4px}
 .onizbar{background:#FFC400;color:#16203A;border-radius:0;margin:0 -16px 0;padding:10px 16px;font-size:13px;text-align:center}
 .oniztab{display:flex;gap:6px;justify-content:center;margin-top:8px}
 .oniztab a{flex:1;max-width:130px;padding:7px 8px;border-radius:9px;background:rgba(5,10,48,.1);color:#16203A;text-decoration:none;font-weight:700}
@@ -130,7 +138,7 @@ button.ana:disabled{opacity:.5;cursor:not-allowed}
 </head>
 <body>
 <div class="wrap" id="wrap">
-  <div class="durum" id="durum">Form yükleniyor…</div>
+  <div class="durum" id="durum"><div class="yukleme"></div>Formunuz açılıyor…</div>
 </div>
 
 <div class="altbar" id="altbar" style="display:none"><div class="ic">
@@ -149,32 +157,72 @@ var ONIZLE = token ? '' : (new URLSearchParams(location.search).get('onizle') ||
 var TANIM = null, BELGELER = {}, gonderiliyor = false;
 var $ = function (id) { return document.getElementById(id); };
 
+/* Form alanları — Apps Script'teki ALANLAR'ın kopyası. Form sunucuyu beklemeden anında açılsın diye
+   sayfaya gömülü. Kod.gs'de ALANLAR / KVKK değişirse burayı da güncelleyin. */
+var GOMULU = {"alanlar":{"kiraci":[{"grup":"Kişi bilgileri"},{"k":"ad","e":"Ad Soyad","tip":"isim","z":true},{"k":"tc","e":"T.C. Kimlik No","tip":"tc","z":true,"a":"Kimlik kartınızdaki 11 haneli numara"},{"grup":"İletişim"},{"k":"tel","e":"Cep Telefonu","tip":"tel","z":true},{"k":"mail","e":"E-posta","tip":"mail"},{"k":"adres","e":"İkamet Adresi","tip":"uzunmetin","z":true},{"grup":"İş bilgileri"},{"k":"isyeri","e":"Çalıştığı Kurum","tip":"metin"},{"k":"meslek","e":"Görevi / Mesleği","tip":"metin"},{"k":"istel","e":"İş Telefonu","tip":"tel"},{"k":"isadres","e":"İş Adresi","tip":"uzunmetin"},{"grup":"Medeni durum"},{"k":"medeni","e":"Medeni Durumunuz","tip":"secim","sec":["Evli","Bekâr"],"z":true,"a":"Evliyseniz tahliye taahhütnamesinde eşinizin de beyanı gerekir (TMK m. 194 — aile konutu)."},{"k":"esAd","e":"Eşinizin Adı Soyadı","tip":"isim","z":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"esTc","e":"Eşinizin T.C. Kimlik No","tip":"tc","z":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"esTel","e":"Eşinizin Cep Telefonu","tip":"tel","ko":{"k":"medeni","v":"Evli"}},{"grup":"Belgeler"},{"k":"kimlikOn","e":"Kimlik — ön yüz","belge":true,"z":true,"kimlik":true,"a":"Dört köşesi görünsün, yazılar net olsun"},{"k":"kimlikArka","e":"Kimlik — arka yüz","belge":true,"z":true,"kimlik":true},{"k":"esKimlikOn","e":"Eşinizin kimliği — ön yüz","belge":true,"z":true,"kimlik":true,"ko":{"k":"medeni","v":"Evli"},"a":"Sözleşmenin arkasına eklenecek — dört köşesi görünsün"},{"k":"esKimlikArka","e":"Eşinizin kimliği — arka yüz","belge":true,"z":true,"kimlik":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"bordro","e":"Maaş bordrosu / vergi levhası","belge":true,"resim":true,"belgeTara":true,"z":true,"a":"PDF’i seçebilir ya da belgenin fotoğrafını çekebilirsiniz"},{"k":"findeks","e":"Findeks raporu","belge":true,"resim":true,"belgeTara":true,"z":true,"a":"Kira ödeme performans raporu. Findeks uygulamasındaki PDF’i seçebilir ya da fotoğrafını çekebilirsiniz"},{"k":"evlilik","e":"Evlilik cüzdanı","belge":true,"resim":true,"belgeTara":true,"z":true,"ko":{"k":"medeni","v":"Evli"},"a":"Fotoğrafını çekin ya da PDF’ini seçin"}],"sahip":[{"grup":"Kişi bilgileri"},{"k":"ad","e":"Ad Soyad","tip":"isim","z":true},{"k":"tc","e":"T.C. Kimlik No","tip":"tc","z":true,"a":"Kimlik kartınızdaki 11 haneli numara"},{"grup":"İletişim"},{"k":"tel","e":"Cep Telefonu","tip":"tel","z":true},{"k":"mail","e":"E-posta","tip":"mail"},{"k":"adres","e":"Tebligat Adresi","tip":"uzunmetin","z":true},{"grup":"Ödeme ve konut"},{"k":"iban","e":"IBAN","tip":"iban","z":true,"a":"Kira bu hesaba yatacak"},{"k":"abone","e":"Abone Bilgileri","tip":"uzunmetin","a":"Elektrik, su, doğalgaz tesisat numaraları"},{"grup":"Belgeler"},{"k":"kimlikOn","e":"Kimlik — ön yüz","belge":true,"z":true,"kimlik":true,"a":"Dört köşesi görünsün, yazılar net olsun"},{"k":"kimlikArka","e":"Kimlik — arka yüz","belge":true,"z":true,"kimlik":true},{"k":"tapu","e":"Tapu","belge":true,"z":true,"resim":true,"belgeTara":true,"a":"Fotoğrafını, ekran görüntüsünü ya da PDF’ini yükleyebilirsiniz"},{"k":"dask","e":"DASK poliçesi","belge":true,"resim":true,"belgeTara":true,"a":"Fotoğrafını, ekran görüntüsünü ya da PDF’ini yükleyebilirsiniz"},{"k":"vekaletVar","e":"Vekaletname var mı?","tip":"secim","sec":["Var","Yok"],"z":true,"a":"Mülk sizin adınıza vekaletle işlem görecekse \"Var\" seçin"},{"k":"vekalet","e":"Vekaletname","belge":true,"resim":true,"belgeTara":true,"z":true,"ko":{"k":"vekaletVar","v":"Var"},"a":"Sözleşmenin arkasına eklenecek — her sayfasını ayrı çekin"}],"kefil":[{"grup":"Kişi bilgileri"},{"k":"ad","e":"Ad Soyad","tip":"isim","z":true},{"k":"tc","e":"T.C. Kimlik No","tip":"tc","z":true,"a":"Kimlik kartınızdaki 11 haneli numara"},{"grup":"İletişim"},{"k":"tel","e":"Cep Telefonu","tip":"tel","z":true},{"k":"mail","e":"E-posta","tip":"mail"},{"k":"adres","e":"İkamet Adresi","tip":"uzunmetin","z":true},{"grup":"İş ve gelir"},{"k":"isyeri","e":"Çalıştığı Kurum","tip":"metin"},{"k":"isadres","e":"İş Adresi","tip":"uzunmetin"},{"k":"gelir","e":"Aylık Net Geliri","tip":"para"},{"grup":"Medeni durum"},{"k":"medeni","e":"Medeni Durumunuz","tip":"secim","sec":["Evli","Bekâr"],"z":true,"a":"Evliyseniz kefil olabilmeniz için eşinizin yazılı rızası gerekir (TBK m. 584). Eş rıza belgesini sizin için hazırlayacağız."},{"k":"esAd","e":"Eşinizin Adı Soyadı","tip":"isim","z":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"esTc","e":"Eşinizin T.C. Kimlik No","tip":"tc","z":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"esTel","e":"Eşinizin Cep Telefonu","tip":"tel","ko":{"k":"medeni","v":"Evli"}},{"grup":"Belgeler"},{"k":"kimlikOn","e":"Kimlik — ön yüz","belge":true,"z":true,"kimlik":true,"a":"Dört köşesi görünsün, yazılar net olsun"},{"k":"kimlikArka","e":"Kimlik — arka yüz","belge":true,"z":true,"kimlik":true},{"k":"esKimlikOn","e":"Eşinizin kimliği — ön yüz","belge":true,"z":true,"kimlik":true,"ko":{"k":"medeni","v":"Evli"},"a":"Sözleşmenin arkasına eklenecek — dört köşesi görünsün"},{"k":"esKimlikArka","e":"Eşinizin kimliği — arka yüz","belge":true,"z":true,"kimlik":true,"ko":{"k":"medeni","v":"Evli"}},{"k":"ikametgah","e":"Yerleşim yeri belgesi","belge":true,"resim":true,"belgeTara":true,"z":true,"a":"e-Devlet ekran görüntüsü de olur. Sözleşmenin arkasına eklenecek"},{"k":"gelirBelge","e":"Gelir belgesi","belge":true,"resim":true,"belgeTara":true,"z":true,"a":"Bordro, vergi levhası veya emekli maaş dökümü. Sözleşmenin arkasına eklenecek"}]},"kvkk":"RE/MAX Doğuş (UMT GROUP Gayrimenkul Yatırım Danışmanlık) olarak, kira sözleşmesinin hazırlanması ve taraflara iletilmesi amacıyla kimlik, iletişim, adres, gelir ve belge bilgilerinizi işliyoruz. Bu veriler sözleşmenin kurulması ve hukuki yükümlülüklerimizin yerine getirilmesi amacıyla, sözleşme ilişkisi süresince ve mevzuatın öngördüğü saklama süresi boyunca saklanır; yalnızca sözleşmenin tarafları, ofis danışmanınız ve yasal olarak yetkili kurumlarla paylaşılır. 6698 sayılı Kanun kapsamında verilerinize erişme, düzeltilmesini ve silinmesini isteme haklarınız vardır. Talepleriniz için: dogusremax@gmail.com · 0216 315 15 15","roller":{"kiraci":"Kiracı","sahip":"Ev sahibi","kefil":"Kefil"},"ofisTel":"0216 315 15 15"};
+var ROL = (new URLSearchParams(location.search).get('r') || '').replace(/[^a-z0-9]/g, '');
+
+/* İstek: zaman aşımı + JSON */
+function istekAt(url, secenek, sn) {
+  secenek = secenek || {};
+  var ctrl = window.AbortController ? new AbortController() : null, zaman = null;
+  if (ctrl) { secenek.signal = ctrl.signal; zaman = setTimeout(function () { ctrl.abort(); }, (sn || 30) * 1000); }
+  return fetch(url, secenek).then(function (r) { return r.json(); })
+    .then(function (j) { if (zaman) clearTimeout(zaman); return j; },
+          function (e) { if (zaman) clearTimeout(zaman); throw e; });
+}
+function bekle(ms) { return new Promise(function (coz) { setTimeout(coz, ms); }); }
+
+function yerelTanim(rol) {
+  var kok = rol.replace(/\d+$/, ''), sira = Number((rol.match(/(\d+)$/) || [0, 1])[1]);
+  var ad = GOMULU.roller[kok] || kok;
+  return { ok: true, rol: rol, rolAdi: sira > 1 ? sira + '. ' + ad : ad, dosyaNo: '', adres: '', danisman: '',
+           alanlar: JSON.parse(JSON.stringify(GOMULU.alanlar[kok])), kvkk: GOMULU.kvkk, ofisTel: GOMULU.ofisTel };
+}
+
 /* ---------- yükleme ---------- */
 if (ONIZLE) { onizlemeAc(ONIZLE); }
 else if (!token) { $('durum').textContent = 'Bağlantı eksik görünüyor. Danışmanınızdan yeni bağlantı isteyin.'; }
-else {
-  fetch(API + '?action=form&k=' + encodeURIComponent(token))
-    .then(function (r) { return r.json(); })
-    .then(function (d) { d.ok ? ciz(d) : mesajGoster(d.gonderildi ? 'tamam' : 'hata', d.hata); })
-    .catch(function () { $('durum').textContent = 'Bağlantı kurulamadı. İnternetinizi kontrol edip sayfayı yenileyin.'; });
+else if (GOMULU.alanlar[ROL.replace(/\d+$/, '')]) {
+  ciz(yerelTanim(ROL));          /* form hemen açılır */
+  formuDogrula(true, 1);         /* bağlantı kontrolü arkada */
+} else {
+  formuDogrula(false, 1);        /* eski linkler: rol bilinmiyor, sunucuyu bekle */
+  setTimeout(function () {
+    var d = $('durum'); if (d) d.innerHTML = '<div class="yukleme"></div>Formunuz hazırlanıyor…<br><span class="mini">Bağlantınıza göre birkaç saniye sürebilir.</span>';
+  }, 3000);
+}
+
+function formuDogrula(cizildi, deneme) {
+  istekAt(API + '?action=form&k=' + encodeURIComponent(token), null, 25).then(function (d) {
+    if (!d.ok) { mesajGoster(d.gonderildi ? 'tamam' : 'hata', d.hata); return; }
+    if (!cizildi) { ciz(d); return; }
+    TANIM.dosyaNo = d.dosyaNo || ''; TANIM.adres = d.adres || ''; TANIM.danisman = d.danisman || '';
+    TANIM.ofisTel = d.ofisTel || TANIM.ofisTel; TANIM.dogrulandi = true;
+    basligiGuncelle();
+  }).catch(function () {
+    if (deneme < 3) { bekle(1500 * deneme).then(function () { formuDogrula(cizildi, deneme + 1); }); return; }
+    if (cizildi) return;   /* form açık; gönderirken sunucu zaten kontrol eder */
+    var d = $('durum'); if (!d) return;
+    d.innerHTML = 'Form açılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.<br>' +
+                  '<button type="button" class="tekrarBtn" id="tekrarAc">Tekrar dene</button>';
+    $('tekrarAc').onclick = function () { d.innerHTML = '<div class="yukleme"></div>Formunuz açılıyor…'; formuDogrula(false, 1); };
+  });
 }
 
 function onizlemeAc(rol) {
-  fetch(API + '?action=alanlar')
-    .then(function (r) { return r.json(); })
-    .then(function (j) {
-      if (!j.ok || !j.alanlar[rol]) { $('durum').textContent = 'Önizleme açılamadı: rol kiraci, sahip ya da kefil olmalı.'; return; }
-      ciz({ ok: true, rol: rol, rolAdi: (j.roller || {})[rol] || rol, dosyaNo: 'ÖNİZLEME', adres: '', danisman: (function () { try { return localStorage.getItem('kd_dan') || ''; } catch (e) { return ''; } })(),
-            alanlar: j.alanlar[rol], kvkk: j.kvkk, ofisTel: '0216 315 15 15' });
-      var bar = document.createElement('div');
-      bar.className = 'onizbar';
-      bar.innerHTML = '<b>Önizleme</b> — gönderilen hiçbir şey kaydedilmez' +
-        '<div class="oniztab">' + ['kiraci', 'sahip', 'kefil'].map(function (r) {
-          return '<a href="?onizle=' + r + '"' + (r === rol ? ' class="aktif"' : '') + '>' + ((j.roller || {})[r] || r) + '</a>';
-        }).join('') + '</div>';
-      $('wrap').insertBefore(bar, $('wrap').firstChild);
-    })
-    .catch(function () { $('durum').textContent = 'Bağlantı kurulamadı. Sayfayı yenileyin.'; });
+  var j = GOMULU;
+  if (!j.alanlar[rol]) { $('durum').textContent = 'Önizleme açılamadı: rol kiraci, sahip ya da kefil olmalı.'; return; }
+  ciz({ ok: true, rol: rol, rolAdi: j.roller[rol] || rol, dosyaNo: 'ÖNİZLEME', adres: '',
+        danisman: (function () { try { return localStorage.getItem('kd_dan') || ''; } catch (e) { return ''; } })(),
+        alanlar: JSON.parse(JSON.stringify(j.alanlar[rol])), kvkk: j.kvkk, ofisTel: j.ofisTel });
+  var bar = document.createElement('div');
+  bar.className = 'onizbar';
+  bar.innerHTML = '<b>Önizleme</b> — gönderilen hiçbir şey kaydedilmez' +
+    '<div class="oniztab">' + ['kiraci', 'sahip', 'kefil'].map(function (r) {
+      return '<a href="?onizle=' + r + '"' + (r === rol ? ' class="aktif"' : '') + '>' + (j.roller[r] || r) + '</a>';
+    }).join('') + '</div>';
+  $('wrap').insertBefore(bar, $('wrap').firstChild);
 }
 
 function mesajGoster(tip, metin) {
@@ -185,6 +233,15 @@ function mesajGoster(tip, metin) {
   ($('wrap').querySelector('p') || $('wrap').querySelector('.durum')).textContent = metin || '';
 }
 
+function basligiGuncelle() {
+  var d = TANIM; if (!d || !$('ustMarka')) return;
+  $('ustMarka').textContent = 'RE/MAX Doğuş' + (d.danisman ? ' · ' + d.danisman : '');
+  $('ustAciklama').textContent = (d.adres ? d.adres + ' için kira sözleşmesi hazırlanıyor. ' : '') +
+    'Bilgilerinizi doldurup belgelerinizi yükleyin, sözleşmeyi biz hazırlayalım.';
+  $('altBilgi').innerHTML = 'Sorunuz olursa ' + (d.danisman ? 'danışmanınız ' + d.danisman : 'danışmanınız') +
+    ' ya da ofisimiz (' + (d.ofisTel || '') + ') ile iletişime geçebilirsiniz.' + (d.dosyaNo ? '<br>Dosya no: ' + d.dosyaNo : '');
+}
+
 /* ---------- formu çiz ---------- */
 function ciz(d) {
   if (HARIC.length) {
@@ -193,10 +250,9 @@ function ciz(d) {
     d.alanlar = kalan.filter(function (a, i) { return !a.grup || (kalan[i + 1] && !kalan[i + 1].grup); });
   }
   TANIM = d;
-  var h = '<div class="ust"><img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><div class="marka">RE/MAX Doğuş' + (d.danisman ? ' · ' + d.danisman : '') + '</div>' +
+  var h = '<div class="ust"><img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><div class="marka" id="ustMarka"></div>' +
     '<h1>' + d.rolAdi + ' Bilgi Formu</h1>' +
-    '<p>' + (d.adres ? d.adres + ' için kira sözleşmesi hazırlanıyor. ' : '') +
-    'Bilgilerinizi doldurup belgelerinizi yükleyin, sözleşmeyi biz hazırlayalım.</p></div>';
+    '<p id="ustAciklama"></p></div>';
   h += '<div class="uyari" id="uyari"></div>';
 
   var kartAcik = false;
@@ -219,16 +275,19 @@ function ciz(d) {
       });
       h += '</div>';
     } else if (a.belge) {
+      /* İki ayrı giriş: biri doğrudan kamera, biri galeri/dosya. (capture özniteliği galeriyi
+         kapatıp yalnızca kamerayı açtığı için ikisi ayrı tutuluyor.) Kimlik dışında PDF de kabul. */
+      var pdfOlur = !a.kimlik;
       h += '<div class="belge">' +
-             '<input type="file" id="a_' + a.k + '"' +
-               ' accept="' + (a.kimlik || a.resim ? 'image/*' : 'image/*,application/pdf') + '" capture="environment" multiple>' +
+             '<input type="file" id="a_' + a.k + '" accept="' + (pdfOlur ? 'image/*,application/pdf' : 'image/*') + '" multiple>' +
+             '<input type="file" id="c_' + a.k + '" accept="image/*" capture="environment">' +
              '<div class="btnler">' +
                (a.kimlik ? '<span class="btn" data-tara="' + a.k + '">📷 Kimliği tara</span>'
-                : a.belgeTara ? '<span class="btn" data-tara="' + a.k + '">📷 Belgeyi tara</span>' : '') +
-               '<span class="btn" onclick="document.getElementById(\'a_' + a.k + '\').click()">' +
-                 (a.kimlik || a.belgeTara ? '🖼️ Galeriden seç' : '📷 Fotoğraf çek veya dosya seç') +
-               '</span>' +
+                : a.belgeTara ? '<span class="btn" data-tara="' + a.k + '">📷 Belgeyi tara</span>'
+                : '<span class="btn" data-ac="c_' + a.k + '">📷 Fotoğraf çek</span>') +
+               '<span class="btn" data-ac="a_' + a.k + '">' + (pdfOlur ? '📎 Galeri / PDF seç' : '🖼️ Galeriden seç') + '</span>' +
              '</div>' +
+             (pdfOlur && !a.a ? '<span class="not">Telefonunuzdaki PDF belgeleri de seçebilirsiniz.</span>' : '') +
              '<div class="onizleme" id="o_' + a.k + '"></div>' +
            '</div>';
     } else if (a.tip === 'uzunmetin') {
@@ -250,11 +309,11 @@ function ciz(d) {
        '<label class="onay"><input type="checkbox" id="kvkk">' +
        '<span>Aydınlatma metnini okudum, bilgilerimin ve belgelerimin kira sözleşmesinin hazırlanması amacıyla işlenmesine onay veriyorum.</span></label>' +
        '</div>' +
-       '<p class="mini">Sorunuz olursa ' + (d.danisman ? 'danışmanınız ' + d.danisman : 'danışmanınız') +
-       ' ya da ofisimiz (' + (d.ofisTel || '') + ') ile iletişime geçebilirsiniz.<br>Dosya no: ' + d.dosyaNo + '</p>';
+       '<p class="mini" id="altBilgi"></p>';
 
   $('wrap').innerHTML = h;
   $('altbar').style.display = 'block';
+  basligiGuncelle();
 
   d.alanlar.forEach(function (a) {
     if (!a.k) return;
@@ -265,7 +324,12 @@ function ciz(d) {
       return;
     }
     var el = $('a_' + a.k);
-    if (a.belge) { BELGELER[a.k] = []; el.addEventListener('change', function (e) { dosyaEkle(a.k, e.target.files); e.target.value = ''; }); }
+    if (a.belge) {
+      BELGELER[a.k] = [];
+      [el, $('c_' + a.k)].forEach(function (giris) {
+        giris.addEventListener('change', function (e) { dosyaEkle(a.k, Array.prototype.slice.call(e.target.files || [])); e.target.value = ''; });
+      });
+    }
     else if (a.tip === 'tel') el.addEventListener('input', function (e) { e.target.value = telBicim(e.target.value); });
     else if (a.tip === 'isim') {
       el.addEventListener('input', function (e) { canliBicim(e.target, isimCanli); });
@@ -286,6 +350,9 @@ function ciz(d) {
   Array.prototype.forEach.call($('wrap').querySelectorAll('input, textarea'), function (el) {
     if (el.type === 'file' || el.id === 'kvkk') return;
     el.addEventListener(el.type === 'radio' ? 'change' : 'input', yerelYazGecikmeli);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ac]'), function (b) {
+    b.onclick = function () { var g = $(b.dataset.ac); if (g) g.click(); };
   });
   Array.prototype.forEach.call(document.querySelectorAll('[data-tara]'), function (b) {
     b.onclick = function () {
@@ -340,7 +407,7 @@ function taraAc(alan, baslik, a4) {
 function taraBaslat(yon) {
   _taraYon = yon;
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    taraKapat(); uyar('Bu cihazda kamera açılamadı. "Galeriden" ile fotoğraf seçebilirsiniz.'); return;
+    taraKapat(); uyar('Bu cihazda kamera açılamadı. "Galeri" düğmesiyle fotoğraf seçebilirsiniz.'); return;
   }
   if (_taraAkis) { _taraAkis.getTracks().forEach(function (t) { t.stop(); }); _taraAkis = null; }
   navigator.mediaDevices.getUserMedia({
@@ -349,7 +416,7 @@ function taraBaslat(yon) {
     _taraAkis = akis;
     var v = $('taraVid'); v.srcObject = akis; return v.play().catch(function () {});
   }).catch(function () {
-    taraKapat(); uyar('Kameraya erişilemedi. Kamera iznini verin ya da "Galeriden" seçin.');
+    taraKapat(); uyar('Kameraya erişilemedi. Kamera iznini verin ya da "Galeri" düğmesiyle seçin.');
   });
 }
 
@@ -577,53 +644,155 @@ function dosyaEkle(alan, dosyalar) {
   Array.prototype.forEach.call(dosyalar, function (f) { dosyaYukle(alan, f); });
 }
 
+/* ---------- yükleme kuyruğu: aynı anda en fazla 2 belge, zaman aşımı, otomatik tekrar ---------- */
+var KUYRUK = [], AKTIF = 0;
+
+function alanTanimi(alan) {
+  var t = null;
+  ((TANIM && TANIM.alanlar) || []).forEach(function (a) { if (a.k === alan) t = a; });
+  return t || {};
+}
+
 function dosyaYukle(alan, f) {
-  (function () {
-    if (f.size > 20 * 1024 * 1024) { uyar('Dosya 20MB\'dan büyük olamaz: ' + f.name); return; }
-    var kayit = { ad: f.name, tur: f.type || 'image/jpeg', link: '', durum: 'yukleniyor', onizleme: '' };
-    BELGELER[alan].push(kayit);
-    kucult(f).then(function (o) {
-      kayit.onizleme = o.onizleme; kayit.tur = o.tur; belgeleriCiz(alan);
-      if (ONIZLE) return { ok: true, link: '' };   /* önizlemede Drive'a yüklenmez */
-      return fetch(API, { method: 'POST', body: new URLSearchParams({
-        action: 'belgeYukle',
-        data: JSON.stringify({ token: token, alan: alan, tur: o.tur, icerik: o.base64 })
-      }) }).then(function (r) { return r.json(); });
-    }).then(function (c) {
-      kayit.durum = c && c.ok ? 'tamam' : 'hata';
-      kayit.link = (c && c.link) || '';
-      if (!(c && c.ok)) uyar('Belge yüklenemedi, tekrar deneyin.');
+  if (f.size > 25 * 1024 * 1024) { uyar('Dosya çok büyük (25 MB üstü): ' + (f.name || '')); return; }
+  var pdf = (f.type || '').indexOf('pdf') > -1 || /\.pdf$/i.test(f.name || '');
+  /* Sözleşmeye basılacak belgelerde PDF sayfaları fotoğrafa çevrilir */
+  if (pdf && alanTanimi(alan).resim) {
+    var kayit0 = { ad: f.name, tur: 'image/jpeg', link: '', durum: 'hazirlaniyor', onizleme: '' };
+    BELGELER[alan].push(kayit0); belgeleriCiz(alan);
+    var sure = new Promise(function (c, red) { setTimeout(function () { red(new Error('zaman aşımı')); }, 25000); });
+    Promise.race([pdfSayfalari(f), sure]).then(function (sayfalar) {
+      BELGELER[alan].splice(BELGELER[alan].indexOf(kayit0), 1);
+      sayfalar.forEach(function (o, i) {
+        var k = { ad: (f.name || 'belge') + ' s' + (i + 1), tur: o.tur, link: '', durum: 'sirada', onizleme: o.onizleme, base64: o.base64 };
+        BELGELER[alan].push(k); kuyrugaEkle(alan, k);
+      });
       belgeleriCiz(alan);
-      kucukResim(kayit.onizleme).then(function (k) { kayit.kucuk = k; yerelYaz(); });
-    }).catch(function () { kayit.durum = 'hata'; belgeleriCiz(alan); uyar('Belge yüklenemedi, tekrar deneyin.'); });
+    }).catch(function () {
+      /* çevrilemediyse PDF’i olduğu gibi gönder */
+      BELGELER[alan].splice(BELGELER[alan].indexOf(kayit0), 1);
+      dosyaHazirla(alan, f, true);
+    });
+    return;
+  }
+  dosyaHazirla(alan, f, pdf);
+}
+
+function dosyaHazirla(alan, f, pdf) {
+  var kayit = { ad: f.name, tur: f.type || 'image/jpeg', link: '', durum: 'hazirlaniyor', onizleme: '' };
+  BELGELER[alan].push(kayit); belgeleriCiz(alan);
+  kucult(f, pdf).then(function (o) {
+    kayit.onizleme = o.onizleme; kayit.tur = o.tur; kayit.base64 = o.base64; kayit.durum = 'sirada';
+    belgeleriCiz(alan); kuyrugaEkle(alan, kayit);
+  }).catch(function () {
+    kayit.durum = 'hata'; kayit.hata = 'Dosya okunamadı'; belgeleriCiz(alan);
+    uyar('Bu dosya okunamadı. Başka bir fotoğraf ya da PDF seçin.');
+  });
+}
+
+function kuyrugaEkle(alan, kayit) { KUYRUK.push({ alan: alan, kayit: kayit }); kuyrukIsle(); }
+
+function kuyrukIsle() {
+  while (AKTIF < 2 && KUYRUK.length) {
+    var is = KUYRUK.shift();
+    if (is.kayit.silindi) continue;
+    AKTIF++;
+    yukleDene(is.alan, is.kayit, 1).then(function () { AKTIF--; kuyrukIsle(); });
+  }
+}
+
+function yukleDene(alan, kayit, deneme) {
+  kayit.durum = 'yukleniyor'; kayit.deneme = deneme; belgeleriCiz(alan);
+  var is = ONIZLE ? bekle(500).then(function () { return { ok: true, link: '' }; })   /* önizlemede Drive'a yüklenmez */
+    : istekAt(API, { method: 'POST', body: new URLSearchParams({
+        action: 'belgeYukle',
+        data: JSON.stringify({ token: token, alan: alan, tur: kayit.tur, icerik: kayit.base64 })
+      }) }, 90);
+  return is.then(function (c) {
+    if (!(c && c.ok)) { var e = new Error((c && c.hata) || 'Yüklenemedi'); e.kalici = /geçersiz|okunamadı/i.test(e.message); throw e; }
+    if (kayit.silindi) return;
+    kayit.durum = 'tamam'; kayit.link = c.link || ''; kayit.base64 = '';
     belgeleriCiz(alan);
-  })();
+    kucukResim(kayit.onizleme).then(function (k) { kayit.kucuk = k; yerelYaz(); });
+  }).catch(function (e) {
+    if (kayit.silindi) return;
+    if (deneme < 3 && !(e && e.kalici)) return bekle(2500 * deneme).then(function () { return yukleDene(alan, kayit, deneme + 1); });
+    kayit.durum = 'hata'; kayit.hata = (e && e.kalici && e.message) || '';
+    belgeleriCiz(alan);
+    uyar((alanTanimi(alan).e || 'Belge') + ' yüklenemedi. ' +
+         (kayit.hata ? kayit.hata : 'Kırmızı kutuya dokunup tekrar deneyin.'));
+  });
 }
 
 /* Fotoğrafı en fazla 1600px'e küçült — yükleme hızlanır, kalite bozulmaz */
-function kucult(f) {
-  return new Promise(function (coz) {
-    if ((f.type || '').indexOf('pdf') > -1) {
-      var fr = new FileReader();
+function kucult(f, pdf) {
+  return new Promise(function (coz, red) {
+    var fr = new FileReader();
+    fr.onerror = function () { red(new Error('okunamadı')); };
+    if (pdf) {
       fr.onload = function () { coz({ base64: fr.result.split(',')[1], tur: 'application/pdf', onizleme: '' }); };
       fr.readAsDataURL(f);
       return;
     }
-    var fr2 = new FileReader();
-    fr2.onload = function () {
+    fr.onload = function () {
       var img = new Image();
       img.onload = function () {
-        var en = 1600, o = Math.min(1, en / Math.max(img.width, img.height));
-        var c = document.createElement('canvas');
-        c.width = Math.round(img.width * o); c.height = Math.round(img.height * o);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        var url = c.toDataURL('image/jpeg', 0.88);
-        coz({ base64: url.split(',')[1], tur: 'image/jpeg', onizleme: url });
+        try {
+          var en = 1600, o = Math.min(1, en / Math.max(img.width, img.height));
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.width * o); c.height = Math.round(img.height * o);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          var url = c.toDataURL('image/jpeg', 0.85);
+          coz({ base64: url.split(',')[1], tur: 'image/jpeg', onizleme: url });
+        } catch (e) { coz({ base64: fr.result.split(',')[1], tur: f.type || 'image/jpeg', onizleme: fr.result }); }
       };
-      img.onerror = function () { coz({ base64: fr2.result.split(',')[1], tur: f.type || 'image/jpeg', onizleme: fr2.result }); };
-      img.src = fr2.result;
+      /* HEIC gibi tarayıcının çizemediği biçimler: olduğu gibi gönder */
+      img.onerror = function () { coz({ base64: fr.result.split(',')[1], tur: f.type || 'image/jpeg', onizleme: '' }); };
+      img.src = fr.result;
     };
-    fr2.readAsDataURL(f);
+    fr.readAsDataURL(f);
+  });
+}
+
+/* PDF → sayfa fotoğrafları (en fazla 6 sayfa). pdf.js yalnızca gerektiğinde yüklenir. */
+var _pdfjs = null;
+function pdfjsYukle() {
+  if (_pdfjs) return _pdfjs;
+  _pdfjs = new Promise(function (coz, red) {
+    var sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload = function () {
+      try {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        coz(window.pdfjsLib);
+      } catch (e) { red(e); }
+    };
+    sc.onerror = function () { _pdfjs = null; red(new Error('pdf.js yüklenemedi')); };
+    document.head.appendChild(sc);
+  });
+  return _pdfjs;
+}
+function pdfSayfalari(f) {
+  return pdfjsYukle().then(function (lib) {
+    return f.arrayBuffer().then(function (buf) { return lib.getDocument({ data: buf }).promise; });
+  }).then(function (doc) {
+    var adet = Math.min(doc.numPages, 6), sonuc = [], sira = Promise.resolve();
+    for (var i = 1; i <= adet; i++) (function (n) {
+      sira = sira.then(function () { return doc.getPage(n); }).then(function (sayfa) {
+        var v0 = sayfa.getViewport({ scale: 1 });
+        var olcek = Math.min(2.5, 1600 / Math.max(v0.width, v0.height));
+        var v = sayfa.getViewport({ scale: olcek });
+        var c = document.createElement('canvas');
+        c.width = Math.round(v.width); c.height = Math.round(v.height);
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        return sayfa.render({ canvasContext: ctx, viewport: v }).promise.then(function () {
+          var url = c.toDataURL('image/jpeg', 0.85);
+          sonuc.push({ base64: url.split(',')[1], tur: 'image/jpeg', onizleme: url });
+        });
+      });
+    })(i);
+    return sira.then(function () { if (!sonuc.length) throw new Error('boş'); return sonuc; });
   });
 }
 
@@ -631,12 +800,24 @@ function belgeleriCiz(alan) {
   var kutu = $('o_' + alan); if (!kutu) return;
   kutu.innerHTML = BELGELER[alan].map(function (b, i) {
     var ic = b.onizleme ? '<img src="' + b.onizleme + '">' : '<div class="pdf">📄</div>';
-    var ust = b.durum === 'yukleniyor' ? '<div class="yuk">Yükleniyor…</div>'
-            : b.durum === 'hata' ? '<div class="yuk">Hata</div>' : '';
+    var ust = b.durum === 'hazirlaniyor' ? '<div class="yuk">Hazırlanıyor…</div>'
+            : b.durum === 'sirada' ? '<div class="yuk">Sırada…</div>'
+            : b.durum === 'yukleniyor' ? '<div class="yuk">Yükleniyor…' + (b.deneme > 1 ? '<br>(' + b.deneme + '. deneme)' : '') + '</div>'
+            : b.durum === 'hata' ? '<div class="yuk hata" data-i="' + i + '">' + (b.base64 ? '⟳<br>Tekrar dene' : 'Yeniden<br>seçin') + '</div>' : '';
     return '<div class="oge">' + ic + ust + '<button class="sil" data-i="' + i + '">×</button></div>';
   }).join('');
   Array.prototype.forEach.call(kutu.querySelectorAll('.sil'), function (b) {
-    b.onclick = function () { BELGELER[alan].splice(Number(b.dataset.i), 1); belgeleriCiz(alan); yerelYaz(); };
+    b.onclick = function () {
+      var k = BELGELER[alan][Number(b.dataset.i)]; if (k) k.silindi = true;
+      BELGELER[alan].splice(Number(b.dataset.i), 1); belgeleriCiz(alan); yerelYaz();
+    };
+  });
+  Array.prototype.forEach.call(kutu.querySelectorAll('.yuk.hata'), function (b) {
+    b.onclick = function () {
+      var k = BELGELER[alan][Number(b.dataset.i)];
+      if (!k || !k.base64) return;
+      k.durum = 'sirada'; belgeleriCiz(alan); kuyrugaEkle(alan, k);
+    };
   });
 }
 
@@ -658,7 +839,7 @@ function gonder() {
       var ok = (BELGELER[a.k] || []).filter(function (b) { return b.durum === 'tamam'; });
       if (ok.length) belgeler[a.k] = ok.map(function (b) { return b.link; });
       if (a.z && !ok.length) { eksik.push(a.e); }
-      if ((BELGELER[a.k] || []).some(function (b) { return b.durum === 'yukleniyor'; })) eksik.push(a.e + ' (yükleme sürüyor)');
+      if ((BELGELER[a.k] || []).some(function (b) { return /hazirlaniyor|sirada|yukleniyor/.test(b.durum); })) eksik.push(a.e + ' (yükleme sürüyor, birkaç saniye bekleyin)');
     } else {
       var v = (el.value || '').trim();
       if (a.tip === 'iban') {
@@ -682,10 +863,14 @@ function gonder() {
   if (ONIZLE) { uyar('Önizleme: form eksiksiz, gerçek linkte gönderilebilirdi. Hiçbir şey kaydedilmedi.'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
   gonderiliyor = true;
   $('gonder').disabled = true; $('gonder').textContent = 'Gönderiliyor…';
-  fetch(API, { method: 'POST', body: new URLSearchParams({
-    action: 'formGonder',
-    data: JSON.stringify({ token: token, veri: veri, belgeler: belgeler, kvkk: true })
-  }) }).then(function (r) { return r.json(); }).then(function (c) {
+  var govde = { action: 'formGonder', data: JSON.stringify({ token: token, veri: veri, belgeler: belgeler, kvkk: true }) };
+  var gonderDene = function (n) {
+    return istekAt(API, { method: 'POST', body: new URLSearchParams(govde) }, 60)
+      .catch(function (e) { if (n < 2) return bekle(2000).then(function () { return gonderDene(n + 1); }); throw e; });
+  };
+  gonderDene(1).then(function (c) {
+    /* ilk deneme ulaşıp cevabı kaybolduysa ikincisi "zaten gönderilmiş" der — bu da başarı */
+    if (c && !c.ok && /zaten g[öo]nderil/i.test(c.hata || '')) c = { ok: true };
     if (c && c.ok) {
       yerelSil();
       mesajGoster('tamam', 'Bilgileriniz ve belgeleriniz danışmanınıza iletildi. Sözleşme hazır olduğunda sizinle iletişime geçilecek. Teşekkür ederiz.');
@@ -703,7 +888,9 @@ function gonder() {
 function uyar(metin) {
   var u = $('uyari'); if (!u) { alert(metin); return; }
   u.textContent = metin; u.style.display = 'block';
-  setTimeout(function () { u.style.display = 'none'; }, 6000);
+  clearTimeout(uyar._z);
+  uyar._z = setTimeout(function () { u.style.display = 'none'; }, 7000);
+  u.onclick = function () { u.style.display = 'none'; };
 }
 
 /* ---------- biçimlendirme ---------- */

@@ -552,7 +552,7 @@ function dosyaGoster(no, d){
         if(bh) h += '<div class="belgeler">'+bh+'</div>';
       } else {
         var haric = haricOku(no, rol);
-        var link = FORM_ADRES + t.token + (haric.length ? '&x=' + haric.join(',') : '');
+        var link = FORM_ADRES + t.token + '&r=' + rol + (haric.length ? '&x=' + haric.join(',') : '');
         var tel = telWa((kayit.tel && kayit.tel[rol]) || '');
         var mesaj = 'Merhaba' + (ad ? ' ' + ad : '') + ', RE/MAX Doğuş\'tan ' + (d.dosya.danisman||'') + '. ' +
           (d.dosya.adres ? d.dosya.adres + ' için ' : '') + 'kira sözleşmesini hazırlayabilmemiz için bilgi formunu ' +
