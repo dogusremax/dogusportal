@@ -187,7 +187,16 @@ function destek(d, L, gun, cumle) {
 }
 
 // ---------- ÇARŞAMBA ----------
+// Tek seferlik: bu haftaların çarşamba mesajı Cuma gider. Onaylı çarşamba şablonunda sabit
+// "Çarşamba akşamı" satırı olduğu için bu haftalarda onaylı destek_mesaji şablonu kullanılır.
+// Anahtar: haftanın Pazartesi tarihi. Listede olmayan haftalar normal Çarşamba olarak devam eder.
+const CUMA_HAFTALARI = { '2026-09-28': true };
+
 function carsamba(veri, tarih) {
+  if (CUMA_HAFTALARI[iso(tarih)]) return cumaVersiyon(veri, tarih);
+  return carsambaHam(veri, tarih);
+}
+function carsambaHam(veri, tarih) {
   const L = veri.siralama;
   const mot = MOTIVASYON[haftaNo(tarih) % MOTIVASYON.length];
   return L.map((d, i) => {
@@ -210,6 +219,19 @@ function carsamba(veri, tarih) {
     const eksik = Object.keys(ETIKET).filter(k => sayi(d.counts, k) < HEDEF[k]).slice(0, 2).map(k => `${ETIKET[k]} ${sayi(d.counts, k)}/${HEDEF[k]}`);
     const hedef = sessiz ? 'yarın tek bir etki araması bile seni listeye taşır 📲' : eksik.length ? eksik.join(', ') : 'haftalık hedeflerinin hepsi tamam, harikasın 👏';
     return { d, sira, sablon: 'carsamba_hatirlatma', p: [d.first, mot, durum, hedef] };
+  });
+}
+
+// Çarşamba mesajının Cuma versiyonu — aynı içerik, "Çarşamba" kelimesi geçmez
+function cumaVersiyon(veri, tarih) {
+  const L = veri.siralama;
+  return carsambaHam(veri, tarih).map(m => {
+    if (m.sablon === 'destek_mesaji') { m.p[1] = 'Haftanın sonuna geldik, seni düşündük.'; return m; }
+    const [ad, , durum, hedef] = m.p;
+    return { d: m.d, sira: m.sira, sablon: 'destek_mesaji', p: [ad,
+      'Haftanın sonuna geldik, bugün *Cuma*! 🗓️',
+      'Haftayı güçlü bitiren, yeni haftaya önde başlar.',
+      `📊 ${durum} · Hafta sonuna kadar: ${hedef} · Aktivitelerini uygulamaya girmeyi unutma 👉 dogusportal.com`] };
   });
 }
 
