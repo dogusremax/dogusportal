@@ -116,10 +116,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);background:#fff
   <div class="dans" id="dans" style="display:none"></div>
   <p class="small" style="margin-top:-4px">Karuselde senin fotoğrafın, adın ve numaran yer alır.</p>
   <div class="row">
-    <div><label>Cep telefonu</label><input type="tel" id="d_phone" placeholder="05xx xxx xx xx"></div>
-    <div><label>Unvan</label><input type="text" id="d_title"></div>
+    <div><label>Cep telefonu 🔒</label><input type="tel" id="d_phone" readonly tabindex="-1" style="opacity:.75;cursor:not-allowed"></div>
+    <div><label>Unvan 🔒</label><input type="text" id="d_title" readonly tabindex="-1" style="opacity:.75;cursor:not-allowed"></div>
   </div>
-  <div class="warn" id="phoneWarn">Bu danışmanın cep numarası kayıtlı değil, ofis numarası yazılıyor. Numarayı yazarsan bu cihazda hatırlanır.</div>
+  <div class="warn" id="phoneWarn">Bu danışmanın cep numarası kayıtlı değil, ofis numarası yazılıyor. Değiştirmek için broker ile iletişime geç.</div>
 </section>
 
 <section id="sec-photos">
@@ -292,7 +292,7 @@ function load(){
 }
 function save(){ try{ const t=clone(S); t._capEdited=capEdited; localStorage.setItem('pk_taslak_d',JSON.stringify(t)); }catch(e){} }
 function telKayit(){ try{return JSON.parse(localStorage.getItem('pk_tel')||'{}');}catch(e){return {};} }
-function danisman(){ if(window.BENIM) S.dan=window.BENIM; const d=DANISMANLAR.find(x=>x.id===S.dan)||DANISMANLAR[0]; const k=telKayit()[d.id]||{}; return {...d, tel:(k.tel!=null?k.tel:d.tel), unvan:(k.unvan||d.unvan||"Gayrimenkul Danışmanı")}; }
+function danisman(){ if(window.BENIM) S.dan=window.BENIM; const d=DANISMANLAR.find(x=>x.id===S.dan)||DANISMANLAR[0]; return {...d, tel:d.tel, unvan:(d.unvan||"Gayrimenkul Danışmanı")}; }
 function getK(path){ return path.split('.').reduce((o,k)=>o&&o[k],S); }
 function setK(path,v){ const ks=path.split('.'); let o=S; ks.slice(0,-1).forEach(k=>o=o[k]); o[ks[ks.length-1]]=v; }
 
@@ -613,7 +613,7 @@ document.getElementById('bulk').onchange=async e=>{
 };
 function resetAll(){ if(!confirm('Tüm yazılar varsayılan şablona dönsün mü?')) return; localStorage.removeItem('pk_taslak_d'); load(); capEdited=false; init(); }
 document.getElementById('caption').oninput=e=>{ capEdited=true; S.caption=e.target.value; save(); };
-document.getElementById('d_phone').oninput=saveDan; document.getElementById('d_title').oninput=saveDan;
+
 
 /* ================== BAŞLAT ================== */
 function imgLoad(src){ return new Promise(r=>{ const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=src; }); }
