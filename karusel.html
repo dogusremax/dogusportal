@@ -14,7 +14,7 @@
   /* Broker kapısı: portal bu cihazda broker modundaysa doğrudan açılır, değilse sayfada PIN sorulur (yönlendirme yok) */
   window.PORTAL = /dogusportal\.com$|github\.io$/.test(location.hostname);
   window.DANISMAN_MODU = true;
-  window.oturum = function(){ try{ return JSON.parse(sessionStorage.getItem('pk_danisman')||'null'); }catch(e){ return null; } };
+  window.oturum = function(){ try{ return JSON.parse(localStorage.getItem('pk_danisman')||sessionStorage.getItem('pk_danisman')||'null'); }catch(e){ return null; } };
 </script>
 <style>
 :root{--navy:#0A1628;--navy2:#13233B;--red:#E11B2B;--cream:#F3EFE8;--ink:#0E1E36;--mute:#6B7385;--line:#E3DED5;--card:#fff}
@@ -628,11 +628,11 @@ async function pinDene(){
   const v=document.getElementById('pinIn').value.trim(), err=document.getElementById('pinErr'); if(!v) return;
   err.textContent='Kontrol ediliyor…';
   try{ const r=await (await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',body:JSON.stringify({action:'danismanGiris',pin:v})})).json();
-    if(r.success && DANISMANLAR.some(d=>d.id===(KIMLIK[r.id]||r.id))){ const o={id:r.id,name:r.name}; sessionStorage.setItem('pk_danisman',JSON.stringify(o)); err.textContent=''; girisYap(o); }
+    if(r.success && DANISMANLAR.some(d=>d.id===(KIMLIK[r.id]||r.id))){ const o={id:r.id,name:r.name}; try{localStorage.setItem('pk_danisman',JSON.stringify(o));}catch(e){} try{sessionStorage.setItem('pk_danisman',JSON.stringify(o));}catch(e){} err.textContent=''; girisYap(o); }
     else { err.textContent=r.error||'Hatalı PIN'; document.getElementById('pinIn').value=''; }
   }catch(e){ err.textContent='Bağlantı hatası, tekrar dene.'; }
 }
-function cikis(){ sessionStorage.removeItem('pk_danisman'); location.reload(); }
+function cikis(){ try{localStorage.removeItem('pk_danisman');}catch(e){} try{sessionStorage.removeItem('pk_danisman');}catch(e){} location.reload(); }
 document.getElementById('pinIn').addEventListener('keydown',e=>{ if(e.key==='Enter') pinDene(); });
 (function(){ const o=window.oturum(); if(o) setTimeout(()=>girisYap(o),0); else if(!window.PORTAL){ window.BENIM='gizem'; setTimeout(()=>{document.getElementById('pinGate').style.display='none';girisCoz();},0); } else { document.getElementById('pinGate').style.display='flex'; setTimeout(()=>document.getElementById('pinIn').focus(),200); } })();
 
