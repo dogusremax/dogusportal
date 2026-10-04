@@ -31,7 +31,7 @@ if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogu
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
 const KEY="dogus-performans";
 const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-const LBL={fzbo:"FZBO",etki:"Etki Çevresi",sunum1:"1. Sunum",sunum2:"2. Sunum",yetki:"Yetki",gosterim:"Gösterim",kapora:"Kapora",kibris_sunum:"Kıbrıs Sunum",emlak_nobet:"Nöbet",brosur:"Broşür",story:"Story & Post",sosyal_medya:"Sosyal Medya",egitim:"Eğitim"};
+const LBL={fzbo:"FZBO",etki:"Etki Çevresi",sunum1:"1. Sunum",sunum2:"2. Sunum",yetki:"Yetki",gosterim:"Gösterim",kapora:"Kapora",kibris_sunum:"Kıbrıs Sunum",emlak_nobet:"Nöbet",brosur:"Broşür",story:"Story & Post",sosyal_medya:"Sosyal Medya",egitim:"Eğitim",musteri_kayit:"Yeni Müşteri",musteri_not:"Takip Notu"};
 const tl=n=>'₺'+Math.round(n||0).toLocaleString('tr-TR');
 const sel=document.getElementById('ay'),now=new Date();
 for(let i=0;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=M[d.getMonth()]+' '+d.getFullYear();sel.appendChild(o);}
@@ -42,7 +42,7 @@ async function load(){
     document.getElementById('h').textContent=d.ayAdi+' Ayı Genel Sıralaması';
     const t=d.toplam||{};document.getElementById('sum').innerHTML=`<div><b>${t.puan||0}</b>ekip puanı</div><div><b>${Number(t.kapanis||0).toLocaleString('tr-TR',{maximumFractionDigits:2})}</b>işlem</div><div><b>${d.toplam.yetki||0}</b>yetki</div><div><b>${t.gosterim||0}</b>gösterim</div><div><b>${t.sosyal_medya||0}</b>sosyal medya</div><div><b>${t.aktifDanisman||0}/${d.siralama.length}</b>aktif danışman</div>`;
     document.getElementById('list').innerHTML=d.siralama.map((x,i)=>`<div class="row ${i<3?'top3':''}" onclick="this.classList.toggle('open')"><div class="n">${i+1}</div><div class="av"><img src="assets/ekip/${x.id}.png" onerror="this.remove()"></div><div class="main"><div class="name">${x.name}</div><div class="meta"><span>${x.aktifGun} aktif gün</span><span>${(x.counts||{}).gosterim||0} gösterim</span><span>${(x.counts||{}).yetki||0} yetki</span></div></div><div class="pts">${x.puan}<small> p</small></div>
-<div class="det"><div>Aktivite<b>${x.aktivitePuan}p</b></div><div>İstikrar<b>+${x.istikrar}</b></div><div>Kapanış<b>+${x.kapanisPuan}</b></div><div>Hedef bonusu<b>+${x.hedefBonus}</b></div>${x.komboBonus?`<div>İçerik kombosu<b>+${x.komboBonus}</b></div>`:''}${Object.keys(LBL).map(k=>`<div>${LBL[k]}<b>${(x.counts||{})[k]||0}</b></div>`).join('')}</div></div>`).join('');
+<div class="det"><div>Aktivite<b>${x.aktivitePuan}p</b></div><div>İstikrar<b>+${x.istikrar}</b></div><div>Kapanış<b>+${x.kapanisPuan}</b></div><div>Hedef bonusu<b>+${x.hedefBonus}</b></div>${x.komboBonus?`<div>İçerik kombosu<b>+${x.komboBonus}</b></div>`:''}${x.musteriPuan?`<div>Müşteri Takip<b>+${x.musteriPuan}</b></div>`:''}${Object.keys(LBL).map(k=>`<div>${LBL[k]}<b>${(x.counts||{})[k]||0}</b></div>`).join('')}</div></div>`).join('');
     st.textContent=`${d.ayAdi} ${d.yil} · satıra dokun, puan dökümü açılır`;
   }catch(e){st.textContent='Hata: '+e.message;}
 }
