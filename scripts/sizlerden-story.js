@@ -11,6 +11,8 @@ const SIRA = ['evsen', 'gizem', 'orhan', 'aysun', 'ozlem_varol', 'gamze', 'irem'
 const YENI_SINIR = '2026-10-06T00:00:00Z';
 const SIGAN = 210;   // kartta ~6 satır × 35 karakter; bundan kısa yorumlar kesilmeden sığar
 
+// "Canan Akşar" → "Canan A." (soyadın sadece baş harfi)
+const kisaAd = a => { const p = String(a || '').trim().split(/\s+/); return p.length < 2 ? p[0] || '' : p.slice(0, -1).map(w => w.charAt(0).toLocaleUpperCase('tr') + w.slice(1)).join(' ') + ' ' + p[p.length - 1].charAt(0).toLocaleUpperCase('tr') + '.'; };
 const oku = (f, v) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return v; } };
 const sil = f => { try { fs.unlinkSync(f); } catch (e) {} };
 const simdi = new Date();
@@ -55,8 +57,8 @@ function sec() {
   gecmis.son = id; gecmis.sonGun = bugun; gecmis.paylasilan.push(r.id);
   fs.writeFileSync(GECMIS, JSON.stringify(gecmis, null, 1));
   const ad = danismanlar.find(d => d.id === id).ad;
-  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, yazar: r.yazar, metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
-  console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', r.yazar, '|', r.metin.slice(0, 80));
+  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
+  console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', kisaAd(r.yazar), '|', r.metin.slice(0, 80));
 }
 
 async function uret() {

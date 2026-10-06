@@ -63,6 +63,8 @@ const LOGO="assets/dogus-logo.png";
 const q=new URLSearchParams(location.search);
 let DANISMANLAR=[], YORUMLAR=[];
 
+// "Canan Akşar" → "Canan A." (soyadın sadece baş harfi)
+const kisaAd=a=>{const p=String(a||'').trim().split(/\s+/);return p.length<2?p[0]||'':p.slice(0,-1).map(w=>w.charAt(0).toLocaleUpperCase('tr')+w.slice(1)).join(' ')+' '+p[p.length-1].charAt(0).toLocaleUpperCase('tr')+'.';};
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const logo=()=>`<img src="${LOGO}" style="position:absolute;top:30px;right:32px;width:104px;z-index:12;">`;
 const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:120px;bottom:26px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
@@ -159,7 +161,7 @@ function render(){
 function yorumYukle(id){
   const r=YORUMLAR.find(x=>x.id===id); if(!r) return;
   document.getElementById('danisman').value=r.danismanlar[0];
-  document.getElementById('musteri').value=r.yazar;
+  document.getElementById('musteri').value=kisaAd(r.yazar);
   document.getElementById('metin').value=r.metin;
   render();
 }
@@ -196,7 +198,7 @@ async function downloadAll(){
     .sort((a,b)=>(b.tarih||'').localeCompare(a.tarih||''));
   document.getElementById('danisman').innerHTML=d.map(x=>`<option value="${x.id}">${esc(x.ad)}</option>`).join('');
   document.getElementById('yorumSec').innerHTML='<option value="">— Yorum seç —</option>'+YORUMLAR.map(r=>
-    `<option value="${esc(r.id)}">${esc(r.danismanlar.map(i=>(d.find(x=>x.id===i)||{}).ad).filter(Boolean).join(', '))} · ${esc(r.yazar)} · ${esc(r.metin.slice(0,50))}…</option>`).join('');
+    `<option value="${esc(r.id)}">${esc(r.danismanlar.map(i=>(d.find(x=>x.id===i)||{}).ad).filter(Boolean).join(', '))} · ${esc(kisaAd(r.yazar))} · ${esc(r.metin.slice(0,50))}…</option>`).join('');
   const hedef=q.get('yorum')||(YORUMLAR[0]||{}).id;
   if(hedef){document.getElementById('yorumSec').value=hedef;yorumYukle(hedef);}
   if(q.get('danisman')){document.getElementById('danisman').value=q.get('danisman');render();}
