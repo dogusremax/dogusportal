@@ -1,4 +1,4 @@
-// Google yorumlarından "Sizlerden Gelenler" story'si üretir → sizlerden-story/<tarih>-<n>.png
+// Google yorumlarından "Sizlerden Gelenler" story'si (<tarih>-<n>.png) ve gönderi karuseli (<tarih>-<n>-k1..3.png) üretir → sizlerden-story/
 // Kural: her yorum yalnızca bir kez paylaşılır (sizlerden-story/.gecmis.json), tekrar yok.
 //  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 12:00–21:00 arası ilk saatlik (gece gelen ertesi gün 12:00) çalışmada paylaşılır.
 //  - Eski yorumlar: hepsi bitene kadar her gün 12:00'den sonraki ilk çalışmada bir tane, danışmanlar sırayla döner.
@@ -80,12 +80,22 @@ async function uret() {
     render();
     return cv.toDataURL('image/png').split(',')[1];
   }, secim);
+
+  // Gönderi karuseli (sizlerden-karusel.html, 3 × 1080x1440)
+  const kp = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 1080 / 420 });
+  await kp.goto(`https://dogusportal.com/sizlerden-karusel.html?oto=1&yorum=${encodeURIComponent(secim.yorumId)}&danisman=${secim.danisman}&v=${Date.now()}`, { waitUntil: 'networkidle' });
+  await kp.waitForSelector('body[data-ready]', { timeout: 60000 });
+  await kp.waitForTimeout(1000);
+  const slaytlar = kp.locator('.slide');
+  const kareler = [];
+  for (let i = 0; i < await slaytlar.count(); i++) kareler.push(await slaytlar.nth(i).screenshot());
   await browser.close();
 
-  const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && f.endsWith('.png')).length + (secim.tekrar ? 0 : 1);
+  const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && /^[\d-]+\.png$/.test(f) && !/-k\d\.png$/.test(f)).length + (secim.tekrar ? 0 : 1);
   const dosya = `${DIR}/${bugun}-${Math.max(no, 1)}.png`;
   fs.writeFileSync(dosya, Buffer.from(png, 'base64'));
-  fs.writeFileSync(DIR + '/.media', JSON.stringify({ date: bugun, key: secim.yorumId, isVideo: false, url: 'https://dogusportal.com/' + dosya, secim }, null, 1));
+  const feed = kareler.map((b, i) => { const f = dosya.replace('.png', `-k${i + 1}.png`); fs.writeFileSync(f, b); return 'https://dogusportal.com/' + f; });
+  fs.writeFileSync(DIR + '/.media', JSON.stringify({ date: bugun, key: secim.yorumId, isVideo: false, url: 'https://dogusportal.com/' + dosya, feed, secim }, null, 1));
   fs.writeFileSync(DIR + '/.son', `${bugun} ${secim.ad} · ${secim.yazar}`);
   console.log('✓ story', dosya, '|', secim.ad, '|', secim.yazar);
 }
