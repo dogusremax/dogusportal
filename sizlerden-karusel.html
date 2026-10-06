@@ -42,10 +42,8 @@
   <a href="index.html">‹ Portal</a>
   <img src="assets/dogus-logo.png" alt="Doğuş">
   <h1>Sizlerden Gelenler · Karusel</h1>
-  <select id="fmt" onchange="setFmt()">
-    <option value="feed">Karusel (3:4)</option>
-    <option value="story">Story (9:16)</option>
-  </select>
+  <!-- Story bu sayfadan değil, danışman şablonundan üretilir (sizlerden-gelenler.html) -->
+  <select id="fmt" onchange="setFmt()" style="display:none"><option value="feed">Karusel (3:4)</option></select>
   <button id="zipbtn" onclick="downloadAll()">Tümünü indir (ZIP)</button>
 </div>
 
