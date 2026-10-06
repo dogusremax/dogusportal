@@ -1,6 +1,6 @@
 // Google yorumlarından "Sizlerden Gelenler" story'si üretir → sizlerden-story/<tarih>-<n>.png
 // Kural: her yorum yalnızca bir kez paylaşılır (sizlerden-story/.gecmis.json), tekrar yok.
-//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 09:00–21:00 arası ilk saatlik çalışmada paylaşılır.
+//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 12:00–21:00 arası ilk saatlik (gece gelen ertesi gün 12:00) çalışmada paylaşılır.
 //  - Eski yorumlar: hepsi bitene kadar her gün 12:00'den sonraki ilk çalışmada bir tane, danışmanlar sırayla döner.
 //    Bitince sadece yeni yorumlar paylaşılır.
 // `node sizlerden-story.js sec` sadece seçim yapar (.secim.json), argümansız çalışınca seçimi görsele çevirir.
@@ -38,7 +38,7 @@ function sec() {
 
   let r = null, id = null;
   const yeniler = adaylar.filter(x => (x.ilkGorulme || '') >= YENI_SINIR).sort((a, b) => a.ilkGorulme.localeCompare(b.ilkGorulme));
-  if (yeniler.length && saat >= 9 && saat < 21) {
+  if (yeniler.length && saat >= 12 && saat < 21) {
     r = yeniler[0];
     id = sirali.find(i => r.danismanlar.includes(i));
   } else if (!yeniler.length && saat >= 12 && gecmis.sonGun !== bugun) {
