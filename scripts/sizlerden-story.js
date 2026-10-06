@@ -1,8 +1,8 @@
 // Google yorumlarından "Sizlerden Gelenler" story'si (<tarih>-<n>.png) ve gönderi karuseli (<tarih>-<n>-k1..3.png) üretir → sizlerden-story/
 // Kural: her yorum yalnızca bir kez paylaşılır (sizlerden-story/.gecmis.json), tekrar yok.
 //  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 12:00–21:00 arası ilk saatlik (gece gelen ertesi gün 12:00) çalışmada paylaşılır.
-//  - Eski yorumlar: hepsi bitene kadar her gün 12:00'den sonraki ilk çalışmada bir tane, danışmanlar sırayla döner.
-//    Bitince sadece yeni yorumlar paylaşılır.
+//  - Eski (stok) yorumlar: haftada bir, ÇARŞAMBA 12:00'den sonraki ilk çalışmada bir tane; her hafta sıradaki danışman
+//    (eskiSon'dan devam, stoğu bitmiş danışman atlanır). Bitince sadece yeni yorumlar paylaşılır.
 // `node sizlerden-story.js sec` sadece seçim yapar (.secim.json), argümansız çalışınca seçimi görsele çevirir.
 const fs = require('fs');
 
@@ -18,6 +18,8 @@ const sil = f => { try { fs.unlinkSync(f); } catch (e) {} };
 const simdi = new Date();
 const bugun = simdi.toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
 const saat = +simdi.toLocaleString('en-GB', { timeZone: 'Europe/Istanbul', hour: '2-digit', hour12: false });
+const carsamba = simdi.toLocaleDateString('en-US', { timeZone: 'Europe/Istanbul', weekday: 'short' }) === 'Wed';
+const gunFark = (a, b) => Math.round((Date.parse(a) - Date.parse(b)) / 864e5);
 
 function sec() {
   fs.mkdirSync(DIR, { recursive: true });
@@ -35,7 +37,10 @@ function sec() {
   const adaylar = (oku('data/google-yorumlar.json', {}).yorumlar || [])
     .filter(r => r.puan >= 4 && r.metin && r.metin.trim() && !gecmis.paylasilan.includes(r.id)
       && (r.danismanlar || []).some(id => SIRA.includes(id) && danismanlar.some(d => d.id === id)));
-  const bas = SIRA.indexOf(gecmis.son) + 1;
+  // Stok yorum sırası kendi alanında tutulur (yeni yorum paylaşımları sırayı kaydırmaz)
+  const eskiSon = gecmis.eskiSon !== undefined ? gecmis.eskiSon : gecmis.son;
+  const eskiSonGun = gecmis.eskiSonGun !== undefined ? gecmis.eskiSonGun : gecmis.sonGun;
+  const bas = SIRA.indexOf(eskiSon) + 1;
   const sirali = Array.from({ length: SIRA.length }, (_, k) => SIRA[(bas + k) % SIRA.length]);
 
   let r = null, id = null;
@@ -43,13 +48,13 @@ function sec() {
   if (yeniler.length && saat >= 12 && saat < 21) {
     r = yeniler[0];
     id = sirali.find(i => r.danismanlar.includes(i));
-  } else if (!yeniler.length && saat >= 12 && gecmis.sonGun !== bugun) {
+  } else if (!yeniler.length && carsamba && saat >= 12 && (!eskiSonGun || gunFark(bugun, eskiSonGun) >= 6)) {
     for (const i of sirali) {
       const l = adaylar.filter(x => x.danismanlar.includes(i));
       if (!l.length) continue;
       // Önce karta sığan yorumlar, sonra en yeni
       l.sort((a, b) => (a.metin.length > SIGAN) - (b.metin.length > SIGAN) || (b.tarih || '').localeCompare(a.tarih || ''));
-      r = l[0]; id = i; break;
+      r = l[0]; id = i; gecmis.eskiSon = i; gecmis.eskiSonGun = bugun; break;
     }
   }
   if (!r) return console.log(adaylar.length ? 'Şu an paylaşım zamanı değil.' : 'Paylaşılmamış yorum yok.');
