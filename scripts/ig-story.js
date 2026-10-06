@@ -5,9 +5,10 @@ if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atland�
 const G = 'https://graph.facebook.com/v23.0';
 const DIR = process.env.STORY_DIR || 'nobet-story';   // sizlerden-story de aynı scripti kullanır
 const media = JSON.parse(fs.readFileSync(DIR + '/.media', 'utf8'));
+const KEY = media.key || media.date;   // sizlerden-story aynı gün birden çok story atabilir, yorum id'siyle ayrılır
 const bugun = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
 if (media.date !== bugun) { console.log('Medya bugüne ait değil, paylaşım atlandı:', media.date); process.exit(0); }
-try { if (fs.readFileSync(DIR + '/.pub', 'utf8').trim() === media.date) { console.log('Bugün zaten yayınlanmış, atlandı:', media.date); process.exit(0); } } catch (e) {}
+try { if (fs.readFileSync(DIR + '/.pub', 'utf8').trim() === KEY) { console.log('Bugün zaten yayınlanmış, atlandı:', media.date); process.exit(0); } } catch (e) {}
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function post(p, body) {
   const r = await fetch(`${G}/${p}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, access_token: TOKEN }) });
@@ -24,5 +25,5 @@ async function post(p, body) {
   }
   const pub = await post(`${UID}/media_publish`, { creation_id: cont.id });
   console.log('✓ Instagram story yayınlandı:', pub.id, media.date);
-  fs.writeFileSync(DIR + '/.pub', media.date);
+  fs.writeFileSync(DIR + '/.pub', KEY);
 })().catch(e => { console.error('IG paylaşım hatası:', e.message); process.exit(1); });
