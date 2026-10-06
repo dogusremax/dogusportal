@@ -9,7 +9,7 @@ const fs = require('fs');
 const DIR = 'sizlerden-story', GECMIS = DIR + '/.gecmis.json', SECIM = DIR + '/.secim.json';
 const SIRA = ['evsen', 'gizem', 'orhan', 'aysun', 'ozlem_varol', 'gamze', 'irem', 'aysegul_alpay'];  // sayfadaki çip sırası
 const YENI_SINIR = '2026-10-06T00:00:00Z';
-const SIGAN = 210;   // kartta ~6 satır × 35 karakter; bundan kısa yorumlar kesilmeden sığar
+const SIGAN = 210;   // story kutusuna kesilmeden sığan yaklaşık uzunluk; eski yorumlarda önce bunlar seçilir
 
 // "Canan Akşar" → "Canan A." (soyadın sadece baş harfi)
 const kisaAd = a => { const p = String(a || '').trim().split(/\s+/); return p.length < 2 ? p[0] || '' : p.slice(0, -1).map(w => w.charAt(0).toLocaleUpperCase('tr') + w.slice(1)).join(' ') + ' ' + p[p.length - 1].charAt(0).toLocaleUpperCase('tr') + '.'; };
@@ -56,7 +56,7 @@ function sec() {
 
   gecmis.son = id; gecmis.sonGun = bugun; gecmis.paylasilan.push(r.id);
   fs.writeFileSync(GECMIS, JSON.stringify(gecmis, null, 1));
-  const ad = danismanlar.find(d => d.id === id).ad;
+  const { ad } = danismanlar.find(d => d.id === id);
   fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
   console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', kisaAd(r.yazar), '|', r.metin.slice(0, 80));
 }
@@ -66,36 +66,24 @@ async function uret() {
   if (!secim) return console.log('Seçim yok, story üretilmedi.');
   const { chromium } = require('playwright');
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
-  await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
-  await page.goto('https://dogusportal.com/sizlerden-gelenler.html?v=' + Date.now(), { waitUntil: 'networkidle' });
-  await page.waitForSelector('.chip', { timeout: 60000 });
-  const png = await page.evaluate(async s => {
-    await document.fonts.load('bold 25px Poppins'); await document.fonts.load('22px Poppins');
-    const chip = [...document.querySelectorAll('.chip')].find(c => c.textContent.trim() === s.ad);
-    if (!chip) throw new Error('Sayfada danışman yok: ' + s.ad);
-    document.getElementById('n1').value = s.yazar;
-    document.getElementById('t1').value = s.metin;
-    chip.click();
-    for (let i = 0; i < 100 && !cache[cur.i]; i++) await new Promise(r => setTimeout(r, 100));
-    if (!cache[cur.i]) throw new Error('Şablon görseli yüklenmedi');
-    render();
-    return cv.toDataURL('image/png').split(',')[1];
-  }, secim);
-
-  // Gönderi karuseli (sizlerden-karusel.html, 3 × 1080x1440)
-  const kp = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 1080 / 420 });
-  await kp.goto(`https://dogusportal.com/sizlerden-karusel.html?oto=1&yorum=${encodeURIComponent(secim.yorumId)}&danisman=${secim.danisman}&v=${Date.now()}`, { waitUntil: 'networkidle' });
-  await kp.waitForSelector('body[data-ready]', { timeout: 60000 });
-  await kp.waitForTimeout(1000);
-  const slaytlar = kp.locator('.slide');
-  const kareler = [];
-  for (let i = 0; i < await slaytlar.count(); i++) kareler.push(await slaytlar.nth(i).screenshot());
+  // Story ve karusel aynı sayfadan (sizlerden-karusel.html): story 1080x1920, karusel 1080x1440 kareler
+  const cek = async fmt => {
+    const p = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 1080 / 420 });
+    await p.goto(`https://dogusportal.com/sizlerden-karusel.html?oto=1&fmt=${fmt}&yorum=${encodeURIComponent(secim.yorumId)}&danisman=${secim.danisman}&v=${Date.now()}`, { waitUntil: 'networkidle' });
+    await p.waitForSelector('body[data-ready]', { timeout: 60000 });
+    await p.waitForTimeout(1000);
+    const sl = p.locator('.slide'), l = [];
+    for (let i = 0; i < await sl.count(); i++) l.push(await sl.nth(i).screenshot());
+    await p.close();
+    return l;
+  };
+  const [png] = await cek('story');
+  const kareler = await cek('feed');
   await browser.close();
 
   const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && /^[\d-]+\.png$/.test(f) && !/-k\d\.png$/.test(f)).length + (secim.tekrar ? 0 : 1);
   const dosya = `${DIR}/${bugun}-${Math.max(no, 1)}.png`;
-  fs.writeFileSync(dosya, Buffer.from(png, 'base64'));
+  fs.writeFileSync(dosya, png);
   const feed = kareler.map((b, i) => { const f = dosya.replace('.png', `-k${i + 1}.png`); fs.writeFileSync(f, b); return 'https://dogusportal.com/' + f; });
   fs.writeFileSync(DIR + '/.media', JSON.stringify({ date: bugun, key: secim.yorumId, isVideo: false, url: 'https://dogusportal.com/' + dosya, feed, secim }, null, 1));
   fs.writeFileSync(DIR + '/.son', `${bugun} ${secim.ad} · ${secim.yazar}`);

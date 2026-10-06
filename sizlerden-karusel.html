@@ -28,9 +28,11 @@
   .card{display:flex;flex-direction:column;align-items:center;gap:8px}
   .card small{font-size:11px;color:rgba(255,255,255,.5)}
   .slide{width:420px;height:560px;position:relative;overflow:hidden;border-radius:4px;flex:none;cursor:pointer}
+  .slide.story{height:747px}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   @media (max-width:460px){
     .card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}
+    .card .slide.story{margin-bottom:-149px}
   }
   body.oto .top,body.oto .panel,body.oto .status,body.oto small{display:none}
 </style>
@@ -40,6 +42,10 @@
   <a href="index.html">‹ Portal</a>
   <img src="assets/dogus-logo.png" alt="Doğuş">
   <h1>Sizlerden Gelenler · Karusel</h1>
+  <select id="fmt" onchange="setFmt()">
+    <option value="feed">Karusel (3:4)</option>
+    <option value="story">Story (9:16)</option>
+  </select>
   <button id="zipbtn" onclick="downloadAll()">Tümünü indir (ZIP)</button>
 </div>
 
@@ -61,7 +67,7 @@ const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
 const TEL="0216 315 15 15", WEB="www.remaxdogus.com.tr";
 const LOGO="assets/dogus-logo.png";
 const q=new URLSearchParams(location.search);
-let DANISMANLAR=[], YORUMLAR=[];
+let DANISMANLAR=[], YORUMLAR=[], STORY=false;
 
 // "Canan Akşar" → "Canan A." (soyadın sadece baş harfi)
 const kisaAd=a=>{const p=String(a||'').trim().split(/\s+/);return p.length<2?p[0]||'':p.slice(0,-1).map(w=>w.charAt(0).toLocaleUpperCase('tr')+w.slice(1)).join(' ')+' '+p[p.length-1].charAt(0).toLocaleUpperCase('tr')+'.';};
@@ -93,18 +99,17 @@ ${logo()}
 ${foot('RE/MAX DOĞUŞ · '+TEL)}${kaydir()}</div>`;
 }
 
-// 2) Yorum: metin kutuya sığacak puntoyla
-function yorum(d,musteri,metin){
-  const n=metin.length;
-  const fs=n<=140?21:n<=240?18:n<=380?15.5:n<=560?13.5:n<=800?12:11;
+// 2) Yorum: tek sayfaya sığarsa punto büyür; sığmazsa YAZI_MIN puntoda birden çok sayfaya bölünür (yorumSayfalari)
+const YAZI_MIN=15;
+function yorum(d,musteri,metin,s={ilk:true,son:true,no:1,top:1}){
   const bas=(musteri||'?').trim().charAt(0).toLocaleUpperCase('tr');
   return `<div class="slide" style="background:${NAVY};">
 <div class="sans" style="position:absolute;top:-60px;right:-10px;font-size:380px;font-weight:800;line-height:1;color:rgba(255,255,255,.05);">”</div>
 ${logo()}
 <div style="position:absolute;left:32px;right:32px;top:100px;bottom:56px;display:flex;flex-direction:column;">
-<div><div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">${esc(d.ad.toLocaleUpperCase('tr'))} İÇİN</div></div>
-<div class="yorumKutu" style="flex:1 1 auto;min-height:0;overflow:hidden;display:flex;align-items:center;margin:14px 0;">
-<div class="sans" style="font-size:${fs}px;line-height:1.5;font-weight:500;color:rgba(255,255,255,.95);">“${esc(metin)}”</div>
+<div><div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">${esc(d.ad.toLocaleUpperCase('tr'))} İÇİN</div>${s.top>1?`<span class="sans" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);margin-left:8px;">${s.no}/${s.top}</span>`:''}</div>
+<div class="yorumKutu"${s.top>1?' data-sabit="1"':''} style="flex:1 1 auto;min-height:0;overflow:hidden;display:flex;align-items:center;margin:14px 0;">
+<div class="sans" style="font-size:${s.top>1?YAZI_MIN:21}px;line-height:1.5;font-weight:500;color:rgba(255,255,255,.95);">${s.ilk?'“':'…'}${esc(metin)}${s.son?'”':` <b style="color:${CORAL};font-weight:700;white-space:nowrap;">devamı →</b>`}</div>
 </div>
 <div style="display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);">
 <div class="sans" style="width:42px;height:42px;border-radius:50%;background:${RGRAD};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex:0 0 42px;">${esc(bas)}</div>
@@ -138,21 +143,93 @@ ${satir('☎',TEL)}${satir('⌂',WEB)}${satir('⌖','Fikirtepe · Kadıköy')}
 
 function sigdir(){
   // Yorum kutusuna sığmazsa puntoyu küçült
-  document.querySelectorAll('.yorumKutu').forEach(k=>{
+  document.querySelectorAll('.yorumKutu:not([data-sabit]),.storyKutu').forEach(k=>{
     const t=k.firstElementChild; let fs=22;
     t.style.fontSize=fs+'px';
-    while(t.scrollHeight>k.clientHeight&&fs>9){fs-=.5;t.style.fontSize=fs+'px';}
+    while(t.scrollHeight>k.clientHeight&&fs>YAZI_MIN){fs-=.5;t.style.fontSize=fs+'px';}
   });
 }
+
+// Uzun yorumu YAZI_MIN puntoda sayfalara böl; mümkünse cümle sonundan kes
+function yorumSayfalari(d,musteri,metin){
+  const tmp=document.createElement('div'); tmp.style.cssText='position:absolute;left:-9999px;top:0;';
+  document.body.appendChild(tmp);
+  const sigar=(t,s)=>{tmp.innerHTML=yorum(d,musteri,t,{...s,top:2});const k=tmp.querySelector('.yorumKutu');return k.firstElementChild.scrollHeight<=k.clientHeight;};
+  try{
+    if(sigar(metin,{ilk:true,son:true})) return [metin];
+    const w=metin.split(' '), sayfalar=[]; let i=0;
+    while(i<w.length){
+      let j=i+1;
+      while(j<w.length&&sigar(w.slice(i,j+1).join(' '),{ilk:i===0,son:j+1===w.length})) j++;
+      if(j<w.length) for(let k=j;k>i+(j-i)*.6;k--) if(/[.!?…:)]["”']?$/.test(w[k-1])){j=k;break;}
+      sayfalar.push(w.slice(i,j).join(' ')); i=j;
+    }
+    return sayfalar;
+  }finally{tmp.remove();}
+}
+
+// Story (9:16): gönderinin kapağıyla aynı yapı + altta yorum kutusu ve iletişim
+const STORY_EK='Devamı gönderimizde 👆';
+function storySlide(d,musteri,metin,devam){
+  const bas=(musteri||'?').trim().charAt(0).toLocaleUpperCase('tr');
+  return `<div class="slide story" style="background:${RGRAD};">
+<div class="sans" style="position:absolute;top:-96px;left:-14px;font-size:420px;font-weight:800;line-height:1;color:rgba(255,255,255,.09);">“</div>
+${logo()}
+<img src="${foto(d.id)}" style="position:absolute;right:-24px;top:150px;height:440px;z-index:2;filter:drop-shadow(0 10px 30px rgba(0,0,0,.25));">
+<div style="position:absolute;left:32px;top:120px;z-index:3;">
+<div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;padding:8px 14px;border-radius:9px;">MÜŞTERİ YORUMU</div>
+<div class="sans" style="font-size:46px;font-weight:800;letter-spacing:-1.8px;line-height:1.02;margin-top:16px;color:#fff;">Sizlerden<br>Gelenler</div>
+<div style="margin-top:14px;">${yildiz(18)}</div>
+<div class="sans" style="font-size:12px;color:rgba(255,255,255,.85);margin-top:4px;font-weight:600;">Google yorumu</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;bottom:100px;z-index:4;background:${NAVY};border-radius:22px;padding:20px 22px 16px;box-shadow:0 16px 40px rgba(0,0,0,.35);">
+<div class="storyKutu" style="max-height:210px;overflow:hidden;">
+<div class="sans" style="font-size:20px;line-height:1.5;font-weight:500;color:rgba(255,255,255,.95);">“${esc(metin)}${devam?` …”<br><b style="color:${CORAL};font-weight:700;font-size:13px;">${STORY_EK}</b>`:'”'}</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);">
+<div class="sans" style="width:38px;height:38px;border-radius:50%;background:${RGRAD};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex:0 0 38px;">${esc(bas)}</div>
+<div style="flex:1;min-width:0;"><div class="sans" style="font-size:14px;font-weight:700;color:#fff;">${esc(musteri)}</div>
+<div>${yildiz(12)} <span class="sans" style="font-size:10px;color:rgba(255,255,255,.55);margin-left:4px;">Google</span></div></div>
+</div></div>
+<div style="position:absolute;left:32px;right:32px;bottom:34px;display:flex;justify-content:space-between;align-items:flex-end;z-index:4;">
+<div><div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.8);">Gayrimenkul Danışmanı</div>
+<div class="sans" style="font-size:20px;font-weight:800;letter-spacing:-.4px;color:#fff;margin-top:2px;">${esc(d.ad)}</div></div>
+<div class="sans" style="text-align:right;font-size:11.5px;font-weight:700;color:#fff;line-height:1.6;">☎ ${TEL}<br>${WEB}</div>
+</div></div>`;
+}
+// Story kutusuna sığdır: tamamı 15px'te sığmazsa danışmanın adının geçtiği cümleden başlayan bir bölüm + "Devamı gönderimizde"
+function storyIcerik(d,musteri,metin){
+  const tmp=document.createElement('div'); tmp.style.cssText='position:absolute;left:-9999px;top:0;';
+  document.body.appendChild(tmp);
+  const sigar=(t,devam)=>{tmp.innerHTML=storySlide(d,musteri,t,devam);const k=tmp.querySelector('.storyKutu'),x=k.firstElementChild;x.style.fontSize=YAZI_MIN+'px';return x.scrollHeight<=k.clientHeight;};
+  try{
+    if(sigar(metin,false)) return {metin,devam:false};
+    const cumleler=(metin.match(/[^.!?…]+[.!?…]+["”')]*|[^.!?…]+$/g)||[metin]).map(c=>c.trim()).filter(Boolean);
+    const re=new RegExp('(?<![a-zçğıöşü])(?:'+(d.desen||'^$')+')');
+    let bas=cumleler.findIndex(c=>re.test(c.toLocaleLowerCase('tr'))); if(bas<0) bas=0;
+    const on=bas>0?'… ':'';
+    let t='';
+    for(let i=bas;i<cumleler.length&&sigar(on+(t+' '+cumleler[i]).trim(),true);i++) t=(t+' '+cumleler[i]).trim();
+    if(!t){const w=cumleler[bas].split(' ');let j=1;while(j<w.length&&sigar(on+w.slice(0,j+1).join(' '),true))j++;t=w.slice(0,j).join(' ');}
+    return {metin:on+t,devam:true};
+  }finally{tmp.remove();}
+}
+function setFmt(){STORY=document.getElementById('fmt').value==='story';render();}
 
 function render(){
   const d=secili(); if(!d.id) return;
   const musteri=document.getElementById('musteri').value.trim(), metin=document.getElementById('metin').value.replace(/\s+/g,' ').trim();
   const g=document.getElementById('grid'); g.innerHTML='';
-  [kapak(d),yorum(d,musteri,metin),iletisim(d)].forEach((html,i)=>{
+  let sayfalar;
+  if(STORY){const s=storyIcerik(d,musteri,metin);sayfalar=[storySlide(d,musteri,s.metin,s.devam)];}
+  else{
+    const parca=yorumSayfalari(d,musteri,metin);
+    sayfalar=[kapak(d),...parca.map((t,i)=>yorum(d,musteri,t,{ilk:i===0,son:i===parca.length-1,no:i+1,top:parca.length})),iletisim(d)];
+  }
+  sayfalar.forEach((html,i)=>{
     const c=document.createElement('div'); c.className='card';
-    c.innerHTML=html+`<small>Gönderi ${i+1}/3 · indirmek için tıkla</small>`;
-    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`sizlerden-${d.id}-${i+1}.png`);
+    c.innerHTML=html+`<small>${STORY?'Story':'Gönderi '+(i+1)+'/'+sayfalar.length} · indirmek için tıkla</small>`;
+    c.querySelector('.slide').onclick=()=>shot(c.querySelector('.slide'),`sizlerden-${d.id}-${STORY?'story':i+1}.png`);
     g.appendChild(c);
   });
   sigdir();
@@ -167,7 +244,7 @@ function yorumYukle(id){
 }
 
 async function canvasOf(el){
-  return html2canvas(el,{scale:1080/420,useCORS:true,backgroundColor:null,logging:false,width:420,height:560});
+  return html2canvas(el,{scale:1080/420,useCORS:true,backgroundColor:null,logging:false,width:420,height:el.classList.contains('story')?747:560});
 }
 async function shot(el,name){
   const s=document.getElementById('status'); s.textContent='Görsel hazırlanıyor…';
@@ -192,6 +269,7 @@ async function downloadAll(){
 (async()=>{
   // ?oto=1&yorum=<id>: otomatik paylaşım için sadece slaytlar (scripts/sizlerden-story.js)
   if(q.get('oto')) document.body.classList.add('oto');
+  if(q.get('fmt')==='story'){document.getElementById('fmt').value='story';STORY=true;}
   const [d,y]=await Promise.all([fetch('data/danismanlar.json?t='+Date.now()).then(r=>r.json()),fetch('data/google-yorumlar.json?t='+Date.now()).then(r=>r.json())]);
   DANISMANLAR=d;
   YORUMLAR=(y.yorumlar||[]).filter(r=>r.puan>=4&&r.metin&&(r.danismanlar||[]).some(i=>d.some(x=>x.id===i)))
