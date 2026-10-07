@@ -97,7 +97,7 @@ button{font:inherit;cursor:pointer}
 .flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
 
 /* ---------- hero ---------- */
-.hero{position:relative;background:var(--hero) url("assets/kibris/hero4-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:84px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
+.hero{position:relative;background:var(--hero) url("assets/kibris/hero4-q.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:84px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
 .hero-media{position:absolute;inset:0;z-index:0}
 .sound{position:absolute;z-index:3;bottom:22px;inset-inline-end:18px;display:flex;align-items:center;gap:8px;background:rgba(6,22,34,.62);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 .82rem var(--f-body)}
 .sound .ic-on{display:none}
@@ -931,8 +931,11 @@ let soundOn=false, motionOK=true;
   if(!v) return;
   const portrait = matchMedia("(max-aspect-ratio: 1/1)").matches;           // telefon: dikey kırpılmış 1080×1920
   const hevc = !!v.canPlayType('video/mp4; codecs="hvc1.1.6.L120.90"');      // iPhone/Mac/çoğu Android: daha net ve hafif
-  v.poster = portrait ? "assets/kibris/hero4-m.jpg" : "assets/kibris/hero4-d.jpg";
-  v.src = "assets/kibris/hero4-" + (portrait ? "m" : "d") + (hevc ? "-hevc" : "") + ".mp4";
+  const px = Math.max(innerWidth, innerHeight*16/9) * (devicePixelRatio||1);   // ekranın gerçek piksel genişliği
+  let tier = portrait ? "m" : (px > 2600 ? "4k" : (px > 1700 ? "q" : "d"));
+  if (tier==="4k" && !hevc) tier = "q";                                        // 4K sadece HEVC destekli cihazlara
+  v.poster = "assets/kibris/hero4-" + (tier==="m" ? "m" : tier==="d" ? "d" : "q") + ".jpg";
+  v.src = "assets/kibris/hero4-" + tier + (hevc ? "-hevc" : "") + ".mp4";
   v.muted = true;
   v.style.opacity="0"; v.style.transition="opacity .6s";
   const show=()=>{ v.style.opacity="1"; };
