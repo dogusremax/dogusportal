@@ -97,7 +97,12 @@ button{font:inherit;cursor:pointer}
 .flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
 
 /* ---------- hero ---------- */
-.hero{position:relative;background:linear-gradient(180deg,var(--hero) 0%,var(--hero-2) 70%,#0F4A63 100%);color:var(--hero-fg);overflow:hidden;padding-top:96px;padding-bottom:0}
+.hero{position:relative;background:var(--hero) url("assets/kibris/hero.jpg") center/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:56px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
+.hero-media{position:absolute;inset:0;z-index:0}
+.hero-media video{width:100%;height:100%;object-fit:cover;object-position:60% 50%;display:block}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,34,.55) 0%,rgba(6,22,34,.15) 35%,rgba(6,22,34,.35) 60%,rgba(6,22,34,.88) 100%)}
+.hero .wrap{width:100%}
+.hero h1,.hero .sub{text-shadow:0 2px 24px rgba(0,0,0,.35)}
 .hero .wrap{position:relative;z-index:2}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,10vw,5.2rem);line-height:1;letter-spacing:-.015em;max-width:15ch}
 .hero h1 em{color:var(--sun);font-style:italic}
@@ -273,6 +278,11 @@ footer b{color:var(--ink)}
 </header>
 
 <section class="hero" id="top">
+  <div class="hero-media" aria-hidden="true">
+    <video id="herovid" autoplay muted loop playsinline preload="auto" poster="assets/kibris/hero.jpg">
+      <source src="assets/kibris/hero.mp4" type="video/mp4">
+    </video>
+  </div>
   <div class="wrap">
     <span class="eyebrow" style="color:rgba(234,243,245,.6)" data-i="hero_eyebrow"></span>
     <h1 data-i="h1"></h1>
@@ -286,15 +296,6 @@ footer b{color:var(--ink)}
       <div class="fact"><b>£</b><span data-i="f2"></span></div>
       <div class="fact"><b data-i="f3b"></b><span data-i="f3"></span></div>
     </div>
-  </div>
-  <div class="scene" aria-hidden="true">
-    <div class="sunball"></div>
-    <span class="scene-label" data-i="scene"></span>
-    <svg viewBox="0 0 1200 240" preserveAspectRatio="none">
-      <path d="M0 150 L120 130 L190 140 L260 100 L300 112 L340 70 L362 92 L384 58 L404 86 L428 52 L450 84 L474 64 L500 98 L560 110 L640 96 L720 118 L800 104 L880 124 L960 112 L1060 132 L1200 120 L1200 240 L0 240 Z" fill="#0B3346" opacity=".95"/>
-      <path d="M0 176 L160 166 L300 172 L460 160 L620 170 L780 162 L940 172 L1100 164 L1200 168 L1200 240 L0 240 Z" fill="#0C2C3D"/>
-    </svg>
-    <canvas id="sea"></canvas>
   </div>
 </section>
 
@@ -911,6 +912,15 @@ document.querySelectorAll("[data-ev]").forEach(a => a.addEventListener("click", 
     t++; if(!reduce) requestAnimationFrame(draw);
   }
   draw();
+})();
+
+/* ================= HERO VİDEO ================= */
+(function(){
+  const v=$("herovid"); if(!v) return;
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || saveData) { v.removeAttribute("autoplay"); v.pause(); v.preload="none"; return; }
+  const p=v.play(); if(p && p.catch) p.catch(()=>{});
+  document.addEventListener("visibilitychange",()=>{ document.hidden ? v.pause() : v.play().catch(()=>{}); });
 })();
 
 /* ================= BÖLGELER ================= */
