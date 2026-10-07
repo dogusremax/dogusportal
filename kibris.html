@@ -135,17 +135,23 @@ button{font:inherit;cursor:pointer}
 
 
 /* ---------- ayrıcalıklar ---------- */
-.perks-sec{background:var(--card);border-bottom:1px solid var(--line);padding-block:52px}
-.av-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:26px}
-@media(min-width:860px){.av-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.av{border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
-.av b{font-family:var(--f-mono);font-size:clamp(1.3rem,4.5vw,1.7rem);color:var(--sea);line-height:1.1}
-.av:nth-child(2) b{color:var(--brand)}
-.av h3{font-size:.98rem}
-.av p{font-size:.86rem;color:var(--muted)}
-.av-cta{margin-top:22px}
-@media(max-width:400px){.av-grid{grid-template-columns:1fr}}
-
+.perks-sec{position:relative;background:radial-gradient(120% 140% at 85% 0%,#123F57 0%,#0A2433 55%,#071A26 100%);color:#EAF3F5;padding-block:72px;overflow:hidden}
+.perks-sec::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(233,162,59,.55),transparent) top/100% 1px no-repeat}
+.perks-sec .eyebrow{color:#E9C27A}
+.perks-sec h2{color:#F4F8F9;max-width:20ch}
+.perks-sec h2 em{color:#E9C27A}
+.av-grid{display:grid;grid-template-columns:1fr;margin-top:36px;border-top:1px solid rgba(233,194,122,.22)}
+@media(min-width:900px){.av-grid{grid-template-columns:repeat(4,minmax(0,1fr));border-top:0}}
+.av{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:22px 0;border-bottom:1px solid rgba(233,194,122,.22);min-width:0}
+@media(min-width:900px){.av{grid-template-columns:1fr;gap:14px;padding:4px 26px 0;border-bottom:0;border-inline-start:1px solid rgba(233,194,122,.22)}.av:first-child{border-inline-start:0;padding-inline-start:0}}
+.av-ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#E9C27A;border:1px solid rgba(233,194,122,.45);background:rgba(233,194,122,.06)}
+.av-k{display:block;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#E9C27A;margin-bottom:6px}
+.av h3{font-family:var(--f-display);font-weight:400;font-size:1.45rem;line-height:1.15;color:#F4F8F9}
+.av p{font-size:.88rem;color:rgba(234,243,245,.68);margin-top:8px;line-height:1.55}
+.av-cta{margin-top:34px}
+.btn-gold{background:transparent;color:#F4F8F9;border:1px solid #E9C27A;padding:14px 26px}
+.btn-gold:hover{background:rgba(233,194,122,.12)}
+[lang="fa"] .av h3{font-family:"Vazirmatn",var(--f-display);font-weight:600;font-size:1.15rem}
 /* ---------- reasons ---------- */
 .grid4{display:grid;grid-template-columns:1fr;gap:14px;margin-top:30px}
 @media(min-width:640px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -324,15 +330,17 @@ footer b{color:var(--ink)}
 
 <section class="perks-sec" id="ayricalik">
   <div class="wrap">
-    <span class="eyebrow" data-i="av_e"></span>
-    <h2 data-i="av_h"></h2>
-    <div class="av-grid">
-      <div class="av"><b data-i="av1_k"></b><h3 data-i="av1_h"></h3><p data-i="av1_p"></p></div>
-      <div class="av"><b data-i="av2_k"></b><h3 data-i="av2_h"></h3><p data-i="av2_p"></p></div>
-      <div class="av"><b data-i="av3_k"></b><h3 data-i="av3_h"></h3><p data-i="av3_p"></p></div>
-      <div class="av"><b data-i="av4_k"></b><h3 data-i="av4_h"></h3><p data-i="av4_p"></p></div>
+    <div class="av-head">
+      <span class="eyebrow" data-i="av_e"></span>
+      <h2 data-i="av_h"></h2>
     </div>
-    <div class="av-cta"><a class="btn btn-sun" href="#form" data-ev="avantaj_cta" data-i="av_cta"></a></div>
+    <div class="av-grid">
+      <div class="av"><span class="av-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></span><div><span class="av-k" data-i="av1_k"></span><h3 data-i="av1_h"></h3><p data-i="av1_p"></p></div></div>
+      <div class="av"><span class="av-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 15l6-6"/><circle cx="9.5" cy="9.5" r=".9"/><circle cx="14.5" cy="14.5" r=".9"/></svg></span><div><span class="av-k" data-i="av2_k"></span><h3 data-i="av2_h"></h3><p data-i="av2_p"></p></div></div>
+      <div class="av"><span class="av-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H8a2.5 2.5 0 010-5c3 0 4 5 4 5zM12 7h4a2.5 2.5 0 000-5c-3 0-4 5-4 5z"/></svg></span><div><span class="av-k" data-i="av3_k"></span><h3 data-i="av3_h"></h3><p data-i="av3_p"></p></div></div>
+      <div class="av"><span class="av-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="M8 15l2.5 2.5L16 13"/></svg></span><div><span class="av-k" data-i="av4_k"></span><h3 data-i="av4_h"></h3><p data-i="av4_p"></p></div></div>
+    </div>
+    <div class="av-cta"><a class="btn btn-gold" href="#form" data-ev="avantaj_cta" data-i="av_cta"></a></div>
   </div>
 </section>
 
@@ -470,7 +478,7 @@ const I18N = {
 tr:{
  title:"Kuzey Kıbrıs Projeleri · RE/MAX Doğuş", locale:"tr-TR", dir:"ltr",
  t:{
-  av_e:"RE/MAX Doğuş ayrıcalığı", av_h:"Firma fiyatına, <em>ekstra ücret olmadan.</em>", av1_k:"Liste fiyatı", av1_h:"Şirket liste fiyatıyla satış", av1_p:"Fiyatlarımız inşaat firmalarının resmi liste fiyatlarıdır. Üzerine hiçbir aracı farkı eklenmez.", av2_k:"%0", av2_h:"Sizden komisyon almıyoruz", av2_p:"Alıcı olarak bize hizmet bedeli ya da komisyon ödemezsiniz.", av3_k:"Özel indirim", av3_h:"Firmalarla özel anlaşmalar", av3_p:"Anlaşmalı inşaat firmalarımızla yaptığımız özel anlaşmalar sayesinde size özel indirim sağlayabiliyoruz.", av4_k:"Size özel plan", av4_h:"Kişiye özel ödeme planı", av4_p:"Standart planın dışında, bütçenize uygun peşinat ve taksit yapısını firmayla sizin adınıza biz görüşürüz.", av_cta:"Bana özel teklif isteyin →", 
+  av_e:"RE/MAX Doğuş ayrıcalığı", av_h:"Aynı fiyat. <em>Daha güçlü pazarlık.</em>", av1_k:"Liste fiyatı", av1_h:"Şirket liste fiyatıyla satış", av1_p:"Fiyatlarımız inşaat firmalarının resmi liste fiyatlarıdır. Üzerine hiçbir aracı farkı eklenmez.", av2_k:"%0 komisyon", av2_h:"Sizden komisyon almıyoruz", av2_p:"Alıcı olarak bize hizmet bedeli ya da komisyon ödemezsiniz.", av3_k:"Özel indirim", av3_h:"Firmalarla özel anlaşmalar", av3_p:"Anlaşmalı inşaat firmalarımızla yaptığımız özel anlaşmalar sayesinde size özel indirim sağlayabiliyoruz.", av4_k:"Size özel plan", av4_h:"Kişiye özel ödeme planı", av4_p:"Standart planın dışında, bütçenize uygun peşinat ve taksit yapısını firmayla sizin adınıza biz görüşürüz.", av_cta:"Bana özel teklif isteyin →", 
   logo_sub:"KUZEY KIBRIS MASASI", phone:"0216 315 15 15",
   hero_eyebrow:"Girne · İskele · Esentepe · Gazimağusa",
   h1:"Denize karşı, <em>sterlinle.</em>",
@@ -539,7 +547,7 @@ tr:{
 en:{
  title:"North Cyprus Homes · RE/MAX Doğuş", locale:"en-GB", dir:"ltr",
  t:{
-  av_e:"The RE/MAX Doğuş advantage", av_h:"Developer prices, <em>no extra fees.</em>", av1_k:"List price", av1_h:"Sold at the developer's list price", av1_p:"Our prices are the developers' official list prices. No intermediary mark-up is added.", av2_k:"0%", av2_h:"No commission from you", av2_p:"As a buyer, you pay us no service fee and no commission.", av3_k:"Special discount", av3_h:"Special agreements with developers", av3_p:"Thanks to our special agreements with partner developers, we can secure a discount just for you.", av4_k:"Your own plan", av4_h:"Personalised payment plan", av4_p:"Beyond the standard plan, we negotiate a down payment and instalment structure that fits your budget with the developer on your behalf.", av_cta:"Request my personal offer →", 
+  av_e:"The RE/MAX Doğuş advantage", av_h:"Same price. <em>Stronger negotiating power.</em>", av1_k:"List price", av1_h:"Sold at the developer's list price", av1_p:"Our prices are the developers' official list prices. No intermediary mark-up is added.", av2_k:"0% commission", av2_h:"No commission from you", av2_p:"As a buyer, you pay us no service fee and no commission.", av3_k:"Special discount", av3_h:"Special agreements with developers", av3_p:"Thanks to our special agreements with partner developers, we can secure a discount just for you.", av4_k:"Your own plan", av4_h:"Personalised payment plan", av4_p:"Beyond the standard plan, we negotiate a down payment and instalment structure that fits your budget with the developer on your behalf.", av_cta:"Request my personal offer →", 
   logo_sub:"NORTH CYPRUS DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Facing the sea, <em>in sterling.</em>",
@@ -608,7 +616,7 @@ en:{
 ru:{
  title:"Северный Кипр · RE/MAX Doğuş", locale:"ru-RU", dir:"ltr",
  t:{
-  av_e:"Преимущества RE/MAX Doğuş", av_h:"Цена застройщика, <em>без доплат.</em>", av1_k:"Прайс-лист", av1_h:"Продажа по прайс-листу застройщика", av1_p:"Наши цены — официальные прайс-листы застройщиков. Никаких посреднических наценок.", av2_k:"0%", av2_h:"Без комиссии для вас", av2_p:"Покупатель не платит нам ни за услуги, ни комиссию.", av3_k:"Спецскидка", av3_h:"Особые соглашения с застройщиками", av3_p:"Благодаря особым соглашениям с застройщиками-партнёрами мы можем получить для вас персональную скидку.", av4_k:"Ваш план", av4_h:"Индивидуальный план оплаты", av4_p:"Помимо стандартного плана, мы согласуем с застройщиком первый взнос и рассрочку под ваш бюджет.", av_cta:"Получить персональное предложение →", 
+  av_e:"Преимущества RE/MAX Doğuş", av_h:"Та же цена. <em>Сильнее переговорная позиция.</em>", av1_k:"Прайс-лист", av1_h:"Продажа по прайс-листу застройщика", av1_p:"Наши цены — официальные прайс-листы застройщиков. Никаких посреднических наценок.", av2_k:"0% комиссии", av2_h:"Без комиссии для вас", av2_p:"Покупатель не платит нам ни за услуги, ни комиссию.", av3_k:"Спецскидка", av3_h:"Особые соглашения с застройщиками", av3_p:"Благодаря особым соглашениям с застройщиками-партнёрами мы можем получить для вас персональную скидку.", av4_k:"Ваш план", av4_h:"Индивидуальный план оплаты", av4_p:"Помимо стандартного плана, мы согласуем с застройщиком первый взнос и рассрочку под ваш бюджет.", av_cta:"Получить персональное предложение →", 
   logo_sub:"СЕВЕРНЫЙ КИПР", phone:"+90 216 315 15 15",
   hero_eyebrow:"Кирения · Искеле · Эсентепе · Фамагуста",
   h1:"Вид на море, <em>цена в фунтах.</em>",
@@ -677,7 +685,7 @@ ru:{
 fa:{
  title:"قبرس شمالی · RE/MAX Doğuş", locale:"fa-IR-u-nu-latn", dir:"rtl",
  t:{
-  av_e:"مزیت RE/MAX Doğuş", av_h:"قیمت سازنده، <em>بدون هزینهٔ اضافه.</em>", av1_k:"قیمت رسمی", av1_h:"فروش با لیست قیمت رسمی سازنده", av1_p:"قیمت‌های ما همان لیست قیمت رسمی شرکت‌های سازنده است و هیچ مبلغ واسطه‌ای به آن اضافه نمی‌شود.", av2_k:"۰٪", av2_h:"از شما کمیسیون نمی‌گیریم", av2_p:"شما به‌عنوان خریدار هیچ هزینهٔ خدمات یا کمیسیونی به ما نمی‌پردازید.", av3_k:"تخفیف ویژه", av3_h:"توافق‌های ویژه با سازندگان", av3_p:"به لطف توافق‌های ویژه با سازندگان همکار، می‌توانیم برای شما تخفیف ویژه بگیریم.", av4_k:"برنامهٔ شما", av4_h:"برنامهٔ پرداخت اختصاصی", av4_p:"فراتر از برنامهٔ استاندارد، پیش‌پرداخت و اقساط متناسب با بودجهٔ شما را از طرف شما با سازنده هماهنگ می‌کنیم.", av_cta:"پیشنهاد اختصاصی بگیرید ←", 
+  av_e:"مزیت RE/MAX Doğuş", av_h:"همان قیمت؛ <em>قدرت مذاکرهٔ بیشتر.</em>", av1_k:"قیمت رسمی", av1_h:"فروش با لیست قیمت رسمی سازنده", av1_p:"قیمت‌های ما همان لیست قیمت رسمی شرکت‌های سازنده است و هیچ مبلغ واسطه‌ای به آن اضافه نمی‌شود.", av2_k:"۰٪ کمیسیون", av2_h:"از شما کمیسیون نمی‌گیریم", av2_p:"شما به‌عنوان خریدار هیچ هزینهٔ خدمات یا کمیسیونی به ما نمی‌پردازید.", av3_k:"تخفیف ویژه", av3_h:"توافق‌های ویژه با سازندگان", av3_p:"به لطف توافق‌های ویژه با سازندگان همکار، می‌توانیم برای شما تخفیف ویژه بگیریم.", av4_k:"برنامهٔ شما", av4_h:"برنامهٔ پرداخت اختصاصی", av4_p:"فراتر از برنامهٔ استاندارد، پیش‌پرداخت و اقساط متناسب با بودجهٔ شما را از طرف شما با سازنده هماهنگ می‌کنیم.", av_cta:"پیشنهاد اختصاصی بگیرید ←", 
   logo_sub:"بخش قبرس شمالی", phone:"+90 216 315 15 15",
   hero_eyebrow:"گیرنه · ایسکله · اسنتپه · فاماگوستا",
   h1:"رو به دریا، <em>به پوند.</em>",
@@ -746,7 +754,7 @@ fa:{
 de:{
  title:"Nordzypern · RE/MAX Doğuş", locale:"de-DE", dir:"ltr",
  t:{
-  av_e:"Ihr Vorteil bei RE/MAX Doğuş", av_h:"Bauträgerpreis, <em>ohne Zusatzkosten.</em>", av1_k:"Listenpreis", av1_h:"Verkauf zum Listenpreis des Bauträgers", av1_p:"Unsere Preise sind die offiziellen Preislisten der Bauträger. Es kommt kein Vermittleraufschlag hinzu.", av2_k:"0%", av2_h:"Keine Provision für Sie", av2_p:"Als Käufer zahlen Sie uns weder Servicegebühr noch Provision.", av3_k:"Sonderrabatt", av3_h:"Sondervereinbarungen mit Bauträgern", av3_p:"Dank unserer Sondervereinbarungen mit Partnerbauträgern können wir für Sie einen persönlichen Rabatt erzielen.", av4_k:"Ihr Plan", av4_h:"Individueller Zahlungsplan", av4_p:"Über den Standardplan hinaus verhandeln wir für Sie mit dem Bauträger eine Anzahlung und Ratenstruktur, die zu Ihrem Budget passt.", av_cta:"Persönliches Angebot anfordern →", 
+  av_e:"Ihr Vorteil bei RE/MAX Doğuş", av_h:"Gleicher Preis. <em>Mehr Verhandlungsmacht.</em>", av1_k:"Listenpreis", av1_h:"Verkauf zum Listenpreis des Bauträgers", av1_p:"Unsere Preise sind die offiziellen Preislisten der Bauträger. Es kommt kein Vermittleraufschlag hinzu.", av2_k:"0 % Provision", av2_h:"Keine Provision für Sie", av2_p:"Als Käufer zahlen Sie uns weder Servicegebühr noch Provision.", av3_k:"Sonderrabatt", av3_h:"Sondervereinbarungen mit Bauträgern", av3_p:"Dank unserer Sondervereinbarungen mit Partnerbauträgern können wir für Sie einen persönlichen Rabatt erzielen.", av4_k:"Ihr Plan", av4_h:"Individueller Zahlungsplan", av4_p:"Über den Standardplan hinaus verhandeln wir für Sie mit dem Bauträger eine Anzahlung und Ratenstruktur, die zu Ihrem Budget passt.", av_cta:"Persönliches Angebot anfordern →", 
   logo_sub:"NORDZYPERN-DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Mit Blick aufs Meer, <em>in Pfund.</em>",
@@ -815,7 +823,7 @@ de:{
 pl:{
  title:"Cypr Północny · RE/MAX Doğuş", locale:"pl-PL", dir:"ltr",
  t:{
-  av_e:"Przewaga RE/MAX Doğuş", av_h:"Cena dewelopera, <em>bez dodatkowych opłat.</em>", av1_k:"Cena katalogowa", av1_h:"Sprzedaż po cenie z cennika dewelopera", av1_p:"Nasze ceny to oficjalne cenniki deweloperów. Nie doliczamy żadnej marży pośrednika.", av2_k:"0%", av2_h:"Nie pobieramy od Ciebie prowizji", av2_p:"Jako kupujący nie płacisz nam opłaty za usługę ani prowizji.", av3_k:"Rabat specjalny", av3_h:"Specjalne umowy z deweloperami", av3_p:"Dzięki specjalnym umowom z deweloperami partnerskimi możemy uzyskać dla Ciebie indywidualny rabat.", av4_k:"Twój plan", av4_h:"Indywidualny plan płatności", av4_p:"Poza standardowym planem negocjujemy w Twoim imieniu z deweloperem wpłatę i raty dopasowane do Twojego budżetu.", av_cta:"Poproś o ofertę dla siebie →", 
+  av_e:"Przewaga RE/MAX Doğuş", av_h:"Ta sama cena. <em>Większa siła negocjacji.</em>", av1_k:"Cena katalogowa", av1_h:"Sprzedaż po cenie z cennika dewelopera", av1_p:"Nasze ceny to oficjalne cenniki deweloperów. Nie doliczamy żadnej marży pośrednika.", av2_k:"0% prowizji", av2_h:"Nie pobieramy od Ciebie prowizji", av2_p:"Jako kupujący nie płacisz nam opłaty za usługę ani prowizji.", av3_k:"Rabat specjalny", av3_h:"Specjalne umowy z deweloperami", av3_p:"Dzięki specjalnym umowom z deweloperami partnerskimi możemy uzyskać dla Ciebie indywidualny rabat.", av4_k:"Twój plan", av4_h:"Indywidualny plan płatności", av4_p:"Poza standardowym planem negocjujemy w Twoim imieniu z deweloperem wpłatę i raty dopasowane do Twojego budżetu.", av_cta:"Poproś o ofertę dla siebie →", 
   logo_sub:"DZIAŁ CYPR PÓŁNOCNY", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Z widokiem na morze, <em>w funtach.</em>",
