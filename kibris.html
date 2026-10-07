@@ -99,10 +99,10 @@ button{font:inherit;cursor:pointer}
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--hero) url("assets/kibris/hero-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:56px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
 .hero-media{position:absolute;inset:0;z-index:0}
-@media (max-aspect-ratio:1/1){.hero{background-image:url("assets/kibris/hero-m.jpg");background-position:center}.hero-media video{object-position:center}}
 .hero-media video{width:100%;height:100%;object-fit:cover;object-position:60% 50%;display:block}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,34,.45) 0%,rgba(6,22,34,0) 30%,rgba(6,22,34,.2) 58%,rgba(6,22,34,.82) 100%)}
 .hero .wrap{width:100%}
+@media (max-aspect-ratio:1/1){.hero{background-image:url("assets/kibris/hero-m.jpg");background-position:center}.hero-media video{object-position:center}}
 .hero h1,.hero .sub{text-shadow:0 2px 24px rgba(0,0,0,.35)}
 .hero .wrap{position:relative;z-index:2}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,10vw,5.2rem);line-height:1;letter-spacing:-.015em;max-width:15ch}
