@@ -97,8 +97,14 @@ button{font:inherit;cursor:pointer}
 .flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
 
 /* ---------- hero ---------- */
-.hero{position:relative;background:var(--hero) url("assets/kibris/hero-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:56px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
+.hero{position:relative;background:var(--hero) url("assets/kibris/hero-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:84px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
 .hero-media{position:absolute;inset:0;z-index:0}
+.sound{position:absolute;z-index:3;bottom:22px;inset-inline-end:18px;display:flex;align-items:center;gap:8px;background:rgba(6,22,34,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 .82rem var(--f-body);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sound .ic-on{display:none}
+.sound[aria-pressed="true"] .ic-on{display:block}
+.sound[aria-pressed="true"] .ic-off{display:none}
+.sound[aria-pressed="false"]{animation:nudge 2.4s ease-in-out 1.5s 3}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(233,162,59,0)}50%{box-shadow:0 0 0 8px rgba(233,162,59,.25)}}
 .hero-media video{width:100%;height:100%;object-fit:cover;object-position:60% 50%;display:block}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,34,.45) 0%,rgba(6,22,34,0) 30%,rgba(6,22,34,.2) 58%,rgba(6,22,34,.82) 100%)}
 .hero .wrap{width:100%}
@@ -282,6 +288,12 @@ footer b{color:var(--ink)}
   <div class="hero-media" aria-hidden="true">
     <video id="herovid" autoplay muted loop playsinline preload="auto"></video>
   </div>
+  <audio id="seaaudio" loop preload="none" src="assets/kibris/deniz.m4a"></audio>
+  <button type="button" class="sound" id="soundbtn" aria-pressed="false">
+    <svg class="ic-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+    <svg class="ic-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+    <span id="soundlbl"></span>
+  </button>
   <div class="wrap">
     <span class="eyebrow" style="color:rgba(234,243,245,.6)" data-i="hero_eyebrow"></span>
     <h1 data-i="h1"></h1>
@@ -472,7 +484,7 @@ tr:{
   disc:"Sayfadaki ödeme planları örnektir; kesin fiyat ve koşullar ilgili firmanın güncel fiyat listesine ve satış sözleşmesine tabidir. Her RE/MAX ofisi bağımsız olarak sahiplenilir ve işletilir.",
   sticky:"Uygun projeleri göster"
  },
- dyn:{ months:"{n} ay", once:"tek seferde", s2l:"{n} eşit taksit, faizsiz", s3l:"{n} eşit taksit", s3once:"Teslimde tek ödeme", per_mo:"/ay", per_yr:"{x} / yıl kira", map_sea:"AKDENİZ", map_south:"GÜNEY KIBRIS", proj:"Partner projeler" },
+ dyn:{ snd_on:"Denizi dinle", snd_off:"Sesi kapat", months:"{n} ay", once:"tek seferde", s2l:"{n} eşit taksit, faizsiz", s3l:"{n} eşit taksit", s3once:"Teslimde tek ödeme", per_mo:"/ay", per_yr:"{x} / yıl kira", map_sea:"AKDENİZ", map_south:"GÜNEY KIBRIS", proj:"Partner projeler" },
  regions:{
   girne:{name:"Girne", tag:"Tarihî liman · yerleşik yaşam", text:"Adanın en köklü yaşam merkezi. Antik liman, Beşparmak manzarası, restoran ve hastaneye yakınlık. Oturmak ve emeklilik için ilk tercih; fiyatlar diğer bölgelere göre daha yüksek.", fit:["Yaşam","Emeklilik","Uzun dönem kira"], proj:"Girne ve çevresinde güncel stoklu projeleri ön görüşmede paylaşıyoruz."},
   esentepe:{name:"Esentepe", tag:"Girne doğusu · golf ve sakin koylar", text:"Girne'ye 25–30 dakika, dağ ile deniz arasında daha sakin bir kıyı. Golf sahası ve butik siteler. Hem tatil evi hem kısa dönem kiralama için uygun.", fit:["Tatil evi","Kısa dönem kira","Doğa"], proj:"Casa del Mare (Northernland)"},
@@ -540,7 +552,7 @@ en:{
   disc:"Payment plans on this page are examples; final prices and terms are subject to the developer's current price list and the sales contract. Each RE/MAX office is independently owned and operated.",
   sticky:"Show matching projects"
  },
- dyn:{ months:"{n} months", once:"in one payment", s2l:"{n} equal interest-free instalments", s3l:"{n} equal instalments", s3once:"Single payment at handover", per_mo:"/mo", per_yr:"{x} rent per year", map_sea:"MEDITERRANEAN SEA", map_south:"SOUTH CYPRUS", proj:"Partner projects" },
+ dyn:{ snd_on:"Hear the sea", snd_off:"Mute", months:"{n} months", once:"in one payment", s2l:"{n} equal interest-free instalments", s3l:"{n} equal instalments", s3once:"Single payment at handover", per_mo:"/mo", per_yr:"{x} rent per year", map_sea:"MEDITERRANEAN SEA", map_south:"SOUTH CYPRUS", proj:"Partner projects" },
  regions:{
   girne:{name:"Kyrenia", tag:"Historic harbour · settled living", text:"The island's most established place to live: an ancient harbour, views of the Five Finger Mountains, restaurants and hospitals close by. The first choice for living and retiring; prices are higher than in other regions.", fit:["Living","Retirement","Long-term rental"], proj:"We share current projects with available units around Kyrenia during your first call."},
   esentepe:{name:"Esentepe", tag:"East of Kyrenia · golf and quiet bays", text:"25–30 minutes from Kyrenia, a calmer coastline between the mountains and the sea, with a golf course and boutique complexes. Suits both a holiday home and short-term letting.", fit:["Holiday home","Short-term rental","Nature"], proj:"Casa del Mare (Northernland)"},
@@ -608,7 +620,7 @@ ru:{
   disc:"Планы оплаты на этой странице приведены как пример; окончательные цены и условия определяются актуальным прайс-листом застройщика и договором купли-продажи. Каждый офис RE/MAX находится в независимой собственности и управлении.",
   sticky:"Подобрать проекты"
  },
- dyn:{ months:"{n} мес.", once:"одним платежом", s2l:"{n} равных платежей без процентов", s3l:"{n} равных платежей", s3once:"Единый платёж при сдаче", per_mo:"/мес", per_yr:"{x} аренды в год", map_sea:"СРЕДИЗЕМНОЕ МОРЕ", map_south:"ЮЖНЫЙ КИПР", proj:"Проекты партнёров" },
+ dyn:{ snd_on:"Послушать море", snd_off:"Выключить звук", months:"{n} мес.", once:"одним платежом", s2l:"{n} равных платежей без процентов", s3l:"{n} равных платежей", s3once:"Единый платёж при сдаче", per_mo:"/мес", per_yr:"{x} аренды в год", map_sea:"СРЕДИЗЕМНОЕ МОРЕ", map_south:"ЮЖНЫЙ КИПР", proj:"Проекты партнёров" },
  regions:{
   girne:{name:"Кирения", tag:"Историческая гавань · обжитое место", text:"Самое обжитое место острова: древняя гавань, вид на горы Пентадактилос, рестораны и больницы рядом. Первый выбор для жизни и пенсии; цены выше, чем в других регионах.", fit:["Жизнь","Пенсия","Долгосрочная аренда"], proj:"Актуальные проекты со свободными квартирами в районе Кирении покажем на первой консультации."},
   esentepe:{name:"Эсентепе", tag:"Восточнее Кирении · гольф и тихие бухты", text:"25–30 минут от Кирении, более спокойное побережье между горами и морем, с гольф-полем и бутиковыми комплексами. Подходит и для дома для отдыха, и для краткосрочной аренды.", fit:["Дом для отдыха","Краткосрочная аренда","Природа"], proj:"Casa del Mare (Northernland)"},
@@ -676,7 +688,7 @@ fa:{
   disc:"برنامه‌های پرداخت این صفحه نمونه هستند؛ قیمت و شرایط نهایی تابع لیست قیمت فعلی سازنده و قرارداد فروش است. هر دفتر RE/MAX به‌صورت مستقل مالکیت و اداره می‌شود.",
   sticky:"نمایش پروژه‌های مناسب"
  },
- dyn:{ months:"{n} ماه", once:"یکجا", s2l:"{n} قسط مساوی بدون بهره", s3l:"{n} قسط مساوی", s3once:"پرداخت یکجا هنگام تحویل", per_mo:"/ماه", per_yr:"{x} اجاره در سال", map_sea:"دریای مدیترانه", map_south:"قبرس جنوبی", proj:"پروژه‌های همکار" },
+ dyn:{ snd_on:"صدای دریا", snd_off:"قطع صدا", months:"{n} ماه", once:"یکجا", s2l:"{n} قسط مساوی بدون بهره", s3l:"{n} قسط مساوی", s3once:"پرداخت یکجا هنگام تحویل", per_mo:"/ماه", per_yr:"{x} اجاره در سال", map_sea:"دریای مدیترانه", map_south:"قبرس جنوبی", proj:"پروژه‌های همکار" },
  regions:{
   girne:{name:"گیرنه", tag:"بندر تاریخی · زندگی جاافتاده", text:"جاافتاده‌ترین محل زندگی در جزیره: بندر باستانی، چشم‌انداز کوه‌های پنج‌انگشت، رستوران‌ها و بیمارستان‌ها در نزدیکی. انتخاب اول برای زندگی و بازنشستگی؛ قیمت‌ها از مناطق دیگر بالاتر است.", fit:["زندگی","بازنشستگی","اجارهٔ بلندمدت"], proj:"پروژه‌های فعلیِ دارای واحد خالی در اطراف گیرنه را در اولین گفت‌وگو معرفی می‌کنیم."},
   esentepe:{name:"اسنتپه", tag:"شرق گیرنه · گلف و خلیج‌های آرام", text:"۲۵ تا ۳۰ دقیقه از گیرنه؛ ساحلی آرام‌تر میان کوه و دریا با زمین گلف و مجتمع‌های کوچک و شیک. هم برای خانهٔ تعطیلات و هم برای اجارهٔ کوتاه‌مدت مناسب است.", fit:["خانهٔ تعطیلات","اجارهٔ کوتاه‌مدت","طبیعت"], proj:"Casa del Mare (Northernland)"},
@@ -744,7 +756,7 @@ de:{
   disc:"Die Zahlungspläne auf dieser Seite sind Beispiele; endgültige Preise und Bedingungen richten sich nach der aktuellen Preisliste des Bauträgers und dem Kaufvertrag. Jedes RE/MAX-Büro ist unabhängig in Besitz und Betrieb.",
   sticky:"Passende Projekte zeigen"
  },
- dyn:{ months:"{n} Monate", once:"in einer Zahlung", s2l:"{n} gleiche zinsfreie Raten", s3l:"{n} gleiche Raten", s3once:"Einmalzahlung bei Übergabe", per_mo:"/Monat", per_yr:"{x} Miete pro Jahr", map_sea:"MITTELMEER", map_south:"SÜDZYPERN", proj:"Partnerprojekte" },
+ dyn:{ snd_on:"Das Meer hören", snd_off:"Ton aus", months:"{n} Monate", once:"in einer Zahlung", s2l:"{n} gleiche zinsfreie Raten", s3l:"{n} gleiche Raten", s3once:"Einmalzahlung bei Übergabe", per_mo:"/Monat", per_yr:"{x} Miete pro Jahr", map_sea:"MITTELMEER", map_south:"SÜDZYPERN", proj:"Partnerprojekte" },
  regions:{
   girne:{name:"Kyrenia", tag:"Historischer Hafen · etabliertes Wohnen", text:"Der am längsten gewachsene Wohnort der Insel: antiker Hafen, Blick auf das Pentadaktylos-Gebirge, Restaurants und Krankenhäuser in der Nähe. Erste Wahl zum Leben und für den Ruhestand; die Preise liegen über denen anderer Regionen.", fit:["Wohnen","Ruhestand","Langzeitmiete"], proj:"Aktuelle Projekte mit freien Einheiten rund um Kyrenia zeigen wir Ihnen im Erstgespräch."},
   esentepe:{name:"Esentepe", tag:"Östlich von Kyrenia · Golf und ruhige Buchten", text:"25–30 Minuten von Kyrenia, eine ruhigere Küste zwischen Bergen und Meer mit Golfplatz und Boutique-Anlagen. Geeignet als Ferienhaus und für Kurzzeitvermietung.", fit:["Ferienhaus","Kurzzeitmiete","Natur"], proj:"Casa del Mare (Northernland)"},
@@ -812,7 +824,7 @@ pl:{
   disc:"Plany płatności na tej stronie są przykładowe; ostateczne ceny i warunki zależą od aktualnego cennika dewelopera i umowy sprzedaży. Każde biuro RE/MAX jest niezależnie posiadane i prowadzone.",
   sticky:"Pokaż pasujące projekty"
  },
- dyn:{ months:"{n} mies.", once:"jednorazowo", s2l:"{n} równych rat bez odsetek", s3l:"{n} równych rat", s3once:"Jednorazowa płatność przy odbiorze", per_mo:"/mies.", per_yr:"{x} czynszu rocznie", map_sea:"MORZE ŚRÓDZIEMNE", map_south:"CYPR POŁUDNIOWY", proj:"Projekty partnerów" },
+ dyn:{ snd_on:"Posłuchaj morza", snd_off:"Wycisz", months:"{n} mies.", once:"jednorazowo", s2l:"{n} równych rat bez odsetek", s3l:"{n} równych rat", s3once:"Jednorazowa płatność przy odbiorze", per_mo:"/mies.", per_yr:"{x} czynszu rocznie", map_sea:"MORZE ŚRÓDZIEMNE", map_south:"CYPR POŁUDNIOWY", proj:"Projekty partnerów" },
  regions:{
   girne:{name:"Kyrenia", tag:"Historyczny port · ugruntowane życie", text:"Najbardziej zadomowione miejsce na wyspie: starożytny port, widok na góry Pentadaktylos, restauracje i szpitale w pobliżu. Pierwszy wybór do życia i na emeryturę; ceny są wyższe niż w innych regionach.", fit:["Życie","Emerytura","Najem długoterminowy"], proj:"Aktualne projekty z wolnymi lokalami w okolicy Kyrenii pokażemy podczas pierwszej rozmowy."},
   esentepe:{name:"Esentepe", tag:"Na wschód od Kyrenii · golf i spokojne zatoki", text:"25–30 minut od Kyrenii, spokojniejsze wybrzeże między górami a morzem, z polem golfowym i kameralnymi osiedlami. Sprawdzi się jako dom wakacyjny i pod najem krótkoterminowy.", fit:["Dom wakacyjny","Najem krótkoterminowy","Przyroda"], proj:"Casa del Mare (Northernland)"},
@@ -924,6 +936,18 @@ document.querySelectorAll("[data-ev]").forEach(a => a.addEventListener("click", 
   const p=v.play(); if(p && p.catch) p.catch(()=>{});
   document.addEventListener("visibilitychange",()=>{ document.hidden ? v.pause() : v.play().catch(()=>{}); });
 })();
+
+/* ================= SES ================= */
+const snd=$("seaaudio"), sbtn=$("soundbtn");
+let soundOn=false;
+function soundLabel(){ $("soundlbl").textContent = soundOn ? D().dyn.snd_off : D().dyn.snd_on; sbtn.setAttribute("aria-pressed", soundOn); }
+sbtn.addEventListener("click", ()=>{
+  soundOn=!soundOn;
+  if(soundOn){ snd.volume=.7; snd.play().catch(()=>{ soundOn=false; soundLabel(); }); track("Ses",{dil:L}); }
+  else snd.pause();
+  soundLabel();
+});
+document.addEventListener("visibilitychange",()=>{ if(document.hidden) snd.pause(); else if(soundOn) snd.play().catch(()=>{}); });
 
 /* ================= BÖLGELER ================= */
 const REGIONS = [
@@ -1108,7 +1132,7 @@ function applyLang(lang, user){
   $("langcode").textContent = L.toUpperCase();
   document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-selected", b.dataset.lang===L));
   $("wa-sticky").href = waLink(sent);
-  buildRegions(); calc(); render();
+  buildRegions(); calc(); render(); soundLabel();
   try{ localStorage.setItem("kibris_lang", L); }catch(e){}
   if(user){
     try{ const u=new URL(location.href); u.searchParams.set("lang",L); history.replaceState(null,"",u); }catch(e){}
