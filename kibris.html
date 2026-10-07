@@ -133,6 +133,19 @@ button{font:inherit;cursor:pointer}
 @keyframes rise{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .scene-label{position:absolute;inset-inline-start:18px;bottom:52%;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.12em;color:rgba(234,243,245,.55);text-transform:uppercase}
 
+
+/* ---------- ayrıcalıklar ---------- */
+.perks-sec{background:var(--card);border-bottom:1px solid var(--line);padding-block:52px}
+.av-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:26px}
+@media(min-width:860px){.av-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.av{border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
+.av b{font-family:var(--f-mono);font-size:clamp(1.3rem,4.5vw,1.7rem);color:var(--sea);line-height:1.1}
+.av:nth-child(2) b{color:var(--brand)}
+.av h3{font-size:.98rem}
+.av p{font-size:.86rem;color:var(--muted)}
+.av-cta{margin-top:22px}
+@media(max-width:400px){.av-grid{grid-template-columns:1fr}}
+
 /* ---------- reasons ---------- */
 .grid4{display:grid;grid-template-columns:1fr;gap:14px;margin-top:30px}
 @media(min-width:640px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -309,6 +322,20 @@ footer b{color:var(--ink)}
   </div>
 </section>
 
+<section class="perks-sec" id="ayricalik">
+  <div class="wrap">
+    <span class="eyebrow" data-i="av_e"></span>
+    <h2 data-i="av_h"></h2>
+    <div class="av-grid">
+      <div class="av"><b data-i="av1_k"></b><h3 data-i="av1_h"></h3><p data-i="av1_p"></p></div>
+      <div class="av"><b data-i="av2_k"></b><h3 data-i="av2_h"></h3><p data-i="av2_p"></p></div>
+      <div class="av"><b data-i="av3_k"></b><h3 data-i="av3_h"></h3><p data-i="av3_p"></p></div>
+      <div class="av"><b data-i="av4_k"></b><h3 data-i="av4_h"></h3><p data-i="av4_p"></p></div>
+    </div>
+    <div class="av-cta"><a class="btn btn-sun" href="#form" data-ev="avantaj_cta" data-i="av_cta"></a></div>
+  </div>
+</section>
+
 <section id="neden">
   <div class="wrap">
     <span class="eyebrow" data-i="why_e"></span>
@@ -443,6 +470,7 @@ const I18N = {
 tr:{
  title:"Kuzey Kıbrıs Projeleri · RE/MAX Doğuş", locale:"tr-TR", dir:"ltr",
  t:{
+  av_e:"RE/MAX Doğuş ayrıcalığı", av_h:"Firma fiyatına, <em>ekstra ücret olmadan.</em>", av1_k:"Liste fiyatı", av1_h:"Şirket liste fiyatıyla satış", av1_p:"Fiyatlarımız inşaat firmalarının resmi liste fiyatlarıdır. Üzerine hiçbir aracı farkı eklenmez.", av2_k:"%0", av2_h:"Sizden komisyon almıyoruz", av2_p:"Alıcı olarak bize hizmet bedeli ya da komisyon ödemezsiniz.", av3_k:"Özel indirim", av3_h:"Firmalarla özel anlaşmalar", av3_p:"Anlaşmalı inşaat firmalarımızla yaptığımız özel anlaşmalar sayesinde size özel indirim sağlayabiliyoruz.", av4_k:"Size özel plan", av4_h:"Kişiye özel ödeme planı", av4_p:"Standart planın dışında, bütçenize uygun peşinat ve taksit yapısını firmayla sizin adınıza biz görüşürüz.", av_cta:"Bana özel teklif isteyin →", 
   logo_sub:"KUZEY KIBRIS MASASI", phone:"0216 315 15 15",
   hero_eyebrow:"Girne · İskele · Esentepe · Gazimağusa",
   h1:"Denize karşı, <em>sterlinle.</em>",
@@ -478,7 +506,7 @@ tr:{
   q6_q:"Neden İstanbul'daki bir ofisle çalışayım?", q6_a:"Sözleşmeyi Türkçe okuyor, sorunuzu yüz yüze soruyor, satış sonrasında da muhatabınızı İstanbul'da buluyorsunuz. Anlaşmalı olduğumuz 4 Kıbrıs inşaat firmasının fiyatları, doğrudan firmadan aldığınız fiyatla aynıdır.",
   form_e:"30 saniyelik eşleştirme", form_h:"Size uygun 3 projeyi <em>biz seçelim.</em>",
   form_l:"Beş kısa soruya cevap verin. Kıbrıs danışmanımız fiyat listesi ve ödeme planıyla 24 saat içinde size dönsün.",
-  pk1:"Ücretsiz ve bağlayıcı değil", pk2:"Spam yok", pk3:"Firma fiyatıyla aynı",
+  pk1:"Ücretsiz ve bağlayıcı değil", pk2:"Spam yok", pk3:"Komisyon yok",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, İstanbul",
   disc:"Sayfadaki ödeme planları örnektir; kesin fiyat ve koşullar ilgili firmanın güncel fiyat listesine ve satış sözleşmesine tabidir. Her RE/MAX ofisi bağımsız olarak sahiplenilir ve işletilir.",
   sticky:"Uygun projeleri göster"
@@ -511,6 +539,7 @@ tr:{
 en:{
  title:"North Cyprus Homes · RE/MAX Doğuş", locale:"en-GB", dir:"ltr",
  t:{
+  av_e:"The RE/MAX Doğuş advantage", av_h:"Developer prices, <em>no extra fees.</em>", av1_k:"List price", av1_h:"Sold at the developer's list price", av1_p:"Our prices are the developers' official list prices. No intermediary mark-up is added.", av2_k:"0%", av2_h:"No commission from you", av2_p:"As a buyer, you pay us no service fee and no commission.", av3_k:"Special discount", av3_h:"Special agreements with developers", av3_p:"Thanks to our special agreements with partner developers, we can secure a discount just for you.", av4_k:"Your own plan", av4_h:"Personalised payment plan", av4_p:"Beyond the standard plan, we negotiate a down payment and instalment structure that fits your budget with the developer on your behalf.", av_cta:"Request my personal offer →", 
   logo_sub:"NORTH CYPRUS DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Facing the sea, <em>in sterling.</em>",
@@ -546,7 +575,7 @@ en:{
   q6_q:"Why work with an office in Istanbul?", q6_a:"You can meet us in person, we go through the contract with you, and after the sale you still have a contact in Istanbul. Prices from the 4 Cyprus developers we partner with are the same as buying directly from the developer.",
   form_e:"30-second match", form_h:"Let us <em>pick 3 projects</em> for you.",
   form_l:"Answer five short questions. Our Cyprus consultant will get back to you within 24 hours with price lists and payment plans.",
-  pk1:"Free and non-binding", pk2:"No spam", pk3:"Same price as the developer",
+  pk1:"Free and non-binding", pk2:"No spam", pk3:"No commission",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul, Türkiye",
   disc:"Payment plans on this page are examples; final prices and terms are subject to the developer's current price list and the sales contract. Each RE/MAX office is independently owned and operated.",
   sticky:"Show matching projects"
@@ -579,6 +608,7 @@ en:{
 ru:{
  title:"Северный Кипр · RE/MAX Doğuş", locale:"ru-RU", dir:"ltr",
  t:{
+  av_e:"Преимущества RE/MAX Doğuş", av_h:"Цена застройщика, <em>без доплат.</em>", av1_k:"Прайс-лист", av1_h:"Продажа по прайс-листу застройщика", av1_p:"Наши цены — официальные прайс-листы застройщиков. Никаких посреднических наценок.", av2_k:"0%", av2_h:"Без комиссии для вас", av2_p:"Покупатель не платит нам ни за услуги, ни комиссию.", av3_k:"Спецскидка", av3_h:"Особые соглашения с застройщиками", av3_p:"Благодаря особым соглашениям с застройщиками-партнёрами мы можем получить для вас персональную скидку.", av4_k:"Ваш план", av4_h:"Индивидуальный план оплаты", av4_p:"Помимо стандартного плана, мы согласуем с застройщиком первый взнос и рассрочку под ваш бюджет.", av_cta:"Получить персональное предложение →", 
   logo_sub:"СЕВЕРНЫЙ КИПР", phone:"+90 216 315 15 15",
   hero_eyebrow:"Кирения · Искеле · Эсентепе · Фамагуста",
   h1:"Вид на море, <em>цена в фунтах.</em>",
@@ -614,7 +644,7 @@ ru:{
   q6_q:"Зачем работать с офисом в Стамбуле?", q6_a:"Вы встречаетесь с нами лично, мы вместе разбираем договор, а после сделки у вас остаётся контакт в Стамбуле. Цены 4 застройщиков-партнёров на Кипре такие же, как при покупке напрямую у застройщика.",
   form_e:"Подбор за 30 секунд", form_h:"Позвольте нам <em>подобрать 3 проекта</em>.",
   form_l:"Ответьте на пять коротких вопросов. Наш консультант по Кипру свяжется с вами в течение 24 часов с прайс-листами и планами оплаты.",
-  pk1:"Бесплатно и без обязательств", pk2:"Без спама", pk3:"Цена как у застройщика",
+  pk1:"Бесплатно и без обязательств", pk2:"Без спама", pk3:"Без комиссии",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Фикиртепе / Кадыкёй, Стамбул, Турция",
   disc:"Планы оплаты на этой странице приведены как пример; окончательные цены и условия определяются актуальным прайс-листом застройщика и договором купли-продажи. Каждый офис RE/MAX находится в независимой собственности и управлении.",
   sticky:"Подобрать проекты"
@@ -647,6 +677,7 @@ ru:{
 fa:{
  title:"قبرس شمالی · RE/MAX Doğuş", locale:"fa-IR-u-nu-latn", dir:"rtl",
  t:{
+  av_e:"مزیت RE/MAX Doğuş", av_h:"قیمت سازنده، <em>بدون هزینهٔ اضافه.</em>", av1_k:"قیمت رسمی", av1_h:"فروش با لیست قیمت رسمی سازنده", av1_p:"قیمت‌های ما همان لیست قیمت رسمی شرکت‌های سازنده است و هیچ مبلغ واسطه‌ای به آن اضافه نمی‌شود.", av2_k:"۰٪", av2_h:"از شما کمیسیون نمی‌گیریم", av2_p:"شما به‌عنوان خریدار هیچ هزینهٔ خدمات یا کمیسیونی به ما نمی‌پردازید.", av3_k:"تخفیف ویژه", av3_h:"توافق‌های ویژه با سازندگان", av3_p:"به لطف توافق‌های ویژه با سازندگان همکار، می‌توانیم برای شما تخفیف ویژه بگیریم.", av4_k:"برنامهٔ شما", av4_h:"برنامهٔ پرداخت اختصاصی", av4_p:"فراتر از برنامهٔ استاندارد، پیش‌پرداخت و اقساط متناسب با بودجهٔ شما را از طرف شما با سازنده هماهنگ می‌کنیم.", av_cta:"پیشنهاد اختصاصی بگیرید ←", 
   logo_sub:"بخش قبرس شمالی", phone:"+90 216 315 15 15",
   hero_eyebrow:"گیرنه · ایسکله · اسنتپه · فاماگوستا",
   h1:"رو به دریا، <em>به پوند.</em>",
@@ -682,7 +713,7 @@ fa:{
   q6_q:"چرا با دفتری در استانبول کار کنم؟", q6_a:"ما را حضوری می‌بینید، قرارداد را با هم بررسی می‌کنیم و پس از خرید هم در استانبول طرف حساب دارید. قیمت‌های ۴ سازندهٔ همکار ما در قبرس با خرید مستقیم از سازنده یکسان است.",
   form_e:"انتخاب در ۳۰ ثانیه", form_h:"بگذارید <em>۳ پروژه</em> را برایتان انتخاب کنیم.",
   form_l:"به پنج پرسش کوتاه پاسخ دهید. مشاور قبرس ما ظرف ۲۴ ساعت با لیست قیمت و برنامهٔ پرداخت با شما تماس می‌گیرد.",
-  pk1:"رایگان و بدون تعهد", pk2:"بدون پیام تبلیغاتی", pk3:"همان قیمت سازنده",
+  pk1:"رایگان و بدون تعهد", pk2:"بدون پیام تبلیغاتی", pk3:"بدون کمیسیون",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap، فیکیرتپه / کادیکوی، استانبول، ترکیه",
   disc:"برنامه‌های پرداخت این صفحه نمونه هستند؛ قیمت و شرایط نهایی تابع لیست قیمت فعلی سازنده و قرارداد فروش است. هر دفتر RE/MAX به‌صورت مستقل مالکیت و اداره می‌شود.",
   sticky:"نمایش پروژه‌های مناسب"
@@ -715,6 +746,7 @@ fa:{
 de:{
  title:"Nordzypern · RE/MAX Doğuş", locale:"de-DE", dir:"ltr",
  t:{
+  av_e:"Ihr Vorteil bei RE/MAX Doğuş", av_h:"Bauträgerpreis, <em>ohne Zusatzkosten.</em>", av1_k:"Listenpreis", av1_h:"Verkauf zum Listenpreis des Bauträgers", av1_p:"Unsere Preise sind die offiziellen Preislisten der Bauträger. Es kommt kein Vermittleraufschlag hinzu.", av2_k:"0%", av2_h:"Keine Provision für Sie", av2_p:"Als Käufer zahlen Sie uns weder Servicegebühr noch Provision.", av3_k:"Sonderrabatt", av3_h:"Sondervereinbarungen mit Bauträgern", av3_p:"Dank unserer Sondervereinbarungen mit Partnerbauträgern können wir für Sie einen persönlichen Rabatt erzielen.", av4_k:"Ihr Plan", av4_h:"Individueller Zahlungsplan", av4_p:"Über den Standardplan hinaus verhandeln wir für Sie mit dem Bauträger eine Anzahlung und Ratenstruktur, die zu Ihrem Budget passt.", av_cta:"Persönliches Angebot anfordern →", 
   logo_sub:"NORDZYPERN-DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Mit Blick aufs Meer, <em>in Pfund.</em>",
@@ -750,7 +782,7 @@ de:{
   q6_q:"Warum mit einem Büro in Istanbul arbeiten?", q6_a:"Sie treffen uns persönlich, wir gehen den Vertrag gemeinsam durch, und nach dem Kauf haben Sie weiterhin einen Ansprechpartner in Istanbul. Die Preise unserer 4 Partnerbauträger auf Zypern entsprechen dem Direktkauf beim Bauträger.",
   form_e:"Abgleich in 30 Sekunden", form_h:"Lassen Sie uns <em>3 Projekte</em> für Sie auswählen.",
   form_l:"Beantworten Sie fünf kurze Fragen. Unser Zypern-Berater meldet sich innerhalb von 24 Stunden mit Preislisten und Zahlungsplänen.",
-  pk1:"Kostenlos und unverbindlich", pk2:"Kein Spam", pk3:"Gleicher Preis wie beim Bauträger",
+  pk1:"Kostenlos und unverbindlich", pk2:"Kein Spam", pk3:"Keine Provision",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul, Türkei",
   disc:"Die Zahlungspläne auf dieser Seite sind Beispiele; endgültige Preise und Bedingungen richten sich nach der aktuellen Preisliste des Bauträgers und dem Kaufvertrag. Jedes RE/MAX-Büro ist unabhängig in Besitz und Betrieb.",
   sticky:"Passende Projekte zeigen"
@@ -783,6 +815,7 @@ de:{
 pl:{
  title:"Cypr Północny · RE/MAX Doğuş", locale:"pl-PL", dir:"ltr",
  t:{
+  av_e:"Przewaga RE/MAX Doğuş", av_h:"Cena dewelopera, <em>bez dodatkowych opłat.</em>", av1_k:"Cena katalogowa", av1_h:"Sprzedaż po cenie z cennika dewelopera", av1_p:"Nasze ceny to oficjalne cenniki deweloperów. Nie doliczamy żadnej marży pośrednika.", av2_k:"0%", av2_h:"Nie pobieramy od Ciebie prowizji", av2_p:"Jako kupujący nie płacisz nam opłaty za usługę ani prowizji.", av3_k:"Rabat specjalny", av3_h:"Specjalne umowy z deweloperami", av3_p:"Dzięki specjalnym umowom z deweloperami partnerskimi możemy uzyskać dla Ciebie indywidualny rabat.", av4_k:"Twój plan", av4_h:"Indywidualny plan płatności", av4_p:"Poza standardowym planem negocjujemy w Twoim imieniu z deweloperem wpłatę i raty dopasowane do Twojego budżetu.", av_cta:"Poproś o ofertę dla siebie →", 
   logo_sub:"DZIAŁ CYPR PÓŁNOCNY", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
   h1:"Z widokiem na morze, <em>w funtach.</em>",
@@ -818,7 +851,7 @@ pl:{
   q6_q:"Dlaczego warto współpracować z biurem w Stambule?", q6_a:"Spotykasz się z nami osobiście, razem omawiamy umowę, a po zakupie nadal masz kontakt w Stambule. Ceny 4 naszych deweloperów partnerskich na Cyprze są takie same jak przy zakupie bezpośrednio u dewelopera.",
   form_e:"Dopasowanie w 30 sekund", form_h:"Pozwól nam <em>wybrać 3 projekty</em> dla Ciebie.",
   form_l:"Odpowiedz na pięć krótkich pytań. Nasz doradca ds. Cypru skontaktuje się z Tobą w ciągu 24 godzin z cennikami i planami płatności.",
-  pk1:"Bezpłatnie i niezobowiązująco", pk2:"Bez spamu", pk3:"Ta sama cena co u dewelopera",
+  pk1:"Bezpłatnie i niezobowiązująco", pk2:"Bez spamu", pk3:"Bez prowizji",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Stambuł, Turcja",
   disc:"Plany płatności na tej stronie są przykładowe; ostateczne ceny i warunki zależą od aktualnego cennika dewelopera i umowy sprzedaży. Każde biuro RE/MAX jest niezależnie posiadane i prowadzone.",
   sticky:"Pokaż pasujące projekty"
