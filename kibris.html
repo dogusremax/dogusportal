@@ -97,7 +97,7 @@ button{font:inherit;cursor:pointer}
 .flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
 
 /* ---------- hero ---------- */
-.hero{position:relative;background:var(--hero) url("assets/kibris/hero3-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:84px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
+.hero{position:relative;background:var(--hero) url("assets/kibris/hero4-d.jpg") 60% 50%/cover no-repeat;color:var(--hero-fg);overflow:hidden;padding-top:104px;padding-bottom:84px;min-height:min(92svh,860px);display:flex;align-items:flex-end}
 .hero-media{position:absolute;inset:0;z-index:0}
 .sound{position:absolute;z-index:3;bottom:22px;inset-inline-end:18px;display:flex;align-items:center;gap:8px;background:rgba(6,22,34,.62);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 .82rem var(--f-body)}
 .sound .ic-on{display:none}
@@ -108,7 +108,7 @@ button{font:inherit;cursor:pointer}
 .hero-media video{width:100%;height:100%;object-fit:cover;object-position:60% 50%;display:block}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,34,.45) 0%,rgba(6,22,34,0) 30%,rgba(6,22,34,.2) 58%,rgba(6,22,34,.82) 100%)}
 .hero .wrap{width:100%}
-@media (max-aspect-ratio:1/1){.hero{background-image:url("assets/kibris/hero3-m.jpg");background-position:center}.hero-media video{object-position:center}}
+@media (max-aspect-ratio:1/1){.hero{background-image:url("assets/kibris/hero4-m.jpg");background-position:center}.hero-media video{object-position:center}}
 .hero h1,.hero .sub{text-shadow:0 1px 12px rgba(0,0,0,.35)}
 .hero .wrap{position:relative;z-index:2}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,10vw,5.2rem);line-height:1;letter-spacing:-.015em;max-width:15ch}
@@ -931,9 +931,12 @@ let soundOn=false, motionOK=true;
   if(!v) return;
   const portrait = matchMedia("(max-aspect-ratio: 1/1)").matches;           // telefon: dikey kırpılmış 1080×1920
   const hevc = !!v.canPlayType('video/mp4; codecs="hvc1.1.6.L120.90"');      // iPhone/Mac/çoğu Android: daha net ve hafif
-  v.poster = portrait ? "assets/kibris/hero3-m.jpg" : "assets/kibris/hero3-d.jpg";
-  v.src = "assets/kibris/hero3-" + (portrait ? "m" : "d") + (hevc ? "-hevc" : "") + ".mp4";
+  v.poster = portrait ? "assets/kibris/hero4-m.jpg" : "assets/kibris/hero4-d.jpg";
+  v.src = "assets/kibris/hero4-" + (portrait ? "m" : "d") + (hevc ? "-hevc" : "") + ".mp4";
   v.muted = true;
+  v.style.opacity="0"; v.style.transition="opacity .6s";
+  const show=()=>{ v.style.opacity="1"; };
+  v.addEventListener("canplaythrough", show, {once:true}); setTimeout(show, 4000);
   const saveData = navigator.connection && navigator.connection.saveData;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches || saveData) { motionOK=false; v.removeAttribute("autoplay"); v.preload="none"; v.pause(); return; }
   const p=v.play(); if(p && p.catch) p.catch(()=>{});
