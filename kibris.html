@@ -81,10 +81,20 @@ button{font:inherit;cursor:pointer}
 .top-phone{color:var(--hero-fg);font-family:var(--f-mono);font-size:.8rem;opacity:.85;text-decoration:none;border:1px solid rgba(255,255,255,.25);padding:7px 12px;border-radius:999px;direction:ltr}
 @media (max-width:520px){.top-phone{display:none}}
 .langsel{position:relative}
-.langsel select{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.1);color:var(--hero-fg);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 30px 8px 12px;font:600 .82rem var(--f-body);cursor:pointer;color-scheme:dark}
-[dir="rtl"] .langsel select{padding:8px 12px 8px 30px}
-.langsel::after{content:"";position:absolute;inset-inline-end:12px;top:50%;width:7px;height:7px;border-right:2px solid var(--hero-fg);border-bottom:2px solid var(--hero-fg);transform:translateY(-70%) rotate(45deg);pointer-events:none;opacity:.8}
-.langsel select option{color:#0D2230;background:#fff}
+.langbtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);color:var(--hero-fg);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px 6px 8px;font:700 .8rem var(--f-mono);letter-spacing:.06em}
+.langbtn::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.8;margin-inline-start:2px}
+.langbtn[aria-expanded="true"]{background:rgba(255,255,255,.2)}
+.flag{display:inline-block;flex:0 0 auto;width:24px;height:16px;border-radius:3px;background-size:cover;background-position:center;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.langbtn .flag{width:22px;height:15px}
+.langmenu{position:absolute;inset-inline-end:0;top:calc(100% + 8px);list-style:none;margin:0;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 40px -16px rgba(0,0,0,.45);min-width:180px;z-index:30}
+.langmenu button{width:100%;display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--ink);padding:10px 12px;border-radius:9px;font:600 .95rem var(--f-body);text-align:start}
+.langmenu button:hover,.langmenu button[aria-selected="true"]{background:var(--sea-soft)}
+.flag-tr{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23E30A17%22/%3E%3Ccircle cx=%22425%22 cy=%22400%22 r=%22200%22 fill=%22%23fff%22/%3E%3Ccircle cx=%22475%22 cy=%22400%22 r=%22160%22 fill=%22%23E30A17%22/%3E%3Cpolygon fill=%22%23fff%22 points=%22475.0,400.0 544.1,377.5 544.1,304.9 586.8,363.7 655.9,341.2 613.2,400.0 655.9,458.8 586.8,436.3 544.1,495.1 544.1,422.5%22/%3E%3C/svg%3E")}
+.flag-en{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 30%22%3E%3CclipPath id=%22s%22%3E%3Cpath d=%22M0,0v30h60V0z%22/%3E%3C/clipPath%3E%3CclipPath id=%22t%22%3E%3Cpath d=%22M30,15h30v15zv15H0zH0V0zV0h30z%22/%3E%3C/clipPath%3E%3Cg clip-path=%22url%28%23s%29%22%3E%3Cpath d=%22M0,0v30h60V0z%22 fill=%22%23012169%22/%3E%3Cpath d=%22M0,0L60,30M60,0L0,30%22 stroke=%22%23fff%22 stroke-width=%226%22/%3E%3Cpath d=%22M0,0L60,30M60,0L0,30%22 clip-path=%22url%28%23t%29%22 stroke=%22%23C8102E%22 stroke-width=%224%22/%3E%3Cpath d=%22M30,0v30M0,15h60%22 stroke=%22%23fff%22 stroke-width=%2210%22/%3E%3Cpath d=%22M30,0v30M0,15h60%22 stroke=%22%23C8102E%22 stroke-width=%226%22/%3E%3C/g%3E%3C/svg%3E")}
+.flag-ru{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 9 6%22%3E%3Crect width=%229%22 height=%226%22 fill=%22%23fff%22/%3E%3Crect y=%222%22 width=%229%22 height=%224%22 fill=%22%230039A6%22/%3E%3Crect y=%224%22 width=%229%22 height=%222%22 fill=%22%23D52B1E%22/%3E%3C/svg%3E")}
+.flag-fa{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 7 4%22%3E%3Crect width=%227%22 height=%224%22 fill=%22%23DA0000%22/%3E%3Crect width=%227%22 height=%222.67%22 fill=%22%23fff%22/%3E%3Crect width=%227%22 height=%221.33%22 fill=%22%23239F40%22/%3E%3C/svg%3E")}
+.flag-de{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 5 3%22%3E%3Crect width=%225%22 height=%223%22 fill=%22%23FFCE00%22/%3E%3Crect width=%225%22 height=%222%22 fill=%22%23DD0000%22/%3E%3Crect width=%225%22 height=%221%22 fill=%22%23000%22/%3E%3C/svg%3E")}
+.flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:linear-gradient(180deg,var(--hero) 0%,var(--hero-2) 70%,#0F4A63 100%);color:var(--hero-fg);overflow:hidden;padding-top:96px;padding-bottom:0}
@@ -246,15 +256,16 @@ footer b{color:var(--ink)}
   <div class="wrap">
     <a class="logo" href="#top"><i aria-hidden="true"></i><span>RE/MAX DOĞUŞ<small data-i="logo_sub"></small></span></a>
     <div class="top-right">
-      <div class="langsel">
-        <select id="lang" aria-label="Dil / Language">
-          <option value="tr">TR · Türkçe</option>
-          <option value="en">EN · English</option>
-          <option value="ru">RU · Русский</option>
-          <option value="fa">FA · فارسی</option>
-          <option value="de">DE · Deutsch</option>
-          <option value="pl">PL · Polski</option>
-        </select>
+      <div class="langsel" id="langsel">
+        <button type="button" class="langbtn" id="langbtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Dil / Language"><i class="flag" id="langflag"></i><span id="langcode">TR</span></button>
+        <ul class="langmenu" id="langmenu" role="listbox" hidden>
+          <li><button type="button" role="option" data-lang="tr"><i class="flag flag-tr"></i>Türkçe</button></li>
+          <li><button type="button" role="option" data-lang="en"><i class="flag flag-en"></i>English</button></li>
+          <li><button type="button" role="option" data-lang="ru"><i class="flag flag-ru"></i>Русский</button></li>
+          <li><button type="button" role="option" data-lang="fa"><i class="flag flag-fa"></i>فارسی</button></li>
+          <li><button type="button" role="option" data-lang="de"><i class="flag flag-de"></i>Deutsch</button></li>
+          <li><button type="button" role="option" data-lang="pl"><i class="flag flag-pl"></i>Polski</button></li>
+        </ul>
       </div>
       <a class="top-phone" href="tel:+902163151515" data-i="phone"></a>
     </div>
@@ -1081,7 +1092,9 @@ function applyLang(lang, user){
   document.querySelectorAll("[data-i]").forEach(el=>{
     const k=el.getAttribute("data-i"); if(d.t[k]!=null) el.innerHTML=d.t[k];
   });
-  $("lang").value = L;
+  $("langflag").className = "flag flag-"+L;
+  $("langcode").textContent = L.toUpperCase();
+  document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-selected", b.dataset.lang===L));
   $("wa-sticky").href = waLink(sent);
   buildRegions(); calc(); render();
   try{ localStorage.setItem("kibris_lang", L); }catch(e){}
@@ -1090,7 +1103,12 @@ function applyLang(lang, user){
     track("Dil",{dil:L});
   }
 }
-$("lang").addEventListener("change", e=>applyLang(e.target.value, true));
+const langBtn=$("langbtn"), langMenu=$("langmenu");
+function menu(open){ langMenu.hidden=!open; langBtn.setAttribute("aria-expanded", open); }
+langBtn.addEventListener("click", e=>{ e.stopPropagation(); menu(langMenu.hidden); });
+langMenu.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click", ()=>{ menu(false); if(b.dataset.lang!==L) applyLang(b.dataset.lang, true); }));
+document.addEventListener("click", e=>{ if(!langMenu.hidden && !$("langsel").contains(e.target)) menu(false); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !langMenu.hidden){ menu(false); langBtn.focus(); } });
 applyLang(L, false);
 
 /* ================= ALT BAR ================= */
