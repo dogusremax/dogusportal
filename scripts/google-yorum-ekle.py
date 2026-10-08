@@ -123,7 +123,7 @@ def main():
         t = ts(tarih)
         kayit = {
             'id': y['id'], 'yazar': y.get('yazar', ''), 'yazarUrl': y.get('yazarUrl', ''), 'foto': y.get('foto', ''),
-            'puan': y['puan'], 'metin': y.get('metin', ''), 'yanit': y.get('yanit', ''),
+            'puan': y['puan'], 'metin': re.sub(r'^[\s⭐★☆✨🌟]+', '', y.get('metin', '')), 'yanit': y.get('yanit', ''),
             'tarih': t, 'tarihYaklasik': True, 'once': (y.get('once') or '').replace(' düzenlendi', ''),
             'danismanlar': danismanlar, 'eslesme': eslesme, 'kaynak': 'tarayici', 'ilkGorulme': ts(simdi),
         }
