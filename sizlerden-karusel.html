@@ -277,15 +277,6 @@ Güzel sözleriniz için çok teşekkür ederiz 🙏 Danışmanımız ${d.ad}'a 
 
 ${tags.join(' ')}`;
 }
-// Instagram karusel en fazla 4:5 (1080×1350) kabul ediyor; 3:4 görseli kenarları uzatarak 4:5'e yerleştirir
-function dortBes(cv){
-  const W=1080,H=1350,o=document.createElement('canvas');o.width=W;o.height=H;
-  const x=o.getContext('2d'), w=Math.round(cv.width*H/cv.height), dx=Math.round((W-w)/2);
-  x.drawImage(cv,0,0,1,cv.height,0,0,dx+1,H);
-  x.drawImage(cv,cv.width-1,0,1,cv.height,dx+w-1,0,W-(dx+w)+1,H);
-  x.drawImage(cv,dx,0,w,H);
-  return o;
-}
 async function paylas(){
   const st=document.getElementById('status'), btn=document.getElementById('pubBtn');
   const els=[...document.querySelectorAll('.slide')];
@@ -299,7 +290,8 @@ async function paylas(){
     const images=[];
     for(let i=0;i<els.length;i++){
       st.textContent=`Görseller hazırlanıyor… ${i+1}/${els.length}`;
-      images.push(dortBes(await canvasOf(els[i])).toDataURL('image/jpeg',.92).split(',')[1]);
+      // Otomatik paylaşımla aynı: 1080×1440 (3:4), kapak birebir aynı kalır
+      images.push((await canvasOf(els[i])).toDataURL('image/jpeg',.92).split(',')[1]);
     }
     st.textContent='📤 Gönderiliyor… (1-2 dakika sürebilir)'; btn.textContent='📤 Yayınlanıyor…';
     const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',body:JSON.stringify({action:'instagramYayinla',ay:'sizlerden-'+Date.now(),set:'karusel',images,caption:cap,facebook:true})});
