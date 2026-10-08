@@ -44,7 +44,8 @@
   <h1>Sizlerden Gelenler · Karusel</h1>
   <!-- Story bu sayfadan değil, danışman şablonundan üretilir (sizlerden-gelenler.html) -->
   <select id="fmt" onchange="setFmt()" style="display:none"><option value="feed">Karusel (3:4)</option></select>
-  <button id="zipbtn" onclick="downloadAll()">Tümünü indir (ZIP)</button>
+  <button id="zipbtn" class="ghost" onclick="downloadAll()">Tümünü indir (ZIP)</button>
+  <button id="pubBtn" onclick="paylas()">📤 Paylaş</button>
 </div>
 
 <div class="panel">
@@ -55,6 +56,9 @@
     <input id="musteri" placeholder="Müşteri adı" oninput="render()">
   </div>
   <div class="row"><textarea id="metin" placeholder="Yorum metni" oninput="render()"></textarea></div>
+  <label style="margin-top:14px">Paylaşım açıklaması ve hashtag'ler — yorum seçince otomatik dolar, istersen düzenle</label>
+  <textarea id="caption" style="height:190px" oninput="capElle=true"></textarea>
+  <div class="row" style="margin-top:8px"><button class="ghost" style="flex:0 0 auto" onclick="capElle=false;aciklamaYap()">↺ Açıklamayı yeniden oluştur</button></div>
 </div>
 <div class="status" id="status">Görsele tıklayınca tek tek PNG iner · 1080×1440 karusel</div>
 <div class="grid" id="grid"></div>
@@ -231,16 +235,79 @@ function render(){
     g.appendChild(c);
   });
   sigdir();
+  aciklamaYap();
 }
-
 function yorumYukle(id){
   const r=YORUMLAR.find(x=>x.id===id); if(!r) return;
   document.getElementById('danisman').value=r.danismanlar[0];
   document.getElementById('musteri').value=kisaAd(r.yazar);
   document.getElementById('metin').value=r.metin;
+  capElle=false;
   render();
 }
 
+// ── Paylaşım: açıklama + Instagram/Facebook karusel ─────────────
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+let capElle=false;
+function ilkCumle(m){
+  const c=(m.match(/[^.!?…]+[.!?…]+/g)||[m]).map(x=>x.trim()).filter(Boolean);
+  let t=''; for(const x of c){ if((t+' '+x).length>220) break; t=(t+' '+x).trim(); }
+  return t||m.slice(0,200).trim()+'…';
+}
+function aciklamaYap(){
+  if(capElle) return;
+  const d=secili(), musteri=document.getElementById('musteri').value.trim();
+  const metin=document.getElementById('metin').value.replace(/\s+/g,' ').trim();
+  if(!d.id||!metin){document.getElementById('caption').value='';return;}
+  const ing=!/[çğışöüÇĞİŞÖÜ]/.test(metin.replace(new RegExp(d.ad.split(' ').join('|'),'g'),'').replace(/Doğuş|Türkiye/g,'')) && /\b(the|and|with|was|very)\b/i.test(metin);
+  const tags=['#remaxdogus','#remax','#sizlerdengelenler','#müşteriyorumu','#mutlumüşteri','#gayrimenkul',
+    '#emlakdanışmanı','#fikirtepe','#yenifikirtepe','#kadıköy','#istanbul'];
+  if(ing) tags.push('#istanbulrealestate','#propertyinturkey');
+  document.getElementById('caption').value=
+`Sizlerden Gelenler 💬 ⭐⭐⭐⭐⭐
+
+“${ilkCumle(metin)}”
+— ${musteri||'Müşterimiz'}
+
+Güzel sözleriniz için çok teşekkür ederiz 🙏 Danışmanımız ${d.ad}'a özverili çalışması için teşekkürler.
+
+📞 ${TEL}
+🌐 ${WEB}
+📍 RE/MAX Doğuş · Fikirtepe / Kadıköy
+
+${tags.join(' ')}`;
+}
+// Instagram karusel en fazla 4:5 (1080×1350) kabul ediyor; 3:4 görseli kenarları uzatarak 4:5'e yerleştirir
+function dortBes(cv){
+  const W=1080,H=1350,o=document.createElement('canvas');o.width=W;o.height=H;
+  const x=o.getContext('2d'), w=Math.round(cv.width*H/cv.height), dx=Math.round((W-w)/2);
+  x.drawImage(cv,0,0,1,cv.height,0,0,dx+1,H);
+  x.drawImage(cv,cv.width-1,0,1,cv.height,dx+w-1,0,W-(dx+w)+1,H);
+  x.drawImage(cv,dx,0,w,H);
+  return o;
+}
+async function paylas(){
+  const st=document.getElementById('status'), btn=document.getElementById('pubBtn');
+  const els=[...document.querySelectorAll('.slide')];
+  const cap=document.getElementById('caption').value.trim();
+  if(!els.length){alert('Önce bir yorum seç.');return;}
+  if(els.length>10){alert('Instagram karuselde en fazla 10 görsel olabilir, bu yorum '+els.length+' sayfa tutuyor. Yorumu kısalt.');return;}
+  if(!/dogusportal\.com$|github\.io$/.test(location.hostname)){st.textContent='Önizleme modunda yayın kapalı. Portaldan açınca çalışır.';return;}
+  if(!confirm(els.length+" görsellik karusel açıklamasıyla birlikte @remaxdogus Instagram ve Facebook sayfasında yayınlanacak. Onaylıyor musun?")) return;
+  btn.disabled=true; btn.textContent='⏳ Hazırlanıyor…';
+  try{
+    const images=[];
+    for(let i=0;i<els.length;i++){
+      st.textContent=`Görseller hazırlanıyor… ${i+1}/${els.length}`;
+      images.push(dortBes(await canvasOf(els[i])).toDataURL('image/jpeg',.92).split(',')[1]);
+    }
+    st.textContent='📤 Gönderiliyor… (1-2 dakika sürebilir)'; btn.textContent='📤 Yayınlanıyor…';
+    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',body:JSON.stringify({action:'instagramYayinla',ay:'sizlerden-'+Date.now(),set:'karusel',images,caption:cap,facebook:true})});
+    const r=await resp.json();
+    if(r.success){btn.textContent='✅ Yayınlandı';st.textContent='Instagram'+(r.fbPostId?' + Facebook':'')+' yayınlandı.'+(r.fbPostId?'':(r.fbError?' Facebook: '+r.fbError:''));}
+    else throw new Error(r.error||'bilinmeyen hata');
+  }catch(e){st.textContent='❌ '+e.message;btn.disabled=false;btn.textContent='Tekrar dene';}
+}
 async function canvasOf(el){
   return html2canvas(el,{scale:1080/420,useCORS:true,backgroundColor:null,logging:false,width:420,height:el.classList.contains('story')?747:560});
 }
@@ -257,6 +324,7 @@ async function downloadAll(){
       s.textContent=`Hazırlanıyor… ${i+1}/${els.length}`;
       zip.file(`sizlerden-${i+1}.png`,(await canvasOf(els[i])).toDataURL('image/png').split(',')[1],{base64:true});
     }
+    zip.file('aciklama.txt',document.getElementById('caption').value);
     const a=document.createElement('a');a.href=URL.createObjectURL(await zip.generateAsync({type:'blob'}));
     a.download=`sizlerden-${secili().id}.zip`;a.click();
     s.textContent='ZIP indirildi.';
