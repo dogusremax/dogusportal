@@ -279,7 +279,8 @@ button{font:inherit;cursor:pointer}
 .mag{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;justify-self:center;border-radius:6px;overflow:hidden;color:#fff;background:#0A2433;box-shadow:0 22px 40px -18px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:16px 16px 14px;direction:ltr}
 .mag-bg{position:absolute;inset:0;background:url("assets/kibris/hero5-m.jpg") center 60%/cover no-repeat;z-index:0}
 .mag-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,16,26,.15) 0%,rgba(5,16,26,0) 30%,rgba(5,16,26,.15) 55%,rgba(5,16,26,.85) 100%)}
-.mag>*:not(.mag-bg){position:relative;z-index:1}
+.mag>*:not(.mag-bg):not(.mag-bar){position:relative;z-index:1}
+.mag-bar{z-index:1}
 .mag-iss{display:flex;justify-content:space-between;font:700 .56rem var(--f-mono);letter-spacing:.16em;opacity:.9}
 .mag-name{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-size:clamp(4.6rem,22vw,6.4rem);line-height:.82;letter-spacing:-.03em;text-align:center;margin-top:4px;text-shadow:0 2px 18px rgba(0,0,0,.25)}
 .mag-lines{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;max-width:55%}
@@ -288,7 +289,7 @@ button{font:inherit;cursor:pointer}
 .mag-kick{font:700 .62rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;background:#C8102E;align-self:flex-start;padding:3px 7px;margin-bottom:6px}
 .mag-story b{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(4rem,18vw,5.4rem);line-height:.8;color:#E9A23B}
 .mag-story strong{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(2rem,9vw,2.6rem);line-height:1;margin-top:2px}
-.mag-story em{font-style:normal;font:600 .82rem/1.25 var(--f-body);max-width:24ch;margin-top:4px;opacity:.95}
+.mag-story em{font-style:normal;font:600 .82rem/1.25 var(--f-body);max-width:70%;margin-top:4px;opacity:.95}
 .mag-bar{position:absolute;right:14px;bottom:14px;display:flex;align-items:flex-end;gap:5px}
 .mag-bar i{display:block;width:34px;height:20px;background:repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 3px,#fff 3px 5px,transparent 5px 6px);opacity:.85}
 .mag-bar span{font:700 .7rem var(--f-mono)}
