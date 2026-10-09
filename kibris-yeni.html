@@ -819,6 +819,71 @@ html{overflow-x:hidden}
 @media (max-width:1439px){.rail .rcta{display:none}}
 .brand i{width:36px;height:46px;border-radius:0;background:url("assets/kibris/remax-balon.webp") center/contain no-repeat;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
 .mbar .brand i{width:28px;height:36px}
+/* bölge testi */
+.v2 .quiz,.v2 .getiri,.v2 .sorular{padding-block:clamp(56px,9vw,110px)}
+.qz{margin-top:30px;padding:clamp(20px,4vw,40px);max-width:860px;background:linear-gradient(160deg,#0D1850,#081038);border:1px solid var(--line);position:relative;overflow:hidden}
+.qz::after{content:"";position:absolute;inset:auto -80px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(220,28,46,.22),transparent 70%);pointer-events:none}
+.qz-prog{display:flex;gap:6px;margin-bottom:18px}
+.qz-prog i{flex:1;height:4px;border-radius:4px;background:var(--line);transition:background .4s}
+.qz-prog i.done{background:rgba(220,28,46,.55)}.qz-prog i.on{background:var(--red)}
+.qz-step{font:500 .74rem var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.qz-q{font-size:clamp(1.3rem,3.4vw,1.8rem);margin:8px 0 20px;line-height:1.2}
+.qz-opts{display:grid;gap:10px}
+@media (min-width:640px){.qz-opts{grid-template-columns:1fr 1fr}}
+.qz-opts button{display:flex;align-items:center;gap:14px;text-align:start;width:100%;padding:16px 18px;border-radius:16px;border:1.5px solid var(--line);background:#071040;color:var(--ink);font:600 .98rem var(--f-body);cursor:pointer;transition:border-color .25s,transform .25s var(--ease),background .25s}
+.qz-opts button b{flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:800 .85rem var(--f-head);background:var(--sea-soft);color:var(--gold);transition:background .25s,color .25s}
+.qz-opts button:hover{border-color:rgba(220,28,46,.6);transform:translateY(-2px)}
+.qz-opts button.sel{border-color:var(--red);background:rgba(220,28,46,.14)}
+.qz-opts button.sel b{background:var(--red);color:#fff}
+.qz-back{margin-top:18px;background:none;border:0;color:var(--muted);font:600 .9rem var(--f-body);cursor:pointer;padding:6px 0}
+.qz-back:hover{color:#fff}
+.qz-res{animation:qzin .6s var(--ease)}
+@keyframes qzin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.qz-res h3{font-size:clamp(2rem,6vw,3.2rem);margin:6px 0 2px;letter-spacing:-.03em}
+.qz-tag{color:var(--gold);font-weight:700;margin-bottom:10px}
+.qz-res>p{color:var(--muted);max-width:60ch}
+.qz-bars{display:grid;gap:8px;margin:20px 0 14px;max-width:520px}
+.qz-bars div{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:12px;font-size:.88rem}
+.qz-bars i{display:block;height:8px;border-radius:8px;background:linear-gradient(90deg,var(--red),#FF6B79);width:var(--w);animation:qzbar 1s var(--ease)}
+.qz-bars div+div i{background:var(--sea-soft);box-shadow:inset 0 0 0 1px var(--line)}
+@keyframes qzbar{from{width:0}}
+.qz-alt{font-size:.92rem;color:var(--muted)}
+.qz-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+/* getiri hesaplayıcı */
+.gt{display:grid;gap:16px;margin-top:30px}
+@media (min-width:960px){.gt{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.gt-in{padding:clamp(20px,3vw,32px)}
+.gt-in .field label output{color:var(--gold);font-size:1.05rem}
+.gt-in input[type=range]{accent-color:var(--red)}
+.gt-lab{display:block;font-weight:600;font-size:.92rem;margin-bottom:10px}
+.gt-regs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (min-width:560px){.gt-regs{grid-template-columns:repeat(4,1fr)}}
+.gt-regs button{padding:12px 8px;border-radius:14px;border:1.5px solid var(--line);background:#071040;color:var(--ink);font:700 .9rem var(--f-body);cursor:pointer;transition:border-color .25s,background .25s}
+.gt-regs button[aria-checked="true"]{border-color:var(--red);background:rgba(220,28,46,.16);color:#fff}
+.gt-note{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.gt-out{display:grid;gap:12px}
+.gt-k{border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;background:linear-gradient(150deg,#0D1850,#081038)}
+.gt-k span{display:block;font:500 .74rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.gt-k b{display:block;font:800 clamp(1.8rem,5vw,2.5rem) var(--f-head);letter-spacing:-.03em;color:#fff;margin-top:4px;direction:ltr;text-align:start}
+.gt-k small{color:var(--gold);font-weight:600}
+.gt-meter{height:8px;border-radius:8px;background:var(--sea-soft);margin-top:10px;overflow:hidden}
+.gt-meter i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--red),var(--gold));border-radius:8px;transition:width .4s var(--ease)}
+.gt-yrs{display:flex;align-items:flex-end;gap:5px;height:46px;margin-top:10px}
+.gt-yrs i{flex:1;height:var(--h);border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--gold),rgba(233,194,122,.25))}
+.gt-out .note{margin:2px 0 4px}
+.gt-cta{justify-self:start}
+/* sorular */
+.fqs{margin-top:30px;display:grid;gap:10px;max-width:900px}
+.fq{border:1px solid var(--line);border-radius:18px;background:#0A1340;transition:border-color .3s}
+.fq[open]{border-color:rgba(220,28,46,.55)}
+.fq summary{list-style:none;cursor:pointer;display:flex;justify-content:flex-start;text-align:start;gap:14px;align-items:baseline;padding:18px 20px;font:700 1.02rem var(--f-head);position:relative;padding-inline-end:48px}
+.fq summary::-webkit-details-marker{display:none}
+.fq summary::after{content:"+";position:absolute;inset-inline-end:20px;top:14px;font:400 1.6rem var(--f-head);color:var(--red);transition:transform .3s var(--ease)}
+.fq[open] summary::after{transform:rotate(45deg)}
+.fq summary em{font:500 .78rem var(--f-mono);font-style:normal;color:var(--red);flex:0 0 auto}
+.fq p{margin:0;padding:0 20px 20px 54px;color:var(--muted);line-height:1.6}
+[dir=rtl] .fq p{padding:0 54px 20px 20px}
+.fq-ask{font-size:.86rem;color:var(--gold);margin-top:8px}
 
 </style>
 </head>
@@ -920,6 +985,14 @@ html{overflow-x:hidden}
   </div>
 </section>
     <div class="marq" aria-hidden="true"><div class="marq-t"><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>LONG BEACH</span><b>✦</b><span>BELLAPAIS</span><b>✦</b><span>DİPKARPAZ</span><b>✦</b><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>LONG BEACH</span><b>✦</b><span>BELLAPAIS</span><b>✦</b><span>DİPKARPAZ</span><b>✦</b></div></div>
+    <section class="quiz" id="test">
+      <div class="wrap">
+        <span class="eyebrow" data-qz="e"></span>
+        <h2 data-qz="h"></h2>
+        <p class="lead" data-qz="l"></p>
+        <div class="qz panel" id="qz-box"></div>
+      </div>
+    </section>
     <section class="principles" id="prensip">
   <div class="wrap pr-wrap">
     <div class="pr-head">
@@ -1017,6 +1090,14 @@ html{overflow-x:hidden}
     </div>
   </div>
 </section>
+    <section class="getiri" id="getiri">
+      <div class="wrap">
+        <span class="eyebrow" data-gt-t="e"></span>
+        <h2 data-gt-t="h"></h2>
+        <p class="lead" data-gt-t="l"></p>
+        <div class="gt" id="gt-box"></div>
+      </div>
+    </section>
     <section class="karpaz" id="karpaz">
   <div class="wrap kz">
     <div class="kz-txt">
@@ -1155,6 +1236,14 @@ html{overflow-x:hidden}
     </div>
   </div>
 </section>
+    <section class="sorular" id="sorular">
+      <div class="wrap">
+        <span class="eyebrow" data-fq="e"></span>
+        <h2 data-fq="h"></h2>
+        <p class="lead" data-fq="l"></p>
+        <div class="fqs" id="fq-box"></div>
+      </div>
+    </section>
     <a class="next" href="#/isbirligi" data-go="isbirligi"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>08</em><b data-nvt="isbirligi"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="isbirligi" hidden>
@@ -2207,7 +2296,7 @@ const NV={
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={masraf:"masraf",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={masraf:"masraf",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -2408,6 +2497,173 @@ $$("ms-mail").addEventListener("submit",async e=>{
 inp.value=fmt(price);
 render();
 new MutationObserver(render).observe(root,{attributes:true,attributeFilter:["lang"]});
+})();
+
+/* ================= ETKİLEŞİMLİ İÇERİK: bölge testi, getiri hesaplayıcı, gerçek sorular ================= */
+(()=>{
+const RG=["girne","esentepe","iskele","karpaz"];
+const YR={girne:[5,7],esentepe:[6,8],iskele:[7,9],karpaz:[4,6]};   // tahmini brüt kira getirisi aralığı (%)
+const W=[
+ [[1,2,3,0],[1,3,2,2],[3,1,1,1],[2,2,2,1]],
+ [[0,1,3,2],[1,3,3,2],[3,2,2,1],[3,2,1,1]],
+ [[3,1,1,0],[1,3,0,2],[0,1,3,0],[0,1,0,3]],
+ [[3,1,1,0],[0,2,3,2],[1,1,1,2]],
+ [[1,2,3,1],[3,1,2,0],[1,2,0,3]]
+];
+const X={
+tr:{qz:{e:"60 saniyelik test",h:"Hangi bölge <em>size uygun?</em>",l:"Beş kısa soruyu cevaplayın; amacınıza ve bütçenize en uygun kıyıyı söyleyelim.",step:"Soru {n} / {t}",back:"← Geri",again:"Testi yeniden yap",res:"Size en uygun bölge",alt:"İkinci seçenek",cta:"Bu bölgedeki 3 projeyi gönderin",map:"Haritada gör",calc:"Getirisini hesapla",
+ q:[["Kıbrıs'ta ev almaktaki asıl amacınız?",["Yatırım ve kira geliri","Tatil evi","Yerleşmek / emeklilik","Biraz hepsi"]],["Bütçeniz yaklaşık ne kadar?",["£150.000 altı","£150.000 – 250.000","£250.000 – 400.000","£400.000 üzeri"]],["Hangi ortam size daha yakın?",["Şehir hayatı, restoran, sosyal yaşam","Dağ ile deniz arası sakinlik","Uzun kumsal ve yeni nesil siteler","Bakir doğa, kalabalıktan uzak"]],["Ne zaman kullanmak istiyorsunuz?",["Hemen, hazır daire","1–2 yıl içinde, maketten alım","Acelem yok"]],["Kiraya verecek misiniz?",["Kısa dönem tatil kirası","Uzun dönem kira","Kiraya vermeyeceğim"]]]},
+ gt:{e:"Getiri hesaplayıcı",h:"Bütçeniz ne kadar <em>kira getirir?</em>",l:"Bütçenizi ve bölgeyi seçin; tahmini yıllık kirayı ve yatırımın kendini kaç yılda amorti edeceğini görün.",budget:"Bütçe",region:"Bölge",yield:"Tahmini brüt kira getirisi",range:"{r} için tahmini aralık: {a} – {b}. İsterseniz değiştirin.",annual:"Yıllık brüt kira",monthly:"aylık ≈ {m}",payback:"Kendini amorti etme",years:"{n} yıl",ten:"10 yılda toplam kira",disc:"Tahmindir, garanti değildir. Gerçek kira; daireye, konuma, sezona ve yönetime göre değişir. Aidat, yönetim ve vergiler dahil değildir.",cta:"Size uygun 3 projeyi gönderelim"},
+ fq:{e:"Gerçek sorular",h:"Alıcıların <em>en çok sorduğu</em>",l:"Ofisimize en sık gelen sorulara kısa ve net cevaplar.",ask:"Mevzuat ve süreler değişebilir; güncel durumu danışmanınıza sorun.",
+ i:[["Türk vatandaşı olarak nasıl alırım, izin ne kadar sürer?","KKTC'de Türk vatandaşları da yabancı alıcı statüsündedir ve Bakanlar Kurulu izni gerekir. Satış sözleşmesi tapu dairesine kaydedilir, ardından izin başvurusu yapılır. Bakanlık onayı son dönemde ortalama 1 ay civarında sonuçlanıyor; bu sürede sözleşmeniz tapuda kayıtlı olduğu için hakkınız korunur."],
+ ["Sterlin riski var mı?","Fiyatlar, taksitler ve kiralar sterlin bazlıdır. Gelirinizi TL ile kazanıyorsanız kur değişimi taksit tutarını TL olarak etkiler; buna karşılık kira geliriniz de sterlin olarak gelir. Birçok alıcı taksit dönemine yayılarak sterlin biriktirmeyi tercih ediyor."],
+ ["Kiraya verdiğimde yönetimi kim yapar?","Sitelerin çoğunda yerinde yönetim hizmeti var; ayrıca bölgede kiralama ve bakım yapan yönetim firmaları bulunuyor. Kira gelirinin bir yüzdesi karşılığında misafir karşılama, temizlik ve bakımı üstlenirler. Uygun seçenekleri size biz bağlıyoruz."],
+ ["Satmak istersem ne kadar sürede satarım?","Konuma, fiyata ve sezona bağlı. Denize yakın, iyi yönetilen sitelerdeki daireler daha hızlı el değiştiriyor. Tapu çıkmadan önce sözleşme devriyle satış da mümkün olabilir; bu, sözleşmenizdeki devir şartlarına bağlıdır."],
+ ["Ev alırsam oturma izni alabilir miyim?","Mülk sahibi olmak KKTC'de oturma izni başvurusunu destekleyen bir unsurdur. Şartları ve gerekli belgeleri yetkili kurumlar belirler ve zaman zaman değişir."],
+ ["Kredi kullanabilir miyim?","Projelerin çoğunda müteahhit, teslime kadar faizsiz taksit sunuyor; bu yüzden çoğu alıcı krediye ihtiyaç duymuyor. Yurt dışında yaşayanlar için banka kredisi seçenekleri sınırlıdır."]]}},
+en:{qz:{e:"60-second quiz",h:"Which area <em>suits you?</em>",l:"Answer five short questions and we'll tell you which coast fits your goal and budget.",step:"Question {n} / {t}",back:"← Back",again:"Take the quiz again",res:"Your best-fit area",alt:"Second choice",cta:"Send me 3 projects in this area",map:"See on the map",calc:"Calculate the return",
+ q:[["What is your main goal in buying in Cyprus?",["Investment and rental income","Holiday home","Relocation / retirement","A bit of everything"]],["Roughly what is your budget?",["Under £150,000","£150,000 – 250,000","£250,000 – 400,000","Over £400,000"]],["Which setting suits you best?",["Town life, restaurants, social life","Calm between mountains and sea","Long sandy beach and new complexes","Unspoilt nature, away from crowds"]],["When do you want to use it?",["Now, ready to move in","In 1–2 years, buying off-plan","No rush"]],["Will you rent it out?",["Short-term holiday lets","Long-term rental","I won't rent it out"]]]},
+ gt:{e:"Return calculator",h:"How much rent can <em>your budget earn?</em>",l:"Choose your budget and area to see the estimated annual rent and how many years the investment takes to pay for itself.",budget:"Budget",region:"Area",yield:"Estimated gross rental yield",range:"Estimated range for {r}: {a} – {b}. Adjust if you like.",annual:"Annual gross rent",monthly:"≈ {m} a month",payback:"Pays for itself in",years:"{n} years",ten:"Total rent over 10 years",disc:"This is an estimate, not a guarantee. Actual rent depends on the apartment, location, season and management. Service charges, management and taxes are not included.",cta:"Send me 3 suitable projects"},
+ fq:{e:"Real questions",h:"What buyers <em>ask us most</em>",l:"Short, clear answers to the questions our office hears most often.",ask:"Regulations and timelines can change; ask your consultant for the current position.",
+ i:[["How do I buy as a foreigner, and how long does approval take?","Foreign buyers in North Cyprus, including Turkish citizens, need Council of Ministers approval. The sales contract is registered at the land registry, then the approval application is made. Ministry approval has recently taken about 1 month on average; your contract is registered meanwhile, which protects your rights."],
+ ["Is there a currency risk with sterling?","Prices, instalments and rents are in sterling. If you earn in another currency, exchange rates change what your instalments cost you, but your rental income also comes in sterling. Many buyers build up sterling gradually over the instalment period."],
+ ["Who manages the property if I rent it out?","Most complexes offer on-site management, and local management companies handle lettings and maintenance. For a percentage of the rent they take care of guests, cleaning and upkeep. We put you in touch with suitable options."],
+ ["How long does it take to sell if I want to?","It depends on location, price and season. Apartments close to the sea in well-run complexes change hands faster. Selling by assigning the contract before the title is issued may also be possible, depending on the transfer terms in your contract."],
+ ["Can buying a home help me get a residence permit?","Owning property supports a residence permit application in North Cyprus. The requirements and documents are set by the authorities and change from time to time."],
+ ["Can I get a mortgage?","Most developers offer interest-free instalments until handover, so most buyers don't need a loan. Bank finance options for non-residents are limited."]]}},
+ru:{qz:{e:"Тест за 60 секунд",h:"Какой район <em>подходит вам?</em>",l:"Ответьте на пять коротких вопросов, и мы подскажем, какое побережье подходит вашей цели и бюджету.",step:"Вопрос {n} / {t}",back:"← Назад",again:"Пройти тест заново",res:"Самый подходящий район",alt:"Второй вариант",cta:"Пришлите 3 проекта в этом районе",map:"Показать на карте",calc:"Рассчитать доходность",
+ q:[["Главная цель покупки на Кипре?",["Инвестиции и доход от аренды","Дом для отдыха","Переезд / пенсия","Всего понемногу"]],["Примерный бюджет?",["До £150 000","£150 000 – 250 000","£250 000 – 400 000","Более £400 000"]],["Какая обстановка вам ближе?",["Городская жизнь, рестораны","Тишина между горами и морем","Длинный пляж и новые комплексы","Нетронутая природа, без толп"]],["Когда хотите пользоваться?",["Сразу, готовая квартира","Через 1–2 года, покупка на этапе стройки","Не тороплюсь"]],["Будете сдавать в аренду?",["Краткосрочная аренда отдыхающим","Долгосрочная аренда","Не буду сдавать"]]]},
+ gt:{e:"Калькулятор доходности",h:"Сколько аренды <em>принесёт ваш бюджет?</em>",l:"Выберите бюджет и район, чтобы увидеть ориентировочную годовую аренду и срок окупаемости.",budget:"Бюджет",region:"Район",yield:"Ориентировочная валовая доходность",range:"Ориентировочный диапазон для {r}: {a} – {b}. Можно изменить.",annual:"Валовая аренда в год",monthly:"≈ {m} в месяц",payback:"Окупаемость",years:"{n} лет",ten:"Аренда за 10 лет",disc:"Это оценка, а не гарантия. Реальная аренда зависит от квартиры, расположения, сезона и управления. Обслуживание, управление и налоги не учтены.",cta:"Пришлите 3 подходящих проекта"},
+ fq:{e:"Реальные вопросы",h:"О чём нас <em>спрашивают чаще всего</em>",l:"Короткие и ясные ответы на самые частые вопросы.",ask:"Законы и сроки могут меняться; уточните актуальную ситуацию у консультанта.",
+ i:[["Как купить иностранцу и сколько длится одобрение?","Иностранным покупателям на Северном Кипре нужно разрешение Совета министров. Договор регистрируется в земельном кадастре, затем подаётся заявка. В последнее время одобрение занимает в среднем около 1 месяца; ваш договор уже зарегистрирован, поэтому ваши права защищены."],
+ ["Есть ли валютный риск с фунтом?","Цены, рассрочка и аренда — в фунтах. Если вы зарабатываете в другой валюте, курс влияет на стоимость платежей, но и доход от аренды приходит в фунтах. Многие покупатели накапливают фунты постепенно в период рассрочки."],
+ ["Кто управляет квартирой при сдаче?","В большинстве комплексов есть управление на месте, также работают местные управляющие компании. За процент от аренды они берут на себя гостей, уборку и обслуживание. Мы свяжем вас с подходящими вариантами."],
+ ["Как быстро можно продать?","Зависит от расположения, цены и сезона. Квартиры у моря в хорошо управляемых комплексах продаются быстрее. До выдачи титула возможна продажа переуступкой договора, если это позволяют условия договора."],
+ ["Поможет ли покупка получить вид на жительство?","Владение недвижимостью поддерживает заявление на вид на жительство на Северном Кипре. Требования и документы определяют власти, и они время от времени меняются."],
+ ["Можно ли взять ипотеку?","Большинство застройщиков предлагают беспроцентную рассрочку до сдачи, поэтому кредит обычно не нужен. Банковское финансирование для нерезидентов ограничено."]]}},
+fa:{qz:{e:"آزمون ۶۰ ثانیه‌ای",h:"کدام منطقه <em>مناسب شماست؟</em>",l:"به پنج پرسش کوتاه پاسخ دهید تا بگوییم کدام ساحل با هدف و بودجهٔ شما جور است.",step:"پرسش {n} از {t}",back:"بازگشت →",again:"انجام دوبارهٔ آزمون",res:"مناسب‌ترین منطقه برای شما",alt:"گزینهٔ دوم",cta:"۳ پروژه در این منطقه بفرستید",map:"دیدن روی نقشه",calc:"محاسبهٔ بازده",
+ q:[["هدف اصلی شما از خرید در قبرس؟",["سرمایه‌گذاری و درآمد اجاره","خانهٔ تعطیلات","مهاجرت / بازنشستگی","کمی از همه"]],["بودجهٔ تقریبی شما؟",["کمتر از ۱۵۰٬۰۰۰ پوند","۱۵۰٬۰۰۰ تا ۲۵۰٬۰۰۰ پوند","۲۵۰٬۰۰۰ تا ۴۰۰٬۰۰۰ پوند","بیش از ۴۰۰٬۰۰۰ پوند"]],["کدام فضا به شما نزدیک‌تر است؟",["زندگی شهری، رستوران و اجتماع","آرامش میان کوه و دریا","ساحل طولانی و مجتمع‌های نو","طبیعت بکر، دور از شلوغی"]],["چه زمانی می‌خواهید استفاده کنید؟",["همین حالا، آمادهٔ تحویل","ظرف ۱ تا ۲ سال، پیش‌خرید","عجله‌ای ندارم"]],["آیا اجاره می‌دهید؟",["اجارهٔ کوتاه‌مدت تعطیلات","اجارهٔ بلندمدت","اجاره نمی‌دهم"]]]},
+ gt:{e:"ماشین‌حساب بازده",h:"بودجهٔ شما چقدر <em>اجاره درمی‌آورد؟</em>",l:"بودجه و منطقه را انتخاب کنید تا اجارهٔ سالانهٔ تخمینی و مدت بازگشت سرمایه را ببینید.",budget:"بودجه",region:"منطقه",yield:"بازده ناخالص تخمینی اجاره",range:"بازهٔ تخمینی برای {r}: {a} تا {b}. در صورت تمایل تغییر دهید.",annual:"اجارهٔ ناخالص سالانه",monthly:"ماهانه ≈ {m}",payback:"بازگشت سرمایه",years:"{n} سال",ten:"مجموع اجاره در ۱۰ سال",disc:"این یک تخمین است، نه تضمین. اجارهٔ واقعی به واحد، موقعیت، فصل و مدیریت بستگی دارد. شارژ، مدیریت و مالیات لحاظ نشده است.",cta:"۳ پروژهٔ مناسب برایم بفرستید"},
+ fq:{e:"پرسش‌های واقعی",h:"<em>پرتکرارترین</em> پرسش‌های خریداران",l:"پاسخ‌های کوتاه و روشن به پرسش‌هایی که بیشتر از همه می‌شنویم.",ask:"قوانین و زمان‌ها ممکن است تغییر کنند؛ وضعیت فعلی را از مشاور خود بپرسید.",
+ i:[["خریدار خارجی چگونه می‌خرد و تأیید چقدر طول می‌کشد؟","خریداران خارجی در قبرس شمالی به مجوز هیئت وزیران نیاز دارند. قرارداد فروش در ادارهٔ ثبت ثبت می‌شود و سپس درخواست مجوز داده می‌شود. تأیید وزارتخانه اخیراً به‌طور میانگین حدود ۱ ماه طول کشیده است؛ در این مدت قرارداد شما ثبت شده و حقوقتان محفوظ است."],
+ ["آیا ریسک ارزی پوند وجود دارد؟","قیمت‌ها، اقساط و اجاره‌ها به پوند است. اگر درآمد شما به ارز دیگری است، نرخ ارز بر هزینهٔ اقساط اثر می‌گذارد، اما درآمد اجاره هم به پوند می‌آید. بسیاری از خریداران در دورهٔ اقساط به‌تدریج پوند جمع می‌کنند."],
+ ["اگر اجاره دهم، مدیریت با کیست؟","بیشتر مجتمع‌ها مدیریت در محل دارند و شرکت‌های مدیریت محلی هم اجاره و نگهداری را انجام می‌دهند. در ازای درصدی از اجاره، پذیرش مهمان، نظافت و نگهداری را بر عهده می‌گیرند. ما شما را به گزینه‌های مناسب معرفی می‌کنیم."],
+ ["اگر بخواهم بفروشم، چقدر طول می‌کشد؟","به موقعیت، قیمت و فصل بستگی دارد. واحدهای نزدیک دریا در مجتمع‌های خوش‌مدیریت سریع‌تر فروش می‌روند. پیش از صدور سند، فروش از طریق انتقال قرارداد نیز بسته به شرایط قرارداد ممکن است."],
+ ["آیا خرید خانه به اقامت کمک می‌کند؟","مالکیت ملک از درخواست اقامت در قبرس شمالی پشتیبانی می‌کند. شرایط و مدارک را مراجع رسمی تعیین می‌کنند و گاهی تغییر می‌کند."],
+ ["آیا می‌توانم وام بگیرم؟","بیشتر سازندگان تا زمان تحویل اقساط بدون بهره ارائه می‌دهند، بنابراین اغلب خریداران به وام نیاز ندارند. گزینه‌های وام بانکی برای غیرمقیمان محدود است."]]}},
+de:{qz:{e:"60-Sekunden-Test",h:"Welche Region <em>passt zu Ihnen?</em>",l:"Beantworten Sie fünf kurze Fragen, und wir sagen Ihnen, welche Küste zu Ziel und Budget passt.",step:"Frage {n} / {t}",back:"← Zurück",again:"Test wiederholen",res:"Ihre passendste Region",alt:"Zweite Wahl",cta:"3 Projekte in dieser Region senden",map:"Auf der Karte zeigen",calc:"Rendite berechnen",
+ q:[["Was ist Ihr Hauptziel beim Kauf auf Zypern?",["Anlage und Mieteinnahmen","Ferienhaus","Auswandern / Ruhestand","Von allem etwas"]],["Wie hoch ist Ihr Budget ungefähr?",["Unter £150.000","£150.000 – 250.000","£250.000 – 400.000","Über £400.000"]],["Welche Umgebung liegt Ihnen?",["Stadtleben, Restaurants, Geselligkeit","Ruhe zwischen Bergen und Meer","Langer Sandstrand und neue Anlagen","Unberührte Natur, abseits der Massen"]],["Wann möchten Sie es nutzen?",["Sofort, bezugsfertig","In 1–2 Jahren, Kauf in der Bauphase","Keine Eile"]],["Werden Sie vermieten?",["Kurzzeit-Ferienvermietung","Langzeitvermietung","Ich vermiete nicht"]]]},
+ gt:{e:"Renditerechner",h:"Wie viel Miete <em>bringt Ihr Budget?</em>",l:"Wählen Sie Budget und Region und sehen Sie die geschätzte Jahresmiete und nach wie vielen Jahren sich die Anlage amortisiert.",budget:"Budget",region:"Region",yield:"Geschätzte Bruttomietrendite",range:"Geschätzte Spanne für {r}: {a} – {b}. Gern anpassen.",annual:"Jährliche Bruttomiete",monthly:"≈ {m} pro Monat",payback:"Amortisiert sich in",years:"{n} Jahren",ten:"Miete in 10 Jahren",disc:"Dies ist eine Schätzung, keine Garantie. Die tatsächliche Miete hängt von Wohnung, Lage, Saison und Verwaltung ab. Nebenkosten, Verwaltung und Steuern sind nicht enthalten.",cta:"3 passende Projekte senden"},
+ fq:{e:"Echte Fragen",h:"Was Käufer <em>am häufigsten fragen</em>",l:"Kurze, klare Antworten auf die Fragen, die wir am häufigsten hören.",ask:"Vorschriften und Fristen können sich ändern; fragen Sie Ihren Berater nach dem aktuellen Stand.",
+ i:[["Wie kaufe ich als Ausländer und wie lange dauert die Genehmigung?","Ausländische Käufer in Nordzypern brauchen eine Genehmigung des Ministerrats. Der Kaufvertrag wird beim Grundbuchamt registriert, danach wird die Genehmigung beantragt. Zuletzt dauerte sie im Schnitt etwa 1 Monat; Ihr Vertrag ist in der Zwischenzeit registriert, Ihre Rechte sind geschützt."],
+ ["Gibt es ein Währungsrisiko mit dem Pfund?","Preise, Raten und Mieten sind in Pfund. Verdienen Sie in einer anderen Währung, beeinflusst der Kurs Ihre Raten, aber auch die Mieteinnahmen kommen in Pfund. Viele Käufer bauen über die Ratenzeit schrittweise Pfund auf."],
+ ["Wer verwaltet die Wohnung bei Vermietung?","Die meisten Anlagen bieten eine Verwaltung vor Ort, zudem gibt es lokale Verwaltungsfirmen. Gegen einen Prozentsatz der Miete übernehmen sie Gäste, Reinigung und Instandhaltung. Wir vermitteln passende Optionen."],
+ ["Wie schnell kann ich verkaufen?","Das hängt von Lage, Preis und Saison ab. Meernahe Wohnungen in gut geführten Anlagen wechseln schneller den Besitzer. Vor Ausstellung des Titels ist je nach Vertragsbedingungen auch ein Verkauf per Vertragsübertragung möglich."],
+ ["Hilft ein Immobilienkauf bei der Aufenthaltserlaubnis?","Immobilienbesitz unterstützt einen Antrag auf Aufenthaltserlaubnis in Nordzypern. Voraussetzungen und Unterlagen legen die Behörden fest; sie ändern sich gelegentlich."],
+ ["Kann ich eine Finanzierung bekommen?","Die meisten Bauträger bieten bis zur Übergabe zinsfreie Raten, daher brauchen die meisten Käufer keinen Kredit. Bankfinanzierungen für Nichtansässige sind begrenzt."]]}},
+pl:{qz:{e:"Test w 60 sekund",h:"Który region <em>pasuje do Ciebie?</em>",l:"Odpowiedz na pięć krótkich pytań, a podpowiemy, które wybrzeże pasuje do Twojego celu i budżetu.",step:"Pytanie {n} / {t}",back:"← Wstecz",again:"Zrób test ponownie",res:"Najlepiej pasujący region",alt:"Druga opcja",cta:"Wyślij 3 projekty z tego regionu",map:"Pokaż na mapie",calc:"Oblicz zwrot",
+ q:[["Jaki jest Twój główny cel zakupu na Cyprze?",["Inwestycja i dochód z najmu","Dom wakacyjny","Przeprowadzka / emerytura","Po trochu wszystko"]],["Jaki masz mniej więcej budżet?",["Poniżej £150 000","£150 000 – 250 000","£250 000 – 400 000","Powyżej £400 000"]],["Jakie otoczenie Ci odpowiada?",["Życie miejskie, restauracje","Spokój między górami a morzem","Długa plaża i nowe osiedla","Dzika przyroda, z dala od tłumów"]],["Kiedy chcesz korzystać?",["Od razu, gotowe mieszkanie","Za 1–2 lata, zakup na etapie budowy","Nie spieszę się"]],["Czy będziesz wynajmować?",["Najem krótkoterminowy","Najem długoterminowy","Nie będę wynajmować"]]]},
+ gt:{e:"Kalkulator zwrotu",h:"Ile najmu <em>przyniesie Twój budżet?</em>",l:"Wybierz budżet i region, aby zobaczyć szacowany roczny czynsz i po ilu latach inwestycja się zwróci.",budget:"Budżet",region:"Region",yield:"Szacowana stopa zwrotu brutto",range:"Szacowany zakres dla {r}: {a} – {b}. Możesz zmienić.",annual:"Roczny czynsz brutto",monthly:"≈ {m} miesięcznie",payback:"Zwrot inwestycji",years:"{n} lat",ten:"Czynsz przez 10 lat",disc:"To szacunek, nie gwarancja. Rzeczywisty czynsz zależy od mieszkania, lokalizacji, sezonu i zarządzania. Opłaty, zarządzanie i podatki nie są uwzględnione.",cta:"Wyślij 3 pasujące projekty"},
+ fq:{e:"Prawdziwe pytania",h:"O co kupujący <em>pytają najczęściej</em>",l:"Krótkie, jasne odpowiedzi na pytania, które słyszymy najczęściej.",ask:"Przepisy i terminy mogą się zmieniać; zapytaj doradcę o aktualną sytuację.",
+ i:[["Jak kupić jako obcokrajowiec i ile trwa zgoda?","Kupujący z zagranicy na Cyprze Północnym potrzebują zgody Rady Ministrów. Umowa sprzedaży jest rejestrowana w urzędzie ksiąg, potem składa się wniosek. Ostatnio zgoda trwała średnio około 1 miesiąca; w tym czasie Twoja umowa jest zarejestrowana, więc Twoje prawa są chronione."],
+ ["Czy jest ryzyko walutowe funta?","Ceny, raty i czynsze są w funtach. Jeśli zarabiasz w innej walucie, kurs wpływa na koszt rat, ale dochód z najmu też przychodzi w funtach. Wielu kupujących stopniowo gromadzi funty w okresie rat."],
+ ["Kto zarządza mieszkaniem przy wynajmie?","Większość osiedli ma zarządcę na miejscu, działają też lokalne firmy zarządzające. Za procent od czynszu zajmują się gośćmi, sprzątaniem i utrzymaniem. Łączymy Cię z odpowiednimi opcjami."],
+ ["Jak szybko mogę sprzedać?","To zależy od lokalizacji, ceny i sezonu. Mieszkania blisko morza w dobrze zarządzanych osiedlach sprzedają się szybciej. Przed wydaniem aktu możliwa bywa sprzedaż przez cesję umowy, zależnie od jej warunków."],
+ ["Czy zakup pomoże w uzyskaniu pozwolenia na pobyt?","Posiadanie nieruchomości wspiera wniosek o pozwolenie na pobyt na Cyprze Północnym. Wymagania i dokumenty ustalają władze i czasem się zmieniają."],
+ ["Czy mogę wziąć kredyt?","Większość deweloperów oferuje nieoprocentowane raty do odbioru, więc większość kupujących nie potrzebuje kredytu. Finansowanie bankowe dla nierezydentów jest ograniczone."]]}}
+};
+const root=document.documentElement, $$=id=>document.getElementById(id);
+const T=()=>X[root.lang]||X.en, RN=id=>{ try{ return D().regions[id]; }catch(e){ return {name:id,tag:"",text:""}; } };
+const fmt=n=>"£"+Math.round(n).toLocaleString("en-GB");
+const pctf=n=>{ const l=root.lang, v=(+n).toLocaleString({tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL"}[l]||"en-GB",{maximumFractionDigits:1}); return l==="tr"?"%"+v:(["ru","de","pl"].includes(l)?v+" %":v+"%"); };
+const fill2=(s,o)=>s.replace(/\{(\w+)\}/g,(_,k)=>o[k]);
+const choose=id=>{ try{ regionChosen=I18N.tr.regions[id].name; }catch(e){} };
+const trk=(n,d)=>{ try{ typeof track==="function"&&track(n,d); }catch(e){} };
+
+/* ---- bölge testi ---- */
+let qi=0, ans=[];
+function quiz(){
+  const t=T().qz, box=$$("qz-box"); if(!box) return;
+  ["e","h","l"].forEach(k=>{ const el=document.querySelector(`[data-qz="${k}"]`); if(el) el.innerHTML=t[k]; });
+  const N=t.q.length;
+  if(qi<N){
+    const [q,opts]=t.q[qi];
+    box.innerHTML=`<div class="qz-prog" aria-hidden="true">${t.q.map((_,j)=>`<i class="${j<qi?"done":j===qi?"on":""}"></i>`).join("")}</div>
+      <span class="qz-step">${fill2(t.step,{n:qi+1,t:N})}</span><h3 class="qz-q">${q}</h3>
+      <div class="qz-opts">${opts.map((o,j)=>`<button type="button" data-o="${j}" class="${ans[qi]===j?"sel":""}"><b>${String.fromCharCode(65+j)}</b><span>${o}</span></button>`).join("")}</div>
+      ${qi>0?`<button type="button" class="qz-back" data-back>${t.back}</button>`:""}`;
+  } else {
+    const sc=[0,0,0,0]; ans.forEach((a,j)=>W[j][a].forEach((v,k)=>sc[k]+=v));
+    const order=[0,1,2,3].sort((a,b)=>sc[b]-sc[a]), best=RG[order[0]], alt=RG[order[1]], r=RN(best), r2=RN(alt), max=Math.max(...sc);
+    choose(best);
+    box.innerHTML=`<div class="qz-res">
+      <span class="eyebrow">${t.res}</span>
+      <h3>${r.name}</h3><div class="qz-tag">${r.tag}</div><p>${r.text}</p>
+      <div class="qz-bars">${order.map(k=>`<div><span>${RN(RG[k]).name}</span><i style="--w:${Math.round(sc[k]/max*100)}%"></i></div>`).join("")}</div>
+      <p class="qz-alt"><b>${t.alt}:</b> ${r2.name}</p>
+      <div class="qz-cta"><a class="btn btn-sun" href="#/form" data-ev="quiz_cta">${t.cta} →</a><a class="btn btn-ghost" href="#/bolge/getiri" data-gt="${best}">${t.calc}</a><a class="btn btn-ghost" href="#/bolge" data-map="${order[0]}">${t.map}</a></div>
+      <button type="button" class="qz-back" data-again>${t.again}</button></div>`;
+    trk("Test",{bolge:I18N.tr.regions[best].name,dil:root.lang});
+  }
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest && e.target.closest("#qz-box button, #qz-box a"); if(!b) return;
+  if(b.dataset.o!=null){ ans[qi]=+b.dataset.o; b.classList.add("sel"); setTimeout(()=>{ qi++; quiz(); },220); }
+  else if(b.hasAttribute("data-back")){ qi=Math.max(0,qi-1); quiz(); }
+  else if(b.hasAttribute("data-again")){ qi=0; ans=[]; quiz(); }
+  else if(b.dataset.gt){ setRegion(b.dataset.gt); }
+  else if(b.dataset.map!=null){ setTimeout(()=>{ try{ pickRegion(REGIONS.findIndex(x=>x.id===RG[+b.dataset.map]),true); }catch(x){} },500); }
+},true);
+
+/* ---- getiri hesaplayıcı ---- */
+let gReg="iskele", gBud=200000, gYld=8, yTouched=false;
+function setRegion(id){ gReg=id; yTouched=false; gYld=(YR[id][0]+YR[id][1])/2; gt(); }
+function gt(){
+  const t=T().gt, box=$$("gt-box"); if(!box) return;
+  ["e","h","l"].forEach(k=>{ const el=document.querySelector(`[data-gt-t="${k}"]`); if(el) el.innerHTML=t[k]; });
+  const [a,b]=YR[gReg];
+  box.innerHTML=`<div class="gt-in panel">
+      <div class="field"><label for="gt-b"><span>${t.budget}</span><output>${fmt(gBud)}</output></label><input id="gt-b" type="range" min="80000" max="600000" step="5000" value="${gBud}"></div>
+      <span class="gt-lab">${t.region}</span>
+      <div class="gt-regs" role="radiogroup">${RG.map(id=>`<button type="button" role="radio" aria-checked="${id===gReg}" data-r="${id}">${RN(id).name}</button>`).join("")}</div>
+      <div class="field" style="margin:18px 0 0"><label for="gt-y"><span>${t.yield}</span><output>${pctf(gYld)}</output></label><input id="gt-y" type="range" min="3" max="12" step="0.5" value="${gYld}"></div>
+      <p class="gt-note">${fill2(t.range,{r:RN(gReg).name,a:pctf(a),b:pctf(b)})}</p>
+    </div>
+    <div class="gt-out" id="gt-out">${gtOut()}</div>`;
+}
+function gtOut(){
+  const t=T().gt, ann=gBud*gYld/100, pb=100/gYld;
+  return `
+      <div class="gt-k"><span>${t.annual}</span><b>${fmt(ann)}</b><small>${fill2(t.monthly,{m:fmt(ann/12)})}</small></div>
+      <div class="gt-k"><span>${t.payback}</span><b>${fill2(t.years,{n:pb.toLocaleString(root.lang==="tr"?"tr-TR":"en-GB",{maximumFractionDigits:1})})}</b><div class="gt-meter" aria-hidden="true"><i style="--w:${Math.min(100,pb/25*100)}%"></i></div></div>
+      <div class="gt-k"><span>${t.ten}</span><b>${fmt(ann*10)}</b><div class="gt-yrs" aria-hidden="true">${Array.from({length:10},(_,j)=>`<i style="--h:${(j+1)*10}%"></i>`).join("")}</div></div>
+      <p class="note">${t.disc}</p>
+      <a class="btn btn-sun gt-cta" href="#/form" data-ev="getiri_cta">${t.cta} →</a>`;
+}
+document.addEventListener("input",e=>{
+  if(e.target.id==="gt-b"){ gBud=+e.target.value; upd(); }
+  if(e.target.id==="gt-y"){ gYld=+e.target.value; yTouched=true; upd(); }
+});
+function upd(){ const o=$$("gt-out"); if(!o) return gt(); o.innerHTML=gtOut();
+  const ob=document.querySelector('label[for="gt-b"] output'), oy=document.querySelector('label[for="gt-y"] output');
+  if(ob) ob.textContent=fmt(gBud); if(oy) oy.textContent=pctf(gYld); }
+document.addEventListener("click",e=>{
+  const r=e.target.closest && e.target.closest(".gt-regs button"); if(r){ setRegion(r.dataset.r); return; }
+  const c=e.target.closest && e.target.closest(".gt-cta"); if(c) choose(gReg);
+},true);
+
+/* ---- gerçek sorular ---- */
+function fq(){
+  const t=T().fq, box=$$("fq-box"); if(!box) return;
+  ["e","h","l"].forEach(k=>{ const el=document.querySelector(`[data-fq="${k}"]`); if(el) el.innerHTML=t[k]; });
+  box.innerHTML=t.i.map(([q,a],j)=>`<details class="fq"${j===0?" open":""}><summary><em>${String(j+1).padStart(2,"0")}</em>${q}</summary><p>${a}</p></details>`).join("")+`<p class="fq-ask">ⓘ ${t.ask}</p>`;
+}
+
+function all(){ quiz(); gt(); fq(); }
+const pr=$$("price"); if(pr){ gBud=Math.min(600000,Math.max(80000,+pr.value||gBud)); }
+gYld=(YR[gReg][0]+YR[gReg][1])/2;
+all();
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 
 </script>
