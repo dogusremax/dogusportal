@@ -255,6 +255,25 @@ button{font:inherit;cursor:pointer}
 .kz-why{grid-column:1/-1;font-size:.95rem;color:#F4F8F9;border-inline-start:2px solid #E9C27A;padding-inline-start:14px}
 [lang="fa"] .kz-blocks h3{font-family:"Vazirmatn",var(--f-display);font-weight:600;font-size:1.05rem}
 
+
+/* ---------- basında biz ---------- */
+.press{background:#FBFBF9;color:#121417;border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0;border:1px solid #121417;box-shadow:6px 6px 0 #121417}
+@media(min-width:680px){.press.feat{grid-column:span 2;padding:30px}}
+.pr-top{display:flex;justify-content:space-between;gap:12px;border-top:3px solid #121417;border-bottom:1px solid #121417;padding-block:7px;font:700 .68rem var(--f-mono);letter-spacing:.18em}
+.pr-body{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:680px){.press.feat .pr-body{grid-template-columns:auto 1fr;gap:30px;align-items:center}}
+.pr-rank{display:flex;flex-direction:column}
+.pr-rank b{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(5rem,16vw,8.5rem);line-height:.85;letter-spacing:-.04em;color:#121417;direction:ltr}
+.pr-rank span{font:600 .72rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#5A5F66;margin-top:8px;max-width:22ch}
+.pr-txt{min-width:0;border-inline-start:1px solid #121417;padding-inline-start:20px}
+@media(max-width:679px){.pr-txt{border-inline-start:0;padding-inline-start:0;border-top:1px solid #C9CCD0;padding-top:14px}}
+.press h3{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.08;color:#121417}
+.press blockquote{margin:14px 0 0;font-family:"Instrument Serif","PT Serif",Georgia,serif;font-style:italic;font-size:1.2rem;line-height:1.3;color:#B0201B}
+.pr-meta{font-size:.76rem;color:#5A5F66;margin-top:12px;line-height:1.45}
+.pr-link{display:inline-block;margin-top:12px;font-weight:700;font-size:.85rem;color:#121417;text-decoration:none;border-bottom:2px solid #121417;padding-bottom:1px}
+.pr-link:hover{color:#B0201B;border-color:#B0201B}
+[lang="fa"] .press h3,[lang="fa"] .press blockquote{font-family:"Vazirmatn",serif;font-style:normal;font-weight:600;font-size:1.15rem}
+
 /* ---------- regions ---------- */
 .regions{background:var(--card);border-block:1px solid var(--line)}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-top:26px;scrollbar-width:none}
@@ -1358,6 +1377,13 @@ let rzT; addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(()=>{dr
 
 /* ================= GÜNDEM ================= */
 let ncat="all", nmore=false;
+const PRESS={
+ tr:{k:"BASINDA KUZEY KIBRIS",r:"Sahil yatırımında dünya sıralaması",q:"Akdeniz'in en iyisi, maliyetin küçük bir kısmına.",m:"Forbes · Şubat 2021 · Live and Invest Overseas Küresel Gayrimenkul Araştırması",c:"Haberi okuyun →"},
+ en:{k:"NORTH CYPRUS IN THE PRESS",r:"World ranking for beachfront investment",q:"The best of the Mediterranean at a fraction the cost.",m:"Forbes · February 2021 · Live and Invest Overseas Global Property Survey",c:"Read the story →"},
+ ru:{k:"СЕВЕРНЫЙ КИПР В ПРЕССЕ",r:"Мировой рейтинг инвестиций у моря",q:"Лучшее в Средиземноморье за малую часть цены.",m:"Forbes · февраль 2021 · Global Property Survey, Live and Invest Overseas",c:"Читать статью →"},
+ fa:{k:"قبرس شمالی در رسانه‌ها",r:"رتبهٔ جهانی سرمایه‌گذاری ساحلی",q:"بهترینِ مدیترانه، با کسری از هزینه.",m:"Forbes · فوریهٔ ۲۰۲۱ · نظرسنجی جهانی املاک Live and Invest Overseas",c:"خواندن خبر ←"},
+ de:{k:"NORDZYPERN IN DER PRESSE",r:"Weltrangliste für Strandinvestitionen",q:"Das Beste des Mittelmeers zu einem Bruchteil der Kosten.",m:"Forbes · Februar 2021 · Global Property Survey von Live and Invest Overseas",c:"Artikel lesen →"},
+ pl:{k:"CYPR PÓŁNOCNY W PRASIE",r:"Światowy ranking inwestycji przy plaży",q:"To, co najlepsze na Morzu Śródziemnym, za ułamek ceny.",m:"Forbes · luty 2021 · Global Property Survey, Live and Invest Overseas",c:"Przeczytaj artykuł →"}};
 const NMORE={tr:"Tüm başlıkları göster ({n})",en:"Show all stories ({n})",ru:"Показать все ({n})",fa:"نمایش همه ({n})",de:"Alle Meldungen zeigen ({n})",pl:"Pokaż wszystkie ({n})"};
 function renderNews(){
   const n=D().n, meta=NEWS.meta;
@@ -1369,6 +1395,12 @@ function renderNews(){
   $("ngrid").innerHTML=(cut?list.slice(0,7):list).map((m,idx)=>{
     const [id,c,fig,src,url,yr]=m, [h,p]=n.i[id], fl=n.fl[id]||"";
     const feat = idx===0 && (ncat==="all"||ncat==="yatirim");
+    if(id==="forbes"){ const pr=PRESS[L]||PRESS.en;
+      return `<article class="press${feat?" feat":""}" data-c="${c}">
+        <div class="pr-top"><span>${pr.k}</span><span>${yr}</span></div>
+        <div class="pr-body"><div class="pr-rank"><b>#1</b><span>${pr.r}</span></div>
+          <div class="pr-txt"><h3>${h}</h3><blockquote>“${pr.q}”</blockquote><p class="pr-meta">${pr.m}</p>
+          <a class="pr-link" href="${url}" target="_blank" rel="noopener">${pr.c}</a></div></div></article>`; }
     return `<article class="ncard${feat?" feat":""}" data-c="${c}">
       <div class="ntop"><span class="ntag">${n.c[c]}</span>${yr?`<span class="ndate">${yr}</span>`:""}</div>
       ${fig?`<div class="nfig"><b>${fig}</b><span>${fl}</span></div>`:""}
