@@ -29,6 +29,8 @@ async function yayindaMi(url) {
   throw new Error('Medya yayında değil: ' + url);
 }
 
+// Son güvenlik: 4★ altı ya da metinsiz yorum hiçbir yoldan paylaşılmaz
+if (!(m.secim?.puan >= 4) || !m.secim?.metin?.trim()) { console.error('Paylaşım engellendi: 4 yıldız altı ya da metinsiz yorum', m.key); process.exit(1); }
 const s = m.secim, kisa = s.metin.length > 900 ? s.metin.slice(0, 900).replace(/\s+\S*$/, '') + '…' : s.metin;
 const aciklama =
 `Sizlerden Gelenler 💬 ${s.ad}
