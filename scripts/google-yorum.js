@@ -1,35 +1,69 @@
-// Google yorumlarını Places API (New) ile çeker, data/google-yorumlar.json'a biriktirir.
-// Google tek seferde en fazla 5 yorum döndürür; yeni gelenler eskilerin üstüne eklenir.
+// Google yorumlarını Business Profile API ile çeker (tüm yorumlar, sayfalı), data/google-yorumlar.json'a biriktirir.
+// Kimlik: GOOGLE_PLACES_KEY secret'ında JSON {client_id, client_secret, refresh_token} (scripts/gbp-yetki.js üretir).
+// Secret adı eski Places denemesinden kaldı; workflow dosyasını değiştirmemek için aynı ad kullanılıyor.
 const fs = require('fs');
 
-const KEY = process.env.GOOGLE_PLACES_KEY;
-const PLACE_ID = process.env.PLACE_ID || 'ChIJdblFqvvHyhQR_agtjpCfYW0';
 const DOSYA = 'data/google-yorumlar.json';
+const GORULEN = 'data/google-yorum-gorulen.json';
+const YILDIZ = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+
+async function token(k) {
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: k.client_id, client_secret: k.client_secret, refresh_token: k.refresh_token, grant_type: 'refresh_token' }),
+  });
+  const t = await r.json();
+  if (!t.access_token) throw { durum: r.status, mesaj: 'Token alınamadı: ' + (t.error_description || t.error) };
+  return t.access_token;
+}
+
+async function al(url, tok) {
+  const r = await fetch(url, { headers: { Authorization: 'Bearer ' + tok } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw { durum: r.status, mesaj: (j.error?.message || r.statusText) + ' (' + url.split('?')[0] + ')' };
+  return j;
+}
+
+// Google çeviri eklediyse sadece orijinal metni al
+const orijinal = s => {
+  s = s || '';
+  const m = s.match(/\(Original\)\n([\s\S]*)$/) || s.match(/\(Orijinal\)\n([\s\S]*)$/);
+  return (m ? m[1] : s.replace(/\n\n\((Translated by Google|Google tarafından çevrildi)\)[\s\S]*$/, '')).trim();
+};
 
 (async () => {
-  if (!KEY) { console.log('GOOGLE_PLACES_KEY yok, atlandı.'); return; }
+  let k;
+  try { k = JSON.parse(process.env.GOOGLE_PLACES_KEY || ''); } catch {}
+  if (!k?.refresh_token) { console.log('Business Profile kimliği yok, atlandı.'); return; }
 
-  const r = await fetch(`https://places.googleapis.com/v1/places/${PLACE_ID}?languageCode=tr`, {
-    headers: {
-      'X-Goog-Api-Key': KEY,
-      'X-Goog-FieldMask': 'displayName,rating,userRatingCount,googleMapsUri,reviews',
-    },
-  });
   let eski = { yorumlar: [] };
   try { eski = JSON.parse(fs.readFileSync(DOSYA, 'utf8')); } catch {}
 
-  if (!r.ok) {
-    // Hatayı veri dosyasına da yaz (loglar giriş gerektiriyor); anahtar metinden temizlenir
-    const metin = (await r.text()).split(KEY).join('***');
-    console.error('Places API hatası', r.status, metin);
-    let mesaj = metin;
-    try { mesaj = JSON.parse(metin).error?.message || metin; } catch {}
-    // Aynı hata zaten kayıtlıysa dosyaya tekrar yazma (her saat boş hata commit'i olmasın)
-    if (eski.hata && eski.hata.durum === r.status && eski.hata.mesaj === mesaj.slice(0, 500)) { console.log('Aynı hata sürüyor, kayıt değişmedi.'); return; }
-    fs.writeFileSync(DOSYA, JSON.stringify({ ...eski, hata: { zaman: new Date().toISOString(), durum: r.status, mesaj: mesaj.slice(0, 500) } }, null, 1));
+  let hesap, konum, yorumlar = [], ozet = {};
+  try {
+    const tok = await token(k);
+    const hesaplar = (await al('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', tok)).accounts || [];
+    const konumlar = [];
+    for (const h of hesaplar) {
+      const l = await al(`https://mybusinessbusinessinformation.googleapis.com/v1/${h.name}/locations?readMask=name,title&pageSize=100`, tok);
+      for (const x of l.locations || []) konumlar.push({ hesap: h.name, ...x });
+    }
+    const secilen = konumlar.find(x => new RegExp(process.env.GBP_KONUM || 'fikirtepe', 'i').test(x.title)) || konumlar[0];
+    if (!secilen) throw { durum: 404, mesaj: 'Hesapta işletme konumu bulunamadı' };
+    hesap = secilen.hesap; konum = secilen.name;
+    let sayfa = '';
+    do {
+      const r = await al(`https://mybusiness.googleapis.com/v4/${hesap}/${konum}/reviews?pageSize=50${sayfa ? '&pageToken=' + sayfa : ''}`, tok);
+      yorumlar.push(...(r.reviews || []));
+      ozet = { puan: r.averageRating, toplam: r.totalReviewCount };
+      sayfa = r.nextPageToken;
+    } while (sayfa);
+  } catch (e) {
+    console.error('Business Profile API hatası', e.durum, e.mesaj || e);
+    fs.writeFileSync(DOSYA, JSON.stringify({ ...eski, hata: { zaman: new Date().toISOString(), durum: e.durum || 0, mesaj: String(e.mesaj || e).slice(0, 500) } }, null, 1));
     return;
   }
-  const p = await r.json();
   const hataVardi = !!eski.hata;
   delete eski.hata;
 
@@ -40,53 +74,69 @@ const DOSYA = 'data/google-yorumlar.json';
   const desenler = danismanlar.map(d => [d.id, new RegExp('(?<![a-zçğıöşü])(?:' + d.desen + ')')]);
   const eslestir = metin => { const t = norm(metin); return desenler.filter(([, r]) => r.test(t)).map(([id]) => id); };
 
-  // İlk aktarımdaki yorumların id'leri API'den farklı; aynı yorumu yazar + metin başından tanı
-  const imza = (yazar, metin) => norm(yazar).trim() + '|' + norm(metin).replace(/\s+/g, ' ').slice(0, 40);
+  // Tarayıcıdan/ilk aktarımdan gelen yorumların id'leri API'den farklı: aynı yorumu yazar + metin başından,
+  // yazar adı farklı yazılmışsa sadece metin başından tanı (story'ler aynı yorumu iki kez paylaşmasın)
+  // Emoji/noktalama farkları (tarayıcı ⭐ satırını atıyor) eşleşmeyi bozmasın: sadece harf, rakam ve boşluk
+  const temiz = s => norm(s).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const imza = (yazar, metin) => temiz(yazar) + '|' + temiz(metin).slice(0, 40);
   const map = new Map(eski.yorumlar.map(y => [y.id, y]));
   const imzalar = new Map(eski.yorumlar.map(y => [imza(y.yazar, y.metin), y.id]));
-  for (const rv of p.reviews || []) {
-    const metin = rv.originalText?.text || rv.text?.text || '';
-    const yazar = rv.authorAttribution?.displayName || 'Google kullanıcısı';
-    const eskiId = imzalar.get(imza(yazar, metin));
-    if (eskiId && eskiId !== rv.name) {
-      // Bilinen yorum: kesin tarihi ve linki güncelle, geri kalanı koru
-      const y = map.get(eskiId);
-      Object.assign(y, { tarih: rv.publishTime || y.tarih, tarihYaklasik: false, link: rv.googleMapsUri || y.link || '' });
+  const metinler = new Map(eski.yorumlar.filter(y => temiz(y.metin).length >= 25).map(y => [temiz(y.metin).slice(0, 60), y.id]));
+  let gorulen = [];
+  try { gorulen = JSON.parse(fs.readFileSync(GORULEN, 'utf8')); } catch {}
+  const gorulenSet = new Set(gorulen);
+  let haric = [];   // elle listeden çıkarılan yorumların id'leri (ör. eski danışman anılıyor)
+  try { haric = JSON.parse(fs.readFileSync('data/google-yorum-haric.json', 'utf8')); } catch {}
+  const simdi = new Date();
+  const ucGunOnce = new Date(simdi - 3 * 864e5).toISOString();
+
+  for (const rv of yorumlar) {
+    const id = rv.reviewId;
+    const metin = orijinal(rv.comment);
+    const yazar = rv.reviewer?.isAnonymous ? 'Google kullanıcısı' : (rv.reviewer?.displayName || 'Google kullanıcısı');
+    const puan = YILDIZ[rv.starRating] || 0;
+    const yanit = rv.reviewReply?.comment || '';
+    if (!gorulenSet.has(id)) { gorulenSet.add(id); gorulen.push(id); }
+    const varolan = map.get(id) || map.get(imzalar.get(imza(yazar, metin))) || (temiz(metin).length >= 25 && map.get(metinler.get(temiz(metin).slice(0, 60))));
+    if (varolan) {
+      // Bilinen yorum: kesin tarih ve güncel yanıtı yaz, id ve geri kalanı koru
+      Object.assign(varolan, { tarih: rv.createTime || varolan.tarih, tarihYaklasik: false, yanit, puan: puan || varolan.puan });
+      delete varolan.once;
       continue;
     }
-    // Sadece 4★ ve üzeri, danışmanlarımızdan birinin adı geçen yorumlar
-    if ((rv.rating || 0) < 4 || !eslestir(metin).length) continue;
-    const id = rv.name;
+    // Sadece 4★ ve üzeri, danışmanlarımızdan birinin adı geçen, bilerek dışarıda bırakılmamış yorumlar
+    if (puan < 4 || !eslestir(metin).length || haric.includes(id)) continue;
     map.set(id, {
       id,
       yazar,
-      yazarUrl: rv.authorAttribution?.uri || '',
-      foto: rv.authorAttribution?.photoUri || '',
-      puan: rv.rating || 0,
+      yazarUrl: '',
+      foto: rv.reviewer?.profilePhotoUrl || '',
+      puan,
       metin,
-      yanit: map.get(id)?.yanit || '',
-      tarih: rv.publishTime || '',
+      yanit,
+      tarih: rv.createTime || '',
       tarihYaklasik: false,
-      link: rv.googleMapsUri || '',
+      link: '',
       danismanlar: eslestir(metin),
-      ilkGorulme: map.get(id)?.ilkGorulme || new Date().toISOString(),
+      kaynak: 'api',
+      // Eski yorumlar "yeni gelen" sayılıp story'de hemen paylaşılmasın
+      ilkGorulme: (rv.createTime || '') < ucGunOnce ? rv.createTime : simdi.toISOString(),
     });
   }
 
-  const yorumlar = [...map.values()].sort((a, b) => (b.tarih || '').localeCompare(a.tarih || ''));
+  const liste = [...map.values()].sort((a, b) => (b.tarih || '').localeCompare(a.tarih || ''));
   const yeni = {
-    isletme: p.displayName?.text || 'RE/MAX Doğuş',
-    puan: p.rating || 0,
-    toplam: p.userRatingCount || 0,
-    mapsUrl: p.googleMapsUri || '',
-    guncelleme: new Date().toISOString(),
-    yorumlar,
+    isletme: eski.isletme || 'RE/MAX Doğuş',
+    puan: ozet.puan ? Math.round(ozet.puan * 10) / 10 : eski.puan,
+    toplam: ozet.toplam || eski.toplam,
+    mapsUrl: eski.mapsUrl || '',
+    guncelleme: simdi.toISOString(),
+    yorumlar: liste,
   };
 
-  // Sadece içerik değiştiyse yaz (her saat boş commit olmasın)
+  fs.writeFileSync(GORULEN, JSON.stringify(gorulen, null, 0).replace(/","/g, '",\n"'));
   const degisti = JSON.stringify({ ...yeni, guncelleme: 0 }) !== JSON.stringify({ ...eski, guncelleme: 0 });
-  if (!degisti && !hataVardi) { console.log('Değişiklik yok.'); return; }
-  fs.mkdirSync('data', { recursive: true });
+  if (!degisti && !hataVardi) { console.log(`Değişiklik yok (${yorumlar.length} yorum okundu).`); return; }
   fs.writeFileSync(DOSYA, JSON.stringify(yeni, null, 1));
-  console.log(`Kaydedildi: ${yeni.puan}★, ${yeni.toplam} değerlendirme, ${yorumlar.length} yorum arşivde.`);
+  console.log(`Kaydedildi: ${yeni.puan}★, ${yeni.toplam} değerlendirme, ${yorumlar.length} yorum okundu, ${liste.length} yorum arşivde.`);
 })();
