@@ -957,6 +957,51 @@ html{overflow-x:hidden}
 .st-c{margin:0;border:1px solid var(--line);border-radius:var(--r);padding:22px;background:#0A1340}
 .st-c blockquote{margin:0 0 14px;font-size:1.02rem;line-height:1.55}
 .st-c figcaption b{display:block}.st-c figcaption span{color:var(--muted);font-size:.86rem}
+/* mekanlar */
+.v2 .mekanlar{padding-block:clamp(40px,7vw,90px)}
+.vn{display:grid;gap:14px;margin-top:30px}
+@media (min-width:700px){.vn{grid-template-columns:1fr 1fr}}
+@media (min-width:1150px){.vn{grid-template-columns:repeat(4,1fr)}}
+.vn-c{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#0A1340;display:flex;flex-direction:column;transition:transform .35s var(--ease),border-color .35s}
+.vn-c:hover{transform:translateY(-4px);border-color:rgba(220,28,46,.5)}
+.vn-art{position:relative;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden}
+.vn-hotel .vn-art{background:radial-gradient(120% 90% at 80% 0%,#E9C27A55,transparent 60%),linear-gradient(160deg,#1B2B7A,#0B1442)}
+.vn-beach .vn-art{background:radial-gradient(100% 80% at 20% 100%,#F2D49B66,transparent 60%),linear-gradient(180deg,#2E7FD6,#0E3B7A)}
+.vn-fish .vn-art{background:radial-gradient(100% 80% at 80% 100%,#7FB2FF55,transparent 60%),linear-gradient(170deg,#0E4E6E,#081B40)}
+.vn-food .vn-art{background:radial-gradient(100% 80% at 50% 0%,#FF445766,transparent 60%),linear-gradient(170deg,#5A1424,#14082A)}
+.vn-art svg{width:64px;height:64px;fill:none;stroke:#fff;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9;transition:transform .5s var(--ease)}
+.vn-c:hover .vn-art svg{transform:scale(1.1) rotate(-3deg)}
+.vn-art span{position:absolute;inset-inline-start:14px;top:10px;font:500 .74rem var(--f-mono);color:rgba(255,255,255,.7);letter-spacing:.1em}
+.vn-tx{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+.vn-k{font:500 .7rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.vn-tx h3{font-size:1.12rem;margin:6px 0 2px;line-height:1.25}
+.vn-a{color:var(--gold);font-weight:600;font-size:.86rem}
+.vn-tx p{color:var(--muted);font-size:.92rem;line-height:1.55;margin:10px 0 14px;flex:1}
+.vn-map{color:#fff;font-weight:700;font-size:.88rem;text-decoration:none;border-bottom:1px solid var(--red);align-self:flex-start}
+/* kapalı maraş */
+.v2 .maras{padding-bottom:clamp(40px,7vw,90px)}
+.mr-hero{position:relative;padding:clamp(70px,14vw,170px) 0 clamp(40px,7vw,80px);background:linear-gradient(180deg,rgba(5,10,48,.35),#050A30 92%),var(--img,none) center/cover no-repeat,linear-gradient(160deg,#3a2a1a,#050A30);overflow:hidden}
+.mr-hero h2{font-size:clamp(2.6rem,8vw,5.4rem);max-width:14ch;text-shadow:0 6px 40px rgba(0,0,0,.6)}
+.mr-hero .lead{color:#E7EAF6;text-shadow:0 2px 20px rgba(0,0,0,.6);max-width:62ch}
+.mr-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 40px}
+@media (min-width:860px){.mr-facts{grid-template-columns:repeat(4,1fr)}}
+.mr-facts div{border:1px solid var(--line);border-radius:18px;padding:18px;background:#0A1340}
+.mr-facts b{display:block;font:800 clamp(1.5rem,4vw,2.2rem) var(--f-head);color:var(--gold);letter-spacing:-.02em}
+.mr-facts span{color:var(--muted);font-size:.86rem}
+.mr-ch{display:grid;gap:22px;max-width:900px}
+.mr-c{display:grid;grid-template-columns:110px 1fr;gap:20px;align-items:start}
+@media (max-width:600px){.mr-c{grid-template-columns:1fr;gap:6px}}
+.mr-y{font:400 clamp(1.6rem,4vw,2.4rem) "Instrument Serif","PT Serif",Georgia,serif;font-style:italic;color:var(--red);line-height:1}
+.mr-c h3{font-size:1.4rem;margin:0 0 8px}
+.mr-c p{margin:0;color:#C9CEE6;line-height:1.75;font-size:1.02rem}
+.mr-ph{margin:6px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,#2a2018,#0B1442)}
+.mr-ph img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;filter:saturate(.85) contrast(1.05);transition:transform 1.2s var(--ease)}
+.mr-ph:hover img{transform:scale(1.04)}
+.mr-ph figcaption{padding:10px 16px;font-size:.84rem;color:var(--muted)}
+.mr-ph.noimg{display:none}
+.mr-vis{margin-top:40px;padding:clamp(20px,3vw,32px);max-width:900px}
+.mr-vis ul{padding-inline-start:20px;color:#C9CEE6;line-height:1.7;margin:10px 0 18px}
+@media (max-width:699px){.vn-art{aspect-ratio:21/8}.vn-art svg{width:48px;height:48px}}
 
 </style>
 </head>
@@ -966,7 +1011,7 @@ html{overflow-x:hidden}
 <!-- ======= KABUK: masaüstünde yan ray, mobilde üst bar + alt sekmeler ======= -->
 <aside class="rail" id="rail">
   <a class="brand" href="#/home" data-go="home"><i aria-hidden="true"></i><span>RE/MAX DOĞUŞ<small data-i="logo_sub"></small></span></a>
-  <nav class="rnav" aria-label="Menu"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a><a href="#/yasam" data-go="yasam"><em>04</em><span data-nvt="yasam"></span></a><a href="#/hesap" data-go="hesap"><em>05</em><span data-nvt="hesap"></span></a><a href="#/masraf" data-go="masraf"><em>06</em><span data-nvt="masraf"></span></a><a href="#/surec" data-go="surec"><em>07</em><span data-nvt="surec"></span></a><a href="#/isbirligi" data-go="isbirligi"><em>08</em><span data-nvt="isbirligi"></span></a><a href="#/form" data-go="form"><em>09</em><span data-nvt="form"></span></a></nav>
+  <nav class="rnav" aria-label="Menu"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a><a href="#/maras" data-go="maras"><em>04</em><span data-nvt="maras"></span></a><a href="#/yasam" data-go="yasam"><em>05</em><span data-nvt="yasam"></span></a><a href="#/hesap" data-go="hesap"><em>06</em><span data-nvt="hesap"></span></a><a href="#/masraf" data-go="masraf"><em>07</em><span data-nvt="masraf"></span></a><a href="#/surec" data-go="surec"><em>08</em><span data-nvt="surec"></span></a><a href="#/isbirligi" data-go="isbirligi"><em>09</em><span data-nvt="isbirligi"></span></a><a href="#/form" data-go="form"><em>10</em><span data-nvt="form"></span></a></nav>
   <div class="rfoot">
     <div class="langsel" id="langsel">
         <button type="button" class="langbtn" id="langbtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Dil / Language"><i class="flag" id="langflag"></i><span id="langcode">TR</span></button>
@@ -992,7 +1037,7 @@ html{overflow-x:hidden}
 
 <div class="ovl" id="ovl" hidden>
   <div class="ovl-in">
-    <ol class="onav"><li style="--i:0"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a></li><li style="--i:1"><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a></li><li style="--i:2"><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a></li><li style="--i:3"><a href="#/yasam" data-go="yasam"><em>04</em><span data-nvt="yasam"></span></a></li><li style="--i:4"><a href="#/hesap" data-go="hesap"><em>05</em><span data-nvt="hesap"></span></a></li><li style="--i:5"><a href="#/masraf" data-go="masraf"><em>06</em><span data-nvt="masraf"></span></a></li><li style="--i:6"><a href="#/surec" data-go="surec"><em>07</em><span data-nvt="surec"></span></a></li><li style="--i:7"><a href="#/isbirligi" data-go="isbirligi"><em>08</em><span data-nvt="isbirligi"></span></a></li><li style="--i:8"><a href="#/form" data-go="form"><em>09</em><span data-nvt="form"></span></a></li></ol>
+    <ol class="onav"><li style="--i:0"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a></li><li style="--i:1"><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a></li><li style="--i:2"><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a></li><li style="--i:3"><a href="#/maras" data-go="maras"><em>04</em><span data-nvt="maras"></span></a></li><li style="--i:4"><a href="#/yasam" data-go="yasam"><em>05</em><span data-nvt="yasam"></span></a></li><li style="--i:5"><a href="#/hesap" data-go="hesap"><em>06</em><span data-nvt="hesap"></span></a></li><li style="--i:6"><a href="#/masraf" data-go="masraf"><em>07</em><span data-nvt="masraf"></span></a></li><li style="--i:7"><a href="#/surec" data-go="surec"><em>08</em><span data-nvt="surec"></span></a></li><li style="--i:8"><a href="#/isbirligi" data-go="isbirligi"><em>09</em><span data-nvt="isbirligi"></span></a></li><li style="--i:9"><a href="#/form" data-go="form"><em>10</em><span data-nvt="form"></span></a></li></ol>
     <div class="ofoot">
       <div class="olang" id="olang"><button type="button" data-olang="tr"><i class="flag flag-tr"></i>TR</button><button type="button" data-olang="en"><i class="flag flag-en"></i>EN</button><button type="button" data-olang="ru"><i class="flag flag-ru"></i>RU</button><button type="button" data-olang="fa"><i class="flag flag-fa"></i>FA</button><button type="button" data-olang="de"><i class="flag flag-de"></i>DE</button><button type="button" data-olang="pl"><i class="flag flag-pl"></i>PL</button></div>
       <div class="orow"><a class="ob" href="tel:+902163151515"><span class="ltr">0216 315 15 15</span></a><a class="ob ob-wa" id="nvwa" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
@@ -1117,7 +1162,7 @@ html{overflow-x:hidden}
     <a class="next" href="#/neden" data-go="neden"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>02</em><b data-nvt="neden"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="neden" hidden>
-    <header class="ph"><span class="ph-n">02</span><span class="ph-k"><b data-nvt="neden"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">02</span><span class="ph-k"><b data-nvt="neden"></b><i>/ 10</i></span></header>
     <section id="neden">
   <div class="wrap">
     <span class="eyebrow" data-i="why_e"></span>
@@ -1155,7 +1200,7 @@ html{overflow-x:hidden}
     <a class="next" href="#/bolge" data-go="bolge"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>03</em><b data-nvt="bolge"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="bolge" hidden>
-    <header class="ph"><span class="ph-n">03</span><span class="ph-k"><b data-nvt="bolge"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">03</span><span class="ph-k"><b data-nvt="bolge"></b><i>/ 10</i></span></header>
     <section class="regions" id="bolge">
   <div class="wrap">
     <span class="eyebrow" data-i="reg_e"></span>
@@ -1218,10 +1263,30 @@ html{overflow-x:hidden}
     <p class="kz-why" id="k-w"></p>
   </div>
 </section>
-    <a class="next" href="#/yasam" data-go="yasam"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>04</em><b data-nvt="yasam"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/maras" data-go="maras"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>04</em><b data-nvt="maras"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="maras" hidden>
+    <header class="ph"><span class="ph-n">04</span><span class="ph-k"><b data-nvt="maras"></b><i>/ 10</i></span></header>
+    <section class="maras" id="maras">
+      <div class="mr-hero" id="mr-hero"><div class="wrap">
+        <span class="eyebrow" data-mr="e"></span>
+        <h2 data-mr="h"></h2>
+        <p class="lead" data-mr="l"></p>
+      </div></div>
+      <div class="wrap"><div id="mr-box"></div></div>
+    </section>
+    <a class="next" href="#/yasam" data-go="yasam"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>05</em><b data-nvt="yasam"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="yasam" hidden>
-    <header class="ph"><span class="ph-n">04</span><span class="ph-k"><b data-nvt="yasam"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">05</span><span class="ph-k"><b data-nvt="yasam"></b><i>/ 10</i></span></header>
+    <section class="mekanlar" id="mekanlar">
+      <div class="wrap">
+        <span class="eyebrow" data-vn="e"></span>
+        <h2 data-vn="h"></h2>
+        <p class="lead" data-vn="l"></p>
+        <div class="vn" id="vn-box"></div>
+      </div>
+    </section>
     <section class="guide" id="rehber">
   <div class="wrap">
     <span class="eyebrow" id="g-e"></span>
@@ -1240,10 +1305,10 @@ html{overflow-x:hidden}
         <div class="lv" id="lv-box"></div>
       </div>
     </section>
-    <a class="next" href="#/hesap" data-go="hesap"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>05</em><b data-nvt="hesap"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/hesap" data-go="hesap"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>06</em><b data-nvt="hesap"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="hesap" hidden>
-    <header class="ph"><span class="ph-n">05</span><span class="ph-k"><b data-nvt="hesap"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">06</span><span class="ph-k"><b data-nvt="hesap"></b><i>/ 10</i></span></header>
     <section id="hesap">
   <div class="wrap">
     <span class="eyebrow" data-i="calc_e"></span>
@@ -1275,10 +1340,10 @@ html{overflow-x:hidden}
     </div>
   </div>
 </section>
-    <a class="next" href="#/masraf" data-go="masraf"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>06</em><b data-nvt="masraf"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/masraf" data-go="masraf"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>07</em><b data-nvt="masraf"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="masraf" hidden>
-    <header class="ph"><span class="ph-n">06</span><span class="ph-k"><b data-nvt="masraf"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">07</span><span class="ph-k"><b data-nvt="masraf"></b><i>/ 10</i></span></header>
     <section class="masraf" id="masraf">
       <div class="wrap">
         <span class="eyebrow" data-ms="e"></span>
@@ -1308,10 +1373,10 @@ html{overflow-x:hidden}
         <p class="note" data-ms="disclaimer"></p>
       </div>
     </section>
-    <a class="next" href="#/surec" data-go="surec"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>07</em><b data-nvt="surec"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/surec" data-go="surec"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>08</em><b data-nvt="surec"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="surec" hidden>
-    <header class="ph"><span class="ph-n">07</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">08</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 10</i></span></header>
     <section class="adimlar" id="adimlar">
       <div class="wrap">
         <span class="eyebrow" data-tl="e"></span>
@@ -1355,10 +1420,10 @@ html{overflow-x:hidden}
         <div class="fqs" id="fq-box"></div>
       </div>
     </section>
-    <a class="next" href="#/isbirligi" data-go="isbirligi"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>08</em><b data-nvt="isbirligi"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/isbirligi" data-go="isbirligi"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>09</em><b data-nvt="isbirligi"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="isbirligi" hidden>
-    <header class="ph"><span class="ph-n">08</span><span class="ph-k"><b data-nvt="isbirligi"></b><i>/ 09</i></span></header>
+    <header class="ph"><span class="ph-n">09</span><span class="ph-k"><b data-nvt="isbirligi"></b><i>/ 10</i></span></header>
     <section class="partners" id="isbirligi">
   <div class="wrap">
     <span class="eyebrow" id="pt-e"></span>
@@ -1370,7 +1435,7 @@ html{overflow-x:hidden}
     </div>
   </div>
 </section>
-    <a class="next" href="#/form" data-go="form"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>09</em><b data-nvt="form"></b></span><i aria-hidden="true">→</i></a>
+    <a class="next" href="#/form" data-go="form"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>10</em><b data-nvt="form"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="form" hidden>
     <section class="advs"><div class="wrap"><div class="adv panel"></div></div></section>
@@ -2399,16 +2464,16 @@ addEventListener("scroll",()=>{
 /* ================= YENİ TASARIM v2: sayfa yönlendirme, menüler, animasyon ================= */
 (()=>{
 const NV={
- tr:{home:"Keşfet",neden:"Neden Kıbrıs",bolge:"Bölgeler",yasam:"Yaşam Rehberi",hesap:"Ödeme Planı",masraf:"Masraf Hesapla",t_masraf:"Masraf",surec:"Süreç & SSS",isbirligi:"İş Birliği",form:"Başvuru",t_home:"Keşfet",t_bolge:"Bölgeler",t_hesap:"Hesapla",t_surec:"SSS",t_form:"Başvur",cta:"Ücretsiz teklif al",next:"Sıradaki sayfa"},
- en:{home:"Discover",neden:"Why Cyprus",bolge:"Regions",yasam:"Living Guide",hesap:"Payment Plan",masraf:"Cost Calculator",t_masraf:"Costs",surec:"Process & FAQ",isbirligi:"Partners",form:"Apply",t_home:"Discover",t_bolge:"Regions",t_hesap:"Calculate",t_surec:"FAQ",t_form:"Apply",cta:"Get a free offer",next:"Next page"},
- ru:{home:"Обзор",neden:"Почему Кипр",bolge:"Регионы",yasam:"Гид по жизни",hesap:"План оплаты",masraf:"Расчёт расходов",t_masraf:"Расходы",surec:"Процесс и FAQ",isbirligi:"Партнёрам",form:"Заявка",t_home:"Обзор",t_bolge:"Регионы",t_hesap:"Расчёт",t_surec:"FAQ",t_form:"Заявка",cta:"Бесплатный подбор",next:"Следующая страница"},
- fa:{home:"کاوش",neden:"چرا قبرس",bolge:"مناطق",yasam:"راهنمای زندگی",hesap:"برنامه پرداخت",masraf:"محاسبهٔ هزینه‌ها",t_masraf:"هزینه‌ها",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",form:"درخواست",t_home:"کاوش",t_bolge:"مناطق",t_hesap:"محاسبه",t_surec:"پرسش‌ها",t_form:"درخواست",cta:"دریافت پیشنهاد رایگان",next:"صفحه بعد"},
- de:{home:"Entdecken",neden:"Warum Zypern",bolge:"Regionen",yasam:"Lebensratgeber",hesap:"Zahlungsplan",masraf:"Nebenkostenrechner",t_masraf:"Kosten",surec:"Ablauf & FAQ",isbirligi:"Partner",form:"Anfrage",t_home:"Entdecken",t_bolge:"Regionen",t_hesap:"Rechner",t_surec:"FAQ",t_form:"Anfrage",cta:"Kostenloses Angebot",next:"Nächste Seite"},
- pl:{home:"Odkryj",neden:"Dlaczego Cypr",bolge:"Regiony",yasam:"Przewodnik",hesap:"Plan płatności",masraf:"Kalkulator kosztów",t_masraf:"Koszty",surec:"Proces i FAQ",isbirligi:"Współpraca",form:"Zgłoszenie",t_home:"Odkryj",t_bolge:"Regiony",t_hesap:"Kalkulator",t_surec:"FAQ",t_form:"Zgłoś",cta:"Darmowa oferta",next:"Następna strona"}
+ tr:{maras:"Kapalı Maraş",home:"Keşfet",neden:"Neden Kıbrıs",bolge:"Bölgeler",yasam:"Yaşam Rehberi",hesap:"Ödeme Planı",masraf:"Masraf Hesapla",t_masraf:"Masraf",surec:"Süreç & SSS",isbirligi:"İş Birliği",form:"Başvuru",t_home:"Keşfet",t_bolge:"Bölgeler",t_hesap:"Hesapla",t_surec:"SSS",t_form:"Başvur",cta:"Ücretsiz teklif al",next:"Sıradaki sayfa"},
+ en:{maras:"Varosha",home:"Discover",neden:"Why Cyprus",bolge:"Regions",yasam:"Living Guide",hesap:"Payment Plan",masraf:"Cost Calculator",t_masraf:"Costs",surec:"Process & FAQ",isbirligi:"Partners",form:"Apply",t_home:"Discover",t_bolge:"Regions",t_hesap:"Calculate",t_surec:"FAQ",t_form:"Apply",cta:"Get a free offer",next:"Next page"},
+ ru:{maras:"Вароша",home:"Обзор",neden:"Почему Кипр",bolge:"Регионы",yasam:"Гид по жизни",hesap:"План оплаты",masraf:"Расчёт расходов",t_masraf:"Расходы",surec:"Процесс и FAQ",isbirligi:"Партнёрам",form:"Заявка",t_home:"Обзор",t_bolge:"Регионы",t_hesap:"Расчёт",t_surec:"FAQ",t_form:"Заявка",cta:"Бесплатный подбор",next:"Следующая страница"},
+ fa:{maras:"واروشا",home:"کاوش",neden:"چرا قبرس",bolge:"مناطق",yasam:"راهنمای زندگی",hesap:"برنامه پرداخت",masraf:"محاسبهٔ هزینه‌ها",t_masraf:"هزینه‌ها",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",form:"درخواست",t_home:"کاوش",t_bolge:"مناطق",t_hesap:"محاسبه",t_surec:"پرسش‌ها",t_form:"درخواست",cta:"دریافت پیشنهاد رایگان",next:"صفحه بعد"},
+ de:{maras:"Varosha",home:"Entdecken",neden:"Warum Zypern",bolge:"Regionen",yasam:"Lebensratgeber",hesap:"Zahlungsplan",masraf:"Nebenkostenrechner",t_masraf:"Kosten",surec:"Ablauf & FAQ",isbirligi:"Partner",form:"Anfrage",t_home:"Entdecken",t_bolge:"Regionen",t_hesap:"Rechner",t_surec:"FAQ",t_form:"Anfrage",cta:"Kostenloses Angebot",next:"Nächste Seite"},
+ pl:{maras:"Warosza",home:"Odkryj",neden:"Dlaczego Cypr",bolge:"Regiony",yasam:"Przewodnik",hesap:"Plan płatności",masraf:"Kalkulator kosztów",t_masraf:"Koszty",surec:"Proces i FAQ",isbirligi:"Współpraca",form:"Zgłoszenie",t_home:"Odkryj",t_bolge:"Regiony",t_hesap:"Kalkulator",t_surec:"FAQ",t_form:"Zgłoś",cta:"Darmowa oferta",next:"Następna strona"}
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -3012,6 +3077,118 @@ function st(){
 document.addEventListener("click",e=>{ const a=e.target.closest&&e.target.closest("[data-ev]"); if(a&&/^(trip_wa|event_notify|adv_wa|adv_call|wa_float)$/.test(a.dataset.ev)){ try{ typeof track==="function"&&track(a.dataset.ev,{dil:root.lang}); }catch(x){} } });
 
 function all(){ cmp(); tl(); lv(); iv(); ad(); waf(); st(); tlProg(); }
+all();
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
+})();
+
+/* ================= MEKANLAR + KAPALI MARAŞ ================= */
+(function(){
+const root=document.documentElement, $$=id=>document.getElementById(id), L=()=>MV[root.lang]?root.lang:"en";
+const IMG=f=>"https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(f)+"?width=1400", PAGE=f=>"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(f.replace(/ /g,"_"));
+const PH=["Varosha (Famagusta) Salaminia Tower Hotel 1.jpg","Varosha 2016 5.jpg"];
+/* mekanlar: [ad, bölge, tür ikonu, harita sorgusu] */
+const VN=[["Grand Sapphire Resort & Casino","Long Beach · İskele","hotel","Grand Sapphire Resort Long Beach Iskele"],["Pera Mackenzie","Long Beach · İskele","beach","Pera Mackenzie Long Beach Iskele"],["Lush Beach Club","Long Beach · İskele","beach","Lush Beach Club Long Beach Iskele"],["The Arkın İskele","İskele","hotel","The Arkin Iskele Hotel"],["Merit Royal Gardens Hotel & Casino","Yeni İskele","hotel","Merit Royal Gardens Hotel Casino Iskele"],["Salamis Bay Conti Resort Hotel & Casino","Salamis · Gazimağusa","hotel","Salamis Bay Conti Resort Hotel Casino"],["Körfez Restaurant","Boğaz · İskele","fish","Korfez Restaurant Bogaz"],["Epic Burger","Yeni İskele","food","Epic Burger Iskele"]];
+const VI={hotel:'<path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6M7 10h2M11 10h2M15 10h2"/>',beach:'<path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9zM12 12l-4 9"/><path d="M2 21h20"/>',fish:'<path d="M3 12c3-5 9-6 14-2l4-3v10l-4-3c-5 4-11 3-14-2z"/><circle cx="15" cy="11" r=".6"/>',food:'<path d="M4 11h16a8 4 0 0 0-16 0zM4 14h16M5 17h14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/>'};
+const MV={
+tr:{e:"Bölgenin popüler mekanları",h:"Long Beach'te <em>hayat nerede akar?</em>",l:"İskele ve çevresinde en çok ziyaret edilen oteller, beach club'lar ve restoranlar. Yatırım yaptığınız bölgenin sosyal hayatını şimdiden tanıyın.",map:"Haritada aç",
+ c:{hotel:"Otel · Casino",beach:"Beach club",fish:"Balık restoranı",food:"Burger"},
+ t:["Long Beach'in simge yapılarından biri. Plaja sıfır konumu, casinosu, havuzları ve restoranlarıyla hem tatilcilerin hem de bölgenin akşam hayatının buluşma noktası.","Long Beach'in güney ucunda plaj, havuz, restoran ve barı bir arada sunan beach club. Yaz boyunca DJ performansları ve etkinliklerle bölgenin en hareketli adreslerinden.","Belediye plajının hemen yanında; şezlongları, barı ve restoranıyla gün boyu deniz keyfi. Yaz akşamlarında tema geceleri düzenleniyor.","5 yıldızlı sahil oteli: yaklaşık 1 km'lik özel plaj, denize uzanan iskele, spa, casino ve birbirinden farklı restoranlar.","2025'te açılan yeni otel; özel plaj alanı, casino, spa ve restoranlarıyla İskele'nin yeni buluşma noktalarından.","Antik Salamis kentinin yakınında, uzun kumsal üzerinde kurulu köklü tatil oteli. Casinosu ve geniş plajıyla bölgenin en bilinen tesislerinden.","Boğaz balıkçı köyünde, denizin hemen kenarında. Taze deniz ürünleri öne çıkıyor; menüde et, makarna ve salata da var.","Long Beach'te gündelik hayatın sevilen adreslerinden; burger ve Amerikan mutfağı."],
+ note:"Mekan bilgileri tanıtım amaçlıdır; çalışma saatleri ve sezon durumu değişebilir. Görseller temsilidir."},
+en:{e:"Popular places nearby",h:"Where does life <em>happen on Long Beach?</em>",l:"The most visited hotels, beach clubs and restaurants in and around İskele. Get to know the social life of the area you invest in.",map:"Open in Maps",
+ c:{hotel:"Hotel · Casino",beach:"Beach club",fish:"Seafood restaurant",food:"Burgers"},
+ t:["One of Long Beach's landmarks. Right on the beach, with a casino, pools and restaurants, it is a meeting point for holidaymakers and the area's nightlife.","A beach club at the southern end of Long Beach combining beach, pool, restaurant and bar. DJ sets and events make it one of the liveliest spots all summer.","Right next to the municipal beach, with loungers, a bar and a restaurant for a full day by the sea. Themed nights on summer evenings.","A 5-star seaside hotel with a private beach of about 1 km, a jetty over the sea, spa, casino and a range of restaurants.","A new hotel opened in 2025, with a private beach area, casino, spa and restaurants; one of İskele's new meeting points.","A long-established resort on a long sandy beach near the ancient city of Salamis. With its casino and wide beach, one of the best-known places in the area.","In the fishing village of Boğaz, right by the water. Fresh seafood is the highlight; steaks, pasta and salads are on the menu too.","A favourite everyday spot on Long Beach for burgers and American food."],
+ note:"Venue details are for information; opening hours and seasons may change. Images are illustrative."},
+ru:{e:"Популярные места рядом",h:"Где кипит жизнь <em>на Лонг-Бич?</em>",l:"Самые посещаемые отели, пляжные клубы и рестораны Искеле и окрестностей. Познакомьтесь с жизнью района, в который инвестируете.",map:"Открыть на карте",
+ c:{hotel:"Отель · Казино",beach:"Пляжный клуб",fish:"Рыбный ресторан",food:"Бургеры"},
+ t:["Одна из визитных карточек Лонг-Бич. Прямо на пляже, с казино, бассейнами и ресторанами — место встречи отдыхающих и центр вечерней жизни.","Пляжный клуб в южной части Лонг-Бич: пляж, бассейн, ресторан и бар. Летом DJ-сеты и мероприятия делают его одним из самых оживлённых мест.","Рядом с муниципальным пляжем: шезлонги, бар и ресторан на весь день у моря. Летними вечерами — тематические вечеринки.","Пятизвёздочный отель у моря: частный пляж около 1 км, пирс над водой, спа, казино и несколько ресторанов.","Новый отель, открытый в 2025 году: частный пляж, казино, спа и рестораны; одно из новых мест встреч Искеле.","Давно известный курортный отель на длинном песчаном пляже рядом с древним Саламином. С казино и широким пляжем — одно из самых известных мест района.","В рыбацкой деревне Богаз, у самой воды. Главное — свежие морепродукты; в меню также мясо, паста и салаты.","Любимое повседневное место на Лонг-Бич: бургеры и американская кухня."],
+ note:"Информация о заведениях носит ознакомительный характер; часы работы и сезон могут меняться. Изображения иллюстративные."},
+fa:{e:"مکان‌های محبوب منطقه",h:"زندگی در لانگ بیچ <em>کجا جریان دارد؟</em>",l:"پربازدیدترین هتل‌ها، بیچ‌کلاب‌ها و رستوران‌های ایسکله و اطراف. با زندگی اجتماعی منطقه‌ای که در آن سرمایه‌گذاری می‌کنید آشنا شوید.",map:"باز کردن در نقشه",
+ c:{hotel:"هتل · کازینو",beach:"بیچ‌کلاب",fish:"رستوران دریایی",food:"برگر"},
+ t:["یکی از نمادهای لانگ بیچ. درست کنار ساحل، با کازینو، استخرها و رستوران‌ها؛ محل دیدار مسافران و مرکز زندگی شبانه منطقه.","بیچ‌کلابی در جنوب لانگ بیچ که ساحل، استخر، رستوران و بار را یکجا دارد. در تابستان با اجرای دی‌جی و رویدادها از پرجنب‌وجوش‌ترین مکان‌هاست.","درست کنار ساحل شهرداری؛ با صندلی‌های ساحلی، بار و رستوران برای یک روز کامل کنار دریا. شب‌های تابستان مهمانی‌های موضوعی دارد.","هتل ساحلی پنج‌ستاره با ساحل اختصاصی حدود ۱ کیلومتری، اسکله‌ای روی دریا، اسپا، کازینو و رستوران‌های متنوع.","هتلی تازه که در ۲۰۲۵ افتتاح شد؛ با ساحل اختصاصی، کازینو، اسپا و رستوران‌ها، از پاتوق‌های تازه ایسکله.","هتل تفریحی قدیمی و شناخته‌شده روی ساحل شنی بلند نزدیک شهر باستانی سالامیس. با کازینو و ساحل وسیعش از معروف‌ترین مکان‌های منطقه است.","در روستای ماهیگیری بوغاز، درست کنار آب. غذاهای دریایی تازه شاخص آن است؛ استیک، پاستا و سالاد هم دارد.","یکی از پاتوق‌های روزمره محبوب لانگ بیچ؛ برگر و غذای آمریکایی."],
+ note:"اطلاعات مکان‌ها برای آشنایی است؛ ساعات کار و فصل ممکن است تغییر کند. تصاویر نمادین هستند."},
+de:{e:"Beliebte Orte in der Nähe",h:"Wo spielt das Leben <em>am Long Beach?</em>",l:"Die meistbesuchten Hotels, Beach Clubs und Restaurants in und um İskele. Lernen Sie das gesellschaftliche Leben Ihrer Investitionsregion kennen.",map:"In Karten öffnen",
+ c:{hotel:"Hotel · Casino",beach:"Beach Club",fish:"Fischrestaurant",food:"Burger"},
+ t:["Eines der Wahrzeichen von Long Beach. Direkt am Strand, mit Casino, Pools und Restaurants – Treffpunkt für Urlauber und das Nachtleben der Gegend.","Ein Beach Club am Südende von Long Beach mit Strand, Pool, Restaurant und Bar. DJ-Sets und Events machen ihn den ganzen Sommer zu einem der lebhaftesten Orte.","Direkt neben dem Gemeindestrand, mit Liegen, Bar und Restaurant für einen ganzen Tag am Meer. An Sommerabenden Themenabende.","Ein 5-Sterne-Strandhotel mit rund 1 km Privatstrand, Steg über dem Meer, Spa, Casino und verschiedenen Restaurants.","Ein neues, 2025 eröffnetes Hotel mit Privatstrand, Casino, Spa und Restaurants; einer der neuen Treffpunkte in İskele.","Ein traditionsreiches Resort an einem langen Sandstrand nahe der antiken Stadt Salamis. Mit Casino und breitem Strand einer der bekanntesten Orte der Gegend.","Im Fischerdorf Boğaz, direkt am Wasser. Frische Meeresfrüchte stehen im Mittelpunkt; Steaks, Pasta und Salate gibt es auch.","Ein beliebter Alltagsort am Long Beach für Burger und amerikanische Küche."],
+ note:"Angaben zu den Orten dienen der Information; Öffnungszeiten und Saison können sich ändern. Bilder sind symbolisch."},
+pl:{e:"Popularne miejsca w okolicy",h:"Gdzie toczy się życie <em>na Long Beach?</em>",l:"Najczęściej odwiedzane hotele, kluby plażowe i restauracje w İskele i okolicy. Poznaj życie towarzyskie regionu, w który inwestujesz.",map:"Otwórz w mapach",
+ c:{hotel:"Hotel · Kasyno",beach:"Klub plażowy",fish:"Restauracja rybna",food:"Burgery"},
+ t:["Jeden z symboli Long Beach. Tuż przy plaży, z kasynem, basenami i restauracjami – miejsce spotkań urlopowiczów i centrum wieczornego życia.","Klub plażowy na południowym krańcu Long Beach: plaża, basen, restauracja i bar. Latem sety DJ i wydarzenia czynią go jednym z najżywszych miejsc.","Tuż obok plaży miejskiej, z leżakami, barem i restauracją na cały dzień nad morzem. Latem wieczory tematyczne.","Pięciogwiazdkowy hotel nad morzem z prywatną plażą o długości ok. 1 km, pomostem nad wodą, spa, kasynem i kilkoma restauracjami.","Nowy hotel otwarty w 2025 roku, z prywatną plażą, kasynem, spa i restauracjami; jedno z nowych miejsc spotkań w İskele.","Od lat znany ośrodek na długiej, piaszczystej plaży blisko starożytnej Salaminy. Z kasynem i szeroką plażą to jedno z najbardziej znanych miejsc w okolicy.","W rybackiej wiosce Boğaz, tuż nad wodą. Królują świeże owoce morza; w menu są też steki, makarony i sałatki.","Ulubione codzienne miejsce na Long Beach: burgery i kuchnia amerykańska."],
+ note:"Informacje o miejscach mają charakter poglądowy; godziny otwarcia i sezon mogą się zmieniać. Obrazy są poglądowe."}
+};
+const MR={
+tr:{e:"Gazimağusa · Kapalı Maraş",h:"Zamanın <em>durduğu şehir</em>",l:"Bir zamanlar Akdeniz'in en göz alıcı tatil kenti olan Maraş, 1974'ten bu yana dünyaya kapılarını kapattı. Bugün bir kısmı ziyarete açık: sessiz caddeleri, yarım asırdır bekleyen otelleri ve altın kumlarıyla adanın en etkileyici yerlerinden biri.",
+ f:[["1970–74","Altın çağ"],["~39.000","En kalabalık dönem nüfusu"],["6,19 km²","Toplam alan"],["2020","Kısmen ziyarete açıldı"]],
+ ch:[["1970'ler","Akdeniz'in yıldızı","1970'lerin başında Gazimağusa adanın en gözde turizm merkeziydi. Sahil boyunca yükselen oteller Avrupa'nın dört bir yanından gelen tatilcileri ağırladı; Elizabeth Taylor, Richard Burton, Raquel Welch ve Brigitte Bardot gibi ünlülerin bu kumsallarda vakit geçirdiği anlatılır. Gece kulüpleri, butikler ve kalabalık caddelerle Maraş, dönemin Riviera'sıydı."],
+ ["1974","Kapanan kapılar","1974'teki savaşın ardından bölge sakinleri evlerini geride bıraktı. Maraş tellerle çevrildi, askeri bölge oldu ve yaklaşık yarım asır boyunca kimsenin giremediği bir şehre dönüştü. Vitrinlerde eşyalar, garajlarda arabalar, masalarda yarım kalmış hayatlar... Zaman, Maraş'ta durdu."],
+ ["1984","Dünyanın gündeminde","BM Güvenlik Konseyi'nin 550 sayılı kararı (1984) Maraş'ın statüsünü ele aldı. Bölge bugün de Kıbrıs meselesinin en hassas başlıklarından biri; geleceği adanın iki toplumunun ve uluslararası diplomasinin gündeminde."],
+ ["2020","Yeniden açılan sokaklar","8 Ekim 2020'de bölgenin bir kısmı ziyaretçilere açıldı. Yenilenen ana caddeler ve bisiklet yolları açıldı, 2022'de Altın Kum (Golden Sands) plajının bir bölümü kullanıma girdi. Maraş, kısa sürede milyonlarca ziyaretçiyi ağırladı."],
+ ["Bugün","Yarım asırlık sessizliğe yolculuk","Açık bölgede yürüyerek ya da kiralık bisikletle dolaşabilirsiniz. Bir yanda turkuaz deniz ve ince kum, öbür yanda pencereleri rüzgâra açık oteller: Maraş, hem bir hafıza mekânı hem de unutulmaz bir manzara."]],
+ vis:"Ziyaret ipuçları",v:["Kapalı alanlara girmek ve bazı noktalarda fotoğraf çekmek yasaktır; tabelalara ve görevlilere uyun.","Sabah erken ya da gün batımına doğru gidin; yaz öğlenleri çok sıcak olur.","Long Beach'ten (İskele) arabayla yaklaşık 20–25 dakika."],
+ cr:"Fotoğraflar: Wikimedia Commons, özgür lisanslı. Yazar ve lisans bilgisi için fotoğrafa tıklayın.",cta:"Maraş'a yakın İskele projelerini görün",cap:["Sahildeki terk edilmiş oteller","Maraş'ın sessiz sokakları"]},
+en:{e:"Famagusta · Varosha",h:"The town <em>where time stood still</em>",l:"Once the most glamorous resort on the Mediterranean, Varosha closed its gates to the world in 1974. Today part of it is open to visitors: silent avenues, hotels that have waited half a century and golden sand make it one of the island's most striking places.",
+ f:[["1970–74","Golden age"],["~39,000","Population at its peak"],["6.19 km²","Total area"],["2020","Partly opened to visitors"]],
+ ch:[["1970s","Star of the Mediterranean","In the early 1970s Famagusta was the island's top tourist destination. Hotels rising along the shore welcomed holidaymakers from all over Europe, and stars such as Elizabeth Taylor, Richard Burton, Raquel Welch and Brigitte Bardot are said to have spent time on these beaches. With its nightclubs, boutiques and busy avenues, Varosha was the Riviera of its day."],
+ ["1974","Closed gates","After the war in 1974 the residents left their homes behind. Varosha was fenced off as a military zone and for almost half a century became a town no one could enter. Goods in shop windows, cars in garages, lives left mid-sentence: in Varosha, time stopped."],
+ ["1984","On the world's agenda","UN Security Council Resolution 550 (1984) addressed Varosha's status. The area remains one of the most sensitive issues of the Cyprus question, its future on the agenda of both communities and international diplomacy."],
+ ["2020","Streets reopened","On 8 October 2020 part of the area opened to visitors. Renovated main avenues and cycle paths opened, and in 2022 part of Golden Sands beach came into use. Varosha has since welcomed millions of visitors."],
+ ["Today","A journey into half a century of silence","Explore the open area on foot or by rented bicycle. Turquoise sea and fine sand on one side, hotels with windows open to the wind on the other: Varosha is both a place of memory and an unforgettable view."]],
+ vis:"Visiting tips",v:["Entering closed areas and taking photos at some points is forbidden; follow the signs and staff.","Go early in the morning or towards sunset; summer middays are very hot.","About 20–25 minutes by car from Long Beach (İskele)."],
+ cr:"Photos: Wikimedia Commons, freely licensed. Click a photo for author and licence.",cta:"See İskele projects near Varosha",cap:["Abandoned hotels on the seafront","The silent streets of Varosha"]},
+ru:{e:"Фамагуста · Вароша",h:"Город, <em>где остановилось время</em>",l:"Когда-то самый блестящий курорт Средиземноморья, Вароша закрыла свои ворота для мира в 1974 году. Сегодня часть района открыта для посещения: тихие улицы, отели, ждущие полвека, и золотой песок делают его одним из самых впечатляющих мест острова.",
+ f:[["1970–74","Золотой век"],["~39 000","Население в пик"],["6,19 км²","Площадь"],["2020","Частично открыт"]],
+ ch:[["1970-е","Звезда Средиземноморья","В начале 1970-х Фамагуста была главным туристическим центром острова. Отели вдоль берега принимали отдыхающих со всей Европы; говорят, здесь отдыхали Элизабет Тейлор, Ричард Бёртон, Ракел Уэлч и Брижит Бардо. С ночными клубами, бутиками и оживлёнными улицами Вароша была Ривьерой своего времени."],
+ ["1974","Закрытые ворота","После войны 1974 года жители оставили свои дома. Варошу обнесли ограждением как военную зону, и почти полвека в город никто не мог войти. Товары в витринах, машины в гаражах, прерванные жизни — время в Вароше остановилось."],
+ ["1984","В мировой повестке","Резолюция 550 Совета Безопасности ООН (1984) касалась статуса Вароши. Район и сегодня остаётся одной из самых чувствительных тем кипрского вопроса; его будущее — в повестке обеих общин и международной дипломатии."],
+ ["2020","Вновь открытые улицы","8 октября 2020 года часть района открыли для посетителей. Открылись обновлённые главные улицы и велодорожки, а в 2022 году — часть пляжа Голден Сэндс. С тех пор Варошу посетили миллионы людей."],
+ ["Сегодня","Путешествие в полвека тишины","Открытую часть можно обойти пешком или объехать на арендованном велосипеде. С одной стороны — бирюзовое море и мелкий песок, с другой — отели с распахнутыми ветру окнами: Вароша — и место памяти, и незабываемый вид."]],
+ vis:"Советы для посещения",v:["Входить в закрытые зоны и фотографировать в некоторых местах запрещено; следуйте знакам и указаниям персонала.","Приезжайте рано утром или ближе к закату; летом в полдень очень жарко.","Около 20–25 минут на машине от Лонг-Бич (Искеле)."],
+ cr:"Фото: Wikimedia Commons, свободная лицензия. Нажмите на фото, чтобы увидеть автора и лицензию.",cta:"Проекты в Искеле рядом с Варошей",cap:["Заброшенные отели на набережной","Тихие улицы Вароши"]},
+fa:{e:"فاماگوستا · واروشا",h:"شهری که <em>زمان در آن ایستاد</em>",l:"واروشا که روزگاری پرزرق‌وبرق‌ترین تفرجگاه مدیترانه بود، از ۱۹۷۴ درهایش را به روی جهان بست. امروز بخشی از آن برای بازدید باز است: خیابان‌های خاموش، هتل‌هایی که نیم قرن منتظر مانده‌اند و شن‌های طلایی، آن را به یکی از تأثیرگذارترین مکان‌های جزیره تبدیل کرده‌اند.",
+ f:[["۱۹۷۰–۷۴","دوران طلایی"],["~۳۹٬۰۰۰","جمعیت در اوج"],["۶٫۱۹ کیلومتر مربع","مساحت"],["۲۰۲۰","بازگشایی بخشی از آن"]],
+ ch:[["دهه ۱۹۷۰","ستاره مدیترانه","در آغاز دهه ۱۹۷۰ فاماگوستا مهم‌ترین مقصد گردشگری جزیره بود. هتل‌های ساحلی پذیرای گردشگرانی از سراسر اروپا بودند و گفته می‌شود چهره‌هایی چون الیزابت تیلور، ریچارد برتون، راکل ولش و بریژیت باردو در این سواحل وقت گذرانده‌اند. واروشا با کلوپ‌های شبانه، بوتیک‌ها و خیابان‌های شلوغش ریویرای زمان خود بود."],
+ ["۱۹۷۴","درهای بسته","پس از جنگ ۱۹۷۴ ساکنان خانه‌هایشان را ترک کردند. واروشا با حصار به منطقه نظامی تبدیل شد و نزدیک نیم قرن کسی نمی‌توانست واردش شود. کالاها در ویترین‌ها، خودروها در پارکینگ‌ها، زندگی‌های نیمه‌تمام: در واروشا زمان ایستاد."],
+ ["۱۹۸۴","در دستور کار جهان","قطعنامه ۵۵۰ شورای امنیت سازمان ملل (۱۹۸۴) به وضعیت واروشا پرداخت. این منطقه امروز نیز از حساس‌ترین موضوعات مسئله قبرس است و آینده‌اش در دستور کار هر دو جامعه و دیپلماسی بین‌المللی قرار دارد."],
+ ["۲۰۲۰","خیابان‌هایی که دوباره باز شدند","در ۸ اکتبر ۲۰۲۰ بخشی از منطقه برای بازدید باز شد. خیابان‌های اصلی نوسازی‌شده و مسیرهای دوچرخه گشوده شدند و در ۲۰۲۲ بخشی از ساحل گلدن سندز مورد استفاده قرار گرفت. از آن زمان میلیون‌ها نفر از واروشا دیدن کرده‌اند."],
+ ["امروز","سفری به نیم قرن سکوت","بخش باز را می‌توانید پیاده یا با دوچرخه کرایه‌ای بگردید. یک سو دریای فیروزه‌ای و شن نرم، سوی دیگر هتل‌هایی با پنجره‌های گشوده به باد: واروشا هم مکان حافظه است و هم منظره‌ای فراموش‌نشدنی."]],
+ vis:"نکته‌های بازدید",v:["ورود به بخش‌های بسته و عکاسی در برخی نقاط ممنوع است؛ از تابلوها و مأموران پیروی کنید.","صبح زود یا نزدیک غروب بروید؛ ظهرهای تابستان بسیار گرم است.","حدود ۲۰ تا ۲۵ دقیقه با خودرو از لانگ بیچ (ایسکله)."],
+ cr:"عکس‌ها: ویکی‌مدیا کامانز، با مجوز آزاد. برای نام عکاس و مجوز روی عکس کلیک کنید.",cta:"پروژه‌های ایسکله نزدیک واروشا",cap:["هتل‌های متروک کنار ساحل","خیابان‌های خاموش واروشا"]},
+de:{e:"Famagusta · Varosha",h:"Die Stadt, <em>in der die Zeit stillsteht</em>",l:"Einst der glanzvollste Badeort am Mittelmeer, schloss Varosha 1974 seine Tore für die Welt. Heute ist ein Teil davon für Besucher geöffnet: stille Boulevards, Hotels, die seit einem halben Jahrhundert warten, und goldener Sand machen es zu einem der eindrucksvollsten Orte der Insel.",
+ f:[["1970–74","Goldene Ära"],["~39.000","Einwohner zur Blütezeit"],["6,19 km²","Fläche"],["2020","Teilweise geöffnet"]],
+ ch:[["1970er","Stern des Mittelmeers","Anfang der 1970er war Famagusta das wichtigste Touristenziel der Insel. Die Hotels entlang der Küste empfingen Urlauber aus ganz Europa; Stars wie Elizabeth Taylor, Richard Burton, Raquel Welch und Brigitte Bardot sollen an diesen Stränden gewesen sein. Mit Nachtclubs, Boutiquen und belebten Straßen war Varosha die Riviera seiner Zeit."],
+ ["1974","Geschlossene Tore","Nach dem Krieg 1974 verließen die Bewohner ihre Häuser. Varosha wurde eingezäunt, zum Sperrgebiet erklärt und blieb fast ein halbes Jahrhundert unzugänglich. Waren in Schaufenstern, Autos in Garagen, unterbrochene Leben: In Varosha blieb die Zeit stehen."],
+ ["1984","Auf der Weltbühne","Die Resolution 550 des UN-Sicherheitsrats (1984) befasste sich mit dem Status von Varosha. Das Gebiet ist bis heute eines der sensibelsten Themen der Zypernfrage; seine Zukunft steht auf der Agenda beider Volksgruppen und der internationalen Diplomatie."],
+ ["2020","Wieder geöffnete Straßen","Am 8. Oktober 2020 wurde ein Teil des Gebiets für Besucher geöffnet. Erneuerte Hauptstraßen und Radwege wurden zugänglich, 2022 kam ein Teil des Golden-Sands-Strandes hinzu. Seither kamen Millionen Besucher."],
+ ["Heute","Eine Reise in ein halbes Jahrhundert Stille","Den geöffneten Bereich erkunden Sie zu Fuß oder mit dem Leihfahrrad. Auf der einen Seite türkisfarbenes Meer und feiner Sand, auf der anderen Hotels mit offenen Fenstern im Wind: Varosha ist Erinnerungsort und unvergesslicher Anblick zugleich."]],
+ vis:"Tipps für den Besuch",v:["Das Betreten gesperrter Bereiche und Fotografieren an manchen Stellen ist verboten; beachten Sie Schilder und Personal.","Kommen Sie früh morgens oder gegen Sonnenuntergang; Sommermittage sind sehr heiß.","Etwa 20–25 Minuten mit dem Auto von Long Beach (İskele)."],
+ cr:"Fotos: Wikimedia Commons, frei lizenziert. Für Urheber und Lizenz auf das Foto klicken.",cta:"İskele-Projekte nahe Varosha ansehen",cap:["Verlassene Hotels an der Küste","Die stillen Straßen von Varosha"]},
+pl:{e:"Famagusta · Warosza",h:"Miasto, <em>w którym zatrzymał się czas</em>",l:"Niegdyś najbardziej olśniewający kurort Morza Śródziemnego, Warosza zamknęła bramy przed światem w 1974 roku. Dziś część dzielnicy jest otwarta dla zwiedzających: ciche aleje, hotele czekające od pół wieku i złoty piasek czynią ją jednym z najbardziej poruszających miejsc wyspy.",
+ f:[["1970–74","Złoty wiek"],["~39 000","Mieszkańców w szczycie"],["6,19 km²","Powierzchnia"],["2020","Częściowo otwarta"]],
+ ch:[["Lata 70.","Gwiazda Śródziemnomorza","Na początku lat 70. Famagusta była głównym ośrodkiem turystycznym wyspy. Hotele wzdłuż wybrzeża gościły turystów z całej Europy; mówi się, że na tych plażach bywali Elizabeth Taylor, Richard Burton, Raquel Welch i Brigitte Bardot. Z klubami nocnymi, butikami i gwarnymi ulicami Warosza była Riwierą swoich czasów."],
+ ["1974","Zamknięte bramy","Po wojnie w 1974 roku mieszkańcy opuścili domy. Waroszę ogrodzono jako strefę wojskową i przez niemal pół wieku nikt nie mógł do niej wejść. Towary w witrynach, samochody w garażach, przerwane życia: w Waroszy czas się zatrzymał."],
+ ["1984","Na światowej agendzie","Rezolucja 550 Rady Bezpieczeństwa ONZ (1984) dotyczyła statusu Waroszy. Obszar wciąż jest jednym z najbardziej drażliwych tematów kwestii cypryjskiej; jego przyszłość jest przedmiotem rozmów obu społeczności i dyplomacji międzynarodowej."],
+ ["2020","Ponownie otwarte ulice","8 października 2020 roku część obszaru otwarto dla zwiedzających. Udostępniono odnowione główne ulice i ścieżki rowerowe, a w 2022 roku część plaży Golden Sands. Od tego czasu Waroszę odwiedziły miliony osób."],
+ ["Dziś","Podróż w pół wieku ciszy","Otwartą część zwiedzisz pieszo lub wypożyczonym rowerem. Z jednej strony turkusowe morze i drobny piasek, z drugiej hotele z oknami otwartymi na wiatr: Warosza to miejsce pamięci i niezapomniany widok."]],
+ vis:"Wskazówki dla zwiedzających",v:["Wchodzenie do zamkniętych stref i fotografowanie w niektórych miejscach jest zabronione; stosuj się do znaków i obsługi.","Przyjdź wcześnie rano lub przed zachodem słońca; latem w południe jest bardzo gorąco.","Ok. 20–25 minut samochodem z Long Beach (İskele)."],
+ cr:"Zdjęcia: Wikimedia Commons, wolne licencje. Kliknij zdjęcie, aby zobaczyć autora i licencję.",cta:"Zobacz projekty w İskele blisko Waroszy",cap:["Opuszczone hotele na nabrzeżu","Ciche ulice Waroszy"]}
+};
+const head=(attr,o)=>["e","h","l"].forEach(k=>document.querySelectorAll(`[${attr}="${k}"]`).forEach(el=>{ if(o[k]!=null) el.innerHTML=o[k]; }));
+function vn(){
+  const t=MV[L()], box=$$("vn-box"); if(!box) return; head("data-vn",t);
+  box.innerHTML=VN.map(([n,a,c,q],j)=>`<article class="vn-c vn-${c}"><div class="vn-art" aria-hidden="true"><svg viewBox="0 0 24 24">${VI[c]}</svg><span>${String(j+1).padStart(2,"0")}</span></div>
+    <div class="vn-tx"><span class="vn-k">${t.c[c]}</span><h3>${n}</h3><span class="vn-a">${a}</span><p>${t.t[j]}</p>
+    <a class="vn-map" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">${t.map} ↗</a></div></article>`).join("")+`<p class="note">${t.note}</p>`;
+}
+function mr(){
+  const t=MR[L()], box=$$("mr-box"); if(!box) return; head("data-mr",t);
+  const ph=(f,cap)=>`<figure class="mr-ph"><a href="${PAGE(f)}" target="_blank" rel="noopener"><img src="${IMG(f)}" alt="${cap}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest('figure').classList.add('noimg')"></a><figcaption>${cap}</figcaption></figure>`;
+  box.innerHTML=`<div class="mr-facts">${t.f.map(([v,k])=>`<div><b>${v}</b><span>${k}</span></div>`).join("")}</div>
+   <div class="mr-ch">${t.ch.map(([y,h,p],j)=>`<article class="mr-c rv"><span class="mr-y">${y}</span><div><h3>${h}</h3><p>${p}</p></div></article>${j===1?ph(PH[0],t.cap[0]):j===3?ph(PH[1],t.cap[1]):""}`).join("")}</div>
+   <div class="mr-vis panel"><h3>${t.vis}</h3><ul>${t.v.map(x=>`<li>${x}</li>`).join("")}</ul><a class="btn btn-sun" href="#/form" data-ev="maras_cta">${t.cta} →</a></div>
+   <p class="note">${t.cr}</p>`;
+  const hero=$$("mr-hero"); if(hero) hero.style.setProperty("--img",`url("${IMG(PH[0])}")`);
+  if(document.documentElement.classList.contains("rvon")&&"IntersectionObserver" in window){ const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } }),{rootMargin:"0px 0px -8% 0px"}); box.querySelectorAll(".rv").forEach(el=>io.observe(el)); } else box.querySelectorAll(".rv").forEach(el=>el.classList.add("in"));
+}
+function all(){ vn(); mr(); }
 all();
 new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
