@@ -107,6 +107,9 @@ const orijinal = s => {
 
   let haric = [];   // elle listeden çıkarılan yorumların id'leri (ör. eski danışman anılıyor)
   try { haric = JSON.parse(fs.readFileSync('data/google-yorum-haric.json', 'utf8')); } catch {}
+  // Otomatik paylaşılmayacak yeni yorumlar (düşük puan, metinsiz, danışman adı yok) → workflow Umut'a GitHub issue açar
+  const SIRA = ['evsen', 'gizem', 'orhan', 'aysun', 'ozlem_varol', 'gamze', 'irem', 'aysegul_alpay'];   // sizlerden-story.js ile aynı
+  const bildirim = [];
 
   for (const rv of yorumlar) {
     const id = rv.reviewId;
@@ -114,7 +117,13 @@ const orijinal = s => {
     const yazar = rv.reviewer?.isAnonymous ? 'Google kullanıcısı' : (rv.reviewer?.displayName || 'Google kullanıcısı');
     const puan = YILDIZ[rv.starRating] || 0;
     const yanit = rv.reviewReply?.comment || '';
-    if (!gorulenSet.has(id)) { gorulenSet.add(id); gorulen.push(id); }
+    const ilkKez = !gorulenSet.has(id);
+    if (ilkKez) { gorulenSet.add(id); gorulen.push(id); }
+    if (ilkKez && (rv.createTime || '') >= ucGunOnce) {
+      const ids = eslestir(metin);
+      const neden = puan < 4 ? `${puan} yıldız` : !metin ? 'yorum metni yok' : !ids.some(i => SIRA.includes(i)) ? 'paylaşılan danışmanlardan birinin adı geçmiyor' : haric.includes(id) ? 'hariç listesinde' : '';
+      if (neden) bildirim.push({ yazar, puan, metin, neden, tarih: rv.createTime });
+    }
     const varolan = map.get(id) || map.get(imzalar.get(imza(yazar, metin))) || (temiz(metin).length >= 25 && map.get(metinler.get(temiz(metin).slice(0, 60))));
     if (varolan) {
       // Bilinen yorum: kesin tarih ve güncel yanıtı yaz, id ve geri kalanı koru
@@ -152,6 +161,8 @@ const orijinal = s => {
     yorumlar: liste,
   };
 
+  if (bildirim.length) fs.writeFileSync('yorum-bildirim.md', bildirim.map(b =>
+    `**${b.yazar}** · ${'★'.repeat(b.puan)}${'☆'.repeat(5 - b.puan)} · ${b.tarih.slice(0, 10)}\nOtomatik paylaşılmadı: ${b.neden}\n\n> ${(b.metin || '(metin yok)').replace(/\n/g, '\n> ')}`).join('\n\n---\n\n'));
   fs.writeFileSync(GORULEN, JSON.stringify(gorulen, null, 0).replace(/","/g, '",\n"'));
   const degisti = JSON.stringify({ ...yeni, guncelleme: 0 }) !== JSON.stringify({ ...eski, guncelleme: 0 });
   if (!degisti && !hataVardi) { console.log(`Değişiklik yok (${yorumlar.length} yorum okundu).`); return; }

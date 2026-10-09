@@ -1,14 +1,16 @@
 // Google yorumlarından "Sizlerden Gelenler" story'si (<tarih>-<n>.png) ve gönderi karuseli (<tarih>-<n>-k1..3.png) üretir → sizlerden-story/
 // Kural: her yorum yalnızca bir kez paylaşılır (sizlerden-story/.gecmis.json), tekrar yok.
-//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 12:00–21:00 arası ilk saatlik (gece gelen ertesi gün 12:00) çalışmada paylaşılır.
+//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 08:00–23:00 arası ilk çalışmada (15 dk'da bir) paylaşılır; gece gelen sabah 08:00'de.
 //  - Eski (stok) yorumlar: haftada bir, ÇARŞAMBA 12:00'den sonraki ilk çalışmada bir tane; her hafta sıradaki danışman
-//    (eskiSon'dan devam, stoğu bitmiş danışman atlanır). Bitince sadece yeni yorumlar paylaşılır.
+//    (eskiSon'dan devam, stoğu bitmiş danışman atlanır). Bitince sadece yeni yorumlar paylaşılır. SADECE_YENI=1 iken stok atlanır.
+// SITE: sayfaların okunduğu adres (workflow yerel sunucu verir; yeni commit'lenen yorum Pages'e düşmeden görsel üretilebilsin).
 // `node sizlerden-story.js sec` sadece seçim yapar (.secim.json), argümansız çalışınca seçimi görsele çevirir.
 const fs = require('fs');
 
 const DIR = 'sizlerden-story', GECMIS = DIR + '/.gecmis.json', SECIM = DIR + '/.secim.json';
 const SIRA = ['evsen', 'gizem', 'orhan', 'aysun', 'ozlem_varol', 'gamze', 'irem', 'aysegul_alpay'];  // sayfadaki çip sırası
 const YENI_SINIR = '2026-10-06T00:00:00Z';
+const SITE = (process.env.SITE || 'https://dogusportal.com').replace(/\/$/, '');
 const SIGAN = 210;   // kartta ~6 satır × 35 karakter; bundan kısa yorumlar kesilmeden sığar
 
 // "Canan Akşar" → "Canan A." (soyadın sadece baş harfi)
@@ -45,10 +47,10 @@ function sec() {
 
   let r = null, id = null;
   const yeniler = adaylar.filter(x => (x.ilkGorulme || '') >= YENI_SINIR).sort((a, b) => a.ilkGorulme.localeCompare(b.ilkGorulme));
-  if (yeniler.length && saat >= 12 && saat < 21) {
+  if (yeniler.length && saat >= 8 && saat < 23) {
     r = yeniler[0];
     id = sirali.find(i => r.danismanlar.includes(i));
-  } else if (!yeniler.length && carsamba && saat >= 12 && (!eskiSonGun || gunFark(bugun, eskiSonGun) >= 6)) {
+  } else if (!yeniler.length && process.env.SADECE_YENI !== '1' && carsamba && saat >= 12 && (!eskiSonGun || gunFark(bugun, eskiSonGun) >= 6)) {
     for (const i of sirali) {
       const l = adaylar.filter(x => x.danismanlar.includes(i));
       if (!l.length) continue;
@@ -62,7 +64,7 @@ function sec() {
   gecmis.son = id; gecmis.sonGun = bugun; gecmis.paylasilan.push(r.id);
   fs.writeFileSync(GECMIS, JSON.stringify(gecmis, null, 1));
   const { ad } = danismanlar.find(d => d.id === id);
-  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
+  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, puan: r.puan, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
   console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', kisaAd(r.yazar), '|', r.metin.slice(0, 80));
 }
 
@@ -74,7 +76,7 @@ async function uret() {
   // Story: danışmanın kendi şablonu (sizlerden-gelenler.html) — sadece zemini gönderiyle aynı
   const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
   await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
-  await page.goto('https://dogusportal.com/sizlerden-gelenler.html?v=' + Date.now(), { waitUntil: 'networkidle' });
+  await page.goto(SITE + '/sizlerden-gelenler.html?v=' + Date.now(), { waitUntil: 'networkidle' });
   await page.waitForSelector('.chip', { timeout: 60000 });
   const png = await page.evaluate(async s => {
     await document.fonts.load('bold 25px Poppins'); await document.fonts.load('22px Poppins');
@@ -94,7 +96,7 @@ async function uret() {
   // Gönderi karuseli (sizlerden-karusel.html, 1080x1440 kareler)
   const cek = async fmt => {
     const p = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 1080 / 420 });
-    await p.goto(`https://dogusportal.com/sizlerden-karusel.html?oto=1&fmt=${fmt}&yorum=${encodeURIComponent(secim.yorumId)}&danisman=${secim.danisman}&v=${Date.now()}`, { waitUntil: 'networkidle' });
+    await p.goto(`${SITE}/sizlerden-karusel.html?oto=1&fmt=${fmt}&yorum=${encodeURIComponent(secim.yorumId)}&danisman=${secim.danisman}&v=${Date.now()}`, { waitUntil: 'networkidle' });
     await p.waitForSelector('body[data-ready]', { timeout: 60000 });
     await p.waitForTimeout(1000);
     const sl = p.locator('.slide'), l = [];

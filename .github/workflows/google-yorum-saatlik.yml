@@ -1,10 +1,14 @@
-name: Google yorumları (saatlik, son 5)
+name: Google yorumları + Sizlerden Gelenler otomatik paylaşım
 on:
   schedule:
-    - cron: "7 * * * *"   # her saat :07 — Places API en yeni 5 yorumu döndürür; bilinmeyenler arşive eklenir
+    - cron: "7,22,37,52 * * * *"   # 15 dk'da bir — Business Profile API'den tüm yorumlar; yeni olan arşive eklenir
   workflow_dispatch:
 permissions:
   contents: write
+  issues: write
+concurrency:
+  group: google-yorum
+  cancel-in-progress: false
 jobs:
   yorum:
     runs-on: ubuntu-latest
@@ -18,5 +22,55 @@ jobs:
       - run: |
           git config user.name "dogus-bot"
           git config user.email "bot@dogusremax.com"
-          git add data/google-yorumlar.json 2>/dev/null || true
+          git add data/google-yorumlar.json data/google-yorum-gorulen.json 2>/dev/null || true
           git diff --cached --quiet || (git commit -m "Google yorumları güncellendi" && git pull --rebase && git push)
+
+      # Otomatik paylaşılmayan yeni yorumlar (düşük puan, metinsiz, danışman adı yok) → Umut'a bildirim
+      - name: Paylaşılmayan yeni yorumu bildir
+        if: hashFiles('yorum-bildirim.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Yeni Google yorumu (otomatik paylaşılmadı)" --body-file yorum-bildirim.md --assignee dogusremax || true
+
+      # Sizlerden Gelenler: yeni 4-5★ yorum → story + karusel. Sadece sizlerden-story/.canli dosyası varken çalışır.
+      - name: Yeni yorum seç
+        if: hashFiles('sizlerden-story/.canli') != ''
+        env:
+          SADECE_YENI: "1"
+        run: node scripts/sizlerden-story.js sec
+      - name: Story ve karusel görsellerini üret
+        if: hashFiles('sizlerden-story/.secim.json') != ''
+        run: |
+          npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+          python3 -m http.server 8000 >/dev/null 2>&1 &
+          sleep 2
+          SITE=http://localhost:8000 node scripts/sizlerden-story.js
+          rm -f sizlerden-story/.secim.json
+          git add sizlerden-story
+          git diff --cached --quiet || (git commit -m "Sizlerden Gelenler: $(cat sizlerden-story/.son)" && git pull --rebase && git push)
+      - name: Güncel IG token'ı al
+        if: hashFiles('sizlerden-story/.canli') != '' && hashFiles('sizlerden-story/.media') != ''
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        if: hashFiles('sizlerden-story/.canli') != '' && hashFiles('sizlerden-story/.media') != ''
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          set -o pipefail
+          ST=0; node scripts/sizlerden-ig.js 2>&1 | tee sizlerden-story/ig-log.txt || ST=$?
+          for f in ig-log.txt .pub .pub-story; do [ -f sizlerden-story/$f ] && git add sizlerden-story/$f; done
+          git diff --cached --quiet || (git commit -m "Sizlerden Gelenler: ig log" && git pull --rebase && git push)
+          exit $ST
+      - name: Paylaşım hatasını bildir
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          T="Sizlerden Gelenler otomatik paylaşım hatası"
+          [ -n "$(gh issue list --state open --search "in:title $T" --json number -q '.[].number')" ] && exit 0
+          gh issue create --title "$T" --body "Çalışma: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" --assignee dogusremax || true
