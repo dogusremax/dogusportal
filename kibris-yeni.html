@@ -759,6 +759,57 @@ html{overflow-x:hidden}
 .v2 .big small{letter-spacing:0;font-family:var(--f-body);font-weight:500}
 .rail .brand{flex:0 0 auto;white-space:nowrap}
 @media (max-width:1439px){.rail .brand small{display:none}.rail .rnav a{padding:8px 8px;font-size:.82rem}.rail{gap:12px;padding:0 22px}}
+/* masraf hesaplayıcı */
+.v2 .masraf{padding-top:24px}
+.ms{display:grid;gap:16px;margin-top:30px}
+@media (min-width:960px){.ms{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:start}.ms-in{position:sticky;top:96px}}
+.ms-lab{display:block;font-weight:700;font-size:.92rem;margin-bottom:10px}
+.ms-field{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:16px;padding:6px 18px;background:#071040;transition:border-color .25s,box-shadow .25s}
+.ms-field:focus-within{border-color:var(--red);box-shadow:0 0 0 4px rgba(220,28,46,.18)}
+.ms-field span{font:800 1.8rem var(--f-head);color:var(--gold)}
+.ms-field input{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;font:800 clamp(1.8rem,5vw,2.4rem) var(--f-head);letter-spacing:-.03em;padding:8px 0;direction:ltr;text-align:start}
+.ms-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ms-quick button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);border-radius:999px;padding:8px 14px;font:700 .82rem var(--f-mono);transition:background .2s,border-color .2s,transform .2s}
+.ms-quick button:hover{transform:translateY(-2px);border-color:var(--gold)}
+.ms-quick button.on{background:var(--red);border-color:var(--red);color:#fff}
+.ms-sync{font-size:.78rem;color:var(--muted);margin-top:10px;min-height:1.2em}
+.ms-tot{margin-top:22px;padding-top:20px;border-top:1px dashed var(--line);display:grid;gap:4px}
+.ms-tot .eyebrow{margin:0}
+.ms-tot b{font:800 clamp(2.4rem,7vw,3.4rem)/1 var(--f-head);letter-spacing:-.05em;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;direction:ltr;justify-self:start}
+.ms-tot small{color:var(--muted);font-size:.85rem}
+.ms-tot em{font-style:normal;color:var(--gold);font-weight:700}
+.ms-bar{display:flex;height:12px;border-radius:12px;overflow:hidden;margin-top:16px;background:var(--line);direction:ltr}
+.ms-bar i{background:var(--c);width:0;transition:width .8s var(--ease)}
+.ms-leg{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.ms-leg li{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);min-width:0}
+.ms-leg li i{width:10px;height:10px;border-radius:3px;background:var(--c);flex:0 0 auto}
+.ms-leg li b{margin-inline-start:auto;color:var(--ink);font-family:var(--f-mono);font-size:.78rem}
+.ms-mail{margin-top:22px;padding-top:18px;border-top:1px dashed var(--line)}
+.ms-mail label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.ms-mail div{display:flex;gap:8px;flex-wrap:wrap}
+.ms-mail input{flex:1 1 180px;min-width:0;background:#071040;border:1.5px solid var(--line);border-radius:999px;color:#fff;padding:12px 16px;font:500 .95rem var(--f-body);outline:0}
+.ms-mail input:focus{border-color:var(--red)}
+.ms-mail .btn{padding:12px 20px;font-size:.9rem}
+.ms-msg{font-size:.82rem;margin-top:8px;min-height:1.2em;color:var(--ok)}
+.ms-msg.err{color:var(--brand)}
+.ms-phases{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:ph}
+.ms-ph{position:relative;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(170deg,#0E1850,#0A1240);padding:20px 20px 8px;counter-increment:ph}
+.ms-ph::before{content:"0" counter(ph);position:absolute;inset-inline-end:18px;top:12px;font:800 2.6rem/1 var(--f-head);color:transparent;-webkit-text-stroke:1px rgba(238,241,250,.18);direction:ltr}
+.ms-ph h3{display:flex;align-items:center;gap:10px;font-size:1.05rem;margin-bottom:6px}
+.ms-ph h3 i{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent)}
+.ms-it{border-top:1px solid var(--line)}
+.ms-it:first-of-type{border-top:0}
+.ms-it button{width:100%;display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center;background:none;border:0;color:var(--ink);text-align:start;padding:14px 0}
+.ms-it .n{font-weight:700;font-size:.95rem}
+.ms-it .n small{display:inline-block;margin-inline-start:8px;font:700 .7rem var(--f-mono);color:var(--gold);background:rgba(233,194,122,.12);padding:2px 7px;border-radius:999px}
+.ms-it .t{grid-column:1;font-size:.8rem;color:var(--muted)}
+.ms-it .v{grid-row:1/3;grid-column:2;font:800 1.15rem var(--f-head);letter-spacing:-.02em;direction:ltr;text-align:end}
+.ms-it .v.tbd{font:italic 500 .9rem var(--f-body);color:var(--muted)}
+.ms-it .x{grid-column:1/-1;font-size:.8rem;color:var(--gold);max-height:0;overflow:hidden;transition:max-height .35s var(--ease)}
+.ms-it.open .x{max-height:80px}
+.ms-it button[aria-expanded]{cursor:pointer}
+.ms-it button:not([aria-expanded]){cursor:default}
+@media (max-width:520px){.ms-leg{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -1030,6 +1081,35 @@ html{overflow-x:hidden}
     </div>
   </div>
 </section>
+    <section class="masraf" id="masraf">
+      <div class="wrap">
+        <span class="eyebrow" data-ms="e"></span>
+        <h2 data-ms="h"></h2>
+        <p class="lead" data-ms="l"></p>
+        <div class="ms">
+          <div class="ms-in panel">
+            <label class="ms-lab" for="ms-price" data-ms="priceLabel"></label>
+            <div class="ms-field"><span>£</span><input id="ms-price" inputmode="numeric" autocomplete="off" value="185,000" aria-describedby="ms-sync"></div>
+            <div class="ms-quick" id="ms-quick"><button type="button" data-p="120000">£120k</button><button type="button" data-p="185000">£185k</button><button type="button" data-p="250000">£250k</button><button type="button" data-p="400000">£400k</button></div>
+            <p class="ms-sync" id="ms-sync" data-ms="sync"></p>
+            <div class="ms-tot">
+              <span class="eyebrow" data-ms="totalPercent"></span>
+              <b id="ms-total">£0</b>
+              <small><span data-ms="totalRatio"></span> <em id="ms-ratio">%0</em></small>
+            </div>
+            <div class="ms-bar" id="ms-bar" aria-hidden="true"><i style="--c:#7FB2FF"></i><i style="--c:#4F7BFF"></i><i style="--c:#F2B55C"></i><i style="--c:#DC1C2E"></i></div>
+            <ul class="ms-leg" id="ms-leg"></ul>
+            <form class="ms-mail" id="ms-mail" novalidate>
+              <label for="ms-email" data-ms="emailLabel"></label>
+              <div><input id="ms-email" type="email" autocomplete="email" inputmode="email"><button type="submit" class="btn btn-sun" id="ms-send" data-ms="sendPdf"></button></div>
+              <p class="ms-msg" id="ms-msg" aria-live="polite"></p>
+            </form>
+          </div>
+          <ol class="ms-phases" id="ms-phases"></ol>
+        </div>
+        <p class="note" data-ms="disclaimer"></p>
+      </div>
+    </section>
     <a class="next" href="#/surec" data-go="surec"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>06</em><b data-nvt="surec"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="surec" hidden>
@@ -2104,16 +2184,16 @@ addEventListener("scroll",()=>{
 /* ================= YENİ TASARIM v2: sayfa yönlendirme, menüler, animasyon ================= */
 (()=>{
 const NV={
- tr:{home:"Keşfet",neden:"Neden Kıbrıs",bolge:"Bölgeler",yasam:"Yaşam Rehberi",hesap:"Ödeme Planı",surec:"Süreç & SSS",isbirligi:"İş Birliği",form:"Başvuru",t_home:"Keşfet",t_bolge:"Bölgeler",t_hesap:"Hesapla",t_surec:"SSS",t_form:"Başvur",cta:"Ücretsiz teklif al",next:"Sıradaki sayfa"},
- en:{home:"Discover",neden:"Why Cyprus",bolge:"Regions",yasam:"Living Guide",hesap:"Payment Plan",surec:"Process & FAQ",isbirligi:"Partners",form:"Apply",t_home:"Discover",t_bolge:"Regions",t_hesap:"Calculate",t_surec:"FAQ",t_form:"Apply",cta:"Get a free offer",next:"Next page"},
- ru:{home:"Обзор",neden:"Почему Кипр",bolge:"Регионы",yasam:"Гид по жизни",hesap:"План оплаты",surec:"Процесс и FAQ",isbirligi:"Партнёрам",form:"Заявка",t_home:"Обзор",t_bolge:"Регионы",t_hesap:"Расчёт",t_surec:"FAQ",t_form:"Заявка",cta:"Бесплатный подбор",next:"Следующая страница"},
- fa:{home:"کاوش",neden:"چرا قبرس",bolge:"مناطق",yasam:"راهنمای زندگی",hesap:"برنامه پرداخت",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",form:"درخواست",t_home:"کاوش",t_bolge:"مناطق",t_hesap:"محاسبه",t_surec:"پرسش‌ها",t_form:"درخواست",cta:"دریافت پیشنهاد رایگان",next:"صفحه بعد"},
- de:{home:"Entdecken",neden:"Warum Zypern",bolge:"Regionen",yasam:"Lebensratgeber",hesap:"Zahlungsplan",surec:"Ablauf & FAQ",isbirligi:"Partner",form:"Anfrage",t_home:"Entdecken",t_bolge:"Regionen",t_hesap:"Rechner",t_surec:"FAQ",t_form:"Anfrage",cta:"Kostenloses Angebot",next:"Nächste Seite"},
- pl:{home:"Odkryj",neden:"Dlaczego Cypr",bolge:"Regiony",yasam:"Przewodnik",hesap:"Plan płatności",surec:"Proces i FAQ",isbirligi:"Współpraca",form:"Zgłoszenie",t_home:"Odkryj",t_bolge:"Regiony",t_hesap:"Kalkulator",t_surec:"FAQ",t_form:"Zgłoś",cta:"Darmowa oferta",next:"Następna strona"}
+ tr:{home:"Keşfet",neden:"Neden Kıbrıs",bolge:"Bölgeler",yasam:"Yaşam Rehberi",hesap:"Ödeme & Masraf",surec:"Süreç & SSS",isbirligi:"İş Birliği",form:"Başvuru",t_home:"Keşfet",t_bolge:"Bölgeler",t_hesap:"Hesapla",t_surec:"SSS",t_form:"Başvur",cta:"Ücretsiz teklif al",next:"Sıradaki sayfa"},
+ en:{home:"Discover",neden:"Why Cyprus",bolge:"Regions",yasam:"Living Guide",hesap:"Payments & Costs",surec:"Process & FAQ",isbirligi:"Partners",form:"Apply",t_home:"Discover",t_bolge:"Regions",t_hesap:"Calculate",t_surec:"FAQ",t_form:"Apply",cta:"Get a free offer",next:"Next page"},
+ ru:{home:"Обзор",neden:"Почему Кипр",bolge:"Регионы",yasam:"Гид по жизни",hesap:"Оплата и расходы",surec:"Процесс и FAQ",isbirligi:"Партнёрам",form:"Заявка",t_home:"Обзор",t_bolge:"Регионы",t_hesap:"Расчёт",t_surec:"FAQ",t_form:"Заявка",cta:"Бесплатный подбор",next:"Следующая страница"},
+ fa:{home:"کاوش",neden:"چرا قبرس",bolge:"مناطق",yasam:"راهنمای زندگی",hesap:"پرداخت و هزینه‌ها",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",form:"درخواست",t_home:"کاوش",t_bolge:"مناطق",t_hesap:"محاسبه",t_surec:"پرسش‌ها",t_form:"درخواست",cta:"دریافت پیشنهاد رایگان",next:"صفحه بعد"},
+ de:{home:"Entdecken",neden:"Warum Zypern",bolge:"Regionen",yasam:"Lebensratgeber",hesap:"Zahlung & Kosten",surec:"Ablauf & FAQ",isbirligi:"Partner",form:"Anfrage",t_home:"Entdecken",t_bolge:"Regionen",t_hesap:"Rechner",t_surec:"FAQ",t_form:"Anfrage",cta:"Kostenloses Angebot",next:"Nächste Seite"},
+ pl:{home:"Odkryj",neden:"Dlaczego Cypr",bolge:"Regiony",yasam:"Przewodnik",hesap:"Płatności i koszty",surec:"Proces i FAQ",isbirligi:"Współpraca",form:"Zgłoszenie",t_home:"Odkryj",t_bolge:"Regiony",t_hesap:"Kalkulator",t_surec:"FAQ",t_form:"Zgłoś",cta:"Darmowa oferta",next:"Następna strona"}
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={masraf:"hesap",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -2243,6 +2323,76 @@ if(fine && !reduce){
   });
 }
 { const h=location.hash.replace(/^#\/?/,""), [a,b]=h.split("/"); const [v,t]=parse(a); show(v,b||t); }
+})();
+
+/* ================= MASRAF HESAPLAYICI (dogusportal masraf-hesaplayici.html mantığı) ================= */
+(()=>{
+const MS={
+ tr:{e:"Resmi masraflar",h:"Fiyatın üstüne <em>ne ödersiniz?</em>",l:"Damga vergisi, tapu harcı, KDV ve onay harcı: satış bedelini girin, hangi masrafın ne zaman ödendiğini adım adım görün.",priceLabel:"Satış bedeli (GBP)",sync:"Ödeme planındaki fiyattan otomatik alınıyor; kendiniz de yazabilirsiniz.",totalPercent:"Yüzdeli kalemler toplamı",totalRatio:"Satış bedeline oranı:",emailLabel:"Masraf tablosunu PDF olarak e-postanıza gönderelim",sendPdf:"PDF gönder",sending:"Gönderiliyor…",sent:"✓ Gönderildi, e-postanızı kontrol edin.",err:"Geçerli bir e-posta adresi yazın.",disclaimer:"Bu hesaplama bilgilendirme amaçlıdır. Güncel vergi oran ve tutarları değişiklik gösterebilir.",
+  stampDuty:"Damga (pul) vergisi",stampDutyTime:"Satış sözleşmesi imzalanırken",titleDeed1:"Tapu harcı (1. ödeme)",titleDeed1Time:"Sözleşme tapuya işlendiğinde",councilFee:"Bakanlar Kurulu onay harcı (yabancı alıcı)",councilFeeTime:"Sözleşmeden sonraki 1 ay içinde",councilFeeNote:"Bakanlık onayı ortalama 1 ay içinde sonuçlanır.",titleDeed2:"Tapu harcı (2. ödeme)",titleDeed2Time:"Bakanlık onayından sonra 75 gün içinde",vat:"KDV",vatTime:"Daire tesliminde",trafo:"Trafo katılım bedeli",trafoTime:"Daire tesliminde",trafoNote:"Müteahhit tarafından belirlenir.",lawyer:"Avukatlık ücreti",lawyerTime:"Tercih edeceğiniz avukatla belirlenir",lawyerNote:"Güncel tutar avukattan sorulur.",tbd:"Belirlenecek",phase1:"Sözleşme aşaması",phase2:"Tapu işlemleri",phase3:"Teslim aşaması"},
+ en:{e:"Official costs",h:"What do you pay <em>on top of the price?</em>",l:"Stamp duty, title deed fees, VAT and the approval fee: enter the sale price and see which cost is paid when, step by step.",priceLabel:"Sale price (GBP)",sync:"Taken from the payment plan price; you can also type your own.",totalPercent:"Total of percentage-based items",totalRatio:"Ratio to sale price:",emailLabel:"We can email you the cost breakdown as a PDF",sendPdf:"Send PDF",sending:"Sending…",sent:"✓ Sent, please check your inbox.",err:"Please enter a valid email address.",disclaimer:"This calculation is for information only. Current tax rates and amounts may change.",
+  stampDuty:"Stamp duty",stampDutyTime:"On signing the sales contract",titleDeed1:"Title deed fee (1st payment)",titleDeed1Time:"When the contract is registered at the land registry",councilFee:"Council of Ministers approval fee (foreign buyer)",councilFeeTime:"Within 1 month of the contract",councilFeeNote:"Ministry approval usually takes about 1 month.",titleDeed2:"Title deed fee (2nd payment)",titleDeed2Time:"Within 75 days of ministry approval",vat:"VAT",vatTime:"On handover",trafo:"Transformer connection fee",trafoTime:"On handover",trafoNote:"Set by the developer.",lawyer:"Legal fee",lawyerTime:"Agreed with the lawyer you choose",lawyerNote:"Ask the lawyer for the current fee.",tbd:"TBD",phase1:"Contract stage",phase2:"Title deed stage",phase3:"Handover stage"},
+ ru:{e:"Официальные расходы",h:"Сколько вы платите <em>сверх цены?</em>",l:"Гербовый сбор, сборы за титул, НДС и сбор за одобрение: введите цену и посмотрите, какой расход и когда оплачивается.",priceLabel:"Цена покупки (GBP)",sync:"Берётся из цены в плане оплаты; можно ввести свою.",totalPercent:"Итого процентных статей",totalRatio:"Доля от цены:",emailLabel:"Отправим таблицу расходов вам на e-mail в PDF",sendPdf:"Отправить PDF",sending:"Отправка…",sent:"✓ Отправлено, проверьте почту.",err:"Введите корректный e-mail.",disclaimer:"Расчёт носит информационный характер. Актуальные ставки и суммы могут меняться.",
+  stampDuty:"Гербовый сбор",stampDutyTime:"При подписании договора купли-продажи",titleDeed1:"Сбор за титул (1-й платёж)",titleDeed1Time:"При регистрации договора в земельном кадастре",councilFee:"Сбор за одобрение Совета министров (иностранный покупатель)",councilFeeTime:"В течение 1 месяца после договора",councilFeeNote:"Одобрение министерства обычно занимает около 1 месяца.",titleDeed2:"Сбор за титул (2-й платёж)",titleDeed2Time:"В течение 75 дней после одобрения",vat:"НДС",vatTime:"При передаче квартиры",trafo:"Сбор за подключение трансформатора",trafoTime:"При передаче квартиры",trafoNote:"Определяется застройщиком.",lawyer:"Услуги юриста",lawyerTime:"По договорённости с выбранным юристом",lawyerNote:"Актуальную сумму уточните у юриста.",tbd:"Уточняется",phase1:"Этап договора",phase2:"Оформление титула",phase3:"Передача"},
+ fa:{e:"هزینه‌های رسمی",h:"علاوه بر قیمت <em>چه می‌پردازید؟</em>",l:"مالیات تمبر، عوارض سند، مالیات بر ارزش افزوده و عوارض تأیید: قیمت فروش را وارد کنید و ببینید هر هزینه چه زمانی پرداخت می‌شود.",priceLabel:"قیمت فروش (پوند)",sync:"از قیمت برنامهٔ پرداخت گرفته می‌شود؛ می‌توانید خودتان هم بنویسید.",totalPercent:"جمع اقلام درصدی",totalRatio:"نسبت به قیمت فروش:",emailLabel:"جدول هزینه‌ها را به‌صورت PDF به ایمیلتان می‌فرستیم",sendPdf:"ارسال PDF",sending:"در حال ارسال…",sent:"✓ ارسال شد، ایمیل خود را بررسی کنید.",err:"یک ایمیل معتبر وارد کنید.",disclaimer:"این محاسبه صرفاً جنبهٔ اطلاع‌رسانی دارد. نرخ‌ها و مبالغ ممکن است تغییر کنند.",
+  stampDuty:"مالیات تمبر",stampDutyTime:"هنگام امضای قرارداد فروش",titleDeed1:"عوارض سند (پرداخت اول)",titleDeed1Time:"هنگام ثبت قرارداد در ادارهٔ ثبت",councilFee:"عوارض تأیید هیئت وزیران (خریدار خارجی)",councilFeeTime:"ظرف ۱ ماه پس از قرارداد",councilFeeNote:"تأیید وزارتخانه معمولاً حدود ۱ ماه طول می‌کشد.",titleDeed2:"عوارض سند (پرداخت دوم)",titleDeed2Time:"ظرف ۷۵ روز پس از تأیید وزارتخانه",vat:"مالیات بر ارزش افزوده",vatTime:"هنگام تحویل",trafo:"هزینهٔ اتصال ترانسفورماتور",trafoTime:"هنگام تحویل",trafoNote:"توسط سازنده تعیین می‌شود.",lawyer:"حق‌الوکاله",lawyerTime:"با وکیل انتخابی شما توافق می‌شود",lawyerNote:"مبلغ فعلی را از وکیل بپرسید.",tbd:"تعیین می‌شود",phase1:"مرحلهٔ قرارداد",phase2:"مرحلهٔ سند",phase3:"مرحلهٔ تحویل"},
+ de:{e:"Offizielle Nebenkosten",h:"Was zahlen Sie <em>zusätzlich zum Preis?</em>",l:"Stempelsteuer, Grundbuchgebühren, MwSt. und Genehmigungsgebühr: Kaufpreis eingeben und Schritt für Schritt sehen, welche Kosten wann fällig sind.",priceLabel:"Kaufpreis (GBP)",sync:"Aus dem Preis im Zahlungsplan übernommen; Sie können auch selbst eingeben.",totalPercent:"Summe der Prozentposten",totalRatio:"Anteil am Kaufpreis:",emailLabel:"Wir senden Ihnen die Kostenaufstellung als PDF per E-Mail",sendPdf:"PDF senden",sending:"Wird gesendet…",sent:"✓ Gesendet, bitte Posteingang prüfen.",err:"Bitte eine gültige E-Mail-Adresse eingeben.",disclaimer:"Diese Berechnung dient nur zur Information. Aktuelle Sätze und Beträge können sich ändern.",
+  stampDuty:"Stempelsteuer",stampDutyTime:"Bei Unterzeichnung des Kaufvertrags",titleDeed1:"Grundbuchgebühr (1. Zahlung)",titleDeed1Time:"Bei Eintragung des Vertrags im Grundbuchamt",councilFee:"Genehmigungsgebühr des Ministerrats (ausländische Käufer)",councilFeeTime:"Innerhalb 1 Monats nach Vertrag",councilFeeNote:"Die Genehmigung dauert meist etwa 1 Monat.",titleDeed2:"Grundbuchgebühr (2. Zahlung)",titleDeed2Time:"Innerhalb von 75 Tagen nach Genehmigung",vat:"MwSt.",vatTime:"Bei Übergabe",trafo:"Trafo-Anschlussgebühr",trafoTime:"Bei Übergabe",trafoNote:"Wird vom Bauträger festgelegt.",lawyer:"Anwaltskosten",lawyerTime:"Mit dem Anwalt Ihrer Wahl vereinbart",lawyerNote:"Aktuellen Betrag beim Anwalt erfragen.",tbd:"Offen",phase1:"Vertragsphase",phase2:"Grundbuchphase",phase3:"Übergabephase"},
+ pl:{e:"Opłaty urzędowe",h:"Ile płacisz <em>ponad cenę?</em>",l:"Opłata skarbowa, opłaty za akt własności, VAT i opłata za zgodę: wpisz cenę i zobacz krok po kroku, który koszt i kiedy jest płatny.",priceLabel:"Cena zakupu (GBP)",sync:"Pobrane z ceny w planie płatności; możesz wpisać własną.",totalPercent:"Suma pozycji procentowych",totalRatio:"Udział w cenie:",emailLabel:"Wyślemy zestawienie kosztów w PDF na Twój e-mail",sendPdf:"Wyślij PDF",sending:"Wysyłanie…",sent:"✓ Wysłano, sprawdź skrzynkę.",err:"Wpisz poprawny adres e-mail.",disclaimer:"Kalkulacja ma charakter informacyjny. Aktualne stawki i kwoty mogą się zmienić.",
+  stampDuty:"Opłata skarbowa",stampDutyTime:"Przy podpisaniu umowy sprzedaży",titleDeed1:"Opłata za akt własności (1. rata)",titleDeed1Time:"Przy rejestracji umowy w urzędzie ksiąg",councilFee:"Opłata za zgodę Rady Ministrów (kupujący z zagranicy)",councilFeeTime:"W ciągu 1 miesiąca od umowy",councilFeeNote:"Zgoda ministerstwa trwa zwykle ok. 1 miesiąca.",titleDeed2:"Opłata za akt własności (2. rata)",titleDeed2Time:"W ciągu 75 dni od zgody ministerstwa",vat:"VAT",vatTime:"Przy odbiorze",trafo:"Opłata za przyłącze transformatora",trafoTime:"Przy odbiorze",trafoNote:"Ustala deweloper.",lawyer:"Honorarium prawnika",lawyerTime:"Ustalane z wybranym prawnikiem",lawyerNote:"Aktualną kwotę podaje prawnik.",tbd:"Do ustalenia",phase1:"Etap umowy",phase2:"Akt własności",phase3:"Etap odbioru"}
+};
+const COUNCIL_FEE_TL=35447, SCRIPT_URL="https://script.google.com/macros/s/AKfycbxXlY4CxiKTUXJ5tuVbXw55xW_f3kzZ-RoFRs2kDgNXSctDP0iIwl8ExlwBqKZiEVUt/exec";
+const root=document.documentElement, $$=id=>document.getElementById(id), T=()=>MS[root.lang]||MS.en;
+const inp=$$("ms-price"); if(!inp) return;
+let price=185000, manual=false, open=null, shown=0;
+const fmt=n=>Math.round(n).toLocaleString("en-GB");
+const C=["#7FB2FF","#4F7BFF","#F2B55C","#DC1C2E"];
+const pct=n=>{ const l=root.lang, v=n.toLocaleString({tr:"tr-TR",en:"en-GB",ru:"ru-RU",fa:"en-GB",de:"de-DE",pl:"pl-PL"}[l]||"en-GB",{maximumFractionDigits:1}); return l==="tr"?"%"+v:(["ru","de","pl"].includes(l)?v+" %":v+"%"); };
+function calc(){ return {s:price*.005,d1:price*.03,d2:price*.03,v:price*.05}; }
+function render(){
+  const t=T(), c=calc(), tot=c.s+c.d1+c.d2+c.v;
+  document.querySelectorAll("[data-ms]").forEach(e=>{ const v=t[e.dataset.ms]; if(v!=null) e.innerHTML=v; });
+  const ph=[
+    [t.phase1,C[1],[["stampDuty",pct(.5),c.s],["titleDeed1",pct(3),c.d1],["councilFee",null,fmt(COUNCIL_FEE_TL)+" TL","councilFeeNote"]]],
+    [t.phase2,C[2],[["titleDeed2",pct(3),c.d2]]],
+    [t.phase3,C[3],[["vat",pct(5),c.v],["trafo",null,null,"trafoNote"],["lawyer",null,null,"lawyerNote"]]]
+  ];
+  $$("ms-phases").innerHTML=ph.map(([lab,col,items],pi)=>`<li class="ms-ph" style="--c:${col}"><h3><i></i>${lab}</h3>${items.map(([k,r,v,note],ii)=>{
+    const id=pi+"-"+ii, val= v==null?`<span class="v tbd">${t.tbd}</span>`:`<span class="v" ${typeof v==="number"?`data-v="${v}"`:""}>${typeof v==="number"?"£"+fmt(v):v}</span>`;
+    return `<div class="ms-it${open===id?" open":""}"><button type="button" ${note?`aria-expanded="${open===id}" data-id="${id}"`:""}><span class="n">${t[k]}${r?`<small>${r}</small>`:""}${note?" ⓘ":""}</span><span class="t">${t[k+"Time"]}</span>${val}${note?`<span class="x">${t[note]}</span>`:""}</button></div>`;
+  }).join("")}</li>`).join("");
+  $$("ms-leg").innerHTML=[["stampDuty","0,5%",c.s],["titleDeed1","3%",c.d1],["titleDeed2","3%",c.d2],["vat","5%",c.v]].map(([k,r,v],i)=>`<li style="--c:${C[i]}"><i></i>${t[k]}<b>£${fmt(v)}</b></li>`).join("");
+  const bars=$$("ms-bar").children; [c.s,c.d1,c.d2,c.v].forEach((v,i)=>bars[i].style.width=(tot?v/tot*100:0)+"%");
+  $$("ms-ratio").textContent=pct(price?Math.round(tot/price*1000)/10:0);
+  animTotal(tot);
+  document.querySelectorAll("#ms-quick button").forEach(b=>b.classList.toggle("on",+b.dataset.p===price));
+  $$("ms-sync").style.visibility=manual?"hidden":"visible";
+}
+let raf;
+function animTotal(to){
+  cancelAnimationFrame(raf); const from=shown, t0=performance.now(), el=$$("ms-total");
+  const st=t=>{ const k=Math.min(1,(t-t0)/600), v=from+(to-from)*(1-Math.pow(1-k,3)); el.textContent="£"+fmt(v); shown=v; if(k<1) raf=requestAnimationFrame(st); };
+  raf=requestAnimationFrame(st);
+}
+function setPrice(p,src){ price=Math.max(0,Math.min(p||0,99999999)); if(src!=="input") inp.value=price?fmt(price):""; render(); }
+inp.addEventListener("input",()=>{ const raw=inp.value.replace(/[^0-9]/g,""); manual=true; const n=raw?parseInt(raw,10):0; inp.value=raw?fmt(n):""; setPrice(n,"input"); });
+$$("ms-quick").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; manual=true; setPrice(+b.dataset.p); });
+$$("ms-phases").addEventListener("click",e=>{ const b=e.target.closest("button[data-id]"); if(!b) return; open = open===b.dataset.id?null:b.dataset.id; render(); });
+const pr=$$("price"); if(pr){ pr.addEventListener("input",()=>{ if(!manual) setPrice(+pr.value); }); price=+pr.value||price; }
+$$("ms-mail").addEventListener("submit",async e=>{
+  e.preventDefault(); const t=T(), em=$$("ms-email").value.trim(), msg=$$("ms-msg"), btn=$$("ms-send");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) || !price){ msg.className="ms-msg err"; msg.textContent=t.err; return; }
+  const c=calc(), tot=c.s+c.d1+c.d2+c.v;
+  const params=new URLSearchParams({email:em,lang:root.lang==="tr"?"tr":"en",price,stampDuty:c.s,titleDeed1:c.d1,titleDeed2:c.d2,vat:c.v,councilFeeTL:COUNCIL_FEE_TL,percentTotal:tot,ratio:(tot/price*100).toFixed(2)}).toString();
+  btn.disabled=true; btn.textContent=t.sending; msg.textContent="";
+  let f=$$("mailFrame"); if(!f){ f=document.createElement("iframe"); f.id="mailFrame"; f.hidden=true; document.body.appendChild(f); }
+  f.src=SCRIPT_URL+"?"+params;
+  try{ typeof track==="function" && track("MasrafPDF",{dil:root.lang}); }catch(x){}
+  setTimeout(()=>{ btn.disabled=false; btn.textContent=t.sendPdf; msg.className="ms-msg"; msg.textContent=t.sent; $$("ms-email").value=""; },2500);
+});
+inp.value=fmt(price);
+render();
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 
 </script>
