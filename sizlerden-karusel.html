@@ -335,9 +335,13 @@ async function downloadAll(){
   document.getElementById('danisman').innerHTML=d.map(x=>`<option value="${x.id}">${esc(x.ad)}</option>`).join('');
   document.getElementById('yorumSec').innerHTML='<option value="">— Yorum seç —</option>'+YORUMLAR.map(r=>
     `<option value="${esc(r.id)}">${esc(r.danismanlar.map(i=>(d.find(x=>x.id===i)||{}).ad).filter(Boolean).join(', '))} · ${esc(kisaAd(r.yazar))} · ${esc(r.metin.slice(0,50))}…</option>`).join('');
-  const hedef=q.get('yorum')||(YORUMLAR[0]||{}).id;
+  const elleGecis=q.get('musteri')||q.get('metin');
+  const hedef=q.get('yorum')||(elleGecis?null:(YORUMLAR[0]||{}).id);
   if(hedef){document.getElementById('yorumSec').value=hedef;yorumYukle(hedef);}
-  if(q.get('danisman')){document.getElementById('danisman').value=q.get('danisman');render();}
+  if(q.get('danisman')){document.getElementById('danisman').value=q.get('danisman');}
+  if(q.get('musteri')){document.getElementById('musteri').value=q.get('musteri');}
+  if(q.get('metin')){document.getElementById('metin').value=q.get('metin');}
+  if(q.get('danisman')||q.get('musteri')||q.get('metin')){capElle=false;aciklamaYap();render();}
   await document.fonts.ready;
   await Promise.all([...document.images].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
   sigdir();
