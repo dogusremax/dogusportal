@@ -262,7 +262,7 @@ button{font:inherit;cursor:pointer}
 .pr-top{display:flex;justify-content:space-between;gap:12px;border-top:3px solid #121417;border-bottom:1px solid #121417;padding-block:7px;font:700 .68rem var(--f-mono);letter-spacing:.18em}
 .pr-body{display:grid;grid-template-columns:1fr;gap:16px}
 @media(min-width:680px){.press.feat .pr-body{grid-template-columns:auto 1fr;gap:30px;align-items:center}}
-.pr-rank{display:flex;flex-direction:column}
+.pr-rank{display:none}
 .pr-rank b{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(5rem,16vw,8.5rem);line-height:.85;letter-spacing:-.04em;color:#121417;direction:ltr}
 .pr-rank span{font:600 .72rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#5A5F66;margin-top:8px;max-width:22ch}
 .pr-txt{min-width:0;border-inline-start:1px solid #121417;padding-inline-start:20px}
@@ -273,6 +273,27 @@ button{font:inherit;cursor:pointer}
 .pr-link{display:inline-block;margin-top:12px;font-weight:700;font-size:.85rem;color:#121417;text-decoration:none;border-bottom:2px solid #121417;padding-bottom:1px}
 .pr-link:hover{color:#B0201B;border-color:#B0201B}
 [lang="fa"] .press h3,[lang="fa"] .press blockquote{font-family:"Vazirmatn",serif;font-style:normal;font-weight:600;font-size:1.15rem}
+
+
+/* ---------- dergi kapağı ---------- */
+.mag{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;justify-self:center;border-radius:6px;overflow:hidden;color:#fff;background:#0A2433;box-shadow:0 22px 40px -18px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:16px 16px 14px;direction:ltr}
+.mag-bg{position:absolute;inset:0;background:url("assets/kibris/hero5-m.jpg") center 60%/cover no-repeat;z-index:0}
+.mag-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,16,26,.15) 0%,rgba(5,16,26,0) 30%,rgba(5,16,26,.15) 55%,rgba(5,16,26,.85) 100%)}
+.mag>*:not(.mag-bg){position:relative;z-index:1}
+.mag-iss{display:flex;justify-content:space-between;font:700 .56rem var(--f-mono);letter-spacing:.16em;opacity:.9}
+.mag-name{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-size:clamp(4.6rem,22vw,6.4rem);line-height:.82;letter-spacing:-.03em;text-align:center;margin-top:4px;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+.mag-lines{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;max-width:55%}
+.mag-lines li{font:700 .7rem/1.2 var(--f-body);text-transform:uppercase;letter-spacing:.04em;text-shadow:0 1px 8px rgba(0,0,0,.5);border-top:2px solid #E9A23B;padding-top:4px}
+.mag-story{margin-top:auto;display:flex;flex-direction:column}
+.mag-kick{font:700 .62rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;background:#C8102E;align-self:flex-start;padding:3px 7px;margin-bottom:6px}
+.mag-story b{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(4rem,18vw,5.4rem);line-height:.8;color:#E9A23B}
+.mag-story strong{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-size:clamp(2rem,9vw,2.6rem);line-height:1;margin-top:2px}
+.mag-story em{font-style:normal;font:600 .82rem/1.25 var(--f-body);max-width:24ch;margin-top:4px;opacity:.95}
+.mag-bar{position:absolute;right:14px;bottom:14px;display:flex;align-items:flex-end;gap:5px}
+.mag-bar i{display:block;width:34px;height:20px;background:repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 3px,#fff 3px 5px,transparent 5px 6px);opacity:.85}
+.mag-bar span{font:700 .7rem var(--f-mono)}
+[lang="fa"] .mag-lines li,[lang="fa"] .mag-story em,[lang="fa"] .mag-kick,[lang="fa"] .mag-iss{font-family:"Vazirmatn",var(--f-body);letter-spacing:0;text-transform:none;direction:rtl;text-align:right}
+@media(min-width:680px){.press.feat .pr-body{grid-template-columns:minmax(240px,320px) 1fr}}
 
 /* ---------- regions ---------- */
 .regions{background:var(--card);border-block:1px solid var(--line)}
@@ -1377,6 +1398,7 @@ let rzT; addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(()=>{dr
 
 /* ================= GÜNDEM ================= */
 let ncat="all", nmore=false;
+const COVER={"tr": {"iss": "SAYI 01 · 2026", "kick": "Forbes listesinde dünya birincisi", "main": "Dünyanın en iyi sahil yatırımı", "c1": "Sterlinle değer koruyan evler", "c2": "Karpaz: adanın saklı ucu", "c3": "Yeni Ercan: yılda 10 milyon yolcu", "tag": "KUZEY KIBRIS"}, "en": {"iss": "ISSUE 01 · 2026", "kick": "Ranked first in the world by Forbes", "main": "The world's best beachfront buy", "c1": "Homes that hold their value in sterling", "c2": "Karpas: the island's hidden tip", "c3": "New Ercan: 10 million passengers a year", "tag": "NORTH CYPRUS"}, "ru": {"iss": "ВЫПУСК 01 · 2026", "kick": "Первое место в мире по версии Forbes", "main": "Лучшая в мире покупка у моря", "c1": "Дома, хранящие стоимость в фунтах", "c2": "Карпас: скрытый край острова", "c3": "Новый Эрджан: 10 млн пассажиров в год", "tag": "СЕВЕРНЫЙ КИПР"}, "fa": {"iss": "شمارهٔ ۰۱ · ۲۰۲۶", "kick": "رتبهٔ نخست جهان به گزارش فوربس", "main": "بهترین خرید ساحلی جهان", "c1": "خانه‌هایی که ارزششان به پوند حفظ می‌شود", "c2": "کارپاس: گوشهٔ پنهان جزیره", "c3": "ارجان جدید: ۱۰ میلیون مسافر در سال", "tag": "قبرس شمالی"}, "de": {"iss": "AUSGABE 01 · 2026", "kick": "Laut Forbes weltweit auf Platz eins", "main": "Der weltbeste Kauf am Strand", "c1": "Häuser, die ihren Wert in Pfund halten", "c2": "Karpaz: die verborgene Spitze der Insel", "c3": "Neuer Flughafen Ercan: 10 Mio. Passagiere", "tag": "NORDZYPERN"}, "pl": {"iss": "NUMER 01 · 2026", "kick": "Pierwsze miejsce na świecie według Forbes", "main": "Najlepsza inwestycja przy plaży na świecie", "c1": "Domy, które trzymają wartość w funtach", "c2": "Karpas: ukryty kraniec wyspy", "c3": "Nowe Ercan: 10 mln pasażerów rocznie", "tag": "CYPR PÓŁNOCNY"}};
 const PRESS={
  tr:{k:"BASINDA KUZEY KIBRIS",r:"Sahil yatırımında dünya sıralaması",q:"Akdeniz'in en iyisi, maliyetin küçük bir kısmına.",m:"Forbes · Şubat 2021 · Live and Invest Overseas Küresel Gayrimenkul Araştırması",c:"Haberi okuyun →"},
  en:{k:"NORTH CYPRUS IN THE PRESS",r:"World ranking for beachfront investment",q:"The best of the Mediterranean at a fraction the cost.",m:"Forbes · February 2021 · Live and Invest Overseas Global Property Survey",c:"Read the story →"},
@@ -1395,10 +1417,17 @@ function renderNews(){
   $("ngrid").innerHTML=(cut?list.slice(0,7):list).map((m,idx)=>{
     const [id,c,fig,src,url,yr]=m, [h,p]=n.i[id], fl=n.fl[id]||"";
     const feat = idx===0 && (ncat==="all"||ncat==="yatirim");
-    if(id==="forbes"){ const pr=PRESS[L]||PRESS.en;
+    if(id==="forbes"){ const pr=PRESS[L]||PRESS.en, cv=COVER[L]||COVER.en;
       return `<article class="press${feat?" feat":""}" data-c="${c}">
         <div class="pr-top"><span>${pr.k}</span><span>${yr}</span></div>
-        <div class="pr-body"><div class="pr-rank"><b>#1</b><span>${pr.r}</span></div>
+        <div class="pr-body">
+          <div class="mag" aria-label="${cv.main}">
+            <div class="mag-bg"></div>
+            <div class="mag-head"><div class="mag-iss"><span>${cv.tag}</span><span>${cv.iss}</span></div><div class="mag-name">ROTA</div></div>
+            <ul class="mag-lines"><li>${cv.c1}</li><li>${cv.c2}</li><li>${cv.c3}</li></ul>
+            <div class="mag-story"><span class="mag-kick">${cv.kick}</span><b>#1</b><strong>${D().regions.iskele.name}</strong><em>${cv.main}</em></div>
+            <div class="mag-bar" aria-hidden="true"><i></i><span>£</span></div>
+          </div>
           <div class="pr-txt"><h3>${h}</h3><blockquote>“${pr.q}”</blockquote><p class="pr-meta">${pr.m}</p>
           <a class="pr-link" href="${url}" target="_blank" rel="noopener">${pr.c}</a></div></div></article>`; }
     return `<article class="ncard${feat?" feat":""}" data-c="${c}">
