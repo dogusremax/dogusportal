@@ -175,6 +175,18 @@ button{font:inherit;cursor:pointer}
 .btn-gold{background:transparent;color:#F4F8F9;border:1px solid #E9C27A;padding:14px 26px}
 .btn-gold:hover{background:rgba(233,194,122,.12)}
 [lang="fa"] .av h3{font-family:"Vazirmatn",var(--f-display);font-weight:600;font-size:1.15rem}
+/* ---------- çalışma prensibi ---------- */
+.principles{background:var(--card);border-top:1px solid var(--line)}
+.pr-head{display:grid;grid-template-columns:1fr;gap:20px;align-items:center}
+.pr-seal{width:96px;height:96px}
+@media(min-width:760px){.pr-head{grid-template-columns:auto 1fr;gap:32px}.pr-seal{width:140px;height:140px}}
+.pr-list{list-style:none;margin:32px 0 0;padding:0;display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:640px){.pr-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1000px){.pr-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.pr{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.pr-ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--sea);background:var(--sea-soft)}
+.pr h3{font-size:1.05rem}
+.pr p{color:var(--muted);font-size:.93rem;margin-top:6px;line-height:1.55}
 /* ---------- reasons ---------- */
 .grid4{display:grid;grid-template-columns:1fr;gap:14px;margin-top:30px}
 @media(min-width:640px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -530,7 +542,7 @@ footer b{color:var(--ink)}
 </header>
 
 <section class="hero" id="top">
-  <a class="seal is-img" href="#gundem" aria-label="Ödüllü projeler">
+  <a class="seal is-img" href="#prensip" aria-label="Ödüllü projeler">
     <span class="seal-img"><img class="seal-ring" src="assets/kibris/odullu-muhur-halka.webp" width="400" height="400" alt="" decoding="async"><img src="assets/kibris/odullu-muhur-merkez.webp" width="400" height="400" alt="" decoding="async"></span>
     <svg viewBox="0 0 200 250" aria-hidden="true">
       <defs>
@@ -579,6 +591,26 @@ footer b{color:var(--ink)}
       <div class="fact"><b>£</b><span data-i="f2"></span></div>
       <div class="fact"><b data-i="f3b"></b><span data-i="f3"></span></div>
     </div>
+  </div>
+</section>
+
+<section class="principles" id="prensip">
+  <div class="wrap pr-wrap">
+    <div class="pr-head">
+      <img class="pr-seal" src="assets/kibris/odullu-muhur-merkez.webp" width="400" height="400" alt="" loading="lazy" decoding="async">
+      <div>
+        <span class="eyebrow" data-i="ilke_e"></span>
+        <h2 data-i="ilke_h"></h2>
+        <p class="lead" data-i="ilke_l"></p>
+      </div>
+    </div>
+    <ol class="pr-list">
+      <li class="pr"><span class="pr-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.8L7 22l5-3 5 3-1.5-8.2"/></svg></span><div><h3 data-i="ilke1_h"></h3><p data-i="ilke1_p"></p></div></li>
+      <li class="pr"><span class="pr-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></span><div><h3 data-i="ilke2_h"></h3><p data-i="ilke2_p"></p></div></li>
+      <li class="pr"><span class="pr-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><circle cx="12" cy="7" r="3"/></svg></span><div><h3 data-i="ilke3_h"></h3><p data-i="ilke3_p"></p></div></li>
+      <li class="pr"><span class="pr-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><div><h3 data-i="ilke4_h"></h3><p data-i="ilke4_p"></p></div></li>
+      <li class="pr"><span class="pr-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v5h-5"/><path d="M12 8v4l3 2"/></svg></span><div><h3 data-i="ilke5_h"></h3><p data-i="ilke5_p"></p></div></li>
+    </ol>
   </div>
 </section>
 
@@ -811,6 +843,7 @@ const I18N = {
 tr:{
  title:"Kuzey Kıbrıs Projeleri · RE/MAX Doğuş", locale:"tr-TR", dir:"ltr",
  t:{
+  ilke_e:"Çalışma prensibimiz", ilke_h:"Her projeyi değil, <em>sadece kendini kanıtlamış olanları</em> öneriyoruz.", ilke_l:"Bir projeyi portföyümüze almadan önce beş şarta bakıyoruz. Biri bile eksikse o projeyi size önermiyoruz.", ilke1_h:"Sadece ödüllü projeler", ilke1_p:"Yalnızca ödül almış, kalitesi bağımsız olarak tescillenmiş projelerle çalışıyoruz.", ilke2_h:"Köklü, adalı yüklenici", ilke2_p:"Yüklenici firma Kıbrıslı, adada köklü ve teslim edilmiş, yaşayan projeleri olan bir firma olmalı. Kendini sahada ispatlamamış firmalarla çalışmıyoruz.", ilke3_h:"Sahil hattında konum", ilke3_p:"Projelerimiz sahil hattında. Kiracının da alıcının da ilk aradığı şey denize yakınlık.", ilke4_h:"Yüksek ve sürekli kira", ilke4_p:"Yıl boyu kiracı bulan, yüksek kira getirisiyle kendini kısa sürede amorti eden projeleri seçiyoruz.", ilke5_h:"Hızlı geri dönüş", ilke5_p:"Satarken de kiralarken de hızlı alıcı ve kiracı bulan, nakde kolay dönen projelere çalışıyoruz.",
   av_e:"RE/MAX Doğuş ayrıcalığı", av_h:"Aynı fiyat. <em>Daha güçlü pazarlık.</em>", av1_k:"Liste fiyatı", av1_h:"Şirket liste fiyatıyla satış", av1_p:"Fiyatlarımız inşaat firmalarının resmi liste fiyatlarıdır. Üzerine hiçbir aracı farkı eklenmez.", av2_k:"%0 komisyon", av2_h:"Sizden komisyon almıyoruz", av2_p:"Alıcı olarak bize hizmet bedeli ya da komisyon ödemezsiniz.", av3_k:"Özel indirim", av3_h:"Firmalarla özel anlaşmalar", av3_p:"Anlaşmalı inşaat firmalarımızla yaptığımız özel anlaşmalar sayesinde size özel indirim sağlayabiliyoruz.", av4_k:"Size özel plan", av4_h:"Kişiye özel ödeme planı", av4_p:"Standart planın dışında, bütçenize uygun peşinat ve taksit yapısını firmayla sizin adınıza biz görüşürüz.", av_cta:"Bana özel teklif isteyin →", 
   logo_sub:"KUZEY KIBRIS MASASI", phone:"0216 315 15 15",
   hero_eyebrow:"Girne · İskele · Esentepe · Gazimağusa",
@@ -880,6 +913,7 @@ tr:{
 en:{
  title:"North Cyprus Homes · RE/MAX Doğuş", locale:"en-GB", dir:"ltr",
  t:{
+  ilke_e:"Our principles", ilke_h:"Not every project. <em>Only the ones that have proven themselves.</em>", ilke_l:"Before we take a project into our portfolio, we check five conditions. If even one is missing, we don't offer it to you.", ilke1_h:"Award-winning projects only", ilke1_p:"We only work with projects that have won awards and whose quality has been independently recognised.", ilke2_h:"Established local developer", ilke2_p:"The developer must be a Cypriot company with deep roots on the island and completed, lived-in projects. We don't work with firms that haven't proven themselves on the ground.", ilke3_h:"On the coastline", ilke3_p:"Our projects are on the coastline. Proximity to the sea is the first thing both tenants and buyers look for.", ilke4_h:"High, steady rental income", ilke4_p:"We choose projects that find tenants all year round and pay for themselves quickly through strong rental yields.", ilke5_h:"Fast returns", ilke5_p:"We work on projects that find buyers and tenants quickly, so your money never sits idle when you sell or let.",
   av_e:"The RE/MAX Doğuş advantage", av_h:"Same price. <em>Stronger negotiating power.</em>", av1_k:"List price", av1_h:"Sold at the developer's list price", av1_p:"Our prices are the developers' official list prices. No intermediary mark-up is added.", av2_k:"0% commission", av2_h:"No commission from you", av2_p:"As a buyer, you pay us no service fee and no commission.", av3_k:"Special discount", av3_h:"Special agreements with developers", av3_p:"Thanks to our special agreements with partner developers, we can secure a discount just for you.", av4_k:"Your own plan", av4_h:"Personalised payment plan", av4_p:"Beyond the standard plan, we negotiate a down payment and instalment structure that fits your budget with the developer on your behalf.", av_cta:"Request my personal offer →", 
   logo_sub:"NORTH CYPRUS DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
@@ -949,6 +983,7 @@ en:{
 ru:{
  title:"Северный Кипр · RE/MAX Doğuş", locale:"ru-RU", dir:"ltr",
  t:{
+  ilke_e:"Наш принцип работы", ilke_h:"Не любые проекты, <em>а только те, что уже доказали себя.</em>", ilke_l:"Прежде чем взять проект в портфель, мы проверяем пять условий. Если не выполнено хотя бы одно, мы не предлагаем его вам.", ilke1_h:"Только проекты с наградами", ilke1_p:"Мы работаем только с проектами, получившими награды, чьё качество подтверждено независимо.", ilke2_h:"Надёжный местный застройщик", ilke2_p:"Застройщик должен быть кипрской компанией с давней историей на острове и сданными, заселёнными проектами. С компаниями, не доказавшими себя на деле, мы не работаем.", ilke3_h:"На побережье", ilke3_p:"Наши проекты расположены у моря. Близость к морю — первое, что ищут и арендаторы, и покупатели.", ilke4_h:"Высокая и стабильная аренда", ilke4_p:"Мы выбираем проекты, которые сдаются круглый год и быстро окупаются за счёт высокой арендной доходности.", ilke5_h:"Быстрая отдача", ilke5_p:"Мы работаем с объектами, для которых быстро находятся покупатели и арендаторы, будь то продажа или сдача.",
   av_e:"Преимущества RE/MAX Doğuş", av_h:"Та же цена. <em>Сильнее переговорная позиция.</em>", av1_k:"Прайс-лист", av1_h:"Продажа по прайс-листу застройщика", av1_p:"Наши цены — официальные прайс-листы застройщиков. Никаких посреднических наценок.", av2_k:"0% комиссии", av2_h:"Без комиссии для вас", av2_p:"Покупатель не платит нам ни за услуги, ни комиссию.", av3_k:"Спецскидка", av3_h:"Особые соглашения с застройщиками", av3_p:"Благодаря особым соглашениям с застройщиками-партнёрами мы можем получить для вас персональную скидку.", av4_k:"Ваш план", av4_h:"Индивидуальный план оплаты", av4_p:"Помимо стандартного плана, мы согласуем с застройщиком первый взнос и рассрочку под ваш бюджет.", av_cta:"Получить персональное предложение →", 
   logo_sub:"СЕВЕРНЫЙ КИПР", phone:"+90 216 315 15 15",
   hero_eyebrow:"Кирения · Искеле · Эсентепе · Фамагуста",
@@ -1018,6 +1053,7 @@ ru:{
 fa:{
  title:"قبرس شمالی · RE/MAX Doğuş", locale:"fa-IR-u-nu-latn", dir:"rtl",
  t:{
+  ilke_e:"اصول کاری ما", ilke_h:"نه هر پروژه‌ای؛ <em>فقط پروژه‌هایی که خود را ثابت کرده‌اند.</em>", ilke_l:"پیش از افزودن هر پروژه به سبد خود، پنج شرط را بررسی می‌کنیم. اگر حتی یکی کم باشد، آن پروژه را به شما پیشنهاد نمی‌کنیم.", ilke1_h:"فقط پروژه‌های برنده جایزه", ilke1_p:"فقط با پروژه‌هایی کار می‌کنیم که جایزه گرفته‌اند و کیفیتشان به‌طور مستقل تأیید شده است.", ilke2_h:"سازنده محلی و باسابقه", ilke2_p:"سازنده باید شرکتی قبرسی با سابقه طولانی در جزیره و پروژه‌های تحویل‌شده و مسکونی باشد. با شرکت‌هایی که خود را در عمل ثابت نکرده‌اند کار نمی‌کنیم.", ilke3_h:"در خط ساحلی", ilke3_p:"پروژه‌های ما در خط ساحلی هستند. نزدیکی به دریا اولین چیزی است که مستأجر و خریدار به دنبال آن‌اند.", ilke4_h:"اجاره بالا و پایدار", ilke4_p:"پروژه‌هایی را انتخاب می‌کنیم که در تمام سال مستأجر دارند و با بازده اجاره بالا، سرمایه را زود برمی‌گردانند.", ilke5_h:"بازگشت سریع", ilke5_p:"روی پروژه‌هایی کار می‌کنیم که هم در فروش و هم در اجاره، سریع خریدار و مستأجر پیدا می‌کنند.",
   av_e:"مزیت RE/MAX Doğuş", av_h:"همان قیمت؛ <em>قدرت مذاکرهٔ بیشتر.</em>", av1_k:"قیمت رسمی", av1_h:"فروش با لیست قیمت رسمی سازنده", av1_p:"قیمت‌های ما همان لیست قیمت رسمی شرکت‌های سازنده است و هیچ مبلغ واسطه‌ای به آن اضافه نمی‌شود.", av2_k:"۰٪ کمیسیون", av2_h:"از شما کمیسیون نمی‌گیریم", av2_p:"شما به‌عنوان خریدار هیچ هزینهٔ خدمات یا کمیسیونی به ما نمی‌پردازید.", av3_k:"تخفیف ویژه", av3_h:"توافق‌های ویژه با سازندگان", av3_p:"به لطف توافق‌های ویژه با سازندگان همکار، می‌توانیم برای شما تخفیف ویژه بگیریم.", av4_k:"برنامهٔ شما", av4_h:"برنامهٔ پرداخت اختصاصی", av4_p:"فراتر از برنامهٔ استاندارد، پیش‌پرداخت و اقساط متناسب با بودجهٔ شما را از طرف شما با سازنده هماهنگ می‌کنیم.", av_cta:"پیشنهاد اختصاصی بگیرید ←", 
   logo_sub:"بخش قبرس شمالی", phone:"+90 216 315 15 15",
   hero_eyebrow:"گیرنه · ایسکله · اسنتپه · فاماگوستا",
@@ -1087,6 +1123,7 @@ fa:{
 de:{
  title:"Nordzypern · RE/MAX Doğuş", locale:"de-DE", dir:"ltr",
  t:{
+  ilke_e:"Unser Arbeitsprinzip", ilke_h:"Nicht jedes Projekt. <em>Nur die, die sich bewährt haben.</em>", ilke_l:"Bevor wir ein Projekt in unser Portfolio aufnehmen, prüfen wir fünf Bedingungen. Fehlt auch nur eine, bieten wir es Ihnen nicht an.", ilke1_h:"Nur ausgezeichnete Projekte", ilke1_p:"Wir arbeiten nur mit Projekten, die Auszeichnungen erhalten haben und deren Qualität unabhängig bestätigt ist.", ilke2_h:"Etablierter Bauträger von der Insel", ilke2_p:"Der Bauträger muss ein zyprisches Unternehmen mit langer Geschichte auf der Insel und fertiggestellten, bewohnten Projekten sein. Mit Firmen, die sich vor Ort nicht bewährt haben, arbeiten wir nicht.", ilke3_h:"Direkt an der Küste", ilke3_p:"Unsere Projekte liegen an der Küstenlinie. Meeresnähe ist das Erste, worauf Mieter und Käufer achten.", ilke4_h:"Hohe, stetige Mieteinnahmen", ilke4_p:"Wir wählen Projekte, die ganzjährig vermietet sind und sich durch hohe Mietrenditen schnell amortisieren.", ilke5_h:"Schneller Rückfluss", ilke5_p:"Wir setzen auf Projekte, für die sich beim Verkauf wie bei der Vermietung schnell Käufer und Mieter finden.",
   av_e:"Ihr Vorteil bei RE/MAX Doğuş", av_h:"Gleicher Preis. <em>Mehr Verhandlungsmacht.</em>", av1_k:"Listenpreis", av1_h:"Verkauf zum Listenpreis des Bauträgers", av1_p:"Unsere Preise sind die offiziellen Preislisten der Bauträger. Es kommt kein Vermittleraufschlag hinzu.", av2_k:"0 % Provision", av2_h:"Keine Provision für Sie", av2_p:"Als Käufer zahlen Sie uns weder Servicegebühr noch Provision.", av3_k:"Sonderrabatt", av3_h:"Sondervereinbarungen mit Bauträgern", av3_p:"Dank unserer Sondervereinbarungen mit Partnerbauträgern können wir für Sie einen persönlichen Rabatt erzielen.", av4_k:"Ihr Plan", av4_h:"Individueller Zahlungsplan", av4_p:"Über den Standardplan hinaus verhandeln wir für Sie mit dem Bauträger eine Anzahlung und Ratenstruktur, die zu Ihrem Budget passt.", av_cta:"Persönliches Angebot anfordern →", 
   logo_sub:"NORDZYPERN-DESK", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
@@ -1156,6 +1193,7 @@ de:{
 pl:{
  title:"Cypr Północny · RE/MAX Doğuş", locale:"pl-PL", dir:"ltr",
  t:{
+  ilke_e:"Nasza zasada pracy", ilke_h:"Nie każdy projekt. <em>Tylko te, które już się sprawdziły.</em>", ilke_l:"Zanim włączymy projekt do oferty, sprawdzamy pięć warunków. Jeśli brakuje choćby jednego, nie proponujemy go Państwu.", ilke1_h:"Tylko nagradzane projekty", ilke1_p:"Pracujemy wyłącznie z projektami, które zdobyły nagrody, a ich jakość została niezależnie potwierdzona.", ilke2_h:"Doświadczony lokalny deweloper", ilke2_p:"Deweloper musi być cypryjską firmą z wieloletnią historią na wyspie i ukończonymi, zamieszkanymi projektami. Nie współpracujemy z firmami, które nie sprawdziły się w praktyce.", ilke3_h:"Na linii brzegowej", ilke3_p:"Nasze projekty leżą przy linii brzegowej. Bliskość morza to pierwsze, czego szukają najemcy i kupujący.", ilke4_h:"Wysoki i stały czynsz", ilke4_p:"Wybieramy projekty, które mają najemców przez cały rok i szybko się zwracają dzięki wysokiej stopie zwrotu z najmu.", ilke5_h:"Szybki zwrot", ilke5_p:"Stawiamy na projekty, dla których szybko znajdują się kupujący i najemcy, zarówno przy sprzedaży, jak i wynajmie.",
   av_e:"Przewaga RE/MAX Doğuş", av_h:"Ta sama cena. <em>Większa siła negocjacji.</em>", av1_k:"Cena katalogowa", av1_h:"Sprzedaż po cenie z cennika dewelopera", av1_p:"Nasze ceny to oficjalne cenniki deweloperów. Nie doliczamy żadnej marży pośrednika.", av2_k:"0% prowizji", av2_h:"Nie pobieramy od Ciebie prowizji", av2_p:"Jako kupujący nie płacisz nam opłaty za usługę ani prowizji.", av3_k:"Rabat specjalny", av3_h:"Specjalne umowy z deweloperami", av3_p:"Dzięki specjalnym umowom z deweloperami partnerskimi możemy uzyskać dla Ciebie indywidualny rabat.", av4_k:"Twój plan", av4_h:"Indywidualny plan płatności", av4_p:"Poza standardowym planem negocjujemy w Twoim imieniu z deweloperem wpłatę i raty dopasowane do Twojego budżetu.", av_cta:"Poproś o ofertę dla siebie →", 
   logo_sub:"DZIAŁ CYPR PÓŁNOCNY", phone:"+90 216 315 15 15",
   hero_eyebrow:"Kyrenia · Iskele · Esentepe · Famagusta",
