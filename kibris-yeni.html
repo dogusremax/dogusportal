@@ -884,6 +884,79 @@ html{overflow-x:hidden}
 .fq p{margin:0;padding:0 20px 20px 54px;color:var(--muted);line-height:1.6}
 [dir=rtl] .fq p{padding:0 54px 20px 20px}
 .fq-ask{font-size:.86rem;color:var(--gold);margin-top:8px}
+.fq-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;margin-bottom:8px;-webkit-mask:linear-gradient(90deg,#000 88%,transparent)}
+.fq-chips::-webkit-scrollbar{display:none}
+.fq-chips button{flex:0 0 auto;padding:10px 16px;border-radius:999px;border:1.5px solid var(--line);background:#071040;color:var(--ink);font:700 .88rem var(--f-body);cursor:pointer;transition:border-color .25s,background .25s}
+.fq-chips button[aria-selected="true"]{border-color:var(--red);background:rgba(220,28,46,.16);color:#fff}
+.fq-g{display:grid;gap:10px}
+.fq-gh{font:500 .78rem var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:18px 0 2px}
+.fq-ask span{display:block;color:var(--muted);margin-top:4px;font-size:.8rem}
+/* karşılaştırma */
+.v2 .karsilastir,.v2 .adimlar,.v2 .yasamr,.v2 .gezi{padding-block:clamp(56px,9vw,110px)}
+.v2 #surec{display:none}
+.cp{margin-top:30px;padding:clamp(16px,3vw,30px);max-width:980px}
+.cp-head{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cp-vs{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font:800 .8rem var(--f-head);margin-bottom:8px}
+.cp-head>div+div .cp-vs{background:var(--gold);color:#050A30}
+.cp-pick{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media (min-width:760px){.cp-pick{grid-template-columns:repeat(4,1fr)}}
+.cp-pick button{padding:10px 6px;border-radius:12px;border:1.5px solid var(--line);background:#071040;color:var(--ink);font:700 .84rem var(--f-body);cursor:pointer;transition:border-color .25s,background .25s}
+.cp-head>div:first-child .cp-pick button[aria-checked="true"]{border-color:var(--red);background:rgba(220,28,46,.16);color:#fff}
+.cp-head>div+div .cp-pick button[aria-checked="true"]{border-color:var(--gold);background:rgba(233,194,122,.14);color:#fff}
+.cp-row{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:14px 0;border-top:1px solid var(--line);align-items:center}
+.cp-k{grid-column:1/-1;font:500 .72rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (min-width:760px){.cp-row{grid-template-columns:1.1fr 1fr 1fr}.cp-k{grid-column:auto}}
+.cp-v{font-size:.95rem;line-height:1.35}
+.cp-v b{font:800 1.2rem var(--f-head);color:#fff;direction:ltr;unicode-bidi:isolate}
+.cp-dots{display:inline-flex;gap:5px}
+.cp-dots i{width:12px;height:12px;border-radius:50%;background:var(--sea-soft);box-shadow:inset 0 0 0 1px var(--line)}
+.cp-dots i.on{background:var(--red);box-shadow:none}
+.cp-v+.cp-v .cp-dots i.on{background:var(--gold)}
+/* süreç çizelgesi */
+.tl{list-style:none;margin:34px 0 0;padding:0;position:relative;max-width:820px;--p:0}
+.tl::before,.tl::after{content:"";position:absolute;inset-inline-start:21px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tl::after{background:linear-gradient(var(--red),var(--gold));transform-origin:top;transform:scaleY(var(--p));transition:transform .2s linear}
+.tl li{display:grid;grid-template-columns:44px 1fr;gap:16px;padding-bottom:26px;position:relative;z-index:1}
+.tl-n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#0B1442;border:2px solid var(--red);font:800 .9rem var(--f-head);color:#fff}
+.tl-d{display:inline-block;font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(233,194,122,.35);border-radius:999px;padding:3px 10px;margin-top:4px}
+.tl h3{font-size:1.15rem;margin:8px 0 4px}
+.tl p{margin:0;color:var(--muted);max-width:60ch}
+/* yaşam rehberi */
+.lv{display:grid;gap:12px;margin-top:30px}
+@media (min-width:640px){.lv{grid-template-columns:1fr 1fr}}
+@media (min-width:1100px){.lv{grid-template-columns:repeat(3,1fr)}}
+.lv-c{border:1px solid var(--line);border-radius:var(--r);padding:22px;background:linear-gradient(160deg,#0D1850,#081038);transition:transform .35s var(--ease),border-color .35s}
+.lv-c:hover{transform:translateY(-4px);border-color:rgba(220,28,46,.5)}
+.lv-c svg{width:34px;height:34px;fill:none;stroke:var(--red);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lv-c h3{margin:12px 0 6px;font-size:1.1rem}
+.lv-c p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.55}
+/* davet + danışman */
+.gz{display:grid;gap:24px;align-items:start}
+@media (min-width:960px){.gz{grid-template-columns:1.2fr .8fr;align-items:center}}
+.iv-b{list-style:none;padding:0;margin:22px 0;display:grid;gap:10px}
+.iv-b li{position:relative;padding-inline-start:30px}
+.iv-b li::before{content:"";position:absolute;inset-inline-start:0;top:.35em;width:18px;height:18px;border-radius:50%;background:rgba(220,28,46,.18) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff4457' stroke-width='3'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat}
+.iv-cta,.adv-cta{display:flex;flex-wrap:wrap;gap:10px}
+.adv{display:flex;gap:18px;padding:clamp(20px,3vw,28px);align-items:flex-start}
+.adv-ph{flex:0 0 auto;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font:800 2rem var(--f-head);color:#fff;background:linear-gradient(140deg,var(--red),#7a0f1a);box-shadow:0 0 0 4px rgba(220,28,46,.2);background-size:cover;background-position:center}
+.adv-tx h3{font-size:1.6rem;margin:4px 0 0}
+.adv-r{display:block;color:var(--gold);font-weight:600;font-size:.9rem}
+.adv-tx p{color:var(--muted);margin:10px 0 14px}
+.btn-wa2{background:#25D366;color:#06301a;display:inline-flex;align-items:center;gap:8px}
+@media (max-width:480px){.adv{flex-direction:column}}
+.v2 .advs{padding:96px 0 0}
+.advs .adv{max-width:760px}
+/* WhatsApp yüzen */
+.waf{position:fixed;inset-inline-end:14px;bottom:calc(136px + env(safe-area-inset-bottom,0px));z-index:20;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 12px 30px -8px rgba(37,211,102,.6);transition:transform .3s var(--ease)}
+.waf svg{width:28px;height:28px}
+.waf:hover{transform:scale(1.08)}
+@media (min-width:1280px){.waf{bottom:84px;inset-inline-end:21px}}
+/* hikâyeler */
+.st{display:grid;gap:14px;margin-top:30px}
+@media (min-width:860px){.st{grid-template-columns:repeat(3,1fr)}}
+.st-c{margin:0;border:1px solid var(--line);border-radius:var(--r);padding:22px;background:#0A1340}
+.st-c blockquote{margin:0 0 14px;font-size:1.02rem;line-height:1.55}
+.st-c figcaption b{display:block}.st-c figcaption span{color:var(--muted);font-size:.86rem}
 
 </style>
 </head>
@@ -1027,6 +1100,20 @@ html{overflow-x:hidden}
     <div class="av-cta"><a class="btn btn-gold" href="#form" data-ev="avantaj_cta" data-i="av_cta"></a></div>
   </div>
 </section>
+    <section class="hikayeler" id="hikayeler" hidden>
+      <div class="wrap">
+        <span class="eyebrow" data-st="e"></span>
+        <h2 data-st="h"></h2>
+        <p class="lead" data-st="l"></p>
+        <div class="st" id="st-box"></div>
+      </div>
+    </section>
+    <section class="gezi" id="gezi">
+      <div class="wrap gz">
+        <div class="gz-in"><span class="eyebrow" data-iv="e"></span><h2 data-iv="h"></h2><p class="lead" data-iv="l"></p><div id="iv-box"></div></div>
+        <div class="adv panel"></div>
+      </div>
+    </section>
     <a class="next" href="#/neden" data-go="neden"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>02</em><b data-nvt="neden"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="neden" hidden>
@@ -1098,6 +1185,14 @@ html{overflow-x:hidden}
         <div class="gt" id="gt-box"></div>
       </div>
     </section>
+    <section class="karsilastir" id="karsilastir">
+      <div class="wrap">
+        <span class="eyebrow" data-cp="e"></span>
+        <h2 data-cp="h"></h2>
+        <p class="lead" data-cp="l"></p>
+        <div class="cp panel" id="cp-box"></div>
+      </div>
+    </section>
     <section class="karpaz" id="karpaz">
   <div class="wrap kz">
     <div class="kz-txt">
@@ -1137,6 +1232,14 @@ html{overflow-x:hidden}
     <div class="turtle" id="turtle"></div>
   </div>
 </section>
+    <section class="yasamr" id="yasam-rehberi">
+      <div class="wrap">
+        <span class="eyebrow" data-lv="e"></span>
+        <h2 data-lv="h"></h2>
+        <p class="lead" data-lv="l"></p>
+        <div class="lv" id="lv-box"></div>
+      </div>
+    </section>
     <a class="next" href="#/hesap" data-go="hesap"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>05</em><b data-nvt="hesap"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="hesap" hidden>
@@ -1209,6 +1312,14 @@ html{overflow-x:hidden}
   </div>
   <div class="view" data-view="surec" hidden>
     <header class="ph"><span class="ph-n">07</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 09</i></span></header>
+    <section class="adimlar" id="adimlar">
+      <div class="wrap">
+        <span class="eyebrow" data-tl="e"></span>
+        <h2 data-tl="h"></h2>
+        <p class="lead" data-tl="l"></p>
+        <div id="tl-box"></div>
+      </div>
+    </section>
     <section id="surec" style="padding-top:0">
   <div class="wrap two">
     <div>
@@ -1262,6 +1373,7 @@ html{overflow-x:hidden}
     <a class="next" href="#/form" data-go="form"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>09</em><b data-nvt="form"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="form" hidden>
+    <section class="advs"><div class="wrap"><div class="adv panel"></div></div></section>
     <section class="formsec" id="form">
   <div class="wrap">
     <span class="eyebrow" style="color:rgba(234,243,245,.6)" data-i="form_e"></span>
@@ -2296,7 +2408,7 @@ const NV={
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={masraf:"masraf",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -2499,6 +2611,82 @@ render();
 new MutationObserver(render).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 
+/* ---- sorular: gruplar + yeni sorular (kaynaklar: KIBHAS sefer bilgisi; KKTC tapu/sözleşme kaydı uygulaması; piyasa yönetim ücretleri) ---- */
+const FQG={
+tr:{c:["Kiralama","Masraflar & Vergi","Kullanım","Ulaşım","Güvence & Tapu"],all:"Tümü",upd:"Son güncelleme: Ekim 2026",map:[4,1,-1,2,2,1],n:[
+[0,"Teslim aldığım daireyi kiraya vermek istiyorum. Hizmeti kimden alırım, ücreti ne kadar?","Çoğu sitede yerinde bir yönetim ve kiralama ofisi var; bölgede çalışan yerel kiralama şirketleri de bulunuyor. Size uygun seçenekle sizi biz buluşturuyoruz. Piyasadaki yaygın aralık: uzun dönem kiralamada aylık kiranın yaklaşık %4–12'si, tatil kiralamasında brüt gelirin yaklaşık %15–30'u. Kesin ücret ve neyin dahil olduğu sözleşmeye göre değişir."],
+[0,"Aidat, bakım, temizlik ve tamirat masraflarını kim karşılar?","Site aidatı (ortak alanlar, havuz, bahçe, güvenlik) mülk sahibine aittir; kiracı olsa da değişmez. Daire içindeki bakım ve tamirat da mülk sahibine aittir. Uzun dönem kirada elektrik, su ve internet genellikle kiracı tarafından ödenir. Tatil kiralamasında misafirler arası temizlik ve çamaşırı yönetim şirketi yapar; bu masraf çoğunlukla gelirden düşülür ya da misafire yansıtılır. Ayrıntılar yönetim sözleşmenizde yazar."],
+[1,"Mülk sahibi olarak her yıl hangi vergileri öderim?","Satın alırken ödenen vergiler (damga vergisi, KDV, tapu devir harcı) bir kerelik. Sonrasında her yıl bağlı olduğunuz belediyeye emlak vergisi ödersiniz; dairenin kapalı alanına (m²) göre hesaplanır ve tutarı genelde düşüktür. Alım masraflarının tamamını Masraf hesaplayıcıda görebilirsiniz."],
+[1,"Kira gelirime vergi var mı?","Evet. KKTC'de kira geliri gelir vergisine tabidir; uygulamada genellikle %10 civarında bir kesinti söz konusudur. Türkiye'de yerleşikseniz bu geliri Türkiye'de de beyan etmeniz gerekebilir; Türkiye ile KKTC arasındaki çifte vergilendirmeyi önleme anlaşması sayesinde KKTC'de ödenen vergi genellikle mahsup edilebilir. Kendi durumunuz için bir mali müşavire danışın."],
+[2,"Dairemi tatil için kendim de kullanabilir miyim?","Evet. Tatil kiralamasında yönetim şirketiyle ortak bir takvim kullanılır: kalacağınız tarihleri önceden bloke edersiniz, kalan günler kiraya açılır. Yüksek sezonda kendi kullanımınız geliri düşürdüğü için birçok sahip temmuz–ağustos dışını tercih ediyor. Bloke süresi ve bildirim kuralları sözleşmeye göre değişir. Uzun dönem kirada ise kiracı varken daireyi kullanamazsınız."],
+[2,"Firmanın diğer projelerindeki sosyal tesislere ve plajlara giriş hakkım olur mu?","Bazı firmalar ev sahiplerine diğer projelerindeki havuz, spor salonu ya da plaj kulübüne giriş hakkı tanıyor; bazılarında bu ücretli ya da hiç yok. Projeye göre değişir; bu hakkın satış sözleşmesine yazılmasını öneririz. Danışmanınıza sorun."],
+[3,"Ercan Havalimanı'ndan bölgelere taksi dışında nasıl giderim?","KIBHAS otobüsleri Ercan'dan Lefkoşa, Girne ve Gazimağusa'ya gün boyu düzenli sefer yapıyor. İskele ve Karpaz için Gazimağusa üzerinden yerel ulaşım ya da özel transfer gerekir. Havalimanında araç kiralama ve paylaşımlı transfer seçenekleri de var; bazı siteler ev sahipleri için transfer ayarlıyor."],
+[4,"İnşaat firmasından daire alırken kendimi nasıl güvenceye alırım?","En önemli adım: satış sözleşmesi imzadan sonra 21 gün içinde, damga vergisi ödenerek Tapu Dairesi'ne kaydettirilir. Kayıtlı sözleşme, dairenin başkasına satılmasına ve sonradan konacak yüklere karşı sizi korur. Ayrıca bağımsız avukatınız arsanın tapusunu, ipotek ya da şerh olup olmadığını ve inşaat ruhsatını kontrol etmeli; ödemeler inşaatın ilerleyişine bağlanmalı, gecikme cezası ve teknik şartname sözleşmeye eklenmelidir. Biz yalnızca tamamlanmış projeleri olan köklü yerel firmalarla çalışıyoruz."],
+[4,"Devlet garantisi var mı?","Hayır. KKTC'de inşaat halindeki konutlar için devletin verdiği bir garanti ya da sigorta sistemi yok. Güvenceniz; Tapu Dairesi'ne kayıtlı sözleşmeniz, sözleşmedeki koruyucu maddeler ve firmanın geçmişidir. Bu yüzden firma seçimi en kritik karardır."],
+[4,"Tapumu (koçanımı) ne zaman alırım?","Koçan; inşaat bitip binanın kat mülkiyeti çıktıktan, Bakanlar Kurulu izniniz geldikten ve devir harcı ile KDV ödendikten sonra adınıza devredilir. Süre projeye göre değişir ve anahtar tesliminden sonra da sürebilir. Bu arada Tapu Dairesi'ne kayıtlı sözleşmeniz haklarınızı korur. Projedeki tahmini tarihi danışmanınıza sorun."],
+[4,"İnşaat firmasının avukatıyla çalışmak zorunda mıyım?","Hayır. Kendi seçtiğiniz bağımsız bir avukatla çalışabilirsiniz ve bunu öneriyoruz. Avukatınız sözleşmeyi inceler, tapu kontrollerini yapar, sözleşme kaydını ve Bakanlar Kurulu izin başvurunuzu yürütür. Avukatlık ücreti avukata göre değişir; önceden teklif alın."]]},
+en:{c:["Renting out","Costs & tax","Using your home","Getting there","Protection & title"],all:"All",upd:"Last updated: October 2026",map:[4,1,-1,2,2,1],n:[
+[0,"I want to rent out my apartment after handover. Who provides the service and what does it cost?","Most developments have an on-site management and rental office, and local rental companies also operate in each area. We connect you with the right option. Typical market range: about 4–12% of monthly rent for long-term lets, and about 15–30% of gross income for holiday lets. The exact fee and what it covers depend on the contract."],
+[0,"Who pays the service charge, maintenance, cleaning and repairs?","The site service charge (common areas, pool, gardens, security) is the owner's, even when the flat is let. Maintenance and repairs inside the apartment are also the owner's. With long-term tenants, electricity, water and internet are usually paid by the tenant. For holiday lets, the management company handles cleaning and laundry between guests; this is usually deducted from income or charged to guests. Details are in your management contract."],
+[1,"What taxes do I pay every year as an owner?","Purchase taxes (stamp duty, VAT, transfer fee) are paid once. After that you pay an annual property tax to your local municipality, calculated on the covered area (m²); it is usually small. You can see all purchase costs in the cost calculator."],
+[1,"Is there tax on rental income?","Yes. Rental income in Northern Cyprus is subject to income tax; in practice a deduction of around 10% is common. Depending on where you are tax resident, you may also need to declare this income at home, where a tax treaty may allow credit for tax paid. Ask a tax adviser about your own situation."],
+[2,"Can I use the apartment for my own holidays too?","Yes. With holiday letting you share a calendar with the management company: you block your own dates in advance and the rest is open for bookings. Using it in peak season reduces income, so many owners choose dates outside July–August. Blocking periods and notice rules depend on the contract. With a long-term tenant you cannot use the flat while it is let."],
+[2,"Do I get access to the developer's other projects' facilities and beaches?","Some developers give owners access to pools, gyms or beach clubs in their other projects; for others it is paid or not offered. It depends on the project, and we recommend having it written into the sales contract. Ask your adviser."],
+[3,"How do I get from Ercan Airport to the regions without a taxi?","KIBHAS buses run regularly throughout the day from Ercan to Nicosia, Kyrenia (Girne) and Famagusta. For İskele and Karpaz you continue via Famagusta by local transport or a private transfer. Car hire and shared shuttle transfers are available at the airport, and some developments arrange transfers for owners."],
+[4,"How do I protect myself when buying off-plan from a developer?","The key step: the sales contract is registered at the Land Registry within 21 days of signing, after paying stamp duty. A registered contract protects you against the unit being sold to someone else and against later charges. Your independent lawyer should also check the land title, any mortgage or caution, and the building permit; payments should follow construction progress, with late-completion penalties and specifications attached to the contract. We only work with established local developers with completed projects."],
+[4,"Is there a state guarantee?","No. Northern Cyprus has no state guarantee or insurance scheme for off-plan homes. Your protection is your registered contract, the protective clauses in it and the developer's track record, which is why choosing the developer is the most important decision."],
+[4,"When do I receive my title deed?","The title deed is transferred to you once construction is complete and the building's strata title is issued, your Council of Ministers permission is granted, and the transfer fee and VAT are paid. Timing varies by project and can run past key handover. Meanwhile your registered contract protects your rights. Ask your adviser for the expected date for the project."],
+[4,"Do I have to use the developer's lawyer?","No. You can work with an independent lawyer of your choice, and we recommend it. Your lawyer reviews the contract, carries out title checks, and handles contract registration and your purchase permission application. Fees vary by lawyer; ask for a quote in advance."]]},
+ru:{c:["Аренда","Расходы и налоги","Использование","Как добраться","Гарантии и тапу"],all:"Все",upd:"Обновлено: октябрь 2026",map:[4,1,-1,2,2,1],n:[
+[0,"Хочу сдавать квартиру после сдачи дома. Кто оказывает услугу и сколько это стоит?","В большинстве комплексов есть управляющая компания с офисом аренды на месте, в каждом районе работают и местные агентства. Мы подберём подходящий вариант. Обычный рыночный диапазон: около 4–12% месячной аренды при долгосрочной сдаче и около 15–30% валового дохода при посуточной. Точная ставка и что в неё входит зависят от договора."],
+[0,"Кто оплачивает обслуживание комплекса, ремонт, уборку?","Плата за обслуживание комплекса (общие зоны, бассейн, сад, охрана) лежит на собственнике, даже если квартира сдана. Ремонт внутри квартиры тоже за собственником. При долгосрочной аренде электричество, воду и интернет обычно оплачивает арендатор. При посуточной сдаче уборку и стирку между гостями делает управляющая компания; расход обычно вычитается из дохода или включается в цену для гостей. Детали прописаны в договоре управления."],
+[1,"Какие налоги я плачу каждый год как владелец?","Налоги при покупке (гербовый сбор, НДС, сбор за переоформление) платятся один раз. Далее ежегодно — налог на недвижимость в местный муниципалитет, по закрытой площади (м²); сумма обычно небольшая. Все расходы на покупку видны в калькуляторе расходов."],
+[1,"Облагается ли налогом доход от аренды?","Да. На Северном Кипре доход от аренды облагается подоходным налогом; на практике обычно удерживается около 10%. В зависимости от вашего налогового резидентства доход может потребоваться задекларировать и дома, где налоговое соглашение может позволить зачесть уплаченный налог. Уточните у налогового консультанта."],
+[2,"Могу ли я сам отдыхать в своей квартире?","Да. При посуточной сдаче используется общий календарь с управляющей компанией: вы заранее бронируете свои даты, остальные открыты для гостей. Проживание в высокий сезон снижает доход, поэтому многие выбирают даты вне июля–августа. Сроки и правила уведомления зависят от договора. При долгосрочной аренде пользоваться квартирой во время аренды нельзя."],
+[2,"Есть ли доступ к инфраструктуре и пляжам других проектов застройщика?","Некоторые застройщики дают владельцам доступ к бассейнам, спортзалам или пляжным клубам других своих проектов; у других это платно или не предусмотрено. Зависит от проекта; советуем закрепить это в договоре. Спросите консультанта."],
+[3,"Как добраться из аэропорта Эрджан без такси?","Автобусы KIBHAS регулярно курсируют весь день из Эрджана в Никосию, Кирению (Гирне) и Фамагусту. До Искеле и Карпаса — дальше через Фамагусту местным транспортом или трансфером. В аэропорту есть аренда авто и групповые трансферы, а некоторые комплексы организуют трансфер для владельцев."],
+[4,"Как защитить себя при покупке строящейся квартиры?","Главное: договор купли-продажи регистрируется в Земельном департаменте в течение 21 дня после подписания, после уплаты гербового сбора. Зарегистрированный договор защищает от продажи квартиры другому лицу и от последующих обременений. Ваш независимый юрист также проверяет титул на землю, наличие ипотеки или запретов и разрешение на строительство; платежи должны идти по мере строительства, а в договоре — штрафы за просрочку и спецификация. Мы работаем только с надёжными местными застройщиками с завершёнными проектами."],
+[4,"Есть ли государственная гарантия?","Нет. На Северном Кипре нет государственной гарантии или страхования для строящегося жилья. Ваша защита — зарегистрированный договор, защитные условия в нём и репутация застройщика. Поэтому выбор застройщика — самое важное решение."],
+[4,"Когда я получу тапу (свидетельство о праве собственности)?","Тапу переоформляется на вас после завершения строительства и оформления поэтажной собственности, получения разрешения Совета министров и оплаты сбора за переоформление и НДС. Сроки зависят от проекта и могут выходить за дату передачи ключей. До этого ваши права защищает зарегистрированный договор. Ожидаемую дату уточните у консультанта."],
+[4,"Обязан ли я работать с юристом застройщика?","Нет. Вы можете выбрать независимого юриста, и мы это рекомендуем. Юрист проверит договор и титул, зарегистрирует договор и подаст заявление на разрешение на покупку. Стоимость услуг зависит от юриста; запросите предложение заранее."]]},
+fa:{c:["اجاره","هزینه‌ها و مالیات","استفاده","رفت‌وآمد","ضمانت و سند"],all:"همه",upd:"آخرین به‌روزرسانی: اکتبر ۲۰۲۶",map:[4,1,-1,2,2,1],n:[
+[0,"می‌خواهم آپارتمانم را پس از تحویل اجاره دهم. خدمات را از چه کسی بگیرم و هزینه‌اش چقدر است؟","بیشتر مجتمع‌ها دفتر مدیریت و اجاره در محل دارند و شرکت‌های اجاره محلی هم در هر منطقه فعال‌اند. ما شما را با گزینه مناسب آشنا می‌کنیم. بازه رایج بازار: حدود ۴ تا ۱۲ درصد اجاره ماهانه برای اجاره بلندمدت و حدود ۱۵ تا ۳۰ درصد درآمد ناخالص برای اجاره تعطیلات. مبلغ دقیق و خدمات شامل آن به قرارداد بستگی دارد."],
+[0,"شارژ مجتمع، نگهداری، نظافت و تعمیرات با کیست؟","شارژ مجتمع (فضاهای مشترک، استخر، باغ، نگهبانی) با مالک است، حتی وقتی واحد اجاره داده شده. تعمیرات داخل آپارتمان هم با مالک است. در اجاره بلندمدت معمولاً برق، آب و اینترنت را مستأجر می‌پردازد. در اجاره تعطیلات، نظافت و شست‌وشو بین مهمانان را شرکت مدیریت انجام می‌دهد و هزینه آن معمولاً از درآمد کسر یا به مهمان منتقل می‌شود. جزئیات در قرارداد مدیریت آمده است."],
+[1,"به‌عنوان مالک هر سال چه مالیاتی می‌پردازم؟","مالیات‌های خرید (تمبر، مالیات بر ارزش افزوده، هزینه انتقال) یک‌بار پرداخت می‌شوند. پس از آن هر سال مالیات ملک را به شهرداری محل می‌پردازید که بر اساس متراژ سرپوشیده محاسبه می‌شود و معمولاً مبلغ کمی است. همه هزینه‌های خرید را در محاسبه‌گر هزینه‌ها ببینید."],
+[1,"آیا درآمد اجاره مالیات دارد؟","بله. در قبرس شمالی درآمد اجاره مشمول مالیات بر درآمد است و در عمل معمولاً حدود ۱۰ درصد کسر می‌شود. بسته به محل اقامت مالیاتی‌تان، ممکن است لازم باشد این درآمد را در کشور خود نیز اعلام کنید. برای وضعیت خودتان با مشاور مالیاتی مشورت کنید."],
+[2,"آیا می‌توانم خودم هم برای تعطیلات از آپارتمان استفاده کنم؟","بله. در اجاره تعطیلات تقویمی مشترک با شرکت مدیریت دارید: تاریخ‌های خود را از قبل رزرو می‌کنید و باقی روزها برای اجاره باز است. استفاده در فصل اوج درآمد را کم می‌کند، پس بسیاری از مالکان خارج از تیر و مرداد را انتخاب می‌کنند. قوانین رزرو و اطلاع‌رسانی به قرارداد بستگی دارد. در اجاره بلندمدت تا مستأجر هست نمی‌توانید از واحد استفاده کنید."],
+[2,"آیا به امکانات و ساحل پروژه‌های دیگر سازنده دسترسی دارم؟","برخی سازندگان به مالکان اجازه استفاده از استخر، باشگاه یا کلوپ ساحلی پروژه‌های دیگرشان را می‌دهند؛ در برخی این امکان پولی است یا وجود ندارد. به پروژه بستگی دارد و پیشنهاد می‌کنیم در قرارداد فروش نوشته شود. از مشاور خود بپرسید."],
+[3,"از فرودگاه ارجان بدون تاکسی چگونه به مناطق بروم؟","اتوبوس‌های KIBHAS در طول روز به‌طور منظم از ارجان به نیکوزیا، گیرنه و فاماگوستا می‌روند. برای ایسکله و کارپاز از فاماگوستا با حمل‌ونقل محلی یا ترانسفر خصوصی ادامه می‌دهید. اجاره خودرو و ترانسفر اشتراکی هم در فرودگاه هست و برخی مجتمع‌ها برای مالکان ترانسفر ترتیب می‌دهند."],
+[4,"هنگام خرید پیش‌فروش از سازنده چگونه از خودم محافظت کنم؟","مهم‌ترین گام: قرارداد فروش ظرف ۲۱ روز پس از امضا و با پرداخت مالیات تمبر در اداره ثبت املاک ثبت می‌شود. قرارداد ثبت‌شده شما را در برابر فروش واحد به شخص دیگر و بارهای بعدی محافظت می‌کند. وکیل مستقل شما باید سند زمین، وجود رهن یا قید و پروانه ساخت را بررسی کند؛ پرداخت‌ها باید با پیشرفت ساخت همراه باشد و جریمه تأخیر و مشخصات فنی در قرارداد بیاید. ما فقط با سازندگان محلی باسابقه که پروژه تکمیل‌شده دارند کار می‌کنیم."],
+[4,"آیا ضمانت دولتی وجود دارد؟","خیر. در قبرس شمالی برای خانه‌های در حال ساخت ضمانت یا بیمه دولتی وجود ندارد. ضمانت شما قرارداد ثبت‌شده، بندهای حمایتی آن و سابقه سازنده است؛ به همین دلیل انتخاب سازنده مهم‌ترین تصمیم است."],
+[4,"سند مالکیتم را کی دریافت می‌کنم؟","سند پس از پایان ساخت و صدور سند تفکیکی ساختمان، دریافت مجوز هیئت وزیران و پرداخت هزینه انتقال و مالیات بر ارزش افزوده به نام شما منتقل می‌شود. زمان آن به پروژه بستگی دارد و ممکن است پس از تحویل کلید هم طول بکشد. در این فاصله قرارداد ثبت‌شده از حقوق شما محافظت می‌کند. تاریخ تخمینی را از مشاور بپرسید."],
+[4,"آیا باید با وکیل سازنده کار کنم؟","خیر. می‌توانید با وکیل مستقلی به انتخاب خودتان کار کنید و ما همین را توصیه می‌کنیم. وکیل قرارداد را بررسی می‌کند، استعلام‌های سند را انجام می‌دهد و ثبت قرارداد و درخواست مجوز خرید را پیگیری می‌کند. هزینه وکیل متفاوت است؛ از قبل پیشنهاد قیمت بگیرید."]]},
+de:{c:["Vermietung","Kosten & Steuern","Nutzung","Anreise","Absicherung & Grundbuch"],all:"Alle",upd:"Stand: Oktober 2026",map:[4,1,-1,2,2,1],n:[
+[0,"Ich möchte meine Wohnung nach der Übergabe vermieten. Wer übernimmt das und was kostet es?","Die meisten Anlagen haben ein Verwaltungs- und Vermietungsbüro vor Ort; dazu kommen lokale Vermietungsfirmen in jeder Region. Wir bringen Sie mit der passenden Option zusammen. Übliche Marktspanne: etwa 4–12 % der Monatsmiete bei Langzeitvermietung und etwa 15–30 % der Bruttoeinnahmen bei Ferienvermietung. Genaue Gebühr und Leistungen hängen vom Vertrag ab."],
+[0,"Wer zahlt Hausgeld, Instandhaltung, Reinigung und Reparaturen?","Das Hausgeld der Anlage (Gemeinschaftsflächen, Pool, Garten, Sicherheit) trägt der Eigentümer, auch wenn vermietet ist. Reparaturen in der Wohnung ebenfalls. Bei Langzeitmietern zahlen Strom, Wasser und Internet meist die Mieter. Bei Ferienvermietung übernimmt die Verwaltung Reinigung und Wäsche zwischen den Gästen; das wird meist von den Einnahmen abgezogen oder den Gästen berechnet. Details stehen im Verwaltungsvertrag."],
+[1,"Welche Steuern zahle ich jährlich als Eigentümer?","Die Kaufsteuern (Stempelsteuer, Mehrwertsteuer, Übertragungsgebühr) fallen einmal an. Danach zahlen Sie jährlich eine Grundsteuer an die Gemeinde, berechnet nach der überdachten Fläche (m²); der Betrag ist meist gering. Alle Kaufnebenkosten sehen Sie im Nebenkostenrechner."],
+[1,"Sind Mieteinnahmen steuerpflichtig?","Ja. In Nordzypern unterliegen Mieteinnahmen der Einkommensteuer; in der Praxis ist ein Abzug von etwa 10 % üblich. Je nach steuerlicher Ansässigkeit müssen Sie die Einnahmen ggf. auch im Heimatland erklären, wo ein Abkommen die Anrechnung erlauben kann. Fragen Sie einen Steuerberater zu Ihrer Situation."],
+[2,"Kann ich die Wohnung auch selbst für den Urlaub nutzen?","Ja. Bei Ferienvermietung teilen Sie einen Kalender mit der Verwaltung: Sie blocken Ihre eigenen Termine vorab, der Rest ist buchbar. Eigennutzung in der Hochsaison senkt die Einnahmen, daher wählen viele Eigentümer Zeiten außerhalb von Juli–August. Sperrfristen und Ankündigungsregeln hängen vom Vertrag ab. Bei Langzeitvermietung ist Eigennutzung während der Mietzeit nicht möglich."],
+[2,"Habe ich Zugang zu Anlagen und Stränden anderer Projekte des Bauträgers?","Manche Bauträger gewähren Eigentümern Zugang zu Pools, Fitnessstudios oder Beach Clubs ihrer anderen Projekte; bei anderen ist das kostenpflichtig oder nicht vorgesehen. Das hängt vom Projekt ab; lassen Sie es am besten im Kaufvertrag festhalten. Fragen Sie Ihren Berater."],
+[3,"Wie komme ich ohne Taxi vom Flughafen Ercan in die Regionen?","KIBHAS-Busse fahren den ganzen Tag regelmäßig von Ercan nach Nikosia, Kyrenia (Girne) und Famagusta. Nach İskele und Karpaz geht es ab Famagusta mit lokalem Verkehr oder Privattransfer weiter. Am Flughafen gibt es Mietwagen und Sammeltransfers; manche Anlagen organisieren Transfers für Eigentümer."],
+[4,"Wie sichere ich mich beim Kauf vom Bauträger ab?","Der wichtigste Schritt: Der Kaufvertrag wird innerhalb von 21 Tagen nach Unterzeichnung nach Zahlung der Stempelsteuer beim Grundbuchamt registriert. Ein registrierter Vertrag schützt vor dem Verkauf an Dritte und vor späteren Belastungen. Ihr unabhängiger Anwalt prüft außerdem den Grundstückstitel, Hypotheken oder Vermerke und die Baugenehmigung; Zahlungen sollten dem Baufortschritt folgen, mit Verzugsstrafen und Baubeschreibung im Vertrag. Wir arbeiten nur mit etablierten lokalen Bauträgern mit fertiggestellten Projekten."],
+[4,"Gibt es eine staatliche Garantie?","Nein. In Nordzypern gibt es keine staatliche Garantie oder Versicherung für Wohnungen im Bau. Ihre Absicherung sind der registrierte Vertrag, seine Schutzklauseln und die Erfolgsbilanz des Bauträgers. Darum ist die Wahl des Bauträgers die wichtigste Entscheidung."],
+[4,"Wann erhalte ich meinen Grundbuchtitel?","Der Titel wird auf Sie übertragen, wenn der Bau fertig und das Wohnungseigentum eingetragen ist, Ihre Genehmigung des Ministerrats vorliegt und Übertragungsgebühr sowie Mehrwertsteuer bezahlt sind. Die Dauer hängt vom Projekt ab und kann über die Schlüsselübergabe hinausgehen. Bis dahin schützt Sie der registrierte Vertrag. Fragen Sie Ihren Berater nach dem voraussichtlichen Termin."],
+[4,"Muss ich den Anwalt des Bauträgers nehmen?","Nein. Sie können einen unabhängigen Anwalt Ihrer Wahl beauftragen, und das empfehlen wir. Er prüft Vertrag und Titel, registriert den Vertrag und stellt Ihren Antrag auf Erwerbsgenehmigung. Die Honorare sind unterschiedlich; holen Sie vorab ein Angebot ein."]]},
+pl:{c:["Wynajem","Koszty i podatki","Korzystanie","Dojazd","Zabezpieczenie i akt"],all:"Wszystko",upd:"Aktualizacja: październik 2026",map:[4,1,-1,2,2,1],n:[
+[0,"Chcę wynajmować mieszkanie po odbiorze. Kto świadczy tę usługę i ile to kosztuje?","Większość osiedli ma biuro zarządu i wynajmu na miejscu; w każdym regionie działają też lokalne firmy. Pomożemy wybrać odpowiednią opcję. Typowy zakres rynkowy: ok. 4–12% miesięcznego czynszu przy najmie długoterminowym i ok. 15–30% przychodu brutto przy najmie wakacyjnym. Dokładna opłata i zakres usług zależą od umowy."],
+[0,"Kto płaci opłaty osiedlowe, utrzymanie, sprzątanie i naprawy?","Opłata osiedlowa (części wspólne, basen, ogród, ochrona) należy do właściciela, także gdy mieszkanie jest wynajęte. Naprawy wewnątrz mieszkania również. Przy najmie długoterminowym prąd, wodę i internet zwykle płaci najemca. Przy najmie wakacyjnym sprzątanie i pranie między gośćmi wykonuje firma zarządzająca; koszt zwykle odlicza się od przychodu lub dolicza gościom. Szczegóły są w umowie zarządzania."],
+[1,"Jakie podatki płacę co roku jako właściciel?","Podatki przy zakupie (opłata skarbowa, VAT, opłata za przeniesienie) płaci się raz. Potem co roku płacisz podatek od nieruchomości gminie, liczony od powierzchni krytej (m²); kwota jest zwykle niewielka. Wszystkie koszty zakupu zobaczysz w kalkulatorze kosztów."],
+[1,"Czy dochód z najmu jest opodatkowany?","Tak. Na Cyprze Północnym dochód z najmu podlega podatkowi dochodowemu; w praktyce zwykle potrąca się ok. 10%. W zależności od rezydencji podatkowej może być konieczne wykazanie go także w kraju, gdzie umowa podatkowa może pozwolić zaliczyć zapłacony podatek. Zapytaj doradcę podatkowego."],
+[2,"Czy mogę sam korzystać z mieszkania na wakacje?","Tak. Przy najmie wakacyjnym dzielisz kalendarz z firmą zarządzającą: z wyprzedzeniem blokujesz swoje terminy, reszta jest dostępna dla gości. Pobyt w szczycie sezonu zmniejsza przychód, dlatego wielu właścicieli wybiera terminy poza lipcem i sierpniem. Zasady blokad i powiadomień zależą od umowy. Przy najmie długoterminowym nie korzystasz z mieszkania w trakcie najmu."],
+[2,"Czy mam dostęp do obiektów i plaż innych projektów dewelopera?","Niektórzy deweloperzy dają właścicielom dostęp do basenów, siłowni lub klubów plażowych w innych projektach; u innych jest to płatne albo niedostępne. Zależy od projektu; warto wpisać to do umowy. Zapytaj doradcę."],
+[3,"Jak dojechać z lotniska Ercan do regionów bez taksówki?","Autobusy KIBHAS kursują regularnie przez cały dzień z Ercan do Nikozji, Kyrenii (Girne) i Famagusty. Do İskele i Karpazu dalej z Famagusty komunikacją lokalną lub transferem prywatnym. Na lotnisku są wypożyczalnie aut i transfery współdzielone; niektóre osiedla organizują transfery dla właścicieli."],
+[4,"Jak zabezpieczyć się przy zakupie od dewelopera na etapie budowy?","Najważniejsze: umowę sprzedaży rejestruje się w urzędzie ksiąg w ciągu 21 dni od podpisania, po opłaceniu opłaty skarbowej. Zarejestrowana umowa chroni przed sprzedażą lokalu komuś innemu i późniejszymi obciążeniami. Twój niezależny prawnik sprawdza też tytuł do gruntu, hipoteki lub wpisy oraz pozwolenie na budowę; płatności powinny iść za postępem budowy, a w umowie powinny być kary za opóźnienie i specyfikacja. Pracujemy tylko z uznanymi lokalnymi deweloperami z ukończonymi projektami."],
+[4,"Czy jest gwarancja państwowa?","Nie. Na Cyprze Północnym nie ma państwowej gwarancji ani ubezpieczenia dla mieszkań w budowie. Twoje zabezpieczenie to zarejestrowana umowa, jej klauzule ochronne i historia dewelopera, dlatego wybór dewelopera jest najważniejszą decyzją."],
+[4,"Kiedy otrzymam akt własności?","Akt zostaje przeniesiony na Ciebie po zakończeniu budowy i wydaniu tytułu do lokali, uzyskaniu zgody Rady Ministrów oraz opłaceniu opłaty za przeniesienie i VAT. Czas zależy od projektu i może wykraczać poza odbiór kluczy. W tym czasie Twoje prawa chroni zarejestrowana umowa. Zapytaj doradcę o przewidywany termin."],
+[4,"Czy muszę korzystać z prawnika dewelopera?","Nie. Możesz wybrać niezależnego prawnika i to zalecamy. Prawnik sprawdzi umowę i tytuł, zarejestruje umowę i złoży wniosek o zgodę na zakup. Honoraria są różne; poproś wcześniej o wycenę."]]}
+};
+
 /* ================= ETKİLEŞİMLİ İÇERİK: bölge testi, getiri hesaplayıcı, gerçek sorular ================= */
 (()=>{
 const RG=["girne","esentepe","iskele","karpaz"];
@@ -2653,15 +2841,177 @@ document.addEventListener("click",e=>{
 },true);
 
 /* ---- gerçek sorular ---- */
+let fqG=-1;
 function fq(){
-  const t=T().fq, box=$$("fq-box"); if(!box) return;
+  const t=T().fq, g=FQG[root.lang]||FQG.en, box=$$("fq-box"); if(!box) return;
   ["e","h","l"].forEach(k=>{ const el=document.querySelector(`[data-fq="${k}"]`); if(el) el.innerHTML=t[k]; });
-  box.innerHTML=t.i.map(([q,a],j)=>`<details class="fq"${j===0?" open":""}><summary><em>${String(j+1).padStart(2,"0")}</em>${q}</summary><p>${a}</p></details>`).join("")+`<p class="fq-ask">ⓘ ${t.ask}</p>`;
+  const items=[]; t.i.forEach((x,j)=>{ if(g.map[j]>=0) items.push([g.map[j],x[0],x[1]]); }); g.n.forEach(x=>items.push(x));
+  try{ const d=D().t; [4,2,1,1,4,4].forEach((gi,j)=>{ const q=d[`q${j+1}_q`], a=d[`q${j+1}_a`]; if(q&&a) items.push([gi,q,a]); }); }catch(e){}
+  const list=g.c.map((c,ci)=>items.filter(x=>x[0]===ci)).flatMap(a=>a);
+  let n=0;
+  box.innerHTML=`<div class="fq-chips" role="tablist">${[g.all,...g.c].map((c,ci)=>`<button type="button" role="tab" aria-selected="${fqG===ci-1}" data-fg="${ci-1}">${c}</button>`).join("")}</div>`+
+    g.c.map((c,ci)=>`<div class="fq-g" data-g="${ci}"${fqG>=0&&fqG!==ci?" hidden":""}><h3 class="fq-gh">${c}</h3>${list.filter(x=>x[0]===ci).map(([,q,a])=>{n++;return `<details class="fq"><summary><em>${String(n).padStart(2,"0")}</em>${q}</summary><p>${a}</p></details>`;}).join("")}</div>`).join("")+
+    `<p class="fq-ask">ⓘ ${t.ask} <span>${g.upd}</span></p>`;
 }
+document.addEventListener("click",e=>{
+  const b=e.target.closest && e.target.closest(".fq-chips button"); if(!b) return;
+  fqG=+b.dataset.fg; document.querySelectorAll(".fq-chips button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll(".fq-g").forEach(x=>x.hidden=fqG>=0&&+x.dataset.g!==fqG);
+});
 
 function all(){ quiz(); gt(); fq(); }
 const pr=$$("price"); if(pr){ gBud=Math.min(600000,Math.max(80000,+pr.value||gBud)); }
 gYld=(YR[gReg][0]+YR[gReg][1])/2;
+all();
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
+})();
+
+/* ================= EK İÇERİK: karşılaştırma, süreç çizelgesi, yaşam rehberi, davet, danışman, WhatsApp, hikâyeler ================= */
+(function(){
+const RG=["girne","esentepe","iskele","karpaz"], YR={girne:[5,7],esentepe:[6,8],iskele:[7,9],karpaz:[4,6]};
+const CV={girne:{p:4,a:"40",s:5,c:2},esentepe:{p:3,a:"45",s:2,c:4},iskele:{p:2,a:"45",s:3,c:3},karpaz:{p:2,a:"60–90",s:1,c:5}};
+const PHONE="0532 472 41 48", TEL="+905324724148";
+/* Müşteri hikâyeleri: gerçek, izinli örnekler gelince buraya eklenir: {tr:{n:"Ad S.",r:"İstanbul → İskele",q:"..."}, en:{...}} */
+const HIK=[];
+const Y={
+tr:{cmp:{e:"Bölge karşılaştırma",h:"İki bölgeyi <em>yan yana koyun</em>",l:"Getiri, fiyat seviyesi, ulaşım ve yaşam temposu; iki bölge seçin, farkı görün.",rows:{y:"Tahmini brüt kira getirisi",p:"Görece fiyat seviyesi",a:"Ercan Havalimanı'na",b:"Deniz ve sahil",s:"Sosyal hayat",c:"Doğa ve sakinlik",r:"Kiralama tipi"},min:"≈{n} dk",note:"Değerler genel bir fikir vermek içindir ve tahminidir; projeye göre değişir. Güncel rakamları danışmanınıza sorun.",
+ v:{girne:{b:"Koylar, marina ve tarihi liman",r:"Yıl boyu + tatil"},esentepe:{b:"Doğal koylar ve golf sahası",r:"Tatil ve golf"},iskele:{b:"Kilometrelerce kumsal (Long Beach)",r:"Tatil + yıl boyu"},karpaz:{b:"Bakir kumsallar (Altın Kum)",r:"Yaz sezonu, butik"}}},
+ tl:{e:"Adım adım satın alma",h:"İlk görüşmeden <em>tapuya kadar</em>",l:"Her adımın tahmini süresi ve ne olduğu. Süreler projeye ve döneme göre değişebilir.",
+ s:[["İlk görüşme ve proje önerisi","1–3 gün","Bütçenizi ve hedefinizi konuşuruz; size uygun 3 projeyi fiyat listesiyle göndeririz."],["Keşif gezisi veya canlı video tur","2–4 gün","Adada projeleri birlikte gezeriz ya da daireyi video görüşmeyle canlı gösteririz."],["Rezervasyon","Aynı gün","Rezervasyon bedeliyle seçtiğiniz daire adınıza bloke edilir."],["Sözleşme ve avukat kontrolü","1–2 hafta","Bağımsız avukatınız sözleşmeyi ve tapu kayıtlarını inceler, sözleşme imzalanır."],["Damga vergisi ve sözleşme kaydı","21 gün içinde","%0,5 damga vergisi ödenir, sözleşme Tapu Dairesi'ne kaydedilir; haklarınız koruma altına girer."],["Satın alma izni başvurusu","Değişir","Bakanlar Kurulu izni avukatınız aracılığıyla istenir; bu sırada ödeme planınız devam eder."],["Taksitler ve inşaat","Teslime kadar","Ödemeler plana göre sürer; inşaatın ilerleyişini takip edersiniz."],["Teslim ve anahtar","İnşaat bitince","Daireyi kontrol edip anahtarınızı alırsınız. İsterseniz kiralama yönetimine geçilir."],["Koçan devri","Projeye göre","Kat mülkiyeti çıkıp izniniz geldiğinde devir harcı ödenir ve koçan adınıza geçer."]]},
+ lv:{e:"Yaşam rehberi",h:"Adada <em>günlük hayat</em>",l:"Taşınmayı ya da uzun süre kalmayı düşünenler için pratik bilgiler.",
+ i:[["Sağlık","Girne, Lefkoşa ve Gazimağusa'da özel ve devlet hastaneleri var. Girne, Esentepe ve İskele'den büyük bir hastaneye genellikle yarım saat civarında ulaşılır; Karpaz'ın uç köylerinden daha uzun sürer. Özel sağlık sigortası öneririz."],["Eğitim","Ada genelinde 20'yi aşkın üniversite ve İngilizce eğitim veren özel okullar var; çoğu Lefkoşa, Girne ve Gazimağusa'da."],["Ulaşım","Türkiye'nin birçok şehrinden Ercan Havalimanı'na doğrudan uçuş var; diğer ülkelerden bağlantılar Türkiye üzerinden. Trafik soldan akar ve araç kiralamak kolaydır."],["Para ve banka","Resmi para birimi Türk lirası. Emlak ve turizmde sterlin ve euro yaygın. Yerel bankada hesap açabilirsiniz."],["Günlük yaşam","Prizler İngiliz tipi (üç uçlu), yanınıza adaptör alın. Market, eczane ve restoranlar her bölgede var; Karpaz daha sakin, seçenek daha az."],["İklim","Yılda 300'den fazla güneşli gün. Deniz genellikle mayıs–ekim arası yüzmeye uygun; yazlar sıcak, kışlar ılık ve yağışlı."]]},
+ iv:{e:"Kıbrıs'ı yerinde görün",h:"Keşif gezinizi <em>birlikte planlayalım</em>",l:"Projeleri yerinde görmek isteyenler için hangi gün hangi projeleri göreceğinizi birlikte planlıyoruz. Yatırımcı buluşması ve sunum tarihleri belli olduğunda da ilk size haber verelim.",
+ b:["Programı bütçenize ve bölge tercihinize göre hazırlarız","Projeleri ve çevresini yerinde görürsünüz","İsterseniz önce İstanbul ofisimizde ön görüşme yaparız"],trip:"Keşif gezisi planlayalım",ev:"Buluşmalardan haberdar et",wa:"Merhaba, Kıbrıs keşif gezisi planlamak istiyorum."},
+ ad:{e:"Danışmanınız",n:"Umut",r:"Kıbrıs yatırım danışmanı · RE/MAX Doğuş",t:"Bölge, proje ya da süreçle ilgili sorularınızı doğrudan bana yazabilirsiniz.",wa:"WhatsApp'tan yaz",call:"Ara"},
+ st:{e:"Müşteri hikâyeleri",h:"Kıbrıs'ta ev alanlar <em>anlatıyor</em>"},waf:"WhatsApp'tan yazın"},
+en:{cmp:{e:"Compare regions",h:"Put two regions <em>side by side</em>",l:"Yield, price level, access and pace of life; pick two regions and see the difference.",rows:{y:"Estimated gross rental yield",p:"Relative price level",a:"To Ercan Airport",b:"Sea and beach",s:"Social life",c:"Nature and calm",r:"Rental type"},min:"≈{n} min",note:"Values are indicative estimates and vary by project. Ask your adviser for current figures.",
+ v:{girne:{b:"Coves, marina and historic harbour",r:"Year-round + holiday"},esentepe:{b:"Natural coves and golf course",r:"Holiday and golf"},iskele:{b:"Miles of sandy beach (Long Beach)",r:"Holiday + year-round"},karpaz:{b:"Unspoilt beaches (Golden Beach)",r:"Summer season, boutique"}}},
+ tl:{e:"Step by step",h:"From first call <em>to title deed</em>",l:"What happens at each step and roughly how long it takes. Timings vary by project and period.",
+ s:[["First call and project shortlist","1–3 days","We discuss your budget and goal and send 3 suitable projects with price lists."],["Viewing trip or live video tour","2–4 days","We visit projects together on the island, or show the apartment live by video call."],["Reservation","Same day","A reservation fee holds your chosen apartment in your name."],["Contract and lawyer check","1–2 weeks","Your independent lawyer reviews the contract and land records, and the contract is signed."],["Stamp duty and contract registration","Within 21 days","0.5% stamp duty is paid and the contract is registered at the Land Registry, protecting your rights."],["Purchase permission","Varies","Council of Ministers permission is applied for through your lawyer; your payment plan continues meanwhile."],["Instalments and construction","Until handover","Payments follow the plan and you follow construction progress."],["Handover and keys","On completion","You inspect the apartment and receive the keys. Rental management can start if you wish."],["Title deed transfer","Depends on project","Once strata title is issued and your permission is granted, the transfer fee is paid and the deed passes to you."]]},
+ lv:{e:"Living guide",h:"Everyday <em>island life</em>",l:"Practical information if you are thinking of moving or staying longer.",
+ i:[["Healthcare","Kyrenia, Nicosia and Famagusta have private and state hospitals. From Girne, Esentepe and İskele a major hospital is usually about half an hour away; longer from the far villages of Karpaz. We recommend private health insurance."],["Education","There are more than 20 universities and private schools teaching in English, mostly in Nicosia, Kyrenia and Famagusta."],["Getting around","Ercan Airport is reached via Türkiye, with direct flights from many Turkish cities. Traffic drives on the left and car hire is easy."],["Money and banking","The official currency is the Turkish lira; pounds and euros are common in property and tourism. You can open a local bank account."],["Daily life","Sockets are UK type (three-pin). Supermarkets, pharmacies and restaurants are in every region; Karpaz is quieter with fewer options."],["Climate","More than 300 sunny days a year. The sea is usually good for swimming from May to October; summers are hot, winters mild and rainy."]]},
+ iv:{e:"See Cyprus for yourself",h:"Let's plan <em>your viewing trip</em>",l:"If you want to see projects in person, we plan together which projects to see on which days. We will also let you know first when investor meetings and presentations are scheduled.",
+ b:["We plan the programme around your budget and preferred region","You see the projects and their surroundings in person","If you like, we meet first at our Istanbul office"],trip:"Plan a viewing trip",ev:"Notify me about meetings",wa:"Hello, I'd like to plan a viewing trip to Cyprus."},
+ ad:{e:"Your adviser",n:"Umut",r:"Cyprus investment adviser · RE/MAX Doğuş",t:"Send me your questions about regions, projects or the process directly.",wa:"Message on WhatsApp",call:"Call"},
+ st:{e:"Client stories",h:"Buyers in Cyprus <em>tell their story</em>"},waf:"Message us on WhatsApp"},
+ru:{cmp:{e:"Сравнение регионов",h:"Сравните два региона <em>рядом</em>",l:"Доходность, уровень цен, транспорт и ритм жизни: выберите два региона и увидьте разницу.",rows:{y:"Ориентировочная валовая доходность",p:"Относительный уровень цен",a:"До аэропорта Эрджан",b:"Море и пляж",s:"Социальная жизнь",c:"Природа и тишина",r:"Тип аренды"},min:"≈{n} мин",note:"Значения ориентировочные и зависят от проекта. Актуальные цифры уточните у консультанта.",
+ v:{girne:{b:"Бухты, марина и старая гавань",r:"Круглый год + отпуск"},esentepe:{b:"Природные бухты и гольф-поле",r:"Отпуск и гольф"},iskele:{b:"Километры песчаного пляжа (Long Beach)",r:"Отпуск + круглый год"},karpaz:{b:"Нетронутые пляжи (Золотой пляж)",r:"Летний сезон, бутик"}}},
+ tl:{e:"Шаг за шагом",h:"От первого звонка <em>до тапу</em>",l:"Что происходит на каждом этапе и примерно сколько это занимает. Сроки зависят от проекта и периода.",
+ s:[["Первый разговор и подбор проектов","1–3 дня","Обсуждаем бюджет и цель и отправляем 3 подходящих проекта с прайс-листами."],["Ознакомительная поездка или видеотур","2–4 дня","Вместе осматриваем проекты на острове или показываем квартиру по видеосвязи."],["Бронирование","В тот же день","Бронировочный взнос закрепляет выбранную квартиру за вами."],["Договор и проверка юристом","1–2 недели","Независимый юрист проверяет договор и земельные записи, договор подписывается."],["Гербовый сбор и регистрация договора","В течение 21 дня","Оплачивается гербовый сбор 0,5%, договор регистрируется в Земельном департаменте, ваши права защищены."],["Разрешение на покупку","По-разному","Разрешение Совета министров запрашивается через юриста; график платежей при этом продолжается."],["Платежи и строительство","До передачи","Платежи идут по графику, вы следите за ходом строительства."],["Передача и ключи","После завершения","Вы проверяете квартиру и получаете ключи. При желании начинается управление арендой."],["Переоформление тапу","Зависит от проекта","После оформления поэтажной собственности и получения разрешения оплачивается сбор, и тапу переходит к вам."]]},
+ lv:{e:"Гид по жизни",h:"Повседневная <em>жизнь на острове</em>",l:"Практическая информация для тех, кто думает о переезде или долгом пребывании.",
+ i:[["Медицина","В Кирении, Никосии и Фамагусте есть частные и государственные больницы. Из Гирне, Эсентепе и Искеле до крупной больницы обычно около получаса; из дальних сёл Карпаса дольше. Рекомендуем частную медстраховку."],["Образование","Более 20 университетов и частные школы с обучением на английском, в основном в Никосии, Кирении и Фамагусте."],["Транспорт","В аэропорт Эрджан летают через Турцию, с прямыми рейсами из многих турецких городов. Движение левостороннее, авто легко арендовать."],["Деньги и банки","Официальная валюта — турецкая лира; в недвижимости и туризме распространены фунты и евро. Можно открыть местный банковский счёт."],["Быт","Розетки британского типа (три штыря). Магазины, аптеки и рестораны есть в каждом регионе; в Карпасе тише и выбор меньше."],["Климат","Более 300 солнечных дней в году. Купаться обычно можно с мая по октябрь; лето жаркое, зима мягкая и дождливая."]]},
+ iv:{e:"Увидьте Кипр сами",h:"Спланируем <em>вашу поездку</em>",l:"Если хотите увидеть проекты вживую, вместе решим, какие проекты смотреть и в какие дни. Также первыми сообщим вам о датах встреч с инвесторами и презентаций.",
+ b:["Составим программу под ваш бюджет и регион","Вы увидите проекты и окрестности вживую","При желании сначала встретимся в нашем офисе в Стамбуле"],trip:"Спланировать поездку",ev:"Сообщить о встречах",wa:"Здравствуйте, хочу спланировать ознакомительную поездку на Кипр."},
+ ad:{e:"Ваш консультант",n:"Умут",r:"Консультант по инвестициям на Кипре · RE/MAX Doğuş",t:"Пишите мне напрямую любые вопросы о регионах, проектах и процессе.",wa:"Написать в WhatsApp",call:"Позвонить"},
+ st:{e:"Истории клиентов",h:"Покупатели на Кипре <em>рассказывают</em>"},waf:"Написать в WhatsApp"},
+fa:{cmp:{e:"مقایسه مناطق",h:"دو منطقه را <em>کنار هم بگذارید</em>",l:"بازده، سطح قیمت، دسترسی و آهنگ زندگی؛ دو منطقه را انتخاب کنید و تفاوت را ببینید.",rows:{y:"بازده ناخالص اجاره (تخمینی)",p:"سطح نسبی قیمت",a:"تا فرودگاه ارجان",b:"دریا و ساحل",s:"زندگی اجتماعی",c:"طبیعت و آرامش",r:"نوع اجاره"},min:"≈{n} دقیقه",note:"مقادیر تخمینی و برای دید کلی هستند و بسته به پروژه تغییر می‌کنند. ارقام به‌روز را از مشاور بپرسید.",
+ v:{girne:{b:"خلیج‌ها، مارینا و بندر تاریخی",r:"تمام سال + تعطیلات"},esentepe:{b:"خلیج‌های طبیعی و زمین گلف",r:"تعطیلات و گلف"},iskele:{b:"کیلومترها ساحل شنی (لانگ بیچ)",r:"تعطیلات + تمام سال"},karpaz:{b:"سواحل بکر (ساحل طلایی)",r:"فصل تابستان، بوتیک"}}},
+ tl:{e:"گام به گام",h:"از اولین گفتگو <em>تا سند</em>",l:"هر مرحله چیست و تقریباً چقدر طول می‌کشد. زمان‌ها بسته به پروژه و دوره تغییر می‌کند.",
+ s:[["گفتگوی اول و پیشنهاد پروژه","۱ تا ۳ روز","درباره بودجه و هدفتان صحبت می‌کنیم و ۳ پروژه مناسب را با لیست قیمت می‌فرستیم."],["سفر بازدید یا تور ویدیویی زنده","۲ تا ۴ روز","پروژه‌ها را با هم در جزیره می‌بینیم یا آپارتمان را با تماس تصویری زنده نشان می‌دهیم."],["رزرو","همان روز","با پرداخت ودیعه رزرو، آپارتمان انتخابی به نام شما نگه داشته می‌شود."],["قرارداد و بررسی وکیل","۱ تا ۲ هفته","وکیل مستقل شما قرارداد و سوابق ثبتی را بررسی می‌کند و قرارداد امضا می‌شود."],["مالیات تمبر و ثبت قرارداد","ظرف ۲۱ روز","مالیات تمبر ۰٫۵٪ پرداخت و قرارداد در اداره ثبت املاک ثبت می‌شود و حقوق شما محفوظ می‌ماند."],["مجوز خرید","متغیر","مجوز هیئت وزیران از طریق وکیل درخواست می‌شود و برنامه پرداخت شما ادامه دارد."],["اقساط و ساخت","تا تحویل","پرداخت‌ها طبق برنامه ادامه دارد و پیشرفت ساخت را دنبال می‌کنید."],["تحویل و کلید","پس از اتمام ساخت","آپارتمان را بررسی و کلید را دریافت می‌کنید. در صورت تمایل مدیریت اجاره آغاز می‌شود."],["انتقال سند","بسته به پروژه","پس از صدور سند تفکیکی و دریافت مجوز، هزینه انتقال پرداخت و سند به نام شما می‌شود."]]},
+ lv:{e:"راهنمای زندگی",h:"زندگی روزمره <em>در جزیره</em>",l:"اطلاعات کاربردی برای کسانی که به مهاجرت یا اقامت طولانی فکر می‌کنند.",
+ i:[["درمان","در گیرنه، نیکوزیا و فاماگوستا بیمارستان‌های خصوصی و دولتی هست. از گیرنه، اسنتپه و ایسکله معمولاً حدود نیم ساعت تا یک بیمارستان بزرگ راه است؛ از روستاهای دورتر کارپاز بیشتر. بیمه درمان خصوصی را توصیه می‌کنیم."],["آموزش","بیش از ۲۰ دانشگاه و مدارس خصوصی با آموزش انگلیسی، بیشتر در نیکوزیا، گیرنه و فاماگوستا."],["رفت‌وآمد","پروازهای فرودگاه ارجان از طریق ترکیه است و از بسیاری از شهرهای ترکیه پرواز مستقیم دارد. رانندگی از سمت چپ است و اجاره خودرو آسان است."],["پول و بانک","واحد پول رسمی لیر ترکیه است؛ پوند و یورو در املاک و گردشگری رایج است. می‌توانید حساب بانکی محلی باز کنید."],["زندگی روزمره","پریزها از نوع بریتانیایی (سه‌شاخه) هستند. سوپرمارکت، داروخانه و رستوران در همه مناطق هست؛ کارپاز آرام‌تر است و گزینه‌های کمتری دارد."],["آب‌وهوا","بیش از ۳۰۰ روز آفتابی در سال. دریا معمولاً از اردیبهشت تا مهر برای شنا مناسب است؛ تابستان گرم و زمستان معتدل و بارانی."]]},
+ iv:{e:"قبرس را از نزدیک ببینید",h:"سفر بازدید شما را <em>با هم برنامه‌ریزی کنیم</em>",l:"اگر می‌خواهید پروژه‌ها را از نزدیک ببینید، با هم برنامه می‌ریزیم که کدام روز کدام پروژه را ببینید. زمان جلسات سرمایه‌گذاران و ارائه‌ها را هم اول به شما خبر می‌دهیم.",
+ b:["برنامه را بر اساس بودجه و منطقه دلخواهتان می‌چینیم","پروژه‌ها و اطرافشان را از نزدیک می‌بینید","در صورت تمایل ابتدا در دفتر استانبول ما دیدار می‌کنیم"],trip:"برنامه‌ریزی سفر بازدید",ev:"از جلسات باخبرم کنید",wa:"سلام، می‌خواهم سفر بازدید به قبرس برنامه‌ریزی کنم."},
+ ad:{e:"مشاور شما",n:"Umut",r:"مشاور سرمایه‌گذاری قبرس · RE/MAX Doğuş",t:"پرسش‌های خود درباره مناطق، پروژه‌ها یا روند خرید را مستقیم برای من بفرستید.",wa:"پیام در واتساپ",call:"تماس"},
+ st:{e:"داستان مشتریان",h:"خریداران در قبرس <em>تعریف می‌کنند</em>"},waf:"پیام در واتساپ"},
+de:{cmp:{e:"Regionen vergleichen",h:"Zwei Regionen <em>im direkten Vergleich</em>",l:"Rendite, Preisniveau, Anbindung und Lebenstempo: Wählen Sie zwei Regionen und sehen Sie den Unterschied.",rows:{y:"Geschätzte Bruttomietrendite",p:"Relatives Preisniveau",a:"Zum Flughafen Ercan",b:"Meer und Strand",s:"Gesellschaftsleben",c:"Natur und Ruhe",r:"Vermietungsart"},min:"≈{n} Min.",note:"Die Werte sind Schätzungen zur Orientierung und hängen vom Projekt ab. Aktuelle Zahlen erhalten Sie von Ihrem Berater.",
+ v:{girne:{b:"Buchten, Marina und historischer Hafen",r:"Ganzjährig + Urlaub"},esentepe:{b:"Naturbuchten und Golfplatz",r:"Urlaub und Golf"},iskele:{b:"Kilometerlanger Sandstrand (Long Beach)",r:"Urlaub + ganzjährig"},karpaz:{b:"Unberührte Strände (Golden Beach)",r:"Sommersaison, Boutique"}}},
+ tl:{e:"Schritt für Schritt",h:"Vom ersten Gespräch <em>bis zum Grundbuch</em>",l:"Was in jedem Schritt passiert und wie lange es ungefähr dauert. Zeiten variieren je nach Projekt und Zeitraum.",
+ s:[["Erstgespräch und Projektauswahl","1–3 Tage","Wir besprechen Budget und Ziel und senden Ihnen 3 passende Projekte mit Preislisten."],["Besichtigungsreise oder Live-Videotour","2–4 Tage","Wir besichtigen die Projekte gemeinsam auf der Insel oder zeigen die Wohnung live per Videoanruf."],["Reservierung","Am selben Tag","Mit einer Reservierungsgebühr wird die gewählte Wohnung für Sie geblockt."],["Vertrag und Anwaltsprüfung","1–2 Wochen","Ihr unabhängiger Anwalt prüft Vertrag und Grundbuchdaten, dann wird unterschrieben."],["Stempelsteuer und Vertragsregistrierung","Innerhalb von 21 Tagen","0,5 % Stempelsteuer werden bezahlt und der Vertrag beim Grundbuchamt registriert; Ihre Rechte sind geschützt."],["Erwerbsgenehmigung","Unterschiedlich","Die Genehmigung des Ministerrats wird über Ihren Anwalt beantragt; Ihr Zahlungsplan läuft weiter."],["Raten und Bau","Bis zur Übergabe","Die Zahlungen folgen dem Plan, Sie verfolgen den Baufortschritt."],["Übergabe und Schlüssel","Nach Fertigstellung","Sie prüfen die Wohnung und erhalten die Schlüssel. Auf Wunsch startet die Vermietungsverwaltung."],["Titelübertragung","Je nach Projekt","Sobald das Wohnungseigentum eingetragen und Ihre Genehmigung erteilt ist, wird die Gebühr bezahlt und der Titel auf Sie übertragen."]]},
+ lv:{e:"Lebensratgeber",h:"Alltag <em>auf der Insel</em>",l:"Praktische Informationen, wenn Sie umziehen oder länger bleiben möchten.",
+ i:[["Gesundheit","In Kyrenia, Nikosia und Famagusta gibt es private und staatliche Krankenhäuser. Von Girne, Esentepe und İskele ist ein großes Krankenhaus meist etwa eine halbe Stunde entfernt; aus den entlegenen Dörfern von Karpaz länger. Wir empfehlen eine private Krankenversicherung."],["Bildung","Über 20 Universitäten und Privatschulen mit Unterricht auf Englisch, überwiegend in Nikosia, Kyrenia und Famagusta."],["Unterwegs","Ercan wird über die Türkei angeflogen, mit Direktflügen aus vielen türkischen Städten. Es herrscht Linksverkehr, Mietwagen sind leicht zu bekommen."],["Geld und Bank","Offizielle Währung ist die türkische Lira; Pfund und Euro sind bei Immobilien und im Tourismus üblich. Ein lokales Bankkonto ist möglich."],["Alltag","Steckdosen nach britischem Typ (drei Stifte). Supermärkte, Apotheken und Restaurants gibt es in jeder Region; Karpaz ist ruhiger mit weniger Auswahl."],["Klima","Mehr als 300 Sonnentage im Jahr. Baden meist von Mai bis Oktober; Sommer heiß, Winter mild und regnerisch."]]},
+ iv:{e:"Zypern vor Ort erleben",h:"Planen wir <em>Ihre Besichtigungsreise</em>",l:"Wenn Sie Projekte vor Ort sehen möchten, planen wir gemeinsam, welche Projekte Sie an welchen Tagen besichtigen. Termine für Investorentreffen und Präsentationen erfahren Sie zuerst von uns.",
+ b:["Wir planen das Programm nach Budget und Wunschregion","Sie sehen Projekte und Umgebung persönlich","Auf Wunsch treffen wir uns vorher in unserem Istanbuler Büro"],trip:"Besichtigungsreise planen",ev:"Über Treffen informieren",wa:"Hallo, ich möchte eine Besichtigungsreise nach Zypern planen."},
+ ad:{e:"Ihr Berater",n:"Umut",r:"Investmentberater Zypern · RE/MAX Doğuş",t:"Schreiben Sie mir Ihre Fragen zu Regionen, Projekten oder Ablauf direkt.",wa:"Per WhatsApp schreiben",call:"Anrufen"},
+ st:{e:"Kundengeschichten",h:"Käufer auf Zypern <em>erzählen</em>"},waf:"Per WhatsApp schreiben"},
+pl:{cmp:{e:"Porównaj regiony",h:"Dwa regiony <em>obok siebie</em>",l:"Zwrot, poziom cen, dojazd i tempo życia: wybierz dwa regiony i zobacz różnicę.",rows:{y:"Szacowana stopa zwrotu brutto",p:"Względny poziom cen",a:"Do lotniska Ercan",b:"Morze i plaża",s:"Życie towarzyskie",c:"Przyroda i spokój",r:"Rodzaj najmu"},min:"≈{n} min",note:"Wartości są orientacyjnymi szacunkami i zależą od projektu. Aktualne dane poda doradca.",
+ v:{girne:{b:"Zatoczki, marina i zabytkowy port",r:"Cały rok + wakacje"},esentepe:{b:"Naturalne zatoczki i pole golfowe",r:"Wakacje i golf"},iskele:{b:"Kilometry piaszczystej plaży (Long Beach)",r:"Wakacje + cały rok"},karpaz:{b:"Dzikie plaże (Złota Plaża)",r:"Sezon letni, butikowy"}}},
+ tl:{e:"Krok po kroku",h:"Od pierwszej rozmowy <em>do aktu własności</em>",l:"Co dzieje się na każdym etapie i ile mniej więcej trwa. Czas zależy od projektu i okresu.",
+ s:[["Pierwsza rozmowa i wybór projektów","1–3 dni","Omawiamy budżet i cel, wysyłamy 3 pasujące projekty z cennikami."],["Wyjazd lub wideo na żywo","2–4 dni","Oglądamy projekty razem na wyspie albo pokazujemy mieszkanie na żywo przez wideo."],["Rezerwacja","Tego samego dnia","Opłata rezerwacyjna blokuje wybrane mieszkanie na Ciebie."],["Umowa i kontrola prawnika","1–2 tygodnie","Niezależny prawnik sprawdza umowę i księgi, następuje podpisanie."],["Opłata skarbowa i rejestracja umowy","W ciągu 21 dni","Płacisz 0,5% opłaty skarbowej, umowa zostaje zarejestrowana w urzędzie ksiąg, Twoje prawa są chronione."],["Zgoda na zakup","Różnie","O zgodę Rady Ministrów występuje prawnik; plan płatności trwa w tym czasie."],["Raty i budowa","Do odbioru","Płatności idą zgodnie z planem, śledzisz postęp budowy."],["Odbiór i klucze","Po zakończeniu budowy","Sprawdzasz mieszkanie i odbierasz klucze. Na życzenie startuje zarządzanie najmem."],["Przeniesienie aktu","Zależnie od projektu","Po wydaniu tytułu do lokali i uzyskaniu zgody płacisz opłatę, a akt przechodzi na Ciebie."]]},
+ lv:{e:"Przewodnik po życiu",h:"Codzienność <em>na wyspie</em>",l:"Praktyczne informacje dla myślących o przeprowadzce lub dłuższym pobycie.",
+ i:[["Zdrowie","W Kyrenii, Nikozji i Famaguście są szpitale prywatne i państwowe. Z Girne, Esentepe i İskele do dużego szpitala jest zwykle około pół godziny; z dalekich wsi Karpazu dłużej. Polecamy prywatne ubezpieczenie zdrowotne."],["Edukacja","Ponad 20 uczelni i prywatne szkoły z nauką po angielsku, głównie w Nikozji, Kyrenii i Famaguście."],["Transport","Na lotnisko Ercan lata się przez Turcję, z bezpośrednimi lotami z wielu tureckich miast. Ruch jest lewostronny, auto łatwo wynająć."],["Pieniądze i bank","Oficjalną walutą jest lira turecka; w nieruchomościach i turystyce powszechne są funty i euro. Można założyć lokalne konto."],["Codzienność","Gniazdka typu brytyjskiego (trzy bolce). Sklepy, apteki i restauracje są w każdym regionie; Karpaz jest spokojniejszy, z mniejszym wyborem."],["Klimat","Ponad 300 słonecznych dni w roku. Kąpiel zwykle od maja do października; lata gorące, zimy łagodne i deszczowe."]]},
+ iv:{e:"Zobacz Cypr na miejscu",h:"Zaplanujmy <em>Twój wyjazd</em>",l:"Jeśli chcesz zobaczyć projekty osobiście, razem ustalimy, które projekty i w jakie dni. O terminach spotkań z inwestorami i prezentacji poinformujemy Cię jako pierwszego.",
+ b:["Program układamy pod budżet i wybrany region","Oglądasz projekty i okolicę osobiście","Na życzenie spotkamy się najpierw w naszym biurze w Stambule"],trip:"Zaplanuj wyjazd",ev:"Powiadom o spotkaniach",wa:"Dzień dobry, chcę zaplanować wyjazd na Cypr."},
+ ad:{e:"Twój doradca",n:"Umut",r:"Doradca inwestycyjny Cypr · RE/MAX Doğuş",t:"Pisz do mnie bezpośrednio z pytaniami o regiony, projekty i proces.",wa:"Napisz na WhatsApp",call:"Zadzwoń"},
+ st:{e:"Historie klientów",h:"Kupujący na Cyprze <em>opowiadają</em>"},waf:"Napisz na WhatsApp"}
+};
+const root=document.documentElement, $$=id=>document.getElementById(id), L=()=>Y[root.lang]?root.lang:"en", T=()=>Y[L()];
+const RN=id=>{ try{ return D().regions[id]; }catch(e){ return {name:id}; } };
+const fill=(s,o)=>s.replace(/\{(\w+)\}/g,(_,k)=>o[k]);
+const pctf=n=>{ const l=root.lang, v=(+n).toLocaleString({tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL"}[l]||"en-GB"); return l==="tr"?"%"+v:(["ru","de","pl"].includes(l)?v+" %":v+"%"); };
+const wa=msg=>{ let n="905324724148"; try{ n=CONFIG.WHATSAPP||n; }catch(e){} return `https://wa.me/${n}?text=${encodeURIComponent(msg)}`; };
+const wa0=()=>{ try{ return D().wa0; }catch(e){ return ""; } };
+const head=(attr,o)=>["e","h","l"].forEach(k=>document.querySelectorAll(`[${attr}="${k}"]`).forEach(el=>{ if(o[k]!=null) el.innerHTML=o[k]; }));
+const dots=n=>`<span class="cp-dots" aria-label="${n}/5">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+
+/* karşılaştırma */
+let cA="iskele", cB="girne";
+function cmp(){
+  const t=T().cmp, box=$$("cp-box"); if(!box) return; head("data-cp",t);
+  const val=(id,k)=>{ const c=CV[id];
+    if(k==="y") return `<b>${pctf(YR[id][0])}–${pctf(YR[id][1]).replace(/^%/,"")}</b>`;
+    if(k==="p") return dots(c.p); if(k==="s") return dots(c.s); if(k==="c") return dots(c.c);
+    if(k==="a") return `<b>${fill(t.min,{n:c.a})}</b>`; return t.v[id][k]; };
+  const pick=(side,cur)=>`<div class="cp-pick" role="radiogroup" data-side="${side}">${RG.map(id=>`<button type="button" role="radio" aria-checked="${id===cur}" data-id="${id}">${RN(id).name}</button>`).join("")}</div>`;
+  box.innerHTML=`<div class="cp-head"><div><span class="cp-vs">A</span>${pick("a",cA)}</div><div><span class="cp-vs">B</span>${pick("b",cB)}</div></div>
+   <div class="cp-tbl">${["y","p","a","b","s","c","r"].map(k=>`<div class="cp-row"><span class="cp-k">${t.rows[k]}</span><div class="cp-v">${val(cA,k)}</div><div class="cp-v">${val(cB,k)}</div></div>`).join("")}</div>
+   <p class="note">${t.note}</p>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cp-pick button"); if(!b) return;
+  if(b.parentNode.dataset.side==="a") cA=b.dataset.id; else cB=b.dataset.id; cmp(); });
+
+/* süreç çizelgesi */
+function tl(){
+  const t=T().tl, box=$$("tl-box"); if(!box) return; head("data-tl",t);
+  box.innerHTML=`<ol class="tl">${t.s.map(([h,d,p],j)=>`<li class="rv" style="--d:${Math.min(j,4)*.06}s"><span class="tl-n">${String(j+1).padStart(2,"0")}</span><div><span class="tl-d">${d}</span><h3>${h}</h3><p>${p}</p></div></li>`).join("")}</ol>`;
+  box.querySelectorAll(".rv").forEach(el=>{ if(!document.documentElement.classList.contains("rvon")) return; if("IntersectionObserver" in window){ io.observe(el); } else el.classList.add("in"); });
+}
+const io="IntersectionObserver" in window ? new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } }),{rootMargin:"0px 0px -8% 0px"}) : null;
+function tlProg(){ const ol=document.querySelector(".tl"); if(!ol||!ol.offsetParent) return; const r=ol.getBoundingClientRect(), v=innerHeight*.6; ol.style.setProperty("--p",Math.max(0,Math.min(1,(v-r.top)/r.height))); }
+addEventListener("scroll",tlProg,{passive:true});
+
+/* yaşam rehberi */
+const LIC=["M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z","M3 9l9-5 9 5-9 5-9-5zm4 2.5V16c0 1.5 2.5 3 5 3s5-1.5 5-3v-4.5","M2 16l20-8-6 12-3-5-5 3 1-5z","M3 7h18v10H3zM12 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0","M5 8h14l-1.5 11h-11zM9 8V6a3 3 0 0 1 6 0v2","M12 4v2m0 12v2M4 12h2m12 0h2M6.3 6.3l1.4 1.4m8.6 8.6l1.4 1.4m0-11.4l-1.4 1.4M7.7 16.3l-1.4 1.4M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8z"];
+function lv(){
+  const t=T().lv, box=$$("lv-box"); if(!box) return; head("data-lv",t);
+  box.innerHTML=t.i.map(([h,p],j)=>`<article class="lv-c"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${LIC[j]}"/></svg><h3>${h}</h3><p>${p}</p></article>`).join("");
+}
+
+/* davet */
+function iv(){
+  const t=T().iv, box=$$("iv-box"); if(!box) return; head("data-iv",t);
+  box.innerHTML=`<ul class="iv-b">${t.b.map(x=>`<li>${x}</li>`).join("")}</ul>
+   <div class="iv-cta"><a class="btn btn-sun" href="${wa(t.wa)}" target="_blank" rel="noopener" data-ev="trip_wa">${t.trip} →</a><a class="btn btn-ghost" href="#/form" data-ev="event_notify">${t.ev}</a></div>`;
+}
+
+/* danışman kartı */
+function ad(){
+  const t=T().ad;
+  document.querySelectorAll(".adv").forEach(box=>{
+    box.innerHTML=`<div class="adv-ph" aria-hidden="true">${t.n.charAt(0)}</div>
+     <div class="adv-tx"><span class="eyebrow">${t.e}</span><h3>${t.n}</h3><span class="adv-r">${t.r}</span><p>${t.t}</p>
+     <div class="adv-cta"><a class="btn btn-wa2" href="${wa(wa0())}" target="_blank" rel="noopener" data-ev="adv_wa">${WAI}${t.wa}</a><a class="btn btn-ghost" href="tel:${TEL}" data-ev="adv_call">${t.call} · <span dir="ltr">${PHONE}</span></a></div></div>`;
+  });
+}
+const WAI=`<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3z"/></svg>`;
+
+/* WhatsApp yüzen buton */
+function waf(){
+  let a=$$("waf"); if(!a){ a=document.createElement("a"); a.id="waf"; a.className="waf"; a.target="_blank"; a.rel="noopener"; a.dataset.ev="wa_float"; a.innerHTML=WAI; document.body.appendChild(a); }
+  a.href=wa(wa0()); a.setAttribute("aria-label",T().waf); a.title=T().waf;
+}
+
+/* müşteri hikâyeleri (gerçek örnek gelene kadar gizli) */
+function st(){
+  const sec=$$("hikayeler"), box=$$("st-box"); if(!sec||!box) return;
+  if(!HIK.length){ sec.hidden=true; return; }
+  sec.hidden=false; head("data-st",T().st);
+  box.innerHTML=HIK.map(h=>{ const x=h[L()]||h.en||h.tr; return `<figure class="st-c"><blockquote>${x.q}</blockquote><figcaption><b>${x.n}</b><span>${x.r}</span></figcaption></figure>`; }).join("");
+}
+
+document.addEventListener("click",e=>{ const a=e.target.closest&&e.target.closest("[data-ev]"); if(a&&/^(trip_wa|event_notify|adv_wa|adv_call|wa_float)$/.test(a.dataset.ev)){ try{ typeof track==="function"&&track(a.dataset.ev,{dil:root.lang}); }catch(x){} } });
+
+function all(){ cmp(); tl(); lv(); iv(); ad(); waf(); st(); tlProg(); }
 all();
 new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
