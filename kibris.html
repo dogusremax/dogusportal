@@ -1756,7 +1756,7 @@ function applyLang(lang, user){
   $("langcode").textContent = L.toUpperCase();
   document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-selected", b.dataset.lang===L));
   $("wa-sticky").href = waLink(sent);
-  { const sl=SEAL[L]||SEAL.en; $("seal-ring").textContent=sl[0]; $("seal-l1").textContent=sl[1]; $("seal-l2").textContent=sl[2]; document.querySelector(".seal").setAttribute("aria-label",sl[1]+" "+sl[2]); document.querySelector(".seal").classList.toggle("is-img",L==="tr"); } fitSeal();
+  { const sl=SEAL[L]||SEAL.en; $("seal-ring").textContent=sl[0]; $("seal-l1").textContent=sl[1]; $("seal-l2").textContent=sl[2]; document.querySelector(".seal").setAttribute("aria-label",sl[1]+" "+sl[2]); } fitSeal();
   buildRegions(); renderPartners(); renderNews(); renderCharts(); renderGuide(); calc(); render(); soundLabel();
   try{ localStorage.setItem("kibris_lang", L); }catch(e){}
   if(user){
