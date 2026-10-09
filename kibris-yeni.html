@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#050A30">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kuzey Kıbrıs Projeleri · RE/MAX Doğuş</title>
 <meta name="description" content="Kuzey Kıbrıs'ta sterlin bazlı, denize yakın konut projeleri. RE/MAX Doğuş ile ücretsiz yatırım danışmanlığı. Türkçe · English · Русский · فارسی · Deutsch · Polski">
@@ -521,123 +522,256 @@ footer b{color:var(--ink)}
 .btn-wa{background:#1FA855;color:#fff;flex:0 0 auto!important;width:52px;padding:0!important}
 @media(min-width:860px){.sticky{display:none}}
 
-/* ================= YENİ TASARIM (deneme) ================= */
-:root{--r:20px;--nvh:64px;--grad:linear-gradient(90deg,var(--sun),var(--brand))}
-/* üst menü */
-.top.nv{position:fixed;top:0;padding-top:env(safe-area-inset-top,0px);z-index:40;transition:background .35s ease,box-shadow .35s ease,transform .35s ease}
-.top.nv .wrap{max-width:1240px;padding-block:12px;min-height:var(--nvh)}
-.top.nv.solid{background:rgba(8,28,40,.9);box-shadow:0 10px 30px -18px rgba(0,0,0,.6)}
-@supports (backdrop-filter:blur(1px)){@media (pointer:fine){.top.nv.solid{background:rgba(8,28,40,.84);backdrop-filter:blur(14px) saturate(1.4)}}}
-.top.nv.hide{transform:translateY(-100%)}
-.nv-links{display:none;gap:2px;align-items:center;margin-inline:auto}
-.nv-links a{position:relative;color:rgba(234,243,245,.82);text-decoration:none;font-weight:600;font-size:.86rem;padding:8px 12px;border-radius:999px;transition:color .2s,background .2s;white-space:nowrap}
-.nv-links a::after{content:"";position:absolute;inset-inline:12px;bottom:4px;height:2px;border-radius:2px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
-.nv-links a:hover{color:#fff}
-.nv-links a:hover::after,.nv-links a.on::after{transform:scaleX(1)}
-.nv-links a.on{color:#fff;background:rgba(255,255,255,.08)}
-@media (min-width:1180px){.nv-links{display:flex}}
-.nv-cta{display:none;align-items:center;background:var(--sun);color:#1A1205;font-weight:800;font-size:.85rem;text-decoration:none;padding:9px 16px;border-radius:999px;white-space:nowrap;box-shadow:0 8px 22px -10px rgba(233,162,59,.8);transition:transform .2s}
-.nv-cta:hover{transform:translateY(-2px)}
-@media (min-width:640px){.nv-cta{display:inline-flex}}
-.nv-burger{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:grid;place-content:center;gap:4px;padding:0;color:#fff}
-.nv-burger span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .3s ease,opacity .2s}
-.nv-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-.nv-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
-.nv-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-@media (max-width:380px){.logo small{display:none}.langbtn{padding-inline:8px}}
-.nv-prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:41;pointer-events:none}
-.nv-prog i{display:block;height:100%;background:var(--grad);transform-origin:0 50%;transform:scaleX(0)}
-[dir="rtl"] .nv-prog i{transform-origin:100% 50%}
-/* çekmece menü */
-.nv-drawer{position:fixed;inset:0;z-index:60}
-.nv-scrim{position:absolute;inset:0;background:rgba(3,12,20,.55);opacity:0;transition:opacity .35s}
-.nv-panel{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(420px,88vw);background:linear-gradient(170deg,#0E3A50,#071A26 70%);color:#EAF3F5;padding:calc(18px + env(safe-area-inset-top,0px)) 22px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;overflow-y:auto;transform:translateX(100%);transition:transform .45s cubic-bezier(.2,.8,.2,1);box-shadow:-30px 0 60px -30px rgba(0,0,0,.6)}
-[dir="rtl"] .nv-panel{transform:translateX(-100%)}
-.nv-drawer.open .nv-scrim{opacity:1}
-.nv-drawer.open .nv-panel{transform:none}
-.nv-ph{display:flex;justify-content:space-between;align-items:center}
-.nv-ph .eyebrow{color:rgba(234,243,245,.55);margin:0}
-.nv-x{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:none;color:#fff;font-size:1rem}
-.nv-list{list-style:none;margin:18px 0;padding:0;display:grid}
-.nv-list li{opacity:0;transform:translateX(24px);transition:opacity .4s ease,transform .45s cubic-bezier(.2,.8,.2,1);transition-delay:calc(.05s * var(--i) + .1s)}
-[dir="rtl"] .nv-list li{transform:translateX(-24px)}
-.nv-drawer.open .nv-list li{opacity:1;transform:none}
-.nv-list a{display:flex;align-items:baseline;gap:14px;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:#EAF3F5;font-family:var(--f-display);font-size:1.55rem;line-height:1.15;transition:color .2s,padding .25s}
-[lang="fa"] .nv-list a{font-family:"Vazirmatn",var(--f-body);font-size:1.2rem;font-weight:600}
-.nv-list em{font:500 .7rem var(--f-mono);color:var(--sun);font-style:normal;letter-spacing:.1em}
-.nv-list span{flex:1}
-.nv-list i{font-style:normal;opacity:0;transition:opacity .2s,transform .25s;transform:translateX(-6px)}
-[dir="rtl"] .nv-list i{transform:scaleX(-1)}
-.nv-list a:hover,.nv-list a.on{color:var(--sun);padding-inline-start:10px}
-.nv-list a:hover i,.nv-list a.on i{opacity:1;transform:none}
-[dir="rtl"] .nv-list a:hover i,[dir="rtl"] .nv-list a.on i{transform:scaleX(-1)}
-.nv-foot{margin-top:auto;display:grid;gap:12px}
-.nv-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.nv-ic{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.2);color:#EAF3F5;text-decoration:none;font-weight:600;font-size:.88rem}
-.nv-wa{background:#1FA855;border-color:#1FA855;color:#fff}
-body.nv-lock{overflow:hidden}
+/* ================= YENİ TASARIM v2 ================= */
+body.v2{
+  --bg:#050A30; --card:#0B1442; --ink:#EEF1FA; --muted:#9AA3C9; --line:#1D2866;
+  --sea:#7FB2FF; --sea-soft:#131E5A; --sun:#F2B55C; --brand:#FF4457; --red:#DC1C2E; --gold:#E9C27A;
+  --hero:#050A30; --hero-2:#0B1442; --hero-fg:#F2F4FB; --ok:#3DBB82;
+  --c1:#5E9CFF; --c2:#F2B55C; --grid:#1B2662;
+  --f-head:"Manrope","Vazirmatn",system-ui,sans-serif;
+  --rail:264px; --r:22px; --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+  background:#050A30; color:var(--ink); padding-bottom:calc(68px + env(safe-area-inset-bottom,0px));
+}
+body.v2::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(60vmax 60vmax at 110% -10%,rgba(220,28,46,.16),transparent 60%),
+  radial-gradient(50vmax 50vmax at -20% 110%,rgba(64,96,255,.14),transparent 60%),#050A30}
+.skip{position:absolute;left:-999px}
+.v2 .sticky{display:none!important}
+.v2 h1,.v2 h2{font-family:var(--f-head);font-weight:800;letter-spacing:-.035em}
+.v2 h2{font-size:clamp(2.2rem,6.4vw,4.3rem);line-height:1.02;max-width:18ch}
+.v2 h1 em,.v2 h2 em{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-style:italic;letter-spacing:-.01em;color:var(--gold)}
+.v2 h3{font-family:var(--f-head);font-weight:700;letter-spacing:-.01em}
+.v2 .lead{font-size:1.06rem;max-width:58ch}
+.v2 .eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);letter-spacing:.2em}
+.v2 .eyebrow::before{content:"";width:26px;height:2px;background:var(--red);flex:0 0 auto}
+.v2 section{padding-block:72px;background:transparent}
+@media (min-width:860px){.v2 section{padding-block:104px}}
+.v2 .wrap{max-width:1160px;padding-inline:20px}
+@media (min-width:860px){.v2 .wrap{padding-inline:48px}}
+[lang="fa"] .v2 h1,[lang="fa"] .v2 h2,[lang="fa"] .v2 h3{font-family:"Vazirmatn",var(--f-head);letter-spacing:0}
+.v2 .btn-sun,.v2 .btn-ink{background:var(--red);color:#fff;box-shadow:0 14px 34px -14px rgba(220,28,46,.9)}
+.v2 .btn-ghost{border-color:rgba(255,255,255,.3)}
+
+/* ---------- yan ray (masaüstü) ---------- */
+.brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:800 .95rem var(--f-head);letter-spacing:.02em;min-width:0}
+.brand i{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:conic-gradient(var(--red) 0 33%,#fff 0 66%,#1B3A8C 0)}
+.brand small{display:block;font:500 .68rem var(--f-body);opacity:.6;letter-spacing:.08em}
+.rail{display:none}
+@media (min-width:1024px){
+  body.v2{padding-bottom:0;padding-inline-start:var(--rail)}
+  .rail{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;inset-inline-start:0;width:var(--rail);z-index:30;padding:28px 22px;background:rgba(4,8,38,.72);border-inline-end:1px solid var(--line)}
+  @supports (backdrop-filter:blur(1px)){.rail{backdrop-filter:blur(18px)}}
+}
+.rnav{display:grid;gap:2px;margin-top:40px}
+.rnav a{position:relative;display:flex;align-items:baseline;gap:14px;padding:11px 12px;border-radius:12px;color:rgba(238,241,250,.6);text-decoration:none;font:700 .98rem var(--f-head);transition:color .25s,background .25s,transform .3s var(--ease)}
+.rnav em{font:500 .66rem var(--f-mono);font-style:normal;color:rgba(238,241,250,.35);letter-spacing:.1em;transition:color .25s}
+.rnav a::before{content:"";position:absolute;inset-inline-start:-22px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--red);transform:scaleY(0);transition:transform .35s var(--ease)}
+.rnav a:hover{color:#fff;transform:translateX(4px)}
+[dir="rtl"] .rnav a:hover{transform:translateX(-4px)}
+.rnav a.on{color:#fff;background:rgba(255,255,255,.05)}
+.rnav a.on em{color:var(--red)}
+.rnav a.on::before{transform:none}
+.rfoot{margin-top:auto;display:grid;gap:12px}
+.rfoot .langsel{justify-self:start}
+.rfoot .langmenu{top:auto;bottom:calc(100% + 8px);inset-inline-start:0;inset-inline-end:auto}
+.rcta{display:flex;justify-content:space-between;align-items:center;background:var(--red);color:#fff;text-decoration:none;font:800 .95rem var(--f-head);padding:15px 18px;border-radius:14px;transition:transform .3s var(--ease),box-shadow .3s}
+.rcta:hover{transform:translateY(-2px);box-shadow:0 18px 36px -16px rgba(220,28,46,.9)}
+.rcta b{transition:transform .3s var(--ease)}
+.rcta:hover b{transform:translateX(4px)}
+[dir="rtl"] .rcta b{transform:scaleX(-1)}
+.rtel{color:rgba(238,241,250,.55);font:500 .8rem var(--f-mono);text-decoration:none}
+
+/* ---------- mobil üst bar + alt sekmeler ---------- */
+.mbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;transition:background .3s,box-shadow .3s}
+.mbar.solid{background:rgba(5,10,48,.92);box-shadow:0 10px 30px -20px #000}
+.mtitle{flex:1;text-align:center;font:600 .72rem var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(238,241,250,.6);opacity:0;transition:opacity .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbar.solid .mtitle{opacity:1}
+.mbar .brand span{white-space:nowrap}
+.mburger{margin-inline-start:auto;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(5,10,48,.4);display:grid;place-content:center;gap:6px;padding:0;color:#fff;position:relative;z-index:2}
+.mburger span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .35s var(--ease)}
+.mburger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
+.mburger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(5,10,48,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px 9px;color:rgba(238,241,250,.5);text-decoration:none;font:600 .66rem var(--f-body);transition:color .25s}
+.tabbar a svg{transition:transform .35s var(--ease)}
+.tabbar a.on{color:#fff}
+.tabbar a.on svg{transform:translateY(-2px);color:var(--red)}
+.tabbar a[data-go="form"]{color:var(--gold)}
+.tb-ind{position:absolute;top:-1px;height:2px;background:var(--red);border-radius:2px;transition:transform .45s var(--ease),width .45s var(--ease);left:0;width:0}
+@media (min-width:1024px){.mbar,.tabbar,.ovl{display:none!important}}
+
+/* ---------- tam ekran menü ---------- */
+.ovl{position:fixed;inset:0;z-index:29;background:#050A30;overflow-y:auto;clip-path:circle(0 at calc(100% - 38px) 32px);transition:clip-path .6s var(--ease)}
+[dir="rtl"] .ovl{clip-path:circle(0 at 38px 32px)}
+.ovl.open{clip-path:circle(150% at calc(100% - 38px) 32px)}
+[dir="rtl"] .ovl.open{clip-path:circle(150% at 38px 32px)}
+.ovl-in{min-height:100%;display:flex;flex-direction:column;padding:calc(80px + env(safe-area-inset-top,0px)) 22px calc(96px + env(safe-area-inset-bottom,0px))}
+.onav{list-style:none;margin:0;padding:0}
+.onav li{overflow:hidden}
+.onav a{display:flex;align-items:baseline;gap:14px;padding:9px 0;text-decoration:none;color:#fff;font:800 clamp(1.7rem,8.4vw,2.6rem)/1.08 var(--f-head);letter-spacing:-.03em;transform:translateY(110%);transition:transform .6s var(--ease),color .2s;transition-delay:calc(.04s * var(--i) + .12s)}
+[lang="fa"] .onav a{font-family:"Vazirmatn",var(--f-head);letter-spacing:0;font-size:1.6rem}
+.ovl.open .onav a{transform:none}
+.onav em{font:500 .7rem var(--f-mono);font-style:normal;color:var(--red);letter-spacing:.1em}
+.onav a.on{color:var(--gold)}
+.ofoot{margin-top:auto;padding-top:28px;display:grid;gap:14px}
+.olang{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.olang button{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;border-radius:12px;padding:11px 6px;font:700 .8rem var(--f-mono)}
+.olang button.on{border-color:var(--red);background:rgba(220,28,46,.15)}
+.orow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ob{display:flex;justify-content:center;padding:14px;border-radius:14px;border:1px solid var(--line);color:#fff;text-decoration:none;font-weight:700;font-size:.9rem}
+.ob-wa{background:#1FA855;border-color:#1FA855}
+body.lock{overflow:hidden}
+
+/* ---------- sayfa geçiş perdesi ---------- */
+.cur{position:fixed;inset:0;z-index:100;background:var(--red);display:grid;place-items:center;transform:translateY(100%);pointer-events:none;visibility:hidden}
+.cur span{font:800 clamp(2.2rem,9vw,6rem) var(--f-head);color:#fff;letter-spacing:-.04em;opacity:0;transform:translateY(30px);transition:opacity .3s,transform .5s var(--ease)}
+.cur.in{visibility:visible;transform:none;transition:transform .42s cubic-bezier(.7,0,.3,1)}
+.cur.in span{opacity:1;transform:none;transition-delay:.12s}
+.cur.out{visibility:visible;transform:translateY(-100%);transition:transform .55s cubic-bezier(.7,0,.3,1)}
+.cur.out span{opacity:0}
+.view{animation:vin .7s var(--ease) both}
+@keyframes vin{from{opacity:0}to{opacity:1}}
+
+/* ---------- sayfa başlığı ---------- */
+.ph{position:relative;padding:calc(96px + env(safe-area-inset-top,0px)) 20px 0;max-width:1160px;margin:0 auto;display:flex;align-items:flex-end;gap:18px;overflow:hidden}
+@media (min-width:860px){.ph{padding:72px 48px 0}}
+.ph-n{font:800 clamp(6.5rem,26vw,15rem)/.8 var(--f-head);letter-spacing:-.07em;color:transparent;-webkit-text-stroke:1.5px rgba(238,241,250,.22);direction:ltr;animation:phn 1s var(--ease) both}
+@keyframes phn{from{opacity:0;transform:translateY(40%)}to{opacity:1;transform:none}}
+.ph-k{display:grid;gap:4px;padding-bottom:10px;animation:phn 1s .12s var(--ease) both}
+.ph-k b{font:800 .8rem var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:#fff}
+.ph-k i{font:500 .72rem var(--f-mono);font-style:normal;color:var(--red);letter-spacing:.14em}
+.ph + section{padding-top:28px}
+
+/* ---------- hero ---------- */
+.v2 .hero{min-height:100svh;padding-top:calc(100px + env(safe-area-inset-top,0px));padding-bottom:64px;background-color:#050A30}
+.v2 .hero-media::after{background:linear-gradient(180deg,rgba(5,10,48,.55) 0%,rgba(5,10,48,.05) 32%,rgba(5,10,48,.35) 60%,#050A30 100%)}
+.v2 .hero h1{font-size:clamp(3.1rem,11.5vw,8.6rem);line-height:.92;letter-spacing:-.055em;max-width:12ch}
+[lang="fa"] .v2 .hero h1{line-height:1.25}
+.v2 .hero h1 em{display:inline-block;background:linear-gradient(90deg,var(--gold),#FFE3A8,var(--gold));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite;padding-inline-end:.08em}
+@keyframes shine{to{background-position:-200% 0}}
+.v2 .hero .sub{font-size:clamp(1.02rem,1.6vw,1.25rem);max-width:44ch}
+.v2 .hero .eyebrow,.v2 .hero h1,.v2 .hero .sub,.v2 .hero-cta,.v2 .facts{animation:up 1s var(--ease) both}
+.v2 .hero h1{animation-delay:.1s}.v2 .hero .sub{animation-delay:.25s}.v2 .hero-cta{animation-delay:.4s}.v2 .facts{animation-delay:.55s}
+@keyframes up{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.v2 .facts{max-width:none;gap:0;margin-top:44px;border-top:1px solid rgba(255,255,255,.18)}
+.v2 .fact{border:0;padding:16px 12px 0 0;border-inline-end:1px solid rgba(255,255,255,.12);padding-inline:0 14px}
+.v2 .fact + .fact{padding-inline-start:14px}
+.v2 .fact:last-child{border:0}
+.v2 .fact b{font:800 clamp(1.3rem,4vw,2.2rem) var(--f-head);letter-spacing:-.03em}
+@media (min-width:1024px){.v2 .seal{top:40px}}
+.v2 .sound{z-index:3}
+
+/* kayan şerit */
+.marq{overflow:hidden;background:var(--red);color:#fff;direction:ltr;transform:rotate(-1.6deg) scale(1.04);margin-block:-8px 0;position:relative;z-index:2;box-shadow:0 20px 40px -24px rgba(220,28,46,.8)}
+.marq-t{display:flex;width:max-content;animation:marq 38s linear infinite}
+.marq span{font:800 clamp(1rem,2.6vw,1.5rem) var(--f-head);letter-spacing:.06em;padding:14px 18px;white-space:nowrap}
+.marq b{align-self:center;font-size:.8rem;opacity:.7}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- prensipler: yatay kaydırmalı büyük kartlar ---------- */
+.v2 .principles{border:0;padding-top:96px}
+.v2 .pr-seal{width:84px;height:84px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
+.v2 .pr-list{counter-reset:pr;scroll-padding-inline:20px;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-20px;padding:6px 20px 18px;scrollbar-width:none}
+.v2 .pr-list::-webkit-scrollbar{display:none}
+.v2 .pr{counter-increment:pr;flex:0 0 min(84%,340px);scroll-snap-align:start;grid-template-columns:1fr;align-content:start;background:linear-gradient(160deg,#101B58,#0A1240);border:1px solid var(--line);padding:26px 24px 28px;min-height:270px;position:relative;overflow:hidden}
+.v2 .pr::after{content:"0" counter(pr);position:absolute;inset-inline-end:16px;bottom:-18px;font:800 6.5rem/1 var(--f-head);letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px rgba(238,241,250,.12);direction:ltr}
+.v2 .pr-ic{background:rgba(220,28,46,.14);color:#FF6B7A;width:50px;height:50px}
+.v2 .pr h3{font-size:1.22rem;margin-top:18px}
+.v2 .pr p{font-size:.95rem}
+@media (min-width:1024px){.v2 .pr-list{display:grid;grid-template-columns:repeat(6,1fr);overflow:visible;margin:40px 0 0;padding:0}.v2 .pr{grid-column:span 2}.v2 .pr:nth-child(n+4){grid-column:span 3}}
+.pr-dots{display:flex;gap:6px;justify-content:center;margin-top:4px}
+.pr-dots i{width:6px;height:6px;border-radius:6px;background:rgba(255,255,255,.2);transition:width .35s var(--ease),background .3s}
+.pr-dots i.on{width:22px;background:var(--red)}
+@media (min-width:1024px){.pr-dots{display:none}}
+
+/* ayrıcalıklar */
+.v2 .perks-sec{background:radial-gradient(90% 120% at 100% 0%,rgba(233,194,122,.13),transparent 60%),linear-gradient(180deg,#0A1240,#050A30);border-block:1px solid rgba(233,194,122,.18)}
+.v2 .perks-sec::before{display:none}
+.v2 .av-grid{border:0;gap:12px}
+.v2 .av{border:1px solid rgba(233,194,122,.18);border-radius:var(--r);padding:24px;background:rgba(233,194,122,.03);transition:transform .4s var(--ease),border-color .3s,background .3s}
+@media (min-width:860px){.v2 .av-grid{grid-template-columns:1fr 1fr}}
+@media (pointer:fine){.v2 .av:hover{transform:translateY(-6px);border-color:rgba(233,194,122,.55);background:rgba(233,194,122,.07)}}
+.v2 .btn-gold{border-color:var(--gold);color:var(--gold)}
+
+/* kartlar genel */
+.v2 .reason,.v2 .cbox,.v2 .panel,.v2 .ncard,.v2 .gcard,.v2 .pcard.alt,.v2 .fcard,.v2 .rinfo{border-color:var(--line)}
+.v2 .reason,.v2 .cbox,.v2 .panel,.v2 .pcard{border-radius:var(--r);transition:transform .4s var(--ease),box-shadow .4s,border-color .4s}
+.v2 .reason{position:relative;overflow:hidden;padding:28px 24px;background:linear-gradient(170deg,#0E1850,#0A1240)}
+.v2 .reason .k{font:800 clamp(2.4rem,6vw,3.4rem)/1 var(--f-head);letter-spacing:-.05em;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.v2 .reason::before,.v2 .pcard::before,.v2 .pr::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(300px circle at var(--mx,50%) var(--my,-50%),rgba(220,28,46,.22),transparent 60%);opacity:0;transition:opacity .3s}
+.v2 .pcard{position:relative;overflow:hidden}
+@media (pointer:fine){
+  .v2 .reason:hover,.v2 .cbox:hover,.v2 .pcard:hover,.v2 .pr:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,0,0,.8);border-color:rgba(220,28,46,.5)}
+  .v2 .reason:hover::before,.v2 .pcard:hover::before,.v2 .pr:hover::before{opacity:1}
+}
+.v2 .pcard{background:linear-gradient(160deg,#16226A,#0A1240)}
+.v2 .pcard.alt{background:#0B1442}
+.v2 .tab[aria-selected="true"],.v2 .gchip[aria-selected="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.v2 .region-map{border:1px solid var(--line)}
+.v2 .karpaz{background:linear-gradient(180deg,transparent,#081040 30%,#081040 70%,transparent)}
+.v2 .stage .pct{color:#fff}
+.v2 .big{font-family:var(--f-head);font-weight:800;letter-spacing:-.04em}
+.v2 input[type=range]{accent-color:var(--red)}
+.v2 .steps li::before{font:800 2.2rem/1 var(--f-head);color:var(--red);letter-spacing:-.04em}
+.v2 .steps li{transition:background .3s,padding .3s;border-radius:14px}
+@media (pointer:fine){.v2 .steps li:hover{background:rgba(255,255,255,.04);padding-inline:12px}}
+.v2 details summary{transition:color .2s}
+.v2 details summary:hover{color:var(--gold)}
+.v2 details[open] p{animation:up .45s var(--ease) both}
+.v2 .formsec{background:radial-gradient(80% 60% at 50% 0%,rgba(220,28,46,.22),transparent 70%);padding-top:calc(110px + env(safe-area-inset-top,0px))}
+@media (min-width:1024px){.v2 .formsec{padding-top:96px;min-height:100vh}}
+.v2 footer{border-top:1px solid var(--line)}
+.v2 footer b{color:#fff}
+
+/* sonraki sayfa bağlantısı */
+.next{display:flex;align-items:center;gap:18px;position:relative;overflow:hidden;margin:24px 20px 40px;padding:34px 28px;border-radius:28px;border:1px solid var(--line);background:#0A1240;color:#fff;text-decoration:none;isolation:isolate}
+@media (min-width:860px){.next{margin:40px auto 64px;max-width:1064px;padding:48px 44px}}
+.next::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease)}
+[dir="rtl"] .next::before{transform-origin:right}
+.next:hover::before{transform:none}
+.next-k{position:absolute;top:18px;inset-inline-start:28px;font:600 .68rem var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:rgba(238,241,250,.55)}
+@media (min-width:860px){.next-k{top:24px;inset-inline-start:44px}}
+.next-t{flex:1;display:flex;align-items:baseline;gap:14px;margin-top:14px}
+.next-t em{font:500 .8rem var(--f-mono);font-style:normal;color:var(--gold)}
+.next-t b{font:800 clamp(1.8rem,6vw,3.6rem)/1 var(--f-head);letter-spacing:-.04em}
+[lang="fa"] .next-t b{font-family:"Vazirmatn",var(--f-head);letter-spacing:0}
+.next i{flex:0 0 auto;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:1.4rem;border:1px solid rgba(255,255,255,.3);transition:transform .5s var(--ease),background .3s}
+.next:hover i{transform:rotate(-45deg);background:#fff;color:var(--red)}
+[dir="rtl"] .next i{transform:scaleX(-1)}
+
 /* yukarı çık */
-.nv-top{position:fixed;inset-inline-end:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:19;width:48px;height:48px;border-radius:50%;border:0;padding:0;background:var(--card);color:var(--ink);box-shadow:0 12px 30px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity .3s,transform .3s}
+.nv-top{position:fixed;inset-inline-end:14px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:20;width:46px;height:46px;border-radius:50%;border:0;padding:0;background:#0B1442;color:#fff;box-shadow:0 12px 30px -10px rgba(0,0,0,.7);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity .3s,transform .3s}
 .nv-top.show{opacity:1;transform:none;pointer-events:auto}
 .nv-top svg{width:100%;height:100%;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .nv-top .t-bg{stroke:var(--line);stroke-width:2.5}
-.nv-top .t-fg{stroke:var(--sun);stroke-width:2.5;stroke-dasharray:100.5;stroke-dashoffset:100.5;transform:rotate(-90deg);transform-origin:center}
+.nv-top .t-fg{stroke:var(--red);stroke-width:2.5;stroke-dasharray:100.5;stroke-dashoffset:100.5;transform:rotate(-90deg);transform-origin:center}
 .nv-top path{stroke:currentColor;stroke-width:2}
-@media (min-width:860px){.nv-top{bottom:24px;inset-inline-end:24px}}
-/* hero giriş animasyonu */
-.hero{padding-top:calc(var(--nvh) + 48px)}
-.hero .eyebrow,.hero h1,.hero .sub,.hero-cta,.facts{animation:nvup .9s cubic-bezier(.2,.8,.2,1) both}
-.hero h1{animation-delay:.12s}.hero .sub{animation-delay:.26s}.hero-cta{animation-delay:.4s}.facts{animation-delay:.55s}
-@keyframes nvup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-.hero h1 em{background:linear-gradient(90deg,var(--sun),#FFD58A,var(--sun));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:nvshine 5s linear infinite}
-@keyframes nvshine{to{background-position:-200% 0}}
-.nv-cue{position:absolute;z-index:3;left:50%;bottom:18px;width:24px;height:38px;margin-left:-12px;border:2px solid rgba(255,255,255,.5);border-radius:14px}
-.nv-cue::before{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:nvcue 1.8s ease-in-out infinite}
-@keyframes nvcue{0%{opacity:0;transform:translateY(-3px)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
-@media (max-width:859px){.nv-cue{display:none}}
-.btn{position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
-.btn-sun::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s ease}
-.btn-sun:hover::after{transform:translateX(120%)}
-@media (pointer:fine){.btn:hover{transform:translateY(-3px)}}
-/* başlıklar */
-section .eyebrow{display:inline-flex;align-items:center;gap:10px}
-section .eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--grad);flex:0 0 auto}
-section{scroll-margin-top:calc(var(--nvh) - 4px)}
-/* kartlar: yuvarlak, derinlik, imleç ışığı */
-.pr,.reason,.cbox,.panel,.pcard{border-radius:var(--r);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
-.pr,.reason,.pcard.alt{position:relative;overflow:hidden}
-.reason::before,.pr::before,.pcard::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(320px circle at var(--mx,50%) var(--my,-40%),color-mix(in srgb,var(--sun) 16%,transparent),transparent 60%);opacity:0;transition:opacity .3s}
-@media (pointer:fine){
-  .pr:hover,.reason:hover,.cbox:hover,.pcard:hover{transform:translateY(-6px);box-shadow:0 26px 50px -28px rgba(11,40,60,.45);border-color:color-mix(in srgb,var(--sun) 45%,var(--line))}
-  .reason:hover::before,.pr:hover::before,.pcard:hover::before{opacity:1}
-}
-.pr-ic,.av-ic{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-.pr:hover .pr-ic{transform:rotate(-10deg) scale(1.1)}
-.reason .k{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:2rem}
-.steps li{transition:background .3s,padding .3s;border-radius:12px}
-.steps li::before{transition:transform .4s,color .3s}
-@media (pointer:fine){.steps li:hover{background:var(--sea-soft);padding-inline:10px}.steps li:hover::before{transform:scale(1.15);color:var(--brand)}}
-details summary{transition:color .2s}
-details summary:hover{color:var(--sea)}
-details[open] p{animation:nvup .4s ease both}
+@media (min-width:1024px){.nv-top{bottom:24px;inset-inline-end:24px}}
+
 /* kaydırınca beliren öğeler */
-.nv-rv .rv{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
-.nv-rv .rv.in{opacity:1;transform:none}
-.nv-rv .rv.rv-s{transform:scale(.94)}
-.nv-rv .rv.rv-s.in{transform:none}
-@media (prefers-reduced-motion: reduce){.nv-rv .rv{opacity:1!important;transform:none!important}}
+.rvon .rv{opacity:0;transform:translateY(40px);transition:opacity .9s ease,transform 1s var(--ease);transition-delay:var(--d,0s)}
+.rvon .rv.in{opacity:1;transform:none}
+.rvon h2.rv{transform:translateY(50px) skewY(3deg);transform-origin:0 0;transition:opacity 1s ease,transform 1.1s var(--ease)}
+.rvon h2.rv.in{transform:none}
+@media (prefers-reduced-motion: reduce){.rvon .rv{opacity:1!important;transform:none!important;clip-path:none!important}.marq-t{animation:none}.cur{display:none}}
+
+#app{overflow-x:clip}
+html{overflow-x:hidden}
+.v2 .stage .pct{color:#fff!important}
+.v2 .big small{letter-spacing:0;font-family:var(--f-body);font-weight:500}
 
 </style>
 </head>
-<body>
+<body class="v2">
+<div class="cur" id="cur" aria-hidden="true"><span id="curtxt"></span></div>
 
-<div class="nv-prog" id="nvprog" aria-hidden="true"><i></i></div>
-<header class="top nv" id="nvbar">
-  <div class="wrap">
-    <a class="logo" href="#top"><i aria-hidden="true"></i><span>RE/MAX DOĞUŞ<small data-i="logo_sub"></small></span></a>
-    <nav class="nv-links" aria-label="Menu"><a href="#prensip" data-nv="prensip">prensip</a><a href="#neden" data-nv="neden">neden</a><a href="#bolge" data-nv="bolge">bolge</a><a href="#hesap" data-nv="hesap">hesap</a><a href="#surec" data-nv="surec">surec</a><a href="#isbirligi" data-nv="isbirligi">isbirligi</a></nav>
-    <div class="top-right">
-      <div class="langsel" id="langsel">
+<!-- ======= KABUK: masaüstünde yan ray, mobilde üst bar + alt sekmeler ======= -->
+<aside class="rail" id="rail">
+  <a class="brand" href="#/home" data-go="home"><i aria-hidden="true"></i><span>RE/MAX DOĞUŞ<small data-i="logo_sub"></small></span></a>
+  <nav class="rnav" aria-label="Menu"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a><a href="#/yasam" data-go="yasam"><em>04</em><span data-nvt="yasam"></span></a><a href="#/hesap" data-go="hesap"><em>05</em><span data-nvt="hesap"></span></a><a href="#/surec" data-go="surec"><em>06</em><span data-nvt="surec"></span></a><a href="#/isbirligi" data-go="isbirligi"><em>07</em><span data-nvt="isbirligi"></span></a><a href="#/form" data-go="form"><em>08</em><span data-nvt="form"></span></a></nav>
+  <div class="rfoot">
+    <div class="langsel" id="langsel">
         <button type="button" class="langbtn" id="langbtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Dil / Language"><i class="flag" id="langflag"></i><span id="langcode">TR</span></button>
         <ul class="langmenu" id="langmenu" role="listbox" hidden>
           <li><button type="button" role="option" data-lang="tr"><i class="flag flag-tr"></i>Türkçe</button></li>
@@ -648,25 +782,32 @@ details[open] p{animation:nvup .4s ease both}
           <li><button type="button" role="option" data-lang="pl"><i class="flag flag-pl"></i>Polski</button></li>
         </ul>
       </div>
-      <a class="nv-cta" href="#form" data-ev="nav_cta" data-nvt="cta">Teklif Al</a>
-      <button type="button" class="nv-burger" id="nvburger" aria-expanded="false" aria-controls="nvdrawer" aria-label="Menü"><span></span><span></span><span></span></button>
+    <a class="rcta" href="#/form" data-go="form" data-ev="rail_cta"><span data-nvt="cta"></span><b aria-hidden="true">→</b></a>
+    <a class="rtel ltr" href="tel:+902163151515">0216 315 15 15</a>
+  </div>
+</aside>
+
+<header class="mbar" id="mbar">
+  <a class="brand" href="#/home" data-go="home"><i aria-hidden="true"></i><span>RE/MAX DOĞUŞ</span></a>
+  <span class="mtitle" id="mtitle" aria-hidden="true"></span>
+  <button type="button" class="mburger" id="mburger" aria-expanded="false" aria-controls="ovl" aria-label="Menu"><span></span><span></span></button>
+</header>
+
+<div class="ovl" id="ovl" hidden>
+  <div class="ovl-in">
+    <ol class="onav"><li style="--i:0"><a href="#/home" data-go="home"><em>01</em><span data-nvt="home"></span></a></li><li style="--i:1"><a href="#/neden" data-go="neden"><em>02</em><span data-nvt="neden"></span></a></li><li style="--i:2"><a href="#/bolge" data-go="bolge"><em>03</em><span data-nvt="bolge"></span></a></li><li style="--i:3"><a href="#/yasam" data-go="yasam"><em>04</em><span data-nvt="yasam"></span></a></li><li style="--i:4"><a href="#/hesap" data-go="hesap"><em>05</em><span data-nvt="hesap"></span></a></li><li style="--i:5"><a href="#/surec" data-go="surec"><em>06</em><span data-nvt="surec"></span></a></li><li style="--i:6"><a href="#/isbirligi" data-go="isbirligi"><em>07</em><span data-nvt="isbirligi"></span></a></li><li style="--i:7"><a href="#/form" data-go="form"><em>08</em><span data-nvt="form"></span></a></li></ol>
+    <div class="ofoot">
+      <div class="olang" id="olang"><button type="button" data-olang="tr"><i class="flag flag-tr"></i>TR</button><button type="button" data-olang="en"><i class="flag flag-en"></i>EN</button><button type="button" data-olang="ru"><i class="flag flag-ru"></i>RU</button><button type="button" data-olang="fa"><i class="flag flag-fa"></i>FA</button><button type="button" data-olang="de"><i class="flag flag-de"></i>DE</button><button type="button" data-olang="pl"><i class="flag flag-pl"></i>PL</button></div>
+      <div class="orow"><a class="ob" href="tel:+902163151515"><span class="ltr">0216 315 15 15</span></a><a class="ob ob-wa" id="nvwa" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
     </div>
   </div>
-</header>
-<div class="nv-drawer" id="nvdrawer" hidden>
-  <div class="nv-scrim" data-close></div>
-  <aside class="nv-panel" role="dialog" aria-modal="true" aria-label="Menü">
-    <div class="nv-ph"><span class="eyebrow" data-nvt="menu">Menü</span><button type="button" class="nv-x" data-close aria-label="Kapat">✕</button></div>
-    <ol class="nv-list"><li style="--i:0"><a href="#prensip" data-nv="prensip"><em>01</em><span>prensip</span><i aria-hidden="true">→</i></a></li><li style="--i:1"><a href="#ayricalik" data-nv="ayricalik"><em>02</em><span>ayricalik</span><i aria-hidden="true">→</i></a></li><li style="--i:2"><a href="#neden" data-nv="neden"><em>03</em><span>neden</span><i aria-hidden="true">→</i></a></li><li style="--i:3"><a href="#gundem" data-nv="gundem"><em>04</em><span>gundem</span><i aria-hidden="true">→</i></a></li><li style="--i:4"><a href="#bolge" data-nv="bolge"><em>05</em><span>bolge</span><i aria-hidden="true">→</i></a></li><li style="--i:5"><a href="#karpaz" data-nv="karpaz"><em>06</em><span>karpaz</span><i aria-hidden="true">→</i></a></li><li style="--i:6"><a href="#rehber" data-nv="rehber"><em>07</em><span>rehber</span><i aria-hidden="true">→</i></a></li><li style="--i:7"><a href="#hesap" data-nv="hesap"><em>08</em><span>hesap</span><i aria-hidden="true">→</i></a></li><li style="--i:8"><a href="#surec" data-nv="surec"><em>09</em><span>surec</span><i aria-hidden="true">→</i></a></li><li style="--i:9"><a href="#isbirligi" data-nv="isbirligi"><em>10</em><span>isbirligi</span><i aria-hidden="true">→</i></a></li></ol>
-    <div class="nv-foot">
-      <a class="btn btn-sun" href="#form" data-close data-nvt="cta">Teklif Al</a>
-      <div class="nv-row"><a class="nv-ic" href="tel:+902163151515" aria-label="Telefon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="ltr">0216 315 15 15</span></a><a class="nv-ic nv-wa" id="nvwa" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
-    </div>
-  </aside>
 </div>
-<button type="button" class="nv-top" id="nvtop" aria-label="Yukarı"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" class="t-bg"/><circle cx="18" cy="18" r="16" class="t-fg" id="nvring"/><path d="M18 24V12M12.5 17.5 18 12l5.5 5.5"/></svg></button>
 
-<section class="hero" id="top">
+<nav class="tabbar" id="tabbar" aria-label="Menu"><a href="#/home" data-go="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span data-nvt="t_home"></span></a><a href="#/bolge" data-go="bolge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg><span data-nvt="t_bolge"></span></a><a href="#/hesap" data-go="hesap"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/></svg><span data-nvt="t_hesap"></span></a><a href="#/surec" data-go="surec"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"/></svg><span data-nvt="t_surec"></span></a><a href="#/form" data-go="form"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg><span data-nvt="t_form"></span></a><i class="tb-ind" id="tbind" aria-hidden="true"></i></nav>
+
+<main id="app">
+  <div class="view" data-view="home">
+    <section class="hero" id="top">
   <a class="seal is-img" href="#prensip" aria-label="Ödüllü projeler">
     <span class="seal-img"><img class="seal-ring" src="assets/kibris/odullu-muhur-halka.webp" width="400" height="400" alt="" decoding="async"><img src="assets/kibris/odullu-muhur-merkez.webp" width="400" height="400" alt="" decoding="async"></span>
     <svg viewBox="0 0 200 250" aria-hidden="true">
@@ -718,8 +859,8 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section class="principles" id="prensip">
+    <div class="marq" aria-hidden="true"><div class="marq-t"><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>GAZİMAĞUSA</span><b>✦</b><span>LEFKOŞA</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>BAFRA</span><b>✦</b><span>LAPTA</span><b>✦</b><span>ALSANCAK</span><b>✦</b><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>GAZİMAĞUSA</span><b>✦</b><span>LEFKOŞA</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>BAFRA</span><b>✦</b><span>LAPTA</span><b>✦</b><span>ALSANCAK</span><b>✦</b></div></div>
+    <section class="principles" id="prensip">
   <div class="wrap pr-wrap">
     <div class="pr-head">
       <img class="pr-seal" src="assets/kibris/odullu-muhur-merkez.webp" width="400" height="400" alt="" loading="lazy" decoding="async">
@@ -738,8 +879,7 @@ details[open] p{animation:nvup .4s ease both}
     </ol>
   </div>
 </section>
-
-<section class="perks-sec" id="ayricalik">
+    <section class="perks-sec" id="ayricalik">
   <div class="wrap">
     <div class="av-head">
       <span class="eyebrow" data-i="av_e"></span>
@@ -754,8 +894,11 @@ details[open] p{animation:nvup .4s ease both}
     <div class="av-cta"><a class="btn btn-gold" href="#form" data-ev="avantaj_cta" data-i="av_cta"></a></div>
   </div>
 </section>
-
-<section id="neden">
+    <a class="next" href="#/neden" data-go="neden"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>02</em><b data-nvt="neden"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="neden" hidden>
+    <header class="ph"><span class="ph-n">02</span><span class="ph-k"><b data-nvt="neden"></b><i>/ 08</i></span></header>
+    <section id="neden">
   <div class="wrap">
     <span class="eyebrow" data-i="why_e"></span>
     <h2 data-i="why_h"></h2>
@@ -768,18 +911,7 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section class="news" id="gundem">
-  <div class="wrap">
-    <span class="eyebrow" id="n-e"></span>
-    <h2 id="n-h"></h2>
-    <p class="lead" id="n-l"></p>
-    <div class="gchips" id="nchips" role="tablist"></div>
-    <div class="ngrid" id="ngrid"></div>
-  </div>
-</section>
-
-<section class="stats" id="rakamlar">
+    <section class="stats" id="rakamlar">
   <div class="wrap">
     <span class="eyebrow" id="c-e"></span>
     <h2 id="c-h"></h2>
@@ -791,8 +923,20 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section class="regions" id="bolge">
+    <section class="news" id="gundem">
+  <div class="wrap">
+    <span class="eyebrow" id="n-e"></span>
+    <h2 id="n-h"></h2>
+    <p class="lead" id="n-l"></p>
+    <div class="gchips" id="nchips" role="tablist"></div>
+    <div class="ngrid" id="ngrid"></div>
+  </div>
+</section>
+    <a class="next" href="#/bolge" data-go="bolge"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>03</em><b data-nvt="bolge"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="bolge" hidden>
+    <header class="ph"><span class="ph-n">03</span><span class="ph-k"><b data-nvt="bolge"></b><i>/ 08</i></span></header>
+    <section class="regions" id="bolge">
   <div class="wrap">
     <span class="eyebrow" data-i="reg_e"></span>
     <h2 data-i="reg_h"></h2>
@@ -813,8 +957,7 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section class="karpaz" id="karpaz">
+    <section class="karpaz" id="karpaz">
   <div class="wrap kz">
     <div class="kz-txt">
       <span class="eyebrow" id="k-e"></span>
@@ -839,8 +982,11 @@ details[open] p{animation:nvup .4s ease both}
     <p class="kz-why" id="k-w"></p>
   </div>
 </section>
-
-<section class="guide" id="rehber">
+    <a class="next" href="#/yasam" data-go="yasam"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>04</em><b data-nvt="yasam"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="yasam" hidden>
+    <header class="ph"><span class="ph-n">04</span><span class="ph-k"><b data-nvt="yasam"></b><i>/ 08</i></span></header>
+    <section class="guide" id="rehber">
   <div class="wrap">
     <span class="eyebrow" id="g-e"></span>
     <h2 id="g-h"></h2>
@@ -850,8 +996,11 @@ details[open] p{animation:nvup .4s ease both}
     <div class="turtle" id="turtle"></div>
   </div>
 </section>
-
-<section id="hesap">
+    <a class="next" href="#/hesap" data-go="hesap"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>05</em><b data-nvt="hesap"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="hesap" hidden>
+    <header class="ph"><span class="ph-n">05</span><span class="ph-k"><b data-nvt="hesap"></b><i>/ 08</i></span></header>
+    <section id="hesap">
   <div class="wrap">
     <span class="eyebrow" data-i="calc_e"></span>
     <h2 data-i="calc_h"></h2>
@@ -882,8 +1031,11 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section id="surec" style="padding-top:0">
+    <a class="next" href="#/surec" data-go="surec"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>06</em><b data-nvt="surec"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="surec" hidden>
+    <header class="ph"><span class="ph-n">06</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 08</i></span></header>
+    <section id="surec" style="padding-top:0">
   <div class="wrap two">
     <div>
       <span class="eyebrow" data-i="pr_e"></span>
@@ -910,8 +1062,11 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<section class="partners" id="isbirligi">
+    <a class="next" href="#/isbirligi" data-go="isbirligi"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>07</em><b data-nvt="isbirligi"></b></span><i aria-hidden="true">→</i></a>
+  </div>
+  <div class="view" data-view="isbirligi" hidden>
+    <header class="ph"><span class="ph-n">07</span><span class="ph-k"><b data-nvt="isbirligi"></b><i>/ 08</i></span></header>
+    <section class="partners" id="isbirligi">
   <div class="wrap">
     <span class="eyebrow" id="pt-e"></span>
     <h2 id="pt-h"></h2>
@@ -922,15 +1077,10 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-<div class="pmodal" id="pmodal" hidden role="dialog" aria-modal="true" aria-labelledby="pm-title">
-  <div class="pm-box">
-    <button type="button" class="pm-x" id="pm-x" aria-label="Kapat">✕</button>
-    <h3 id="pm-title"></h3>
-    <form id="pform" novalidate></form>
+    <a class="next" href="#/form" data-go="form"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>08</em><b data-nvt="form"></b></span><i aria-hidden="true">→</i></a>
   </div>
-</div>
-
-<section class="formsec" id="form">
+  <div class="view" data-view="form" hidden>
+    <section class="formsec" id="form">
   <div class="wrap">
     <span class="eyebrow" style="color:rgba(234,243,245,.6)" data-i="form_e"></span>
     <h2 data-i="form_h"></h2>
@@ -945,8 +1095,8 @@ details[open] p{animation:nvup .4s ease both}
     </div>
   </div>
 </section>
-
-<footer>
+  </div>
+  <footer>
   <div class="wrap">
     <b>RE/MAX Doğuş · UMT Group Gayrimenkul Yatırım Danışmanlık</b>
     <span data-i="addr"></span>
@@ -954,13 +1104,21 @@ details[open] p{animation:nvup .4s ease both}
     <span style="margin-top:8px;font-size:.75rem" data-i="disc"></span>
   </div>
 </footer>
-
+</main>
+<div class="pmodal" id="pmodal" hidden role="dialog" aria-modal="true" aria-labelledby="pm-title">
+  <div class="pm-box">
+    <button type="button" class="pm-x" id="pm-x" aria-label="Kapat">✕</button>
+    <h3 id="pm-title"></h3>
+    <form id="pform" novalidate></form>
+  </div>
+</div>
 <div class="sticky" id="sticky">
   <a class="btn btn-sun" href="#form" data-ev="sticky_cta" data-i="sticky"></a>
   <a class="btn btn-wa" id="wa-sticky" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>
   </a>
 </div>
+<button type="button" class="nv-top" id="nvtop" aria-label="↑"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" class="t-bg"/><circle cx="18" cy="18" r="16" class="t-fg" id="nvring"/><path d="M18 24V12M12.5 17.5 18 12l5.5 5.5"/></svg></button>
 
 <script>
 const I18N = {
@@ -1951,99 +2109,148 @@ addEventListener("scroll",()=>{
 
 </script>
 <script>
-/* ================= YENİ TASARIM: menü, animasyon, etkileşim ================= */
+/* ================= YENİ TASARIM v2: sayfa yönlendirme, menüler, animasyon ================= */
 (()=>{
 const NV={
- tr:{prensip:"Prensiplerimiz",ayricalik:"Ayrıcalıklar",neden:"Neden Kıbrıs",gundem:"Gündem",bolge:"Bölgeler",karpaz:"Karpaz",rehber:"Yaşam Rehberi",hesap:"Ödeme Hesabı",surec:"Süreç & SSS",isbirligi:"İş Birliği",cta:"Teklif Al",menu:"Menü"},
- en:{prensip:"Our Principles",ayricalik:"Perks",neden:"Why Cyprus",gundem:"News",bolge:"Regions",karpaz:"Karpaz",rehber:"Living Guide",hesap:"Payment Calculator",surec:"Process & FAQ",isbirligi:"Partners",cta:"Get an Offer",menu:"Menu"},
- ru:{prensip:"Наши принципы",ayricalik:"Преимущества",neden:"Почему Кипр",gundem:"Новости",bolge:"Регионы",karpaz:"Карпаз",rehber:"Гид по жизни",hesap:"Калькулятор",surec:"Процесс и FAQ",isbirligi:"Партнёрам",cta:"Подбор",menu:"Меню"},
- fa:{prensip:"اصول ما",ayricalik:"مزایا",neden:"چرا قبرس",gundem:"اخبار",bolge:"مناطق",karpaz:"کارپاس",rehber:"راهنمای زندگی",hesap:"محاسبه پرداخت",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",cta:"دریافت پیشنهاد",menu:"منو"},
- de:{prensip:"Unsere Prinzipien",ayricalik:"Vorteile",neden:"Warum Zypern",gundem:"Aktuelles",bolge:"Regionen",karpaz:"Karpaz",rehber:"Lebensratgeber",hesap:"Zahlungsrechner",surec:"Ablauf & FAQ",isbirligi:"Partner",cta:"Angebot erhalten",menu:"Menü"},
- pl:{prensip:"Nasze zasady",ayricalik:"Korzyści",neden:"Dlaczego Cypr",gundem:"Aktualności",bolge:"Regiony",karpaz:"Karpaz",rehber:"Przewodnik",hesap:"Kalkulator płatności",surec:"Proces i FAQ",isbirligi:"Współpraca",cta:"Otrzymaj ofertę",menu:"Menu"}
+ tr:{home:"Keşfet",neden:"Neden Kıbrıs",bolge:"Bölgeler",yasam:"Yaşam Rehberi",hesap:"Ödeme Planı",surec:"Süreç & SSS",isbirligi:"İş Birliği",form:"Başvuru",t_home:"Keşfet",t_bolge:"Bölgeler",t_hesap:"Hesapla",t_surec:"SSS",t_form:"Başvur",cta:"Ücretsiz teklif al",next:"Sıradaki sayfa"},
+ en:{home:"Discover",neden:"Why Cyprus",bolge:"Regions",yasam:"Living Guide",hesap:"Payment Plan",surec:"Process & FAQ",isbirligi:"Partners",form:"Apply",t_home:"Discover",t_bolge:"Regions",t_hesap:"Calculate",t_surec:"FAQ",t_form:"Apply",cta:"Get a free offer",next:"Next page"},
+ ru:{home:"Обзор",neden:"Почему Кипр",bolge:"Регионы",yasam:"Гид по жизни",hesap:"План оплаты",surec:"Процесс и FAQ",isbirligi:"Партнёрам",form:"Заявка",t_home:"Обзор",t_bolge:"Регионы",t_hesap:"Расчёт",t_surec:"FAQ",t_form:"Заявка",cta:"Бесплатный подбор",next:"Следующая страница"},
+ fa:{home:"کاوش",neden:"چرا قبرس",bolge:"مناطق",yasam:"راهنمای زندگی",hesap:"برنامه پرداخت",surec:"فرایند و پرسش‌ها",isbirligi:"همکاری",form:"درخواست",t_home:"کاوش",t_bolge:"مناطق",t_hesap:"محاسبه",t_surec:"پرسش‌ها",t_form:"درخواست",cta:"دریافت پیشنهاد رایگان",next:"صفحه بعد"},
+ de:{home:"Entdecken",neden:"Warum Zypern",bolge:"Regionen",yasam:"Lebensratgeber",hesap:"Zahlungsplan",surec:"Ablauf & FAQ",isbirligi:"Partner",form:"Anfrage",t_home:"Entdecken",t_bolge:"Regionen",t_hesap:"Rechner",t_surec:"FAQ",t_form:"Anfrage",cta:"Kostenloses Angebot",next:"Nächste Seite"},
+ pl:{home:"Odkryj",neden:"Dlaczego Cypr",bolge:"Regiony",yasam:"Przewodnik",hesap:"Plan płatności",surec:"Proces i FAQ",isbirligi:"Współpraca",form:"Zgłoszenie",t_home:"Odkryj",t_bolge:"Regiony",t_hesap:"Kalkulator",t_surec:"FAQ",t_form:"Zgłoś",cta:"Darmowa oferta",next:"Następna strona"}
 };
-const root=document.documentElement, reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const q=(s,c=document)=>c.querySelectorAll(s);
-function nvLang(){
-  const d=NV[root.lang]||NV.en;
-  q("[data-nv]").forEach(a=>{ const t=d[a.dataset.nv]; const s=a.querySelector("span"); (s||a).textContent=t; });
-  q("[data-nvt]").forEach(a=>a.textContent=d[a.dataset.nvt]);
-  const wa=document.getElementById("wa-sticky"); if(wa) document.getElementById("nvwa").href=wa.href;
-}
-nvLang();
-new MutationObserver(nvLang).observe(root,{attributes:true,attributeFilter:["lang"]});
+const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
+const SEC={top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const VIEWS=q(".view").map(v=>v.dataset.view);
+let cur=null;
+const T=()=>NV[root.lang]||NV.en;
 
-/* çekmece */
-const dr=document.getElementById("nvdrawer"), bg=document.getElementById("nvburger");
-function drawer(open){
-  if(open){ dr.hidden=false; requestAnimationFrame(()=>requestAnimationFrame(()=>dr.classList.add("open"))); document.body.classList.add("nv-lock"); dr.querySelector(".nv-x").focus({preventScroll:true}); }
-  else { dr.classList.remove("open"); document.body.classList.remove("nv-lock"); setTimeout(()=>{ if(!dr.classList.contains("open")) dr.hidden=true; }, reduce?0:450); }
-  bg.setAttribute("aria-expanded",open);
+function labels(){
+  const d=T();
+  q("[data-nvt]").forEach(e=>{ if(d[e.dataset.nvt]) e.textContent=d[e.dataset.nvt]; });
+  q("[data-olang]").forEach(b=>b.classList.toggle("on",b.dataset.olang===root.lang));
+  const wa=$$("wa-sticky"); if(wa) $$("nvwa").href=wa.href;
+  if(cur) $$("mtitle").textContent=d[cur];
+  requestAnimationFrame(tabInd);
 }
-bg.addEventListener("click",()=>drawer(dr.hidden));
-dr.addEventListener("click",e=>{ if(e.target.closest("[data-close],a")) drawer(false); });
-addEventListener("keydown",e=>{ if(e.key==="Escape" && !dr.hidden){ drawer(false); bg.focus(); } });
+labels();
+new MutationObserver(labels).observe(root,{attributes:true,attributeFilter:["lang"]});
 
-/* üst bar, ilerleme çubuğu, yukarı butonu */
-const bar=document.getElementById("nvbar"), prog=document.querySelector("#nvprog i"), top=document.getElementById("nvtop"), ring=document.getElementById("nvring");
-let lastY=scrollY, tick=false;
+/* ---- yönlendirme ---- */
+function parse(h){
+  h=(h||"").replace(/^#\/?/,"");
+  if(VIEWS.includes(h)) return [h,null];
+  if(SEC[h]) return [SEC[h], h==="top"?null:h];
+  return ["home",null];
+}
+function show(view,target){
+  q(".view").forEach(v=>{ v.hidden = v.dataset.view!==view; });
+  cur=view;
+  q("[data-go]").forEach(a=>a.classList.toggle("on",a.dataset.go===view));
+  $$("mtitle").textContent=T()[view];
+  const el=target && $$(target);
+  const firstOfView = el && document.querySelector(`.view[data-view="${view}"] section`)===el;
+  scrollTo(0, el && !firstOfView ? el.getBoundingClientRect().top+scrollY-70 : 0);
+  if(view==="neden" && typeof renderCharts==="function") renderCharts();
+  const vid=$$("herovid");
+  if(vid){ if(view==="home"){ if(typeof motionOK==="undefined"||motionOK||!vid.muted) vid.play().catch(()=>{}); } else vid.pause(); }
+  requestAnimationFrame(tabInd);
+  onScroll();
+}
+let busy=false;
+function go(view,target,push=true){
+  if(push){ const h="#/"+view+(target&&target!==view?"/"+target:""); if(location.hash!==h) history.pushState(null,"",h); }
+  if(view===cur){ const el=target&&$$(target); if(el) el.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); else scrollTo({top:0,behavior:reduce?"auto":"smooth"}); return; }
+  try{ typeof track==="function" && track("Sayfa",{sayfa:view}); }catch(e){}
+  if(reduce||busy){ show(view,target); return; }
+  busy=true;
+  const c=$$("cur"); $$("curtxt").textContent=T()[view];
+  c.className="cur in";
+  setTimeout(()=>{ show(view,target); c.className="cur out"; setTimeout(()=>{ c.className="cur"; busy=false; },560); },440);
+}
+function fromHash(push){ const h=location.hash.replace(/^#\/?/,""), [a,b]=h.split("/"); const [v,t]=parse(a); go(v,b||t,push); }
+document.addEventListener("click",e=>{
+  const a=e.target.closest && e.target.closest('a[href^="#"]'); if(!a || e.defaultPrevented) return;
+  const path=a.getAttribute("href").replace(/^#\/?/,""), [x,sub]=path.split("/");
+  if(!x || !(VIEWS.includes(x)||SEC[x])) return;
+  const [v,t]=parse(x);
+  e.preventDefault(); ovl(false); go(v,sub||t);
+});
+addEventListener("popstate",()=>fromHash(false));
+
+/* ---- mobil tam ekran menü ---- */
+const O=$$("ovl"), B=$$("mburger");
+function ovl(open){
+  if(open===!O.hidden && open!==false) return;
+  if(open){ O.hidden=false; requestAnimationFrame(()=>requestAnimationFrame(()=>O.classList.add("open"))); document.body.classList.add("lock"); }
+  else { if(O.hidden) return; O.classList.remove("open"); document.body.classList.remove("lock"); setTimeout(()=>{ if(!O.classList.contains("open")) O.hidden=true; }, reduce?0:600); }
+  B.setAttribute("aria-expanded",!!open);
+}
+B.addEventListener("click",()=>ovl(O.hidden));
+addEventListener("keydown",e=>{ if(e.key==="Escape") ovl(false); });
+q("[data-olang]").forEach(b=>b.addEventListener("click",()=>{ const t=document.querySelector(`#langmenu [data-lang="${b.dataset.olang}"]`); t && t.click(); }));
+
+/* ---- alt sekme göstergesi ---- */
+function tabInd(){
+  const a=document.querySelector("#tabbar a.on"), i=$$("tbind");
+  if(!a){ i.style.width="0"; return; }
+  i.style.width=a.offsetWidth*.5+"px"; i.style.transform=`translateX(${a.offsetLeft+a.offsetWidth*.25}px)`;
+}
+addEventListener("resize",tabInd);
+
+/* ---- kaydırma: üst bar, yukarı butonu ---- */
+const mb=$$("mbar"), top=$$("nvtop"), ring=$$("nvring"); let tk=false;
 function onScroll(){
-  tick=false;
-  const y=scrollY, h=root.scrollHeight-innerHeight, p=h>0?Math.min(1,y/h):0;
-  bar.classList.toggle("solid", y>30);
-  bar.classList.toggle("hide", y>innerHeight && y>lastY+4 && dr.hidden);
-  if(y<lastY-4 || y<innerHeight) bar.classList.remove("hide");
-  lastY=y;
-  prog.style.transform=`scaleX(${p})`;
+  tk=false; const y=scrollY, h=root.scrollHeight-innerHeight, p=h>0?Math.min(1,y/h):0;
+  mb.classList.toggle("solid",y>40);
   ring.style.strokeDashoffset=100.5*(1-p);
-  top.classList.toggle("show", y>innerHeight*1.2);
+  top.classList.toggle("show",y>innerHeight*1.2);
 }
-addEventListener("scroll",()=>{ if(!tick){ tick=true; requestAnimationFrame(onScroll); } },{passive:true});
-onScroll();
+addEventListener("scroll",()=>{ if(!tk){ tk=true; requestAnimationFrame(onScroll); } },{passive:true});
 top.addEventListener("click",()=>scrollTo({top:0,behavior:reduce?"auto":"smooth"}));
 
-/* hero kaydırma ipucu */
-const hero=document.querySelector(".hero"); if(hero){ const c=document.createElement("a"); c.className="nv-cue"; c.href="#prensip"; c.setAttribute("aria-label","↓"); hero.appendChild(c); }
-
-/* aktif bölüm */
-if("IntersectionObserver" in window){
-  const links=q("[data-nv]");
-  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) links.forEach(a=>a.classList.toggle("on", a.dataset.nv===e.target.id)); }),{rootMargin:"-45% 0px -50% 0px"});
-  [...new Set([...links].map(a=>a.dataset.nv))].forEach(id=>{ const s=document.getElementById(id); s && io.observe(s); });
-  const hio=new IntersectionObserver(es=>{ if(es[0].isIntersecting) links.forEach(a=>a.classList.remove("on")); },{rootMargin:"-45% 0px -50% 0px"});
-  hero && hio.observe(hero);
+/* ---- prensip kartları: kaydırma noktaları ---- */
+const pl=document.querySelector(".pr-list");
+if(pl){
+  const dots=document.createElement("div"); dots.className="pr-dots"; dots.setAttribute("aria-hidden","true");
+  const items=q(".pr",pl); items.forEach(()=>dots.appendChild(document.createElement("i"))); pl.after(dots);
+  const upd=()=>{ const w=items[0].offsetWidth+14, k=Math.round(Math.abs(pl.scrollLeft)/w); q("i",dots).forEach((d,j)=>d.classList.toggle("on",j===Math.min(k,items.length-1))); };
+  pl.addEventListener("scroll",()=>requestAnimationFrame(upd),{passive:true}); upd();
 }
 
-/* kaydırınca belirme + sayaçlar */
+/* ---- kaydırınca belirme + sayaçlar ---- */
 if(!reduce && "IntersectionObserver" in window){
-  const groups=[".pr-head",".pr",".av-head",".av",".av-cta",".reason",".cbox",".region-body",".kz-txt",".kz-map",".kz-blocks",".kz-why",".ggrid",".ngrid",".gchips",".tabs",".panel",".steps li","#surec details",".pcard",".formsec .perks",".fcard",
-    "section:not(.hero) > .wrap > .eyebrow","section:not(.hero) > .wrap > h2","section:not(.hero) > .wrap > .lead",".two > div > .eyebrow",".two > div > h2"];
-  const els=[...new Set(groups.flatMap(s=>[...q(s)]))];
-  const sib=new Map();
-  els.forEach(el=>{
-    el.classList.add("rv"); if(el.matches(".cbox,.pcard,.panel,.fcard")) el.classList.add("rv-s");
-    const p=el.parentElement, n=sib.get(p)||0; sib.set(p,n+1); el.style.setProperty("--d",Math.min(n,6)*.08+"s");
-  });
-  root.classList.add("nv-rv");
-  const rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); rio.unobserve(e.target); } }),{rootMargin:"0px 0px -8% 0px",threshold:.08});
-  els.forEach(el=>rio.observe(el));
+  const S=[".pr-head",".pr-list",".av-head",".av",".av-cta",".reason",".cbox",".region-body",".tabs",".kz-txt",".kz-map",".kz-blocks",".kz-why",".gchips",".ggrid",".turtle",".ngrid",".panel",".steps li","#surec details",".pcard",".perks",".fcard",
+    "section:not(.hero) .wrap > .eyebrow","section:not(.hero) .wrap > h2","section:not(.hero) .wrap > .lead",".two > div > .eyebrow",".two > div > h2"];
+  const els=[...new Set(S.flatMap(s=>q(s)))], n=new Map();
+  els.forEach(el=>{ el.classList.add("rv"); const p=el.parentElement, k=n.get(p)||0; n.set(p,k+1); el.style.setProperty("--d",Math.min(k,6)*.08+"s"); });
+  root.classList.add("rvon");
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }),{rootMargin:"0px 0px -6% 0px",threshold:.06});
+  els.forEach(el=>io.observe(el));
   const cio=new IntersectionObserver(es=>es.forEach(e=>{
     if(!e.isIntersecting) return; cio.unobserve(e.target);
     const el=e.target, raw=el.textContent.trim(), m=raw.match(/^([\d.,]+)(.*)$/); if(!m) return;
-    const sep=m[1].includes(".")?".":(m[1].includes(",")?",":""), end=parseInt(m[1].replace(/[.,]/g,""),10), t0=performance.now(), dur=1400;
-    const fmt=n=>{ const s=String(n); return sep? s.replace(/\B(?=(\d{3})+(?!\d))/g,sep):s; };
-    const step=t=>{ const k=Math.min(1,(t-t0)/dur), v=Math.round(end*(1-Math.pow(1-k,3))); el.textContent=fmt(v)+m[2]; if(k<1) requestAnimationFrame(step); else el.textContent=raw; };
-    requestAnimationFrame(step);
+    const sep=m[1].includes(".")?".":(m[1].includes(",")?",":""), end=parseInt(m[1].replace(/[.,]/g,""),10), t0=performance.now();
+    const fmt=v=>{ const s=String(v); return sep? s.replace(/\B(?=(\d{3})+(?!\d))/g,sep):s; };
+    const st=t=>{ const k=Math.min(1,(t-t0)/1500), v=Math.round(end*(1-Math.pow(1-k,3))); el.textContent=fmt(v)+m[2]; if(k<1) requestAnimationFrame(st); else el.textContent=raw; };
+    requestAnimationFrame(st);
   }),{threshold:.6});
   q(".reason .k").forEach(k=>cio.observe(k));
 }
 
-/* imleç ışığı (sadece fare) */
-if(matchMedia("(pointer:fine)").matches){
+/* ---- imleç ışığı + manyetik düğmeler (yalnızca fare) ---- */
+if(fine && !reduce){
   document.addEventListener("pointermove",e=>{
-    const c=e.target.closest && e.target.closest(".reason,.pr,.pcard"); if(!c) return;
+    const c=e.target.closest && e.target.closest(".reason,.pcard,.pr"); if(!c) return;
     const r=c.getBoundingClientRect(); c.style.setProperty("--mx",(e.clientX-r.left)+"px"); c.style.setProperty("--my",(e.clientY-r.top)+"px");
   },{passive:true});
+  q(".hero-cta .btn,.rcta").forEach(b=>{
+    b.addEventListener("pointermove",e=>{ const r=b.getBoundingClientRect(); b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.25}px)`; });
+    b.addEventListener("pointerleave",()=>{ b.style.transform=""; });
+  });
 }
+{ const h=location.hash.replace(/^#\/?/,""), [a,b]=h.split("/"); const [v,t]=parse(a); show(v,b||t); }
 })();
 
 </script>
