@@ -64,7 +64,7 @@ function sec() {
   gecmis.son = id; gecmis.sonGun = bugun; gecmis.paylasilan.push(r.id);
   fs.writeFileSync(GECMIS, JSON.stringify(gecmis, null, 1));
   const { ad } = danismanlar.find(d => d.id === id);
-  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
+  fs.writeFileSync(SECIM, JSON.stringify({ danisman: id, ad, yorumId: r.id, puan: r.puan, yazar: kisaAd(r.yazar), metin: r.metin.replace(/\s+/g, ' ').trim(), yeni: r.ilkGorulme >= YENI_SINIR }));
   console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', kisaAd(r.yazar), '|', r.metin.slice(0, 80));
 }
 

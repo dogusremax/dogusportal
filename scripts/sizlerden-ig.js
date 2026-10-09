@@ -33,6 +33,7 @@ const s = m.secim, kisa = s.metin.length > 900 ? s.metin.slice(0, 900).replace(/
 const aciklama =
 `Sizlerden Gelenler 💬 ${s.ad}
 
+${'⭐'.repeat(s.puan || 5)}
 “${kisa}”
 — ${s.yazar}
 
