@@ -1018,6 +1018,9 @@ html{overflow-x:hidden}
 .vn-steak .vn-art{background:radial-gradient(100% 80% at 30% 0%,#F2B55C66,transparent 60%),linear-gradient(165deg,#7A2E14,#14082A)}
 .vn-cafe .vn-art{background:radial-gradient(100% 80% at 70% 0%,#E9C27A55,transparent 60%),linear-gradient(165deg,#3B2414,#0B1442)}
 
+.adv-ph{position:relative;overflow:hidden}.adv-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;background:#fff}
+.ab-p .adv-ph{width:96px;height:96px}
+
 </style>
 </head>
 <body class="v2">
@@ -3075,7 +3078,7 @@ function iv(){
 function ad(){
   const t=T().ad;
   document.querySelectorAll(".adv").forEach(box=>{
-    box.innerHTML=`<div class="adv-ph" aria-hidden="true">${t.n.charAt(0)}</div>
+    box.innerHTML=`<div class="adv-ph" aria-hidden="true"><img src="assets/kibris/umut-tokkus.webp" alt="" width="76" height="76" loading="lazy" decoding="async" onerror="this.remove()">${t.n.charAt(0)}</div>
      <div class="adv-tx"><span class="eyebrow">${t.e}</span><h3>${t.n}</h3><span class="adv-r">${t.r}</span><p>${t.t}</p>
      <div class="adv-cta"><a class="btn btn-wa2" href="${wa(wa0())}" target="_blank" rel="noopener" data-ev="adv_wa">${WAI}${t.wa}</a><a class="btn btn-ghost" href="tel:${TEL}" data-ev="adv_call">${t.call} · <span dir="ltr">${PHONE}</span></a></div></div>`;
   });
@@ -3263,7 +3266,7 @@ function ab(){
      <p>${o.co}<br>${o.ad}</p>
      <a class="ab-g" href="${MAPS}" target="_blank" rel="noopener"><b>★</b> ${o.g.replace("{p}",num(4.9,l)).replace("{n}",num(153,l))} <small>(${o.gd})</small></a>
      <div class="adv-cta"><a class="btn btn-ghost" href="tel:+902163151515"><span dir="ltr">0216 315 15 15</span></a><a class="btn btn-ghost" href="${MAPS}" target="_blank" rel="noopener">${o.map} ↗</a></div></article>`+
-   t.p.map(p=>`<article class="ab-p panel"><div class="adv-ph" aria-hidden="true">${p.n.charAt(0)}</div>
+   t.p.map(p=>`<article class="ab-p panel"><div class="adv-ph" aria-hidden="true"><img src="assets/kibris/${p.id}-tokkus.webp" alt="" width="76" height="76" loading="lazy" decoding="async" onerror="this.remove()">${p.n.charAt(0)}</div>
      <span class="vn-k">${p.r}</span><h3>${p.n}</h3><p>${p.t}</p>
      <div class="adv-cta">${p.id==="umut"?`<a class="btn btn-wa2" href="${wa}" target="_blank" rel="noopener">${t.wa}</a>`:""}<a class="btn btn-ghost" href="${RX[p.id]}" target="_blank" rel="noopener">${t.rx} ↗</a></div></article>`).join("");
 }
