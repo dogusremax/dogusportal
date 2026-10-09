@@ -1002,6 +1002,18 @@ html{overflow-x:hidden}
 .mr-vis{margin-top:40px;padding:clamp(20px,3vw,32px);max-width:900px}
 .mr-vis ul{padding-inline-start:20px;color:#C9CEE6;line-height:1.7;margin:10px 0 18px}
 @media (max-width:699px){.vn-art{aspect-ratio:21/8}.vn-art svg{width:48px;height:48px}}
+/* hakkımızda */
+.v2 .hakkimizda{padding-block:clamp(56px,9vw,110px)}
+.ab{display:grid;gap:14px;margin-top:30px}
+@media (min-width:960px){.ab{grid-template-columns:1.1fr 1fr 1fr}}
+.ab-of,.ab-p{padding:clamp(20px,3vw,28px);display:flex;flex-direction:column;align-items:flex-start}
+.ab-of img{width:150px;height:auto;margin-bottom:14px}
+.ab-of h3,.ab-p h3{font-size:1.5rem;margin:6px 0 2px}
+.ab-s{color:var(--gold);font-weight:600}
+.ab-of p,.ab-p p{color:var(--muted);line-height:1.6;margin:12px 0 14px;flex:1}
+.ab-g{color:#fff;text-decoration:none;margin-bottom:14px;font-weight:600}
+.ab-g b{color:var(--gold)}.ab-g small{color:var(--muted);font-weight:400}
+.ab-p .adv-ph{margin-bottom:14px}
 
 </style>
 </head>
@@ -1156,7 +1168,14 @@ html{overflow-x:hidden}
     <section class="gezi" id="gezi">
       <div class="wrap gz">
         <div class="gz-in"><span class="eyebrow" data-iv="e"></span><h2 data-iv="h"></h2><p class="lead" data-iv="l"></p><div id="iv-box"></div></div>
-        <div class="adv panel"></div>
+      </div>
+    </section>
+    <section class="hakkimizda" id="hakkimizda">
+      <div class="wrap">
+        <span class="eyebrow" data-ab="e"></span>
+        <h2 data-ab="h"></h2>
+        <p class="lead" data-ab="l"></p>
+        <div class="ab" id="ab-box"></div>
       </div>
     </section>
     <a class="next" href="#/neden" data-go="neden"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>02</em><b data-nvt="neden"></b></span><i aria-hidden="true">→</i></a>
@@ -2473,7 +2492,7 @@ const NV={
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={hakkimizda:"home",maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -3191,6 +3210,62 @@ function mr(){
 function all(){ vn(); mr(); }
 all();
 new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
+})();
+
+/* ================= HAKKIMIZDA ================= */
+(function(){
+const root=document.documentElement, $$=id=>document.getElementById(id), L=()=>AB[root.lang]?root.lang:"en";
+const RX={umut:"https://remax.com.tr/tr/danisman/28251/umut-tokkus",makbule:"https://remax.com.tr/tr/danisman/28250/makbule-tokkus"};
+const MAPS="https://www.google.com/maps/place/?q=place_id:ChIJdblFqvvHyhQR_agtjpCfYW0";
+const AB={
+tr:{e:"Hakkımızda",h:"Kıbrıs yatırımınızın <em>İstanbul'daki adresi</em>",l:"RE/MAX Doğuş, Fikirtepe'de hizmet veren bir RE/MAX ofisi. Kıbrıs yatırımlarında sözleşmeyi Türkçe okuyor, sorularınızı yüz yüze konuşuyor, satış sonrasında da muhatabınızı İstanbul'da buluyorsunuz.",
+ of:{k:"Ofisimiz",n:"RE/MAX Doğuş",s:"Yeni Fikirtepe'nin Gayrimenkul Merkezi",co:"UMT Group Gayrimenkul Yatırım Danışmanlık",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, İstanbul",g:"Google'da {p} puan · {n} yorum",gd:"Ekim 2026",map:"Yol tarifi al"},
+ p:[{id:"umut",n:"Umut Tokkuş",r:"Kıbrıs yatırım danışmanlığı",t:"RE/MAX Doğuş'ta Kıbrıs yatırımlarını yönetiyor: bölge ve proje seçiminden sözleşmeye, teslimden kiralamaya kadar süreç boyunca yatırımcının yanında."},
+    {id:"makbule",n:"Makbule Tokkuş",r:"Uluslararası gayrimenkul",t:"Kuzey Kıbrıs, Dubai ve Yunanistan Golden Visa başta olmak üzere yurt dışı gayrimenkul yatırımları üzerine içerik üretiyor ve yatırımcılara rehberlik ediyor."}],
+ rx:"RE/MAX profili",wa:"WhatsApp"},
+en:{e:"About us",h:"Your Cyprus investment's <em>address in Istanbul</em>",l:"RE/MAX Doğuş is a RE/MAX office in Fikirtepe, Istanbul. For Cyprus investments you read the contract in your language, discuss your questions face to face, and after the sale your contact is right here in Istanbul.",
+ of:{k:"Our office",n:"RE/MAX Doğuş",s:"The real estate centre of New Fikirtepe",co:"UMT Group Real Estate Investment Consultancy",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul",g:"{p} on Google · {n} reviews",gd:"October 2026",map:"Get directions"},
+ p:[{id:"umut",n:"Umut Tokkuş",r:"Cyprus investment advisory",t:"Leads Cyprus investments at RE/MAX Doğuş, standing by investors from choosing the region and project through contract, handover and rental."},
+    {id:"makbule",n:"Makbule Tokkuş",r:"International real estate",t:"Creates content and guides investors on property abroad, with a focus on Northern Cyprus, Dubai and the Greek Golden Visa."}],
+ rx:"RE/MAX profile",wa:"WhatsApp"},
+ru:{e:"О нас",h:"Ваш адрес по инвестициям <em>на Кипре — в Стамбуле</em>",l:"RE/MAX Doğuş — офис RE/MAX в Фикиртепе, Стамбул. При инвестициях на Кипре вы обсуждаете вопросы лично, а после покупки ваш контакт остаётся здесь, в Стамбуле.",
+ of:{k:"Наш офис",n:"RE/MAX Doğuş",s:"Центр недвижимости Нового Фикиртепе",co:"UMT Group, консалтинг по инвестициям в недвижимость",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Стамбул",g:"{p} в Google · {n} отзывов",gd:"октябрь 2026",map:"Проложить маршрут"},
+ p:[{id:"umut",n:"Умут Токкуш",r:"Инвестиции на Кипре",t:"Руководит кипрским направлением RE/MAX Doğuş и сопровождает инвесторов от выбора региона и проекта до договора, передачи и сдачи в аренду."},
+    {id:"makbule",n:"Макбуле Токкуш",r:"Зарубежная недвижимость",t:"Создаёт контент и консультирует инвесторов по зарубежной недвижимости: Северный Кипр, Дубай и «золотая виза» Греции."}],
+ rx:"Профиль RE/MAX",wa:"WhatsApp"},
+fa:{e:"درباره ما",h:"نشانی سرمایه‌گذاری شما در قبرس <em>در استانبول</em>",l:"RE/MAX Doğuş دفتری از RE/MAX در فیکیرتپه استانبول است. در سرمایه‌گذاری قبرس پرسش‌هایتان را حضوری مطرح می‌کنید و پس از خرید هم طرف حسابتان در استانبول است.",
+ of:{k:"دفتر ما",n:"RE/MAX Doğuş",s:"مرکز املاک فیکیرتپه نو",co:"UMT Group، مشاوره سرمایه‌گذاری املاک",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy، استانبول",g:"{p} در گوگل · {n} نظر",gd:"اکتبر ۲۰۲۶",map:"مسیریابی"},
+ p:[{id:"umut",n:"Umut Tokkuş",r:"مشاوره سرمایه‌گذاری قبرس",t:"مدیریت سرمایه‌گذاری‌های قبرس در RE/MAX Doğuş را بر عهده دارد و از انتخاب منطقه و پروژه تا قرارداد، تحویل و اجاره در کنار سرمایه‌گذار است."},
+    {id:"makbule",n:"Makbule Tokkuş",r:"املاک بین‌المللی",t:"درباره سرمایه‌گذاری ملکی خارج از کشور، به‌ویژه قبرس شمالی، دبی و گلدن ویزای یونان، محتوا تولید می‌کند و سرمایه‌گذاران را راهنمایی می‌کند."}],
+ rx:"پروفایل RE/MAX",wa:"واتساپ"},
+de:{e:"Über uns",h:"Ihre Adresse für Zypern-Investments <em>in Istanbul</em>",l:"RE/MAX Doğuş ist ein RE/MAX-Büro in Fikirtepe, Istanbul. Bei Zypern-Investments besprechen Sie Ihre Fragen persönlich, und auch nach dem Kauf ist Ihr Ansprechpartner hier in Istanbul.",
+ of:{k:"Unser Büro",n:"RE/MAX Doğuş",s:"Das Immobilienzentrum von Neu-Fikirtepe",co:"UMT Group Immobilien-Investmentberatung",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul",g:"{p} bei Google · {n} Bewertungen",gd:"Oktober 2026",map:"Route planen"},
+ p:[{id:"umut",n:"Umut Tokkuş",r:"Investmentberatung Zypern",t:"Leitet den Zypern-Bereich bei RE/MAX Doğuş und begleitet Investoren von der Wahl der Region und des Projekts über den Vertrag bis zu Übergabe und Vermietung."},
+    {id:"makbule",n:"Makbule Tokkuş",r:"Internationale Immobilien",t:"Erstellt Inhalte und berät Investoren zu Immobilien im Ausland, mit Schwerpunkt Nordzypern, Dubai und Golden Visa Griechenland."}],
+ rx:"RE/MAX-Profil",wa:"WhatsApp"},
+pl:{e:"O nas",h:"Twój adres inwestycji na Cyprze <em>w Stambule</em>",l:"RE/MAX Doğuş to biuro RE/MAX w Fikirtepe w Stambule. Przy inwestycjach na Cyprze rozmawiasz z nami osobiście, a po zakupie Twój opiekun jest tutaj, w Stambule.",
+ of:{k:"Nasze biuro",n:"RE/MAX Doğuş",s:"Centrum nieruchomości Nowego Fikirtepe",co:"UMT Group, doradztwo inwestycyjne w nieruchomościach",ad:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Stambuł",g:"{p} w Google · {n} opinii",gd:"październik 2026",map:"Wyznacz trasę"},
+ p:[{id:"umut",n:"Umut Tokkuş",r:"Doradztwo inwestycyjne Cypr",t:"Prowadzi dział cypryjski w RE/MAX Doğuş i wspiera inwestorów od wyboru regionu i projektu, przez umowę, po odbiór i wynajem."},
+    {id:"makbule",n:"Makbule Tokkuş",r:"Nieruchomości zagraniczne",t:"Tworzy treści i doradza inwestorom w zakresie nieruchomości za granicą, zwłaszcza na Cyprze Północnym, w Dubaju i w ramach greckiej Złotej Wizy."}],
+ rx:"Profil RE/MAX",wa:"WhatsApp"}
+};
+const num=(v,l)=>(+v).toLocaleString({tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL",fa:"fa-IR"}[l]||"en-GB");
+function ab(){
+  const l=L(), t=AB[l], box=$$("ab-box"); if(!box) return;
+  ["e","h","l"].forEach(k=>document.querySelectorAll(`[data-ab="${k}"]`).forEach(el=>el.innerHTML=t[k]));
+  let wa="https://wa.me/905324724148"; try{ wa+="?text="+encodeURIComponent(D().wa0); }catch(e){}
+  const o=t.of;
+  box.innerHTML=`<article class="ab-of panel"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="200" height="72" loading="lazy" decoding="async">
+     <span class="vn-k">${o.k}</span><h3>${o.n}</h3><span class="ab-s">${o.s}</span>
+     <p>${o.co}<br>${o.ad}</p>
+     <a class="ab-g" href="${MAPS}" target="_blank" rel="noopener"><b>★</b> ${o.g.replace("{p}",num(4.9,l)).replace("{n}",num(153,l))} <small>(${o.gd})</small></a>
+     <div class="adv-cta"><a class="btn btn-ghost" href="tel:+902163151515"><span dir="ltr">0216 315 15 15</span></a><a class="btn btn-ghost" href="${MAPS}" target="_blank" rel="noopener">${o.map} ↗</a></div></article>`+
+   t.p.map(p=>`<article class="ab-p panel"><div class="adv-ph" aria-hidden="true">${p.n.charAt(0)}</div>
+     <span class="vn-k">${p.r}</span><h3>${p.n}</h3><p>${p.t}</p>
+     <div class="adv-cta">${p.id==="umut"?`<a class="btn btn-wa2" href="${wa}" target="_blank" rel="noopener">${t.wa}</a>`:""}<a class="btn btn-ghost" href="${RX[p.id]}" target="_blank" rel="noopener">${t.rx} ↗</a></div></article>`).join("");
+}
+ab();
+new MutationObserver(ab).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 
 </script>
