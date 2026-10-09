@@ -190,6 +190,8 @@ button{font:inherit;cursor:pointer}
 .nsrc{margin-top:auto;font-size:.74rem;color:var(--muted);padding-top:6px;border-top:1px dashed var(--line)}
 .nsrc a{color:inherit;text-underline-offset:2px}
 .ncard.feat .nsrc{color:rgba(234,243,245,.6);border-color:rgba(234,243,245,.2)}
+.nmore{grid-column:1/-1;justify-self:center;margin-top:6px;background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:999px;padding:12px 24px;font-weight:700}
+.nmore:hover{background:var(--ink);color:var(--bg)}
 [lang="fa"] .ncard h3{font-family:"Vazirmatn",var(--f-display);font-weight:600;font-size:1.08rem}
 
 /* ---------- regions ---------- */
@@ -1129,13 +1131,16 @@ function pickRegion(i, user){
 }
 
 /* ================= GÜNDEM ================= */
-let ncat="all";
+let ncat="all", nmore=false;
+const NMORE={tr:"Tüm başlıkları göster ({n})",en:"Show all stories ({n})",ru:"Показать все ({n})",fa:"نمایش همه ({n})",de:"Alle Meldungen zeigen ({n})",pl:"Pokaż wszystkie ({n})"};
 function renderNews(){
   const n=D().n, meta=NEWS.meta;
   $("n-e").textContent=n.e; $("n-h").innerHTML=n.h; $("n-l").textContent=n.l;
   $("nchips").innerHTML=Object.keys(n.c).map(k=>`<button type="button" class="gchip" role="tab" data-c="${k}" aria-selected="${k===ncat}">${n.c[k]}</button>`).join("");
-  $("nchips").querySelectorAll(".gchip").forEach(b=>b.onclick=()=>{ncat=b.dataset.c; renderNews(); track("Gundem",{kategori:ncat});});
-  $("ngrid").innerHTML=meta.filter(m=>ncat==="all"||m[1]===ncat).map((m,idx)=>{
+  $("nchips").querySelectorAll(".gchip").forEach(b=>b.onclick=()=>{ncat=b.dataset.c; nmore=false; renderNews(); track("Gundem",{kategori:ncat});});
+  const list=meta.filter(m=>ncat==="all"||m[1]===ncat);
+  const cut = ncat==="all" && !nmore && list.length>7;
+  $("ngrid").innerHTML=(cut?list.slice(0,7):list).map((m,idx)=>{
     const [id,c,fig,src,url,yr]=m, [h,p]=n.i[id], fl=n.fl[id]||"";
     const feat = idx===0 && (ncat==="all"||ncat==="yatirim");
     return `<article class="ncard${feat?" feat":""}" data-c="${c}">
@@ -1143,7 +1148,8 @@ function renderNews(){
       ${fig?`<div class="nfig"><b>${fig}</b><span>${fl}</span></div>`:""}
       <h3>${h}</h3><p>${p}</p>
       ${src?`<div class="nsrc">${n.src}: <a href="${url}" target="_blank" rel="noopener">${src}</a></div>`:""}
-    </article>`;}).join("");
+    </article>`;}).join("") + (cut?`<button type="button" class="nmore" id="nmore">${fill(NMORE[L]||NMORE.en,{n:list.length})}</button>`:"");
+  if(cut) $("nmore").onclick=()=>{nmore=true; renderNews(); track("GundemTumu");};
 }
 
 /* ================= REHBER ================= */
