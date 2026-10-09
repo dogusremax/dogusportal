@@ -91,12 +91,23 @@ const orijinal = s => {
   // Yeni 4–5★ yorumlara otomatik yanıt. Sadece otomasyon başladıktan sonra gelenler: eski yanıtsızlar
   // kullanıcının bilerek yanıtlamadıklarıdır. 1–3★'a yanıt yazılmaz (Google zaten sahibe mail atıyor).
   const yanitBaslangic = new Date(Math.max(Date.parse('2026-10-10T00:00:00Z'), simdi - 30 * 864e5)).toISOString();
+  // Gemini'ye üslup örneği: elle yazılmış, metinli önceki yanıtlardan çeşitli 8 tane
+  const ornekler = yorumlar
+    .filter(v => /^(Değerli|Dear) /.test(v.reviewReply?.comment || '') && (v.reviewReply.updateTime || '') < '2026-10-10' && orijinal(v.comment).length > 40)
+    .filter((v, i, l) => i % Math.max(1, Math.floor(l.length / 8)) === 0).slice(0, 8)
+    .map(v => ({ metin: orijinal(v.comment), yanit: v.reviewReply.comment }));
   let yanitlanan = 0;
   for (const rv of yorumlar) {
-    if (rv.reviewReply || (YILDIZ[rv.starRating] || 0) < 4 || (rv.createTime || '') < yanitBaslangic || yanitlanan >= 10) continue;
+    const deneme = process.env.YANIT_DENEME;
+    if (!deneme && (rv.reviewReply || (YILDIZ[rv.starRating] || 0) < 4 || (rv.createTime || '') < yanitBaslangic)) continue;
+    if (deneme && (YILDIZ[rv.starRating] || 0) < 4) continue;
+    if (yanitlanan >= (deneme ? +deneme : 10)) break;
     const metin = orijinal(rv.comment);
-    const comment = yanitYaz({ id: rv.reviewId, yazar: rv.reviewer?.isAnonymous ? '' : rv.reviewer?.displayName, metin, danismanIdleri: eslestir(metin) });
-    if (process.env.YANIT_DENEME) { console.log('[deneme]', rv.reviewer?.displayName, '→', comment); continue; }
+    const { metin: comment, kaynak } = await yanitYaz({
+      id: rv.reviewId, yazar: rv.reviewer?.isAnonymous ? '' : rv.reviewer?.displayName, metin, puan: YILDIZ[rv.starRating],
+      danismanIdleri: eslestir(metin), ornekler, geminiAnahtar: k.gemini,
+    });
+    if (deneme) { yanitlanan++; console.log(`\n• ${rv.reviewer?.displayName}: ${metin.slice(0, 90)}\n  [${kaynak}] ${comment}`); continue; }
     try {
       await al(`https://mybusiness.googleapis.com/v4/${hesap}/${konum}/reviews/${rv.reviewId}/reply`, tok, { method: 'PUT', body: JSON.stringify({ comment }) });
       rv.reviewReply = { comment };
