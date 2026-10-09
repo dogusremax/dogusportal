@@ -2,7 +2,6 @@
 // Kimlik: GOOGLE_PLACES_KEY secret'ında JSON {client_id, client_secret, refresh_token} (scripts/gbp-yetki.js üretir).
 // Secret adı eski Places denemesinden kaldı; workflow dosyasını değiştirmemek için aynı ad kullanılıyor.
 const fs = require('fs');
-const yanitYaz = require('./google-yanit');
 
 const DOSYA = 'data/google-yorumlar.json';
 const GORULEN = 'data/google-yorum-gorulen.json';
@@ -88,34 +87,6 @@ const orijinal = s => {
   const gorulenSet = new Set(gorulen);
   const simdi = new Date();
   const ucGunOnce = new Date(simdi - 3 * 864e5).toISOString();
-  // Yeni 4–5★ yorumlara otomatik yanıt. Sadece otomasyon başladıktan sonra gelenler: eski yanıtsızlar
-  // kullanıcının bilerek yanıtlamadıklarıdır. 1–3★'a yanıt yazılmaz (Google zaten sahibe mail atıyor).
-  const yanitBaslangic = new Date(Math.max(Date.parse('2026-10-10T00:00:00Z'), simdi - 30 * 864e5)).toISOString();
-  // Gemini'ye üslup örneği: elle yazılmış, metinli önceki yanıtlardan çeşitli 8 tane
-  const ornekler = yorumlar
-    .filter(v => /^(Değerli|Dear) /.test(v.reviewReply?.comment || '') && (v.reviewReply.updateTime || '') < '2026-10-10' && orijinal(v.comment).length > 40)
-    .filter((v, i, l) => i % Math.max(1, Math.floor(l.length / 8)) === 0).slice(0, 8)
-    .map(v => ({ metin: orijinal(v.comment), yanit: v.reviewReply.comment }));
-  let yanitlanan = 0;
-  for (const rv of yorumlar) {
-    const deneme = process.env.YANIT_DENEME;
-    if (!deneme && (rv.reviewReply || (YILDIZ[rv.starRating] || 0) < 4 || (rv.createTime || '') < yanitBaslangic)) continue;
-    if (deneme && (YILDIZ[rv.starRating] || 0) < 4) continue;
-    if (yanitlanan >= (deneme ? +deneme : 10)) break;
-    const metin = orijinal(rv.comment);
-    const { metin: comment, kaynak } = await yanitYaz({
-      id: rv.reviewId, yazar: rv.reviewer?.isAnonymous ? '' : rv.reviewer?.displayName, metin, puan: YILDIZ[rv.starRating],
-      danismanIdleri: eslestir(metin), ornekler, geminiAnahtar: k.gemini,
-    });
-    if (deneme) { yanitlanan++; console.log(`\n• ${rv.reviewer?.displayName}: ${metin.slice(0, 90)}\n  [${kaynak}] ${comment}`); continue; }
-    try {
-      await al(`https://mybusiness.googleapis.com/v4/${hesap}/${konum}/reviews/${rv.reviewId}/reply`, tok, { method: 'PUT', body: JSON.stringify({ comment }) });
-      rv.reviewReply = { comment };
-      yanitlanan++;
-      console.log('Yanıtlandı:', rv.reviewer?.displayName);
-    } catch (e) { console.error('Yanıt gönderilemedi', rv.reviewer?.displayName, e.durum, e.mesaj); }
-  }
-
   let haric = [];   // elle listeden çıkarılan yorumların id'leri (ör. eski danışman anılıyor)
   try { haric = JSON.parse(fs.readFileSync('data/google-yorum-haric.json', 'utf8')); } catch {}
   // Otomatik paylaşılmayacak yeni yorumlar (düşük puan, metinsiz, danışman adı yok) → workflow Umut'a e-posta atar (Danışman Takip yorumBildir)
