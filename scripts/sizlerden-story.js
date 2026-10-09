@@ -1,6 +1,6 @@
 // Google yorumlarından "Sizlerden Gelenler" story'si (<tarih>-<n>.png) ve gönderi karuseli (<tarih>-<n>-k1..3.png) üretir → sizlerden-story/
 // Kural: her yorum yalnızca bir kez paylaşılır (sizlerden-story/.gecmis.json), tekrar yok.
-//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 10:00–23:00 arası ilk çalışmada (15 dk'da bir) paylaşılır; gece gelen sabah 10:00'da.
+//  - Yeni gelen yorum (YENI_SINIR'dan sonra arşive düşen): 10:00–21:00 arası ilk çalışmada (15 dk'da bir) paylaşılır; akşam 21:00'den sonra gelen ertesi sabah 10:00'da.
 //  - Eski (stok) yorumlar: haftada bir, ÇARŞAMBA 12:00'den sonraki ilk çalışmada bir tane; her hafta sıradaki danışman
 //    (eskiSon'dan devam, stoğu bitmiş danışman atlanır). Bitince sadece yeni yorumlar paylaşılır. SADECE_YENI=1 iken stok atlanır.
 // SITE: sayfaların okunduğu adres (workflow yerel sunucu verir; yeni commit'lenen yorum Pages'e düşmeden görsel üretilebilsin).
@@ -47,7 +47,7 @@ function sec() {
 
   let r = null, id = null;
   const yeniler = adaylar.filter(x => (x.ilkGorulme || '') >= YENI_SINIR).sort((a, b) => a.ilkGorulme.localeCompare(b.ilkGorulme));
-  if (yeniler.length && saat >= 10 && saat < 23) {
+  if (yeniler.length && saat >= 10 && saat < 21) {
     r = yeniler[0];
     id = sirali.find(i => r.danismanlar.includes(i));
   } else if (!yeniler.length && process.env.SADECE_YENI !== '1' && carsamba && saat >= 12 && (!eskiSonGun || gunFark(bugun, eskiSonGun) >= 6)) {
