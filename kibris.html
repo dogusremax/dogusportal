@@ -105,7 +105,9 @@ button{font:inherit;cursor:pointer}
 .seal svg{width:100%;height:auto;display:block;overflow:visible}
 .seal .seal-img{display:none;position:relative;width:100%;aspect-ratio:1}
 .seal .seal-img img{position:absolute;inset:0;width:100%;height:100%}
-.seal .seal-ring{animation:sealspin 40s linear infinite}
+.seal.is-img{filter:none}
+.seal .seal-img::before{content:"";position:absolute;inset:7%;border-radius:50%;box-shadow:0 12px 22px rgba(0,0,0,.42),0 2px 4px rgba(0,0,0,.3)}
+.seal .seal-ring{animation:sealspin 40s linear infinite;will-change:transform}
 @keyframes sealspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion: reduce){.seal .seal-ring{animation:none}}
 .seal.is-img svg{display:none}
@@ -1343,8 +1345,11 @@ document.querySelectorAll("[data-ev]").forEach(a => a.addEventListener("click", 
     });
     x.fillStyle="rgba(242,181,92,.35)";
     for(let i=0;i<7;i++){ const yy=h*(.25+i*.1); const ww=(30-i*3+Math.sin(t*.05+i)*6)*devicePixelRatio; x.fillRect(w*.86-ww/2, yy, ww, 2*devicePixelRatio); }
-    t++; if(!reduce) requestAnimationFrame(draw);
+    t++; if(!reduce && vis) requestAnimationFrame(draw);
   }
+  // Ekranda değilken çizmeyi durdur: işlemciyi ve pili boşuna yormasın
+  let vis=true;
+  if("IntersectionObserver" in window) new IntersectionObserver(es=>{ const was=vis; vis=es[0].isIntersecting; if(vis && !was && !reduce) requestAnimationFrame(draw); }).observe(c);
   draw();
 })();
 
