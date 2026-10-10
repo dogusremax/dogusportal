@@ -329,7 +329,8 @@
   }
   FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
   function goFull(el){ const f = el.requestFullscreen || el.webkitRequestFullscreen; return f ? Promise.resolve(f.call(el)).catch(() => {}) : Promise.resolve(); }
-  $('fs').onclick = () => goFull($('viewer'));
+  // Tek turda da yan yanadaki gibi: turun kendisi tam ekrana geçer, kapaklar en üst katmanda aynı yerlerde
+  $('fs').onclick = () => goFull(cur.embed !== false && frames[cur.id] ? frames[cur.id].f : $('viewer'));
   // Tam ekranda kapaklar aynı piksel yerlerinde kalır (tur arayüzü sabit piksel); tek turda logo kapağın içinde görünür.
   // Turun kendi tam ekran tuşunda kapakları en üst katmanda (popover) aynı yerlere koyarız.
   function onFull(){
