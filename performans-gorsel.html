@@ -124,6 +124,7 @@ function catSlide(r,label,valueHtml,sub,red,no){
 ${wm(String(no||1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
 <div style="position:absolute;right:-6px;bottom:-6px;width:340px;height:545px;overflow:hidden;clip-path:inset(0);">${cut(r.id,545,340)}</div>
 <div style="position:absolute;left:36px;width:170px;bottom:90px;z-index:5;">
+${CEYREK?`<div style="position:relative;width:74px;height:120px;margin:0 0 14px 6px;">${KUPA(120,'left:0;top:0;')}</div>`:''}
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:9px;font-weight:800;letter-spacing:1.4px;padding:5px 9px;border-radius:7px;margin-bottom:10px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.4;">${sub}</div></div>${arrow()}${progress()}</div>`;
@@ -131,6 +132,7 @@ ${wm(String(no||1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(f
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
 <div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:440px;overflow:hidden;clip-path:inset(0);">${cut(r.id,440,260)}</div>
 <div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
+${CEYREK?`<div style="position:relative;width:59px;height:96px;margin:0 0 12px 4px;">${KUPA(96,'left:0;top:0;')}</div>`:''}
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
 ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
@@ -152,6 +154,7 @@ function catSlideMulti(ws,label,valueHtml,sub,red,no){
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:10px;">${label}</div>
 ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;">${sub}</div></div>
+${CEYREK?KUPA(STORY?120:96,`right:${STORY?40:36}px;top:${STORY?150:84}px;`):''}
 <div style="position:absolute;left:0;right:0;bottom:-6px;height:${h}px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end;">${figs}</div>
 <div style="position:absolute;left:0;right:0;bottom:${STORY?116:56}px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
 ${arrow()}${progress()}</div>`;
