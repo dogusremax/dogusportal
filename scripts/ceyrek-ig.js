@@ -1,10 +1,12 @@
 // Çeyrek şampiyonlarını @remaxdogus'ta yayınlar: önce gönderi carousel'i, sonra story'ler sırayla.
 // Her adımdan sonra performans/ceyrek/.pub güncellenir; yeniden çalışırsa kaldığı yerden devam eder, mükerrer atmaz.
 // DRY_RUN=1 ise hiçbir şey yayınlamaz, sadece ne yapacağını yazar.
+// Aylık/haftalık paylaşım da bunu kullanır: PAYLASIM_DIR=performans/oto/ay (ya da /hafta).
 const fs = require('fs');
 const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID, DRY = process.env.DRY_RUN === '1';
-const G = 'https://graph.facebook.com/v23.0', PUB = 'performans/ceyrek/.pub';
-let media; try { media = JSON.parse(fs.readFileSync('performans/ceyrek/.media', 'utf8')); } catch (e) { console.log('.media yok, paylaşım atlandı.'); process.exit(0); }
+const DIR = process.env.PAYLASIM_DIR || 'performans/ceyrek';
+const G = 'https://graph.facebook.com/v23.0', PUB = DIR + '/.pub';
+let media; try { media = JSON.parse(fs.readFileSync(DIR + '/.media', 'utf8')); } catch (e) { console.log('.media yok, paylaşım atlandı.'); process.exit(0); }
 let pub = { q: media.q, carousel: null, story: 0, tamam: false };
 try { const p = JSON.parse(fs.readFileSync(PUB, 'utf8')); if (p.q === media.q) pub = p; } catch (e) {}
 if (pub.tamam) { console.log('Zaten yayınlanmış, atlandı:', media.q); process.exit(0); }
@@ -43,7 +45,7 @@ async function videoYaDaGorsel(u, videoGovde, gorselGovde, hazirBekle) {
 }
 (async () => {
   for (const u of [...media.gonderi, ...media.story]) await yayinda(u);
-  if (!pub.carousel) {
+  if (!pub.carousel && media.gonderi.length) {
     const children = [];
     for (const u of media.gonderi) {   // kupalı slaytlar dönen kupalı videodur (.mp4); video olmazsa aynı slaytın görseli
       children.push(await videoYaDaGorsel(u, url => ({ media_type: 'VIDEO', video_url: url, is_carousel_item: true }), url => ({ image_url: url, is_carousel_item: true }), false));

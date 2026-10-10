@@ -1,0 +1,59 @@
+name: Aylık ve haftalık performans (otomatik paylaşım)
+# Tetik Danışman Takip Apps Script'inden gelir (GitHub'ın kendi zamanlaması saatlerce gecikebiliyor):
+#   hafta → her Pazartesi 09:00 (TR) geçen haftanın sıralaması story olarak
+#   ay    → her ayın 1'i 10:00 (TR) geçen ayın şampiyonları gönderi carousel'i olarak
+# İki saat sonra Apps Script denetler; yayın tamamlanmadıysa yeniden tetikler, olmazsa mail atar.
+# Mükerrer yayın olmaz: performans/oto/<donem>/.pub hangi adımların yayınlandığını tutar.
+on:
+  workflow_dispatch:
+    inputs:
+      donem:
+        description: "ay | hafta"
+        required: true
+      anahtar:
+        description: "ay: YYYY-MM · hafta: Pazartesi YYYY-MM-DD (boş = geçen ay / geçen hafta)"
+        required: false
+      dry_run:
+        description: "1 = üret ama Instagram'a paylaşma"
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: performans-otomatik-${{ github.event.inputs.donem }}
+  cancel-in-progress: false
+jobs:
+  paylas:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run }}
+      PAYLASIM_DIR: performans/oto/${{ github.event.inputs.donem }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+      - run: node scripts/donem.js "${{ github.event.inputs.donem }}" "${{ github.event.inputs.anahtar }}"
+      - name: Görselleri yayına al
+        run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add performans/oto 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Performans ${{ github.event.inputs.donem }}: $(node -p "require('./$PAYLASIM_DIR/.media').q" 2>/dev/null)"
+          git pull --rebase -q && git push
+      - name: Güncel IG token'ı al
+        if: hashFiles(format('{0}/.media', env.PAYLASIM_DIR)) != '' && env.DRY_RUN != '1'
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        if: hashFiles(format('{0}/.media', env.PAYLASIM_DIR)) != ''
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          S=0; node scripts/ceyrek-ig.js 2>&1 | tee "$PAYLASIM_DIR/log.txt" || S=$?
+          git add "$PAYLASIM_DIR" 2>/dev/null
+          git diff --cached --quiet || { git commit -m "Performans ${{ github.event.inputs.donem }} paylaşım kaydı" && git pull --rebase -q && git push; }
+          exit $S
