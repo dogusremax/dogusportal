@@ -28,7 +28,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 .bos{font-size:12px;color:rgba(255,255,255,.4);padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
 </style></head><body>
 <div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Çeyrek Sıralaması</h1><select id="yil"></select></div>
-<div class="bar"><div class="tabs" id="tabs"></div><div class="gl"><a id="g-post" href="#">📸 Gönderi</a><a id="g-story" href="#">📱 Story</a><a id="g-onizle" href="#" style="background:#334155">🔍 Önizleme</a><a id="g-sonizle" href="#" style="background:#334155">🔍 Story Önizleme</a></div></div>
+<div class="bar"><div class="tabs" id="tabs"></div><div class="gl"><a id="g-post" href="#">📸 Gönderi</a><a id="g-onizle" href="#" style="background:#334155">🔍 Gönderi Önizleme</a><a id="g-story" href="#">📱 Story</a><a id="g-sonizle" href="#" style="background:#334155">🔍 Story Önizleme</a></div></div>
 <div class="status" id="status">Yükleniyor…</div>
 <div class="wrap" id="wrap"></div>
 <script>
@@ -90,7 +90,8 @@ async function load(){
   const st=document.getElementById('status'),wrap=document.getElementById('wrap'),k=`${Y}-Q${Q}`,ben=++SIRA;
   history.replaceState(null,'',`?yil=${Y}&q=${Q}`);
   document.getElementById('h').textContent=`Q${Q} ${Y} Sıralaması`;
-  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${k}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';document.getElementById('g-onizle').href=g+'&onizle=1';document.getElementById('g-sonizle').href=g+'&fmt=story&onizle=1';
+  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${k}`,cb='&cb='+Date.now();   // cb: tarayıcı eski sayfayı açmasın
+  document.getElementById('g-post').href=g+cb;document.getElementById('g-story').href=g+'&fmt=story'+cb;document.getElementById('g-onizle').href=g+'&onizle=1'+cb;document.getElementById('g-sonizle').href=g+'&fmt=story&onizle=1'+cb;
   const eski=sakli(k);
   if(eski) goster(eski,await yorumlar(),false); else {st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';}
   try{

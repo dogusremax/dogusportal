@@ -379,7 +379,7 @@ async function render(d){
   if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;}
   if(STORY){const sb2=document.getElementById('storybtn');sb2.style.display='inline-block';sb2.disabled=false;}
   const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
-  const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false;
+  const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false; tb.textContent=STORY?'🔍 Story Önizleme':'🔍 Gönderi Önizleme';
   // ?onizle=1 ile gelindiyse (çeyrek sayfasındaki Önizleme düğmesi) önizleme kendiliğinden açılır
   if(!render._onizlendi&&new URLSearchParams(location.search).get('onizle')==='1'){render._onizlendi=true;openPreview();}
 }
