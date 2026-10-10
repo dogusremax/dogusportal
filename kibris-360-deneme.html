@@ -40,7 +40,8 @@
   .tour small{color:var(--mute)}
   .wrap{display:grid;grid-template-columns:1fr 320px;gap:14px}
   .viewer{background:#000;overflow:hidden;position:relative;height:68vh;min-height:420px}
-  .viewer iframe{width:100%;height:100%;border:0;display:block}
+  .viewer iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .viewer iframe.bg{opacity:0;pointer-events:none;z-index:-1}
   .bar{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
   .btn{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 12px;font:600 13px Manrope;cursor:pointer;text-decoration:none;display:inline-block}
   .btn.red{background:var(--red)}
@@ -119,7 +120,7 @@
         <div class="stage">
         <div class="biglogo" id="bigLogo" hidden><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div>
         <div class="strip" id="strip"><span id="stripText">RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
-        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><div id="frames"></div></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
         <div class="bar">
@@ -226,7 +227,7 @@
     const list = logos(), o = list[i], v = $('viewer').getBoundingClientRect();
     const el = $('badges').children[i], r = el.getBoundingClientRect();
     const sx = e.clientX, sy = e.clientY, left0 = r.left - v.left, top0 = r.top - v.top, w0 = r.width, h0 = r.height;
-    $('frame').style.pointerEvents = 'none';
+    allFrames(f => f.style.pointerEvents = 'none');
     [...$('badges').children].forEach((c,k) => c.classList.toggle('sel', k===i));
     const move = ev => {
       const dx = ev.clientX - sx, dy = ev.clientY - sy;
@@ -236,7 +237,7 @@
     };
     const up = () => {
       window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
-      $('frame').style.pointerEvents = '';
+      allFrames(f => f.style.pointerEvents = '');
       const nr = el.getBoundingClientRect(), L = nr.left - v.left, T = nr.top - v.top, R = v.width - L - nr.width, B = v.height - T - nr.height;
       o.w = Math.round(parseFloat(el.style.width) || o.w);
       o.h = L <= R ? 'l' : 'r'; o.x = Math.round(o.h==='l' ? L : R);
@@ -246,26 +247,42 @@
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
   }
   function hideSplash(){ clearTimeout(splashT); cancelAnimationFrame(splashA); $('splash').classList.add('out'); }
-  function playSplash(){
+  // Turlar sayfa açılınca arkada yüklenir; geçişte kapak yalnızca girişin kalan süresi kadar kalır
+  function playSplash(full){
     clearTimeout(splashT); cancelAnimationFrame(splashA);
     const sec = +sure(), sp = $('splash'), bar = $('splashProg');
     if(cur.embed === false){ sp.classList.add('out'); return; }
+    const gecen = (full === true || !frames[cur.id]) ? 0 : (performance.now() - frames[cur.id].t0) / 1000;
+    if(sec && gecen >= sec){ sp.classList.add('out'); return; }
     sp.classList.remove('out');
     bar.parentNode.hidden = !sec;
     if(!sec) return;
-    const t0 = performance.now();
+    const t0 = performance.now() - gecen*1000;
     const tick = t => { const k = Math.min(1, (t - t0) / (sec*1000)); bar.style.width = (k*100) + '%'; if(k < 1) splashA = requestAnimationFrame(tick); };
     splashA = requestAnimationFrame(tick);
-    splashT = setTimeout(hideSplash, sec*1000);
+    splashT = setTimeout(hideSplash, (sec - gecen)*1000);
   }
   $('splashGo').onclick = hideSplash;
   $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); renderLogos(); };
   $('b_add').onclick = () => { const l = logos(); l.push({h:'l', v:'t', x:20 + l.length*14, y:20 + l.length*14, w:140, st:$('b_st').value || 'cam'}); selIdx = l.length-1; saveLogos(l); renderLogos(); if(!editing) $('b_edit').click(); };
   $('b_st').onchange = () => { const l = logos(); if(l[selIdx]){ l[selIdx].st = $('b_st').value; saveLogos(l); renderLogos(); } };
-  $('b_sure').onchange = () => { store.set('k360S2_'+cur.id, {s:$('b_sure').value}); playSplash(); };
-  $('b_tekrar').onclick = playSplash;
+  $('b_sure').onchange = () => { store.set('k360S2_'+cur.id, {s:$('b_sure').value}); playSplash(true); };
+  $('b_tekrar').onclick = () => playSplash(true);
   let cur = TOURS[0];
   let gridLoaded = false;
+  // Her tur için bir iframe: hepsi hemen yüklenmeye başlar, geçişte yeniden yüklenmez
+  const frames = {};
+  TOURS.forEach(t => {
+    if(t.embed === false) return;
+    const f = document.createElement('iframe');
+    f.className = 'bg';
+    f.allow = 'fullscreen; xr-spatial-tracking; gyroscope; accelerometer';
+    f.allowFullscreen = true;
+    f.src = t.url;
+    $('frames').appendChild(f);
+    frames[t.id] = {f, t0: performance.now()};
+  });
+  function allFrames(fn){ Object.values(frames).forEach(x => fn(x.f)); }
 
   function renderTours(){
     $('tours').innerHTML = TOURS.map(t =>
@@ -276,9 +293,9 @@
     cur = TOURS.find(t => t.id===id);
     renderTours();
     const ok = cur.embed !== false;
-    $('frame').hidden = !ok;
+    allFrames(f => f.classList.add('bg'));
+    if(ok) frames[cur.id].f.classList.remove('bg');
     $('blocked').hidden = ok;
-    $('frame').src = ok ? cur.url : 'about:blank';
     if(!ok) $('blocked').innerHTML = blockedHTML(cur);
     $('open').href = cur.url;
     $('curName').textContent = 'Kıbrıs 360 sanal tur';
