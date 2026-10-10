@@ -17,7 +17,7 @@ async function post(p, body) {
   const j = await r.json(); if (j.error) throw new Error(JSON.stringify(j.error)); return j;
 }
 async function hazir(id) {
-  for (let i = 0; i < 36; i++) {
+  for (let i = 0; i < 60; i++) {
     const st = await (await fetch(`${G}/${id}?fields=status_code&access_token=${TOKEN}`)).json();
     if (st.status_code === 'FINISHED') return;
     if (st.status_code === 'ERROR') throw new Error('Container ERROR ' + id);
@@ -26,7 +26,8 @@ async function hazir(id) {
   throw new Error('Container zaman aşımı ' + id);
 }
 async function yayinda(url) {
-  for (let i = 0; i < 30; i++) { if ((await fetch(url, { method: 'HEAD' })).ok) return; await wait(10000); }
+  // video Pages'ten gelir, yayına çıkması birkaç dakika sürebilir
+  for (let i = 0; i < 60; i++) { if ((await fetch(url, { method: 'HEAD' })).ok) return; await wait(10000); }
   throw new Error('Görsel yayında değil: ' + url);
 }
 (async () => {
@@ -40,7 +41,8 @@ async function yayinda(url) {
     console.log('✓ carousel yayınlandı:', pub.carousel);
   }
   for (let i = pub.story; i < media.story.length; i++) {
-    const cont = await post(`${UID}/media`, { media_type: 'STORIES', image_url: media.story[i] });
+    const u = media.story[i];   // story kapağı dönen kupalı videodur (.mp4)
+    const cont = await post(`${UID}/media`, /\.mp4$/i.test(u) ? { media_type: 'STORIES', video_url: u } : { media_type: 'STORIES', image_url: u });
     await hazir(cont.id);
     await post(`${UID}/media_publish`, { creation_id: cont.id });
     pub.story = i + 1; kaydet();

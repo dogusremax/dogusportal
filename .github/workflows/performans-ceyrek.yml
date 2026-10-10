@@ -27,6 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+      - run: command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
       - run: node scripts/ceyrek.js "${{ github.event.inputs.q }}"
       - name: Görselleri yayına al
         run: |
