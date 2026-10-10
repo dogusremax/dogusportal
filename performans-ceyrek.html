@@ -8,11 +8,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;mi
 .top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
 .top img{height:30px}.top h1{font-size:16px;font-weight:700;flex:1}.top a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px}
 select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;background:#161c44;color:#fff}
-.tabs{display:flex;gap:8px;padding:14px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
+.bar{display:flex;align-items:center;gap:8px;padding:14px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tabs button{font:700 13px 'Plus Jakarta Sans',sans-serif;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;background:#111738;color:rgba(255,255,255,.7);cursor:pointer}
 .tabs button.on{background:#FB5160;border-color:#FB5160;color:#fff}.tabs button:disabled{opacity:.35;cursor:default}
-.gl{display:flex;gap:8px;padding:12px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
-.gl a{font:700 13px 'Plus Jakarta Sans',sans-serif;text-decoration:none;color:#fff;border-radius:10px;padding:9px 14px;background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)}
+.gl{display:flex;gap:6px;margin-left:auto}
+.gl a{font:700 11.5px 'Plus Jakarta Sans',sans-serif;text-decoration:none;color:#fff;border-radius:8px;padding:6px 10px;background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);white-space:nowrap}
 .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6);max-width:980px;margin:0 auto}
 .wrap{max-width:980px;margin:0 auto;padding:6px 16px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .cat{background:#111738;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px}
@@ -27,8 +28,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 .bos{font-size:12px;color:rgba(255,255,255,.4);padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
 </style></head><body>
 <div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Çeyrek Sıralaması</h1><select id="yil"></select></div>
-<div class="tabs" id="tabs"></div>
-<div class="gl"><a id="g-post" href="#">📸 Gönderi karuseli</a><a id="g-story" href="#">📱 Story görselleri</a></div>
+<div class="bar"><div class="tabs" id="tabs"></div><div class="gl"><a id="g-post" href="#">📸 Gönderi</a><a id="g-story" href="#">📱 Story</a></div></div>
 <div class="status" id="status">Yükleniyor…</div>
 <div class="wrap" id="wrap"></div>
 <script>
@@ -70,25 +70,35 @@ function kart(c,s){
   const satir=ilk.map((x,i)=>`<div class="row"><div class="m">${['🥇','🥈','🥉'][i]}</div><div class="av"><img src="assets/ekip/${x.id}.png" onerror="this.remove()"></div><div class="name">${x.name}</div><div class="v">${fmt(x)}</div></div>`).join('');
   return `<div class="cat"><h2>${ad}</h2><p>${acik}</p>${satir||'<div class="bos">Bu çeyrekte kayıt yok</div>'}</div>`;
 }
+/* Son görülen çeyrek verisi tarayıcıda saklanır: sayfa önce onu anında gösterir, sonra tazesini çeker */
+const sakla=(k,d)=>{try{localStorage.setItem('ceyrek_'+k,JSON.stringify(d));}catch(e){}};
+const sakli=k=>{try{return JSON.parse(localStorage.getItem('ceyrek_'+k)||'null');}catch(e){return null;}};
+const cek=async k=>{const r=await fetch(`${APPS_SCRIPT_URL}?action=ceyrek&q=${k}&k=${KEY}`);let d;try{d=await r.json();}catch(e){throw new Error('çeyrek verisi alınamadı');}if(d.error)throw new Error(d.error);sakla(k,d);return d;};
+async function goster(d,yr,taze){
+  const st=document.getElementById('status'),wrap=document.getElementById('wrap');
+  const ay1=M[(Q-1)*3],ay3=M[(Q-1)*3+2];
+  if(!d.hasData){wrap.innerHTML='';st.textContent=`Q${Q} ${Y} için kayıt bulunamadı.`;return;}
+  const say={};
+  yr.filter(y=>d.aylar.includes(String(y.tarih||'').slice(0,7))).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
+  d.siralama.forEach(x=>x.yorum=say[x.id]||0);
+  wrap.innerHTML=CATS.map(c=>kart(c,d.siralama)).join('');
+  st.textContent=`${ay1} – ${ay3} ${Y}`+(d.devamEdiyor?' · çeyrek devam ediyor, sonuçlar ara durum':'')+(taze?'':' · güncelleniyor…');
+}
+let SIRA=0;
 async function load(){
   tabs();
-  const st=document.getElementById('status'),wrap=document.getElementById('wrap');
-  st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';
+  const st=document.getElementById('status'),wrap=document.getElementById('wrap'),k=`${Y}-Q${Q}`,ben=++SIRA;
   history.replaceState(null,'',`?yil=${Y}&q=${Q}`);
-  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${Y}-Q${Q}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';
+  document.getElementById('h').textContent=`Q${Q} ${Y} Sıralaması`;
+  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${k}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';
+  const eski=sakli(k);
+  if(eski) goster(eski,await yorumlar(),false); else {st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';}
   try{
-    const [r,yr]=await Promise.all([fetch(`${APPS_SCRIPT_URL}?action=ceyrek&q=${Y}-Q${Q}&k=${KEY}`),yorumlar()]);
-    let d;try{d=await r.json();}catch(e){throw new Error('çeyrek verisi alınamadı (Apps Script güncellemesi yayında mı?)');}
-    if(d.error)throw new Error(d.error);
-    const ay1=M[(Q-1)*3],ay3=M[(Q-1)*3+2];
-    document.getElementById('h').textContent=`Q${Q} ${Y} Sıralaması`;
-    if(!d.hasData){st.textContent=`Q${Q} ${Y} için kayıt bulunamadı.`;return;}
-    const say={};
-    yr.filter(y=>d.aylar.includes(String(y.tarih||'').slice(0,7))).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
-    d.siralama.forEach(x=>x.yorum=say[x.id]||0);
-    wrap.innerHTML=CATS.map(c=>kart(c,d.siralama)).join('');
-    st.textContent=`${ay1} – ${ay3} ${Y}`+(d.devamEdiyor?' · çeyrek devam ediyor, sonuçlar ara durum':'');
-  }catch(e){st.textContent='Hata: '+e.message;}
+    const [d,yr]=await Promise.all([cek(k),yorumlar()]);
+    if(ben===SIRA) goster(d,yr,true);
+  }catch(e){if(ben===SIRA)st.textContent=(eski?'Son kayıtlı veri gösteriliyor · ':'')+'Hata: '+e.message;}
+  // Aynı yılın diğer çeyreklerini arkadan hazırla: sekme değiştirince anında açılsın
+  if(ben===SIRA) for(let q=1;q<=4;q++){if(q===Q||Y>curY||(Y===curY&&q>curQ))continue;cek(`${Y}-Q${q}`).catch(()=>{});}
 }
 load();
 </script></body></html>
