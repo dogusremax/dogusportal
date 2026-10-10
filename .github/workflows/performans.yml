@@ -1,7 +1,6 @@
 name: Aylık performans görselleri
+# Zamanlama kaldırıldı: aylık paylaşım artık performans-otomatik.yml ile (Apps Script tetikler). Elle çalıştırılabilir.
 on:
-  schedule:
-    - cron: "0 3 1 * *"   # her ayın 1'i 06:00 (TR)
   workflow_dispatch:
     inputs:
       ay:
