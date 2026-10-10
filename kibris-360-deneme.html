@@ -18,6 +18,10 @@
   header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px;line-height:1.1}
   header h1 small{display:block;font-size:11px;font-weight:600;opacity:.7;letter-spacing:1px;text-transform:uppercase}
   .stage{border-radius:14px;overflow:hidden;border:3px solid var(--navy);background:var(--navy);position:relative}
+  .stage:fullscreen{display:flex;flex-direction:column;border-radius:0;border:0;width:100vw;height:100vh}
+  .stage:fullscreen .viewer{flex:1;height:auto;min-height:0}
+  .grid4 .cell:fullscreen{border-radius:0;border:0}
+  .grid4 .cfs{position:absolute;right:10px;top:10px;z-index:6;width:34px;height:34px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:18px;cursor:pointer;opacity:.85}
   .biglogo{position:absolute;left:0;top:0;z-index:7;padding:6px 0 0 14px;pointer-events:none}
   .biglogo img{width:172px;height:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
   .badge.merge img{visibility:hidden}
@@ -116,10 +120,10 @@
   <section id="tek">
     <div class="wrap">
       <div>
-        <div class="stage">
+        <div class="stage" id="stage">
         <div class="biglogo" id="bigLogo" hidden><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div>
         <div class="strip" id="strip"><span id="stripText">RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
-        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="xr-spatial-tracking; gyroscope; accelerometer"></iframe></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
         <div class="bar">
@@ -309,14 +313,17 @@
     } else { $('k_getiri').textContent = '–'; $('k_donus').textContent = '–'; }
   }
   FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
-  $('fs').onclick = () => { const v=$('viewer'); (v.requestFullscreen||v.webkitRequestFullscreen||function(){}).call(v); };
+  // Turların kendi tam ekran butonu kapakları dışarıda bırakır; bu yüzden iframe'lere tam ekran izni yok, tam ekranı kapaklarla birlikte biz açıyoruz
+  function goFull(el){ (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el); }
+  $('fs').onclick = () => goFull($('stage'));
+  document.addEventListener('fullscreenchange', () => layoutBig());
 
   // Yan yana görünüm: her tur kendi açılış kapağı ve logo kapaklarıyla (tek turdaki ayarların aynısı)
   function gridCell(t){
     const c = document.createElement('div');
     c.className = 'cell';
     if(t.embed === false){ c.innerHTML = `<div class="blocked">${blockedHTML(t)}</div>`; return c; }
-    c.innerHTML = `<div class="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="prog"><i></i></span><button class="go">Tura başla</button></div><iframe src="${t.url}" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`;
+    c.innerHTML = `<div class="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="prog"><i></i></span><button class="go">Tura başla</button></div><iframe src="${t.url}" allow="gyroscope; accelerometer"></iframe><button class="cfs" title="Tam ekran">⤢</button>`;
     logosFor(t).forEach(o => {
       const b = document.createElement('div');
       b.className = 'badge ' + o.st;
@@ -328,6 +335,7 @@
     let tm;
     const hide = () => { clearTimeout(tm); sp.classList.add('out'); };
     c.querySelector('.go').onclick = hide;
+    c.querySelector('.cfs').onclick = () => goFull(c);
     bar.parentNode.hidden = !sec;
     if(sec){
       bar.style.transition = `width ${sec}s linear`;
