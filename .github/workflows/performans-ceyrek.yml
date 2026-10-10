@@ -1,10 +1,9 @@
 name: Çeyrek şampiyonları (otomatik paylaşım)
-# Asıl tetik Danışman Takip Apps Script'inden gelir (ceyrekTetikle, çeyreği izleyen ayın 1'i 10:00 TR);
-# GitHub'ın kendi zamanlaması saatlerce gecikebildiği için aşağıdaki cron sadece yedektir.
+# Tetik Danışman Takip Apps Script'inden gelir: ceyrekTetikle, yeni çeyreğin ilk iş günü 10:00 (TR),
+# hafta sonu ve resmi tatiller atlanır; 12:00'de ceyrekKontrol tamamlanmadıysa yeniden dener, olmazsa mail atar.
+# (GitHub'ın kendi zamanlaması saatlerce gecikebildiği için schedule kullanılmıyor.)
 # Mükerrer yayın olmaz: performans/ceyrek/.pub hangi adımların yayınlandığını tutar.
 on:
-  schedule:
-    - cron: "17 7 1 1,4,7,10 *"   # 10:17 TR (yedek)
   workflow_dispatch:
     inputs:
       q:
