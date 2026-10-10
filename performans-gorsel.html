@@ -508,12 +508,12 @@ function kupaDon(){
     im.src=kare[0].src;k.appendChild(im);return im;});
   Promise.all(kare.map(im=>im.decode().catch(()=>{}))).then(()=>{
     document.body.classList.add('don'); const t0=performance.now();
-    const adim=t=>{const i=Math.floor((t-t0)/1000*24)%72;imgs.forEach(im=>{if(im.dataset.i!=i){im.src=kare[i].src;im.dataset.i=i;}});_donT=requestAnimationFrame(adim);};
+    const adim=t=>{const i=Math.max(0,Math.floor((t-t0)/1000*24))%72;imgs.forEach(im=>{if(im.dataset.i!=i){im.src=kare[i].src;im.dataset.i=i;}});_donT=requestAnimationFrame(adim);};
     _donT=requestAnimationFrame(adim);
   });
 }
 // html2canvas her yerde sabit kupayla çizsin
-if(window.html2canvas){const _h2c=window.html2canvas;window.html2canvas=(el,o={})=>_h2c(el,{...o,ignoreElements:e=>e.classList&&e.classList.contains('kupa-don'),onclone:d=>d.body.classList.remove('don')});}
+if(window.html2canvas){const _h2c=window.html2canvas;window.html2canvas=(el,o={})=>_h2c(el,{...o,ignoreElements:e=>e.classList&&e.classList.contains('kupa-don'),onclone:d=>{d.body.classList.remove('don');d.querySelectorAll('.card .slide').forEach(e=>e.style.transform='none');}});}
 /* Çeyrek story kapağının videosu (otomatik paylaşımın ürettiği story_1.mp4); yoksa PNG'ye düşülür */
 async function kapakVideo(i){
   if(!CEYREK||!STORY||i!==0) return null;
@@ -612,6 +612,7 @@ function switchTab(tab){
 }
 var _previewIdx=0,_previewTotal=0;
 function openPreview(){
+  if(STORY) return storyOnizle();
   var slides=document.querySelectorAll('.slide');
   _previewTotal=slides.length; _previewIdx=0;
   var container=document.getElementById('previewSlides');
@@ -726,6 +727,50 @@ function updatePreviewNav(){
     </div>
   </div>
 </div>
+<!-- Story Önizleme: telefon ekranında story akışı (kapak videosu oynar, görseller 5 sn) -->
+<div id="storyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.9);align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif">
+  <div id="spTel" style="position:relative;height:min(92vh,calc(94vw*16/9));aspect-ratio:9/16;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+    <div id="spMedya" style="position:absolute;inset:0"></div>
+    <div id="spBar" style="position:absolute;left:8px;right:8px;top:8px;display:flex;gap:3px;z-index:3"></div>
+    <div style="position:absolute;left:10px;right:10px;top:20px;display:flex;align-items:center;gap:8px;z-index:3;color:#fff;font-size:13px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.5)">
+      <div style="width:30px;height:30px;border-radius:50%;background:#fff url(assets/dogus-logo.png) center/80% no-repeat;border:2px solid #dd2a7b"></div>remaxdogus<span style="font-weight:500;opacity:.75">şimdi</span>
+      <span onclick="storyKapat()" style="margin-left:auto;font-size:24px;line-height:1;cursor:pointer;padding:4px">×</span></div>
+    <div onclick="storyGit(-1)" style="position:absolute;left:0;top:60px;bottom:0;width:35%;z-index:2;cursor:pointer"></div>
+    <div onclick="storyGit(1)" style="position:absolute;right:0;top:60px;bottom:0;width:65%;z-index:2;cursor:pointer"></div>
+    <div id="spYukle" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:4">Hazırlanıyor…</div>
+  </div>
+</div>
+<script>
+let _sp={list:[],i:0,t:0,raf:0};
+async function storyOnizle(){
+  const m=document.getElementById('storyModal'),y=document.getElementById('spYukle'),slides=[...document.querySelectorAll('.slide')];
+  m.style.display='flex'; y.style.display='flex'; _sp.list.forEach(x=>{URL.revokeObjectURL(x.url);x.png&&URL.revokeObjectURL(x.png);}); _sp.list=[];
+  for(let i=0;i<slides.length;i++){
+    y.textContent=`Hazırlanıyor ${i+1}/${slides.length}…`;
+    const v=await kapakVideo(i),b=await renderPng(i);
+    _sp.list.push(v?{video:true,url:URL.createObjectURL(v),png:URL.createObjectURL(b)}:{url:URL.createObjectURL(b)});
+  }
+  document.getElementById('spBar').innerHTML=_sp.list.map(()=>'<div style="flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden"><div style="height:100%;width:0;background:#fff"></div></div>').join('');
+  y.style.display='none'; storyGoster(0);
+}
+function storyGoster(i){
+  cancelAnimationFrame(_sp.raf);
+  if(i<0)i=0; if(i>=_sp.list.length) return storyKapat();
+  _sp.i=i; const s=_sp.list[i],md=document.getElementById('spMedya'),bars=[...document.querySelectorAll('#spBar > div > div')];
+  bars.forEach((b,j)=>b.style.width=j<i?'100%':'0');
+  md.innerHTML=s.video?`<video src="${s.url}" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`:`<img src="${s.url}" style="width:100%;height:100%;object-fit:cover">`;
+  let vid=md.querySelector('video'),t0=performance.now();
+  if(vid) vid.onerror=()=>{md.innerHTML=`<img src="${s.png}" style="width:100%;height:100%;object-fit:cover">`;vid=null;t0=performance.now();};   // video oynatılamazsa sabit kapak
+  const adim=()=>{const p=vid?(vid.duration?vid.currentTime/vid.duration:0):(performance.now()-t0)/5000;
+    bars[i].style.width=Math.min(p,1)*100+'%';
+    if(vid?vid.ended:p>=1) return storyGoster(i+1);
+    _sp.raf=requestAnimationFrame(adim);};
+  _sp.raf=requestAnimationFrame(adim);
+}
+function storyGit(d){storyGoster(_sp.i+d);}
+function storyKapat(){cancelAnimationFrame(_sp.raf);document.getElementById('storyModal').style.display='none';document.getElementById('spMedya').innerHTML='';}
+document.addEventListener('keydown',e=>{if(document.getElementById('storyModal').style.display!=='flex')return;if(e.key==='ArrowRight')storyGit(1);if(e.key==='ArrowLeft')storyGit(-1);if(e.key==='Escape')storyKapat();});
+</script>
 </body>
 </html>
 
