@@ -12,7 +12,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tabs button{font:700 13px 'Plus Jakarta Sans',sans-serif;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;background:#111738;color:rgba(255,255,255,.7);cursor:pointer}
 .tabs button.on{background:#FB5160;border-color:#FB5160;color:#fff}.tabs button:disabled{opacity:.35;cursor:default}
-.gl{display:flex;gap:6px;margin-left:auto}
+.gl{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
 .gl a{font:700 11.5px 'Plus Jakarta Sans',sans-serif;text-decoration:none;color:#fff;border-radius:8px;padding:6px 10px;background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);white-space:nowrap}
 .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6);max-width:980px;margin:0 auto}
 .wrap{max-width:980px;margin:0 auto;padding:6px 16px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
@@ -28,7 +28,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 .bos{font-size:12px;color:rgba(255,255,255,.4);padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
 </style></head><body>
 <div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Çeyrek Sıralaması</h1><select id="yil"></select></div>
-<div class="bar"><div class="tabs" id="tabs"></div><div class="gl"><a id="g-post" href="#">📸 Gönderi</a><a id="g-story" href="#">📱 Story</a><a id="g-onizle" href="#" style="background:#334155">🔍 Önizleme</a></div></div>
+<div class="bar"><div class="tabs" id="tabs"></div><div class="gl"><a id="g-post" href="#">📸 Gönderi</a><a id="g-story" href="#">📱 Story</a><a id="g-onizle" href="#" style="background:#334155">🔍 Önizleme</a><a id="g-sonizle" href="#" style="background:#334155">🔍 Story Önizleme</a></div></div>
 <div class="status" id="status">Yükleniyor…</div>
 <div class="wrap" id="wrap"></div>
 <script>
@@ -90,7 +90,7 @@ async function load(){
   const st=document.getElementById('status'),wrap=document.getElementById('wrap'),k=`${Y}-Q${Q}`,ben=++SIRA;
   history.replaceState(null,'',`?yil=${Y}&q=${Q}`);
   document.getElementById('h').textContent=`Q${Q} ${Y} Sıralaması`;
-  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${k}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';document.getElementById('g-onizle').href=g+'&onizle=1';
+  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${k}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';document.getElementById('g-onizle').href=g+'&onizle=1';document.getElementById('g-sonizle').href=g+'&fmt=story&onizle=1';
   const eski=sakli(k);
   if(eski) goster(eski,await yorumlar(),false); else {st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';}
   try{
