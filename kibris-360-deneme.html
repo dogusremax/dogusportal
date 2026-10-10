@@ -57,7 +57,9 @@
   .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid4 .cell{border:3px solid var(--navy)}
   .grid4 .cell{background:#000;border-radius:12px;overflow:hidden;height:44vh;min-height:300px;position:relative}
-  .grid4 .cell iframe{width:100%;height:100%;border:0}
+  .grid4 .cell iframe{width:100%;height:100%;border:0;display:block}
+  .grid4 .splash img{width:min(40%,220px)}
+  .grid4 .splash .s1{font-size:11px}
   .grid4 .cell .lbl{position:absolute;left:8px;bottom:8px;border-left:3px solid var(--red);background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px}
   .blocked{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--navy);color:#fff;text-align:center;padding:20px}
   .blocked b{font-size:20px}
@@ -172,12 +174,21 @@
   };
   const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
   // Varsayılan: firma logosu sol üst köşede, opak lacivert kapak köşeye yaslı
-  const LDEF = () => cur.logos ? cur.logos.map(o => ({...o})) : [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
+  const LDEF = (t = cur) => t.logos ? t.logos.map(o => ({...o})) : [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
   let splashT, splashA, editing = false, selIdx = 0;
-  function logos(){ const d = store.get('k360L5_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function logosFor(t){ const d = store.get('k360L5_'+t.id); return Array.isArray(d.list) ? d.list : LDEF(t); }
+  function logos(){ return logosFor(cur); }
   function saveLogos(list){ store.set('k360L5_'+cur.id, {list}); }
   // Uzun girişi olan turlarda kapak varsayılan olarak tıklanana kadar kalır
-  function sure(){ const d = store.get('k360S2_'+cur.id); return d.s !== undefined ? d.s : (cur.splash || '15'); }
+  function sureFor(t){ const d = store.get('k360S2_'+t.id); return d.s !== undefined ? d.s : (t.splash || '15'); }
+  function sure(){ return sureFor(cur); }
+  function badgeStyle(b, o){
+    b.style.width = o.w + 'px';
+    if(o.ph) b.style.minHeight = o.ph + 'px';
+    b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
+    b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
+    if(o.x < 4 && o.y < 4){ b.style.borderRadius = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.classList.add('flush'); }
+  }
   function renderLogos(){
     const box = $('badges'), list = logos();
     box.innerHTML = '';
@@ -186,11 +197,7 @@
     list.forEach((o, i) => {
       const b = document.createElement('div');
       b.className = 'badge ' + o.st + (i===selIdx ? ' sel' : '');
-      b.style.width = o.w + 'px';
-      if(o.ph) b.style.minHeight = o.ph + 'px';
-      b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
-      b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
-      if(o.x < 4 && o.y < 4){ const r = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.style.borderRadius = r; b.classList.add('flush'); }
+      badgeStyle(b, o);
       b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><button class="x" title="Sil">×</button><span class="rz"></span>';
       b.querySelector('.x').onclick = e => { e.stopPropagation(); const l = logos(); l.splice(i,1); saveLogos(l); renderLogos(); };
       b.addEventListener('pointerdown', e => startDrag(e, i, e.target.classList.contains('rz')));
@@ -304,12 +311,37 @@
   FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
   $('fs').onclick = () => { const v=$('viewer'); (v.requestFullscreen||v.webkitRequestFullscreen||function(){}).call(v); };
 
+  // Yan yana görünüm: her tur kendi açılış kapağı ve logo kapaklarıyla (tek turdaki ayarların aynısı)
+  function gridCell(t){
+    const c = document.createElement('div');
+    c.className = 'cell';
+    if(t.embed === false){ c.innerHTML = `<div class="blocked">${blockedHTML(t)}</div>`; return c; }
+    c.innerHTML = `<div class="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="prog"><i></i></span><button class="go">Tura başla</button></div><iframe src="${t.url}" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`;
+    logosFor(t).forEach(o => {
+      const b = document.createElement('div');
+      b.className = 'badge ' + o.st;
+      badgeStyle(b, o);
+      b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187">';
+      c.appendChild(b);
+    });
+    const sp = c.querySelector('.splash'), bar = c.querySelector('.prog i'), sec = +sureFor(t);
+    let tm;
+    const hide = () => { clearTimeout(tm); sp.classList.add('out'); };
+    c.querySelector('.go').onclick = hide;
+    bar.parentNode.hidden = !sec;
+    if(sec){
+      bar.style.transition = `width ${sec}s linear`;
+      requestAnimationFrame(() => requestAnimationFrame(() => bar.style.width = '100%'));
+      tm = setTimeout(hide, sec*1000);
+    }
+    return c;
+  }
   function mode(yan){
     $('tek').hidden = yan; $('yan').hidden = !yan; $('tours').hidden = yan;
     $('mTek').classList.toggle('on',!yan); $('mYan').classList.toggle('on',yan);
     if(yan && !gridLoaded){
-      $('grid').innerHTML = TOURS.map(t =>
-        `<div class="cell"><span class="lbl">RE/MAX Doğuş</span>${t.embed===false ? `<div class="blocked">${blockedHTML(t)}</div>` : `<iframe src="${t.url}" loading="lazy" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`}</div>`).join('');
+      $('grid').innerHTML = '';
+      TOURS.forEach(t => $('grid').appendChild(gridCell(t)));
       gridLoaded = true;
     }
   }
