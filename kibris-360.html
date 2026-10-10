@@ -45,6 +45,9 @@
   .grid4 .cell{background:#000;border-radius:12px;overflow:hidden;height:44vh;min-height:300px;position:relative}
   .grid4 .cell iframe{width:100%;height:100%;border:0}
   .grid4 .cell .lbl{position:absolute;left:8px;top:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px}
+  .blocked{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--navy);color:#fff;text-align:center;padding:20px}
+  .blocked b{font-size:20px}
+  .blocked p{margin:0;opacity:.8;font-size:13px;max-width:320px}
   .note{font-size:12px;color:var(--mute);margin-top:12px}
   [hidden]{display:none!important}
   @media (max-width:900px){
@@ -70,7 +73,7 @@
   <section id="tek">
     <div class="wrap">
       <div>
-        <div class="viewer" id="viewer"><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="viewer" id="viewer"><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
         <div class="bar">
           <button class="btn" id="fs">Tam ekran</button>
           <a class="btn ghost" id="open" target="_blank" rel="noopener">Yeni sekmede aç</a>
@@ -103,7 +106,7 @@
 <script>
   const TOURS = [
     {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
-    {id:'northernland', ad:'Northernland', url:'https://360.northernland.com/main/'},
+    {id:'northernland', ad:'Northernland', url:'https://360.northernland.com/main/', embed:false},
     {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/'},
     {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/'}
   ];
@@ -124,7 +127,11 @@
   function select(id){
     cur = TOURS.find(t => t.id===id);
     renderTours();
-    $('frame').src = cur.url;
+    const ok = cur.embed !== false;
+    $('frame').hidden = !ok;
+    $('blocked').hidden = ok;
+    $('frame').src = ok ? cur.url : 'about:blank';
+    if(!ok) $('blocked').innerHTML = blockedHTML(cur);
     $('open').href = cur.url;
     const msg = `Merhaba, Kıbrıs projesini 360° gezebilirsiniz: ${cur.url}\nRE/MAX Doğuş · 0216 315 15 15`;
     $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
@@ -132,6 +139,13 @@
     FIELDS.forEach(f => $('f_'+f).value = d[f]||'');
     calc();
     if(location.hash.slice(1)!==id) history.replaceState(null,'','#'+id);
+  }
+  function blockedHTML(t){
+    return `<b>${t.ad} 360</b><p>Bu tur sayfa içinde açılmıyor, ayrı pencerede açılır. Yatırım paneli burada çalışmaya devam eder.</p><button class="btn red" onclick="openWin('${t.url}')">Turu aç</button>`;
+  }
+  function openWin(u){
+    const w = Math.round(screen.availWidth*.7), h = Math.round(screen.availHeight*.85);
+    window.open(u, 'tur360', `width=${w},height=${h},left=0,top=0`) || window.open(u, '_blank');
   }
   function save(){
     const d = {}; FIELDS.forEach(f => d[f] = $('f_'+f).value);
@@ -152,7 +166,7 @@
     $('mTek').classList.toggle('on',!yan); $('mYan').classList.toggle('on',yan);
     if(yan && !gridLoaded){
       $('grid').innerHTML = TOURS.map(t =>
-        `<div class="cell"><span class="lbl">${t.ad}</span><iframe src="${t.url}" loading="lazy" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe></div>`).join('');
+        `<div class="cell"><span class="lbl">${t.ad}</span>${t.embed===false ? `<div class="blocked">${blockedHTML(t)}</div>` : `<iframe src="${t.url}" loading="lazy" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`}</div>`).join('');
       gridLoaded = true;
     }
   }
