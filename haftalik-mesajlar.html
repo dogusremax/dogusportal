@@ -324,6 +324,23 @@ async function haftalik(h) {
   const t = await r.text();
   try { return JSON.parse(t); } catch (e) { throw new Error('Veri okunamadı'); }
 }
+// Haftalık burç: karnenin kapanış satırının ({{10}}) başına eklenir, ayrı mesaj gitmez.
+// Karne biten haftayı anlatır; burç ise mesajın gittiği yeni haftanınkidir (h + 7 gün).
+async function burcEkle(liste, h) {
+  const karne = liste.filter(m => m.sablon === 'haftalik_karne');
+  if (!karne.length) return;
+  const p = new Date(h + 'T12:00:00'); p.setDate(p.getDate() + 7);
+  try {
+    const r = await fetch(WA_SERVICE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({
+      action: 'haftalikBurc', hafta: iso(p), isimler: karne.map(m => m.d.name) }) });
+    const j = JSON.parse(await r.text());
+    if (!j.success) return;
+    karne.forEach(m => {
+      const b = (j.burclar || {})[m.d.name];
+      if (b && b.metin) m.p[9] = `🔮 *Haftalık burç (${b.emoji} ${b.burc}):* ${b.metin} · ${m.p[9]}`;
+    });
+  } catch (e) { console.warn('Burç yorumları alınamadı', e); }
+}
 async function load() {
   const grid = document.getElementById('grid'), h = document.getElementById('hafta').value;
   durum('Veriler çekiliyor…'); grid.innerHTML = ''; LISTE = []; butonlar();
@@ -335,6 +352,7 @@ async function load() {
     } else veri = await haftalik(h);
     if (!veri || !veri.siralama || !veri.siralama.length) { grid.innerHTML = '<div class="empty">Bu hafta için henüz veri yok.</div>'; durum(''); return; }
     LISTE = MOD === 'pazartesi' ? pazartesi(veri, onceki) : carsamba(veri, new Date(h + 'T12:00:00'));
+    if (MOD === 'pazartesi') { durum('Haftalık burç yorumları alınıyor…'); await burcEkle(LISTE, h); }
     ciz();
   } catch (e) {
     console.warn(e); durum('Veri çekilemedi. İnterneti kontrol edip Yenile\'ye bas.');
