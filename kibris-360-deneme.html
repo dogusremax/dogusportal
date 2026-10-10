@@ -121,7 +121,7 @@
       <div>
         <div class="stage">
         <div class="biglogo" id="bigLogo" hidden><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div>
-        <div class="strip" id="strip"><span id="stripText">RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
+        <div class="strip" id="strip" hidden><span id="stripText">RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
         <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><div id="frames"></div></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
@@ -209,17 +209,10 @@
     $('b_st').value = list[selIdx] ? list[selIdx].st : 'cam';
     layoutBig();
   }
-  // Sol üste yaslı kapak varsa, logo şerit ve kapağı birlikte kaplayan tek büyük logo olur; şeritte yanında "sunar" yazar
+  // Tek tur da yan yanadaki gibi: üst şerit yok, logo kapağın içinde (birleşik büyük logo kapalı)
   function layoutBig(){
-    const big = $('bigLogo'), txt = $('stripText'), list = logos();
-    const i = (editing || cur.embed === false || document.fullscreenElement === $('viewer')) ? -1 : list.findIndex(o => o.h==='l' && o.v==='t' && o.x < 4 && o.y < 4);
-    const el = i < 0 ? null : $('badges').children[i];
-    if(!el){ big.hidden = true; $('strip').classList.remove('merged'); txt.textContent = 'RE/MAX Doğuş sunar'; txt.className = ''; txt.style.paddingLeft = ''; return; }
-    $('strip').classList.add('merged');
-    el.classList.add('merge');
-    big.hidden = false;
-    txt.textContent = 'sunar'; txt.className = 'sunar';
-    txt.style.paddingLeft = '186px';
+    $('bigLogo').hidden = true;
+    $('strip').classList.remove('merged');
   }
   window.addEventListener('resize', () => layoutBig());
   function startDrag(e, i, resize){
