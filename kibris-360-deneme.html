@@ -21,6 +21,8 @@
   .biglogo{position:absolute;left:0;top:0;z-index:7;padding:6px 0 0 14px;pointer-events:none}
   .biglogo img{width:172px;height:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
   .badge.merge img{visibility:hidden}
+  #fsLayer{position:fixed;inset:0;width:100vw;height:100vh;margin:0;padding:0;border:0;background:transparent;pointer-events:none;overflow:visible}
+  #fsLayer:not(:popover-open){display:none}
   .strip.merged{min-height:70px}
   .strip .sunar{font-size:22px;font-weight:500;letter-spacing:.5px;font-style:italic;opacity:.95}
   .strip{display:flex;align-items:center;gap:10px;color:#fff;padding:8px 12px;font-size:13px;font-weight:600}
@@ -210,7 +212,7 @@
   // Sol üste yaslı kapak varsa, logo şerit ve kapağı birlikte kaplayan tek büyük logo olur; şeritte yanında "sunar" yazar
   function layoutBig(){
     const big = $('bigLogo'), txt = $('stripText'), list = logos();
-    const i = (editing || cur.embed === false) ? -1 : list.findIndex(o => o.h==='l' && o.v==='t' && o.x < 4 && o.y < 4);
+    const i = (editing || cur.embed === false || document.fullscreenElement === $('viewer')) ? -1 : list.findIndex(o => o.h==='l' && o.v==='t' && o.x < 4 && o.y < 4);
     const el = i < 0 ? null : $('badges').children[i];
     if(!el){ big.hidden = true; $('strip').classList.remove('merged'); txt.textContent = 'RE/MAX Doğuş sunar'; txt.className = ''; txt.style.paddingLeft = ''; return; }
     $('strip').classList.add('merged');
@@ -326,12 +328,36 @@
     } else { $('k_getiri').textContent = '–'; $('k_donus').textContent = '–'; }
   }
   FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
-  $('fs').onclick = () => { const v=$('viewer'); (v.requestFullscreen||v.webkitRequestFullscreen||function(){}).call(v); };
+  function goFull(el){ const f = el.requestFullscreen || el.webkitRequestFullscreen; return f ? Promise.resolve(f.call(el)).catch(() => {}) : Promise.resolve(); }
+  $('fs').onclick = () => goFull($('viewer'));
+  // Tam ekranda kapaklar aynı piksel yerlerinde kalır (tur arayüzü sabit piksel); tek turda logo kapağın içinde görünür.
+  // Turun kendi tam ekran tuşunda kapakları en üst katmanda (popover) aynı yerlere koyarız.
+  function onFull(){
+    const el = document.fullscreenElement || document.webkitFullscreenElement, L = $('fsLayer');
+    if(el && el.tagName === 'IFRAME'){
+      const cell = el.closest('.cell'), t = cell ? TOURS.find(x => x.id === cell.dataset.id) : cur;
+      L.innerHTML = '';
+      logosFor(t).forEach(o => {
+        const b = document.createElement('div');
+        b.className = 'badge ' + o.st;
+        badgeStyle(b, o);
+        b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187">';
+        L.appendChild(b);
+      });
+      if(L.showPopover){ try{ L.showPopover(); }catch(e){} }
+      return;
+    }
+    if(L.hidePopover){ try{ L.hidePopover(); }catch(e){} }
+    if(!editing) renderLogos();
+  }
+  document.addEventListener('fullscreenchange', onFull);
+  document.addEventListener('webkitfullscreenchange', onFull);
 
   // Yan yana görünüm: her tur kendi açılış kapağı ve logo kapaklarıyla (tek turdaki ayarların aynısı)
   function gridCell(t){
     const c = document.createElement('div');
     c.className = 'cell';
+    c.dataset.id = t.id;
     if(t.embed === false){ c.innerHTML = `<div class="blocked">${blockedHTML(t)}</div>`; return c; }
     c.innerHTML = `<div class="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="prog"><i></i></span><button class="go">Tura başla</button></div><iframe src="${t.url}" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`;
     logosFor(t).forEach(o => {
@@ -367,5 +393,6 @@
 
   select(TOURS.some(t => t.id===location.hash.slice(1)) ? location.hash.slice(1) : TOURS[0].id);
 </script>
+<div id="fsLayer" popover="manual"></div>
 </body>
 </html>
