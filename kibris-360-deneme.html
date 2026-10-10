@@ -156,7 +156,7 @@
 <script>
   const TOURS = [
     {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
-    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/'},
+    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/', splash:'0'},
     {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/', logos:[{h:'l', v:'t', x:10, y:4, w:145, st:'koyu'}]}
   ];
   const $ = id => document.getElementById(id);
@@ -170,7 +170,8 @@
   let splashT, splashA, editing = false, selIdx = 0;
   function logos(){ const d = store.get('k360L3_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
   function saveLogos(list){ store.set('k360L3_'+cur.id, {list}); }
-  function sure(){ const d = store.get('k360S'); return d.s !== undefined ? d.s : '15'; }
+  // Uzun girişi olan turlarda kapak varsayılan olarak tıklanana kadar kalır
+  function sure(){ const d = store.get('k360S_'+cur.id); return d.s !== undefined ? d.s : (cur.splash || '15'); }
   function renderLogos(){
     const box = $('badges'), list = logos();
     box.innerHTML = '';
@@ -235,7 +236,7 @@
   $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); };
   $('b_add').onclick = () => { const l = logos(); l.push({h:'l', v:'t', x:20 + l.length*14, y:20 + l.length*14, w:140, st:$('b_st').value || 'cam'}); selIdx = l.length-1; saveLogos(l); renderLogos(); if(!editing) $('b_edit').click(); };
   $('b_st').onchange = () => { const l = logos(); if(l[selIdx]){ l[selIdx].st = $('b_st').value; saveLogos(l); renderLogos(); } };
-  $('b_sure').onchange = () => { store.set('k360S', {s:$('b_sure').value}); playSplash(); };
+  $('b_sure').onchange = () => { store.set('k360S_'+cur.id, {s:$('b_sure').value}); playSplash(); };
   $('b_tekrar').onclick = playSplash;
   let cur = TOURS[0];
   let gridLoaded = false;
