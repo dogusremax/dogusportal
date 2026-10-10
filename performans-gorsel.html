@@ -40,7 +40,7 @@
   .slide img{-webkit-user-drag:none;pointer-events:none}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   @media(max-width:480px){.grid{padding:12px;gap:10px}.card{width:100%;height:470px;overflow:hidden;justify-content:flex-start}.card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}}
-body.don [data-kupa=kapak] > div > img{opacity:0}
+body.don [data-kupa] > img{opacity:0}
 </style>
 <script>document.addEventListener('DOMContentLoaded',()=>{{const q=new URLSearchParams(location.search);if(q.get('donem')==='hafta'||q.get('fmt')==='story'){const st=document.createElement('style');st.textContent='.slide{height:747px!important;min-height:747px;max-height:747px}';document.head.appendChild(st);}}});</script>
 </head>
@@ -179,10 +179,10 @@ ${STORY?`${wm('3','rgba(255,255,255,.05)')}${logo(false)}<div style="position:ab
 ${progress()}</div>`;
 }
 /* Kupa görseli (yalnız çeyrek): geometrik altın kupa, siyah mermer kaide — Canva'da üretilmiş fotogerçekçi görsel, arka planı temizlendi */
-const KUPA=(h,st='')=>`<div style="position:absolute;${st}width:${Math.round(h*.613)}px;height:${h}px;"><div style="position:absolute;left:12%;right:12%;bottom:-2%;height:9%;border-radius:50%;background:rgba(0,0,0,.45);box-shadow:0 0 ${Math.round(h*.12)}px ${Math.round(h*.05)}px rgba(0,0,0,.4);"></div><div style="position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,206,92,.38),rgba(255,206,92,0));"></div><img src="assets/kupa.png" style="position:relative;display:block;width:100%;height:100%;"></div>`;
+const KUPA=(h,st='')=>`<div data-kupa style="position:absolute;${st}width:${Math.round(h*.613)}px;height:${h}px;"><div style="position:absolute;left:12%;right:12%;bottom:-2%;height:9%;border-radius:50%;background:rgba(0,0,0,.45);box-shadow:0 0 ${Math.round(h*.12)}px ${Math.round(h*.05)}px rgba(0,0,0,.4);"></div><div style="position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,206,92,.38),rgba(255,206,92,0));"></div><img src="assets/kupa.png" style="position:relative;display:block;width:100%;height:100%;"></div>`;
 /* Şampiyonlar story kapağı: haftalık story kapağıyla aynı (kırmızı zemin, podyum, KAYDIR) */
 function kapakStory(d){
-  const pod=(n,h,col,txt)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">${CEYREK&&n===1?`<div data-kupa="kapak" style="position:relative;width:101px;height:165px;margin-bottom:-4px;">${KUPA(165,'left:0;top:0;')}</div>`:`<div class="sans" style="width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.75);">?</div>`}<div style="width:100%;height:${h}px;border-radius:14px 14px 0 0;background:${col};display:flex;align-items:flex-start;justify-content:center;padding-top:12px;box-shadow:0 -10px 30px rgba(0,0,0,.25);"><span class="sans" style="font-size:40px;font-weight:800;color:${txt};line-height:1;letter-spacing:-2px;">${n}</span></div></div>`;
+  const pod=(n,h,col,txt)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">${CEYREK&&n===1?`<div style="position:relative;width:101px;height:165px;margin-bottom:-4px;">${KUPA(165,'left:0;top:0;')}</div>`:`<div class="sans" style="width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.75);">?</div>`}<div style="width:100%;height:${h}px;border-radius:14px 14px 0 0;background:${col};display:flex;align-items:flex-start;justify-content:center;padding-top:12px;box-shadow:0 -10px 30px rgba(0,0,0,.25);"><span class="sans" style="font-size:40px;font-weight:800;color:${txt};line-height:1;letter-spacing:-2px;">${n}</span></div></div>`;
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${ROZET(d)}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">${CEYREK?'Çeyreğin':'Ayın'}<br>Şampiyonları</h1>
 <p class="sans" style="font-size:15px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">${CEYREK?'Ciro, işlem, performans, müşteri memnuniyeti ve sosyal medyada çeyreğin':'Ciro, işlem, performans, sosyal medya ve müşteri memnuniyetinde ayın'} ilk üçü.</p></div>
@@ -369,7 +369,7 @@ async function render(d){
   const st=document.getElementById('status'), grid=document.getElementById('grid');
   document.body.removeAttribute('data-ready'); document.getElementById('zipbtn').disabled=true;
   const slides=build(d);
-  grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">${CEYREK&&STORY&&i===0?'Video indir':'PNG indir'}</button></div>`).join('');
+  grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">${CEYREK&&h.includes('data-kupa')?'Video indir':'PNG indir'}</button></div>`).join('');
   await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
   await document.fonts.ready;
   st.textContent=`${CEYREK?d.ayAdi:d.ayAdi+' '+d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
@@ -496,12 +496,12 @@ async function karnePaylas(dl){
   if(!dl&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});st.textContent='Paylaşım menüsü açıldı → WhatsApp\'ı seç.';return;}catch(e){ console.warn('Sessiz hata:', e); }}
   saveBlob(b,`karne_${DATA.ay}.png`); st.textContent='Karne indirildi ✓';
 }
-/* Story kapağında kupa 360° döner (assets/kupa-360 kareleri, 24 fps). Görsel üretiminde (PNG, önizleme, otomatik paylaşım) sabit kupa kullanılır. */
+/* Çeyrekte kupalar 360° döner (assets/kupa-360 kareleri, 24 fps). Görsel üretiminde (PNG, önizleme, otomatik paylaşım) sabit kupa kullanılır. */
 let _donT=0;
 function kupaDon(){
   cancelAnimationFrame(_donT); document.body.classList.remove('don');
-  if(!CEYREK||!STORY||navigator.webdriver) return;
-  const kutular=[...document.querySelectorAll('[data-kupa=kapak]')]; if(!kutular.length) return;
+  if(!CEYREK||navigator.webdriver) return;
+  const kutular=[...document.querySelectorAll('[data-kupa]')]; if(!kutular.length) return;
   const kare=[...Array(72)].map((_,i)=>{const im=new Image();im.src=`assets/kupa-360/${String(i).padStart(3,'0')}.png`;return im;});
   const imgs=kutular.map(k=>{const h=Math.round(k.offsetHeight*1.04),im=document.createElement('img');im.className='kupa-don';
     im.style.cssText=`position:absolute;left:50%;bottom:-2px;height:${h}px;width:${Math.round(h*347/600)}px;transform:translateX(-50%);z-index:2;pointer-events:none;`;
@@ -514,10 +514,11 @@ function kupaDon(){
 }
 // html2canvas her yerde sabit kupayla çizsin
 if(window.html2canvas){const _h2c=window.html2canvas;window.html2canvas=(el,o={})=>_h2c(el,{...o,ignoreElements:e=>e.classList&&e.classList.contains('kupa-don'),onclone:d=>{d.body.classList.remove('don');d.querySelectorAll('.card .slide').forEach(e=>e.style.transform='none');}});}
-/* Çeyrek story kapağının videosu (otomatik paylaşımın ürettiği story_1.mp4); yoksa PNG'ye düşülür */
+/* Kupalı çeyrek slaytının videosu (otomatik paylaşımın ürettiği gonderi_N.mp4 / story_N.mp4); yoksa PNG'ye düşülür */
 async function kapakVideo(i){
-  if(!CEYREK||!STORY||i!==0) return null;
-  try{const r=await fetch(`performans/ceyrek/${DATA.ay}/story_1.mp4`,{cache:'no-store'});return r.ok?await r.blob():null;}catch(e){return null;}
+  const el=document.querySelectorAll('.slide')[i];
+  if(!CEYREK||!el||!el.querySelector('[data-kupa]')) return null;
+  try{const r=await fetch(`performans/ceyrek/${DATA.ay}/${STORY?'story':'gonderi'}_${i+1}.mp4`,{cache:'no-store'});return r.ok?await r.blob():null;}catch(e){return null;}
 }
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
@@ -635,6 +636,8 @@ function openPreview(){
         imgs.sort(function(a,b){return a.dataset.idx-b.dataset.idx;});
         container.innerHTML='';
         imgs.forEach(function(im){container.appendChild(im);});
+        // kupalı slaytlar videoyla oynar (Instagram'da da video olarak paylaşılır)
+        imgs.forEach(function(im,i){kapakVideo(i).then(function(v){if(!v)return;var vd=document.createElement('video');vd.src=URL.createObjectURL(v);vd.muted=true;vd.loop=true;vd.autoplay=true;vd.playsInline=true;vd.style.cssText=im.style.cssText;vd.onerror=function(){vd.replaceWith(im);};im.replaceWith(vd);});});
         updatePreviewNav();
         document.getElementById('status').textContent=_previewTotal+' slayt hazir. Begendiysen Yayinla butonuna bas.';
         // Facebook grid olustur
