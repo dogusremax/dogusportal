@@ -117,10 +117,18 @@ ${wm(String(idx),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(fal
 const fmtTL=n=>{n=n||0;if(n>=1e6)return '₺'+(n/1e6).toLocaleString('tr-TR',{maximumFractionDigits:1})+' M';if(n>=1e3)return '₺'+Math.round(n/1e3).toLocaleString('tr-TR')+' B';return '₺'+Math.round(n).toLocaleString('tr-TR');};
 function catSlide(r,label,valueHtml,sub,red,no){
   const ptc=red?NAVY:CORAL;
+  // Story: haftalık podyum slaytıyla aynı yerleşim (büyük rakam, sağda büyük fotoğraf, isim solda altta)
+  if(STORY) return `<div class="slide" style="background:${red?RGRAD:NAVY};">
+${wm(String(no||1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
+<div style="position:absolute;right:-6px;bottom:-6px;width:340px;height:545px;overflow:hidden;clip-path:inset(0);">${cut(r.id,545,340)}</div>
+<div style="position:absolute;left:36px;width:170px;bottom:90px;z-index:5;">
+<div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:9px;font-weight:800;letter-spacing:1.4px;padding:5px 9px;border-radius:7px;margin-bottom:10px;white-space:nowrap;">${label}</div>
+<div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
+<div class="sans" style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.4;">${sub}</div></div>${arrow()}${progress()}</div>`;
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
-<div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?300:260}px;height:${STORY?508:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?508:440,STORY?300:260)}</div>
-<div style="position:absolute;left:36px;width:${STORY?300:190}px;${STORY?'top:128px':'bottom:60px'};z-index:5;">
+<div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:440px;overflow:hidden;clip-path:inset(0);">${cut(r.id,440,260)}</div>
+<div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
 ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
@@ -159,10 +167,23 @@ function ilkUclerSlide(d,kats){
 ${k.satirlar.length?(k.genis?yatay(k):k.satirlar.map(x=>satir(x,k.satirlar.reduce((t,g)=>t+g.rs.length,0)>3)).join('')):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">'+(CEYREK?'Bu dönemde':'Bu ay')+' kayıt yok</div>'}</div>`;
   return `<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
-<div style="position:absolute;left:28px;right:28px;top:${STORY?130:26}px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${ROZET(d)}</div>
-<h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:0;line-height:1.05;">İlk Üçler</h2></div>
-<div style="position:absolute;left:24px;right:24px;top:${STORY?186:78}px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
+${STORY?`${wm('3','rgba(255,255,255,.05)')}${logo(false)}<div style="position:absolute;left:32px;right:48px;top:130px;">
+<div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:12px;font-weight:800;letter-spacing:1.6px;padding:6px 12px;border-radius:8px;margin-bottom:12px;">${CEYREK?'ÇEYREĞİN':'AYIN'} İLK 3'LERİ</div>
+<h2 class="sans" style="font-size:30px;font-weight:700;letter-spacing:-.9px;color:#fff;margin:0;line-height:1.1;">${CEYREK?d.donemAdi:d.ayAdi}</h2></div>`:`<div style="position:absolute;left:28px;right:28px;top:26px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${ROZET(d)}</div>
+<h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:0;line-height:1.05;">İlk Üçler</h2></div>`}
+<div style="position:absolute;left:24px;right:24px;top:${STORY?222:78}px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
 ${progress()}</div>`;
+}
+/* Şampiyonlar story kapağı: haftalık story kapağıyla aynı (kırmızı zemin, podyum, KAYDIR) */
+function kapakStory(d){
+  const pod=(n,h,col,txt)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;"><div class="sans" style="width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.75);">?</div><div style="width:100%;height:${h}px;border-radius:14px 14px 0 0;background:${col};display:flex;align-items:flex-start;justify-content:center;padding-top:12px;box-shadow:0 -10px 30px rgba(0,0,0,.25);"><span class="sans" style="font-size:40px;font-weight:800;color:${txt};line-height:1;letter-spacing:-2px;">${n}</span></div></div>`;
+  return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
+<div style="position:absolute;left:32px;right:32px;top:96px;"><div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${ROZET(d)}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">${CEYREK?'Çeyreğin':'Ayın'}<br>Şampiyonları</h1>
+<p class="sans" style="font-size:15px;color:rgba(255,255,255,.8);margin:10px 0 0;line-height:1.5;">Ciro, işlem, performans, sosyal medya ve müşteri memnuniyetinde ${CEYREK?'çeyreğin':'ayın'} ilk üçü.</p></div>
+<div style="position:absolute;left:32px;right:32px;bottom:110px;display:flex;align-items:flex-end;gap:8px;">${pod(2,170,'rgba(5,10,48,.55)','rgba(255,255,255,.85)')}${pod(1,240,NAVY,CORAL)}${pod(3,130,'rgba(5,10,48,.45)','rgba(255,255,255,.85)')}</div>
+<div style="position:absolute;left:32px;right:32px;bottom:106px;height:4px;background:rgba(5,10,48,.7);border-radius:2px;"></div>
+<div class="sans" style="position:absolute;left:32px;bottom:60px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+</div>`;
 }
 function ctaSlide(d){
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
@@ -205,7 +226,7 @@ function build(d){
 <div style="width:34px;height:34px;border-radius:10px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 34px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
 <div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">${c[1]}</div></div>
 <div class="sans" style="width:30px;height:30px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:rgba(255,255,255,.6);">?</div></div>`).join('');
-    slides.push(`<div class="slide" style="background:${NAVY};">
+    if(STORY) slides.push(kapakStory(d)); else slides.push(`<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 80% 110%,rgba(220,28,46,.45),transparent 60%);"></div>
 ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div style="position:absolute;left:32px;right:32px;top:${STORY?150:76}px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${ROZET(d)}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Şampiyonları</h1>
