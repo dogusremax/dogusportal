@@ -73,6 +73,7 @@
   .badge.beyaz{background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.6)}
   .badge.beyaz img{filter:drop-shadow(0 1px 2px rgba(5,10,48,.6))}
   .badge.yalin{background:transparent;padding:0}
+  .badge.flush{box-shadow:0 8px 16px -8px rgba(0,0,0,.45)}
   .badge .x,.badge .rz{display:none}
   .edit .badge{outline:2px dashed #fff;outline-offset:3px;cursor:move}
   .edit .badge.sel{outline-color:var(--red)}
@@ -110,7 +111,7 @@
     <div class="wrap">
       <div>
         <div class="stage">
-        <div class="strip"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="72" height="26"><span>RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
+        <div class="strip"><span>RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
         <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
@@ -140,7 +141,7 @@
           <div class="bar"><button class="btn red" id="b_edit">Yerleştir</button><button class="btn ghost" id="b_add">+ Logo ekle</button></div>
           <div class="row2">
             <div><label>Seçili logo görünümü</label><select id="b_st"><option value="cam">Buzlu cam</option><option value="koyu">Lacivert</option><option value="beyaz">Beyaz cam</option><option value="yalin">Sadece logo</option></select></div>
-            <div><label>Açılış ekranı</label><select id="b_sure"><option value="0">Tıklayınca kalksın</option><option value="10">10 sn</option><option value="15">15 sn</option><option value="20">20 sn</option><option value="30">30 sn</option></select></div>
+            <div><label>Açılış ekranı</label><select id="b_sure"><option value="0">Tıklayınca kalksın</option><option value="10">10 sn</option><option value="15">15 sn</option><option value="20">20 sn</option><option value="30">30 sn</option><option value="35">35 sn</option><option value="45">45 sn</option></select></div>
           </div>
           <div class="bar"><button class="btn ghost" id="b_tekrar">Açılışı tekrar oynat</button></div>
         </div>
@@ -155,9 +156,9 @@
 </main>
 <script>
   const TOURS = [
-    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/', logos:[{h:'l', v:'t', x:12, y:10, w:120, st:'koyu'}]},
-    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/', splash:'0', logos:[{h:'l', v:'t', x:10, y:14, w:150, st:'koyu'}]},
-    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/', logos:[{h:'l', v:'t', x:10, y:4, w:145, st:'koyu'}]}
+    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/', logos:[{h:'l', v:'t', x:0, y:0, w:140, ph:81, st:'koyu'}]},
+    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/', splash:'0', logos:[{h:'l', v:'t', x:0, y:0, w:150, ph:92, st:'koyu'}]},
+    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/', splash:'35', logos:[{h:'l', v:'t', x:0, y:0, w:160, ph:72, st:'koyu'}]}
   ];
   const $ = id => document.getElementById(id);
   const store = {
@@ -168,10 +169,10 @@
   // Varsayılan: firma logosu sol üst köşede, opak lacivert kapak köşeye yaslı
   const LDEF = () => cur.logos ? cur.logos.map(o => ({...o})) : [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
   let splashT, splashA, editing = false, selIdx = 0;
-  function logos(){ const d = store.get('k360L4_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
-  function saveLogos(list){ store.set('k360L4_'+cur.id, {list}); }
+  function logos(){ const d = store.get('k360L5_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function saveLogos(list){ store.set('k360L5_'+cur.id, {list}); }
   // Uzun girişi olan turlarda kapak varsayılan olarak tıklanana kadar kalır
-  function sure(){ const d = store.get('k360S_'+cur.id); return d.s !== undefined ? d.s : (cur.splash || '15'); }
+  function sure(){ const d = store.get('k360S2_'+cur.id); return d.s !== undefined ? d.s : (cur.splash || '15'); }
   function renderLogos(){
     const box = $('badges'), list = logos();
     box.innerHTML = '';
@@ -181,9 +182,10 @@
       const b = document.createElement('div');
       b.className = 'badge ' + o.st + (i===selIdx ? ' sel' : '');
       b.style.width = o.w + 'px';
+      if(o.ph) b.style.minHeight = o.ph + 'px';
       b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
       b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
-      if(o.x < 4 && o.y < 4){ const r = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.style.borderRadius = r; }
+      if(o.x < 4 && o.y < 4){ const r = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.style.borderRadius = r; b.classList.add('flush'); }
       b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><button class="x" title="Sil">×</button><span class="rz"></span>';
       b.querySelector('.x').onclick = e => { e.stopPropagation(); const l = logos(); l.splice(i,1); saveLogos(l); renderLogos(); };
       b.addEventListener('pointerdown', e => startDrag(e, i, e.target.classList.contains('rz')));
@@ -234,7 +236,7 @@
   $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); };
   $('b_add').onclick = () => { const l = logos(); l.push({h:'l', v:'t', x:20 + l.length*14, y:20 + l.length*14, w:140, st:$('b_st').value || 'cam'}); selIdx = l.length-1; saveLogos(l); renderLogos(); if(!editing) $('b_edit').click(); };
   $('b_st').onchange = () => { const l = logos(); if(l[selIdx]){ l[selIdx].st = $('b_st').value; saveLogos(l); renderLogos(); } };
-  $('b_sure').onchange = () => { store.set('k360S_'+cur.id, {s:$('b_sure').value}); playSplash(); };
+  $('b_sure').onchange = () => { store.set('k360S2_'+cur.id, {s:$('b_sure').value}); playSplash(); };
   $('b_tekrar').onclick = playSplash;
   let cur = TOURS[0];
   let gridLoaded = false;
