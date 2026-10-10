@@ -1,0 +1,55 @@
+name: Çeyrek şampiyonları (otomatik paylaşım)
+# Asıl tetik Danışman Takip Apps Script'inden gelir (ceyrekTetikle, çeyreği izleyen ayın 1'i 10:00 TR);
+# GitHub'ın kendi zamanlaması saatlerce gecikebildiği için aşağıdaki cron sadece yedektir.
+# Mükerrer yayın olmaz: performans/ceyrek/.pub hangi adımların yayınlandığını tutar.
+on:
+  schedule:
+    - cron: "17 7 1 1,4,7,10 *"   # 10:17 TR (yedek)
+  workflow_dispatch:
+    inputs:
+      q:
+        description: "Çeyrek (YYYY-Qn, boş = son biten çeyrek)"
+        required: false
+      dry_run:
+        description: "1 = üret ama Instagram'a paylaşma"
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: performans-ceyrek
+  cancel-in-progress: false
+jobs:
+  ceyrek:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+      - run: node scripts/ceyrek.js "${{ github.event.inputs.q }}"
+      - name: Görselleri yayına al
+        run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add performans/ceyrek
+          git diff --cached --quiet || git commit -m "Çeyrek şampiyonları: $(node -p "require('./performans/ceyrek/.media').q" 2>/dev/null)"
+          git pull --rebase -q && git push
+      - name: Güncel IG token'ı al
+        if: hashFiles('performans/ceyrek/.media') != '' && env.DRY_RUN != '1'
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        if: hashFiles('performans/ceyrek/.media') != ''
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          S=0; node scripts/ceyrek-ig.js 2>&1 | tee ceyrek-log.txt || S=$?
+          git add ceyrek-log.txt performans/ceyrek/.pub 2>/dev/null
+          git diff --cached --quiet || { git commit -m "Çeyrek paylaşım kaydı" && git pull --rebase -q && git push; }
+          exit $S
