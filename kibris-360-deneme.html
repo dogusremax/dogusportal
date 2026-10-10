@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kıbrıs 360 Deneme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{--navy:#050A30;--red:#DC1C2E;--ink:#0f1430;--mute:#5b6180;--line:#e3e5ee;--bg:#f5f6fa;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header{border-bottom:4px solid var(--red)}
+  header .logo{height:40px;width:auto;display:block}
+  header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px;line-height:1.1}
+  header h1 small{display:block;font-size:11px;font-weight:600;opacity:.7;letter-spacing:1px;text-transform:uppercase}
+  .stage{border-radius:14px;overflow:hidden;border:3px solid var(--navy);background:var(--navy)}
+  .strip{display:flex;align-items:center;gap:10px;color:#fff;padding:8px 12px;font-size:13px;font-weight:600}
+  .strip img{height:26px;width:auto}
+  .strip .r{margin-left:auto;opacity:.85;font-weight:500}
+  .strip.bot{border-top:3px solid var(--red);justify-content:center;font-weight:500;opacity:.9}
+  header h1 span{color:var(--red)}
+  .tag{font-size:11px;background:rgba(255,255,255,.12);padding:3px 8px;border-radius:99px}
+  .modes{margin-left:auto;display:flex;gap:6px}
+  .modes button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:7px 12px;border-radius:8px;font:600 13px Manrope;cursor:pointer}
+  .modes button.on{background:var(--red);border-color:var(--red)}
+  main{max-width:1400px;margin:0 auto;padding:16px}
+  .tours{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .tour{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .tour.on{border-color:var(--red)}
+  .tour b{display:block;font-size:15px}
+  .tour small{color:var(--mute)}
+  .wrap{display:grid;grid-template-columns:1fr 320px;gap:14px}
+  .viewer{background:#000;overflow:hidden;position:relative;height:68vh;min-height:420px}
+  .viewer iframe{width:100%;height:100%;border:0;display:block}
+  .bar{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .btn{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 12px;font:600 13px Manrope;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.red{background:var(--red)}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  aside{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;align-self:start}
+  aside h2{margin:0 0 4px;font-size:15px}
+  aside p.hint{margin:0 0 12px;color:var(--mute);font-size:12px}
+  label{display:block;font-size:12px;color:var(--mute);margin:8px 0 3px}
+  input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font:500 14px Manrope;background:#fff}
+  .kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  .kpi div{background:var(--bg);border-radius:8px;padding:8px}
+  .kpi small{color:var(--mute);font-size:11px;display:block}
+  .kpi b{font-size:18px;color:var(--navy)}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid4 .cell{border:3px solid var(--navy)}
+  .grid4 .cell{background:#000;border-radius:12px;overflow:hidden;height:44vh;min-height:300px;position:relative}
+  .grid4 .cell iframe{width:100%;height:100%;border:0}
+  .grid4 .cell .lbl{position:absolute;left:8px;bottom:8px;border-left:3px solid var(--red);background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px}
+  .blocked{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--navy);color:#fff;text-align:center;padding:20px}
+  .blocked b{font-size:20px}
+  .blocked p{margin:0;opacity:.8;font-size:13px;max-width:320px}
+  .splash{position:absolute;inset:0;z-index:5;background:radial-gradient(circle at 50% 45%,#0d1a5c 0%,var(--navy) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;transition:opacity .6s}
+  .splash img{width:min(46%,320px);height:auto;animation:pop 1s ease-out}
+  .splash .s1{font-size:13px;letter-spacing:3px;text-transform:uppercase;opacity:.75}
+  .splash .s2{width:60px;height:3px;background:var(--red);border-radius:2px}
+  .splash.out{opacity:0;pointer-events:none}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .badge{position:absolute;z-index:4;background:var(--navy);border-bottom:3px solid var(--red);border-radius:10px;padding:6px 10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  .badge img{width:100%;height:auto;display:block}
+  .badge.tl{top:10px;left:10px}.badge.tr{top:10px;right:10px}.badge.bl{bottom:10px;left:10px}.badge.br{bottom:10px;right:10px}
+  .ctl{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+  .ctl h3{margin:0 0 2px;font-size:14px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .note{font-size:12px;color:var(--mute);margin-top:12px}
+  [hidden]{display:none!important}
+  @media (max-width:900px){
+    .tours{grid-template-columns:1fr 1fr 1fr}
+    header .logo{height:32px}
+    .wrap{grid-template-columns:1fr}
+    .viewer{height:60vh}
+    .grid4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="111" height="40">
+  <h1><small>RE/MAX Doğuş</small>Kıbrıs <span>360</span></h1>
+  <span class="tag">Deneme · iş ortağı onayı için</span>
+  <div class="modes">
+    <button id="mTek" class="on">Tek tur</button>
+    <button id="mYan">Yan yana</button>
+  </div>
+</header>
+<main>
+  <div class="tours" id="tours"></div>
+
+  <section id="tek">
+    <div class="wrap">
+      <div>
+        <div class="stage">
+        <div class="strip"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="72" height="26"><span>RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
+        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1" id="splashName"></span></div><div class="badge br" id="badge"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
+        </div>
+        <div class="bar">
+          <button class="btn" id="fs">Tam ekran</button>
+          <a class="btn ghost" id="open" target="_blank" rel="noopener">Yeni sekmede aç</a>
+          <a class="btn red" id="wa" target="_blank" rel="noopener">Müşteriye WhatsApp ile gönder</a>
+        </div>
+      </div>
+      <aside>
+        <h2>Yatırım paneli</h2>
+        <p class="hint">Sunum sırasında doldurun, bu tarayıcıda saklanır.</p>
+        <label>Proje / daire</label><input id="f_ad" placeholder="Örn. 1+1 deniz manzaralı">
+        <label>Bölge</label>
+        <select id="f_bolge"><option value="">Seçin</option><option>Girne</option><option>İskele</option><option>Karpaz</option><option>Esentepe</option></select>
+        <label>Fiyat (£)</label><input id="f_fiyat" type="number" inputmode="numeric" placeholder="150000">
+        <label>Aylık kira beklentisi (£)</label><input id="f_kira" type="number" inputmode="numeric" placeholder="900">
+        <label>Teslim tarihi</label><input id="f_teslim" placeholder="Örn. Haziran 2027">
+        <div class="kpi">
+          <div><small>Brüt kira getirisi</small><b id="k_getiri">–</b></div>
+          <div><small>Geri dönüş süresi</small><b id="k_donus">–</b></div>
+        </div>
+        <label>Not</label><textarea id="f_not" rows="3" placeholder="Müşteri neyi beğendi?"></textarea>
+        <div class="ctl">
+          <h3>Logo kapatma ayarı</h3>
+          <p class="hint">Rozeti firmanın köşe logosunun üstüne gelecek şekilde ayarlayın. Her tur için ayrı saklanır.</p>
+          <div class="row2">
+            <div><label>Rozet köşesi</label><select id="b_kose"><option value="tl">Sol üst</option><option value="tr">Sağ üst</option><option value="bl">Sol alt</option><option value="br">Sağ alt</option></select></div>
+            <div><label>Açılış ekranı</label><select id="b_sure"><option value="0">Kapalı</option><option value="3">3 sn</option><option value="5">5 sn</option><option value="8">8 sn</option><option value="12">12 sn</option></select></div>
+          </div>
+          <label>Rozet genişliği: <span id="b_genv"></span> px</label><input id="b_gen" type="range" min="80" max="260" step="5">
+          <div class="row2">
+            <div><label>Yatay kaydır</label><input id="b_x" type="range" min="0" max="200" step="2"></div>
+            <div><label>Dikey kaydır</label><input id="b_y" type="range" min="0" max="200" step="2"></div>
+          </div>
+          <div class="bar"><button class="btn ghost" id="b_tekrar">Açılışı tekrar oynat</button></div>
+        </div>
+        <p class="note">Tur içinde görünmüyorsa firma gömmeye izin vermiyordur, "Yeni sekmede aç" ile devam edin.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="yan" hidden>
+    <div class="grid4" id="grid"></div>
+  </section>
+</main>
+<script>
+  const TOURS = [
+    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
+    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/'},
+    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/'}
+  ];
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}'); }catch(e){ return {}; } },
+    set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+  const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
+  const BDEF = {kose:'br', sure:'5', gen:'150', x:'0', y:'0'};
+  let splashT;
+  function badgeCfg(){ return Object.assign({}, BDEF, store.get('k360b_'+cur.id)); }
+  function applyBadge(){
+    const c = badgeCfg(), b = $('badge');
+    b.className = 'badge ' + c.kose;
+    b.style.width = c.gen + 'px';
+    b.style.margin = '0';
+    const v = c.kose[0]==='t' ? 'marginTop' : 'marginBottom', h = c.kose[1]==='l' ? 'marginLeft' : 'marginRight';
+    b.style[v] = c.y + 'px'; b.style[h] = c.x + 'px';
+    b.hidden = cur.embed === false;
+    $('b_genv').textContent = c.gen;
+  }
+  function loadBadgeUI(){ const c = badgeCfg(); ['kose','sure','gen','x','y'].forEach(k => $('b_'+k).value = c[k]); applyBadge(); }
+  function saveBadge(){ const c = {}; ['kose','sure','gen','x','y'].forEach(k => c[k] = $('b_'+k).value); store.set('k360b_'+cur.id, c); applyBadge(); }
+  function playSplash(){
+    clearTimeout(splashT);
+    const sec = +badgeCfg().sure, sp = $('splash');
+    $('splashName').textContent = 'Kıbrıs 360';
+    if(!sec || cur.embed === false){ sp.classList.add('out'); return; }
+    sp.classList.remove('out');
+    splashT = setTimeout(() => sp.classList.add('out'), sec*1000);
+  }
+  ['kose','sure','gen','x','y'].forEach(k => $('b_'+k).addEventListener('input', saveBadge));
+  $('b_tekrar').onclick = playSplash;
+  let cur = TOURS[0];
+  let gridLoaded = false;
+
+  function renderTours(){
+    $('tours').innerHTML = TOURS.map(t =>
+      `<button class="tour${t.id===cur.id?' on':''}" data-id="${t.id}"><b>${t.ad}</b><small>360 sanal tur</small></button>`).join('');
+    document.querySelectorAll('.tour').forEach(b => b.onclick = () => select(b.dataset.id));
+  }
+  function select(id){
+    cur = TOURS.find(t => t.id===id);
+    renderTours();
+    const ok = cur.embed !== false;
+    $('frame').hidden = !ok;
+    $('blocked').hidden = ok;
+    $('frame').src = ok ? cur.url : 'about:blank';
+    if(!ok) $('blocked').innerHTML = blockedHTML(cur);
+    $('open').href = cur.url;
+    $('curName').textContent = 'Kıbrıs 360 sanal tur';
+    const msg = `Merhaba, Kıbrıs projesini 360° gezebilirsiniz: ${cur.url}\nRE/MAX Doğuş · 0216 315 15 15`;
+    $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    const d = store.get('k360_'+cur.id);
+    FIELDS.forEach(f => $('f_'+f).value = d[f]||'');
+    calc();
+    loadBadgeUI(); playSplash();
+    if(location.hash.slice(1)!==id) history.replaceState(null,'','#'+id);
+  }
+  function blockedHTML(t){
+    return `<b>${t.ad} 360</b><p>Bu tur sayfa içinde açılmıyor, ayrı pencerede açılır. Yatırım paneli burada çalışmaya devam eder.</p><button class="btn red" onclick="openWin('${t.url}')">Turu aç</button>`;
+  }
+  function openWin(u){
+    const w = Math.round(screen.availWidth*.7), h = Math.round(screen.availHeight*.85);
+    window.open(u, 'tur360', `width=${w},height=${h},left=0,top=0`) || window.open(u, '_blank');
+  }
+  function save(){
+    const d = {}; FIELDS.forEach(f => d[f] = $('f_'+f).value);
+    store.set('k360_'+cur.id, d); calc();
+  }
+  function calc(){
+    const p = +$('f_fiyat').value, r = +$('f_kira').value;
+    if(p>0 && r>0){
+      $('k_getiri').textContent = '%' + (r*12/p*100).toFixed(1);
+      $('k_donus').textContent = (p/(r*12)).toFixed(1) + ' yıl';
+    } else { $('k_getiri').textContent = '–'; $('k_donus').textContent = '–'; }
+  }
+  FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
+  $('fs').onclick = () => { const v=$('viewer'); (v.requestFullscreen||v.webkitRequestFullscreen||function(){}).call(v); };
+
+  function mode(yan){
+    $('tek').hidden = yan; $('yan').hidden = !yan; $('tours').hidden = yan;
+    $('mTek').classList.toggle('on',!yan); $('mYan').classList.toggle('on',yan);
+    if(yan && !gridLoaded){
+      $('grid').innerHTML = TOURS.map(t =>
+        `<div class="cell"><span class="lbl">RE/MAX Doğuş</span>${t.embed===false ? `<div class="blocked">${blockedHTML(t)}</div>` : `<iframe src="${t.url}" loading="lazy" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe>`}</div>`).join('');
+      gridLoaded = true;
+    }
+  }
+  $('mTek').onclick = () => mode(false);
+  $('mYan').onclick = () => mode(true);
+
+  select(TOURS.some(t => t.id===location.hash.slice(1)) ? location.hash.slice(1) : TOURS[0].id);
+</script>
+</body>
+</html>
