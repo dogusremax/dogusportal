@@ -283,7 +283,10 @@ async function login(){
     const t=await api({action:"team_get"}); TEAM=t.team; TEAM.sort((a,b)=>{if(a.name==="Ofis")return 1;if(b.name==="Ofis")return -1;return a.name.localeCompare(b.name,"tr");}); try{await api({action:"team_set",team:TEAM});}catch(e){ console.warn('Sessiz hata:', e); }
     sessionStorage.setItem("nobet_pin",pin);
     $("pinCard").classList.add("hide"); $("app").classList.remove("hide");
-    renderPeople(); renderMonth();
+    renderPeople();
+    const tq=new URLSearchParams(location.search).get("taslak");
+    if(tq && /^\d{4}-\d{2}$/.test(tq)){ cur=new Date(+tq.slice(0,4),+tq.slice(5,7)-1,1); await renderMonth(); await loadTaslak(tq); }
+    else renderMonth();
   }catch(e){ $("pinMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
 }
 function resetApp(){sessionStorage.clear();localStorage.clear();plan=[];location.reload();}
@@ -454,6 +457,18 @@ function stats(){
   let warn=0; for(let i=1;i<plan.length;i++) if(plan[i].name===plan[i-1].name && plan[i].name!==OFFICE) warn++;
   $("stats").innerHTML=Object.entries(c).map(([k,v])=>`<span class="stat">${k.split(" ")[0]} <b>${v}</b>${k!==OFFICE&&prevCounts[k]!=null?`<small style="color:#8a94ad"> (geçen ay ${prevCounts[k]})</small>`:""}</span>`).join("")
     +(warn?`<span class="stat" style="color:#ff8a94">⚠ ${warn} ardışık gün</span>`:"");
+}
+
+// Ayın 15'inde otomatik hazırlanan taslak (mail linki: nobet.html?taslak=YYYY-MM)
+async function loadTaslak(ay){
+  try{
+    const j=await api({action:"taslak_get",ay});
+    if(!j.taslak){ setStatus(`${AY[cur.getMonth()]} için otomatik taslak bulunamadı.`,"err"); return; }
+    plan=j.taslak.plan.map(p=>({date:p.date,name:p.name}));
+    renderPlan(); previewCal();
+    setStatus(`Otomatik taslak yüklendi (henüz takvime yazılmadı). Değiştirmek istediğin günleri düzelt, sonra <b>Takvime gönder</b>'e bas.`,"ok");
+    $("planCard").scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){ setStatus("Taslak okunamadı: "+e.message,"err"); }
 }
 
 async function readCalendar(){
