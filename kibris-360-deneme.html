@@ -155,8 +155,8 @@
 </main>
 <script>
   const TOURS = [
-    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
-    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/', splash:'0'},
+    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/', logos:[{h:'l', v:'t', x:12, y:10, w:120, st:'koyu'}]},
+    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/', splash:'0', logos:[{h:'l', v:'t', x:10, y:14, w:150, st:'koyu'}]},
     {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/', logos:[{h:'l', v:'t', x:10, y:4, w:145, st:'koyu'}]}
   ];
   const $ = id => document.getElementById(id);
@@ -168,8 +168,8 @@
   // Varsayılan: firma logosu sol üst köşede, opak lacivert kapak köşeye yaslı
   const LDEF = () => cur.logos ? cur.logos.map(o => ({...o})) : [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
   let splashT, splashA, editing = false, selIdx = 0;
-  function logos(){ const d = store.get('k360L3_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
-  function saveLogos(list){ store.set('k360L3_'+cur.id, {list}); }
+  function logos(){ const d = store.get('k360L4_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function saveLogos(list){ store.set('k360L4_'+cur.id, {list}); }
   // Uzun girişi olan turlarda kapak varsayılan olarak tıklanana kadar kalır
   function sure(){ const d = store.get('k360S_'+cur.id); return d.s !== undefined ? d.s : (cur.splash || '15'); }
   function renderLogos(){
@@ -180,8 +180,7 @@
     list.forEach((o, i) => {
       const b = document.createElement('div');
       b.className = 'badge ' + o.st + (i===selIdx ? ' sel' : '');
-      const sc = $('viewer').clientWidth < 600 ? .72 : 1;
-      b.style.width = Math.round(o.w * sc) + 'px';
+      b.style.width = o.w + 'px';
       b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
       b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
       if(o.x < 4 && o.y < 4){ const r = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.style.borderRadius = r; }
@@ -211,8 +210,7 @@
       window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
       $('frame').style.pointerEvents = '';
       const nr = el.getBoundingClientRect(), L = nr.left - v.left, T = nr.top - v.top, R = v.width - L - nr.width, B = v.height - T - nr.height;
-      const sc = v.width < 600 ? .72 : 1;
-      o.w = Math.round((parseFloat(el.style.width) / sc) || o.w);
+      o.w = Math.round(parseFloat(el.style.width) || o.w);
       o.h = L <= R ? 'l' : 'r'; o.x = Math.round(o.h==='l' ? L : R);
       o.v = T <= B ? 't' : 'b'; o.y = Math.round(o.v==='t' ? T : B);
       saveLogos(list); renderLogos();
