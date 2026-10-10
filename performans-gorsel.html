@@ -40,6 +40,7 @@
   .slide img{-webkit-user-drag:none;pointer-events:none}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   @media(max-width:480px){.grid{padding:12px;gap:10px}.card{width:100%;height:470px;overflow:hidden;justify-content:flex-start}.card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}}
+body.don [data-kupa=kapak] > div > img{opacity:0}
 </style>
 <script>document.addEventListener('DOMContentLoaded',()=>{{const q=new URLSearchParams(location.search);if(q.get('donem')==='hafta'||q.get('fmt')==='story'){const st=document.createElement('style');st.textContent='.slide{height:747px!important;min-height:747px;max-height:747px}';document.head.appendChild(st);}}});</script>
 </head>
@@ -368,11 +369,12 @@ async function render(d){
   const st=document.getElementById('status'), grid=document.getElementById('grid');
   document.body.removeAttribute('data-ready'); document.getElementById('zipbtn').disabled=true;
   const slides=build(d);
-  grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">PNG indir</button></div>`).join('');
+  grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">${CEYREK&&STORY&&i===0?'Video indir':'PNG indir'}</button></div>`).join('');
   await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
   await document.fonts.ready;
   st.textContent=`${CEYREK?d.ayAdi:d.ayAdi+' '+d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
+  kupaDon();
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
   if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;}
   if(STORY){const sb2=document.getElementById('storybtn');sb2.style.display='inline-block';sb2.disabled=false;}
@@ -494,15 +496,38 @@ async function karnePaylas(dl){
   if(!dl&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});st.textContent='Paylaşım menüsü açıldı → WhatsApp\'ı seç.';return;}catch(e){ console.warn('Sessiz hata:', e); }}
   saveBlob(b,`karne_${DATA.ay}.png`); st.textContent='Karne indirildi ✓';
 }
+/* Story kapağında kupa 360° döner (assets/kupa-360 kareleri, 24 fps). Görsel üretiminde (PNG, önizleme, otomatik paylaşım) sabit kupa kullanılır. */
+let _donT=0;
+function kupaDon(){
+  cancelAnimationFrame(_donT); document.body.classList.remove('don');
+  if(!CEYREK||!STORY||navigator.webdriver) return;
+  const kutular=[...document.querySelectorAll('[data-kupa=kapak]')]; if(!kutular.length) return;
+  const kare=[...Array(72)].map((_,i)=>{const im=new Image();im.src=`assets/kupa-360/${String(i).padStart(3,'0')}.png`;return im;});
+  const imgs=kutular.map(k=>{const h=Math.round(k.offsetHeight*1.04),im=document.createElement('img');im.className='kupa-don';
+    im.style.cssText=`position:absolute;left:50%;bottom:-2px;height:${h}px;width:${Math.round(h*347/600)}px;transform:translateX(-50%);z-index:2;pointer-events:none;`;
+    im.src=kare[0].src;k.appendChild(im);return im;});
+  Promise.all(kare.map(im=>im.decode().catch(()=>{}))).then(()=>{
+    document.body.classList.add('don'); const t0=performance.now();
+    const adim=t=>{const i=Math.floor((t-t0)/1000*24)%72;imgs.forEach(im=>{if(im.dataset.i!=i){im.src=kare[i].src;im.dataset.i=i;}});_donT=requestAnimationFrame(adim);};
+    _donT=requestAnimationFrame(adim);
+  });
+}
+// html2canvas her yerde sabit kupayla çizsin
+if(window.html2canvas){const _h2c=window.html2canvas;window.html2canvas=(el,o={})=>_h2c(el,{...o,ignoreElements:e=>e.classList&&e.classList.contains('kupa-don'),onclone:d=>d.body.classList.remove('don')});}
+/* Çeyrek story kapağının videosu (otomatik paylaşımın ürettiği story_1.mp4); yoksa PNG'ye düşülür */
+async function kapakVideo(i){
+  if(!CEYREK||!STORY||i!==0) return null;
+  try{const r=await fetch(`performans/ceyrek/${DATA.ay}/story_1.mp4`,{cache:'no-store'});return r.ok?await r.blob():null;}catch(e){return null;}
+}
 async function renderPng(i){
   const el=document.querySelectorAll('.slide')[i];
   const c=await html2canvas(el,{scale:1080/420,width:420,height:SH,backgroundColor:null,useCORS:true,logging:false});
   return new Promise(r=>c.toBlob(r,'image/png'));
 }
-async function downloadOne(i){const b=await renderPng(i);saveBlob(b,`${DATA.ay}_${SET}_slide_${i+1}.png`);}
+async function downloadOne(i){const v=await kapakVideo(i);if(v)return saveBlob(v,`${DATA.ay}_${SET}_slide_${i+1}.mp4`);const b=await renderPng(i);saveBlob(b,`${DATA.ay}_${SET}_slide_${i+1}.png`);}
 async function downloadAll(){
   const st=document.getElementById('status'),zip=new JSZip(),n=document.querySelectorAll('.slide').length;
-  for(let i=0;i<n;i++){st.textContent=`Üretiliyor ${i+1}/${n}…`;zip.file(`slide_${i+1}.png`,await renderPng(i));}
+  for(let i=0;i<n;i++){st.textContent=`Üretiliyor ${i+1}/${n}…`;const v=await kapakVideo(i);if(v)zip.file(`slide_${i+1}.mp4`,v);else zip.file(`slide_${i+1}.png`,await renderPng(i));}
   saveBlob(await zip.generateAsync({type:'blob'}),`${SET==='birinci'?'birinciler':'performans'}_${DATA.ay}.zip`); st.textContent='ZIP indirildi ✓';
 }
 function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
