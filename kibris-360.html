@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kıbrıs 360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{--navy:#050A30;--red:#DC1C2E;--ink:#0f1430;--mute:#5b6180;--line:#e3e5ee;--bg:#f5f6fa;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px}
+  header h1 span{color:var(--red)}
+  .tag{font-size:11px;background:rgba(255,255,255,.12);padding:3px 8px;border-radius:99px}
+  .modes{margin-left:auto;display:flex;gap:6px}
+  .modes button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:7px 12px;border-radius:8px;font:600 13px Manrope;cursor:pointer}
+  .modes button.on{background:var(--red);border-color:var(--red)}
+  main{max-width:1400px;margin:0 auto;padding:16px}
+  .tours{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .tour{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .tour.on{border-color:var(--red)}
+  .tour b{display:block;font-size:15px}
+  .tour small{color:var(--mute)}
+  .wrap{display:grid;grid-template-columns:1fr 320px;gap:14px}
+  .viewer{background:#000;border-radius:12px;overflow:hidden;position:relative;height:72vh;min-height:420px}
+  .viewer iframe{width:100%;height:100%;border:0;display:block}
+  .bar{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .btn{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 12px;font:600 13px Manrope;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.red{background:var(--red)}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  aside{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;align-self:start}
+  aside h2{margin:0 0 4px;font-size:15px}
+  aside p.hint{margin:0 0 12px;color:var(--mute);font-size:12px}
+  label{display:block;font-size:12px;color:var(--mute);margin:8px 0 3px}
+  input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font:500 14px Manrope;background:#fff}
+  .kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  .kpi div{background:var(--bg);border-radius:8px;padding:8px}
+  .kpi small{color:var(--mute);font-size:11px;display:block}
+  .kpi b{font-size:18px;color:var(--navy)}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid4 .cell{background:#000;border-radius:12px;overflow:hidden;height:44vh;min-height:300px;position:relative}
+  .grid4 .cell iframe{width:100%;height:100%;border:0}
+  .grid4 .cell .lbl{position:absolute;left:8px;top:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px}
+  .note{font-size:12px;color:var(--mute);margin-top:12px}
+  [hidden]{display:none!important}
+  @media (max-width:900px){
+    .tours{grid-template-columns:1fr 1fr}
+    .wrap{grid-template-columns:1fr}
+    .viewer{height:60vh}
+    .grid4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Kıbrıs <span>360</span></h1>
+  <span class="tag">İç kullanım · deneme</span>
+  <div class="modes">
+    <button id="mTek" class="on">Tek tur</button>
+    <button id="mYan">Yan yana</button>
+  </div>
+</header>
+<main>
+  <div class="tours" id="tours"></div>
+
+  <section id="tek">
+    <div class="wrap">
+      <div>
+        <div class="viewer" id="viewer"><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="bar">
+          <button class="btn" id="fs">Tam ekran</button>
+          <a class="btn ghost" id="open" target="_blank" rel="noopener">Yeni sekmede aç</a>
+          <a class="btn red" id="wa" target="_blank" rel="noopener">Müşteriye WhatsApp ile gönder</a>
+        </div>
+      </div>
+      <aside>
+        <h2>Yatırım paneli</h2>
+        <p class="hint">Sunum sırasında doldurun, bu tarayıcıda saklanır.</p>
+        <label>Proje / daire</label><input id="f_ad" placeholder="Örn. 1+1 deniz manzaralı">
+        <label>Bölge</label>
+        <select id="f_bolge"><option value="">Seçin</option><option>Girne</option><option>İskele</option><option>Karpaz</option><option>Esentepe</option></select>
+        <label>Fiyat (£)</label><input id="f_fiyat" type="number" inputmode="numeric" placeholder="150000">
+        <label>Aylık kira beklentisi (£)</label><input id="f_kira" type="number" inputmode="numeric" placeholder="900">
+        <label>Teslim tarihi</label><input id="f_teslim" placeholder="Örn. Haziran 2027">
+        <div class="kpi">
+          <div><small>Brüt kira getirisi</small><b id="k_getiri">–</b></div>
+          <div><small>Geri dönüş süresi</small><b id="k_donus">–</b></div>
+        </div>
+        <label>Not</label><textarea id="f_not" rows="3" placeholder="Müşteri neyi beğendi?"></textarea>
+        <p class="note">Tur içinde görünmüyorsa firma gömmeye izin vermiyordur, "Yeni sekmede aç" ile devam edin.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="yan" hidden>
+    <div class="grid4" id="grid"></div>
+  </section>
+</main>
+<script>
+  const TOURS = [
+    {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
+    {id:'northernland', ad:'Northernland', url:'https://360.northernland.com/main/'},
+    {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/'},
+    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/'}
+  ];
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}'); }catch(e){ return {}; } },
+    set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+  const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
+  let cur = TOURS[0];
+  let gridLoaded = false;
+
+  function renderTours(){
+    $('tours').innerHTML = TOURS.map(t =>
+      `<button class="tour${t.id===cur.id?' on':''}" data-id="${t.id}"><b>${t.ad}</b><small>360 sanal tur</small></button>`).join('');
+    document.querySelectorAll('.tour').forEach(b => b.onclick = () => select(b.dataset.id));
+  }
+  function select(id){
+    cur = TOURS.find(t => t.id===id);
+    renderTours();
+    $('frame').src = cur.url;
+    $('open').href = cur.url;
+    const msg = `Merhaba, Kıbrıs projesini 360° gezebilirsiniz: ${cur.url}\nRE/MAX Doğuş · 0216 315 15 15`;
+    $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    const d = store.get('k360_'+cur.id);
+    FIELDS.forEach(f => $('f_'+f).value = d[f]||'');
+    calc();
+    if(location.hash.slice(1)!==id) history.replaceState(null,'','#'+id);
+  }
+  function save(){
+    const d = {}; FIELDS.forEach(f => d[f] = $('f_'+f).value);
+    store.set('k360_'+cur.id, d); calc();
+  }
+  function calc(){
+    const p = +$('f_fiyat').value, r = +$('f_kira').value;
+    if(p>0 && r>0){
+      $('k_getiri').textContent = '%' + (r*12/p*100).toFixed(1);
+      $('k_donus').textContent = (p/(r*12)).toFixed(1) + ' yıl';
+    } else { $('k_getiri').textContent = '–'; $('k_donus').textContent = '–'; }
+  }
+  FIELDS.forEach(f => $('f_'+f).addEventListener('input', save));
+  $('fs').onclick = () => { const v=$('viewer'); (v.requestFullscreen||v.webkitRequestFullscreen||function(){}).call(v); };
+
+  function mode(yan){
+    $('tek').hidden = yan; $('yan').hidden = !yan; $('tours').hidden = yan;
+    $('mTek').classList.toggle('on',!yan); $('mYan').classList.toggle('on',yan);
+    if(yan && !gridLoaded){
+      $('grid').innerHTML = TOURS.map(t =>
+        `<div class="cell"><span class="lbl">${t.ad}</span><iframe src="${t.url}" loading="lazy" allow="fullscreen; gyroscope; accelerometer" allowfullscreen></iframe></div>`).join('');
+      gridLoaded = true;
+    }
+  }
+  $('mTek').onclick = () => mode(false);
+  $('mYan').onclick = () => mode(true);
+
+  select(TOURS.some(t => t.id===location.hash.slice(1)) ? location.hash.slice(1) : TOURS[0].id);
+</script>
+</body>
+</html>
