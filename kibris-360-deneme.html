@@ -17,7 +17,12 @@
   header .logo{height:40px;width:auto;display:block}
   header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px;line-height:1.1}
   header h1 small{display:block;font-size:11px;font-weight:600;opacity:.7;letter-spacing:1px;text-transform:uppercase}
-  .stage{border-radius:14px;overflow:hidden;border:3px solid var(--navy);background:var(--navy)}
+  .stage{border-radius:14px;overflow:hidden;border:3px solid var(--navy);background:var(--navy);position:relative}
+  .biglogo{position:absolute;left:0;top:0;z-index:7;padding:6px 0 0 14px;pointer-events:none}
+  .biglogo img{width:172px;height:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+  .badge.merge img{visibility:hidden}
+  .strip.merged{min-height:70px}
+  .strip .sunar{font-size:22px;font-weight:500;letter-spacing:.5px;font-style:italic;opacity:.95}
   .strip{display:flex;align-items:center;gap:10px;color:#fff;padding:8px 12px;font-size:13px;font-weight:600}
   .strip img{height:26px;width:auto}
   .strip .r{margin-left:auto;opacity:.85;font-weight:500}
@@ -111,7 +116,8 @@
     <div class="wrap">
       <div>
         <div class="stage">
-        <div class="strip"><span>RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
+        <div class="biglogo" id="bigLogo" hidden><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div>
+        <div class="strip" id="strip"><span id="stripText">RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
         <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
@@ -192,7 +198,21 @@
       box.appendChild(b);
     });
     $('b_st').value = list[selIdx] ? list[selIdx].st : 'cam';
+    layoutBig();
   }
+  // Sol üste yaslı kapak varsa, logo şerit ve kapağı birlikte kaplayan tek büyük logo olur; şeritte yanında "sunar" yazar
+  function layoutBig(){
+    const big = $('bigLogo'), txt = $('stripText'), list = logos();
+    const i = (editing || cur.embed === false) ? -1 : list.findIndex(o => o.h==='l' && o.v==='t' && o.x < 4 && o.y < 4);
+    const el = i < 0 ? null : $('badges').children[i];
+    if(!el){ big.hidden = true; $('strip').classList.remove('merged'); txt.textContent = 'RE/MAX Doğuş sunar'; txt.className = ''; txt.style.paddingLeft = ''; return; }
+    $('strip').classList.add('merged');
+    el.classList.add('merge');
+    big.hidden = false;
+    txt.textContent = 'sunar'; txt.className = 'sunar';
+    txt.style.paddingLeft = '186px';
+  }
+  window.addEventListener('resize', () => layoutBig());
   function startDrag(e, i, resize){
     if(!editing || e.target.classList.contains('x')) return;
     e.preventDefault();
@@ -233,7 +253,7 @@
     splashT = setTimeout(hideSplash, sec*1000);
   }
   $('splashGo').onclick = hideSplash;
-  $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); };
+  $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); renderLogos(); };
   $('b_add').onclick = () => { const l = logos(); l.push({h:'l', v:'t', x:20 + l.length*14, y:20 + l.length*14, w:140, st:$('b_st').value || 'cam'}); selIdx = l.length-1; saveLogos(l); renderLogos(); if(!editing) $('b_edit').click(); };
   $('b_st').onchange = () => { const l = logos(); if(l[selIdx]){ l[selIdx].st = $('b_st').value; saveLogos(l); renderLogos(); } };
   $('b_sure').onchange = () => { store.set('k360S2_'+cur.id, {s:$('b_sure').value}); playSplash(); };
