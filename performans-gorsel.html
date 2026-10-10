@@ -80,7 +80,9 @@ const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' |
 const CEYREK=DONEM==='ceyrek';
 const STORY=DONEM==='hafta'||new URLSearchParams(location.search).get('fmt')==='story';   // story = 9:16, değilse gönderi
 // Dönem dili: aylıkta "Ağustos ayında", çeyrekte "Temmuz – Eylül döneminde"
-const ROZET=d=>CEYREK?d.ayAdi:d.ayAdi+' Ayı', DONEMDE=d=>CEYREK?d.donemAdi+' döneminde':d.ayAdi+' ayında', DONEMIN=d=>CEYREK?d.donemAdi+' döneminin':d.ayAdi+' ayının', ONEK=CEYREK?'ÇEYREĞİN':'AYIN';
+const ROZET=d=>CEYREK?d.q+'. Çeyrek '+d.yil:d.ayAdi+' Ayı', DONEMDE=d=>CEYREK?d.donemAdi+' döneminde':d.ayAdi+' ayında', DONEMIN=d=>CEYREK?d.donemAdi+' döneminin':d.ayAdi+' ayının', ONEK=CEYREK?'ÇEYREĞİN':'AYIN';
+// Kategori başlığı: aylıkta "AYIN CİRO BİRİNCİSİ", çeyrekte "3. ÇEYREĞİN CİRO 1.Sİ"
+const KAT=(d,ad,ayli)=>CEYREK?`${d.q}. ÇEYREĞİN ${ad} 1.Sİ`:(ayli?'AYIN ':'')+ad+' BİRİNCİSİ';
 const SH=STORY?747:560; // 'puan' | 'birinci'
 
 const photo=id=>`assets/ekip/${id}.png`;
@@ -168,7 +170,7 @@ ${k.satirlar.length?(k.genis?yatay(k):k.satirlar.map(x=>satir(x,k.satirlar.reduc
   return `<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
 ${STORY?`${wm('3','rgba(255,255,255,.05)')}${logo(false)}<div style="position:absolute;left:32px;right:48px;top:130px;">
-<div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:12px;font-weight:800;letter-spacing:1.6px;padding:6px 12px;border-radius:8px;margin-bottom:12px;">${CEYREK?'ÇEYREĞİN':'AYIN'} İLK 3'LERİ</div>
+<div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:12px;font-weight:800;letter-spacing:1.6px;padding:6px 12px;border-radius:8px;margin-bottom:12px;">${CEYREK?d.q+'. ÇEYREĞİN':'AYIN'} İLK 3'LERİ</div>
 <h2 class="sans" style="font-size:30px;font-weight:700;letter-spacing:-.9px;color:#fff;margin:0;line-height:1.1;">${CEYREK?d.donemAdi:d.ayAdi}</h2></div>`:`<div style="position:absolute;left:28px;right:28px;top:26px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${ROZET(d)}</div>
 <h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:0;line-height:1.05;">İlk Üçler</h2></div>`}
 <div style="position:absolute;left:24px;right:24px;top:${STORY?222:78}px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
@@ -221,7 +223,7 @@ function build(d){
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
     const ico={perf:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>',yorum:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/>'};
-    const cats=[[ONEK+' CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],[ONEK+' İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],[ONEK+' PERFORMANS BİRİNCİSİ',CEYREK?'En yüksek çeyrek puanı':'En yüksek aylık puan','perf'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
+    const cats=[[KAT(d,'CİRO',1),'En yüksek hizmet bedeli','ciro'],[KAT(d,'İŞLEM',1),'En çok kapanan işlem','islem'],[KAT(d,'PERFORMANS',1),CEYREK?'En yüksek çeyrek puanı':'En yüksek aylık puan','perf'],[KAT(d,'SOSYAL MEDYA'),'En çok içerik üreten','sosyal'],[KAT(d,'MÜŞTERİ MEMNUNİYETİ'),'En çok Google yorumu alan','yorum']];
     const cards=cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(4px);">
 <div style="width:34px;height:34px;border-radius:10px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 34px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
 <div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">${c[1]}</div></div>
@@ -235,9 +237,9 @@ ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
 <div class="sans" style="position:absolute;left:32px;bottom:${STORY?116:40}px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
     // Birinci slaytları; renk sırayla kırmızı / lacivert
-    const birinciler=[[wCiro,ONEK+' CİRO BİRİNCİSİ',`${DONEMIN(d)} ciro lideri`],[wIslem,ONEK+' İŞLEM BİRİNCİSİ',`${DONEMDE(d)} en çok işlem kapatan`],
-      [wPerf,ONEK+' PERFORMANS BİRİNCİSİ',`${DONEMDE(d)} en yüksek puanı alan`],[wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${DONEMDE(d)} en çok içerik üreten`],
-      [wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ',`${DONEMDE(d)} müşterilerinden en çok Google yorumu alan`]].filter(b=>b[0].length);
+    const birinciler=[[wCiro,KAT(d,'CİRO',1),`${DONEMIN(d)} ciro lideri`],[wIslem,KAT(d,'İŞLEM',1),`${DONEMDE(d)} en çok işlem kapatan`],
+      [wPerf,KAT(d,'PERFORMANS',1),`${DONEMDE(d)} en yüksek puanı alan`],[wSosyal,KAT(d,'SOSYAL MEDYA'),`${DONEMDE(d)} en çok içerik üreten`],
+      [wYorum,KAT(d,'MÜŞTERİ MEMNUNİYETİ'),`${DONEMDE(d)} müşterilerinden en çok Google yorumu alan`]].filter(b=>b[0].length);
     birinciler.forEach((b,i)=>slides.push(catAny(b[0],b[1],'',b[2],i%2===0)));
     // Tüm kategorilerin 1-2-3'ü tek liste slaytında (gizlenen kategori listede de yok)
     const ilk=(ws,ru,fmt)=>ws.length?[{rs:ws,m:'🥇',v:fmt(ws[0])}].concat(ru):[];
