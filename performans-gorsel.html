@@ -121,18 +121,16 @@ function catSlide(r,label,valueHtml,sub,red,no){
   const ptc=red?NAVY:CORAL;
   // Story: haftalık podyum slaytıyla aynı yerleşim (büyük rakam, sağda büyük fotoğraf, isim solda altta)
   if(STORY) return `<div class="slide" style="background:${red?RGRAD:NAVY};">
-${wm(String(no||1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}
+${wm(String(no||1),red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)')}${logo(false)}${CEYREK?KUPA(120,'left:42px;top:356px;z-index:5;'):''}
 <div style="position:absolute;right:-6px;bottom:-6px;width:340px;height:545px;overflow:hidden;clip-path:inset(0);">${cut(r.id,545,340)}</div>
 <div style="position:absolute;left:36px;width:170px;bottom:90px;z-index:5;">
-${CEYREK?`<div style="position:relative;width:74px;height:120px;margin:0 0 14px 6px;">${KUPA(120,'left:0;top:0;')}</div>`:''}
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:9px;font-weight:800;letter-spacing:1.4px;padding:5px 9px;border-radius:7px;margin-bottom:10px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?32:40}px;font-weight:700;letter-spacing:-1.4px;color:#fff;line-height:1.02;margin-bottom:8px;">${r.first}<br>${r.last}</div>
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.4;">${sub}</div></div>${arrow()}${progress()}</div>`;
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
-<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
+<div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}${CEYREK?KUPA(96,'left:40px;top:238px;z-index:5;'):''}
 <div style="position:absolute;right:-6px;bottom:-6px;width:260px;height:440px;overflow:hidden;clip-path:inset(0);">${cut(r.id,440,260)}</div>
 <div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
-${CEYREK?`<div style="position:relative;width:59px;height:96px;margin:0 0 12px 4px;">${KUPA(96,'left:0;top:0;')}</div>`:''}
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
 ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
