@@ -63,9 +63,22 @@
   .splash .s2{width:60px;height:3px;background:var(--red);border-radius:2px}
   .splash.out{opacity:0;pointer-events:none}
   @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-  .badge{position:absolute;z-index:4;background:var(--navy);border-bottom:3px solid var(--red);border-radius:10px;padding:6px 10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-  .badge img{width:100%;height:auto;display:block}
-  .badge.tl{top:10px;left:10px}.badge.tr{top:10px;right:10px}.badge.bl{bottom:10px;left:10px}.badge.br{bottom:10px;right:10px}
+  .splash .go{margin-top:6px;background:var(--red);color:#fff;border:0;border-radius:99px;padding:11px 26px;font:700 14px Manrope;cursor:pointer;box-shadow:0 6px 20px rgba(220,28,46,.4)}
+  .splash .prog{width:min(40%,260px);height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+  .splash .prog i{display:block;height:100%;width:0;background:#fff;opacity:.6}
+  .badge{position:absolute;z-index:4;border-radius:12px;padding:7px 12px;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none}
+  .badge img{width:100%;height:auto;display:block;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+  .badge.cam{background:rgba(5,10,48,.42);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .badge.koyu{background:var(--navy);border-bottom:3px solid var(--red);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  .badge.beyaz{background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.6)}
+  .badge.beyaz img{filter:drop-shadow(0 1px 2px rgba(5,10,48,.6))}
+  .badge.yalin{background:transparent;padding:0}
+  .badge .x,.badge .rz{display:none}
+  .edit .badge{outline:2px dashed #fff;outline-offset:3px;cursor:move}
+  .edit .badge.sel{outline-color:var(--red)}
+  .edit .badge .x{display:flex;position:absolute;top:-12px;right:-12px;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font:700 13px Manrope;align-items:center;justify-content:center;cursor:pointer;border:0}
+  .edit .badge .rz{display:block;position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;border-radius:4px;background:#fff;border:2px solid var(--red);cursor:nwse-resize}
+  .edit::after{content:'Yerleştirme modu: logoyu sürükleyin, köşesinden büyütün';position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:6;background:var(--red);color:#fff;font:600 12px Manrope;padding:5px 10px;border-radius:99px;pointer-events:none;white-space:nowrap}
   .ctl{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
   .ctl h3{margin:0 0 2px;font-size:14px}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -98,7 +111,7 @@
       <div>
         <div class="stage">
         <div class="strip"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="72" height="26"><span>RE/MAX Doğuş sunar</span><span class="r" id="curName"></span></div>
-        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1" id="splashName"></span></div><div class="badge br" id="badge"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
+        <div class="viewer" id="viewer"><div class="splash out" id="splash"><span class="s1">RE/MAX Doğuş sunar</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><span class="s2"></span><span class="s1">Kıbrıs 360</span><span class="prog"><i id="splashProg"></i></span><button class="go" id="splashGo">Tura başla</button></div><div id="badges"></div><div class="blocked" id="blocked" hidden></div><iframe id="frame" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen></iframe></div>
         <div class="strip bot">Danışmanınız: RE/MAX Doğuş · 0216 315 15 15</div>
         </div>
         <div class="bar">
@@ -122,16 +135,12 @@
         </div>
         <label>Not</label><textarea id="f_not" rows="3" placeholder="Müşteri neyi beğendi?"></textarea>
         <div class="ctl">
-          <h3>Logo kapatma ayarı</h3>
-          <p class="hint">Rozeti firmanın köşe logosunun üstüne gelecek şekilde ayarlayın. Her tur için ayrı saklanır.</p>
+          <h3>Doğuş logosu yerleşimi</h3>
+          <p class="hint">"Yerleştir"e basın, Doğuş logolarını firmanın logosu ve adı geçen her yerin üstüne sürükleyin. Her tur için ayrı saklanır.</p>
+          <div class="bar"><button class="btn red" id="b_edit">Yerleştir</button><button class="btn ghost" id="b_add">+ Logo ekle</button></div>
           <div class="row2">
-            <div><label>Rozet köşesi</label><select id="b_kose"><option value="tl">Sol üst</option><option value="tr">Sağ üst</option><option value="bl">Sol alt</option><option value="br">Sağ alt</option></select></div>
-            <div><label>Açılış ekranı</label><select id="b_sure"><option value="0">Kapalı</option><option value="3">3 sn</option><option value="5">5 sn</option><option value="8">8 sn</option><option value="12">12 sn</option></select></div>
-          </div>
-          <label>Rozet genişliği: <span id="b_genv"></span> px</label><input id="b_gen" type="range" min="80" max="260" step="5">
-          <div class="row2">
-            <div><label>Yatay kaydır</label><input id="b_x" type="range" min="0" max="200" step="2"></div>
-            <div><label>Dikey kaydır</label><input id="b_y" type="range" min="0" max="200" step="2"></div>
+            <div><label>Seçili logo görünümü</label><select id="b_st"><option value="cam">Buzlu cam</option><option value="koyu">Lacivert</option><option value="beyaz">Beyaz cam</option><option value="yalin">Sadece logo</option></select></div>
+            <div><label>Açılış ekranı</label><select id="b_sure"><option value="0">Tıklayınca kalksın</option><option value="10">10 sn</option><option value="15">15 sn</option><option value="20">20 sn</option><option value="30">30 sn</option></select></div>
           </div>
           <div class="bar"><button class="btn ghost" id="b_tekrar">Açılışı tekrar oynat</button></div>
         </div>
@@ -156,30 +165,73 @@
     set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
   };
   const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
-  const BDEF = {kose:'br', sure:'5', gen:'150', x:'0', y:'0'};
-  let splashT;
-  function badgeCfg(){ return Object.assign({}, BDEF, store.get('k360b_'+cur.id)); }
-  function applyBadge(){
-    const c = badgeCfg(), b = $('badge');
-    b.className = 'badge ' + c.kose;
-    b.style.width = c.gen + 'px';
-    b.style.margin = '0';
-    const v = c.kose[0]==='t' ? 'marginTop' : 'marginBottom', h = c.kose[1]==='l' ? 'marginLeft' : 'marginRight';
-    b.style[v] = c.y + 'px'; b.style[h] = c.x + 'px';
-    b.hidden = cur.embed === false;
-    $('b_genv').textContent = c.gen;
+  const LDEF = () => [{h:'r', v:'b', x:12, y:12, w:150, st:'cam'}];
+  let splashT, splashA, editing = false, selIdx = 0;
+  function logos(){ const d = store.get('k360L_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function saveLogos(list){ store.set('k360L_'+cur.id, {list}); }
+  function sure(){ const d = store.get('k360S'); return d.s !== undefined ? d.s : '15'; }
+  function renderLogos(){
+    const box = $('badges'), list = logos();
+    box.innerHTML = '';
+    if(cur.embed === false) return;
+    if(selIdx >= list.length) selIdx = list.length - 1;
+    list.forEach((o, i) => {
+      const b = document.createElement('div');
+      b.className = 'badge ' + o.st + (i===selIdx ? ' sel' : '');
+      b.style.width = o.w + 'px';
+      b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
+      b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
+      b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><button class="x" title="Sil">×</button><span class="rz"></span>';
+      b.querySelector('.x').onclick = e => { e.stopPropagation(); const l = logos(); l.splice(i,1); saveLogos(l); renderLogos(); };
+      b.addEventListener('pointerdown', e => startDrag(e, i, e.target.classList.contains('rz')));
+      box.appendChild(b);
+    });
+    $('b_st').value = list[selIdx] ? list[selIdx].st : 'cam';
   }
-  function loadBadgeUI(){ const c = badgeCfg(); ['kose','sure','gen','x','y'].forEach(k => $('b_'+k).value = c[k]); applyBadge(); }
-  function saveBadge(){ const c = {}; ['kose','sure','gen','x','y'].forEach(k => c[k] = $('b_'+k).value); store.set('k360b_'+cur.id, c); applyBadge(); }
+  function startDrag(e, i, resize){
+    if(!editing || e.target.classList.contains('x')) return;
+    e.preventDefault();
+    selIdx = i;
+    const list = logos(), o = list[i], v = $('viewer').getBoundingClientRect();
+    const el = $('badges').children[i], r = el.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY, left0 = r.left - v.left, top0 = r.top - v.top, w0 = r.width, h0 = r.height;
+    $('frame').style.pointerEvents = 'none';
+    [...$('badges').children].forEach((c,k) => c.classList.toggle('sel', k===i));
+    const move = ev => {
+      const dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if(resize){ el.style.width = Math.max(60, Math.min(420, w0 + dx)) + 'px'; return; }
+      const L = Math.max(0, Math.min(v.width - w0, left0 + dx)), T = Math.max(0, Math.min(v.height - h0, top0 + dy));
+      el.style.left = L + 'px'; el.style.top = T + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+      $('frame').style.pointerEvents = '';
+      const nr = el.getBoundingClientRect(), L = nr.left - v.left, T = nr.top - v.top, R = v.width - L - nr.width, B = v.height - T - nr.height;
+      o.w = Math.round(parseFloat(el.style.width) || o.w);
+      o.h = L <= R ? 'l' : 'r'; o.x = Math.round(o.h==='l' ? L : R);
+      o.v = T <= B ? 't' : 'b'; o.y = Math.round(o.v==='t' ? T : B);
+      saveLogos(list); renderLogos();
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+  }
+  function hideSplash(){ clearTimeout(splashT); cancelAnimationFrame(splashA); $('splash').classList.add('out'); }
   function playSplash(){
-    clearTimeout(splashT);
-    const sec = +badgeCfg().sure, sp = $('splash');
-    $('splashName').textContent = 'Kıbrıs 360';
-    if(!sec || cur.embed === false){ sp.classList.add('out'); return; }
+    clearTimeout(splashT); cancelAnimationFrame(splashA);
+    const sec = +sure(), sp = $('splash'), bar = $('splashProg');
+    if(cur.embed === false){ sp.classList.add('out'); return; }
     sp.classList.remove('out');
-    splashT = setTimeout(() => sp.classList.add('out'), sec*1000);
+    bar.parentNode.hidden = !sec;
+    if(!sec) return;
+    const t0 = performance.now();
+    const tick = t => { const k = Math.min(1, (t - t0) / (sec*1000)); bar.style.width = (k*100) + '%'; if(k < 1) splashA = requestAnimationFrame(tick); };
+    splashA = requestAnimationFrame(tick);
+    splashT = setTimeout(hideSplash, sec*1000);
   }
-  ['kose','sure','gen','x','y'].forEach(k => $('b_'+k).addEventListener('input', saveBadge));
+  $('splashGo').onclick = hideSplash;
+  $('b_edit').onclick = () => { editing = !editing; $('viewer').classList.toggle('edit', editing); $('b_edit').textContent = editing ? 'Bitti' : 'Yerleştir'; if(editing) hideSplash(); };
+  $('b_add').onclick = () => { const l = logos(); l.push({h:'l', v:'t', x:20 + l.length*14, y:20 + l.length*14, w:140, st:$('b_st').value || 'cam'}); selIdx = l.length-1; saveLogos(l); renderLogos(); if(!editing) $('b_edit').click(); };
+  $('b_st').onchange = () => { const l = logos(); if(l[selIdx]){ l[selIdx].st = $('b_st').value; saveLogos(l); renderLogos(); } };
+  $('b_sure').onchange = () => { store.set('k360S', {s:$('b_sure').value}); playSplash(); };
   $('b_tekrar').onclick = playSplash;
   let cur = TOURS[0];
   let gridLoaded = false;
@@ -204,7 +256,7 @@
     const d = store.get('k360_'+cur.id);
     FIELDS.forEach(f => $('f_'+f).value = d[f]||'');
     calc();
-    loadBadgeUI(); playSplash();
+    selIdx = 0; $('b_sure').value = sure(); renderLogos(); playSplash();
     if(location.hash.slice(1)!==id) history.replaceState(null,'','#'+id);
   }
   function blockedHTML(t){
