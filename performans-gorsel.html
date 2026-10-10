@@ -41,7 +41,7 @@
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   @media(max-width:480px){.grid{padding:12px;gap:10px}.card{width:100%;height:470px;overflow:hidden;justify-content:flex-start}.card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}}
 </style>
-<script>document.addEventListener('DOMContentLoaded',()=>{if(new URLSearchParams(location.search).get('donem')==='hafta'){const st=document.createElement('style');st.textContent='.slide{height:747px!important;min-height:747px;max-height:747px}';document.head.appendChild(st);}});</script>
+<script>document.addEventListener('DOMContentLoaded',()=>{{const q=new URLSearchParams(location.search);if(q.get('donem')==='hafta'||q.get('fmt')==='story'){const st=document.createElement('style');st.textContent='.slide{height:747px!important;min-height:747px;max-height:747px}';document.head.appendChild(st);}}});</script>
 </head>
 <body>
 <div class="top">
@@ -76,8 +76,11 @@ const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
 const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 let DATA=null, TOTAL=6;
 const SET=(new URLSearchParams(location.search).get('set')||'puan');
-const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' | 'hafta'
-const STORY=DONEM==='hafta';
+const DONEM=(new URLSearchParams(location.search).get('donem')||'ay'); // 'ay' | 'hafta' | 'ceyrek'
+const CEYREK=DONEM==='ceyrek';
+const STORY=DONEM==='hafta'||new URLSearchParams(location.search).get('fmt')==='story';   // story = 9:16, değilse gönderi
+// Dönem dili: aylıkta "Ağustos ayında", çeyrekte "Temmuz – Eylül döneminde"
+const ROZET=d=>CEYREK?d.ayAdi:d.ayAdi+' Ayı', DONEMDE=d=>CEYREK?d.donemAdi+' döneminde':d.ayAdi+' ayında', DONEMIN=d=>CEYREK?d.donemAdi+' döneminin':d.ayAdi+' ayının', ONEK=CEYREK?'ÇEYREĞİN':'AYIN';
 const SH=STORY?747:560; // 'puan' | 'birinci'
 
 const photo=id=>`assets/ekip/${id}.png`;
@@ -116,8 +119,8 @@ function catSlide(r,label,valueHtml,sub,red,no){
   const ptc=red?NAVY:CORAL;
   return `<div class="slide" style="background:${red?RGRAD:NAVY};">
 <div class="sans" style="position:absolute;top:-50px;left:10px;font-size:340px;font-weight:800;line-height:1;color:${red?'rgba(255,255,255,.10)':'rgba(255,255,255,.06)'};letter-spacing:-12px;">${no||1}</div>${logo(false)}
-<div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?340:260}px;height:${STORY?545:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?545:440,STORY?340:260)}</div>
-<div style="position:absolute;left:36px;width:190px;bottom:60px;z-index:5;">
+<div style="position:absolute;right:-6px;bottom:-6px;width:${STORY?300:260}px;height:${STORY?508:440}px;overflow:hidden;clip-path:inset(0);">${cut(r.id,STORY?508:440,STORY?300:260)}</div>
+<div style="position:absolute;left:36px;width:${STORY?300:190}px;${STORY?'top:128px':'bottom:60px'};z-index:5;">
 <div class="sans" style="display:inline-block;background:${red?NAVY:CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;margin-bottom:12px;white-space:nowrap;">${label}</div>
 <div class="sans" style="font-size:${r.first.length>9||r.last.length>9?28:34}px;font-weight:700;letter-spacing:-1.2px;color:#fff;line-height:1.02;margin-bottom:10px;">${r.first}<br>${r.last}</div>
 ${valueHtml?`<div class="sans" style="font-size:40px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
@@ -140,7 +143,7 @@ function catSlideMulti(ws,label,valueHtml,sub,red,no){
 ${valueHtml?`<div class="sans" style="font-size:48px;font-weight:700;letter-spacing:-1.5px;color:${ptc};line-height:1;white-space:nowrap;">${valueHtml}</div>`:``}
 <div class="sans" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;">${sub}</div></div>
 <div style="position:absolute;left:0;right:0;bottom:-6px;height:${h}px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end;">${figs}</div>
-<div style="position:absolute;left:0;right:0;bottom:56px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
+<div style="position:absolute;left:0;right:0;bottom:${STORY?116:56}px;z-index:6;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 12px;">${tags}</div>
 ${arrow()}${progress()}</div>`;
 }
 function catAny(ws,label,val,sub,red,no){return ws.length===1?catSlide(ws[0],label,val,sub,red,no):catSlideMulti(ws.slice(0,3),label,val,sub,red,no);}
@@ -153,19 +156,19 @@ function ilkUclerSlide(d,kats){
   const yatay=k=>`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 10px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;">${k.satirlar.flatMap(x=>x.rs.slice().sort((p,q)=>p.name.localeCompare(q.name,'tr')).map(r=>`<div style="display:flex;align-items:center;gap:5px;min-width:0;padding:2px 0;"><span style="font-size:12px;line-height:1;">${x.m}</span>${circ(r.id,22,'rgba(255,255,255,.35)')}<div class="sans" style="min-width:0;font-size:11.5px;font-weight:700;color:#fff;line-height:1.15;">${r.name}</div></div>`)).join('')}</div>`;
   const kutu=k=>`<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px 10px 5px;min-width:0;${k.genis?'grid-column:1/-1;padding-bottom:8px;':''}">
 <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><div style="width:22px;height:22px;border-radius:7px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 22px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${k.ikon}</svg></div><div class="sans" style="font-size:9.5px;font-weight:800;letter-spacing:1.2px;color:${CORAL};">${k.ad}</div></div>
-${k.satirlar.length?(k.genis?yatay(k):k.satirlar.map(x=>satir(x,k.satirlar.reduce((t,g)=>t+g.rs.length,0)>3)).join('')):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">Bu ay kayıt yok</div>'}</div>`;
+${k.satirlar.length?(k.genis?yatay(k):k.satirlar.map(x=>satir(x,k.satirlar.reduce((t,g)=>t+g.rs.length,0)>3)).join('')):'<div class="sans" style="font-size:10.5px;color:rgba(255,255,255,.45);padding:6px 0;">'+(CEYREK?'Bu dönemde':'Bu ay')+' kayıt yok</div>'}</div>`;
   return `<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(110% 55% at 15% 105%,rgba(220,28,46,.35),transparent 60%);"></div>
-<div style="position:absolute;left:28px;right:28px;top:26px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${d.ayAdi} Ayı</div>
+<div style="position:absolute;left:28px;right:28px;top:${STORY?130:26}px;display:flex;align-items:center;gap:10px;"><div class="sans" style="background:${RGRAD};color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;">${ROZET(d)}</div>
 <h2 class="sans" style="font-size:25px;font-weight:800;letter-spacing:-.8px;color:#fff;margin:0;line-height:1.05;">İlk Üçler</h2></div>
-<div style="position:absolute;left:24px;right:24px;top:78px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
+<div style="position:absolute;left:24px;right:24px;top:${STORY?186:78}px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">${kats.map(kutu).join('')}</div>
 ${progress()}</div>`;
 }
 function ctaSlide(d){
   return `<div class="slide" style="background:${RGRAD};">${wm('D','rgba(255,255,255,.08)')}${logo(true)}
 <div style="position:absolute;left:36px;right:36px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
-<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">${DONEM==='hafta'?'Önümüzdeki hafta':'Bu ay'}<br>podyumda<br>kim olacak?</h2>
-<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">${DONEM==='hafta'?'Her hafta yeni sıralama. Sürpriz hediyeler.':'Her ay yeni sıralama. Sürpriz hediyeler.'}<br>${DONEM==='hafta'?'Sen de kazanan bir ekibin parçası olmak istersen bizi ara.':'Sen de kazanan bir ekibin parçası olmak istiyorsan bizi ara.'}</p>
+<h2 class="sans" style="font-size:36px;font-weight:700;letter-spacing:-1.2px;color:#fff;margin:0 0 14px;line-height:1.05;">${DONEM==='hafta'?'Önümüzdeki hafta':CEYREK?'Bu çeyrek':'Bu ay'}<br>podyumda<br>kim olacak?</h2>
+<p class="sans" style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 24px;">${DONEM==='hafta'?'Her hafta yeni sıralama. Sürpriz hediyeler.':CEYREK?'Her çeyrek yeni sıralama. Sürpriz hediyeler.':'Her ay yeni sıralama. Sürpriz hediyeler.'}<br>${DONEM==='hafta'?'Sen de kazanan bir ekibin parçası olmak istersen bizi ara.':'Sen de kazanan bir ekibin parçası olmak istiyorsan bizi ara.'}</p>
 <div><div class="sans" style="display:inline-flex;padding:13px 34px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:28px;">Ekibimize katıl →</div></div>
 <p class="sans" style="font-size:12px;color:#fff;margin:22px 0 0;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</p></div></div>`;
 }
@@ -197,7 +200,7 @@ function build(d){
   if(SET==='birinci'){
     // kapak: tanıtım (fotoğrafsız, isimsiz)
     const ico={perf:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',ciro:'<path d="M6 4h9a4 4 0 0 1 0 8H8M5 10h9M5 14h9M8 4v16"/>',islem:'<path d="M20 6 9 17l-5-5"/>',sosyal:'<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>',yorum:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/>'};
-    const cats=[['AYIN CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],['AYIN İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],['AYIN PERFORMANS BİRİNCİSİ','En yüksek aylık puan','perf'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
+    const cats=[[ONEK+' CİRO BİRİNCİSİ','En yüksek hizmet bedeli','ciro'],[ONEK+' İŞLEM BİRİNCİSİ','En çok kapanan işlem','islem'],[ONEK+' PERFORMANS BİRİNCİSİ',CEYREK?'En yüksek çeyrek puanı':'En yüksek aylık puan','perf'],['SOSYAL MEDYA BİRİNCİSİ','En çok içerik üreten','sosyal'],['MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ','En çok Google yorumu alan','yorum']];
     const cards=cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(4px);">
 <div style="width:34px;height:34px;border-radius:10px;background:${RGRAD};display:flex;align-items:center;justify-content:center;flex:0 0 34px;box-shadow:0 8px 18px rgba(220,28,46,.35);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[c[2]]}</svg></div>
 <div style="flex:1;"><div class="sans" style="font-size:11px;font-weight:800;letter-spacing:1.6px;color:${CORAL};">${c[0]}</div><div class="sans" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">${c[1]}</div></div>
@@ -205,15 +208,15 @@ function build(d){
     slides.push(`<div class="slide" style="background:${NAVY};">
 <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 80% 110%,rgba(220,28,46,.45),transparent 60%);"></div>
 ${wm('1','rgba(255,255,255,.06)')}${logo(true)}
-<div style="position:absolute;left:32px;right:32px;top:76px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${d.ayAdi} Ayı</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Şampiyonları</h1>
-<p class="sans" style="font-size:13px;color:rgba(255,255,255,.6);margin:10px 0 0;line-height:1.5;">${d.ayAdi} ayında beş kategoride zirveye çıkan danışmanlarımız.</p></div>
-<div style="position:absolute;left:32px;right:32px;bottom:66px;display:flex;flex-direction:column;gap:7px;">${cards}</div>
-<div class="sans" style="position:absolute;left:32px;bottom:40px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<div style="position:absolute;left:32px;right:32px;top:${STORY?150:76}px;"><div class="sans" style="display:inline-block;background:${RGRAD};color:#fff;font-size:26px;font-weight:700;letter-spacing:-.6px;padding:8px 16px;border-radius:10px;line-height:1.1;box-shadow:0 8px 20px rgba(0,0,0,.25);">${ROZET(d)}</div><h1 class="sans" style="font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#fff;margin:8px 0 0;">Şampiyonları</h1>
+<p class="sans" style="font-size:13px;color:rgba(255,255,255,.6);margin:10px 0 0;line-height:1.5;">${DONEMDE(d)} beş kategoride zirveye çıkan danışmanlarımız.</p></div>
+<div style="position:absolute;left:32px;right:32px;bottom:${STORY?150:66}px;display:flex;flex-direction:column;gap:${STORY?10:7}px;">${cards}</div>
+<div class="sans" style="position:absolute;left:32px;bottom:${STORY?116:40}px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;">KAYDIR <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="rgba(255,255,255,.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>`);
     // Birinci slaytları; renk sırayla kırmızı / lacivert
-    const birinciler=[[wCiro,'AYIN CİRO BİRİNCİSİ',`${d.ayAdi} ayının ciro lideri`],[wIslem,'AYIN İŞLEM BİRİNCİSİ',`${d.ayAdi} ayında en çok işlem kapatan`],
-      [wPerf,'AYIN PERFORMANS BİRİNCİSİ',`${d.ayAdi} ayında en yüksek puanı alan`],[wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${d.ayAdi} ayında en çok içerik üreten`],
-      [wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ',`${d.ayAdi} ayında müşterilerinden en çok Google yorumu alan`]].filter(b=>b[0].length);
+    const birinciler=[[wCiro,ONEK+' CİRO BİRİNCİSİ',`${DONEMIN(d)} ciro lideri`],[wIslem,ONEK+' İŞLEM BİRİNCİSİ',`${DONEMDE(d)} en çok işlem kapatan`],
+      [wPerf,ONEK+' PERFORMANS BİRİNCİSİ',`${DONEMDE(d)} en yüksek puanı alan`],[wSosyal,'SOSYAL MEDYA BİRİNCİSİ',`${DONEMDE(d)} en çok içerik üreten`],
+      [wYorum,'MÜŞTERİ MEMNUNİYETİ BİRİNCİSİ',`${DONEMDE(d)} müşterilerinden en çok Google yorumu alan`]].filter(b=>b[0].length);
     birinciler.forEach((b,i)=>slides.push(catAny(b[0],b[1],'',b[2],i%2===0)));
     // Tüm kategorilerin 1-2-3'ü tek liste slaytında (gizlenen kategori listede de yok)
     const ilk=(ws,ru,fmt)=>ws.length?[{rs:ws,m:'🥇',v:fmt(ws[0])}].concat(ru):[];
@@ -297,6 +300,12 @@ function fillMonths(){
     for(let i=1;i<=10;i++){const st=new Date(tr); st.setDate(tr.getDate()-dow-7*i); const en=new Date(st); en.setDate(st.getDate()+6);
       const v=st.getFullYear()+'-'+String(st.getMonth()+1).padStart(2,'0')+'-'+String(st.getDate()).padStart(2,'0');
       const o=document.createElement('option');o.value=v;o.textContent=st.getDate()+' '+MONTHS[st.getMonth()].slice(0,3)+' – '+en.getDate()+' '+MONTHS[en.getMonth()].slice(0,3);sel.appendChild(o);}
+  } else if(CEYREK){
+    // son tamamlanan çeyrekten geriye 6 çeyrek + devam eden çeyrek en üstte
+    const y0=now.getFullYear(), q0=Math.floor(now.getMonth()/3)+1;
+    for(let i=0;i<=6;i++){const k=y0*4+(q0-1)-i, y=Math.floor(k/4), q=k%4+1;
+      const o=document.createElement('option');o.value=y+'-Q'+q;o.textContent='Q'+q+' '+y+' · '+MONTHS[(q-1)*3].slice(0,3)+'–'+MONTHS[(q-1)*3+2].slice(0,3)+(i===0?' (devam ediyor)':'');sel.appendChild(o);}
+    sel.selectedIndex=1;
   } else
   for(let i=1;i<=12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const o=document.createElement('option');o.value=v;o.textContent=MONTHS[d.getMonth()]+' '+d.getFullYear();sel.appendChild(o);}
   const q=new URLSearchParams(location.search).get('ay'); if(q)sel.value=q;
@@ -305,10 +314,11 @@ function fillMonths(){
 
 /* Müşteri memnuniyeti: o ay portala giren (4★+, danışmana bağlı) Google yorumlarının sayısı */
 async function yorumSay(d, ay){
+  const aylar=d.aylar||[ay];   // çeyrekte üç ay
   try{
     const v=await (await fetch('data/google-yorumlar.json?cb='+Date.now(),{cache:'no-store'})).json();
     const say={};
-    (v.yorumlar||[]).filter(y=>String(y.tarih||'').slice(0,7)===ay).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
+    (v.yorumlar||[]).filter(y=>aylar.includes(String(y.tarih||'').slice(0,7))).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
     d.siralama.forEach(r=>r.yorum=say[r.id]||0);
   }catch(e){ console.warn('Google yorumları okunamadı:', e); }
 }
@@ -316,9 +326,10 @@ async function load(){
   const ay=document.getElementById('ay').value, st=document.getElementById('status'), grid=document.getElementById('grid');
   st.textContent='Danışman Takip\'ten veri çekiliyor…'; grid.innerHTML=''; document.getElementById('zipbtn').disabled=true; document.body.removeAttribute('data-ready');
   try{
-    const res=await fetch(DONEM==='hafta'?`${APPS_SCRIPT_URL}?action=haftalik&hafta=${ay}&k=${KEY}`:`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
+    const res=await fetch(DONEM==='hafta'?`${APPS_SCRIPT_URL}?action=haftalik&hafta=${ay}&k=${KEY}`:CEYREK?`${APPS_SCRIPT_URL}?action=ceyrek&q=${ay}&k=${KEY}`:`${APPS_SCRIPT_URL}?action=aylik&ay=${ay}&k=${KEY}`); DATA=await res.json();
+    if(CEYREK&&!DATA.error){const q=DATA.q;DATA.ay=DATA.ceyrek;DATA.ayAdi='Q'+q+' '+DATA.yil;DATA.donemAdi=MONTHS[(q-1)*3]+' – '+MONTHS[(q-1)*3+2];}
     if(DATA.error)throw new Error(DATA.error);
-    if(!DATA.hasData){st.textContent=`${DATA.ayAdi} ${DATA.yil} için kayıt bulunamadı.`;return;}
+    if(!DATA.hasData){st.textContent=`${CEYREK?DATA.ayAdi:DATA.ayAdi+' '+DATA.yil} için kayıt bulunamadı.`;return;}
     if(DONEM!=='hafta') await yorumSay(DATA, ay);
     buildPanel();
     await render(DATA);
@@ -332,10 +343,11 @@ async function render(d){
   grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">PNG indir</button></div>`).join('');
   await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
   await document.fonts.ready;
-  st.textContent=`${d.ayAdi} ${d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
+  st.textContent=`${CEYREK?d.ayAdi:d.ayAdi+' '+d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
   const sb=document.getElementById('sharebtn'); if(navigator.canShare){sb.style.display='inline-block';sb.disabled=false;}
-  if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;const sb2=document.getElementById('storybtn');sb2.style.display='inline-block';sb2.disabled=false;}
+  if(DONEM==='hafta'){const kb=document.getElementById('karnebtn');kb.style.display='inline-block';kb.disabled=false;}
+  if(STORY){const sb2=document.getElementById('storybtn');sb2.style.display='inline-block';sb2.disabled=false;}
   const ib=document.getElementById('igapibtn'); ib.style.display='inline-block'; ib.disabled=false;
   const tb=document.getElementById('igtestbtn'); tb.style.display='inline-block'; tb.disabled=false;
 }
@@ -465,14 +477,14 @@ async function downloadAll(){
 }
 function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
 
-document.getElementById('ttl').textContent=SET==='birinci'?'Ayın Şampiyonları — Görseller':(DONEM==='hafta'?'Haftalık Sıralama — Görseller':'Performans Sıralaması — Görseller');
+document.getElementById('ttl').textContent=SET==='birinci'?(CEYREK?'Çeyreğin Şampiyonları':'Ayın Şampiyonları')+(STORY?' — Story':' — Görseller'):(DONEM==='hafta'?'Haftalık Sıralama — Görseller':'Performans Sıralaması — Görseller');
 fillMonths(); load();
 
 
 function ghTok(){return localStorage.getItem('ghToken')||'';}  // sunucu kendi anahtarını kullanır, sayfa sormaz
 function igCaption(){
   const ayAd=DATA?DATA.ayAdi+' '+DATA.yil:'';
-  if(SET==='birinci') return `${DATA.ayAdi} ayının şampiyonları belli oldu 🏆\nCiro, işlem, performans, sosyal medya ve müşteri memnuniyetinde zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
+  if(SET==='birinci') return `${CEYREK?DATA.ayAdi+' ('+DATA.donemAdi+')':DATA.ayAdi+' ayının'} şampiyonları belli oldu 🏆\nCiro, işlem, performans, sosyal medya ve müşteri memnuniyetinde zirveye çıkan arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   if(DONEM==='hafta') return `${DATA.ayAdi} haftasının podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
   return `${DATA.ayAdi} podyumu belli oldu 🥇🥈🥉\nDisiplin + istikrar = sonuç. Podyumdaki arkadaşlarımıza gönülden tebrikler.\nSen de kazanan bir ekipte yer almak istiyorsan bizi ara: 0216 315 15 15\n\n#remaxdogus #remax #fikirtepe #kadıköy #gayrimenkul`;
 }

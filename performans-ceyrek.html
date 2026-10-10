@@ -11,6 +11,8 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 .tabs{display:flex;gap:8px;padding:14px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
 .tabs button{font:700 13px 'Plus Jakarta Sans',sans-serif;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;background:#111738;color:rgba(255,255,255,.7);cursor:pointer}
 .tabs button.on{background:#FB5160;border-color:#FB5160;color:#fff}.tabs button:disabled{opacity:.35;cursor:default}
+.gl{display:flex;gap:8px;padding:12px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
+.gl a{font:700 13px 'Plus Jakarta Sans',sans-serif;text-decoration:none;color:#fff;border-radius:10px;padding:9px 14px;background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)}
 .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6);max-width:980px;margin:0 auto}
 .wrap{max-width:980px;margin:0 auto;padding:6px 16px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .cat{background:#111738;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px}
@@ -26,6 +28,7 @@ select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;
 </style></head><body>
 <div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Çeyrek Sıralaması</h1><select id="yil"></select></div>
 <div class="tabs" id="tabs"></div>
+<div class="gl"><a id="g-post" href="#">📸 Gönderi karuseli</a><a id="g-story" href="#">📱 Story görselleri</a></div>
 <div class="status" id="status">Yükleniyor…</div>
 <div class="wrap" id="wrap"></div>
 <script>
@@ -72,6 +75,7 @@ async function load(){
   const st=document.getElementById('status'),wrap=document.getElementById('wrap');
   st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';
   history.replaceState(null,'',`?yil=${Y}&q=${Q}`);
+  const g=`performans-gorsel.html?set=birinci&donem=ceyrek&ay=${Y}-Q${Q}`;document.getElementById('g-post').href=g;document.getElementById('g-story').href=g+'&fmt=story';
   try{
     const [r,yr]=await Promise.all([fetch(`${APPS_SCRIPT_URL}?action=ceyrek&q=${Y}-Q${Q}&k=${KEY}`),yorumlar()]);
     let d;try{d=await r.json();}catch(e){throw new Error('çeyrek verisi alınamadı (Apps Script güncellemesi yayında mı?)');}
