@@ -30,15 +30,23 @@ async function yayinda(url) {
   for (let i = 0; i < 60; i++) { if ((await fetch(url, { method: 'HEAD' })).ok) return; await wait(10000); }
   throw new Error('Görsel yayında değil: ' + url);
 }
+// Video öğe Instagram'da işlenemezse yarım paylaşım bırakmadan aynı slaytın JPEG'ine döner (ceyrek.js ikisini de üretir).
+const gorselUrl = u => RAW + u.replace(/^https?:\/\/[^/]+\//, '').replace(/\.mp4$/i, '.jpg');
+const RAW = 'https://raw.githubusercontent.com/dogusremax/dogusportal/main/';
+async function videoYaDaGorsel(u, videoGovde, gorselGovde, hazirBekle) {
+  if (!/\.mp4$/i.test(u)) { const id = (await post(`${UID}/media`, gorselGovde(u))).id; if (hazirBekle) await hazir(id); return id; }
+  try { const id = (await post(`${UID}/media`, videoGovde(u))).id; await hazir(id); return id; }
+  catch (e) {
+    console.log('! video olmadı, görsel kullanılıyor:', u, '—', e.message);
+    const id = (await post(`${UID}/media`, gorselGovde(gorselUrl(u)))).id; if (hazirBekle) await hazir(id); return id;
+  }
+}
 (async () => {
   for (const u of [...media.gonderi, ...media.story]) await yayinda(u);
   if (!pub.carousel) {
     const children = [];
-    for (const u of media.gonderi) {   // kupalı slaytlar dönen kupalı videodur (.mp4)
-      const v = /\.mp4$/i.test(u);
-      const id = (await post(`${UID}/media`, v ? { media_type: 'VIDEO', video_url: u, is_carousel_item: true } : { image_url: u, is_carousel_item: true })).id;
-      if (v) await hazir(id);
-      children.push(id);
+    for (const u of media.gonderi) {   // kupalı slaytlar dönen kupalı videodur (.mp4); video olmazsa aynı slaytın görseli
+      children.push(await videoYaDaGorsel(u, url => ({ media_type: 'VIDEO', video_url: url, is_carousel_item: true }), url => ({ image_url: url, is_carousel_item: true }), false));
     }
     const cont = await post(`${UID}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption: media.caption });
     await hazir(cont.id);
@@ -46,10 +54,8 @@ async function yayinda(url) {
     console.log('✓ carousel yayınlandı:', pub.carousel);
   }
   for (let i = pub.story; i < media.story.length; i++) {
-    const u = media.story[i];   // kupalı story'ler videodur (.mp4)
-    const cont = await post(`${UID}/media`, /\.mp4$/i.test(u) ? { media_type: 'STORIES', video_url: u } : { media_type: 'STORIES', image_url: u });
-    await hazir(cont.id);
-    await post(`${UID}/media_publish`, { creation_id: cont.id });
+    const id = await videoYaDaGorsel(media.story[i], url => ({ media_type: 'STORIES', video_url: url }), url => ({ media_type: 'STORIES', image_url: url }), true);
+    await post(`${UID}/media_publish`, { creation_id: id });
     pub.story = i + 1; kaydet();
     console.log('✓ story', i + 1, '/', media.story.length);
   }
