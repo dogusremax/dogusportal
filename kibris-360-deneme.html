@@ -69,7 +69,7 @@
   .badge{position:absolute;z-index:4;border-radius:12px;padding:7px 12px;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none}
   .badge img{width:100%;height:auto;display:block;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
   .badge.cam{background:rgba(5,10,48,.42);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 20px rgba(0,0,0,.25)}
-  .badge.koyu{background:var(--navy);border-bottom:3px solid var(--red);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  .badge.koyu{background:var(--navy);border-bottom:3px solid var(--red);box-shadow:0 4px 14px rgba(0,0,0,.35);padding:12px 16px}
   .badge.beyaz{background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.6)}
   .badge.beyaz img{filter:drop-shadow(0 1px 2px rgba(5,10,48,.6))}
   .badge.yalin{background:transparent;padding:0}
@@ -165,10 +165,11 @@
     set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
   };
   const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
-  const LDEF = () => [{h:'r', v:'b', x:12, y:12, w:150, st:'cam'}];
+  // Varsayılan: firma logosu sol üst köşede, opak lacivert kapak köşeye yaslı
+  const LDEF = () => [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
   let splashT, splashA, editing = false, selIdx = 0;
-  function logos(){ const d = store.get('k360L_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
-  function saveLogos(list){ store.set('k360L_'+cur.id, {list}); }
+  function logos(){ const d = store.get('k360L2_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function saveLogos(list){ store.set('k360L2_'+cur.id, {list}); }
   function sure(){ const d = store.get('k360S'); return d.s !== undefined ? d.s : '15'; }
   function renderLogos(){
     const box = $('badges'), list = logos();
@@ -178,9 +179,11 @@
     list.forEach((o, i) => {
       const b = document.createElement('div');
       b.className = 'badge ' + o.st + (i===selIdx ? ' sel' : '');
-      b.style.width = o.w + 'px';
+      const sc = $('viewer').clientWidth < 600 ? .72 : 1;
+      b.style.width = Math.round(o.w * sc) + 'px';
       b.style[o.h==='l' ? 'left' : 'right'] = o.x + 'px';
       b.style[o.v==='t' ? 'top' : 'bottom'] = o.y + 'px';
+      if(o.x < 4 && o.y < 4){ const r = {lt:'0 0 14px 0', rt:'0 0 0 14px', lb:'0 14px 0 0', rb:'14px 0 0 0'}[o.h+o.v]; b.style.borderRadius = r; }
       b.innerHTML = '<img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="519" height="187"><button class="x" title="Sil">×</button><span class="rz"></span>';
       b.querySelector('.x').onclick = e => { e.stopPropagation(); const l = logos(); l.splice(i,1); saveLogos(l); renderLogos(); };
       b.addEventListener('pointerdown', e => startDrag(e, i, e.target.classList.contains('rz')));
@@ -207,7 +210,8 @@
       window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
       $('frame').style.pointerEvents = '';
       const nr = el.getBoundingClientRect(), L = nr.left - v.left, T = nr.top - v.top, R = v.width - L - nr.width, B = v.height - T - nr.height;
-      o.w = Math.round(parseFloat(el.style.width) || o.w);
+      const sc = v.width < 600 ? .72 : 1;
+      o.w = Math.round((parseFloat(el.style.width) / sc) || o.w);
       o.h = L <= R ? 'l' : 'r'; o.x = Math.round(o.h==='l' ? L : R);
       o.v = T <= B ? 't' : 'b'; o.y = Math.round(o.v==='t' ? T : B);
       saveLogos(list); renderLogos();
