@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çeyrek Sıralaması · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+.top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.top img{height:30px}.top h1{font-size:16px;font-weight:700;flex:1}.top a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px}
+select{font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:9px 14px;background:#161c44;color:#fff}
+.tabs{display:flex;gap:8px;padding:14px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
+.tabs button{font:700 13px 'Plus Jakarta Sans',sans-serif;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;background:#111738;color:rgba(255,255,255,.7);cursor:pointer}
+.tabs button.on{background:#FB5160;border-color:#FB5160;color:#fff}.tabs button:disabled{opacity:.35;cursor:default}
+.status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6);max-width:980px;margin:0 auto}
+.wrap{max-width:980px;margin:0 auto;padding:6px 16px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cat{background:#111738;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px}
+.cat h2{font-size:12px;font-weight:800;letter-spacing:1.4px;color:#FB5160;margin-bottom:2px}
+.cat p{font-size:11.5px;color:rgba(255,255,255,.5);margin-bottom:10px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
+.m{width:24px;text-align:center;font-size:18px}
+.av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);overflow:hidden;position:relative;flex:0 0 36px}
+.av img{position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%}
+.name{flex:1;min-width:0;font-weight:700;font-size:14px}
+.v{font-weight:800;font-size:14px;white-space:nowrap}
+.bos{font-size:12px;color:rgba(255,255,255,.4);padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
+</style></head><body>
+<div class="top"><img src="assets/dogus-logo.png"><a href="performans.html">‹ Geri</a><h1 id="h">Çeyrek Sıralaması</h1><select id="yil"></select></div>
+<div class="tabs" id="tabs"></div>
+<div class="status" id="status">Yükleniyor…</div>
+<div class="wrap" id="wrap"></div>
+<script>
+if(sessionStorage.getItem('perfAuth')!=='ok'){window.location.href='https://dogusportal.com';throw new Error('auth');}
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+const KEY="dogus-performans";
+const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const fmtN=n=>Number(n||0).toLocaleString('tr-TR',{maximumFractionDigits:2});
+const CATS=[
+  ['CİRO','En yüksek hizmet bedeli',x=>x.ciro||0,x=>'₺'+Math.round(x.ciro||0).toLocaleString('tr-TR')],
+  ['İŞLEM','En çok kapanan işlem',x=>x.kapanis||0,x=>fmtN(x.kapanis)+' işlem'],
+  ['MÜŞTERİ MEMNUNİYETİ','En çok Google yorumu alan',x=>x.yorum||0,x=>x.yorum+' yorum'],
+  ['SOSYAL MEDYA','En çok içerik üreten',x=>(x.counts&&x.counts.sosyal_medya)||0,x=>x.counts.sosyal_medya+' içerik'],
+  ['DANIŞMAN TAKİP','En yüksek performans puanı',x=>x.puan||0,x=>x.puan+' puan']
+];
+const now=new Date(), curY=now.getFullYear(), curQ=Math.floor(now.getMonth()/3)+1;
+const ySel=document.getElementById('yil');
+for(let y=curY;y>=curY-2;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ySel.appendChild(o);}
+const qs=new URLSearchParams(location.search);
+let Y=+(qs.get('yil')||curY), Q=+(qs.get('q')||curQ);
+ySel.value=Y;
+ySel.onchange=()=>{Y=+ySel.value;Q=Y===curY?curQ:4;load();};
+let YORUM=null;
+async function yorumlar(){
+  if(YORUM) return YORUM;
+  try{YORUM=(await (await fetch('data/google-yorumlar.json?cb='+Date.now(),{cache:'no-store'})).json()).yorumlar||[];}
+  catch(e){console.warn('Google yorumları okunamadı:',e);YORUM=[];}
+  return YORUM;
+}
+function tabs(){
+  document.getElementById('tabs').innerHTML=[1,2,3,4].map(q=>{
+    const ileri=Y>curY||(Y===curY&&q>curQ);
+    return `<button class="${q===Q?'on':''}" ${ileri?'disabled':''} onclick="Q=${q};load()">Q${q} · ${M[(q-1)*3].slice(0,3)}–${M[(q-1)*3+2].slice(0,3)}</button>`;
+  }).join('');
+}
+function kart(c,s){
+  const [ad,acik,f,fmt]=c;
+  const ilk=s.filter(x=>f(x)>0).sort((a,b)=>f(b)-f(a)||b.puan-a.puan).slice(0,3);
+  const satir=ilk.map((x,i)=>`<div class="row"><div class="m">${['🥇','🥈','🥉'][i]}</div><div class="av"><img src="assets/ekip/${x.id}.png" onerror="this.remove()"></div><div class="name">${x.name}</div><div class="v">${fmt(x)}</div></div>`).join('');
+  return `<div class="cat"><h2>${ad}</h2><p>${acik}</p>${satir||'<div class="bos">Bu çeyrekte kayıt yok</div>'}</div>`;
+}
+async function load(){
+  tabs();
+  const st=document.getElementById('status'),wrap=document.getElementById('wrap');
+  st.textContent='Danışman Takip\'ten veri çekiliyor…';wrap.innerHTML='';
+  history.replaceState(null,'',`?yil=${Y}&q=${Q}`);
+  try{
+    const [r,yr]=await Promise.all([fetch(`${APPS_SCRIPT_URL}?action=ceyrek&q=${Y}-Q${Q}&k=${KEY}`),yorumlar()]);
+    let d;try{d=await r.json();}catch(e){throw new Error('çeyrek verisi alınamadı (Apps Script güncellemesi yayında mı?)');}
+    if(d.error)throw new Error(d.error);
+    const ay1=M[(Q-1)*3],ay3=M[(Q-1)*3+2];
+    document.getElementById('h').textContent=`Q${Q} ${Y} Sıralaması`;
+    if(!d.hasData){st.textContent=`Q${Q} ${Y} için kayıt bulunamadı.`;return;}
+    const say={};
+    yr.filter(y=>d.aylar.includes(String(y.tarih||'').slice(0,7))).forEach(y=>(y.danismanlar||[]).forEach(id=>say[id]=(say[id]||0)+1));
+    d.siralama.forEach(x=>x.yorum=say[x.id]||0);
+    wrap.innerHTML=CATS.map(c=>kart(c,d.siralama)).join('');
+    st.textContent=`${ay1} – ${ay3} ${Y}`+(d.devamEdiyor?' · çeyrek devam ediyor, sonuçlar ara durum':'');
+  }catch(e){st.textContent='Hata: '+e.message;}
+}
+load();
+</script></body></html>
