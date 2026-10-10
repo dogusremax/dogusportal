@@ -1,29 +1,36 @@
 // Çeyrek şampiyonları: biten çeyreğin gönderi (1080x1440) ve story (1080x1920) görsellerini üretir
 // → performans/ceyrek/YYYY-Qn/{gonderi,story}_N.jpg + performans/ceyrek/.media (yayın listesi).
-// Story kapağı videodur: kupa 360° döner (assets/kupa-360 kareleri) → story_1.mp4.
+// Kupalı slaytlar videodur: kupa 360° döner (assets/kupa-360 kareleri) → {gonderi,story}_N.mp4.
 // Kullanım: node scripts/ceyrek.js [YYYY-Qn]  (boş = son tamamlanan çeyrek, Türkiye saatiyle)
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const RAW = 'https://raw.githubusercontent.com/dogusremax/dogusportal/main/';
 const SITE = 'https://dogusportal.com/';   // video, Instagram'ın doğru içerik türüyle alabilmesi için Pages'ten verilir
 const BASE = process.env.CEYREK_BASE || SITE;
-// Story kapağındaki sabit kupayı gizleyip zemini çeker, dönen kupa karelerini aynı yere bindirir (24 fps, 3 tur = 9 sn)
+// Slayttaki sabit kupaları gizleyip zemini çeker, dönen kupa karelerini aynı yerlere bindirir (24 fps, 3 tur = 9 sn)
 async function kupaVideo(page, slide, hedef) {
-  const kutu = await slide.evaluate(el => {
-    const k = el.querySelector('[data-kupa=kapak]'); if (!k) return null;
-    const s = el.getBoundingClientRect(), r = k.getBoundingClientRect();
-    k.querySelector('img').style.visibility = 'hidden';
-    return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height, sw: s.width };
+  const o = await slide.evaluate(el => {
+    const s = el.getBoundingClientRect();
+    const kutular = [...el.querySelectorAll('[data-kupa]')].map(k => {
+      const r = k.getBoundingClientRect(); k.querySelector(':scope > img').style.visibility = 'hidden';
+      return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height };
+    });
+    return { kutular, sw: s.width, sh: s.height };
   });
-  if (!kutu) return false;
+  if (!o.kutular.length) return false;
   const zemin = hedef.replace(/\.mp4$/, '_zemin.png');
   await slide.screenshot({ path: zemin });
-  await slide.evaluate(el => { el.querySelector('[data-kupa=kapak] img').style.visibility = ''; });
-  const k = 1080 / kutu.sw, H = Math.round(kutu.h * k * 1.04), alt = Math.round((kutu.y + kutu.h) * k) + 4, ox = Math.round((kutu.x + kutu.w / 2) * k);
+  await slide.evaluate(el => el.querySelectorAll('[data-kupa] > img').forEach(im => { im.style.visibility = ''; }));
+  const k = 1080 / o.sw, n = o.kutular.length;
+  let f = `[0:v]scale=1080:${2 * Math.round(o.sh * k / 2)}[z0];[1:v]split=${n}${o.kutular.map((_, i) => `[s${i}]`).join('')}`;
+  o.kutular.forEach((b, i) => {
+    const H = Math.round(b.h * k * 1.04), alt = Math.round((b.y + b.h) * k) + 4, ox = Math.round((b.x + b.w / 2) * k);
+    f += `;[s${i}]scale=-1:${H}:flags=lanczos[k${i}];[z${i}][k${i}]overlay=x=${ox}-w/2:y=${alt}-h:shortest=1[z${i + 1}]`;
+  });
+  f += `;[z${n}]format=yuv420p[v]`;
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-loop', '1', '-framerate', '24', '-i', zemin,
     '-stream_loop', '2', '-framerate', '24', '-i', 'assets/kupa-360/%03d.png',
-    '-filter_complex', `[0:v]scale=1080:1920[z];[1:v]scale=-1:${H}:flags=lanczos[k];[z][k]overlay=x=${ox}-w/2:y=${alt}-h:shortest=1,format=yuv420p`,
-    '-c:v', 'libx264', '-crf', '18', '-r', '24', '-movflags', '+faststart', hedef]);
+    '-filter_complex', f, '-map', '[v]', '-c:v', 'libx264', '-crf', '18', '-r', '24', '-movflags', '+faststart', hedef]);
   fs.unlinkSync(zemin);
   return true;
 }
@@ -53,7 +60,7 @@ function bitenCeyrek() {
       const f = path.join(out, `${tur}_${i + 1}.jpg`);
       await slides[i].screenshot({ path: f, type: 'jpeg', quality: 95 });
       const v = f.replace(/\.jpg$/, '.mp4');
-      if (tur === 'story' && i === 0 && await kupaVideo(page, slides[i], v)) { media[tur].push(SITE + v.replace(/\\/g, '/')); console.log('✓', q, tur, 1, '(video)'); continue; }
+      if (await kupaVideo(page, slides[i], v)) { media[tur].push(SITE + v.replace(/\\/g, '/')); console.log('✓', q, tur, i + 1, '(video)'); continue; }
       media[tur].push(RAW + f.replace(/\\/g, '/'));
       console.log('✓', q, tur, i + 1);
     }

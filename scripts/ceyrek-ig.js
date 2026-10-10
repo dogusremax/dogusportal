@@ -34,14 +34,19 @@ async function yayinda(url) {
   for (const u of [...media.gonderi, ...media.story]) await yayinda(u);
   if (!pub.carousel) {
     const children = [];
-    for (const u of media.gonderi) children.push((await post(`${UID}/media`, { image_url: u, is_carousel_item: true })).id);
+    for (const u of media.gonderi) {   // kupalı slaytlar dönen kupalı videodur (.mp4)
+      const v = /\.mp4$/i.test(u);
+      const id = (await post(`${UID}/media`, v ? { media_type: 'VIDEO', video_url: u, is_carousel_item: true } : { image_url: u, is_carousel_item: true })).id;
+      if (v) await hazir(id);
+      children.push(id);
+    }
     const cont = await post(`${UID}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption: media.caption });
     await hazir(cont.id);
     pub.carousel = (await post(`${UID}/media_publish`, { creation_id: cont.id })).id; kaydet();
     console.log('✓ carousel yayınlandı:', pub.carousel);
   }
   for (let i = pub.story; i < media.story.length; i++) {
-    const u = media.story[i];   // story kapağı dönen kupalı videodur (.mp4)
+    const u = media.story[i];   // kupalı story'ler videodur (.mp4)
     const cont = await post(`${UID}/media`, /\.mp4$/i.test(u) ? { media_type: 'STORIES', video_url: u } : { media_type: 'STORIES', image_url: u });
     await hazir(cont.id);
     await post(`${UID}/media_publish`, { creation_id: cont.id });
