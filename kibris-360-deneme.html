@@ -157,7 +157,7 @@
   const TOURS = [
     {id:'dovec', ad:'Döveç', url:'https://360.dovecgroup.com/main/'},
     {id:'noyanlar', ad:'Noyanlar', url:'https://360.noyanlar.com/'},
-    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/'}
+    {id:'kibrisinsaat', ad:'Kıbrıs İnşaat', url:'https://360.cyprusconstructions.com/', logos:[{h:'l', v:'t', x:10, y:4, w:145, st:'koyu'}]}
   ];
   const $ = id => document.getElementById(id);
   const store = {
@@ -166,10 +166,10 @@
   };
   const FIELDS = ['ad','bolge','fiyat','kira','teslim','not'];
   // Varsayılan: firma logosu sol üst köşede, opak lacivert kapak köşeye yaslı
-  const LDEF = () => [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
+  const LDEF = () => cur.logos ? cur.logos.map(o => ({...o})) : [{h:'l', v:'t', x:0, y:0, w:210, st:'koyu'}];
   let splashT, splashA, editing = false, selIdx = 0;
-  function logos(){ const d = store.get('k360L2_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
-  function saveLogos(list){ store.set('k360L2_'+cur.id, {list}); }
+  function logos(){ const d = store.get('k360L3_'+cur.id); return Array.isArray(d.list) ? d.list : LDEF(); }
+  function saveLogos(list){ store.set('k360L3_'+cur.id, {list}); }
   function sure(){ const d = store.get('k360S'); return d.s !== undefined ? d.s : '15'; }
   function renderLogos(){
     const box = $('badges'), list = logos();
