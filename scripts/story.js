@@ -6,8 +6,19 @@ const fs = require('fs'), path = require('path');
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 900, height: 900 }, deviceScaleFactor: 1080 / 405 });
   await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
-  await page.goto('https://dogusportal.com/nobet-story.html', { waitUntil: 'networkidle' });
-  await page.waitForSelector('body[data-ready]', { timeout: 90000 });
+  // Nöbet takvimi (Apps Script) ara sıra hata/zaman aşımı veriyor; tek denemede pes etmeyip birkaç kez yeniden dene
+  for (let deneme = 1; ; deneme++) {
+    try {
+      await page.goto('https://dogusportal.com/nobet-story.html?cb=' + Date.now(), { waitUntil: 'networkidle' });
+      await page.waitForSelector('body[data-ready]', { timeout: 60000 });
+      break;
+    } catch (e) {
+      const durum = await page.textContent('#status').catch(() => '');
+      console.log(`Deneme ${deneme} başarısız (${durum || e.message.split('\n')[0]})`);
+      if (deneme >= 5) throw e;
+      await page.waitForTimeout(20000 * deneme);
+    }
+  }
   await page.waitForTimeout(1200);
   // Önceki günün .media dosyası kalırsa yanlışlıkla paylaşılmasın
   const atla = msg => { try { fs.unlinkSync('nobet-story/.media'); } catch (e) {} console.log(msg); };
