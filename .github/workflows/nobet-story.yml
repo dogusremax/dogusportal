@@ -6,6 +6,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+# Birden çok tetik (08:00, 09:00, 10:00, GitHub cron) üst üste gelirse sırayla çalışır; sonraki .pub kilidini görüp atlar
+concurrency:
+  group: nobet-story
+  cancel-in-progress: false
 jobs:
   story:
     runs-on: ubuntu-latest
