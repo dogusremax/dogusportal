@@ -1,0 +1,56 @@
+name: Noyanlar 360 veri indir
+
+on:
+  workflow_dispatch:
+    inputs:
+      liste:
+        description: 'İndirilecek göreli yollar (boşlukla ayrılmış)'
+        required: false
+        default: ''
+      ekran:
+        description: 'Ekran görüntüsü al (evet/hayir)'
+        required: false
+        default: 'evet'
+
+permissions:
+  contents: write
+
+jobs:
+  indir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with: { ref: main }
+      - name: Dosyaları indir
+        run: |
+          set -x
+          D=noyanlar-veri; mkdir -p $D
+          B=https://360.noyanlar.com
+          for f in index.htm script_general.js locale/en.txt $LISTE; do
+            mkdir -p "$D/$(dirname $f)"; curl -sSL --retry 3 -o "$D/$f" "$B/$f" || echo "HATA $f"
+          done
+          ls -laR $D | head -100
+        env:
+          LISTE: ${{ github.event.inputs.liste }}
+      - uses: actions/setup-node@v5
+        if: github.event.inputs.ekran == 'evet'
+        with: { node-version: '22' }
+      - name: Ekran görüntüsü
+        if: github.event.inputs.ekran == 'evet'
+        continue-on-error: true
+        run: |
+          npm i --no-save playwright@1.56.1 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          node scripts/noyanlar-ekran.js
+      - name: Veri dalına yaz
+        run: |
+          git config user.name "dogus-bot"; git config user.email "actions@github.com"
+          mv noyanlar-veri /tmp/nv
+          git fetch origin noyanlar-veri || true
+          git checkout -B noyanlar-veri origin/noyanlar-veri 2>/dev/null || git checkout --orphan noyanlar-veri
+          git rm -rq --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/nv/. .
+          git add -A; git commit -qm "Noyanlar verisi $(date -u +%FT%TZ)" || true
+          git push -f origin noyanlar-veri
