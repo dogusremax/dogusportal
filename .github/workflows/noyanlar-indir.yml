@@ -11,6 +11,10 @@ on:
         description: 'Ekran görüntüsü al (evet/hayir)'
         required: false
         default: 'evet'
+      sayfa:
+        description: 'Ekran görüntüsü alınacak sayfalar: url|ad|bekle_ms|js ; ile ayrılmış'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -39,10 +43,14 @@ jobs:
       - name: Ekran görüntüsü
         if: github.event.inputs.ekran == 'evet'
         continue-on-error: true
+        env:
+          SAYFA: ${{ github.event.inputs.sayfa }}
         run: |
+          mkdir -p noyanlar-veri
           npm i --no-save playwright@1.56.1 >/dev/null 2>&1
           npx playwright install --with-deps chromium >/dev/null 2>&1
-          node scripts/noyanlar-ekran.js
+          node scripts/noyanlar-ekran.js 2>&1 | tee noyanlar-veri/ekran-log.txt
+          curl -sI https://360.noyanlar.com/media/panorama_9A07D83C_946A_9AAA_41B9_B0DD87FC8736_t.webp -H 'Origin: https://dogusportal.com' > noyanlar-veri/cors.txt || true
       - name: Veri dalına yaz
         run: |
           git config user.name "dogus-bot"; git config user.email "actions@github.com"
