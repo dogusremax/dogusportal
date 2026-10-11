@@ -54,7 +54,10 @@
   .ttl{margin:0 auto;text-align:center;padding:8px 18px 9px;border-radius:14px;min-width:0;max-width:50vw}
   .ttl small{display:block;font-size:.6rem;font-weight:700;letter-spacing:.24em;color:var(--coral);text-transform:uppercase}
   .ttl b{display:block;font-size:1.05rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .ttl .vw{display:flex;gap:4px;justify-content:center;margin-top:5px}
+  .ttl .vw{display:flex;gap:4px;margin-top:5px;overflow-x:auto;scrollbar-width:none;max-width:min(560px,56vw);margin-left:auto;margin-right:auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-image:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);padding:0 8px}
+  .ttl .vw::-webkit-scrollbar{display:none}
+  .ttl .vw button{flex:none;white-space:nowrap}
+  .ttl .vw button:first-child{margin-left:auto}.ttl .vw button:last-child{margin-right:auto}
   .ttl .vw:empty{display:none}
   .ttl .vw button{font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--mut)}
   .ttl .vw button.on{background:var(--coral);color:#fff}
@@ -193,6 +196,7 @@
     .logo{height:42px;padding:0 11px;border-radius:13px}.logo img{height:20px}
     .ttl{padding:6px 10px 7px;max-width:none;flex:1;border-radius:13px}
     .ttl b{font-size:.92rem}
+    .ttl .vw{max-width:100%}
     .rail{top:auto;left:0;right:0;width:auto;bottom:calc(68px + var(--sab));height:auto;border-radius:0;background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
     .rail .rh{display:none}
     .rail .ls{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 12px;scrollbar-width:none}
@@ -292,12 +296,12 @@
 
 <script>
   // turlar: menüden seçilir (?tur=), her biri kendi veri dosyası ve görüntü kaynağıyla
-  var TURLAR={kibris:{ad:'Kuzey Kıbrıs',js:'assets/kibris360/data.js?v=2',src:'https://360.noyanlar.com/media',ext:'webp'},
-    esentepe:{ad:'Esentepe',js:'assets/kibris360/data-esentepe.js?v=1',src:'https://360.cyprusconstructions.com/media',ext:'jpg'}};
+  var TURLAR={kibris:{ad:'Kuzey Kıbrıs',js:'assets/kibris360/data.js?v=3',src:'https://360.noyanlar.com/media',ext:'webp'},
+    esentepe:{ad:'Esentepe',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
   document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
 </script>
-<script src="assets/kibris360/k360v.js?v=1"></script>
+<script src="assets/kibris360/k360v.js?v=2"></script>
 <script>
 (function(){
   'use strict';
@@ -366,6 +370,7 @@
     $('tIdx').textContent='Proje '+(GI[k.g]+1)+' / '+G.length;$('tName').textContent=k.g;
     $('tVw').innerHTML=g.s.length>1?g.s.map(function(i,j){return '<button data-s="'+i+'" class="'+(i===cur?'on':'')+'">'+esc(K[i].v||'Genel')+'</button>';}).join(''):'';
     [].forEach.call($('tVw').children,function(b){b.onclick=function(){stopTour();fly(+b.getAttribute('data-s'));};});
+    var on=$('tVw').querySelector('.on');if(on)$('tVw').scrollLeft=on.offsetLeft-$('tVw').clientWidth/2+on.offsetWidth/2;
     t.classList.remove('sw');void t.offsetWidth;t.classList.add('sw');
     [].forEach.call(document.querySelectorAll('[data-g]'),function(b){b.classList.toggle('on',+b.getAttribute('data-g')===GI[k.g]);});
     var r=$('rls').querySelector('.on');if(r)r.scrollIntoView({behavior:RM?'auto':'smooth',block:'nearest',inline:'center'});
