@@ -11,6 +11,10 @@ on:
         description: 'Ekran görüntüsü al (evet/hayir)'
         required: false
         default: 'evet'
+      kaynak:
+        description: 'Tur adresi (3DVista); boşsa 360.noyanlar.com'
+        required: false
+        default: ''
       sayfa:
         description: 'Ekran görüntüsü alınacak sayfalar: url|ad|bekle_ms|js ; ile ayrılmış'
         required: false
@@ -30,13 +34,14 @@ jobs:
         run: |
           set -x
           D=noyanlar-veri; mkdir -p $D
-          B=https://360.noyanlar.com
+          B=${KAYNAK:-https://360.noyanlar.com}
           for f in index.htm script_general.js locale/en.txt $LISTE; do
             mkdir -p "$D/$(dirname $f)"; curl -sSL --retry 3 -o "$D/$f" "$B/$f" || echo "HATA $f"
           done
           ls -laR $D | head -100
         env:
           LISTE: ${{ github.event.inputs.liste }}
+          KAYNAK: ${{ github.event.inputs.kaynak }}
       - uses: actions/setup-node@v5
         if: github.event.inputs.ekran == 'evet'
         with: { node-version: '22' }
