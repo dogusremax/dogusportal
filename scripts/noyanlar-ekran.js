@@ -2,7 +2,7 @@
 // SAYFA: "url|ad|bekle_ms|js" öğeleri, ';' ile ayrılır
 const { chromium, devices } = require('playwright');
 (async () => {
-  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-gpu-rasterization', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const isler = (process.env.SAYFA || 'https://360.noyanlar.com/|noyanlar|25000|').split(';').filter(Boolean);
   for (const is of isler) {
     const [url, ad, bekle, js] = is.split('|');
