@@ -12,10 +12,12 @@
   // (yaw,pitch) yönündeki dünya noktası: kamera bu açıya bakınca ekran merkezine düşer
   function dir(y,p,r){var cp=Math.cos(p*D2R);return [Math.sin(y*D2R)*cp*r,-Math.sin(p*D2R)*r,-Math.cos(y*D2R)*cp*r];}
 
-  // Her yüz 8×8 hücreye bölünür; her hücre tek bir öğedir ve yüklenen en net karonun kendi
-  // parçasını gösterir. Küçük düzlemler göz düzlemini kesse de kaybolmaz, katman sayısı sabit kalır.
+  // Her yüz G×G hücreye bölünür; her hücre tek bir öğedir ve yüklenen en net seviyenin kendi
+  // parçasını gösterir (gerekirse birkaç karodan). Küçük düzlemler göz düzlemini kesse de kaybolmaz,
+  // katman sayısı sabit kalır. def.n: seviye başına yüz kenarındaki karo sayısı (en net önce), karo 512 px.
   function Scene(v,def){
-    var s=this;s.v=v;s.def=def;s.r=def.r||8;s.nl=4;s.minL=s.r===8?0:1;s.tiles={};s.base=0;s.dead=false;s.t0=performance.now();
+    var s=this;s.v=v;s.def=def;s.ns=def.n||[8,4,2,1];s.nl=s.ns.length;s.ext=def.ext||'webp';
+    s.G=s.ns[0]<6?s.ns[0]*2:s.ns[0];s.cw=S/s.G;s.tiles={};s.ok={};s.base=0;s.dead=false;s.t0=performance.now();
     s.st=document.createElement('div');s.st.className='k3v-st';
     s.cam=document.createElement('div');s.cam.className='k3v-cam';s.st.appendChild(s.cam);
     s.hl=document.createElement('div');s.hl.className='k3v-hl';
@@ -25,55 +27,59 @@
       d.addEventListener('pointerdown',function(e){e.stopPropagation();});
       s.hl.appendChild(d);return {h:h,el:d,w:dir(h.yaw,h.pitch,H*.98),on:true};});
     s.cells={};
-    var fr=document.createDocumentFragment();
+    var fr=document.createDocumentFragment(),G=s.G,cw=s.cw;
     FK.forEach(function(f){var m=new DOMMatrix(FACES[f]),a=[];
-      for(var y=0;y<8;y++)for(var x=0;x<8;x++){var e=document.createElement('div');e.className='k3v-t';e.style.visibility='hidden';
-        var c=m.transformPoint(new DOMPoint(-H+(x+.5)*256,-H+(y+.5)*256,-H)),l=Math.hypot(c.x,c.y,c.z);
-        a.push({el:e,f:f,x:x,y:y,L:9,c:[c.x/l,c.y/l,c.z/l],on:false});fr.appendChild(e);}
+      for(var y=0;y<G;y++)for(var x=0;x<G;x++){var e=document.createElement('div');e.className='k3v-t';e.style.visibility='hidden';
+        var c=m.transformPoint(new DOMPoint(-H+(x+.5)*cw,-H+(y+.5)*cw,-H)),l=Math.hypot(c.x,c.y,c.z);
+        a.push({el:e,f:f,x:x,y:y,L:99,c:[c.x/l,c.y/l,c.z/l],on:false});fr.appendChild(e);}
       s.cells[f]=a;});
     s.cam.appendChild(fr);
     FK.forEach(function(f){s.tile(f,s.nl-1,0,0);});
   }
-  Scene.prototype.n=function(L){return L===0?this.r:8>>L;};
   Scene.prototype.tile=function(f,L,row,col){
     var s=this,key=f+L+'_'+row+'_'+col;if(s.tiles[key])return;s.tiles[key]=1;
-    var im=new Image(),src=s.def.base+'/'+f+'/'+L+'/'+row+'_'+col+'.webp';
-    im.onload=function(){if(s.dead)return;var go=function(){if(!s.dead)s.paint(f,L,row,col,src);};
+    var im=new Image(),src=s.def.base+'/'+f+'/'+L+'/'+row+'_'+col+'.'+s.ext;
+    im.onload=function(){if(s.dead)return;var go=function(){if(!s.dead){s.ok[key]=src;s.paint(f,L,row,col);}};
       if(im.decode)im.decode().then(go,go);else go();};
     im.onerror=function(){if(L===s.nl-1)s.base++;};
     im.src=src;
   };
-  // karo yüklendi: kapsadığı hücreler bu seviyeye geçer (daha net olan varsa dokunulmaz)
-  Scene.prototype.paint=function(f,L,row,col,src){
-    var s=this,k=1<<L,px=512/k,u='url("'+src+'")';
+  // karo yüklendi: bu karoya değen hücreler, gereken tüm karoları hazırsa bu seviyeye geçer
+  Scene.prototype.paint=function(f,L,row,col){
+    var s=this,cs=s.ns[L]*512/s.G,sc=s.cw/cs;
     s.cells[f].forEach(function(c){
-      if(c.L<=L||(c.x>>L)!==col||(c.y>>L)!==row)return;
-      var bx=-(c.x%k)*px,by=-(c.y%k)*px,e=c.el.style;c.L=L;
-      // her yönde 1 px taşma: komşu hücre/yüz kenarındaki yumuşatma boşluğunu kapatır; taşan kısım
-      // kaydırılmış kopyalarla kenar pikselini tekrarlar (karo dışına çıkıp saydam kalmaz)
-      e.width=e.height=(px+2)+'px';
-      e.backgroundImage=u+','+u+','+u+','+u+','+u;
-      e.backgroundPosition=[[1,1],[0,1],[2,1],[1,0],[1,2]].map(function(o){return (bx+o[0])+'px '+(by+o[1])+'px';}).join(',');
-      e.transform=FACES[f]+' translateZ('+(-H)+'px) translate('+(-H+c.x*256)+'px,'+(-H+c.y*256)+'px) scale('+(256/px)+') translate(-1px,-1px)';
+      if(c.L<=L)return;
+      var x0=c.x*cs,y0=c.y*cs,c0=Math.floor(x0/512),c1=Math.floor((x0+cs-.01)/512),r0=Math.floor(y0/512),r1=Math.floor((y0+cs-.01)/512);
+      if(col<c0||col>c1||row<r0||row>r1)return;
+      var main=[],pos=[],sh=[],shp=[];
+      for(var r=r0;r<=r1;r++)for(var q=c0;q<=c1;q++){var u=s.ok[f+L+'_'+r+'_'+q];if(!u)return;
+        u='url("'+u+'")';var bx=q*512-x0+1,by=r*512-y0+1;main.push(u);pos.push(bx+'px '+by+'px');
+        // her yönde 1 px taşma: komşu hücre/yüz kenarındaki yumuşatma boşluğunu kapatır; taşan kısım
+        // kaydırılmış kopyalarla kenar pikselini tekrarlar (karo dışına çıkıp saydam kalmaz)
+        [[-1,0],[1,0],[0,-1],[0,1]].forEach(function(o){sh.push(u);shp.push((bx+o[0])+'px '+(by+o[1])+'px');});}
+      var e=c.el.style;c.L=L;
+      e.width=e.height=(cs+2)+'px';
+      e.backgroundImage=main.concat(sh).join(',');e.backgroundPosition=pos.concat(shp).join(',');
+      e.transform=FACES[f]+' translateZ('+(-H)+'px) translate('+(-H+c.x*s.cw)+'px,'+(-H+c.y*s.cw)+'px) scale('+sc+') translate(-1px,-1px)';
       c.on=null;});
     if(L===s.nl-1)s.base++;s.v.dirty=true;
   };
   Scene.prototype.ready=function(){return this.base>=6||performance.now()-this.t0>9000;};
   // görüş konisi dışındaki hücreleri gizle (bellek ve çizim yükü)
   Scene.prototype.cull=function(vd,cone){
-    var lim=Math.cos(Math.min(Math.PI,cone+.32));
+    var lim=Math.cos(Math.min(Math.PI,cone+Math.atan(.75*this.cw/H)));
     FK.forEach(function(f){this.cells[f].forEach(function(c){
-      var on=c.L<9&&c.c[0]*vd[0]+c.c[1]*vd[1]+c.c[2]*vd[2]>=lim;
+      var on=c.L<99&&c.c[0]*vd[0]+c.c[1]*vd[1]+c.c[2]*vd[2]>=lim;
       if(on!==c.on){c.el.style.visibility=on?'':'hidden';c.on=on;}});},this);
   };
   // görünen karoları uygun seviyede iste
   Scene.prototype.need=function(){
-    var s=this,v=s.v,dpr=Math.min(window.devicePixelRatio||1,2.5),want=2*v.P*dpr*.9,L=s.minL;
-    for(var l=s.nl-1;l>=s.minL;l--){if(s.n(l)*512>=want){L=l;break;}}
+    var s=this,v=s.v,dpr=Math.min(window.devicePixelRatio||1,2.5),want=2*v.P*dpr*.9,L=0;
+    for(var l=s.nl-1;l>=0;l--){if(s.ns[l]*512>=want){L=l;break;}}
     if(L>=s.nl-1)return;
     var vd=dir(v.yaw,v.pitch,1),cone=Math.atan(Math.hypot(v.W,v.H)/2/v.P);
     [s.nl-2,L].forEach(function(l2,i){if(i&&l2===s.nl-2)return;
-      var n=8>>l2,ts=S/n,rad=Math.atan(.7072*ts/H),lim=Math.cos(Math.min(Math.PI,cone+rad));
+      var n=s.ns[l2],ts=S/n,rad=Math.atan(.7072*ts/H),lim=Math.cos(Math.min(Math.PI,cone+rad));
       FK.forEach(function(f){var m=new DOMMatrix(FACES[f]);
         for(var r=0;r<n;r++)for(var c=0;c<n;c++){
           var p=m.transformPoint(new DOMPoint(-H+(c+.5)*ts,-H+(r+.5)*ts,-H)),len=Math.hypot(p.x,p.y,p.z);

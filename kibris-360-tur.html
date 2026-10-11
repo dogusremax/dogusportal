@@ -143,6 +143,9 @@
   .dg button:hover img{transform:scale(1.08)}
   .dg button span{position:absolute;inset:auto 0 0 0;padding:20px 8px 7px;background:linear-gradient(transparent,rgba(5,10,48,.94));font-size:.7rem;font-weight:800;line-height:1.15}
   .dg button.on{box-shadow:0 0 0 2px var(--coral)}
+  .tl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tl a{height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.86rem;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+  .tl a.on{background:var(--coral);border-color:var(--coral)}
   .dl a{display:flex;align-items:center;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--line);font-weight:700;font-size:.9rem}
   .dl a::after{content:'→';color:var(--mut)}
   .cta{display:flex;gap:8px;margin-top:18px}
@@ -218,7 +221,7 @@
 
 <div class="intro" id="intro"><div class="in">
   <img src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
-  <h1>Kuzey Kıbrıs <span>360°</span></h1>
+  <h1><b id="iTa">Kuzey Kıbrıs</b> <span>360°</span></h1>
   <p>RE/MAX Doğuş sunar</p>
   <div class="bar"><i id="bar"></i></div>
 </div></div>
@@ -254,6 +257,8 @@
 <aside class="drawer" id="drawer" aria-label="Menü" aria-hidden="true">
   <div class="dh"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><button class="xbtn" id="mClose" aria-label="Menüyü kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="sc">
+    <h4>Turlar</h4>
+    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Kuzey Kıbrıs</a><a href="?tur=esentepe" data-tur="esentepe">Esentepe</a></div>
     <h4>Projeler</h4>
     <input class="srch" id="srch" type="search" placeholder="Proje ara" autocomplete="off">
     <div class="dg" id="dg"></div>
@@ -285,7 +290,13 @@
 </section>
 <div class="toast" id="toast"></div>
 
-<script src="assets/kibris360/data.js?v=1"></script>
+<script>
+  // turlar: menüden seçilir (?tur=), her biri kendi veri dosyası ve görüntü kaynağıyla
+  var TURLAR={kibris:{ad:'Kuzey Kıbrıs',js:'assets/kibris360/data.js?v=2',src:'https://360.noyanlar.com/media',ext:'webp'},
+    esentepe:{ad:'Esentepe',js:'assets/kibris360/data-esentepe.js?v=1',src:'https://360.cyprusconstructions.com/media',ext:'jpg'}};
+  var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
+  document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
+</script>
 <script src="assets/kibris360/k360v.js?v=1"></script>
 <script>
 (function(){
@@ -302,10 +313,12 @@
   /* ---------- veri ---------- */
   var K=window.K360||[];
   // görüntü kaynağı (?yerel=yol ile yerel kopya denenebilir)
-  var q=new URLSearchParams(location.search),SRC=q.get('yerel')||'https://360.noyanlar.com/media';
+  var q=new URLSearchParams(location.search),SRC=q.get('yerel')||TURLAR[TUR].src,EXT=TURLAR[TUR].ext,TA=TURLAR[TUR].ad;
+  document.title=TA+' 360° | RE/MAX Doğuş';$('iTa').textContent=TA;$('tName').textContent=TA;
+  [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);});
   var G=[],GI={};  // projeler: {ad, s:[sahne indexleri]}
   K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});
-  function th(i){return SRC+'/panorama_'+K[i].id+'_t.webp';}
+  function th(i){return SRC+'/panorama_'+K[i].id+'_t.'+EXT;}
   function sName(i){return K[i].g+(K[i].v?' · '+K[i].v:'');}
 
   /* ---------- görüntüleyici ---------- */
@@ -315,7 +328,7 @@
   function hf(){return 100;}
   // dik ekranda görüş dikeyde geniş: ufku biraz yukarı al ki gökyüzü ekranı kaplamasın
   function pp(p){return innerHeight>innerWidth*1.2?Math.max(-80,p-12):p;}
-  function scene(i){var k=K[i];return {base:SRC+'/panorama_'+k.id+'_0',r:k.r,
+  function scene(i){var k=K[i];return {base:SRC+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
       hotSpots:k.h.map(function(h){
         // aynı projenin başka açısına giden etikette proje adı yerine açının adı yazsın
         if(h[3]>=0&&K[h[3]].g===k.g)h=[h[0],h[1],K[h[3]].v||'Genel görünüm'].concat(h.slice(3));
@@ -356,7 +369,7 @@
     t.classList.remove('sw');void t.offsetWidth;t.classList.add('sw');
     [].forEach.call(document.querySelectorAll('[data-g]'),function(b){b.classList.toggle('on',+b.getAttribute('data-g')===GI[k.g]);});
     var r=$('rls').querySelector('.on');if(r)r.scrollIntoView({behavior:RM?'auto':'smooth',block:'nearest',inline:'center'});
-    $('bWa').href='https://wa.me/'+TEL+'?text='+encodeURIComponent('Merhaba, Kuzey Kıbrıs '+k.g+' projesi hakkında bilgi almak istiyorum.');
+    $('bWa').href='https://wa.me/'+TEL+'?text='+encodeURIComponent('Merhaba, '+TA+' '+k.g+' projesi hakkında bilgi almak istiyorum.');
     $('dWa').href=$('bWa').href;
     history.replaceState(null,'','#p='+k.id.slice(0,8));
     calcLoad();}
@@ -392,8 +405,8 @@
   $('bClean').onclick=function(){var on=document.body.classList.toggle('clean');$('bClean').classList.toggle('on',on);if(on)toast('Sunum modu: yalnızca görüntü');};
   var fsOk=document.fullscreenEnabled||document.webkitFullscreenEnabled;if(!fsOk)$('bFs').hidden=true;
   $('bFs').onclick=function(){var d=document,e=d.documentElement;if(d.fullscreenElement||d.webkitFullscreenElement)(d.exitFullscreen||d.webkitExitFullscreen).call(d);else(e.requestFullscreen||e.webkitRequestFullscreen).call(e);};
-  function link(){return location.origin+location.pathname+'#p='+K[cur].id.slice(0,8);}
-  $('bShare').onclick=function(){var d={title:K[cur].g+' · Kuzey Kıbrıs 360°',text:K[cur].g+' projesini 360° gezin (RE/MAX Doğuş)',url:link()};
+  function link(){return location.origin+location.pathname+(TUR!=='kibris'?'?tur='+TUR:'')+'#p='+K[cur].id.slice(0,8);}
+  $('bShare').onclick=function(){var d={title:K[cur].g+' · '+TA+' 360°',text:K[cur].g+' projesini 360° gezin (RE/MAX Doğuş)',url:link()};
     if(navigator.share)navigator.share(d).catch(function(){});else window.open('https://wa.me/?text='+encodeURIComponent(d.text+'\n'+d.url),'_blank');};
   $('rMin').onclick=function(){$('rail').classList.add('min');};$('rTab').onclick=function(){$('rail').classList.remove('min');};
   function drawer(on){$('drawer').classList.toggle('on',on);$('scrim').classList.toggle('on',on);$('drawer').setAttribute('aria-hidden',!on);if(on)stopTour();}
@@ -410,7 +423,7 @@
   function kpi(){var p=+$('fFiyat').value,r=+$('fKira').value,ok=p>0&&r>0;
     $('kGetiri').textContent=ok?'%'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1}):'–';
     $('kDonus').textContent=ok?(p/(r*12)).toLocaleString('tr-TR',{maximumFractionDigits:1})+' yıl':'–';
-    var t='Merhaba, Kuzey Kıbrıs '+K[cur].g+' projesini 360° gezebilirsiniz:\n'+link();
+    var t='Merhaba, '+TA+' '+K[cur].g+' projesini 360° gezebilirsiniz:\n'+link();
     if($('fAd').value)t+='\n\n'+$('fAd').value;
     if(p)t+='\nFiyat: £'+p.toLocaleString('tr-TR');
     if(ok)t+='\nKira getirisi: yıllık yaklaşık %'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1});

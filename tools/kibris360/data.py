@@ -1,5 +1,8 @@
-"""manifest.json (manifest.py çıktısı) -> assets/kibris360/data.js (sayfanın veri dosyası)"""
+"""manifest.json (manifest.py çıktısı) -> assets/kibris360/data.js (sayfanın veri dosyası)
+Kullanım: python3 data.py manifest.json [pin_gorselleri_klasoru]"""
 import json,re,sys,pathlib
+sys.path.insert(0,str(pathlib.Path(__file__).parent));from anchor import fix
+RES=sys.argv[2] if len(sys.argv)>2 else None  # pin görsellerinin klasörü (media)
 R=pathlib.Path(__file__).resolve().parents[2]
 M=json.load(open(sys.argv[1] if len(sys.argv)>1 else '/tmp/claude-0/nvs/manifest.json'))
 AD={'LONG BEACH':'Long Beach','HEAD OFFICE':'Merkez Ofis','MAIN OFFICE':'Merkez Ofis','ROYAL SUN':'Royal Sun','ROYAL LIFE':'Royal Life',
@@ -45,7 +48,8 @@ for o,g,v in P:
         t=idx.get(h['t'],-1) if h['t'] else -1
         a=ad(h['l']) or (P[t][1] if t>=0 else '')
         if not a and t<0: continue
-        hs.append([round(h['y'],2),round(h['p'],2),a,t]+([round(h['ty'],1),round(h['tp'],1)] if h.get('ty') is not None and t>=0 else []))
+        hy,hp=fix(h,RES)
+        hs.append([round(hy,2),round(hp,2),a,t]+([round(h['ty'],1),round(h['tp'],1)] if h.get('ty') is not None and t>=0 else []))
     out.append({'id':o['id'].split('_',1)[1],'g':g,'v':v,'r':o['lv'][0][1],'y':round(o['y'],1),'p':round(o['p'],1),'h':hs})
 (R/'assets/kibris360').mkdir(parents=True,exist_ok=True)
 (R/'assets/kibris360/data.js').write_text('// Kaynak: tools/kibris360 (otomatik üretilir)\nwindow.K360='+json.dumps(out,ensure_ascii=False,separators=(',',':'))+';\n')
