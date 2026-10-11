@@ -41,7 +41,7 @@ for x in P:
     if x[1]=='Satış ofisi':
         m=re.search(r'_(\d+)$',x[0]['ad']);x[2]='Giriş' if 'ENTRANCE' in x[0]['ad'].upper() else ('Bölüm '+m.group(1) if m else x[2])
 # proje sırası: havadan görünümler önde, genel bakış en başta
-SIRA=['Genel bakış','Pearl Island','Maldives','Mykonos','Hawaii Homes','Phuket','Bahamas','Idyll','Esentepe Plajı','Calicup','Californian','Kiralama ofisi','Satış ofisi']
+SIRA=['Pearl Island','Maldives','Mykonos','Hawaii Homes','Phuket','Bahamas','Idyll','Esentepe Plajı','Calicup','Californian','Kiralama ofisi','Satış ofisi','Genel bakış']
 def anahtar(i):
     o,g,v=P[i];return (SIRA.index(g) if g in SIRA else 99, 0 if v in ('','Havadan') else 1, i)
 ordr=sorted(range(len(P)),key=anahtar);yeni={old:n for n,old in enumerate(ordr)}
