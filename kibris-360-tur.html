@@ -80,6 +80,11 @@
   .rail .it.on .th{box-shadow:0 0 0 2.5px var(--coral)}
   .rail .it b{font-size:.78rem;font-weight:700;line-height:1.2;display:block}
   .rail .it small{font-size:.62rem;color:var(--mut);font-weight:500}
+  .rail .tt{display:flex;gap:4px;flex-wrap:wrap;padding:0 10px 8px}
+  .tt button{flex:1 1 auto;height:28px;padding:0 9px;border-radius:9px;font-size:.66rem;font-weight:800;background:rgba(255,255,255,.08);border:1px solid var(--line);white-space:nowrap;transition:background .2s,border-color .2s}
+  .tt button:hover{background:rgba(255,255,255,.14)}
+  .tt button.on{background:var(--coral);border-color:var(--coral)}
+  #pano{transition:opacity .35s}#pano.sw{opacity:.25}
   .rail.min{transform:translateX(calc(-100% - 24px))}
   .rtab{position:fixed;z-index:14;left:calc(16px + var(--sal));top:50%;margin-top:-23px;height:46px;padding:0 14px;border-radius:14px;display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;opacity:0;pointer-events:none;transition:opacity .3s}
   .rail.min+.rtab{opacity:1;pointer-events:auto}
@@ -206,6 +211,9 @@
     .rail .th{width:50px;height:50px}
     .rail .it b{font-size:.58rem;text-shadow:0 1px 6px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:60px}
     .rail .it small{display:none}
+    .rail .tt{flex-wrap:nowrap;overflow-x:auto;padding:0 12px 2px;scrollbar-width:none}
+    .rail .tt::-webkit-scrollbar{display:none}
+    .tt button{flex:none;height:26px;font-size:.62rem;background:rgba(5,10,48,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
     .rtab,.nav{display:none}
     .ctl{left:10px;right:10px;transform:none;bottom:calc(10px + var(--sab));justify-content:space-between;border-radius:16px}
     .ctl .sep,.ctl .zm,.ctl .fs{display:none}
@@ -236,7 +244,7 @@
   <a class="logo glass" href="kibris.html" aria-label="Kıbrıs projeleri"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"></a>
 </header>
 
-<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="ls" id="rls"></div></nav>
+<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="tt" id="tt" role="tablist" aria-label="Turlar"></div><div class="ls" id="rls"></div></nav>
 <button class="rtab glass ui" id="rTab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>PROJELER</button>
 <button class="nav nx glass ui" id="nx" aria-label="Sonraki proje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
 
@@ -303,6 +311,10 @@
     sapphire:{ad:'Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
   document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
+  // tur verisini sayfayı yenilemeden yükle (her tur kendi window.K360 dizisini yazar)
+  var TDATA={};
+  function turYukle(t,cb){if(TDATA[t])return cb(TDATA[t]);var sc=document.createElement('script');sc.src=TURLAR[t].js;
+    sc.onload=function(){TDATA[t]=window.K360||[];cb(TDATA[t]);};sc.onerror=function(){cb(null);};document.head.appendChild(sc);}
 </script>
 <script src="assets/kibris360/k360v.js?v=2"></script>
 <script>
@@ -318,17 +330,23 @@
   var mob=false;function mq(){mob=window.innerWidth<=760;}mq();
 
   /* ---------- veri ---------- */
-  var K=window.K360||[];
+  var K=window.K360||[];TDATA[TUR]=K;
   // görüntü kaynağı (?yerel=yol ile yerel kopya denenebilir)
-  var q=new URLSearchParams(location.search),SRC=q.get('yerel')||TURLAR[TUR].src,EXT=TURLAR[TUR].ext,TA=TURLAR[TUR].ad,TEK=!!TURLAR[TUR].tek;
+  var q=new URLSearchParams(location.search),SRC,EXT,TA,TEK,YEREL=q.get('yerel');
   function pj(){return TEK?TA:K[cur].g;}  // WhatsApp, paylaşım ve hesapta geçen proje adı
-  if(TEK){$('rail').setAttribute('aria-label','Bölümler');$('rail').querySelector('.rh span').textContent='Bölümler';
-    $('rTab').lastChild.textContent='BÖLÜMLER';$('srch').placeholder='Bölüm ara';$('dg').previousElementSibling.previousElementSibling.textContent='Bölümler';
-    $('nx').setAttribute('aria-label','Sonraki bölüm');$('tIdx').lang='en';$('dNote').textContent='Görüntüler projenin 360° çekim ve görselleridir; temsilidir. Fiyat ve teslim bilgisi için danışmanınıza ulaşın.';}
-  document.title=TA+' 360° | RE/MAX Doğuş';$('iTa').textContent=TA;$('tName').textContent=TA;
-  [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);});
-  var G=[],GI={};  // projeler: {ad, s:[sahne indexleri]}
-  K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});
+  var dNote0=$('dNote').textContent,dgH=$('dg').previousElementSibling.previousElementSibling,G=[],GI={};  // projeler: {ad, s:[sahne indexleri]}
+  // seçili turun ayarları; tek projelik turda liste projenin bölümlerini gösterir
+  function turAyarla(){var T=TURLAR[TUR];SRC=(TUR===q.get('tur')&&YEREL)||T.src;EXT=T.ext;TA=T.ad;TEK=!!T.tek;
+    var B=TEK?'Bölüm':'Proje',L=TEK?'Bölümler':'Projeler';
+    $('rail').setAttribute('aria-label',L);$('rail').querySelector('.rh span').textContent=L;$('rTab').lastChild.textContent=L.toLocaleUpperCase('tr-TR');
+    $('srch').placeholder=B+' ara';$('srch').value='';dgH.textContent=L;$('nx').setAttribute('aria-label','Sonraki '+B.toLocaleLowerCase('tr-TR'));
+    if(TEK)$('tIdx').lang='en';else $('tIdx').removeAttribute('lang');
+    $('dNote').textContent=TEK?'Görüntüler projenin 360° çekim ve görselleridir; temsilidir. Fiyat ve teslim bilgisi için danışmanınıza ulaşın.':dNote0;
+    document.title=TA+' 360° | RE/MAX Doğuş';$('iTa').textContent=TA;
+    [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);a.setAttribute('aria-selected',a.getAttribute('data-tur')===TUR);});
+    G=[];GI={};K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});}
+  $('tt').innerHTML=Object.keys(TURLAR).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
+  turAyarla();$('tName').textContent=TA;
   function th(i){return (K[i].s||SRC)+'/'+(K[i].t||'panorama_'+K[i].id+'_t.'+EXT);}
   function sName(i){return K[i].g+(K[i].v?' · '+K[i].v:'');}
 
@@ -362,7 +380,8 @@
   function start(){started=true;clearInterval(bi);bar.style.width='100%';
     setTimeout(function(){$('intro').classList.add('out');document.body.classList.remove('pre');
       if(!RM){var k=K[cur];pv.set(k.y-50,-70,120);pv.lookAt(pp(k.p),k.y,hf(),3200);}
-      setTimeout(function(){rotState();hint(true);},RM?0:3300);},350);}
+      setTimeout(function(){rotState();hint(true);},RM?0:3300);},350);
+    setTimeout(function(){var ks=Object.keys(TURLAR);(function nx(){var t=ks.shift();if(t)turYukle(t,nx);})();},4000);}
 
   /* ---------- geçiş ---------- */
   function fly(i,ty,tp,h){if(!pv||!ready||busy||i===cur)return;hint(false);busy=true;
@@ -370,6 +389,16 @@
       pv.loadScene(scene(i),pp(ty!=null?tp:K[i].p),ty!=null?ty:K[i].y,hf());};
     if(h&&!RM){pv.stopAutoRotate();pv.lookAt(h[1],h[0],Math.max(24,pv.getHfov()*.4),900);setTimeout(go,820);}else go();
     setTimeout(function(){busy=false;},6000);}
+  // başka tura geç: sayfa yenilenmez, görüntü yumuşakça değişir
+  function turaGec(t,cb){if(t===TUR||!TURLAR[t]||!pv||busy)return;busy=true;hint(false);stopTour();$('pano').classList.add('sw');
+    turYukle(t,function(d){if(!d||!d.length){busy=false;$('pano').classList.remove('sw');toast('Tur yüklenemedi');return;}
+      TUR=t;K=d;turAyarla();listBuild();ready=false;$('pano').classList.add('hide-hs');cur=0;if(cb)cb();ui();
+      try{history.replaceState(null,'',location.pathname+(TUR!=='kibris'?'?tur='+TUR:'')+'#p='+K[cur].id.slice(0,8));}catch(e){}
+      pv.loadScene(scene(cur),pp(K[cur].p),K[cur].y,hf());
+      var once=function(){$('pano').classList.remove('sw');};setTimeout(once,400);
+      toast(TA+' turu');setTimeout(function(){busy=false;},6000);});}
+  document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-tur]');if(!a||e.metaKey||e.ctrlKey)return;
+    e.preventDefault();drawer(false);turaGec(a.getAttribute('data-tur'));});
   function stepG(d){var g=GI[K[cur].g],n=G[(g+d+G.length)%G.length];fly(n.s[0]);}
 
   /* ---------- arayüz ---------- */
@@ -383,13 +412,13 @@
     var r=$('rls').querySelector('.on');if(r)r.scrollIntoView({behavior:RM?'auto':'smooth',block:'nearest',inline:'center'});
     $('bWa').href='https://wa.me/'+TEL+'?text='+encodeURIComponent('Merhaba, '+(TEK?TA:TA+' '+k.g)+' projesi hakkında bilgi almak istiyorum.');
     $('dWa').href=$('bWa').href;
-    history.replaceState(null,'','#p='+k.id.slice(0,8));
+    history.replaceState(null,'',location.pathname+(TUR!=='kibris'?'?tur='+TUR:'')+'#p='+k.id.slice(0,8));
     calcLoad();}
   function listBuild(){
     $('rls').innerHTML=G.map(function(g,j){return '<button class="it" data-g="'+j+'"><span class="th"><img src="'+th(g.s[0])+'" alt="" loading="lazy"></span><span><b>'+esc(g.ad)+'</b><small>'+(g.s.length>1?g.s.length+' görünüm':'360° görünüm')+'</small></span></button>';}).join('');
     $('dg').innerHTML=G.map(function(g,j){return '<button data-g="'+j+'" data-n="'+esc(g.ad.toLocaleLowerCase('tr-TR'))+'"><img src="'+th(g.s[0])+'" alt="" loading="lazy"><span>'+esc(g.ad)+'</span></button>';}).join('');
-    [].forEach.call(document.querySelectorAll('[data-g]'),function(b){b.addEventListener('click',function(){drawer(false);stopTour();fly(G[+b.getAttribute('data-g')].s[0]);});});
-    $('srch').addEventListener('input',function(){var v=this.value.trim().toLocaleLowerCase('tr-TR');[].forEach.call($('dg').children,function(b){b.hidden=v&&b.getAttribute('data-n').indexOf(v)<0;});});}
+    [].forEach.call(document.querySelectorAll('[data-g]'),function(b){b.addEventListener('click',function(){drawer(false);stopTour();fly(G[+b.getAttribute('data-g')].s[0]);});});}
+  $('srch').addEventListener('input',function(){var v=this.value.trim().toLocaleLowerCase('tr-TR');[].forEach.call($('dg').children,function(b){b.hidden=v&&b.getAttribute('data-n').indexOf(v)<0;});});
 
   /* üst üste binen etiketler: yakın (alttaki) öncelikli */
   var dcT=0;
