@@ -1063,6 +1063,20 @@ html{overflow-x:hidden}
 #uc-pg.uc-l{border-color:#FDC300}
 #uc-aj.uc-l{border-color:#E30A17}
 
+.kr-sz{margin-top:16px}
+.sz-h h3{margin:0;font-size:1.1rem}.sz-h span{font-size:.8rem;color:var(--muted)}
+.sz-ch{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:190px;margin-top:18px;padding-top:22px}
+.sz-c{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.sz-c i{display:block;width:100%;max-width:38px;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--sea) 55%,transparent)}
+.sz-c.hi i{background:var(--sun)}
+.sz-c.now i{background:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 35%,transparent)}
+.sz-c b{font-size:.62rem;font-weight:600;color:var(--muted);margin-bottom:4px;white-space:nowrap}
+.sz-c span{font-size:.66rem;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;max-width:100%}
+.sz-c em{position:absolute;top:-20px;font-style:normal;font-size:.62rem;font-weight:700;color:var(--red);white-space:nowrap}
+.sz-c.now b{color:inherit}
+.sz-x{margin:14px 0 4px;font-weight:600}
+@media (max-width:520px){.sz-ch{gap:3px}.sz-c b{visibility:hidden;font-size:.58rem}.sz-c.now b,.sz-c.hi:nth-child(7) b{visibility:visible}}
+
 </style>
 </head>
 <body class="v2">
@@ -1435,6 +1449,7 @@ html{overflow-x:hidden}
         <h2 data-kr="h"></h2>
         <p class="lead" data-kr="l"></p>
         <div class="kr-grid" id="kr-box"></div>
+        <div class="kr-sz panel" id="kr-sz"></div>
         <p class="note" data-kr="note"></p>
       </div>
     </section>
@@ -3416,6 +3431,22 @@ function kr(){
     <div class="kr-r"><span>${t.ni}</span>${ni.map(row).join("")}</div>
     <a class="btn" href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}&lang=${BL[l]}&group_adults=2" target="_blank" rel="noopener" data-ev="booking_${id}">${t.bk}</a></article>`).join("");
 }
+/* sezon grafiği: Long Beach tatil sitesi 1+1 haftalık ilan fiyatı (Eki–Nis £450, May–Eyl £570) */
+const SZW=[450,450,450,450,570,570,570,570,570,450,450,450];
+const SZT={
+tr:{t:"Sezona göre tatil kirası",s:"Long Beach tatil sitesinde 1+1, haftalık (£)",now:"Şu an",x:"Şu an düşük sezon: aynı daire yazın haftalık £570, şimdi £450, yani yaklaşık %21 daha ucuz.",f:"Kaynak: sitedeki tatil ilanının sezon fiyatları (Ekim–Nisan, Mayıs–Eylül). Bölge otellerinde en ucuz ay Nisan (ortalamanın %39 altı), en pahalı ay Ağustos (%31 üstü)."},
+en:{t:"Holiday rent by season",s:"1+1 in the Long Beach holiday complex, weekly (£)",now:"Now",x:"It is low season now: the same apartment costs £570 a week in summer and £450 now, about 21% less.",f:"Source: the listing's seasonal prices (October–April, May–September). In local hotels the cheapest month is April (39% below average) and the most expensive is August (31% above)."},
+ru:{t:"Аренда на отдых по сезонам",s:"1+1 в курортном комплексе Лонг-Бич, в неделю (£)",now:"Сейчас",x:"Сейчас низкий сезон: летом эта квартира стоит £570 в неделю, сейчас £450, примерно на 21% дешевле.",f:"Источник: сезонные цены объявления (октябрь–апрель, май–сентябрь). В местных отелях самый дешёвый месяц апрель (на 39% ниже среднего), самый дорогой август (на 31% выше)."},
+fa:{t:"اجارهٔ تعطیلات بر اساس فصل",s:"۱+۱ در مجموعهٔ تعطیلات لانگ بیچ، هفتگی (£)",now:"اکنون",x:"اکنون فصل کم‌رونق است: همین آپارتمان در تابستان هفته‌ای £570 و اکنون £450 است، یعنی حدود ۲۱٪ ارزان‌تر.",f:"منبع: قیمت‌های فصلی آگهی (اکتبر–آوریل، مه–سپتامبر). در هتل‌های منطقه ارزان‌ترین ماه آوریل (۳۹٪ زیر میانگین) و گران‌ترین ماه اوت (۳۱٪ بالاتر) است."},
+de:{t:"Ferienmiete nach Saison",s:"1+1 in der Ferienanlage Long Beach, pro Woche (£)",now:"Jetzt",x:"Jetzt ist Nebensaison: Dieselbe Wohnung kostet im Sommer £570 pro Woche, jetzt £450, also rund 21 % weniger.",f:"Quelle: Saisonpreise des Inserats (Oktober–April, Mai–September). In den Hotels der Region ist April der günstigste Monat (39 % unter dem Schnitt), August der teuerste (31 % darüber)."},
+pl:{t:"Najem wakacyjny według sezonu",s:"1+1 w kompleksie wakacyjnym Long Beach, tygodniowo (£)",now:"Teraz",x:"Teraz jest niski sezon: to samo mieszkanie latem kosztuje £570 tygodniowo, teraz £450, czyli ok. 21% mniej.",f:"Źródło: sezonowe ceny ogłoszenia (październik–kwiecień, maj–wrzesień). W lokalnych hotelach najtańszy jest kwiecień (39% poniżej średniej), najdroższy sierpień (31% powyżej)."}};
+function sz(){
+  const l=L(), t=SZT[l], el=$$("kr-sz"); if(!el) return;
+  const fmt=new Intl.DateTimeFormat((l==="fa"?"fa-u-ca-gregory-nu-latn":l),{month:"short"}), cm=new Date().getMonth(), mx=600;
+  el.innerHTML=`<div class="sz-h"><h3>${t.t}</h3><span>${t.s}</span></div>
+   <div class="sz-ch" dir="ltr">${SZW.map((v,i)=>`<div class="sz-c${i===cm?" now":""}${v>450?" hi":""}"><b>£${v}</b><i style="height:${Math.round(v/mx*100)}%"></i><span>${fmt.format(new Date(2026,i,1)).replace(".","")}</span>${i===cm?`<em>${t.now}</em>`:""}</div>`).join("")}</div>
+   <p class="sz-x">${t.x}</p><p class="note">${t.f}</p>`;
+}
 const iso=d=>d.toISOString().slice(0,10), add=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
 let touched=false;
 function uc(){
@@ -3435,7 +3466,7 @@ function links(){
   $$("uc-pg").href=l==="tr"?"https://www.flypgs.com/ulkeler/istanbul-kibris-ucak-bileti":"https://www.flypgs.com/en";
   $$("uc-aj").href=l==="tr"?"https://ajet.com/tr":"https://ajet.com/en";
 }
-function all(){ kr(); uc(); }
+function all(){ kr(); sz(); uc(); }
 all();
 new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
