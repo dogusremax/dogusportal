@@ -936,6 +936,21 @@ html{overflow-x:hidden}
 .lv-c:hover{transform:translateY(-4px);border-color:rgba(220,28,46,.5)}
 .lv-c svg{width:34px;height:34px;fill:none;stroke:var(--red);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .lv-c h3{margin:12px 0 6px;font-size:1.1rem}
+.v2 .egitim{padding-block:clamp(40px,7vw,90px)}
+.eg-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:20px}
+@media(min-width:760px){.eg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1180px){.eg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.eg-g{border:1px solid var(--line);border-radius:var(--r);padding:18px;background:var(--card);min-width:0}
+.eg-g h3{margin:0 0 10px;font-size:1.05rem;display:flex;justify-content:space-between;align-items:baseline}
+.eg-g h3 span{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.eg-g ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.eg-g li{display:flex;flex-direction:column;gap:3px;padding:9px 0;border-top:1px solid var(--line)}
+.eg-g li:first-child{border-top:0;padding-top:0}
+.eg-g li a,.eg-g li b{color:var(--ink);font-weight:600;font-size:.93rem;text-decoration:none}
+.eg-g li a:hover{text-decoration:underline}
+.eg-t{font-size:.76rem;color:var(--muted)}
+.eg-xt,.eg-xmk{color:var(--sun)}
+.eg-xib,.eg-xgb,.eg-xbr{color:var(--sea)}
 .lv-c p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.55}
 /* davet + danışman */
 .gz{display:grid;gap:24px;align-items:start}
@@ -1271,7 +1286,7 @@ html{overflow-x:hidden}
     <p class="lead" data-i="why_l"></p>
     <div class="grid4">
       <article class="reason"><div class="k">18.716</div><h3 data-i="r1_h"></h3><p data-i="r1_p"></p><span class="src" data-i="r1_s"></span></article>
-      <article class="reason"><div class="k">16+</div><h3 data-i="r2_h"></h3><p data-i="r2_p"></p><span class="src" data-i="r2_s"></span></article>
+      <article class="reason"><div class="k">23</div><h3 data-i="r2_h"></h3><p data-i="r2_p"></p><span class="src" data-i="r2_s"></span></article>
       <article class="reason"><div class="k">£</div><h3 data-i="r3_h"></h3><p data-i="r3_p"></p><span class="src" data-i="r3_s"></span></article>
       <article class="reason"><div class="k" data-i="r4_k"></div><h3 data-i="r4_h"></h3><p data-i="r4_p"></p><span class="src" data-i="r4_s"></span></article>
     </div>
@@ -1403,6 +1418,14 @@ html{overflow-x:hidden}
         <h2 data-lv="h"></h2>
         <p class="lead" data-lv="l"></p>
         <div class="lv" id="lv-box"></div>
+      </div>
+    </section>
+    <section class="egitim" id="egitim">
+      <div class="wrap">
+        <span class="eyebrow" data-eg="e"></span>
+        <h2 data-eg="h"></h2>
+        <p class="lead" data-eg="l"></p>
+        <div id="eg-box"></div>
       </div>
     </section>
     <section class="ucus" id="ucus">
@@ -1629,7 +1652,7 @@ tr:{
   why_e:"Neden Kuzey Kıbrıs", why_h:"Tatil bölgesi değil, <em>talebi kendi içinde</em> olan bir ada.",
   why_l:"Kıbrıs'ta konut talebi üç kaynaktan besleniyor: üniversite öğrencileri, yıl boyu süren turizm ve yerleşmek için gelen yabancılar. Kira geliri bu yüzden mevsimlik kalmıyor.",
   r1_h:"Sadece bu yıl gelen yeni üniversiteli", r1_p:"2026 YKS kılavuzunda KKTC üniversitelerine ayrılan kontenjan. Her yeni dönem, kiralık daire talebi demek.", r1_s:"Kaynak: 2026-YKS Kontenjan Kılavuzu",
-  r2_h:"Üniversite, ODTÜ ve İTÜ kampüsleri", r2_p:"Kılavuzdaki 16 üniversiteye ek olarak ODTÜ Kuzey Kıbrıs, İTÜ-KKTC ve ASBÜ yerleşkeleri adada.", r2_s:"Kaynak: 2026 YKS tercih kılavuzu",
+  r2_h:"Üniversite, ODTÜ, İTÜ ve ASBÜ dahil", r2_p:"YÖDAK'ın tanıdığı 23 üniversite adada. 19'u, ODTÜ, İTÜ ve ASBÜ yerleşkeleriyle birlikte, 2026 YKS kılavuzunda; çoğu Lefkoşa, Girne ve Gazimağusa'da.", r2_s:"Kaynak: YÖDAK, 2026 YKS kılavuzu",
   r3_h:"Sterlinle alınır, sterlinle kiralanır", r3_p:"Proje fiyatları ve kira piyasası sterlin bazlı. Birikiminiz TL dalgalanmasından ayrı bir sepette durur.", r3_s:"Ödemeler sözleşmedeki para birimiyle yapılır",
   r4_k:"TC", r4_h:"Türk vatandaşlarına ek edinim hakkı", r4_p:"KKTC, Türkiye Cumhuriyeti vatandaşlarına diğer yabancılardan daha geniş konut edinme hakkı tanıyor. Güncel sınırı alım öncesi sizin adınıza kontrol ediyoruz.", r4_s:"Taşınmaz Mal Edinme (Yabancılar) mevzuatı",
   reg_e:"Bölgeyi tanıyın", reg_h:"Hangi kıyı <em>size</em> göre?",
@@ -1698,7 +1721,7 @@ en:{
   why_e:"Why North Cyprus", why_h:"More than a holiday spot: an island with <em>its own demand</em>.",
   why_l:"Housing demand in Cyprus comes from three sources: university students, year-round tourism and foreigners who move to the island to live. That keeps rental income from being seasonal.",
   r1_h:"New university places this year alone", r1_p:"The number of places allocated to North Cyprus universities in Turkey's 2026 university admissions guide. Every new semester brings new demand for rentals.", r1_s:"Source: 2026 YKS quota guide",
-  r2_h:"Universities, plus METU and ITU campuses", r2_p:"Besides the 16 universities in the guide, the METU Northern Cyprus, ITU-TRNC and ASBÜ campuses are on the island.", r2_s:"Source: 2026 YKS guide",
+  r2_h:"Universities, including METU, ITU and ASBÜ", r2_p:"YÖDAK recognises 23 universities on the island. 19 of them, including the METU, ITU and ASBÜ campuses, are in the 2026 YKS guide; most are in Nicosia, Kyrenia and Famagusta.", r2_s:"Source: YÖDAK, 2026 YKS guide",
   r3_h:"Bought in sterling, rented in sterling", r3_p:"Project prices and the rental market are quoted in pounds sterling, so your savings sit apart from local currency swings.", r3_s:"Payments follow the currency in your contract",
   r4_k:"✓", r4_h:"Foreigners can own property", r4_p:"Foreign buyers can acquire residential property in North Cyprus with a purchase permit. The limit depends on your nationality, and we check the current rules for you before you buy.", r4_s:"Immovable Property Acquisition (Aliens) Law",
   reg_e:"Get to know the regions", reg_h:"Which coast suits <em>you</em>?",
@@ -1767,7 +1790,7 @@ ru:{
   why_e:"Почему Северный Кипр", why_h:"Не просто курорт, а остров <em>с собственным спросом</em>.",
   why_l:"Спрос на жильё на Кипре держится на трёх источниках: студенты университетов, круглогодичный туризм и иностранцы, которые переезжают на остров жить. Поэтому доход от аренды не сезонный.",
   r1_h:"новых мест для студентов только в этом году", r1_p:"Столько мест выделено университетам Северного Кипра в турецком справочнике приёма на 2026 год. Каждый новый семестр — это новый спрос на аренду.", r1_s:"Источник: справочник квот YKS 2026",
-  r2_h:"университетов, а также кампусы METU и ITU", r2_p:"Кроме 16 университетов из справочника, на острове работают кампусы METU Northern Cyprus, ITU-TRNC и ASBÜ.", r2_s:"Источник: справочник YKS 2026",
+  r2_h:"университета, включая METU, ITU и ASBÜ", r2_p:"YÖDAK признаёт на острове 23 университета. 19 из них, включая кампусы METU, ITU и ASBÜ, есть в справочнике YKS 2026; большинство — в Никосии, Кирении и Фамагусте.", r2_s:"Источник: YÖDAK, справочник YKS 2026",
   r3_h:"Покупка в фунтах, аренда в фунтах", r3_p:"Цены проектов и рынок аренды выражены в фунтах стерлингов, поэтому ваши сбережения не зависят от колебаний местной валюты.", r3_s:"Платежи — в валюте договора",
   r4_k:"✓", r4_h:"Иностранцы могут владеть недвижимостью", r4_p:"Иностранные покупатели приобретают жильё на Северном Кипре по разрешению на покупку. Лимит зависит от гражданства, и перед покупкой мы проверяем для вас действующие правила.", r4_s:"Закон о приобретении недвижимости иностранцами",
   reg_e:"Знакомство с регионами", reg_h:"Какое побережье подходит <em>вам</em>?",
@@ -1836,7 +1859,7 @@ fa:{
   why_e:"چرا قبرس شمالی", why_h:"نه فقط یک مقصد تعطیلات؛ جزیره‌ای با <em>تقاضای درونی</em>.",
   why_l:"تقاضای مسکن در قبرس از سه منبع تأمین می‌شود: دانشجویان، گردشگری در تمام سال و خارجی‌هایی که برای زندگی به جزیره می‌آیند. به همین دلیل درآمد اجاره فصلی نیست.",
   r1_h:"ظرفیت جدید دانشگاهی فقط در امسال", r1_p:"این ظرفیتی است که در راهنمای پذیرش دانشگاه‌های ترکیه برای سال ۲۰۲۶ به دانشگاه‌های قبرس شمالی اختصاص یافته است. هر ترم جدید یعنی تقاضای تازه برای اجاره.", r1_s:"منبع: راهنمای ظرفیت YKS ۲۰۲۶",
-  r2_h:"دانشگاه، به‌علاوهٔ پردیس‌های METU و ITU", r2_p:"علاوه بر ۱۶ دانشگاه موجود در راهنما، پردیس‌های METU قبرس شمالی، ITU-TRNC و ASBÜ نیز در جزیره فعال‌اند.", r2_s:"منبع: راهنمای YKS ۲۰۲۶",
+  r2_h:"دانشگاه، از جمله METU، ITU و ASBÜ", r2_p:"YÖDAK ۲۳ دانشگاه را در جزیره به رسمیت می‌شناسد. ۱۹ مورد از آن‌ها، از جمله پردیس‌های METU، ITU و ASBÜ، در راهنمای YKS ۲۰۲۶ هستند؛ بیشترشان در نیکوزیا، گیرنه و فاماگوستا.", r2_s:"منبع: YÖDAK، راهنمای YKS ۲۰۲۶",
   r3_h:"خرید به پوند، اجاره به پوند", r3_p:"قیمت پروژه‌ها و بازار اجاره به پوند استرلینگ است؛ بنابراین پس‌انداز شما از نوسان ارز محلی جدا می‌ماند.", r3_s:"پرداخت‌ها به ارز ذکرشده در قرارداد",
   r4_k:"✓", r4_h:"خارجی‌ها می‌توانند مالک شوند", r4_p:"خریداران خارجی با مجوز خرید می‌توانند در قبرس شمالی واحد مسکونی بخرند. سقف خرید به تابعیت بستگی دارد و ما پیش از خرید، قوانین فعلی را برای شما بررسی می‌کنیم.", r4_s:"قانون تملک اموال غیرمنقول توسط اتباع خارجی",
   reg_e:"آشنایی با مناطق", reg_h:"کدام ساحل مناسب <em>شماست</em>؟",
@@ -1905,7 +1928,7 @@ de:{
   why_e:"Warum Nordzypern", why_h:"Mehr als ein Urlaubsziel: eine Insel mit <em>eigener Nachfrage</em>.",
   why_l:"Die Wohnungsnachfrage auf Zypern speist sich aus drei Quellen: Studierende, ganzjähriger Tourismus und Ausländer, die zum Leben auf die Insel ziehen. Mieteinnahmen bleiben dadurch nicht saisonal.",
   r1_h:"neue Studienplätze allein in diesem Jahr", r1_p:"So viele Plätze weist der türkische Hochschulzulassungsleitfaden 2026 den Universitäten Nordzyperns zu. Jedes neue Semester bringt neue Mietnachfrage.", r1_s:"Quelle: YKS-Kontingentleitfaden 2026",
-  r2_h:"Universitäten plus Campus von METU und ITU", r2_p:"Neben den 16 Universitäten im Leitfaden liegen auch die Campus von METU Northern Cyprus, ITU-TRNC und ASBÜ auf der Insel.", r2_s:"Quelle: YKS-Leitfaden 2026",
+  r2_h:"Universitäten, darunter METU, ITU und ASBÜ", r2_p:"YÖDAK erkennt 23 Universitäten auf der Insel an. 19 davon, einschließlich der Campus von METU, ITU und ASBÜ, stehen im YKS-Leitfaden 2026; die meisten liegen in Nikosia, Kyrenia und Famagusta.", r2_s:"Quelle: YÖDAK, YKS-Leitfaden 2026",
   r3_h:"In Pfund gekauft, in Pfund vermietet", r3_p:"Projektpreise und Mietmarkt lauten auf britische Pfund. Ihr Erspartes bleibt so unabhängig von Schwankungen der Landeswährung.", r3_s:"Zahlungen in der Vertragswährung",
   r4_k:"✓", r4_h:"Ausländer dürfen Eigentum erwerben", r4_p:"Ausländische Käufer erwerben Wohneigentum in Nordzypern mit einer Kaufgenehmigung. Die Obergrenze hängt von der Staatsangehörigkeit ab; wir prüfen die aktuellen Regeln vor dem Kauf für Sie.", r4_s:"Gesetz über den Immobilienerwerb durch Ausländer",
   reg_e:"Die Regionen kennenlernen", reg_h:"Welche Küste passt zu <em>Ihnen</em>?",
@@ -1974,7 +1997,7 @@ pl:{
   why_e:"Dlaczego Cypr Północny", why_h:"Nie tylko kurort, ale wyspa z <em>własnym popytem</em>.",
   why_l:"Popyt na mieszkania na Cyprze ma trzy źródła: studentów, całoroczną turystykę i obcokrajowców, którzy przeprowadzają się na wyspę na stałe. Dzięki temu dochód z najmu nie jest sezonowy.",
   r1_h:"nowych miejsc dla studentów tylko w tym roku", r1_p:"Tyle miejsc przydzielono uczelniom Cypru Północnego w tureckim przewodniku rekrutacyjnym na 2026 rok. Każdy nowy semestr to nowy popyt na najem.", r1_s:"Źródło: przewodnik limitów YKS 2026",
-  r2_h:"uczelni oraz kampusy METU i ITU", r2_p:"Oprócz 16 uczelni z przewodnika na wyspie działają kampusy METU Northern Cyprus, ITU-TRNC i ASBÜ.", r2_s:"Źródło: przewodnik YKS 2026",
+  r2_h:"uczelnie, w tym METU, ITU i ASBÜ", r2_p:"YÖDAK uznaje na wyspie 23 uczelnie. 19 z nich, w tym kampusy METU, ITU i ASBÜ, jest w przewodniku YKS 2026; większość działa w Nikozji, Kyrenii i Famaguście.", r2_s:"Źródło: YÖDAK, przewodnik YKS 2026",
   r3_h:"Kupujesz w funtach, wynajmujesz w funtach", r3_p:"Ceny inwestycji i rynek najmu są wyrażone w funtach szterlingach, więc Twoje oszczędności nie zależą od wahań lokalnej waluty.", r3_s:"Płatności w walucie umowy",
   r4_k:"✓", r4_h:"Obcokrajowcy mogą kupować nieruchomości", r4_p:"Zagraniczni nabywcy kupują mieszkania na Cyprze Północnym na podstawie zezwolenia na zakup. Limit zależy od obywatelstwa; przed zakupem sprawdzamy dla Ciebie aktualne przepisy.", r4_s:"Ustawa o nabywaniu nieruchomości przez cudzoziemców",
   reg_e:"Poznaj regiony", reg_h:"Które wybrzeże pasuje do <em>Ciebie</em>?",
@@ -3502,6 +3525,63 @@ const say=ch=>ch.querySelectorAll(".sz-c b").forEach((b,i)=>{ const raw=b.textCo
   const st=t=>{ const k=Math.max(0,Math.min(1,(t-t0)/dur)); b.textContent=k<1?"£"+Math.round(end*(1-Math.pow(1-k,3))):raw; if(k<1) requestAnimationFrame(st); }; requestAnimationFrame(st); });
 const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ seen=true; const ch=el.querySelector(".sz-ch"); if(ch){ ch.classList.add("go"); say(ch); } io.disconnect(); } }),{threshold:.35});
 io.observe(el);
+})();
+
+
+/* ================= EĞİTİM: üniversiteler (YÖDAK) + kolej ve okullar (KKTC MEB) ================= */
+(function(){
+const root=document.documentElement, box=document.getElementById("eg-box"); if(!box) return;
+/* [ad, şehir, etiket, site] ; etiket: k=KKTC üniversitesi (YKS kılavuzunda), t=Türkiye üniversitesi yerleşkesi, d=YKS kılavuzunda değil */
+const UNI=[["Yakın Doğu Üniversitesi","lef","k","neu.edu.tr"],["Uluslararası Kıbrıs Üniversitesi","lef","k","ciu.edu.tr"],["Kıbrıs Amerikan Üniversitesi","lef","k","auc.edu.tr"],["Bahçeşehir Kıbrıs Üniversitesi","lef","k","baucyprus.edu.tr"],["Akdeniz Karpaz Üniversitesi","lef","k","akun.edu.tr"],["Rauf Denktaş Üniversitesi","lef","k","rdu.edu.tr"],["Ankara Sosyal Bilimler Üniversitesi (ASBÜ) Kuzey Kıbrıs Yerleşkesi","lef","t","kktc.asbu.edu.tr"],["Altınbaş Kıbrıs Üniversitesi","lef","d","wpu.edu.tr"],["Onbeş Kasım Kıbrıs Üniversitesi","lef","d","onbeskku.edu.tr"],["Uluslararası Alasya Üniversitesi","lef","d","alasia.edu.tr"],
+ ["Girne Amerikan Üniversitesi","gir","k","gau.edu.tr"],["Girne Üniversitesi","gir","k","kyrenia.edu.tr"],["Uluslararası Final Üniversitesi","gir","k","final.edu.tr"],["Kıbrıs Aydın Üniversitesi","gir","k","cau.edu.tr"],["Arkın Yaratıcı Sanatlar ve Tasarım Üniversitesi","gir","k","arucad.edu.tr"],
+ ["Doğu Akdeniz Üniversitesi","maq","k","emu.edu.tr"],["Kıbrıs Batı Üniversitesi","maq","k","cwu.edu.tr"],["Ada Kent Üniversitesi","maq","k","adakent.edu.tr"],["İTÜ-KKTC Eğitim Araştırma Yerleşkeleri","maq","t","kktc.itu.edu.tr"],["Avrupa Liderlik Üniversitesi","maq","d","elu.edu.tr"],
+ ["ODTÜ Kuzey Kıbrıs Kampusu","guz","t","ncc.metu.edu.tr"],["Kıbrıs Sağlık ve Toplum Bilimleri Üniversitesi","guz","k","kstu.edu.tr"],["Lefke Avrupa Üniversitesi","lfk","k","eul.edu.tr"]];
+/* etiket: ib=İngiliz sistemi + IB, gb=İngiliz sınavları (IGCSE/A-Level), br=İngiliz sistemi, te=Türk müfredatı + İngilizce, mk=devlet Maarif koleji */
+const OKUL=[["The English School of Kyrenia","gir","ib","englishschoolkyrenia.com"],["GAU The American College","gir","gb","gau-americancollege.k12.tr"],["Necat British College","gir","br","necatbritishcollege.com"],["Doğa International Schools","gir","gb","kibrisdoga.com"],["Dr. Suat Günsel Girne Koleji","gir","te","girne.nec.k12.tr"],["19 Mayıs Türk Maarif Koleji","gir","mk",""],
+ ["Levent College","lef","gb","leventschools.org"],["Necat British College","lef","br","necatbritishcollege.com"],["TED Kuzey Kıbrıs Koleji","lef","te","tedkuzeykibris.k12.tr"],["Yakın Doğu Koleji","lef","te","nec.k12.tr"],["Türk Maarif Koleji","lef","mk","turkmaarifkoleji.org"],
+ ["Doğu Akdeniz Doğa Koleji","maq","te","kibrisdoga.com"],["Yakın Doğu Yeniboğaziçi Koleji","maq","te","yenibogazici.nec.k12.tr"],["Gazimağusa Türk Maarif Koleji","maq","mk",""],
+ ["Güzelyurt Türk Maarif Koleji","guz","mk",""],["İskele Evkaf Türk Maarif Koleji","isk","mk",""]];
+const SEHIR=["lef","gir","maq","isk","guz","lfk"];
+const ET={
+tr:{e:"Eğitim",h:"Adadaki <em>üniversiteler ve okullar</em>",l:"Çocuğunuz için okul ya da kiracınızın okuyacağı üniversite: şehir şehir liste.",u:"Üniversiteler ({n})",o:"Kolej ve okullar ({n})",
+ c:{lef:"Lefkoşa",gir:"Girne",maq:"Gazimağusa",isk:"İskele",guz:"Güzelyurt",lfk:"Lefke"},
+ t:{k:"YKS ile öğrenci alır",t:"Türkiye devlet üniversitesi yerleşkesi",d:"YKS kılavuzunda yok",ib:"İngiliz sistemi, IB ve A-Level",gb:"İngilizce eğitim, IGCSE ve A-Level",br:"İngiliz sistemi",te:"Türk müfredatı ve yoğun İngilizce",mk:"Devlet koleji, sınavla girilir, İngilizce"},
+ nu:"Liste YÖDAK'ın tanıdığı 23 üniversitedir; YKS bilgisi 2026 YKS kontenjan kılavuzundan.",no:"Okullar KKTC Milli Eğitim Bakanlığı özel ve devlet okul listelerinden seçilmiştir; programlar değişebilir, kayıttan önce okula danışın.",src:"Kaynak"},
+en:{e:"Education",h:"Universities <em>and schools</em> on the island",l:"A school for your children or the university your tenant attends: listed town by town.",u:"Universities ({n})",o:"Colleges and schools ({n})",
+ c:{lef:"Nicosia",gir:"Kyrenia",maq:"Famagusta",isk:"Trikomo (İskele)",guz:"Morphou (Güzelyurt)",lfk:"Lefka"},
+ t:{k:"Admits via Türkiye's YKS exam",t:"Campus of a Turkish state university",d:"Not in the YKS guide",ib:"British system, IB and A-Level",gb:"English-medium, IGCSE and A-Level",br:"British system",te:"Turkish curriculum with intensive English",mk:"State college, entrance exam, English-medium"},
+ nu:"The list covers the 23 universities recognised by YÖDAK; YKS details are from the 2026 YKS guide.",no:"Schools are taken from the TRNC Ministry of Education's private and state school lists; programmes can change, so check with the school before enrolling.",src:"Source"},
+ru:{e:"Образование",h:"Университеты <em>и школы</em> острова",l:"Школа для ваших детей или университет вашего арендатора: список по городам.",u:"Университеты ({n})",o:"Колледжи и школы ({n})",
+ c:{lef:"Никосия",gir:"Кирения",maq:"Фамагуста",isk:"Искеле",guz:"Гюзельюрт (Морфу)",lfk:"Лефка"},
+ t:{k:"Приём по турецкому экзамену YKS",t:"Кампус государственного университета Турции",d:"Нет в справочнике YKS",ib:"Британская система, IB и A-Level",gb:"Обучение на английском, IGCSE и A-Level",br:"Британская система",te:"Турецкая программа и усиленный английский",mk:"Государственный колледж, вступительный экзамен, на английском"},
+ nu:"В списке 23 университета, признанных YÖDAK; данные о YKS — из справочника YKS 2026.",no:"Школы взяты из списков частных и государственных школ Министерства образования ТРСК; программы могут меняться, уточняйте в школе перед поступлением.",src:"Источник"},
+fa:{e:"آموزش",h:"دانشگاه‌ها <em>و مدارس</em> جزیره",l:"مدرسه برای فرزندانتان یا دانشگاهی که مستأجرتان در آن درس می‌خواند: فهرست شهر به شهر.",u:"دانشگاه‌ها ({n})",o:"کالج‌ها و مدارس ({n})",
+ c:{lef:"نیکوزیا",gir:"گیرنه",maq:"فاماگوستا",isk:"ایسکله",guz:"گوزل‌یورت",lfk:"لفکه"},
+ t:{k:"پذیرش از طریق آزمون YKS ترکیه",t:"پردیس دانشگاه دولتی ترکیه",d:"در راهنمای YKS نیست",ib:"نظام بریتانیایی، IB و A-Level",gb:"آموزش انگلیسی، IGCSE و A-Level",br:"نظام بریتانیایی",te:"برنامهٔ ترکیه با انگلیسی فشرده",mk:"کالج دولتی، با آزمون ورودی، به زبان انگلیسی"},
+ nu:"فهرست شامل ۲۳ دانشگاه به رسمیت شناخته‌شده توسط YÖDAK است؛ اطلاعات YKS از راهنمای YKS ۲۰۲۶.",no:"مدارس از فهرست مدارس خصوصی و دولتی وزارت آموزش قبرس شمالی برگرفته شده‌اند؛ برنامه‌ها ممکن است تغییر کند، پیش از ثبت‌نام با مدرسه هماهنگ کنید.",src:"منبع"},
+de:{e:"Bildung",h:"Universitäten <em>und Schulen</em> auf der Insel",l:"Eine Schule für Ihre Kinder oder die Universität Ihres Mieters: nach Städten sortiert.",u:"Universitäten ({n})",o:"Colleges und Schulen ({n})",
+ c:{lef:"Nikosia",gir:"Kyrenia",maq:"Famagusta",isk:"Trikomo (İskele)",guz:"Morphou (Güzelyurt)",lfk:"Lefka"},
+ t:{k:"Zulassung über die türkische YKS-Prüfung",t:"Campus einer türkischen Staatsuniversität",d:"Nicht im YKS-Leitfaden",ib:"Britisches System, IB und A-Level",gb:"Unterricht auf Englisch, IGCSE und A-Level",br:"Britisches System",te:"Türkischer Lehrplan mit intensivem Englisch",mk:"Staatliches College, Aufnahmeprüfung, auf Englisch"},
+ nu:"Die Liste umfasst die 23 von YÖDAK anerkannten Universitäten; YKS-Angaben aus dem YKS-Leitfaden 2026.",no:"Die Schulen stammen aus den Listen privater und staatlicher Schulen des Bildungsministeriums der TRNZ; Programme können sich ändern, fragen Sie vor der Anmeldung bei der Schule nach.",src:"Quelle"},
+pl:{e:"Edukacja",h:"Uczelnie <em>i szkoły</em> na wyspie",l:"Szkoła dla Twoich dzieci albo uczelnia Twojego najemcy: lista według miast.",u:"Uczelnie ({n})",o:"College i szkoły ({n})",
+ c:{lef:"Nikozja",gir:"Kyrenia",maq:"Famagusta",isk:"Trikomo (İskele)",guz:"Morphou (Güzelyurt)",lfk:"Lefka"},
+ t:{k:"Przyjęcia przez turecki egzamin YKS",t:"Kampus tureckiej uczelni państwowej",d:"Brak w przewodniku YKS",ib:"System brytyjski, IB i A-Level",gb:"Nauka po angielsku, IGCSE i A-Level",br:"System brytyjski",te:"Turecki program z intensywnym angielskim",mk:"Państwowe college, egzamin wstępny, po angielsku"},
+ nu:"Lista obejmuje 23 uczelnie uznane przez YÖDAK; dane o YKS z przewodnika YKS 2026.",no:"Szkoły pochodzą z list szkół prywatnych i państwowych Ministerstwa Edukacji TRCP; programy mogą się zmieniać, przed zapisem skontaktuj się ze szkołą.",src:"Źródło"}};
+let sek="u";
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function ciz(){
+  const t=ET[root.lang]||ET.en, L=sek==="u"?UNI:OKUL;
+  document.querySelectorAll("[data-eg]").forEach(el=>{ const k=el.getAttribute("data-eg"); if(t[k]!=null) el.innerHTML=t[k]; });
+  const sekmeler=`<div class="gchips eg-tabs" role="tablist"><button type="button" class="gchip" role="tab" data-s="u" aria-selected="${sek==="u"}">${t.u.replace("{n}",UNI.length)}</button><button type="button" class="gchip" role="tab" data-s="o" aria-selected="${sek==="o"}">${t.o.replace("{n}",OKUL.length)}</button></div>`;
+  const gruplar=SEHIR.map(c=>{ const r=L.filter(x=>x[1]===c); if(!r.length) return "";
+    return `<div class="eg-g"><h3>${t.c[c]} <span>${r.length}</span></h3><ul>${r.map(([n,,e,w])=>`<li>${w?`<a href="https://${w}" target="_blank" rel="noopener">${esc(n)}</a>`:`<b>${esc(n)}</b>`}<span class="eg-t eg-x${e}">${t.t[e]}</span></li>`).join("")}</ul></div>`; }).join("");
+  const kaynak=sek==="u"?`${t.nu} ${t.src}: <a href="https://yodak.gov.ct.tr/universiteler.html" target="_blank" rel="noopener">YÖDAK</a> · <a href="https://cdn.osym.gov.tr/pdfdokuman/2026/YKS/TERCIH/kontkilavuz_yktd21072026.pdf" target="_blank" rel="noopener">ÖSYM 2026 YKS</a>`
+    :`${t.no} ${t.src}: <a href="https://mebnet.net/good-ozel-okullari" target="_blank" rel="noopener">KKTC MEB</a>`;
+  box.innerHTML=sekmeler+`<div class="eg-grid">${gruplar}</div><p class="note">${kaynak}</p>`;
+  box.querySelectorAll(".eg-tabs .gchip").forEach(b=>b.onclick=()=>{ sek=b.dataset.s; ciz(); });
+}
+ciz();
+new MutationObserver(ciz).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 
 </script>
