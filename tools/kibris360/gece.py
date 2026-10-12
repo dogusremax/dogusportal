@@ -108,20 +108,12 @@ def align(day, night):
     return out if s1 > s0 else night
 
 def sky_mask(eq):
-    """Gündüz panoramasında gök maskesi (1 = gök). Her sütunda yukarıdan aşağı ilk belirgin kenara (siluet) kadar gök sayılır."""
-    H, W = eq.shape[:2]; h, w = 2048, 4096
-    sm = cv2.resize(eq, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32)
-    g = cv2.GaussianBlur(sm.mean(2), (0, 0), 1.2)
-    m = cv2.magnitude(cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1))
-    m[:int(h * .30)] = 0                                   # tepe gürültüsü yok sayılır (ufuk ~%50'de)
-    hit = m > float(os.environ.get('SKY_T', 14))
-    first = np.where(hit.any(0), hit.argmax(0), int(h * .5))
-    first = np.minimum(first, int(h * .52))                # ufuk çizgisinin çok altına inmez
-    first = np.minimum.reduce([np.roll(first, k) for k in range(-2, 3)])  # ince kuleler korunur
-    rows = np.arange(h)[:, None]
-    mask = (rows < first[None, :] - 1).astype(np.float32)
-    mask = cv2.GaussianBlur(mask, (0, 0), 1.0)
-    return cv2.resize(mask, (W, H), interpolation=cv2.INTER_LINEAR)
+    """Gök maskesi (1 = gök). Kıbrıs havadan çekimleri yüksekten: ufkun üstünde yapı yok, gök geometriyle ayrılır
+    (ufuk 0° = panoramanın ortası; +0.3°..+1.5° arası yumuşak geçiş, uzak dağlar da göğe karışır)."""
+    H, W = eq.shape[:2]
+    lat = 90 - (np.arange(H) + .5) / H * 180
+    col = np.clip((lat - .3) / 1.2, 0, 1).astype(np.float32)
+    return np.repeat(col[:, None], W, 1)
 
 def night_sky(H, W, hor):
     """Tek parça gece göğü: ufukta şehir ışığı yansıyan sıcak pus, tepeye doğru koyu lacivert. hor: ufuk rengi (BGR)."""
@@ -189,7 +181,7 @@ def _gain_fields(bands, n, ground, gw=1024):
     return G
 
 def merge(src, out, dst, W=16384):
-    H = W // 2; n = cv2.imread(f'{out}/yuz_f.jpg').shape[0]
+    H = W // 2; n = cv2.imread(f'{out}/yuz_{next(iter(FACES))}.jpg').shape[0]
     eq = cv2.imread(src)
     if eq.shape[1] != W: eq = cv2.resize(eq, (W, H), interpolation=cv2.INTER_AREA)
     mask = sky_mask(eq)
