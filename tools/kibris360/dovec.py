@@ -20,6 +20,7 @@ def oda(s):
             m=re.search(r'(\d+)\s*$',s);return v+((' '+m.group(1)) if m and m.group(1)!='1' else '')
     return s
 # sahne adı -> (proje, görünüm); listede olmayan sahne atlanır
+# Not: 'Courtyard Platinum' sahnesi yeni proje; COURT_YARD/COURTYARD sahneleri Long Beach'teki eski Courtyard sitesi (ayrı yer)
 SAHNE={'LONG BEACH BIRDVIEW':('Long Beach','Havadan'),'Panorama':('Long Beach','Havadan 2'),'long_beach_4':('Long Beach','Havadan 3'),
  'HAVUZ':('Long Beach','Havuz'),'CAFE':('Long Beach','Kafe'),'TERAS BAR':('Long Beach','Teras bar'),'FITNESS':('Long Beach','Fitness'),
  'salon1':('Long Beach','Örnek daire 1 · Salon'),'yatak1':('Long Beach','Örnek daire 1 · Yatak odası'),'banyo_new':('Long Beach','Örnek daire 1 · Banyo'),
@@ -36,10 +37,10 @@ SAHNE={'LONG BEACH BIRDVIEW':('Long Beach','Havadan'),'Panorama':('Long Beach','
  'Park View Towers':('Park View Towers',''),'Laisla':('Laisla',''),'Querencia':('Querencia','Havadan 3'),'Natulux':('Natulux',''),
  'Platinum':('Platinum',''),'La Casalia':('La Casalia',''),
  'Four Seasons Villa':('Four Seasons Villa','Havadan'),'4_SEASONS_VILLA (1)':('Four Seasons Villa','1. açı'),'4_SEASONS_VILLA (2)':('Four Seasons Villa','2. açı'),
- 'Courtyard Platinum':('Courtyard Platinum','Havadan'),'COURT_YARD (1)':('Courtyard Platinum','Havadan 2'),'COURT_YARD (3)':('Courtyard Platinum','Havadan 3'),
- 'COURTYARD BACK':('Courtyard Platinum','Arka'),'COURTYARD CENTER':('Courtyard Platinum','Orta'),'COURTYARD CORNER':('Courtyard Platinum','Köşe'),
- 'COURTYARD WALKSIDE':('Courtyard Platinum','Yürüyüş yolu'),'COURTYARD KIDS FACILITY':('Courtyard Platinum','Çocuk alanı'),
- 'COURTYARD CAFE BAR':('Courtyard Platinum','Kafe bar'),
+ 'Courtyard Platinum':('Courtyard Platinum','Havadan'),'COURT_YARD (1)':('Courtyard','Havadan'),'COURT_YARD (3)':('Courtyard','Havadan 2'),
+ 'COURTYARD BACK':('Courtyard','Arka'),'COURTYARD CENTER':('Courtyard','Orta'),'COURTYARD CORNER':('Courtyard','Köşe'),
+ 'COURTYARD WALKSIDE':('Courtyard','Yürüyüş yolu'),'COURTYARD KIDS FACILITY':('Courtyard','Çocuk alanı'),
+ 'COURTYARD CAFE BAR':('Courtyard','Kafe bar'),
  'APOSTOLOS_ANDREAS_MONASTERY_(1)':('Gezilecek yerler','Apostolos Andreas Manastırı'),'APOSTOLOS_ANDREAS_MONASTERY_(2)':('Gezilecek yerler','Apostolos Andreas Manastırı 2'),
  'FINAL_DESTINATION_(1)':('Gezilecek yerler','Zafer Burnu'),'FINAL_DESTINATION_(2)':('Gezilecek yerler','Zafer Burnu 2'),
  'GOLDEN_BEACH_(1)':('Gezilecek yerler','Altın Kum Plajı'),'GOLDEN_BEACH_(2)':('Gezilecek yerler','Altın Kum Plajı 2'),
@@ -103,7 +104,7 @@ cnt=Counter((g,v) for _,g,v in P);seen=defaultdict(int)
 for x in P:
     k=(x[1],x[2])
     if cnt[k]>1: seen[k]+=1;x[2]=x[2]+(' '+str(seen[k]) if seen[k]>1 else '')
-SIRA=['Long Beach','Querencia','D-Point','Courtyard Platinum','Four Seasons Life','Four Seasons Villa','Park View Towers','Laisla','Natulux',
+SIRA=['Long Beach','Querencia','D-Point','Courtyard Platinum','Courtyard','Four Seasons Life','Four Seasons Villa','Park View Towers','Laisla','Natulux',
  'Platinum','La Casalia','Mağusa','Golden Residence','Sky Sakarya','Terrace Park','Central Park','Corner Park','Alfam','Port Karpas','Gezilecek yerler']
 def anahtar(i):
     o,g,v=P[i]
