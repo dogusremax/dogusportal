@@ -196,6 +196,13 @@
   .ulist .no{padding:10px;color:var(--mut);font-size:.72rem}
   .kpi.k3{grid-template-columns:1fr 1fr}
   .kpi .sm b{font-size:1.05rem}
+  .mas{margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.78rem}
+  .mas .mh{font-size:.78rem;font-weight:800;margin-bottom:6px}
+  .mas>div:not(.mh){display:flex;justify-content:space-between;gap:10px;padding:5px 0}
+  .mas span{color:var(--mut);font-weight:600}.mas b{font-weight:800;font-variant-numeric:tabular-nums}
+  .mas .ara{border-top:1px solid var(--line);margin-top:4px;padding-top:8px}
+  .mas .mtop{border-top:1px solid var(--line);margin-top:4px;padding-top:9px;font-size:.92rem}.mas .mtop span{color:#fff;font-weight:800}.mas .mtop b{color:#3ddc84}
+  .mas p{font-size:.62rem;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.45}
   .panel .tip{font-size:.66rem;color:rgba(255,255,255,.45);margin-top:12px;line-height:1.5}
 
   .hint{position:fixed;z-index:12;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-size:.8rem;font-weight:700;pointer-events:none;transition:opacity .6s}
@@ -310,8 +317,15 @@
   <div class="two"><div><label for="fPes">Peşinat (%)</label><input id="fPes" type="number" inputmode="numeric" placeholder="35"></div>
   <div><label for="fAy">Taksit sayısı (ay)</label><input id="fAy" type="number" inputmode="numeric" placeholder="24"></div></div>
   <div class="kpi"><div class="sm"><b id="kPes">–</b><span>peşinat</span></div><div class="sm"><b id="kTaksit">–</b><span>aylık taksit</span></div>
-  <div class="sm"><b id="kMasraf">–</b><span>resmi masraflar (%11,5)</span></div><div class="sm"><b id="kToplam">–</b><span>toplam maliyet</span></div>
   <div class="g"><b id="kGetiri">–</b><span>brüt kira getirisi</span></div><div><b id="kDonus">–</b><span>geri dönüş süresi</span></div></div>
+  <div class="mas" id="mas"><div class="mh">Maliyetler</div>
+  <div><span>Daire fiyatı</span><b id="mFiyat">–</b></div>
+  <div><span>KDV (%5)</span><b id="mKdv">–</b></div>
+  <div><span>Damga vergisi (%0,5)</span><b id="mDamga">–</b></div>
+  <div><span>Tapu harcı (%6)</span><b id="mTapu">–</b></div>
+  <div class="ara"><span>Resmi masraflar toplamı</span><b id="kMasraf">–</b></div>
+  <div class="mtop"><span>Toplam maliyet</span><b id="kToplam">–</b></div>
+  <p>Tapu harcı ilk alımda bir kereye mahsus %3 olabilir. Avukat ücreti ayrıca.</p></div>
   <div class="acts">
     <a class="wa" id="cSend" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="waPath" d=""/></svg>Müşteriye WhatsApp ile gönder</a>
     <button class="sec" id="cCopy">Bağlantıyı kopyala</button>
@@ -506,10 +520,10 @@
     $('kGetiri').textContent=ok?'%'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1}):'–';
     $('kDonus').textContent=ok?(p/(r*12)).toLocaleString('tr-TR',{maximumFractionDigits:1})+' yıl':'–';
     var pes=$('fPes').value!==''?+$('fPes').value:35,ay=$('fAy').value!==''?+$('fAy').value:24,pP=p*pes/100,tk=ay>0?(p-pP)/ay:0,ms=p*.115;
-    $('kPes').textContent=p?para(pP):'–';$('kTaksit').textContent=p&&ay>0?para(tk):'–';$('kMasraf').textContent=p?para(ms):'–';$('kToplam').textContent=p?para(p+ms):'–';
+    $('kPes').textContent=p?para(pP):'–';$('kTaksit').textContent=p&&ay>0?para(tk):'–';$('mFiyat').textContent=p?para(p):'–';$('mKdv').textContent=p?para(p*.05):'–';$('mDamga').textContent=p?para(p*.005):'–';$('mTapu').textContent=p?para(p*.06):'–';$('kMasraf').textContent=p?para(ms):'–';$('kToplam').textContent=p?para(p+ms):'–';
     var t='Merhaba, '+(TEK?TA:TA+' '+K[cur].g)+' projesini 360° gezebilirsiniz:\n'+link();
     if($('fAd').value)t+='\n\n'+$('fAd').value;
-    if(p)t+='\nFiyat: '+para(p)+'\nPeşinat (%'+pes+'): '+para(pP)+(ay>0?'\n'+ay+' ay taksit: aylık '+para(tk):'')+'\nResmi masraflar (yaklaşık): '+para(ms);
+    if(p)t+='\nFiyat: '+para(p)+'\nPeşinat (%'+pes+'): '+para(pP)+(ay>0?'\n'+ay+' ay taksit: aylık '+para(tk):'')+'\nKDV (%5): '+para(p*.05)+'\nDamga vergisi (%0,5): '+para(p*.005)+'\nTapu harcı (%6): '+para(p*.06)+'\nResmi masraflar toplamı: '+para(ms)+'\nToplam maliyet: '+para(p+ms);
     if(ok)t+='\nKira getirisi: yıllık yaklaşık %'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1});
     if($('fTeslim').value)t+='\nTeslim: '+$('fTeslim').value;
     t+='\n\nRE/MAX Doğuş · 0216 315 15 15';
