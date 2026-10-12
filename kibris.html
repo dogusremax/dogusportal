@@ -267,6 +267,13 @@ button{font:inherit;cursor:pointer}
 .ch-foot td,.ch-foot th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:end}
 .ch-foot th:first-child,.ch-foot td:first-child{text-align:start}
 .bar-h:hover rect.bm{opacity:.85}
+/* grafik animasyonu: ekrana girince çubuklar büyür, çizgiler çizilir, rakamlar sayar */
+.ch-an .bm{transform:scaleY(0);transform-box:fill-box;transform-origin:50% 100%}
+.ch-go .bm{transform:none;transition:transform .9s cubic-bezier(.2,.8,.2,1) calc(var(--i,0)*45ms + .15s)}
+.ch-an .ln{stroke-dasharray:1;stroke-dashoffset:1}
+.ch-go .ln{stroke-dashoffset:0;transition:stroke-dashoffset 1.6s cubic-bezier(.45,0,.2,1) .15s}
+.ch-an .fa{opacity:0}
+.ch-go .fa{opacity:1;transition:opacity .5s ease var(--fd,1.5s)}
 /* ---------- karpaz ---------- */
 .karpaz{background:linear-gradient(170deg,#0A2433 0%,#0E3A50 60%,#12506B 100%);color:#EAF3F5;padding-block:70px;overflow:hidden}
 .kz{display:grid;grid-template-columns:1fr;gap:26px}
@@ -2180,16 +2187,26 @@ function pickRegion(i, user){
 }
 
 /* ================= RAKAMLAR (GRAFİKLER) ================= */
+/* grafik animasyonu: kutu ekrana girince .ch-go eklenir, data-n taşıyan rakamlar 0'dan sayar */
+const chSeen=new Set(), chRM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const chIO=(!chRM && "IntersectionObserver" in window)? new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; chIO.unobserve(e.target); chSeen.add(e.target.id); chPlay(e.target); }),{threshold:.3}) : null;
+function chArm(el){ if(!el) return; if(!chIO || chSeen.has(el.id)){ el.classList.remove("ch-an"); el.classList.add("ch-go"); return; } el.classList.remove("ch-go"); el.classList.add("ch-an"); chIO.unobserve(el); chIO.observe(el); }
+function chPlay(el){ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  el.classList.add("ch-go");
+  el.querySelectorAll("[data-n]").forEach(n=>{ const end=+n.dataset.n, f=n._f||(v=>(n.dataset.p||"")+Math.round(v)), raw=n.textContent, t0=performance.now(), dur=+(n.dataset.t||1400);
+    const st=t=>{ const k=Math.max(0,Math.min(1,(t-t0)/dur)); n.textContent=k<1?f(end*(1-Math.pow(1-k,3))):raw; if(k<1) requestAnimationFrame(st); }; n.textContent=f(0); requestAnimationFrame(st); });
+})); }
 const NS="http://www.w3.org/2000/svg";
 const fmtN=(v,d=0)=>v.toLocaleString(D().locale,{maximumFractionDigits:d,minimumFractionDigits:d});
 const fmtM=v=>(v/1e6).toLocaleString(D().locale,{maximumFractionDigits:2})+" M";
 function chartShell(id,o){
   const ch=D().ch, src=CHARTS.data.src[id].map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ");
   $("cb-"+id).innerHTML=`<div class="ch-head"><div class="ch-title"><h3>${o.t}</h3><p>${o.s}</p></div>
-    <div class="ch-kpi"><b>${o.kv}</b><span>${o.k}</span>${o.d?`<em>${o.d}</em>`:""}</div></div>
+    <div class="ch-kpi"><b${o.kn!=null?` data-n="${o.kn}"`:""}>${o.kv}</b><span>${o.k}</span>${o.d?`<em>${o.d}</em>`:""}</div></div>
     ${o.legend||""}<div class="ch-plot" id="pl-${id}"><div class="ch-tip" id="tp-${id}"></div></div>
     <div class="ch-foot">${o.n} ${ch.src}: ${src}
       <details><summary>${ch.tbl}</summary><table>${o.table}</table></details></div>`;
+  if(o.kf) $("cb-"+id).querySelector(".ch-kpi b")._f=o.kf;
 }
 function svgEl(w,h){const s=document.createElementNS(NS,"svg");s.setAttribute("viewBox",`0 0 ${w} ${h}`);s.setAttribute("height",h);return s;}
 function add(s,tag,at,txt){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;s.appendChild(e);return e;}
@@ -2200,7 +2217,7 @@ const MOB=()=>innerWidth<600;
 function drawTour(){
   const ch=D().ch.tour, data=CHARTS.data.tour, est=CHARTS.data.tourEst;
   const first=data[0][1], last=data[data.length-1][1];
-  chartShell("tour",{t:ch.t,s:ch.s,kv:fmtM(last),k:ch.k,d:fill(ch.d,{x:fmtN(last/first,1)}),n:ch.n,
+  chartShell("tour",{t:ch.t,s:ch.s,kv:fmtM(last),kn:last,kf:fmtM,k:ch.k,d:fill(ch.d,{x:fmtN(last/first,1)}),n:ch.n,
     table:`<tr><th>${D().ch.yr}</th><th></th></tr>`+data.map(([y,v])=>`<tr><td>${y}</td><td>${est.includes(y)?"~":""}${fmtN(v)}</td></tr>`).join("")});
   const box=$("pl-tour"), W=box.clientWidth||600, H=MOB()?210:250, m={t:22,r:6,b:24,l:34};
   const s=svgEl(W,H), iw=W-m.l-m.r, ih=H-m.t-m.b, max=3e6;
@@ -2212,10 +2229,11 @@ function drawTour(){
     const x=m.l+slot*bw+bw*0.18, w=bw*0.64, top=y(v), isLast=i===data.length-1, isEst=est.includes(yr);
     const g=add(s,"g",{class:"bar-h"});
     const r=Math.min(4,w/2), h=m.t+ih-top;
-    add(g,"path",{d:`M${x},${m.t+ih}V${top+r}Q${x},${top} ${x+r},${top}H${x+w-r}Q${x+w},${top} ${x+w},${top+r}V${m.t+ih}Z`,fill:"var(--c1)","fill-opacity":isLast?1:(isEst?0.45:0.7),class:"bm"});
+    add(g,"path",{d:`M${x},${m.t+ih}V${top+r}Q${x},${top} ${x+r},${top}H${x+w-r}Q${x+w},${top} ${x+w},${top+r}V${m.t+ih}Z`,fill:"var(--c1)","fill-opacity":isLast?1:(isEst?0.45:0.7),class:"bm",style:"--i:"+i});
     add(g,"rect",{x:m.l+slot*bw,y:m.t,width:bw,height:ih,fill:"transparent"});
-    if(isLast) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"vl"},fmtM(v));
-    if(yr===2020) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle"},ch.dip);
+    const fd=`--fd:${(i*45+950)/1000}s`;
+    if(isLast) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"vl fa",style:fd},fmtM(v));
+    if(yr===2020) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"fa",style:fd},ch.dip);
     const show=!MOB()||yr%5===0||isLast||yr===2019;
     if(show) add(s,"text",{x:x+w/2,y:H-6,"text-anchor":"middle"},MOB()?"'"+String(yr).slice(2):yr);
     const cx=x+w/2;
@@ -2223,7 +2241,7 @@ function drawTour(){
     g.addEventListener("pointerleave",()=>untip("tour"));
     slot++;
   });
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-tour"));
 }
 
 function linePath(pts){return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)).join("");}
@@ -2232,7 +2250,7 @@ function drawProp(){
   const mf=new Intl.DateTimeFormat(D().locale,{month:"short",year:"2-digit",calendar:"gregory"});
   const labs=d.lab.map(s=>{const [y,mm]=s.split("-");return mf.format(new Date(+y,+mm-1,15));});
   const pct=Math.round((d.apt[d.apt.length-1]/d.apt[0]-1)*100);
-  chartShell("prop",{t:ch.t,s:ch.s,kv:"+"+pct+"%",k:ch.k,d:ch.d,n:ch.n,
+  chartShell("prop",{t:ch.t,s:ch.s,kv:"+"+pct+"%",kn:pct,kf:v=>"+"+Math.round(v)+"%",k:ch.k,d:ch.d,n:ch.n,
     legend:`<div class="ch-legend"><span><i style="background:var(--c1)"></i>${ch.apt}</span><span><i style="background:var(--c2)"></i>${ch.house}</span></div>`,
     table:`<tr><th></th><th>${ch.apt}</th><th>${ch.house}</th></tr>`+labs.map((l,i)=>`<tr><td>${l}</td><td>£${fmtN(d.apt[i])}</td><td>£${fmtN(d.house[i])}</td></tr>`).join("")});
   const box=$("pl-prop"), W=box.clientWidth||420, H=MOB()?200:220, m={t:16,r:58,b:24,l:40};
@@ -2243,10 +2261,10 @@ function drawProp(){
   const series=[["apt","var(--c1)"],["house","var(--c2)"]];
   series.forEach(([k,c])=>{
     const pts=d[k].map((v,i)=>[x(i),y(v)]);
-    add(s,"path",{d:linePath(pts),fill:"none",stroke:c,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"});
+    add(s,"path",{d:linePath(pts),fill:"none",stroke:c,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round",class:"ln",pathLength:1});
     const [lx,ly]=pts[pts.length-1];
-    add(s,"circle",{cx:lx,cy:ly,r:4,fill:c,stroke:"var(--card)","stroke-width":2});
-    add(s,"text",{x:lx+8,y:ly+4,class:"vl"},"£"+fmtN(d[k][d[k].length-1]));
+    add(s,"circle",{cx:lx,cy:ly,r:4,fill:c,stroke:"var(--card)","stroke-width":2,class:"fa"});
+    add(s,"text",{x:lx+8,y:ly+4,class:"vl fa"},"£"+fmtN(d[k][d[k].length-1]));
   });
   const cross=add(s,"line",{x1:0,x2:0,y1:m.t,y2:m.t+ih,stroke:"var(--muted)","stroke-width":1,"stroke-dasharray":"3 3",opacity:0});
   const hit=add(s,"rect",{x:m.l-10,y:m.t,width:iw+20,height:ih,fill:"transparent"});
@@ -2257,12 +2275,12 @@ function drawProp(){
     tip("prop",x(i)*(r.width/W),y(d.house[i])*(r.width/W),`${ch.apt}: £${fmtN(d.apt[i])} · ${ch.house}: £${fmtN(d.house[i])}<small>${labs[i]}</small>`);
   });
   hit.addEventListener("pointerleave",()=>{cross.setAttribute("opacity",0);untip("prop");});
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-prop"));
 }
 
 function drawGbp(){
   const ch=D().ch.gbp, data=CHARTS.data.gbp, a=data[0][1], b=data[data.length-1][1];
-  chartShell("gbp",{t:ch.t,s:ch.s,kv:fmtN(b/a,1)+"×",k:ch.k,d:fill(ch.d,{a:fmtN(a*100000),b:fmtN(b*100000)}),n:ch.n,
+  chartShell("gbp",{t:ch.t,s:ch.s,kv:fmtN(b/a,1)+"×",kn:b/a,kf:v=>fmtN(v,1)+"×",k:ch.k,d:fill(ch.d,{a:fmtN(a*100000),b:fmtN(b*100000)}),n:ch.n,
     table:`<tr><th>${D().ch.yr}</th><th>£1 = TL</th></tr>`+data.map(([y,v])=>`<tr><td>${y}</td><td>${fmtN(v,2)}</td></tr>`).join("")});
   const box=$("pl-gbp"), W=box.clientWidth||420, H=MOB()?200:220, m={t:18,r:44,b:24,l:30};
   const s=svgEl(W,H), iw=W-m.l-m.r, ih=H-m.t-m.b, max=60;
@@ -2273,13 +2291,13 @@ function drawGbp(){
   const gid="gg"+Math.random().toString(36).slice(2,7);
   const defs=add(s,"defs",{}); const lg=add(defs,"linearGradient",{id:gid,x1:0,y1:0,x2:0,y2:1});
   add(lg,"stop",{offset:0,"stop-color":"var(--c2)","stop-opacity":.28}); add(lg,"stop",{offset:1,"stop-color":"var(--c2)","stop-opacity":0});
-  add(s,"path",{d:linePath(pts)+`L${x(data.length-1)},${y(0)}L${x(0)},${y(0)}Z`,fill:`url(#${gid})`});
-  add(s,"path",{d:linePath(pts),fill:"none",stroke:"var(--c2)","stroke-width":2,"stroke-linejoin":"round"});
+  add(s,"path",{d:linePath(pts)+`L${x(data.length-1)},${y(0)}L${x(0)},${y(0)}Z`,fill:`url(#${gid})`,class:"fa",style:"--fd:.9s"});
+  add(s,"path",{d:linePath(pts),fill:"none",stroke:"var(--c2)","stroke-width":2,"stroke-linejoin":"round",class:"ln",pathLength:1});
   const [fx,fy]=pts[0],[lx,ly]=pts[pts.length-1];
-  add(s,"circle",{cx:fx,cy:fy,r:3.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2});
-  add(s,"text",{x:fx+2,y:fy-8,class:"vl"},fmtN(a,2));
-  add(s,"circle",{cx:lx,cy:ly,r:4.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2});
-  add(s,"text",{x:lx+8,y:ly+4,class:"vl"},fmtN(b,2));
+  add(s,"circle",{cx:fx,cy:fy,r:3.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,class:"fa",style:"--fd:.2s"});
+  add(s,"text",{x:fx+2,y:fy-8,class:"vl fa",style:"--fd:.2s"},fmtN(a,2));
+  add(s,"circle",{cx:lx,cy:ly,r:4.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,class:"fa"});
+  add(s,"text",{x:lx+8,y:ly+4,class:"vl fa"},fmtN(b,2));
   const dot=add(s,"circle",{r:4,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,opacity:0});
   const hit=add(s,"rect",{x:m.l-10,y:m.t,width:iw+20,height:ih,fill:"transparent"});
   hit.addEventListener("pointermove",e=>{
@@ -2289,10 +2307,11 @@ function drawGbp(){
     tip("gbp",pts[i][0]*(r.width/W),pts[i][1]*(r.width/W),`£1 = ${fmtN(data[i][1],2)} TL<small>${data[i][0]}</small>`);
   });
   hit.addEventListener("pointerleave",()=>{dot.setAttribute("opacity",0);untip("gbp");});
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-gbp"));
 }
 function renderCharts(){
   const ch=D().ch; $("c-e").textContent=ch.e; $("c-h").innerHTML=ch.h; $("c-l").textContent=ch.l;
+  ["cb-tour","cb-prop","cb-gbp"].forEach(i=>chSeen.delete(i));
   drawTour(); drawProp(); drawGbp();
   const k=ch.karpaz;
   $("k-e").textContent=k.e; $("k-h").innerHTML=k.h; $("k-p").textContent=k.p; $("k-w").textContent=k.w;
