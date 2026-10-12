@@ -514,6 +514,7 @@ details p{color:var(--muted);padding-bottom:16px;max-width:65ch}
 footer{padding-block:36px;font-size:.85rem;color:var(--muted)}
 footer .wrap{display:flex;flex-direction:column;gap:6px}
 footer b{color:var(--ink)}
+footer .telif{font-size:.72rem;line-height:1.5;opacity:.75}
 .mono{font-family:var(--f-mono)}
 
 /* ---------- sticky mobile bar ---------- */
@@ -1077,6 +1078,19 @@ html{overflow-x:hidden}
 .sz-x{margin:14px 0 4px;font-weight:600}
 @media (max-width:520px){.sz-ch{gap:3px}.sz-c b{visibility:hidden;font-size:.58rem}.sz-c.now b,.sz-c.hi:nth-child(7) b{visibility:visible}}
 
+
+/* sezon grafiği animasyonu (önizleme) */
+.sz-anim .sz-c i{transform:scaleY(0);transform-origin:50% 100%;transition:transform 1s cubic-bezier(.22,1,.36,1) var(--d)}
+.sz-anim .sz-c span{opacity:0;transition:opacity .5s ease var(--d)}
+.sz-anim .sz-c b{opacity:0;transform:translateY(8px);transition:opacity .45s ease calc(var(--d) + .55s),transform .45s cubic-bezier(.22,1,.36,1) calc(var(--d) + .55s)}
+.sz-anim .sz-c em{opacity:0;transform:translateY(8px) scale(.85);transition:opacity .4s ease calc(var(--d) + 1s),transform .5s cubic-bezier(.34,1.56,.64,1) calc(var(--d) + 1s)}
+.sz-anim~.sz-x{opacity:0;transform:translateY(10px);transition:opacity .6s ease 1.5s,transform .6s cubic-bezier(.22,1,.36,1) 1.5s}
+.sz-anim.go .sz-c i{transform:none}
+.sz-anim.go .sz-c span,.sz-anim.go .sz-c b,.sz-anim.go .sz-c em,.sz-anim.go~.sz-x{opacity:1;transform:none}
+.sz-anim.go .sz-c.now i{animation:szp 1.8s ease-in-out calc(var(--d) + 1.1s) 2}
+@keyframes szp{0%,100%{box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 35%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--red) 18%,transparent),0 0 24px color-mix(in srgb,var(--red) 55%,transparent)}}
+@media (prefers-reduced-motion:reduce){.sz-anim .sz-c i,.sz-anim .sz-c span,.sz-anim .sz-c b,.sz-anim .sz-c em,.sz-anim~.sz-x{transition:none!important;animation:none!important;opacity:1!important;transform:none!important}}
+
 </style>
 </head>
 <body class="v2">
@@ -1574,6 +1588,7 @@ html{overflow-x:hidden}
     <span data-i="addr"></span>
     <span class="mono"><span class="ltr" data-i="phone"></span> · <span class="ltr">+90 532 472 41 48</span> · <span class="ltr">dogusremax@gmail.com</span></span>
     <span style="margin-top:8px;font-size:.75rem" data-i="disc"></span>
+    <span class="telif" data-i="telif"></span>
   </div>
 </footer>
 </main>
@@ -1637,7 +1652,7 @@ tr:{
   form_l:"Beş kısa soruya cevap verin. Kıbrıs danışmanımız fiyat listesi ve ödeme planıyla 24 saat içinde size dönsün.",
   pk1:"Ücretsiz ve bağlayıcı değil", pk2:"Spam yok", pk3:"Komisyon yok",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, İstanbul",
-  disc:"Sayfadaki ödeme planları örnektir; kesin fiyat ve koşullar ilgili firmanın güncel fiyat listesine ve satış sözleşmesine tabidir. Her RE/MAX ofisi bağımsız olarak sahiplenilir ve işletilir.",
+  disc:"Sayfadaki ödeme planları örnektir; kesin fiyat ve koşullar ilgili firmanın güncel fiyat listesine ve satış sözleşmesine tabidir. Her RE/MAX ofisi bağımsız olarak sahiplenilir ve işletilir.",telif:"© 2026 UMT Group Gayrimenkul Yatırım Danışmanlık. Tüm hakları saklıdır. Bu sitedeki tasarım, yazılım, metinler ve derlenen veriler izinsiz kopyalanamaz, çoğaltılamaz ve başka yerde kullanılamaz. Proje görselleri ve 360° turlar ilgili firmalara aittir.",
   sticky:"Uygun projeleri göster"
  },
  dyn:{ snd_on:"Denizi dinle", snd_off:"Sesi kapat", months:"{n} ay", once:"tek seferde", s2l:"{n} eşit taksit, faizsiz", s3l:"{n} eşit taksit", s3once:"Teslimde tek ödeme", per_mo:"/ay", per_yr:"{x} / yıl kira", map_sea:"AKDENİZ", map_south:"GÜNEY KIBRIS", proj:"Partner projeler" },
@@ -1706,7 +1721,7 @@ en:{
   form_l:"Answer five short questions. Our Cyprus consultant will get back to you within 24 hours with price lists and payment plans.",
   pk1:"Free and non-binding", pk2:"No spam", pk3:"No commission",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul, Türkiye",
-  disc:"Payment plans on this page are examples; final prices and terms are subject to the developer's current price list and the sales contract. Each RE/MAX office is independently owned and operated.",
+  disc:"Payment plans on this page are examples; final prices and terms are subject to the developer's current price list and the sales contract. Each RE/MAX office is independently owned and operated.",telif:"© 2026 UMT Group Real Estate Investment Consultancy. All rights reserved. The design, software, texts and compiled data on this site may not be copied, reproduced or reused without permission. Project images and 360° tours belong to their respective developers.",
   sticky:"Show matching projects"
  },
  dyn:{ snd_on:"Hear the sea", snd_off:"Mute", months:"{n} months", once:"in one payment", s2l:"{n} equal interest-free instalments", s3l:"{n} equal instalments", s3once:"Single payment at handover", per_mo:"/mo", per_yr:"{x} rent per year", map_sea:"MEDITERRANEAN SEA", map_south:"SOUTH CYPRUS", proj:"Partner projects" },
@@ -1775,7 +1790,7 @@ ru:{
   form_l:"Ответьте на пять коротких вопросов. Наш консультант по Кипру свяжется с вами в течение 24 часов с прайс-листами и планами оплаты.",
   pk1:"Бесплатно и без обязательств", pk2:"Без спама", pk3:"Без комиссии",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Фикиртепе / Кадыкёй, Стамбул, Турция",
-  disc:"Планы оплаты на этой странице приведены как пример; окончательные цены и условия определяются актуальным прайс-листом застройщика и договором купли-продажи. Каждый офис RE/MAX находится в независимой собственности и управлении.",
+  disc:"Планы оплаты на этой странице приведены как пример; окончательные цены и условия определяются актуальным прайс-листом застройщика и договором купли-продажи. Каждый офис RE/MAX находится в независимой собственности и управлении.",telif:"© 2026 UMT Group. Все права защищены. Дизайн, программный код, тексты и собранные данные этого сайта нельзя копировать, воспроизводить или использовать без разрешения. Изображения проектов и 360° туры принадлежат соответствующим застройщикам.",
   sticky:"Подобрать проекты"
  },
  dyn:{ snd_on:"Послушать море", snd_off:"Выключить звук", months:"{n} мес.", once:"одним платежом", s2l:"{n} равных платежей без процентов", s3l:"{n} равных платежей", s3once:"Единый платёж при сдаче", per_mo:"/мес", per_yr:"{x} аренды в год", map_sea:"СРЕДИЗЕМНОЕ МОРЕ", map_south:"ЮЖНЫЙ КИПР", proj:"Проекты партнёров" },
@@ -1844,7 +1859,7 @@ fa:{
   form_l:"به پنج پرسش کوتاه پاسخ دهید. مشاور قبرس ما ظرف ۲۴ ساعت با لیست قیمت و برنامهٔ پرداخت با شما تماس می‌گیرد.",
   pk1:"رایگان و بدون تعهد", pk2:"بدون پیام تبلیغاتی", pk3:"بدون کمیسیون",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap، فیکیرتپه / کادیکوی، استانبول، ترکیه",
-  disc:"برنامه‌های پرداخت این صفحه نمونه هستند؛ قیمت و شرایط نهایی تابع لیست قیمت فعلی سازنده و قرارداد فروش است. هر دفتر RE/MAX به‌صورت مستقل مالکیت و اداره می‌شود.",
+  disc:"برنامه‌های پرداخت این صفحه نمونه هستند؛ قیمت و شرایط نهایی تابع لیست قیمت فعلی سازنده و قرارداد فروش است. هر دفتر RE/MAX به‌صورت مستقل مالکیت و اداره می‌شود.",telif:"© ۲۰۲۶ UMT Group. همهٔ حقوق محفوظ است. طراحی، نرم‌افزار، متن‌ها و داده‌های گردآوری‌شدهٔ این سایت بدون اجازه قابل کپی، تکثیر یا استفاده نیست. تصاویر پروژه‌ها و تورهای ۳۶۰ درجه متعلق به سازندگان مربوطه است.",
   sticky:"نمایش پروژه‌های مناسب"
  },
  dyn:{ snd_on:"صدای دریا", snd_off:"قطع صدا", months:"{n} ماه", once:"یکجا", s2l:"{n} قسط مساوی بدون بهره", s3l:"{n} قسط مساوی", s3once:"پرداخت یکجا هنگام تحویل", per_mo:"/ماه", per_yr:"{x} اجاره در سال", map_sea:"دریای مدیترانه", map_south:"قبرس جنوبی", proj:"پروژه‌های همکار" },
@@ -1913,7 +1928,7 @@ de:{
   form_l:"Beantworten Sie fünf kurze Fragen. Unser Zypern-Berater meldet sich innerhalb von 24 Stunden mit Preislisten und Zahlungsplänen.",
   pk1:"Kostenlos und unverbindlich", pk2:"Kein Spam", pk3:"Keine Provision",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Istanbul, Türkei",
-  disc:"Die Zahlungspläne auf dieser Seite sind Beispiele; endgültige Preise und Bedingungen richten sich nach der aktuellen Preisliste des Bauträgers und dem Kaufvertrag. Jedes RE/MAX-Büro ist unabhängig in Besitz und Betrieb.",
+  disc:"Die Zahlungspläne auf dieser Seite sind Beispiele; endgültige Preise und Bedingungen richten sich nach der aktuellen Preisliste des Bauträgers und dem Kaufvertrag. Jedes RE/MAX-Büro ist unabhängig in Besitz und Betrieb.",telif:"© 2026 UMT Group. Alle Rechte vorbehalten. Design, Software, Texte und zusammengestellte Daten dieser Website dürfen ohne Genehmigung nicht kopiert, vervielfältigt oder weiterverwendet werden. Projektbilder und 360°-Touren gehören den jeweiligen Bauträgern.",
   sticky:"Passende Projekte zeigen"
  },
  dyn:{ snd_on:"Das Meer hören", snd_off:"Ton aus", months:"{n} Monate", once:"in einer Zahlung", s2l:"{n} gleiche zinsfreie Raten", s3l:"{n} gleiche Raten", s3once:"Einmalzahlung bei Übergabe", per_mo:"/Monat", per_yr:"{x} Miete pro Jahr", map_sea:"MITTELMEER", map_south:"SÜDZYPERN", proj:"Partnerprojekte" },
@@ -1982,7 +1997,7 @@ pl:{
   form_l:"Odpowiedz na pięć krótkich pytań. Nasz doradca ds. Cypru skontaktuje się z Tobą w ciągu 24 godzin z cennikami i planami płatności.",
   pk1:"Bezpłatnie i niezobowiązująco", pk2:"Bez spamu", pk3:"Bez prowizji",
   addr:"Nuhoğlu Yenitepe Sitesi 2. Etap, Fikirtepe / Kadıköy, Stambuł, Turcja",
-  disc:"Plany płatności na tej stronie są przykładowe; ostateczne ceny i warunki zależą od aktualnego cennika dewelopera i umowy sprzedaży. Każde biuro RE/MAX jest niezależnie posiadane i prowadzone.",
+  disc:"Plany płatności na tej stronie są przykładowe; ostateczne ceny i warunki zależą od aktualnego cennika dewelopera i umowy sprzedaży. Każde biuro RE/MAX jest niezależnie posiadane i prowadzone.",telif:"© 2026 UMT Group. Wszelkie prawa zastrzeżone. Projekt, oprogramowanie, teksty i zebrane dane tej strony nie mogą być kopiowane, powielane ani wykorzystywane bez zgody. Zdjęcia projektów i wycieczki 360° należą do odpowiednich deweloperów.",
   sticky:"Pokaż pasujące projekty"
  },
  dyn:{ snd_on:"Posłuchaj morza", snd_off:"Wycisz", months:"{n} mies.", once:"jednorazowo", s2l:"{n} równych rat bez odsetek", s3l:"{n} równych rat", s3once:"Jednorazowa płatność przy odbiorze", per_mo:"/mies.", per_yr:"{x} czynszu rocznie", map_sea:"MORZE ŚRÓDZIEMNE", map_south:"CYPR POŁUDNIOWY", proj:"Projekty partnerów" },
@@ -3469,6 +3484,20 @@ function links(){
 function all(){ kr(); sz(); uc(); }
 all();
 new MutationObserver(all).observe(root,{attributes:true,attributeFilter:["lang"]});
+})();
+
+
+/* sezon grafiği animasyonu (önizleme): ekrana gelince sütunlar aydan aya yükselir */
+(function(){
+const el=document.getElementById("kr-sz"); if(!el||!("IntersectionObserver" in window)) return;
+if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+let seen=false;
+const prep=()=>{ const ch=el.querySelector(".sz-ch"); if(!ch||ch.dataset.a) return; ch.dataset.a="1"; ch.classList.add("sz-anim");
+  [...ch.children].forEach((c,i)=>c.style.setProperty("--d",(i*75)+"ms"));
+  if(seen) requestAnimationFrame(()=>requestAnimationFrame(()=>ch.classList.add("go"))); };
+prep(); new MutationObserver(prep).observe(el,{childList:true});
+const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ seen=true; const ch=el.querySelector(".sz-ch"); if(ch) ch.classList.add("go"); io.disconnect(); } }),{threshold:.35});
+io.observe(el);
 })();
 
 </script>
