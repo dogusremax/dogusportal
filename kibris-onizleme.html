@@ -268,6 +268,13 @@ button{font:inherit;cursor:pointer}
 .ch-foot td,.ch-foot th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:end}
 .ch-foot th:first-child,.ch-foot td:first-child{text-align:start}
 .bar-h:hover rect.bm{opacity:.85}
+/* grafik animasyonu: ekrana girince çubuklar büyür, çizgiler çizilir, rakamlar sayar */
+.ch-an .bm{transform:scaleY(0);transform-box:fill-box;transform-origin:50% 100%}
+.ch-go .bm{transform:none;transition:transform .9s cubic-bezier(.2,.8,.2,1) calc(var(--i,0)*45ms + .15s)}
+.ch-an .ln{stroke-dasharray:1;stroke-dashoffset:1}
+.ch-go .ln{stroke-dashoffset:0;transition:stroke-dashoffset 1.6s cubic-bezier(.45,0,.2,1) .15s}
+.ch-an .fa{opacity:0}
+.ch-go .fa{opacity:1;transition:opacity .5s ease var(--fd,1.5s)}
 /* ---------- karpaz ---------- */
 .karpaz{background:linear-gradient(170deg,#0A2433 0%,#0E3A50 60%,#12506B 100%);color:#EAF3F5;padding-block:70px;overflow:hidden}
 .kz{display:grid;grid-template-columns:1fr;gap:26px}
@@ -1092,11 +1099,29 @@ html{overflow-x:hidden}
 @media (prefers-reduced-motion:reduce){.sz-anim .sz-c i,.sz-anim .sz-c span,.sz-anim .sz-c b,.sz-anim .sz-c em,.sz-anim~.sz-x{transition:none!important;animation:none!important;opacity:1!important;transform:none!important}}
 
 
+/* değer artışı grafiği */
+.v2 .deger{padding-top:48px}
+.dg-box{margin-top:24px}
+.dg-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.dg-k div{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--line);padding-left:12px}
+.dg-k b{font-size:1.7rem;line-height:1.1;font-weight:800}
+.dg-k span{font-weight:600}
+.dg-k small{font-size:.74rem;color:var(--muted)}
+.dg-leg{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.dg-leg i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-inline-end:6px;vertical-align:middle}
+.dg-svg{width:100%;height:auto;display:block;overflow:visible}
+.dg-g{stroke:var(--line);stroke-width:1}
+.dg-yl,.dg-xl{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
+.dg-anim path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.8s cubic-bezier(.45,0,.2,1)}
+.dg-anim .dg-girne path{transition-delay:.35s}.dg-anim .dg-iskele path{transition-delay:.6s}
+.dg-anim circle{opacity:0;transition:opacity .4s ease 1.6s}
+.dg-anim.go path{stroke-dashoffset:0}.dg-anim.go circle{opacity:1}
+@media (prefers-reduced-motion:reduce){.dg-anim path,.dg-anim circle{transition:none!important;stroke-dashoffset:0!important;opacity:1!important}}
 
 </style>
 </head>
 <body class="v2">
-<div class="pv-ban" role="note"><b>ÖNİZLEME</b><a href="#/hesap/kira-oranlari">Kira oranları</a><a href="#/yasam/ucus">Uçak bileti</a></div>
+<div class="pv-ban" role="note"><b>ÖNİZLEME</b><a href="#/hesap/kira-oranlari">Kira oranları</a><a href="#/yasam/ucus">Uçak bileti</a><a href="#/hesap/deger-artisi">Değer artışı</a></div>
 <div class="cur" id="cur" aria-hidden="true"><span id="curtxt"></span></div>
 
 <!-- ======= KABUK: masaüstünde yan ray, mobilde üst bar + alt sekmeler ======= -->
@@ -1467,6 +1492,15 @@ html{overflow-x:hidden}
         <div class="kr-grid" id="kr-box"></div>
         <div class="kr-sz panel" id="kr-sz"></div>
         <p class="note" data-kr="note"></p>
+      </div>
+    </section>
+    <section class="deger" id="deger-artisi">
+      <div class="wrap">
+        <span class="eyebrow" data-dg="e"></span>
+        <h2 data-dg="h"></h2>
+        <p class="lead" data-dg="l"></p>
+        <div class="panel dg-box" id="dg-box"></div>
+        <p class="note" data-dg="note"></p>
       </div>
     </section>
     <a class="next" href="#/masraf" data-go="masraf"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>07</em><b data-nvt="masraf"></b></span><i aria-hidden="true">→</i></a>
@@ -2184,16 +2218,26 @@ function pickRegion(i, user){
 }
 
 /* ================= RAKAMLAR (GRAFİKLER) ================= */
+/* grafik animasyonu: kutu ekrana girince .ch-go eklenir, data-n taşıyan rakamlar 0'dan sayar */
+const chSeen=new Set(), chRM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const chIO=(!chRM && "IntersectionObserver" in window)? new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; chIO.unobserve(e.target); chSeen.add(e.target.id); chPlay(e.target); }),{threshold:.3}) : null;
+function chArm(el){ if(!el) return; if(!chIO || chSeen.has(el.id)){ el.classList.remove("ch-an"); el.classList.add("ch-go"); return; } el.classList.remove("ch-go"); el.classList.add("ch-an"); chIO.unobserve(el); chIO.observe(el); }
+function chPlay(el){ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  el.classList.add("ch-go");
+  el.querySelectorAll("[data-n]").forEach(n=>{ const end=+n.dataset.n, f=n._f||(v=>(n.dataset.p||"")+Math.round(v)), raw=n.textContent, t0=performance.now(), dur=+(n.dataset.t||1400);
+    const st=t=>{ const k=Math.max(0,Math.min(1,(t-t0)/dur)); n.textContent=k<1?f(end*(1-Math.pow(1-k,3))):raw; if(k<1) requestAnimationFrame(st); }; n.textContent=f(0); requestAnimationFrame(st); });
+})); }
 const NS="http://www.w3.org/2000/svg";
 const fmtN=(v,d=0)=>v.toLocaleString(D().locale,{maximumFractionDigits:d,minimumFractionDigits:d});
 const fmtM=v=>(v/1e6).toLocaleString(D().locale,{maximumFractionDigits:2})+" M";
 function chartShell(id,o){
   const ch=D().ch, src=CHARTS.data.src[id].map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ");
   $("cb-"+id).innerHTML=`<div class="ch-head"><div class="ch-title"><h3>${o.t}</h3><p>${o.s}</p></div>
-    <div class="ch-kpi"><b>${o.kv}</b><span>${o.k}</span>${o.d?`<em>${o.d}</em>`:""}</div></div>
+    <div class="ch-kpi"><b${o.kn!=null?` data-n="${o.kn}"`:""}>${o.kv}</b><span>${o.k}</span>${o.d?`<em>${o.d}</em>`:""}</div></div>
     ${o.legend||""}<div class="ch-plot" id="pl-${id}"><div class="ch-tip" id="tp-${id}"></div></div>
     <div class="ch-foot">${o.n} ${ch.src}: ${src}
       <details><summary>${ch.tbl}</summary><table>${o.table}</table></details></div>`;
+  if(o.kf) $("cb-"+id).querySelector(".ch-kpi b")._f=o.kf;
 }
 function svgEl(w,h){const s=document.createElementNS(NS,"svg");s.setAttribute("viewBox",`0 0 ${w} ${h}`);s.setAttribute("height",h);return s;}
 function add(s,tag,at,txt){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;s.appendChild(e);return e;}
@@ -2204,7 +2248,7 @@ const MOB=()=>innerWidth<600;
 function drawTour(){
   const ch=D().ch.tour, data=CHARTS.data.tour, est=CHARTS.data.tourEst;
   const first=data[0][1], last=data[data.length-1][1];
-  chartShell("tour",{t:ch.t,s:ch.s,kv:fmtM(last),k:ch.k,d:fill(ch.d,{x:fmtN(last/first,1)}),n:ch.n,
+  chartShell("tour",{t:ch.t,s:ch.s,kv:fmtM(last),kn:last,kf:fmtM,k:ch.k,d:fill(ch.d,{x:fmtN(last/first,1)}),n:ch.n,
     table:`<tr><th>${D().ch.yr}</th><th></th></tr>`+data.map(([y,v])=>`<tr><td>${y}</td><td>${est.includes(y)?"~":""}${fmtN(v)}</td></tr>`).join("")});
   const box=$("pl-tour"), W=box.clientWidth||600, H=MOB()?210:250, m={t:22,r:6,b:24,l:34};
   const s=svgEl(W,H), iw=W-m.l-m.r, ih=H-m.t-m.b, max=3e6;
@@ -2216,10 +2260,11 @@ function drawTour(){
     const x=m.l+slot*bw+bw*0.18, w=bw*0.64, top=y(v), isLast=i===data.length-1, isEst=est.includes(yr);
     const g=add(s,"g",{class:"bar-h"});
     const r=Math.min(4,w/2), h=m.t+ih-top;
-    add(g,"path",{d:`M${x},${m.t+ih}V${top+r}Q${x},${top} ${x+r},${top}H${x+w-r}Q${x+w},${top} ${x+w},${top+r}V${m.t+ih}Z`,fill:"var(--c1)","fill-opacity":isLast?1:(isEst?0.45:0.7),class:"bm"});
+    add(g,"path",{d:`M${x},${m.t+ih}V${top+r}Q${x},${top} ${x+r},${top}H${x+w-r}Q${x+w},${top} ${x+w},${top+r}V${m.t+ih}Z`,fill:"var(--c1)","fill-opacity":isLast?1:(isEst?0.45:0.7),class:"bm",style:"--i:"+i});
     add(g,"rect",{x:m.l+slot*bw,y:m.t,width:bw,height:ih,fill:"transparent"});
-    if(isLast) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"vl"},fmtM(v));
-    if(yr===2020) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle"},ch.dip);
+    const fd=`--fd:${(i*45+950)/1000}s`;
+    if(isLast) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"vl fa",style:fd},fmtM(v));
+    if(yr===2020) add(s,"text",{x:x+w/2,y:top-6,"text-anchor":"middle",class:"fa",style:fd},ch.dip);
     const show=!MOB()||yr%5===0||isLast||yr===2019;
     if(show) add(s,"text",{x:x+w/2,y:H-6,"text-anchor":"middle"},MOB()?"'"+String(yr).slice(2):yr);
     const cx=x+w/2;
@@ -2227,7 +2272,7 @@ function drawTour(){
     g.addEventListener("pointerleave",()=>untip("tour"));
     slot++;
   });
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-tour"));
 }
 
 function linePath(pts){return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)).join("");}
@@ -2236,7 +2281,7 @@ function drawProp(){
   const mf=new Intl.DateTimeFormat(D().locale,{month:"short",year:"2-digit",calendar:"gregory"});
   const labs=d.lab.map(s=>{const [y,mm]=s.split("-");return mf.format(new Date(+y,+mm-1,15));});
   const pct=Math.round((d.apt[d.apt.length-1]/d.apt[0]-1)*100);
-  chartShell("prop",{t:ch.t,s:ch.s,kv:"+"+pct+"%",k:ch.k,d:ch.d,n:ch.n,
+  chartShell("prop",{t:ch.t,s:ch.s,kv:"+"+pct+"%",kn:pct,kf:v=>"+"+Math.round(v)+"%",k:ch.k,d:ch.d,n:ch.n,
     legend:`<div class="ch-legend"><span><i style="background:var(--c1)"></i>${ch.apt}</span><span><i style="background:var(--c2)"></i>${ch.house}</span></div>`,
     table:`<tr><th></th><th>${ch.apt}</th><th>${ch.house}</th></tr>`+labs.map((l,i)=>`<tr><td>${l}</td><td>£${fmtN(d.apt[i])}</td><td>£${fmtN(d.house[i])}</td></tr>`).join("")});
   const box=$("pl-prop"), W=box.clientWidth||420, H=MOB()?200:220, m={t:16,r:58,b:24,l:40};
@@ -2247,10 +2292,10 @@ function drawProp(){
   const series=[["apt","var(--c1)"],["house","var(--c2)"]];
   series.forEach(([k,c])=>{
     const pts=d[k].map((v,i)=>[x(i),y(v)]);
-    add(s,"path",{d:linePath(pts),fill:"none",stroke:c,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"});
+    add(s,"path",{d:linePath(pts),fill:"none",stroke:c,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round",class:"ln",pathLength:1});
     const [lx,ly]=pts[pts.length-1];
-    add(s,"circle",{cx:lx,cy:ly,r:4,fill:c,stroke:"var(--card)","stroke-width":2});
-    add(s,"text",{x:lx+8,y:ly+4,class:"vl"},"£"+fmtN(d[k][d[k].length-1]));
+    add(s,"circle",{cx:lx,cy:ly,r:4,fill:c,stroke:"var(--card)","stroke-width":2,class:"fa"});
+    add(s,"text",{x:lx+8,y:ly+4,class:"vl fa"},"£"+fmtN(d[k][d[k].length-1]));
   });
   const cross=add(s,"line",{x1:0,x2:0,y1:m.t,y2:m.t+ih,stroke:"var(--muted)","stroke-width":1,"stroke-dasharray":"3 3",opacity:0});
   const hit=add(s,"rect",{x:m.l-10,y:m.t,width:iw+20,height:ih,fill:"transparent"});
@@ -2261,12 +2306,12 @@ function drawProp(){
     tip("prop",x(i)*(r.width/W),y(d.house[i])*(r.width/W),`${ch.apt}: £${fmtN(d.apt[i])} · ${ch.house}: £${fmtN(d.house[i])}<small>${labs[i]}</small>`);
   });
   hit.addEventListener("pointerleave",()=>{cross.setAttribute("opacity",0);untip("prop");});
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-prop"));
 }
 
 function drawGbp(){
   const ch=D().ch.gbp, data=CHARTS.data.gbp, a=data[0][1], b=data[data.length-1][1];
-  chartShell("gbp",{t:ch.t,s:ch.s,kv:fmtN(b/a,1)+"×",k:ch.k,d:fill(ch.d,{a:fmtN(a*100000),b:fmtN(b*100000)}),n:ch.n,
+  chartShell("gbp",{t:ch.t,s:ch.s,kv:fmtN(b/a,1)+"×",kn:b/a,kf:v=>fmtN(v,1)+"×",k:ch.k,d:fill(ch.d,{a:fmtN(a*100000),b:fmtN(b*100000)}),n:ch.n,
     table:`<tr><th>${D().ch.yr}</th><th>£1 = TL</th></tr>`+data.map(([y,v])=>`<tr><td>${y}</td><td>${fmtN(v,2)}</td></tr>`).join("")});
   const box=$("pl-gbp"), W=box.clientWidth||420, H=MOB()?200:220, m={t:18,r:44,b:24,l:30};
   const s=svgEl(W,H), iw=W-m.l-m.r, ih=H-m.t-m.b, max=60;
@@ -2277,13 +2322,13 @@ function drawGbp(){
   const gid="gg"+Math.random().toString(36).slice(2,7);
   const defs=add(s,"defs",{}); const lg=add(defs,"linearGradient",{id:gid,x1:0,y1:0,x2:0,y2:1});
   add(lg,"stop",{offset:0,"stop-color":"var(--c2)","stop-opacity":.28}); add(lg,"stop",{offset:1,"stop-color":"var(--c2)","stop-opacity":0});
-  add(s,"path",{d:linePath(pts)+`L${x(data.length-1)},${y(0)}L${x(0)},${y(0)}Z`,fill:`url(#${gid})`});
-  add(s,"path",{d:linePath(pts),fill:"none",stroke:"var(--c2)","stroke-width":2,"stroke-linejoin":"round"});
+  add(s,"path",{d:linePath(pts)+`L${x(data.length-1)},${y(0)}L${x(0)},${y(0)}Z`,fill:`url(#${gid})`,class:"fa",style:"--fd:.9s"});
+  add(s,"path",{d:linePath(pts),fill:"none",stroke:"var(--c2)","stroke-width":2,"stroke-linejoin":"round",class:"ln",pathLength:1});
   const [fx,fy]=pts[0],[lx,ly]=pts[pts.length-1];
-  add(s,"circle",{cx:fx,cy:fy,r:3.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2});
-  add(s,"text",{x:fx+2,y:fy-8,class:"vl"},fmtN(a,2));
-  add(s,"circle",{cx:lx,cy:ly,r:4.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2});
-  add(s,"text",{x:lx+8,y:ly+4,class:"vl"},fmtN(b,2));
+  add(s,"circle",{cx:fx,cy:fy,r:3.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,class:"fa",style:"--fd:.2s"});
+  add(s,"text",{x:fx+2,y:fy-8,class:"vl fa",style:"--fd:.2s"},fmtN(a,2));
+  add(s,"circle",{cx:lx,cy:ly,r:4.5,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,class:"fa"});
+  add(s,"text",{x:lx+8,y:ly+4,class:"vl fa"},fmtN(b,2));
   const dot=add(s,"circle",{r:4,fill:"var(--c2)",stroke:"var(--card)","stroke-width":2,opacity:0});
   const hit=add(s,"rect",{x:m.l-10,y:m.t,width:iw+20,height:ih,fill:"transparent"});
   hit.addEventListener("pointermove",e=>{
@@ -2293,10 +2338,11 @@ function drawGbp(){
     tip("gbp",pts[i][0]*(r.width/W),pts[i][1]*(r.width/W),`£1 = ${fmtN(data[i][1],2)} TL<small>${data[i][0]}</small>`);
   });
   hit.addEventListener("pointerleave",()=>{dot.setAttribute("opacity",0);untip("gbp");});
-  box.appendChild(s);
+  box.appendChild(s); chArm($("cb-gbp"));
 }
 function renderCharts(){
   const ch=D().ch; $("c-e").textContent=ch.e; $("c-h").innerHTML=ch.h; $("c-l").textContent=ch.l;
+  ["cb-tour","cb-prop","cb-gbp"].forEach(i=>chSeen.delete(i));
   drawTour(); drawProp(); drawGbp();
   const k=ch.karpaz;
   $("k-e").textContent=k.e; $("k-h").innerHTML=k.h; $("k-p").textContent=k.p; $("k-w").textContent=k.w;
@@ -3503,6 +3549,64 @@ io.observe(el);
 })();
 
 
+/* ================= DEĞER ARTIŞI GRAFİĞİ (101evler/Reidin endeksi, daire ilan fiyatı £/m²) ================= */
+(function(){
+const root=document.documentElement, $$=id=>document.getElementById(id);
+/* x: Aralık 2020'den itibaren ay sayısı, y: £/m² */
+const DS=[
+ ["all",3.2,"var(--sun)",[[0,600],[24,827],[30,1004],[36,1113],[42,1225],[48,1274],[57,1427]]],
+ ["girne",2.2,"var(--sea)",[[27,1158],[45,1582],[48,1599]]],
+ ["iskele",2.2,"#5FD3B5",[[27,1431],[36,1826],[45,1801],[48,1734]]]
+];
+const DT={
+tr:{e:"Değer artışı",h:"Son 5 yılda <em>metrekare fiyatları</em>",l:"Kuzey Kıbrıs'ta daire ilan fiyatları, sterlin/m².",s:{all:"KKTC geneli",girne:"Girne",iskele:"İskele"},
+ k:[["+%138","KKTC geneli","Ara 2020 £600 → Eyl 2025 £1.427"],["+%38","Girne","Mar 2023 £1.158 → Ara 2024 £1.599"],["+%21","İskele","Mar 2023 £1.431 → Ara 2024 £1.734"]],
+ note:"Kaynak: 101evler/Reidin Emlak Endeksi (satış değil ilan fiyatları), Giynik Gazetesi ve Haber Kıbrıs haberleri üzerinden. Esentepe Girne'ye, Karpaz İskele'ye dahildir; alt bölge verisi yayımlanmıyor. Eylül 2025'te daire fiyatlarındaki yükseliş serisi durdu. Geçmiş artış gelecekteki getirinin garantisi değildir."},
+en:{e:"Value growth",h:"Price per m² <em>over five years</em>",l:"Apartment asking prices in North Cyprus, pounds per m².",s:{all:"North Cyprus",girne:"Kyrenia",iskele:"İskele"},
+ k:[["+138%","North Cyprus","Dec 2020 £600 → Sep 2025 £1,427"],["+38%","Kyrenia","Mar 2023 £1,158 → Dec 2024 £1,599"],["+21%","İskele","Mar 2023 £1,431 → Dec 2024 £1,734"]],
+ note:"Source: 101evler/Reidin property index (asking prices, not sales), as reported by Giynik Gazetesi and Haber Kıbrıs. Esentepe is part of Kyrenia and Karpaz of İskele; no sub-area data is published. The run of apartment price rises paused in September 2025. Past growth does not guarantee future returns."},
+ru:{e:"Рост стоимости",h:"Цена за м² <em>за пять лет</em>",l:"Цены предложения квартир на Северном Кипре, фунтов за м².",s:{all:"Северный Кипр",girne:"Кирения",iskele:"Искеле"},
+ k:[["+138%","Северный Кипр","дек. 2020 £600 → сен. 2025 £1 427"],["+38%","Кирения","мар. 2023 £1 158 → дек. 2024 £1 599"],["+21%","Искеле","мар. 2023 £1 431 → дек. 2024 £1 734"]],
+ note:"Источник: индекс недвижимости 101evler/Reidin (цены предложения, а не сделок) по данным Giynik Gazetesi и Haber Kıbrıs. Эсентепе входит в Кирению, Карпас в Искеле; данные по микрорайонам не публикуются. В сентябре 2025 года рост цен на квартиры приостановился. Прошлый рост не гарантирует будущую доходность."},
+fa:{e:"رشد ارزش",h:"قیمت هر متر مربع <em>در پنج سال</em>",l:"قیمت آگهی آپارتمان در قبرس شمالی، پوند بر متر مربع.",s:{all:"قبرس شمالی",girne:"گیرنه",iskele:"ایسکله"},
+ k:[["+۱۳۸٪","قبرس شمالی","دسامبر ۲۰۲۰ £600 ← سپتامبر ۲۰۲۵ £1,427"],["+۳۸٪","گیرنه","مارس ۲۰۲۳ £1,158 ← دسامبر ۲۰۲۴ £1,599"],["+۲۱٪","ایسکله","مارس ۲۰۲۳ £1,431 ← دسامبر ۲۰۲۴ £1,734"]],
+ note:"منبع: شاخص املاک 101evler/Reidin (قیمت آگهی، نه معامله) به نقل از Giynik Gazetesi و Haber Kıbrıs. اسنتپه جزو گیرنه و کارپاز جزو ایسکله است؛ دادهٔ زیرمنطقه منتشر نمی‌شود. در سپتامبر ۲۰۲۵ روند افزایش قیمت آپارتمان متوقف شد. رشد گذشته تضمین بازده آینده نیست."},
+de:{e:"Wertzuwachs",h:"Preis pro m² <em>in fünf Jahren</em>",l:"Angebotspreise für Wohnungen in Nordzypern, Pfund pro m².",s:{all:"Nordzypern",girne:"Kyrenia",iskele:"İskele"},
+ k:[["+138 %","Nordzypern","Dez. 2020 £600 → Sep. 2025 £1.427"],["+38 %","Kyrenia","März 2023 £1.158 → Dez. 2024 £1.599"],["+21 %","İskele","März 2023 £1.431 → Dez. 2024 £1.734"]],
+ note:"Quelle: Immobilienindex 101evler/Reidin (Angebots-, keine Verkaufspreise), laut Giynik Gazetesi und Haber Kıbrıs. Esentepe gehört zu Kyrenia, Karpaz zu İskele; Daten für Teilgebiete werden nicht veröffentlicht. Im September 2025 endete die Serie steigender Wohnungspreise vorerst. Vergangener Wertzuwachs garantiert keine künftige Rendite."},
+pl:{e:"Wzrost wartości",h:"Cena za m² <em>w ciągu pięciu lat</em>",l:"Ceny ofertowe mieszkań na Cyprze Północnym, funty za m².",s:{all:"Cypr Północny",girne:"Kyrenia",iskele:"İskele"},
+ k:[["+138%","Cypr Północny","gru 2020 £600 → wrz 2025 £1 427"],["+38%","Kyrenia","mar 2023 £1 158 → gru 2024 £1 599"],["+21%","İskele","mar 2023 £1 431 → gru 2024 £1 734"]],
+ note:"Źródło: indeks nieruchomości 101evler/Reidin (ceny ofertowe, nie transakcyjne) według Giynik Gazetesi i Haber Kıbrıs. Esentepe należy do Kyrenii, Karpaz do İskele; dane dla mniejszych obszarów nie są publikowane. We wrześniu 2025 seria wzrostów cen mieszkań się zatrzymała. Wcześniejszy wzrost nie gwarantuje przyszłych zysków."}
+};
+const L=()=>DT[root.lang]?root.lang:"en";
+let W=640,H=280; const PL=46,PR=16,PT=14,PB=30,X0=0,X1=57,Y0=400,Y1=2000;
+const sx=m=>PL+(m-X0)/(X1-X0)*(W-PL-PR), sy=v=>PT+(1-(v-Y0)/(Y1-Y0))*(H-PT-PB);
+function dg(){
+  const l=L(), t=DT[l], el=$$("dg-box"); if(!el) return;
+  const narrow=innerWidth<560; W=narrow?360:640; H=narrow?300:280;
+  document.querySelectorAll("[data-dg]").forEach(x=>{ const k=x.getAttribute("data-dg"); if(t[k]!=null) x.innerHTML=t[k]; });
+  const nf=new Intl.NumberFormat(l==="fa"?"en":l);
+  const grid=[500,1000,1500,2000].map(v=>`<line x1="${PL}" x2="${W-PR}" y1="${sy(v)}" y2="${sy(v)}" class="dg-g"/><text x="${PL-8}" y="${sy(v)+4}" class="dg-yl" text-anchor="end">£${nf.format(v)}</text>`).join("");
+  const xl=[2021,2022,2023,2024,2025].map((y,i)=>`<text x="${sx(1+i*12)}" y="${H-8}" class="dg-xl" text-anchor="middle">${y}</text>`).join("");
+  const lines=DS.map(([id,w,c,p])=>{ const d=p.map(([m,v],i)=>(i?"L":"M")+sx(m).toFixed(1)+" "+sy(v).toFixed(1)).join(" ");
+    return `<g class="dg-s dg-${id}"><path d="${d}" pathLength="1" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>${p.map(([m,v])=>`<circle cx="${sx(m).toFixed(1)}" cy="${sy(v).toFixed(1)}" r="${id==="all"?4:3}" fill="${c}"><title>£${nf.format(v)}/m²</title></circle>`).join("")}</g>`; }).join("");
+  const leg=DS.map(([id,,c])=>`<span><i style="background:${c}"></i>${t.s[id]}</span>`).join("");
+  el.innerHTML=`<div class="dg-k">${t.k.map(([v,n,d],i)=>`<div><b style="color:${DS[i][2]}">${v}</b><span>${n}</span><small${l==="fa"?"":' dir="ltr"'}>${d}</small></div>`).join("")}</div>
+   <div class="dg-leg">${leg}</div>
+   <svg class="dg-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t.h.replace(/<[^>]+>/g,"")}" dir="ltr">${grid}${xl}${lines}</svg>`;
+  anim(el);
+}
+let seen=false;
+function anim(el){
+  const svg=el.querySelector(".dg-svg"); if(!svg) return;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window)) return;
+  svg.classList.add("dg-anim"); if(seen){ requestAnimationFrame(()=>requestAnimationFrame(()=>svg.classList.add("go"))); return; }
+  const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ seen=true; svg.classList.add("go"); io.disconnect(); } }),{threshold:.35}); io.observe(svg);
+}
+dg();
+new MutationObserver(dg).observe(root,{attributes:true,attributeFilter:["lang"]});
+let rw=innerWidth, rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if((innerWidth<560)!==(rw<560)){ rw=innerWidth; dg(); } },200); });
+})();
 
 </script>
 </body>
