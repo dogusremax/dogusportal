@@ -3364,36 +3364,35 @@ new MutationObserver(ab).observe(root,{attributes:true,attributeFilter:["lang"]}
 const root=document.documentElement, $$=id=>document.getElementById(id);
 /* bölge: [anahtar, booking sorgusu, aylık satırlar, gecelik satırlar, not var mı] ; satır: [etiket anahtarı, aralık] */
 const KR=[
- ["girne","Kyrenia, North Cyprus",[["1+1","£400–900"],["2+1","£500–900"]],[["apt","£70–105"],["villa","£220+"]],0],
- ["esentepe","Esentepe, North Cyprus",[["1+1","£450–750"],["2+1","£450–{K}"]],[["apt2","~£90"],["villa","£180+"]],0],
- ["iskele","Long Beach, Iskele",[["1+1","£400–650"],["2+1","£500–700"]],[["st","£35–70"],["2+1","£80–120"]],0],
- ["karpaz","Dipkarpaz",[["2+1","~£650"]],[["apt","£40+"]],1]
+ ["gs","Grand Sapphire Resort Long Beach Iskele",[["1+1","£500 · €700"],["2+1","£800–{K}"]],[["1+1","€50"],["2+1","4.990 TL"]]],
+ ["cy","Courtyard Long Beach Holiday Resort",[["1+1","£450 · €650–800"]],[["wk","£450–570"]]],
+ ["fs","Four Seasons Life Bafra",[["1+1","£600 · €750"]],[["st","€60"],["1+1","€80"],["2+1","€90–100"]]]
 ];
 const KT={
-tr:{e:"Kira oranları",h:"Bölgelere göre <em>güncel kira aralıkları</em>",l:"Uzun dönem aylık ve kısa dönem gecelik kira aralıkları. Tatil kiralamalarının o günkü fiyatlarını Booking'de görebilirsiniz.",mo:"Uzun dönem · aylık",ni:"Kısa dönem · gecelik",bk:"Booking'de bak ↗",K:"1.000",
- r:{girne:["Girne","Merkez ve sahil şeridi"],esentepe:["Esentepe","Girne doğusu, sahil ve golf"],iskele:["İskele","Long Beach ve Boğaz"],karpaz:["Karpaz","Bafra ve Dipkarpaz"]},
- t:{apt:"Daire",apt2:"2+1 daire",villa:"Havuzlu villa",st:"Stüdyo / 1+1"},kn:"Bölgede ilan az; rakamlar tek tek ilanlardan.",
- note:"Ekim 2026 itibarıyla yayımlanmış kira rehberleri ve emlak portallarındaki ilanlardan derlenmiştir, sterlin (£). Eşya, sezon, manzara ve siteye göre değişir; yatırım kararı için tek başına esas alınmamalıdır."},
-en:{e:"Rental rates",h:"Current <em>rent ranges by region</em>",l:"Long-term monthly and short-term nightly rent ranges. See today's holiday-rental prices on Booking.",mo:"Long term · monthly",ni:"Short term · nightly",bk:"View on Booking ↗",K:"1,000",
- r:{girne:["Kyrenia","Centre and coastline"],esentepe:["Esentepe","East of Kyrenia, coast and golf"],iskele:["İskele","Long Beach and Boğaz"],karpaz:["Karpaz","Bafra and Dipkarpaz"]},
- t:{apt:"Apartment",apt2:"2+1 apartment",villa:"Villa with pool",st:"Studio / 1+1"},kn:"Few listings in the area; figures come from individual listings.",
- note:"Compiled in October 2026 from published rental guides and property-portal listings, in pounds (£). Rents vary with furnishing, season, view and complex; do not use them alone for an investment decision."},
-ru:{e:"Ставки аренды",h:"Актуальные <em>цены аренды по районам</em>",l:"Долгосрочная аренда в месяц и краткосрочная за ночь. Сегодняшние цены на отдых смотрите на Booking.",mo:"Долгосрочно · в месяц",ni:"Краткосрочно · за ночь",bk:"Смотреть на Booking ↗",K:"1 000",
- r:{girne:["Кирения","Центр и побережье"],esentepe:["Эсентепе","Восточнее Кирении, море и гольф"],iskele:["Искеле","Лонг-Бич и Богаз"],karpaz:["Карпас","Бафра и Дипкарпаз"]},
- t:{apt:"Квартира",apt2:"Квартира 2+1",villa:"Вилла с бассейном",st:"Студия / 1+1"},kn:"Объявлений мало; цифры по отдельным объявлениям.",
- note:"Собрано в октябре 2026 года по опубликованным гидам по аренде и объявлениям на порталах недвижимости, в фунтах (£). Цены зависят от мебели, сезона, вида и комплекса; не используйте их как единственную основу для инвестиций."},
-fa:{e:"نرخ اجاره",h:"<em>بازه‌های اجاره</em> به تفکیک منطقه",l:"اجارهٔ بلندمدت ماهانه و کوتاه‌مدت شبانه. قیمت روز اجاره‌های تعطیلات را در Booking ببینید.",mo:"بلندمدت · ماهانه",ni:"کوتاه‌مدت · شبانه",bk:"دیدن در Booking ↗",K:"1,000",
- r:{girne:["گیرنه","مرکز و ساحل"],esentepe:["اسنتپه","شرق گیرنه، ساحل و گلف"],iskele:["ایسکله","لانگ بیچ و بوغاز"],karpaz:["کارپاز","بافرا و دیپ‌کارپاز"]},
- t:{apt:"آپارتمان",apt2:"آپارتمان ۲+۱",villa:"ویلای استخردار",st:"استودیو / ۱+۱"},kn:"آگهی در منطقه کم است؛ ارقام از آگهی‌های تکی است.",
- note:"گردآوری‌شده در اکتبر ۲۰۲۶ از راهنماهای منتشرشدهٔ اجاره و آگهی‌های سایت‌های املاک، به پوند (£). نرخ‌ها با مبلمان، فصل، چشم‌انداز و مجموعه تغییر می‌کنند؛ به‌تنهایی مبنای تصمیم سرمایه‌گذاری نباشند."},
-de:{e:"Mietpreise",h:"Aktuelle <em>Mietspannen nach Region</em>",l:"Langzeitmiete pro Monat und Kurzzeitmiete pro Nacht. Tagesaktuelle Preise für Ferienwohnungen finden Sie auf Booking.",mo:"Langzeit · monatlich",ni:"Kurzzeit · pro Nacht",bk:"Auf Booking ansehen ↗",K:"1.000",
- r:{girne:["Kyrenia","Zentrum und Küste"],esentepe:["Esentepe","Östlich von Kyrenia, Küste und Golf"],iskele:["İskele","Long Beach und Boğaz"],karpaz:["Karpaz","Bafra und Dipkarpaz"]},
- t:{apt:"Wohnung",apt2:"2+1-Wohnung",villa:"Villa mit Pool",st:"Studio / 1+1"},kn:"Wenige Inserate; Werte aus einzelnen Angeboten.",
- note:"Zusammengestellt im Oktober 2026 aus veröffentlichten Mietratgebern und Inseraten auf Immobilienportalen, in Pfund (£). Die Mieten hängen von Ausstattung, Saison, Aussicht und Anlage ab; nicht allein als Grundlage für eine Investitionsentscheidung nutzen."},
-pl:{e:"Stawki najmu",h:"Aktualne <em>czynsze według regionu</em>",l:"Najem długoterminowy miesięcznie i krótkoterminowy za noc. Dzisiejsze ceny wynajmu wakacyjnego sprawdzisz na Booking.",mo:"Długoterminowo · miesięcznie",ni:"Krótkoterminowo · za noc",bk:"Zobacz na Booking ↗",K:"1 000",
- r:{girne:["Kyrenia","Centrum i wybrzeże"],esentepe:["Esentepe","Na wschód od Kyrenii, morze i golf"],iskele:["İskele","Long Beach i Boğaz"],karpaz:["Karpaz","Bafra i Dipkarpaz"]},
- t:{apt:"Mieszkanie",apt2:"Mieszkanie 2+1",villa:"Willa z basenem",st:"Studio / 1+1"},kn:"Ogłoszeń jest mało; dane z pojedynczych ofert.",
- note:"Zestawione w październiku 2026 na podstawie opublikowanych przewodników po najmie i ogłoszeń z portali nieruchomości, w funtach (£). Czynsze zależą od wyposażenia, sezonu, widoku i osiedla; nie traktuj ich jako jedynej podstawy decyzji inwestycyjnej."}
+tr:{e:"Kira oranları",h:"Çalıştığımız projelerde <em>güncel kiralar</em>",l:"Portföyümüzdeki üç sahil projesinde güncel uzun dönem ve tatil kiraları. Tatil kiralamalarının o günkü fiyatlarını Booking'de görebilirsiniz.",mo:"Uzun dönem · aylık",ni:"Kısa dönem · gecelik",bk:"Booking'de bak ↗",K:"1.000",
+ r:{gs:["Long Beach resort rezidans","İskele · Long Beach, resort ve kumarhane yanında"],cy:["Long Beach tatil sitesi","İskele · Long Beach, havuzlu tatil köyü"],fs:["Boğaz sahil sitesi","İskele · Bafra yolu, loft daireler"]},
+ t:{st:"Stüdyo",wk:"1+1 · haftalık"},
+ note:"Ekim 2026'da bu üç projedeki aktif ilanlardan derlenmiştir; para birimi ilandaki gibidir. Tatil fiyatları sezona göre değişir; yatırım kararı için tek başına esas alınmamalıdır."},
+en:{e:"Rental rates",h:"<em>Current rents</em> in projects we work with",l:"Current long-term and holiday rents in three coastal projects in our portfolio. See today's holiday prices on Booking.",mo:"Long term · monthly",ni:"Short term · nightly",bk:"View on Booking ↗",K:"1,000",
+ r:{gs:["Long Beach resort residences","İskele · Long Beach, next to a resort and casino"],cy:["Long Beach holiday complex","İskele · Long Beach, holiday village with pools"],fs:["Boğaz coastal complex","İskele · Bafra road, loft apartments"]},
+ t:{st:"Studio",wk:"1+1 · weekly"},
+ note:"Compiled in October 2026 from active listings in these three projects; currency as listed. Holiday prices vary by season; do not use them alone for an investment decision."},
+ru:{e:"Ставки аренды",h:"<em>Актуальная аренда</em> в наших проектах",l:"Актуальная долгосрочная и курортная аренда в трёх прибрежных проектах нашего портфеля. Сегодняшние цены на отдых смотрите на Booking.",mo:"Долгосрочно · в месяц",ni:"Краткосрочно · за ночь",bk:"Смотреть на Booking ↗",K:"1 000",
+ r:{gs:["Курортные резиденции Лонг-Бич","Искеле · Лонг-Бич, рядом с курортом и казино"],cy:["Курортный комплекс Лонг-Бич","Искеле · Лонг-Бич, курортная деревня с бассейнами"],fs:["Прибрежный комплекс Богаз","Искеле · дорога на Бафру, лофт-апартаменты"]},
+ t:{st:"Студия",wk:"1+1 · в неделю"},
+ note:"Собрано в октябре 2026 года по активным объявлениям в этих трёх проектах; валюта как в объявлении. Курортные цены зависят от сезона; не используйте их как единственную основу для инвестиций."},
+fa:{e:"نرخ اجاره",h:"<em>اجارهٔ روز</em> در پروژه‌های همکار ما",l:"اجارهٔ بلندمدت و تعطیلات روز در سه پروژهٔ ساحلی سبد ما. قیمت روز اجاره‌های تعطیلات را در Booking ببینید.",mo:"بلندمدت · ماهانه",ni:"کوتاه‌مدت · شبانه",bk:"دیدن در Booking ↗",K:"1,000",
+ r:{gs:["اقامتگاه ریزورتی لانگ بیچ","ایسکله · لانگ بیچ، کنار ریزورت و کازینو"],cy:["مجموعهٔ تعطیلات لانگ بیچ","ایسکله · لانگ بیچ، دهکدهٔ تعطیلات با استخر"],fs:["مجموعهٔ ساحلی بوغاز","ایسکله · جادهٔ بافرا، آپارتمان‌های لافت"]},
+ t:{st:"استودیو",wk:"۱+۱ · هفتگی"},
+ note:"گردآوری‌شده در اکتبر ۲۰۲۶ از آگهی‌های فعال این سه پروژه؛ واحد پول مانند آگهی است. قیمت‌های تعطیلات با فصل تغییر می‌کند؛ به‌تنهایی مبنای تصمیم سرمایه‌گذاری نباشد."},
+de:{e:"Mietpreise",h:"<em>Aktuelle Mieten</em> in unseren Projekten",l:"Aktuelle Langzeit- und Ferienmieten in drei Küstenprojekten unseres Portfolios. Tagesaktuelle Ferienpreise finden Sie auf Booking.",mo:"Langzeit · monatlich",ni:"Kurzzeit · pro Nacht",bk:"Auf Booking ansehen ↗",K:"1.000",
+ r:{gs:["Resort-Residenzen Long Beach","İskele · Long Beach, neben Resort und Casino"],cy:["Ferienanlage Long Beach","İskele · Long Beach, Feriendorf mit Pools"],fs:["Küstenanlage Boğaz","İskele · Richtung Bafra, Loft-Wohnungen"]},
+ t:{st:"Studio",wk:"1+1 · pro Woche"},
+ note:"Zusammengestellt im Oktober 2026 aus aktiven Inseraten in diesen drei Projekten; Währung wie im Inserat. Ferienpreise schwanken saisonal; nicht allein als Grundlage für eine Investitionsentscheidung nutzen."},
+pl:{e:"Stawki najmu",h:"<em>Aktualne czynsze</em> w naszych projektach",l:"Aktualny najem długoterminowy i wakacyjny w trzech nadmorskich projektach z naszej oferty. Dzisiejsze ceny wakacyjne sprawdzisz na Booking.",mo:"Długoterminowo · miesięcznie",ni:"Krótkoterminowo · za noc",bk:"Zobacz na Booking ↗",K:"1 000",
+ r:{gs:["Rezydencje resortowe Long Beach","İskele · Long Beach, obok resortu i kasyna"],cy:["Kompleks wakacyjny Long Beach","İskele · Long Beach, wioska wakacyjna z basenami"],fs:["Kompleks nadmorski Boğaz","İskele · droga do Bafry, apartamenty loft"]},
+ t:{st:"Studio",wk:"1+1 · tygodniowo"},
+ note:"Zestawione w październiku 2026 na podstawie aktywnych ogłoszeń w tych trzech projektach; waluta jak w ogłoszeniu. Ceny wakacyjne zależą od sezonu; nie traktuj ich jako jedynej podstawy decyzji inwestycyjnej."}
 };
 const BL={tr:"tr",en:"en-gb",ru:"ru",fa:"en-gb",de:"de",pl:"pl"};
 /* uçuş: [etiket, google sorgusu, skyscanner kodu] */
@@ -3412,10 +3411,9 @@ const head=(attr,t)=>document.querySelectorAll(`[${attr}]`).forEach(el=>{ const 
 function kr(){
   const l=L(), t=KT[l], box=$$("kr-box"); if(!box) return; head("data-kr",t);
   const row=([k,v])=>`<div><span>${t.t[k]||k}</span><b dir="ltr">${v.replace("{K}",t.K)}</b></div>`;
-  box.innerHTML=KR.map(([id,q,mo,ni,n])=>`<article class="kr-c"><h3>${t.r[id][0]}</h3><span class="kr-a">${t.r[id][1]}</span>
+  box.innerHTML=KR.map(([id,q,mo,ni])=>`<article class="kr-c"><h3>${t.r[id][0]}</h3><span class="kr-a">${t.r[id][1]}</span>
     <div class="kr-r"><span>${t.mo}</span>${mo.map(row).join("")}</div>
     <div class="kr-r"><span>${t.ni}</span>${ni.map(row).join("")}</div>
-    ${n?`<p class="kr-n">${t.kn}</p>`:""}
     <a class="btn" href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}&lang=${BL[l]}&group_adults=2" target="_blank" rel="noopener" data-ev="booking_${id}">${t.bk}</a></article>`).join("");
 }
 const iso=d=>d.toISOString().slice(0,10), add=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
