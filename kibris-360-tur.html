@@ -342,7 +342,7 @@
     $('srch').placeholder=B+' ara';$('srch').value='';dgH.textContent=L;$('nx').setAttribute('aria-label','Sonraki '+B.toLocaleLowerCase('tr-TR'));
     if(TEK)$('tIdx').lang='en';else $('tIdx').removeAttribute('lang');
     $('dNote').textContent=TEK?'Görüntüler projenin 360° çekim ve görselleridir; temsilidir. Fiyat ve teslim bilgisi için danışmanınıza ulaşın.':dNote0;
-    document.title=TA+' 360° | RE/MAX Doğuş';$('iTa').textContent=TA;
+    
     [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);a.setAttribute('aria-selected',a.getAttribute('data-tur')===TUR);});
     G=[];GI={};K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});}
   $('tt').innerHTML=Object.keys(TURLAR).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
