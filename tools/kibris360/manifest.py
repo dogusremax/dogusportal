@@ -14,7 +14,7 @@ for it in mp['items']:
 out=[]
 for pid in order:
     p=by[pid]; cam=by.get(pid+'_camera',{}); ip=cam.get('initialPosition',{})
-    lv=p['frames'][0]['cube']['levels']; base=lv[0]['url'].split('/{face}')[0]
+    lv=[l for l in p['frames'][0]['cube']['levels'] if '{row}' in l['url']]; base=lv[0]['url'].split('/{face}')[0]
     hs=[]
     for o in p.get('overlays',[]):
         o=o if isinstance(o,dict) else by.get(ref(o))

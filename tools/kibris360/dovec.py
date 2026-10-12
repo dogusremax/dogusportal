@@ -1,18 +1,19 @@
 """Dovec Group (360.dovecgroup.com/main) manifest.json -> assets/kibris360/data-dovec.js
 Çok projelik tur (Long Beach, Mağusa, Karpaz): 'g' proje, 'v' projenin görünümü.
-Kullanım: python3 dovec.py main/manifest.json main/pinler [d-point/manifest.json d-point/pinler]
-D-Point ayrı bir 3DVista turu (360.dovecgroup.com/d-point); sahneleri 's' alanında kendi görüntü kaynağını taşır."""
+Kullanım: python3 dovec.py main/manifest.json main/pinler [d-point/manifest.json d-point/pinler [querencia/manifest.json querencia/pinler]]
+D-Point ve Querencia ayrı 3DVista turları (360.dovecgroup.com/d-point, /querencia); sahneleri 's' alanında kendi görüntü kaynağını taşır."""
 import json,re,sys,math,pathlib
 sys.path.insert(0,str(pathlib.Path(__file__).parent));from anchor import fix
 R=pathlib.Path(__file__).resolve().parents[2]
 M=json.load(open(sys.argv[1]));RES=sys.argv[2] if len(sys.argv)>2 else None
-DP_SRC='https://360.dovecgroup.com/d-point/media'
-if len(sys.argv)>3:
-    for o in json.load(open(sys.argv[3])):o['_src']=DP_SRC;o['_res']=sys.argv[4] if len(sys.argv)>4 else None;M.append(o)
+DP_SRC='https://360.dovecgroup.com/d-point/media';QU_SRC='https://360.dovecgroup.com/querencia/media'
+for a,src in ((3,DP_SRC),(5,QU_SRC)):
+    if len(sys.argv)>a:
+        for o in json.load(open(sys.argv[a])):o['_src']=src;o['_res']=sys.argv[a+1] if len(sys.argv)>a+1 else None;M.append(o)
 ODA=[('Living room','Salon'),('Livingroom','Salon'),('Living','Salon'),('Saloon','Salon'),('Salon','Salon'),('Kitchen','Mutfak'),
  ('Corridor','Koridor'),('Room View','Oda manzarası'),('Bath Room','Banyo'),('Bathroom','Banyo'),('Bedroom','Yatak odası'),
  ('Bed Room','Yatak odası'),('Room','Yatak odası'),('YATAK ODA','Yatak odası'),('HOME OFFICE','Ev ofisi'),('RECEPTION','Resepsiyon'),
- ('STUDIO','Stüdyo daire')]
+ ('STUDIO','Stüdyo daire'),('Entrance','Giriş')]
 def oda(s):
     for k,v in ODA:
         if k.lower() in s.lower():
@@ -32,7 +33,7 @@ SAHNE={'LONG BEACH BIRDVIEW':('Long Beach','Havadan'),'Panorama':('Long Beach','
  'Four Season Life':('Four Seasons Life','Havadan'),'Four Season Front':('Four Seasons Life','Ön'),'Four Season Center':('Four Seasons Life','Orta'),
  'Four Season Back':('Four Seasons Life','Arka'),'Foursesons2_Left':('Four Seasons Life','Sol'),'Foursesons2_Right':('Four Seasons Life','Sağ'),
  'Four2_Inside':('Four Seasons Life','Site içi'),'FOUR_SEASONS_4':('Four Seasons Life','Havadan 2'),
- 'Park View Towers':('Park View Towers',''),'Laisla':('Laisla',''),'Querencia':('Querencia',''),'Natulux':('Natulux',''),
+ 'Park View Towers':('Park View Towers',''),'Laisla':('Laisla',''),'Querencia':('Querencia','Havadan 3'),'Natulux':('Natulux',''),
  'Platinum':('Platinum',''),'La Casalia':('La Casalia',''),
  'Four Seasons Villa':('Four Seasons Villa','Havadan'),'4_SEASONS_VILLA (1)':('Four Seasons Villa','1. açı'),'4_SEASONS_VILLA (2)':('Four Seasons Villa','2. açı'),
  'Courtyard Platinum':('Courtyard Platinum','Havadan'),'COURT_YARD (1)':('Courtyard Platinum','Havadan 2'),'COURT_YARD (3)':('Courtyard Platinum','Havadan 3'),
@@ -60,6 +61,19 @@ def dpoint(ad):
          '2':'Yatak odası 2','Bath':'Banyo','Terrace':'Teras'}.get(r,r)
         return ('D-Point','2+1 daire · '+v)
     return None
+QU={'Project_View':'Havadan','Air_View':'Havadan 2','Air_Right View':'Havadan sağ','Project Back Right':'Arka sağ',
+ 'Project Back':'Arka','Project Left':'Sol','Pool View Back':'Havuz arka','Pool View_1':'Havuz 1','Pool View_2':'Havuz 2',
+ 'Parking':'Otopark','Tennis':'Tenis kortu','Store_2':'Mağaza','Coffee':'Kafe önü','Lobby_1':'Lobi','Lobby_2':'Lobi 2',
+ 'Cafe_1':'Kafe','Cafe_2':'Kafe 2','Executive business 1 - B1':'Ofis','Executive business 2 - B1':'Ofis 2',
+ 'Penthouse Living':'Penthouse · Salon','Penthouse living 2':'Penthouse · Salon 2','Roof Pool 1':'Çatı havuzu 1',
+ 'Roof Pool 2':'Çatı havuzu 2','Roof Pool 2_1':'Çatı havuzu 3','Roof Pool 4':'Çatı havuzu 4','Roof Pool 4_1':'Çatı havuzu 5','Roof Pool 4_3':'Çatı havuzu 6'}
+def querencia(ad):
+    if ad in QU: return ('Querencia',QU[ad])
+    m=re.match(r'(A Blo(?:c?k) )?(Studio|[0-9]\+[0-9]) (.*)$',ad,re.I)
+    if m:
+        a,t,r=m.groups();t='Stüdyo' if t.lower()=='studio' else t+' daire'
+        return ('Querencia',('A Blok ' if a else '')+t+' · '+oda(r.replace('room','room ').strip()))
+    return None
 def sahne(ad):
     if ad in SAHNE: return SAHNE[ad]
     m=re.match(r'SKY SAKARYA (.*)$',ad)
@@ -80,7 +94,7 @@ def sahne(ad):
     return None
 P=[];idx={}
 for o in M:
-    s=dpoint(o['ad']) if o.get('_src') else sahne(o['ad'])
+    s=(dpoint(o['ad']) if o['_src']==DP_SRC else querencia(o['ad'])) if o.get('_src') else sahne(o['ad'])
     if not s: print('atlandı',o['ad']);continue
     idx[o['id']]=len(P);P.append([o,*s])
 # aynı adı alan görünümleri numarala
@@ -89,13 +103,15 @@ cnt=Counter((g,v) for _,g,v in P);seen=defaultdict(int)
 for x in P:
     k=(x[1],x[2])
     if cnt[k]>1: seen[k]+=1;x[2]=x[2]+(' '+str(seen[k]) if seen[k]>1 else '')
-SIRA=['Long Beach','D-Point','Courtyard Platinum','Four Seasons Life','Four Seasons Villa','Park View Towers','Laisla','Querencia','Natulux',
+SIRA=['Long Beach','Querencia','D-Point','Courtyard Platinum','Four Seasons Life','Four Seasons Villa','Park View Towers','Laisla','Natulux',
  'Platinum','La Casalia','Mağusa','Golden Residence','Sky Sakarya','Terrace Park','Central Park','Corner Park','Alfam','Port Karpas','Gezilecek yerler']
 def anahtar(i):
     o,g,v=P[i]
+    if o.get('_src')==QU_SRC: return (SIRA.index(g),0,(list(QU).index(o['ad']) if o['ad'] in QU else 100+i))
     if o.get('_src'):
         k=DP_SIRA.index(o['ad']) if o['ad'] in DP_SIRA else 100+(0 if o['ad'].startswith('2+1') else 1)*100+i
         return (SIRA.index(g),0,k)
+    if o['ad']=='Querencia': return (SIRA.index(g),0,2.5)  # Long Beach turundaki Querencia görünümü, havadanların arkasına
     k=list(SAHNE).index(o['ad']) if o['ad'] in SAHNE else 1000+i
     return (SIRA.index(g),0 if v.startswith('Havadan') or v=='' else 1,k)
 ordr=sorted(range(len(P)),key=anahtar);yeni={old:n for n,old in enumerate(ordr)}
