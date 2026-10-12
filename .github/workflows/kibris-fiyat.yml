@@ -1,0 +1,23 @@
+name: Kıbrıs 360 fiyatları (Kıbrıs Katalog'dan)
+on:
+  schedule:
+    - cron: "12,42 * * * *"   # yarım saatte bir — Drive'daki fiyat listeleri Katalog üzerinden tura
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: kibris-fiyat
+  cancel-in-progress: false
+jobs:
+  fiyat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node scripts/kibris-fiyat.js
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add assets/kibris360/fiyatlar.json
+          git diff --cached --quiet || (git commit -m "Kıbrıs 360 fiyatları güncellendi" && git pull --rebase && git push)

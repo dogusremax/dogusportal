@@ -183,6 +183,19 @@
   .acts .wa{background:#1fb855}
   .acts .sec{background:rgba(255,255,255,.1)}
   .acts svg{width:18px;height:18px;fill:#fff}
+  .ubox{margin-top:14px;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+  .ubox .uh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .ubox .uh b{font-size:.78rem;font-weight:800}.ubox .uh span{font-size:.6rem;color:var(--mut);font-weight:600}
+  .uchips{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin:9px 0 8px}.uchips::-webkit-scrollbar{display:none}
+  .uchips button{flex:none;height:28px;padding:0 10px;border-radius:999px;font-size:.7rem;font-weight:800;background:rgba(255,255,255,.08);white-space:nowrap}
+  .uchips button.on{background:var(--coral)}
+  .ulist{max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;scrollbar-width:thin}
+  .ulist button{display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.05);font-size:.74rem}
+  .ulist button:hover,.ulist button.on{background:rgba(255,255,255,.14)}.ulist button.on{box-shadow:inset 0 0 0 1.5px var(--coral)}
+  .ulist b{font-weight:800}.ulist i{font-style:normal;font-weight:800;color:#3ddc84;text-align:right}.ulist small{grid-column:1/-1;color:var(--mut);font-size:.64rem;font-weight:600}
+  .ulist .no{padding:10px;color:var(--mut);font-size:.72rem}
+  .kpi.k3{grid-template-columns:1fr 1fr}
+  .kpi .sm b{font-size:1.05rem}
   .panel .tip{font-size:.66rem;color:rgba(255,255,255,.45);margin-top:12px;line-height:1.5}
 
   .hint{position:fixed;z-index:12;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-size:.8rem;font-weight:700;pointer-events:none;transition:opacity .6s}
@@ -289,11 +302,16 @@
 
 <section class="panel" id="panel" aria-label="Yatırım hesabı" aria-hidden="true">
   <div class="ph"><div><small>Yatırım hesabı</small><h3 id="cName">Proje</h3></div><button class="xbtn" id="cX" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="ubox" id="uBox" hidden><div class="uh"><b>Müsait daireler</b><span id="uGun"></span></div><div class="uchips" id="uTip"></div><div class="ulist" id="uList"></div></div>
   <label for="fAd">Daire</label><input id="fAd" placeholder="Örn. 1+1 deniz manzaralı">
   <div class="two"><div><label for="fFiyat">Fiyat (£)</label><input id="fFiyat" type="number" inputmode="numeric" placeholder="150000"></div>
   <div><label for="fKira">Aylık kira (£)</label><input id="fKira" type="number" inputmode="numeric" placeholder="900"></div></div>
   <label for="fTeslim">Teslim</label><input id="fTeslim" placeholder="Örn. Haziran 2027">
-  <div class="kpi"><div class="g"><b id="kGetiri">–</b><span>brüt kira getirisi</span></div><div><b id="kDonus">–</b><span>geri dönüş süresi</span></div></div>
+  <div class="two"><div><label for="fPes">Peşinat (%)</label><input id="fPes" type="number" inputmode="numeric" placeholder="35"></div>
+  <div><label for="fAy">Taksit sayısı (ay)</label><input id="fAy" type="number" inputmode="numeric" placeholder="24"></div></div>
+  <div class="kpi"><div class="sm"><b id="kPes">–</b><span>peşinat</span></div><div class="sm"><b id="kTaksit">–</b><span>aylık taksit</span></div>
+  <div class="sm"><b id="kMasraf">–</b><span>resmi masraflar (%11,5)</span></div><div class="sm"><b id="kToplam">–</b><span>toplam maliyet</span></div>
+  <div class="g"><b id="kGetiri">–</b><span>brüt kira getirisi</span></div><div><b id="kDonus">–</b><span>geri dönüş süresi</span></div></div>
   <div class="acts">
     <a class="wa" id="cSend" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="waPath" d=""/></svg>Müşteriye WhatsApp ile gönder</a>
     <button class="sec" id="cCopy">Bağlantıyı kopyala</button>
@@ -457,18 +475,41 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){drawer(false);calc(false);document.body.classList.remove('clean');$('bClean').classList.remove('on');}});
 
   /* ---------- yatırım hesabı (proje başına bu cihazda saklanır) ---------- */
-  var F=['Ad','Fiyat','Kira','Teslim'];
+  var F=['Ad','Fiyat','Kira','Teslim','Pes','Ay'];
+  /* güncel fiyat listesi: Kıbrıs Katalog (Drive) -> assets/kibris360/fiyatlar.json, yarım saatte bir güncellenir */
+  var FY=null,uTip='',uSec='';
+  var EŞ={'querencia long beach':'querencia','bahamas homes':'bahamas','mykonos homes':'mykonos','pearl island homes':'pearl island','phuket health & wellness resort':'phuket'};
+  function fyYukle(){if(FY)return;FY={projeler:[]};fetch('assets/kibris360/fiyatlar.json?t='+Math.floor(Date.now()/9e5)).then(function(r){return r.json();}).then(function(d){FY=d;uCiz();}).catch(function(){});}
+  function fyProje(){var ad=pj().toLocaleLowerCase('tr');for(var i=0;i<FY.projeler.length;i++){var p=FY.projeler[i],a=p.proje.toLocaleLowerCase('tr');if(a===ad||EŞ[a]===ad)return p;}return null;}
+  function para(n){return '£'+Math.round(n).toLocaleString('tr-TR');}
+  function uCiz(){var box=$('uBox');var p=FY&&fyProje();var us=p?p.uniteler.filter(function(u){return /müsait|available/i.test(u.durum);}):[];
+    box.hidden=!us.length;if(!us.length)return;
+    var tipler=[];us.forEach(function(u){if(tipler.indexOf(u.tip)<0)tipler.push(u.tip);});
+    tipler.sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});if(uTip&&tipler.indexOf(uTip)<0)uTip='';
+    $('uTip').innerHTML='<button data-t="" class="'+(uTip?'':'on')+'">Tümü · '+us.length+'</button>'+tipler.map(function(t){return '<button data-t="'+t.replace(/"/g,'&quot;')+'" class="'+(t===uTip?'on':'')+'">'+t+'</button>';}).join('');
+    var g=new Date(FY.guncel);$('uGun').textContent=isNaN(g)?'':'güncel: '+g.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+' '+g.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+    var l=us.filter(function(u){return !uTip||u.tip===uTip;}).sort(function(a,b){return a.fiyat-b.fiyat;});
+    $('uList').innerHTML=l.slice(0,80).map(function(u){var id=[u.blok,u.kat,u.no].join('-');
+      var yer=[u.blok?u.blok+' blok':'',u.kat!=null?(u.kat===0?'zemin':u.kat+'. kat'):'',u.no!=null?'no '+u.no:''].filter(Boolean).join(' · ');
+      return '<button data-u="'+id+'" class="'+(id===uSec?'on':'')+'"><b>'+u.tip+(u.m2?' · '+u.m2.toLocaleString('tr-TR')+' m²':'')+'</b><i>'+para(u.fiyat)+'</i><small>'+[yer,u.manzara].filter(Boolean).join(' · ')+'</small></button>';}).join('')||'<div class="no">Bu tipte müsait daire yok.</div>';}
+  $('uTip').onclick=function(e){var b=e.target.closest('button');if(!b)return;uTip=b.getAttribute('data-t');uCiz();};
+  $('uList').onclick=function(e){var b=e.target.closest('button[data-u]');if(!b)return;var p=fyProje();if(!p)return;uSec=b.getAttribute('data-u');
+    var u=p.uniteler.filter(function(x){return [x.blok,x.kat,x.no].join('-')===uSec;})[0];if(!u)return;
+    $('fAd').value=u.tip+(u.blok?' · '+u.blok+' blok':'')+(u.kat!=null?' · '+(u.kat===0?'zemin':u.kat+'. kat'):'')+(u.no!=null?' · no '+u.no:'')+(u.m2?' · '+u.m2.toLocaleString('tr-TR')+' m²':'')+(u.manzara?' · '+u.manzara:'');
+    $('fFiyat').value=u.fiyat;$('fFiyat').dispatchEvent(new Event('input'));uCiz();};
   function key(){return 'k360:'+pj();}
   function calc(on){$('panel').classList.toggle('on',on);$('panel').setAttribute('aria-hidden',!on);$('bCalc').classList.toggle('on',on);}
   $('bCalc').onclick=function(){calc(!$('panel').classList.contains('on'));};$('cX').onclick=function(){calc(false);};
   function calcLoad(){$('cName').textContent=pj();var v={};try{v=JSON.parse(localStorage.getItem(key())||'{}');}catch(e){}
-    F.forEach(function(f){$('f'+f).value=v[f]||'';});kpi();}
+    F.forEach(function(f){$('f'+f).value=v[f]||'';});uSec='';uTip='';fyYukle();if(FY)uCiz();kpi();}
   function kpi(){var p=+$('fFiyat').value,r=+$('fKira').value,ok=p>0&&r>0;
     $('kGetiri').textContent=ok?'%'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1}):'–';
     $('kDonus').textContent=ok?(p/(r*12)).toLocaleString('tr-TR',{maximumFractionDigits:1})+' yıl':'–';
+    var pes=$('fPes').value!==''?+$('fPes').value:35,ay=$('fAy').value!==''?+$('fAy').value:24,pP=p*pes/100,tk=ay>0?(p-pP)/ay:0,ms=p*.115;
+    $('kPes').textContent=p?para(pP):'–';$('kTaksit').textContent=p&&ay>0?para(tk):'–';$('kMasraf').textContent=p?para(ms):'–';$('kToplam').textContent=p?para(p+ms):'–';
     var t='Merhaba, '+(TEK?TA:TA+' '+K[cur].g)+' projesini 360° gezebilirsiniz:\n'+link();
     if($('fAd').value)t+='\n\n'+$('fAd').value;
-    if(p)t+='\nFiyat: £'+p.toLocaleString('tr-TR');
+    if(p)t+='\nFiyat: '+para(p)+'\nPeşinat (%'+pes+'): '+para(pP)+(ay>0?'\n'+ay+' ay taksit: aylık '+para(tk):'')+'\nResmi masraflar (yaklaşık): '+para(ms);
     if(ok)t+='\nKira getirisi: yıllık yaklaşık %'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1});
     if($('fTeslim').value)t+='\nTeslim: '+$('fTeslim').value;
     t+='\n\nRE/MAX Doğuş · 0216 315 15 15';
