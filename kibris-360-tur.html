@@ -262,7 +262,7 @@
   <div class="dh"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><button class="xbtn" id="mClose" aria-label="Menüyü kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="sc">
     <h4>Turlar</h4>
-    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Kuzey Kıbrıs</a><a href="?tur=esentepe" data-tur="esentepe">Esentepe</a><a href="?tur=sapphire" data-tur="sapphire">Sapphire</a></div>
+    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Kuzey Kıbrıs</a><a href="?tur=esentepe" data-tur="esentepe">Esentepe</a><a href="?tur=sapphire" data-tur="sapphire">Sapphire</a><a href="?tur=dovec" data-tur="dovec">Dovec</a></div>
     <h4>Projeler</h4>
     <input class="srch" id="srch" type="search" placeholder="Proje ara" autocomplete="off">
     <div class="dg" id="dg"></div>
@@ -298,6 +298,7 @@
   // turlar: menüden seçilir (?tur=), her biri kendi veri dosyası ve görüntü kaynağıyla
   var TURLAR={kibris:{ad:'Kuzey Kıbrıs',js:'assets/kibris360/data.js?v=3',src:'https://360.noyanlar.com/media',ext:'webp'},
     esentepe:{ad:'Esentepe',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'},
+    dovec:{ad:'Dovec',js:'assets/kibris360/data-dovec.js?v=1',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
     // tek projelik turlar: listede projeler yerine projenin bölümleri (havadan, havuzlar, daire tipleri) yer alır
     sapphire:{ad:'Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
