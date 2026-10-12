@@ -1,0 +1,23 @@
+name: Kıbrıs sterlin kuru (TCMB)
+on:
+  schedule:
+    - cron: "45 12,15 * * 1-5"   # TCMB kurları 15:30'da (TSİ) yayımlar; 15:45 ve 18:45'te çekilir
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: kibris-kur
+  cancel-in-progress: false
+jobs:
+  kur:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node scripts/kibris-kur.js
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add assets/kibris/kur.json data/kibris-kur-gunluk.json
+          git diff --cached --quiet || (git commit -m "Kıbrıs sterlin kuru güncellendi" && git pull --rebase && git push)
