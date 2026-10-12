@@ -105,6 +105,8 @@
   .ctl .wa{width:auto;padding:0 14px 0 11px;gap:7px;display:flex;align-items:center;background:#1fb855;font-weight:800;font-size:.8rem}
   .ctl .wa:hover{background:#19a14a}
   .ctl .wa svg{fill:#fff}
+  .ctl .gece{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:800;font-size:.8rem;background:rgba(255,255,255,.1)}.ctl .gece[hidden]{display:none}
+  .ctl .gece.on{background:#2a3a8c}
   .ctl .calc{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:800;font-size:.8rem;background:rgba(255,255,255,.1)}
   .tourbar{position:absolute;left:10px;right:10px;bottom:2px;height:2px;border-radius:2px;overflow:hidden;opacity:0;transition:opacity .3s}
   .tourbar i{display:block;height:100%;width:0;background:var(--coral)}
@@ -278,6 +280,8 @@
   <button class="fs" id="bFs" data-tip="Tam ekran" aria-label="Tam ekran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   <button id="bShare" data-tip="Müşteriye gönder" aria-label="Bu görünümü paylaş"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></svg></button>
   <span class="sep"></span>
+  <button class="gece" id="bGece" hidden aria-label="Gece görünümü"><svg id="icGece" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><span class="tx" id="txGece">Gece</span></button>
+  <span class="sep"></span>
   <button class="calc" id="bCalc" aria-label="Yatırım hesabı"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7h7M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01"/></svg><span class="tx">Yatırım</span></button>
   <a class="wa" id="bWa" target="_blank" rel="noopener" aria-label="WhatsApp ile bilgi al"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.43 9.43 0 0 1-4.8-1.32l-.35-.21-3.57.94.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.24-9.44 9.45-9.44a9.38 9.38 0 0 1 6.68 2.77 9.38 9.38 0 0 1 2.76 6.68c0 5.21-4.24 9.44-9.45 9.44zM20.08 3.9A11.3 11.3 0 0 0 12.04.57C5.77.57.67 5.67.67 11.93c0 2 .52 3.96 1.52 5.68L.57 23.5l6.03-1.58a11.35 11.35 0 0 0 5.43 1.38h.01c6.26 0 11.36-5.1 11.36-11.36 0-3.04-1.18-5.89-3.33-8.04z"/></svg><span class="tx">Bilgi al</span></a>
   <div class="tourbar"><i id="tourbar"></i></div>
@@ -389,7 +393,11 @@
   function hf(){return 100;}
   // dik ekranda görüş dikeyde geniş: ufku biraz yukarı al ki gökyüzü ekranı kaplamasın
   function pp(p){return innerHeight>innerWidth*1.2?Math.max(-80,p-12):p;}
-  function scene(i){var k=K[i];return {base:(k.s||SRC)+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
+  // Gece görünümü: Gemini ile üretilip birleştirilen gece panoramaları, karolar bizim sunucuda (tools/kibris360/gece.py, eq2kup.py)
+  var GECE={sapphire:{base:'assets/kibris360/gece/sapphire',ids:['8B84939C_32CF_18BB_41C1_3FD8568EF350','0684FD46_43FE_682D_4196_545B9B3EA7DE','0427F80B_43CA_683B_41AD_20B7EA5E524B','043C7F35_43C6_686F_41C9_52819AD0AF2B','04617707_43CE_782B_4199_DA2D681F7C2F','043DA000_43FA_5825_41CA_8ABC985C6D80','06F45458_43FA_5825_41B8_86520C561494','041E0E4F_43FD_E83B_41C8_E8E5AD0EC7BF']}},GC=false;
+  function geceVar(i){var g=GECE[TUR];return !!(g&&g.ids.indexOf(K[i].id)>-1);}
+  function scene(i){var k=K[i];if(GC&&geceVar(i))return Object.assign(scene0(i),{base:GECE[TUR].base+'/panorama_'+k.id+'_0',n:[4,2,1],ext:'jpg'});return scene0(i);}
+  function scene0(i){var k=K[i];return {base:(k.s||SRC)+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
       hotSpots:k.h.map(function(h){
         // aynı projenin başka açısına giden etikette proje adı yerine açının adı yazsın
         if(h[3]>=0&&K[h[3]].g===k.g)h=[h[0],h[1],K[h[3]].v||'Genel görünüm'].concat(h.slice(3));
@@ -436,7 +444,11 @@
   function stepG(d){var g=GI[K[cur].g],n=G[(g+d+G.length)%G.length];fly(n.s[0]);}
 
   /* ---------- arayüz ---------- */
-  function ui(){var k=K[cur],g=G[GI[k.g]],t=$('ttl');
+  var AY='<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',GUNES='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  function geceUi(){var v=geceVar(cur),b=$('bGece');b.hidden=!v;b.classList.toggle('on',GC&&v);$('icGece').innerHTML=GC&&v?GUNES:AY;$('txGece').textContent=GC&&v?'Gündüz':'Gece';b.setAttribute('aria-label',GC&&v?'Gündüz görünümü':'Gece görünümü');}
+  $('bGece').onclick=function(){if(!pv||!ready||busy||!geceVar(cur))return;GC=!GC;geceUi();ready=false;
+    pv.loadScene(scene(cur),pv.getPitch(),pv.getYaw(),pv.getHfov());toast(GC?'Gece görünümü':'Gündüz görünümü');};
+  function ui(){var k=K[cur],g=G[GI[k.g]],t=$('ttl');geceUi();
     $('tIdx').textContent=(TEK?TA+' · Bölüm ':'Proje ')+(GI[k.g]+1)+' / '+G.length;$('tName').textContent=k.g;
     $('tVw').innerHTML=g.s.length>1?g.s.map(function(i,j){return '<button data-s="'+i+'" class="'+(i===cur?'on':'')+'">'+esc(K[i].v||'Genel')+'</button>';}).join(''):'';
     [].forEach.call($('tVw').children,function(b){b.onclick=function(){stopTour();fly(+b.getAttribute('data-s'));};});
