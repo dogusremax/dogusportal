@@ -298,7 +298,7 @@
   // turlar: menüden seçilir (?tur=), her biri kendi veri dosyası ve görüntü kaynağıyla
   var TURLAR={kibris:{ad:'Kuzey Kıbrıs',js:'assets/kibris360/data.js?v=3',src:'https://360.noyanlar.com/media',ext:'webp'},
     esentepe:{ad:'Esentepe',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'},
-    dovec:{ad:'Dovec',js:'assets/kibris360/data-dovec.js?v=1',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
+    dovec:{ad:'Dovec',js:'assets/kibris360/data-dovec.js?v=2',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
     // tek projelik turlar: listede projeler yerine projenin bölümleri (havadan, havuzlar, daire tipleri) yer alır
     sapphire:{ad:'Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
@@ -329,7 +329,7 @@
   [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);});
   var G=[],GI={};  // projeler: {ad, s:[sahne indexleri]}
   K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});
-  function th(i){return SRC+'/'+(K[i].t||'panorama_'+K[i].id+'_t.'+EXT);}
+  function th(i){return (K[i].s||SRC)+'/'+(K[i].t||'panorama_'+K[i].id+'_t.'+EXT);}
   function sName(i){return K[i].g+(K[i].v?' · '+K[i].v:'');}
 
   /* ---------- görüntüleyici ---------- */
@@ -339,7 +339,7 @@
   function hf(){return 100;}
   // dik ekranda görüş dikeyde geniş: ufku biraz yukarı al ki gökyüzü ekranı kaplamasın
   function pp(p){return innerHeight>innerWidth*1.2?Math.max(-80,p-12):p;}
-  function scene(i){var k=K[i];return {base:SRC+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
+  function scene(i){var k=K[i];return {base:(k.s||SRC)+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
       hotSpots:k.h.map(function(h){
         // aynı projenin başka açısına giden etikette proje adı yerine açının adı yazsın
         if(h[3]>=0&&K[h[3]].g===k.g)h=[h[0],h[1],K[h[3]].v||'Genel görünüm'].concat(h.slice(3));
