@@ -511,11 +511,17 @@
     var u=p.uniteler.filter(function(x){return [x.blok,x.kat,x.no].join('-')===uSec;})[0];if(!u)return;
     $('fAd').value=u.tip+(u.blok?' · '+u.blok+' blok':'')+(u.kat!=null?' · '+(u.kat===0?'zemin':u.kat+'. kat'):'')+(u.no!=null?' · no '+u.no:'')+(u.m2?' · '+u.m2.toLocaleString('tr-TR')+' m²':'')+(u.manzara?' · '+u.manzara:'');
     $('fFiyat').value=u.fiyat;$('fFiyat').dispatchEvent(new Event('input'));uCiz();};
+  // Teslim tarihleri: firmaların kendi siteleri (Döveç, Cyprus Constructions, Noyanlar yalnız yıl veriyor), Grand Sapphire için acente sayfaları. 12.10.2026'da derlendi.
+  var TES={'Döveç':{'D-Point':'Aralık 2028','Querencia':'Mart 2027','Courtyard Platinum':'Bloğa göre Aralık 2025 / Aralık 2026 / Mayıs 2027','Natulux':'Mayıs 2027','La Casalia':'Aralık 2027','Laisla':'Kısmen teslim edildi'},
+    'Cyprus Constructions':{'Phuket':'Mart 2027','Bahamas':'Taşınmaya hazır','Hawaii Homes':'Taşınmaya hazır','Mykonos':'Teslim edildi','Pearl Island':'Teslim edildi','Maldives':'Teslim edildi','Idyll':'Teslim edildi'},
+    'Noyanlar':{'Ocean Life':'2028','Olea':'2027','Sea Breeze':'2028','Sky Diora':'2027','Solmaris':'2027','La Palazzo':'2027','Terra Life':'2026','Neo Residence':'Taşınmaya hazır','Riverside':'Tamamlandı','Royal Sun Elite':'Teslim edildi','Royal Point':'Teslim edildi','Angel Towers':'Teslim edildi','City Life 2':'Teslim edildi','Rose Villas':'Teslim edildi'},
+    'Grand Sapphire':{'Grand Sapphire':'Blu 1. faz Eylül 2027, 2. faz Eylül 2028'}};
+  function tesBul(){var t=TES[TA];return t&&t[pj()]||'';}
   function key(){return 'k360:'+pj();}
   function calc(on){$('panel').classList.toggle('on',on);$('panel').setAttribute('aria-hidden',!on);$('bCalc').classList.toggle('on',on);}
   $('bCalc').onclick=function(){calc(!$('panel').classList.contains('on'));};$('cX').onclick=function(){calc(false);};
   function calcLoad(){$('cName').textContent=pj();var v={};try{v=JSON.parse(localStorage.getItem(key())||'{}');}catch(e){}
-    F.forEach(function(f){$('f'+f).value=v[f]||'';});uSec='';uTip='';fyYukle();if(FY)uCiz();kpi();}
+    F.forEach(function(f){$('f'+f).value=v[f]||'';});if(!$('fTeslim').value)$('fTeslim').value=tesBul();uSec='';uTip='';fyYukle();if(FY)uCiz();kpi();}
   function kpi(){var p=+$('fFiyat').value,r=+$('fKira').value,ok=p>0&&r>0;
     $('kGetiri').textContent=ok?'%'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1}):'–';
     $('kDonus').textContent=ok?(p/(r*12)).toLocaleString('tr-TR',{maximumFractionDigits:1})+' yıl':'–';
