@@ -74,8 +74,10 @@
   };
   // görünen karoları uygun seviyede iste
   Scene.prototype.need=function(){
-    var s=this,v=s.v,dpr=Math.min(window.devicePixelRatio||1,2.5),want=2*v.P*dpr*.9,L=0;
+    var s=this,v=s.v,dpr=Math.min(window.devicePixelRatio||1,v.maxDpr||2.5),want=2*v.P*dpr*.9,L=0;
     for(var l=s.nl-1;l>=0;l--){if(s.ns[l]*512>=want){L=l;break;}}
+    // telefonda bellek sınırı: yüz kenarı maxFace pikseli aşan seviye yüklenmez (iOS sekmesi çökmesin)
+    while(v.maxFace&&L<s.nl-1&&s.ns[L]*512>v.maxFace)L++;
     if(L>=s.nl-1)return;
     var vd=dir(v.yaw,v.pitch,1),cone=Math.atan(Math.hypot(v.W,v.H)/2/v.P);
     [s.nl-2,L].forEach(function(l2,i){if(i&&l2===s.nl-2)return;
@@ -88,7 +90,7 @@
   Scene.prototype.kill=function(){this.dead=true;this.st.remove();this.hl.remove();};
 
   function V(el,o){
-    var v=this;o=o||{};v.el=el;v.yaw=0;v.pitch=0;v.fov=100;v.min=o.minFov||20;v.max=o.maxFov||120;
+    var v=this;o=o||{};v.el=el;v.yaw=0;v.pitch=0;v.fov=100;v.min=o.minFov||20;v.max=o.maxFov||120;v.maxFace=o.maxFace||0;v.maxDpr=o.maxDpr||0;
     v.vy=0;v.vp=0;v.rot=0;v.anim=null;v.cur=null;v.old=[];v.ev={};v.dirty=true;v.idle=0;v.down=false;v.needT=0;
     el.classList.add('k3v');v.top=document.createElement('i');v.top.hidden=true;el.appendChild(v.top);
     v.resize();v.input();

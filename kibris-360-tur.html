@@ -316,7 +316,7 @@
   function turYukle(t,cb){if(TDATA[t])return cb(TDATA[t]);var sc=document.createElement('script');sc.src=TURLAR[t].js;
     sc.onload=function(){TDATA[t]=window.K360||[];cb(TDATA[t]);};sc.onerror=function(){cb(null);};document.head.appendChild(sc);}
 </script>
-<script src="assets/kibris360/k360v.js?v=2"></script>
+<script src="assets/kibris360/k360v.js?v=3"></script>
 <script>
 (function(){
   'use strict';
@@ -368,7 +368,9 @@
       div.addEventListener('keydown',function(e){if(e.key==='Enter')fly(h[3],h[4],h[5],h);});}}
   function onLoad(){if(ready)return;ready=true;busy=false;$('pano').classList.remove('hide-hs');if(!started)start();else rotState();}
   function init(){
-    pv=new K360V($('pano'),{minFov:20,maxFov:120});
+    // telefon ve tablette (özellikle iOS ve uygulama içi tarayıcılar) bellek sınırlı: en net seviye (4096 px yüz) yüklenmez
+    var lite=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform))||(matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400);
+    pv=new K360V($('pano'),{minFov:20,maxFov:120,maxFace:lite?2048:0,maxDpr:lite?2:0});
     if(q.has('test'))window.K360P=pv;
     pv.on('load',onLoad);
     pv.on('down',function(){hint(false);if(touring)stopTour();});
