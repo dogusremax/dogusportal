@@ -114,10 +114,10 @@
 
   /* proje etiketleri */
   .hs{width:0!important;height:0!important;overflow:visible;z-index:3}
-  .hs .b{position:absolute;left:0;bottom:8px;transform:translateX(-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(5,10,48,.82);box-shadow:0 8px 22px -6px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.18);font-size:.74rem;font-weight:800;letter-spacing:.02em;transition:background .25s,transform .25s,opacity .3s}
+  .hs .b{position:absolute;left:0;bottom:calc(8px + var(--lift,0px));transform:translateX(-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(5,10,48,.82);box-shadow:0 8px 22px -6px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.18);font-size:.74rem;font-weight:800;letter-spacing:.02em;transition:background .25s,transform .25s,opacity .3s}
   .hs .b i{width:24px;height:24px;border-radius:50%;background:var(--coral);display:grid;place-items:center;flex:none}
   .hs .b svg{width:13px;height:13px}
-  .hs .st{position:absolute;left:-1px;bottom:0;width:2px;height:8px;background:rgba(255,255,255,.85)}
+  .hs .st{position:absolute;left:-1px;bottom:0;width:2px;height:calc(8px + var(--lift,0px));background:rgba(255,255,255,.85)}
   .hs .dt{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(251,81,96,.6)}
   .hs.go{cursor:pointer}
   .hs.go:hover{z-index:6}
@@ -398,11 +398,19 @@
   function geceVar(i){var g=GECE[TUR];return !!(g&&g.ids.indexOf(K[i].id)>-1);}
   function scene(i){var k=K[i];if(GC&&geceVar(i))return Object.assign(scene0(i),{base:GECE[TUR].base+'/panorama_'+k.id+'_0',n:[4,2,1],ext:'jpg'});return scene0(i);}
   function scene0(i){var k=K[i];return {base:(k.s||SRC)+'/panorama_'+k.id+'_0',n:k.n||(k.r===7?[7,4,2,1]:[8,4,2,1]),ext:EXT,
-      hotSpots:k.h.map(function(h){
+      hotSpots:tekle(k.h.map(function(h){
         // aynı projenin başka açısına giden etikette proje adı yerine açının adı yazsın
-        if(h[3]>=0&&K[h[3]].g===k.g)h=[h[0],h[1],K[h[3]].v||'Genel görünüm'].concat(h.slice(3));
+        return h[3]>=0&&K[h[3]].g===k.g?[h[0],h[1],K[h[3]].v||'Genel görünüm'].concat(h.slice(3)):h;})).map(function(h){
         return {yaw:h[0],pitch:h[1],cssClass:'hs '+(h[3]>=0?'go':'pl'),create:function(d){hsEl(d,h);},
         click:h[3]>=0?function(){fly(h[3],h[4],h[5],h);}:null};})};}
+  // aynı ada giden, birbirine yakın (20° içinde) pinlerden yalnız ortadaki kalır; büyük sitelerde 4 ayrı etiket kalabalık yapıyordu
+  function tekle(hs){var by={};hs.forEach(function(h){(by[h[2]]=by[h[2]]||[]).push(h);});var out=[];
+    Object.keys(by).forEach(function(a){var g=by[a].slice();
+      while(g.length){var c=g.shift(),kume=[c].concat(g.filter(function(h){return Math.hypot(((h[0]-c[0]+540)%360)-180,h[1]-c[1])<20;}));
+        g=g.filter(function(h){return kume.indexOf(h)<0;});
+        var my=kume.reduce(function(t,h){return t+(((h[0]-c[0]+540)%360)-180);},0)/kume.length+c[0],mp=kume.reduce(function(t,h){return t+h[1];},0)/kume.length;
+        out.push(kume.reduce(function(b,h){return Math.hypot(((h[0]-my+540)%360)-180,h[1]-mp)<Math.hypot(((b[0]-my+540)%360)-180,b[1]-mp)?h:b;}));}});
+    return out;}
   function hsEl(div,h){div.innerHTML='<i class="dt"></i><i class="st"></i><span class="b">'+(h[3]>=0?'<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></i>':'')+esc(h[2])+'</span>';
     if(h[3]>=0){div.setAttribute('role','button');div.setAttribute('tabindex','0');div.setAttribute('aria-label',h[2]+(TEK?' görünümüne git':' projesine git'));
       div.addEventListener('keydown',function(e){if(e.key==='Enter')fly(h[3],h[4],h[5],h);});}}
@@ -473,7 +481,10 @@
       var r=p.getBoundingClientRect(),b=p.querySelector('.b'),w=b?b.offsetWidth:60,h=b?b.offsetHeight:26;
       return {p:p,g:p.classList.contains('go'),b:[r.left-w/2-3,r.top-8-h-3,r.left+w/2+3,r.top-5],y:r.top};});
     it.sort(function(a,b){return (b.g-a.g)||(b.y-a.y);});
-    var ok=[];it.forEach(function(o){var hit=ok.some(function(q){return o.b[0]<q[2]&&o.b[2]>q[0]&&o.b[1]<q[3]&&o.b[3]>q[1];});o.p.classList.toggle('cmp',hit);if(!hit)ok.push(o.b);});}
+    // çakışan etiket gizlenmez: çubuğu uzatılıp yukarı alınır, ancak 4 kat yukarıda da yer yoksa yalnız nokta kalır
+    var ok=[];it.forEach(function(o){var hh=o.b[3]-o.b[1]+2,k,b;
+      for(k=0;k<5;k++){b=[o.b[0],o.b[1]-k*hh,o.b[2],o.b[3]-k*hh];if(!ok.some(function(q){return b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1];}))break;}
+      var hit=k===5;o.p.classList.toggle('cmp',hit);o.p.style.setProperty('--lift',hit?'0px':k*hh+'px');ok.push(hit?[o.b[0]+o.b[2]>>1,o.b[3]-2,(o.b[0]+o.b[2]>>1)+1,o.b[3]]:b);});}
   function loop(t){requestAnimationFrame(loop);if(!t)return;declutter(t);tourTick(t);}
 
   /* ---------- dönme ve otomatik tur ---------- */
