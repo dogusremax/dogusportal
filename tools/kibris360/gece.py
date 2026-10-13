@@ -115,6 +115,29 @@ def sky_mask(eq):
     col = np.clip((lat - .3) / 1.2, 0, 1).astype(np.float32)
     return np.repeat(col[:, None], W, 1)
 
+GEO = None
+
+def color_sky(eq, mask):
+    """Alçak çekimler: ufkun üstündeki yapılar göğe sayılmasın. Gök = üst kenardan kenar geçmeden ulaşılan düzgün bölge;
+    ufka değmeyen kapalı adacıklar (bulut, güneş) yine gök sayılır."""
+    H, W = eq.shape[:2]; h, w = 1024, 2048
+    g = cv2.GaussianBlur(cv2.cvtColor(cv2.resize(eq, (w, h), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY).astype(np.float32), (0, 0), 1.2)
+    gr = np.hypot(cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1))
+    free = (cv2.dilate((gr > float(os.environ.get('SKYEDGE', 40))).astype(np.uint8), np.ones((3, 3), np.uint8)) == 0).astype(np.uint8)
+    hor = h // 2
+    free[hor + 2:] = 0
+    n, lab = cv2.connectedComponents(free, connectivity=4)
+    top = np.unique(lab[0][free[0] > 0]); sky = np.isin(lab, top) & (free > 0)
+    ns = (~sky).astype(np.uint8); ns[hor + 2:] = 1
+    n2, lab2 = cv2.connectedComponents(ns, connectivity=4)
+    keep = np.unique(lab2[hor + 1]); build = np.isin(lab2, keep) & (ns > 0)
+    build = cv2.morphologyEx(build.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    build = cv2.erode(build, np.ones((3, 3), np.uint8))                    # kenar şeridi (yapay zekânın gök hâlesi) göğe
+    for r in filter(None, os.environ.get('SKYFORCE', '').split()):            # elle gök sayılacak dikdörtgenler (oran: x0,y0,x1,y1)
+        x0, y0, x1, y1 = map(float, r.split(',')); build[int(y0 * h):int(y1 * h), int(x0 * w):int(x1 * w)] = 0
+    sk = 1 - cv2.resize(build.astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR)
+    return (mask * np.clip(sk, 0, 1)).astype(np.float32)
+
 def night_sky(H, W, hor):
     """Tek parça gece göğü: ufukta şehir ışığı yansıyan sıcak pus, tepeye doğru koyu lacivert. hor: ufuk rengi (BGR)."""
     lat = 90 - (np.arange(H) + .5) / H * 180
@@ -185,6 +208,8 @@ def merge(src, out, dst, W=16384):
     eq = cv2.imread(src)
     if eq.shape[1] != W: eq = cv2.resize(eq, (W, H), interpolation=cv2.INTER_AREA)
     mask = sky_mask(eq)
+    global GEO; GEO = mask
+    if os.environ.get('SKYCOLOR'): mask = color_sky(eq, mask)
     if os.environ.get('SKYONLY') and os.path.exists(f'{out}/_res.npy'):
         res = np.load(f'{out}/_res.npy'); return _sky(_detail(res, eq), eq, mask, dst)
     nights = {f: align(cv2.imread(f'{out}/yuz_{f}.jpg'), cv2.imread(f'{out}/gece_{f}.png')) for f in FACES if os.path.exists(f'{out}/gece_{f}.png')}
@@ -231,7 +256,7 @@ def _detail(res, eq, s=12.0, mixn=0., B=512):
 def _sky(res, eq, mask, dst):
     H, W = res.shape[:2]
     # gök: maskeyle tek parça yapay gece göğü; ufuk rengi sütun sütun alttaki şehirden alınır (şerit kalmaz)
-    h, w = 2048, 4096; ms = cv2.resize(mask, (w, h), interpolation=cv2.INTER_AREA); ns = cv2.resize(res, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32)
+    h, w = 2048, 4096; ms = cv2.resize(GEO if GEO is not None else mask, (w, h), interpolation=cv2.INTER_AREA); ns = cv2.resize(res, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32)
     sk = (ms > .5).sum(0)                                                     # her sütunda siluet satırı
     med = np.median(np.lib.stride_tricks.sliding_window_view(np.concatenate([sk[-75:], sk, sk[:75]]), 151), 1)
     sk = np.maximum(sk, med)                                                  # kuleler yok sayılır: genel ufuk çizgisi
@@ -251,6 +276,11 @@ def _sky(res, eq, mask, dst):
     skf = cv2.resize(sk[None].astype(np.float32), (W, 1), interpolation=cv2.INTER_LINEAR)[0] * H / h
     above = np.arange(top)[:, None] < skf[None] - 2
     tall = (mask[:top] < .5) & above
+    if os.environ.get('SKYCOLOR'):                                           # maske zaten renkle ayrıldı: kule ayrımı gerekmez
+        hole = (mask[:top] < .5) & (part.max(2) < 10) & (day.max(2) > 30)     # parçaların kapsamadığı yer (kule tepesi): gündüzden gece tonu
+        hole = cv2.GaussianBlur(cv2.dilate(hole.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(np.float32), (0, 0), 2)[..., None]
+        part = part * (1 - hole) + day * np.array([.40, .32, .28]) * hole
+        tall = tall & False
     if tall.any():
         mk = mask[:top].copy()
         for r in np.unique(np.nonzero(tall)[0]):
