@@ -133,6 +133,15 @@ def color_sky(eq, mask):
     keep = np.unique(lab2[hor + 1]); build = np.isin(lab2, keep) & (ns > 0)
     build = cv2.morphologyEx(build.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     build = cv2.erode(build, np.ones((3, 3), np.uint8))                    # kenar şeridi (yapay zekânın gök hâlesi) göğe
+    sm = cv2.resize(eq, (w, h), interpolation=cv2.INTER_AREA).astype(np.int16)
+    smooth = cv2.dilate((gr > 25).astype(np.uint8), np.ones((9, 9), np.uint8)) == 0     # 4 px içinde kenar yok (pencere/cephe değil)
+    cloud = smooth & (sm.min(2) > 120) & (sm[..., 0] - sm[..., 2] > 6)                  # düz, parlak, mavimsi beyaz = bulut/pus
+    cloud = cv2.dilate(cloud.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0             # bulut kenarındaki yumuşak geçiş de
+    cl = (cloud & (build > 0)).astype(np.uint8); cl[hor:] = 0
+    nc, lc, stc, _ = cv2.connectedComponentsWithStats(cl, connectivity=8)
+    for i in range(1, nc):
+        if stc[i, cv2.CC_STAT_AREA] >= 30: build[lc == i] = 0                             # yeterince büyük bulut parçası göğe
+    build = cv2.morphologyEx(build, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
     for r in filter(None, os.environ.get('SKYFORCE', '').split()):            # elle gök sayılacak dikdörtgenler (oran: x0,y0,x1,y1)
         x0, y0, x1, y1 = map(float, r.split(',')); build[int(y0 * h):int(y1 * h), int(x0 * w):int(x1 * w)] = 0
     sk = 1 - cv2.resize(build.astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR)
