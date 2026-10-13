@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instagram'ı Bağla — RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--mute:#6B7A90;--line:#E2E8F0;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1c2b3f;background:#F3F5F8;line-height:1.6;}
+  header{background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral));color:#fff;padding:34px 20px 30px;}
+  header .in{max-width:640px;margin:0 auto;}
+  header img{height:34px;display:block;margin-bottom:18px;}
+  header h1{margin:0;font-size:26px;font-weight:800;line-height:1.2;}
+  header p{margin:8px 0 0;opacity:.92;font-size:15px;}
+  main{max-width:640px;margin:-14px auto 60px;padding:0 16px;}
+  .card{background:#fff;border-radius:16px;padding:22px 20px;box-shadow:0 6px 24px rgba(5,10,48,.08);margin-bottom:16px;}
+  h2{font-size:17px;color:var(--navy);margin:0 0 10px;}
+  ol{padding-left:20px;margin:0;} li{margin-bottom:6px;font-size:15px;}
+  label.f{display:block;font-weight:700;font-size:14px;color:var(--navy);margin-bottom:6px;}
+  select{width:100%;font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;}
+  .kvkk{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;background:#FAFBFC;}
+  .kvkk h3{font-size:14px;margin:12px 0 4px;color:var(--navy);} .kvkk h3:first-child{margin-top:0;}
+  .kvkk p,.kvkk li{font-size:13.5px;margin:0 0 6px;}
+  .onay{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;font-size:14.5px;}
+  .onay input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--red);}
+  button{width:100%;margin-top:16px;border:0;border-radius:12px;padding:15px;font:inherit;font-size:16px;font-weight:800;
+         color:#fff;background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral));cursor:pointer;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+  .msg{text-align:center;padding:10px 0;}
+  .msg .ico{font-size:44px;line-height:1;}
+  .msg h2{font-size:20px;margin:12px 0 6px;}
+  .ok h2{color:#0f7a3d;} .err h2{color:var(--red);}
+  .muted{color:var(--mute);font-size:13px;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" onerror="this.remove()">
+  <h1>Instagram hesabını bağla</h1>
+  <p>Paylaşımların ofis haftalık raporuna otomatik sayılsın.</p>
+</div></header>
+
+<main>
+  <div id="yukleniyor" class="card msg"><p class="muted">Yükleniyor…</p></div>
+
+  <div id="form" class="hidden">
+    <div class="card">
+      <h2>Başlamadan önce</h2>
+      <ol>
+        <li>Instagram hesabın <b>Profesyonel</b> (İşletme veya İçerik Üreticisi) olmalı. Ayarlar → Hesap türü ve araçlar → Profesyonel hesaba geç.</li>
+        <li>Umut Bey'in gönderdiği <b>test kullanıcısı davetini</b> kabul et: Instagram → Ayarlar → Uygulamalar ve web siteleri → Test kullanıcısı davetleri.</li>
+        <li>Aşağıda adını seç, bilgilendirme metnini okuyup onayla ve bağlan.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <label class="f" for="danisman">Adın</label>
+      <select id="danisman"><option value="">Seç…</option></select>
+
+      <div style="height:18px"></div>
+      <label class="f">KVKK bilgilendirme ve açık rıza</label>
+      <div class="kvkk" id="kvkk">
+        <h3>Veri sorumlusu</h3>
+        <p>UMT GROUP Gayrimenkul Yatırım Danışmanlık (RE/MAX Doğuş), Kadıköy / İstanbul. İletişim: dogusremax@gmail.com</p>
+        <h3>Hangi veriler işlenir</h3>
+        <ul>
+          <li>Instagram kullanıcı adın ve hesap kimliğin.</li>
+          <li>Gönderi ve reels'lerin için: paylaşım tarihi ve türü. Açıklamasında ilan, emlak veya RE/MAX ile ilgili ifade geçen paylaşımlarda ayrıca bağlantı, açıklama, beğeni ve yorum sayısı.</li>
+          <li>Story'lerin için: <b>sadece</b> paylaşım tarihi ve türü (sayı olarak). Story görseli, videosu veya içeriği saklanmaz.</li>
+        </ul>
+        <p>Şifren hiçbir zaman istenmez ve görülmez. Mesajların, takipçilerin ve özel hesap içeriklerin okunmaz.</p>
+        <h3>Amaç</h3>
+        <p>Ofisin sosyal medya görünürlüğünü desteklemek amacıyla danışman başına haftalık paylaşım sayılarının ofis içi raporda (performans takibi) gösterilmesi.</p>
+        <h3>Saklama ve erişim</h3>
+        <p>Kayıtlar ofisin Google hesabındaki takip tablosunda tutulur, yalnızca broker (Umut Tokkuş) erişir ve 12 ay sonra otomatik silinir. Üçüncü kişilerle paylaşılmaz; teknik altyapı olarak Google ve Meta hizmetleri kullanılır.</p>
+        <h3>Haklarınız</h3>
+        <p>Rızanı istediğin an geri alabilirsin: Instagram → Ayarlar → Uygulamalar ve web siteleri bölümünden "RE/MAX Doğuş Takip" erişimini kaldırman yeterlidir, veri çekimi o an durur. Kayıtlarının silinmesini dogusremax@gmail.com adresinden isteyebilirsin. 6698 sayılı KVKK'nın 11. maddesindeki diğer hakların saklıdır.</p>
+        <p>Bağlanmak gönüllüdür; bağlanmamak hiçbir olumsuz sonuç doğurmaz.</p>
+      </div>
+      <label class="onay"><input type="checkbox" id="riza"> <span>Bilgilendirme metnini okudum. Instagram paylaşım bilgilerimin yukarıda yazılan şekilde işlenmesine <b>açık rıza</b> veriyorum.</span></label>
+
+      <button id="bagla" disabled>Instagram ile bağlan</button>
+      <p class="muted" style="text-align:center;margin:10px 0 0">Instagram giriş sayfasına yönlendirileceksin.</p>
+    </div>
+  </div>
+
+  <div id="sonuc" class="card msg hidden"></div>
+</main>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+const $ = id => document.getElementById(id);
+const goster = id => ["yukleniyor","form","sonuc"].forEach(x => $(x).classList.toggle("hidden", x !== id));
+function sonuc(tip, baslik, metin) {
+  $("sonuc").className = "card msg " + tip;
+  $("sonuc").innerHTML = `<div class="ico">${tip === "ok" ? "✅" : "⚠️"}</div><h2></h2><p></p>`;
+  $("sonuc").querySelector("h2").textContent = baslik;
+  $("sonuc").querySelector("p").textContent = metin;
+  goster("sonuc");
+}
+async function api(params) {
+  const r = await fetch(API + "?" + new URLSearchParams({ ...params, cb: Date.now() }), { redirect: "follow" });
+  return r.json();
+}
+
+(async function () {
+  const q = new URLSearchParams(location.search);
+  try {
+    if (q.get("error")) {
+      return sonuc("err", "Bağlantı yapılmadı", "Instagram izni verilmedi. İstersen sayfayı yeniden açıp tekrar deneyebilirsin.");
+    }
+    if (q.get("code")) {
+      $("yukleniyor").innerHTML = '<p class="muted">Hesabın bağlanıyor…</p>';
+      let riza = "";
+      try { riza = sessionStorage.getItem("igtRiza") || ""; } catch (e) {}
+      const j = await api({ action: "igtBagla", code: q.get("code"), state: q.get("state") || "", riza });
+      history.replaceState(null, "", location.pathname);
+      if (j.ok) return sonuc("ok", "Bağlandı, teşekkürler!", `@${j.kullanici} hesabın ${j.ad} adına ofis takibine eklendi. Başka bir şey yapmana gerek yok.`);
+      return sonuc("err", "Bağlanamadı", (j.hata || "Bilinmeyen hata") + " Sorun sürerse Umut Bey'e haber ver.");
+    }
+
+    const b = await api({ action: "igtBilgi" });
+    if (!b.hazir) return sonuc("err", "Henüz hazır değil", "Bağlantı sistemi kuruluyor. Umut Bey haber verdiğinde bu sayfayı tekrar aç.");
+    b.danismanlar.forEach(d => {
+      const o = document.createElement("option");
+      o.value = d.id; o.textContent = d.ad + (d.bagli ? "  (bağlı)" : "");
+      $("danisman").appendChild(o);
+    });
+    const kontrol = () => { $("bagla").disabled = !($("danisman").value && $("riza").checked); };
+    $("danisman").onchange = kontrol; $("riza").onchange = kontrol;
+    $("bagla").onclick = () => {
+      try { sessionStorage.setItem("igtRiza", b.rizaSurum); } catch (e) {}
+      location.href = "https://www.instagram.com/oauth/authorize?" + new URLSearchParams({
+        enable_fb_login: "0", force_authentication: "1", client_id: b.clientId, redirect_uri: b.redirectUri,
+        response_type: "code", scope: "instagram_business_basic", state: $("danisman").value
+      });
+    };
+    goster("form");
+  } catch (e) {
+    sonuc("err", "Bir sorun oluştu", "Sayfa yüklenemedi (" + e.message + "). Biraz sonra tekrar dene.");
+  }
+})();
+</script>
+</body>
+</html>
