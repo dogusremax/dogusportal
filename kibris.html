@@ -3668,7 +3668,7 @@ new MutationObserver(ciz).observe(root,{attributes:true,attributeFilter:["lang"]
 <script>
 /* ================= PROJE ALBÜMÜ ================= */
 (()=>{
-const A=[[1,"dis",640,479],[2,"dis",640,427],[3,"dis",480,640],[4,"dis",640,480],[5,"dis",640,373],[6,"dis",640,427],[7,"dis",640,480],[8,"dis",640,427],[9,"dis",640,360],[10,"dis",640,480],[11,"dis",640,479],[12,"dis",480,640],[13,"ic",640,427],[14,"ic",640,427],[15,"ic",640,427],[16,"ic",640,427],[17,"ic",640,427],[18,"ic",640,360],[19,"ic",640,427],[20,"ic",640,427],[21,"ic",640,427],[22,"ic",640,427],[23,"ic",640,427],[24,"ic",640,427],[25,"havuz",640,427],[26,"havuz",640,427],[27,"havuz",640,360],[28,"havuz",640,480],[29,"havuz",640,479],[30,"havuz",640,427],[31,"havuz",640,479],[32,"havuz",640,479],[33,"havuz",640,480],[34,"havuz",640,404],[35,"havuz",640,434],[36,"havuz",640,427],[37,"manzara",640,427],[38,"manzara",640,480],[39,"manzara",640,480],[40,"manzara",640,479],[41,"manzara",640,427],[42,"manzara",640,360],[43,"manzara",640,480],[44,"manzara",640,480],[45,"manzara",640,480],[46,"manzara",640,427],[47,"manzara",640,427],[48,"manzara",640,427]];
+const A=[[1,"dis",640,427],[2,"havuz",640,480],[3,"dis",640,479],[4,"manzara",640,427],[5,"havuz",640,427],[6,"ic",640,427],[7,"ic",640,427],[8,"ic",640,360],[9,"havuz",640,427],[10,"manzara",640,426],[11,"ic",640,427],[12,"havuz",640,427],[13,"manzara",640,480],[14,"dis",427,640],[15,"manzara",640,427],[16,"ic",640,360],[17,"ic",640,427],[18,"havuz",640,480],[19,"dis",640,480],[20,"manzara",640,427],[21,"ic",640,427],[22,"ic",640,427],[23,"ic",640,427],[24,"ic",640,480],[25,"dis",640,427],[26,"manzara",640,360],[27,"havuz",640,404],[28,"dis",640,427],[29,"dis",640,360],[30,"dis",427,640],[31,"ic",640,427],[32,"ic",640,427],[33,"manzara",640,427],[34,"manzara",640,480],[35,"dis",480,640],[36,"manzara",640,427],[37,"havuz",640,480],[38,"ic",640,360],[39,"ic",640,427],[40,"ic",640,427],[41,"ic",640,427],[42,"ic",640,360],[43,"dis",640,480],[44,"dis",640,427],[45,"dis",640,479],[46,"ic",640,427],[47,"ic",640,427],[48,"ic",640,480]];
 const TX={
  tr:{e:"Projelerden kareler",h:"Bir bakın, <em>kendinizi orada görün.</em>",l:"Birlikte çalıştığımız ve önerdiğimiz projelerden seçtiğimiz kareler: teslim edilmiş siteler, örnek daireler, havuzlar ve manzaralar.",all:"Tümü",dis:"Dış görünüm",ic:"İç mekan",havuz:"Havuz ve sosyal tesis",manzara:"Manzara",play:"Slayt gösterisi",pause:"Durdur",k:"Kuzey Kıbrıs",cq:"Bu kareler hangi projede, fiyatı ne? Size uygun olanları seçelim.",cb:"Projeleri öğren",n:"Görsellerin hakları proje firmalarına aittir.",close:"Kapat",prev:"Önceki",next:"Sonraki"},
  en:{e:"Moments from our projects",h:"Take a look, <em>picture yourself there.</em>",l:"A hand-picked selection from the projects we work with and recommend: completed sites, show homes, pools and views.",all:"All",dis:"Exteriors",ic:"Interiors",havuz:"Pools & amenities",manzara:"Views",play:"Slideshow",pause:"Pause",k:"North Cyprus",cq:"Which project is this, and what does it cost? Let us pick the right ones for you.",cb:"Ask about the projects",n:"All images belong to the developers.",close:"Close",prev:"Previous",next:"Next"},
@@ -3681,10 +3681,10 @@ const CATS=["all","dis","ic","havuz","manzara"], $=id=>document.getElementById(i
 const src=(n,k)=>"assets/kibris/album/f"+String(n).padStart(2,"0")+(k?"-k":"")+".webp";
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const T=()=>TX[document.documentElement.lang]||TX.en;
-const MIX=[]; for(let r=0;r<12;r++) for(let c=0;c<4;c++) MIX.push(A[((c+r)%4)*12+r]);
+const MIX=A; // sıra firmalar arasında dönüşümlü
 let cat="all", list=MIX;
 /* vitrin: her kategoriden en iyileri sırayla */
-const HERO=[37,25,13,29,38,14,27,40,16,2].map(n=>A[n-1]);
+const HERO=[5,4,21,10,37,7,13,23,2,1].map(n=>A[n-1]);
 const hero=$("ab-hero"), bars=$("ab-bars");
 HERO.forEach((a,i)=>{ const im=new Image(); im.alt=""; im.decoding="async"; if(i<2) im.src=src(a[0]); else im.dataset.src=src(a[0]); hero.insertBefore(im,bars); bars.appendChild(document.createElement("i")); });
 const himgs=[...hero.querySelectorAll("img")], hbars=[...bars.children];
