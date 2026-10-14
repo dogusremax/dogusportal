@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Portföy İlan Masası</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f5f6f9;--panel:#fff;--ink:#151a2d;--muted:#5d6479;--line:#dde1ea;
+  --blue:#0b3d91;--red:#d41f32;--soft:#e9eefa;--ok:#1d7a46;--warn:#a46200;--on:#fff;
+  --f-disp:"Archivo",system-ui,sans-serif;--f-body:"Source Sans 3",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1220;--panel:#171b2e;--ink:#e8ebf5;--muted:#9aa2bb;--line:#2a3049;
+  --blue:#7ea6ff;--red:#ff6b78;--soft:#1e2742;--ok:#5fd393;--warn:#f0b35a;--on:#0f1220;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);
+  padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
+.wrap{max-width:560px;margin:0 auto;display:grid;gap:16px}
+.eyebrow{font:600 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+h1{font:800 28px/1.1 var(--f-disp);margin:0}
+h2{font:700 18px/1.2 var(--f-disp);margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:16px;min-width:0}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}
+legend{font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+input,select,textarea{font:16px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:5px 10px;color:var(--ink);font-size:14px;cursor:pointer}
+.chips input{width:auto;padding:0}
+.fik{background:var(--soft);border-radius:10px;padding:12px;display:grid;gap:10px}
+.fik small,.hint{color:var(--muted);font-size:13px}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ph{position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--soft)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:99px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:1;cursor:pointer}
+.ph .n{position:absolute;left:4px;bottom:3px;font:600 11px var(--f-mono);color:#fff;text-shadow:0 1px 2px #000}
+.add{aspect-ratio:1;border-radius:6px;border:1px dashed var(--blue);color:var(--blue);display:grid;place-items:center;font:600 12px var(--f-mono);cursor:pointer;text-align:center}
+.add input{display:none}
+.btn{font:700 16px var(--f-disp);background:var(--red);color:var(--on);border:0;border-radius:10px;padding:13px;cursor:pointer;width:100%}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}
+.btn:disabled{opacity:.6}
+.count{font:12px var(--f-mono);color:var(--muted)}
+.msg{font-size:15px;padding:12px;border-radius:10px;background:var(--soft)}
+.msg.err{color:var(--red)}
+.list{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line)}
+.item b{font:700 14px var(--f-disp)}
+.item span{color:var(--muted);font-size:13px}
+.pill{font:600 11px var(--f-mono);padding:3px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;align-self:start}
+.p-hazir{color:var(--warn)}.p-onay{color:var(--blue)}.p-yayin{color:var(--ok)}.p-pasif{color:var(--muted)}
+.bar{height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="eyebrow">RE/MAX Doğuş · Sahibinden</div><h1>Portföy İlan Masası</h1></header>
+
+  <section class="card" id="girisKart">
+    <h2>Giriş</h2>
+    <label>Broker şifresi<input id="pin" type="password" inputmode="numeric" autocomplete="current-password"></label>
+    <button class="btn" id="girisBtn" type="button">Giriş</button>
+    <div class="msg err" id="girisHata" hidden></div>
+  </section>
+
+  <form class="card" id="f" autocomplete="off" hidden>
+    <fieldset>
+      <legend>İlan türü</legend>
+      <div class="row">
+        <label>İşlem<select id="islem"><option>Satılık</option><option>Kiralık</option></select></label>
+        <label>Emlak tipi<select id="tip"><option>Daire</option><option>Residence</option><option>Villa</option><option>Müstakil Ev</option><option>Dükkan</option><option>Ofis</option><option>Arsa</option></select></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Konum</legend>
+      <div class="row">
+        <label>İl / İlçe<input id="ilce" list="ilceler" value="İstanbul / Kadıköy"></label>
+        <label>Mahalle<input id="mahalle" value="Fikirtepe"></label>
+      </div>
+      <datalist id="ilceler"><option>İstanbul / Kadıköy</option><option>İstanbul / Üsküdar</option><option>İstanbul / Ataşehir</option><option>KKTC / İskele</option><option>KKTC / Girne</option><option>KKTC / Gazimağusa</option></datalist>
+      <div class="fik" id="fikbox">
+        <small>Yeni Fikirtepe projesi. Etap, blok ve teslim tarihi yenifikirtepeburada.com teslim takviminden gelir.</small>
+        <div class="row">
+          <label>Etap<select id="etap"></select></label>
+          <label>Blok<select id="blok"></select></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Daire</legend>
+      <div class="row">
+        <label>Oda<select id="oda"><option>Stüdyo (1+0)</option><option>1+1</option><option selected>2+1</option><option>3+1</option><option>4+1</option><option>5+1</option></select></label>
+        <label>Brüt m²<input id="brut" inputmode="numeric" required></label>
+      </div>
+      <div class="row">
+        <label>Net m²<input id="net" inputmode="numeric"></label>
+        <label>Bulunduğu kat<input id="kat" inputmode="numeric" required></label>
+      </div>
+      <div class="row">
+        <label>Kat sayısı<input id="katSayisi" inputmode="numeric"></label>
+        <label>Banyo<select id="banyo"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+      </div>
+      <div class="row">
+        <label>Bina yaşı<select id="yas"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5-10</option><option>11-15</option><option>16-20</option><option>21 ve üzeri</option></select></label>
+        <label>Isıtma<select id="isitma"><option>Kombi (Doğalgaz)</option><option>Merkezi</option><option>Yerden ısıtma</option><option>Klima</option><option>Yok</option></select></label>
+      </div>
+      <div class="row">
+        <label>Cephe<select id="cephe"><option>Güney</option><option>Kuzey</option><option>Doğu</option><option>Batı</option></select></label>
+        <label>Kullanım<select id="kullanim"><option>Boş</option><option>Kiracılı</option><option>Mülk sahibi oturuyor</option></select></label>
+      </div>
+      <div class="chips" aria-label="Özellikler">
+        <label><input type="checkbox" value="Site içinde" checked> Site içinde</label>
+        <label><input type="checkbox" value="Asansör" checked> Asansör</label>
+        <label><input type="checkbox" value="Kapalı otopark" checked> Kapalı otopark</label>
+        <label><input type="checkbox" value="Balkon" checked> Balkon</label>
+        <label><input type="checkbox" value="Eşyalı"> Eşyalı</label>
+        <label><input type="checkbox" value="Krediye uygun" checked> Krediye uygun</label>
+        <label><input type="checkbox" value="Takas"> Takas</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Fiyat ve tapu</legend>
+      <div class="row">
+        <label>Fiyat (TL)<input id="fiyat" inputmode="numeric" required></label>
+        <label>Aidat (TL)<input id="aidat" inputmode="numeric"></label>
+      </div>
+      <label>Tapu<select id="tapu"><option>Kat irtifaklı</option><option>Kat mülkiyetli</option><option>Hisseli</option><option>Arsa tapulu</option></select></label>
+      <label>Kendi notun (açıklamaya eklenir)<textarea id="not" rows="2" placeholder="Örn. deniz manzaralı, köşe daire"></textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>İlan metni</legend>
+      <label>Başlık <span class="count" id="bSay"></span><input id="baslik"></label>
+      <label>Açıklama<textarea id="aciklama" rows="12"></textarea></label>
+      <span class="hint">Formu değiştirdikçe kendiliğinden yazılır. Elle düzeltirsen o alan artık otomatik değişmez.</span>
+    </fieldset>
+
+    <fieldset>
+      <legend>Fotoğraflar <span class="count" id="fSay"></span></legend>
+      <div class="photos" id="photos">
+        <label class="add">+ fotoğraf<input id="dosya" type="file" accept="image/*" multiple></label>
+      </div>
+      <span class="hint">İlk fotoğraf vitrin fotoğrafı olur.</span>
+    </fieldset>
+
+    <div class="bar" id="bar" hidden><i id="barI"></i></div>
+    <div class="msg" id="sonuc" hidden></div>
+    <button class="btn" id="kaydet" type="submit">Kaydet</button>
+  </form>
+
+  <section class="card" id="listeKart" hidden>
+    <h2>Portföylerim</h2>
+    <div class="list" id="liste"><span class="hint">Yükleniyor…</span></div>
+    <a class="hint" id="tabloLink" target="_blank" rel="noopener" hidden>Tabloyu aç</a>
+  </section>
+</div>
+
+<script>
+var API="https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec";
+var PIN="";
+var ETAP={
+  "2. Etap":{C:"2026-10-05",B:"2026-10-09",A:"2026-10-12"},
+  "3. Etap 2. Kısım":{D1:"2026-09-08",E1:"2026-09-11",D2:"2026-09-14",E2:"2026-09-16",F1:"2026-09-22",A3:"2026-10-01",G1:"2026-10-09",G2:"2026-10-20",G3:"2026-10-27"},
+  "11. Etap":{E1:"2026-10-21",C1:"2026-10-27",E2:"2026-11-06",F1:"2026-11-13",D:"2026-11-24",A:"2026-11-24",C2:"2026-11-24",F2:"2026-11-24",F3:"2026-11-24",F4:"2026-11-24",F5:"2026-11-25",B:"2026-11-25"}
+};
+var fotolar=[];
+var elle={baslik:false,aciklama:false};
+function $(i){return document.getElementById(i)}
+function trTarih(s){var p=s.split("-");return p[2]+"."+p[1]+"."+p[0]}
+function para(v){var d=String(v).replace(/\D/g,"");return d?Number(d).toLocaleString("tr-TR"):""}
+
+function etapDoldur(){
+  var s=$("etap"),eski=s.value;s.innerHTML="";
+  Object.keys(ETAP).forEach(function(k){var o=document.createElement("option");o.textContent=k;s.appendChild(o)});
+  if(ETAP[eski])s.value=eski;blokDoldur();
+}
+function blokDoldur(){var b=$("blok");b.innerHTML="";Object.keys(ETAP[$("etap").value]||{}).forEach(function(k){var o=document.createElement("option");o.textContent=k;b.appendChild(o)})}
+fetch("https://yenifikirtepeburada.com/teslim-takvimi.json").then(function(r){return r.json()}).then(function(d){
+  var y={};(d.etaplar||[]).forEach(function(e){var m={};(e.bloklar||[]).forEach(function(b){m[b.b]=b.bit||b.bas});if(Object.keys(m).length)y[e.ad]=m});
+  if(Object.keys(y).length){ETAP=y;etapDoldur();uret()}
+}).catch(function(){});
+
+function fik(){return /fikirtepe/i.test($("mahalle").value)}
+function ozellikler(){return [].slice.call(document.querySelectorAll(".chips input:checked")).map(function(i){return i.value})}
+function teslim(){return fik()?(ETAP[$("etap").value]||{})[$("blok").value]||"":""}
+
+function uret(){
+  $("fikbox").hidden=!fik();
+  var islem=$("islem").value,tip=$("tip").value,oda=$("oda").value,brut=$("brut").value.trim(),net=$("net").value.trim();
+  var ilce=$("ilce").value.split("/").pop().trim(),mah=$("mahalle").value.trim();
+  var etap=$("etap").value,blok=$("blok").value,t=teslim();
+  var teslimEdildi=t&&new Date(t+"T23:59:00")<=new Date();
+  var oz=ozellikler();
+  if(!elle.baslik){
+    $("baslik").value=fik()
+      ?"RE/MAX DOĞUŞ'TAN YENİ FİKİRTEPE "+etap.toLocaleUpperCase("tr")+" "+blok+" BLOK "+islem.toLocaleUpperCase("tr")+" "+oda
+      :"RE/MAX DOĞUŞ'TAN "+mah.toLocaleUpperCase("tr")+" "+islem.toLocaleUpperCase("tr")+(brut?" "+brut+" M²":"")+" "+oda+" "+tip.toLocaleUpperCase("tr");
+  }
+  $("bSay").textContent="("+$("baslik").value.length+" karakter)";
+  if(!elle.aciklama){
+    var L=[],y=[];
+    if(fik()){
+      L.push("Yeni Fikirtepe kentsel dönüşüm projesi, "+etap+" "+blok+" Blok'ta "+islem.toLocaleLowerCase("tr")+" "+oda+" "+tip.toLocaleLowerCase("tr")+".");
+      if(t)L.push(teslimEdildi?"Blok "+trTarih(t)+" tarihinde teslim edildi, anahtar hazır.":"Bloğun teslim programı "+trTarih(t)+" tarihinde tamamlanıyor.");
+    }else L.push(ilce+" "+mah+"'de "+islem.toLocaleLowerCase("tr")+" "+oda+" "+tip.toLocaleLowerCase("tr")+".");
+    L.push("");
+    if(brut)L.push("• "+brut+" m² brüt"+(net?", "+net+" m² net":""));
+    if($("kat").value)L.push("• "+($("katSayisi").value?$("katSayisi").value+" katlı binanın "+$("kat").value+". katı, ":$("kat").value+". kat, ")+$("cephe").value.toLocaleLowerCase("tr")+" cephe");
+    L.push("• "+$("banyo").value+" banyo, "+$("isitma").value.toLocaleLowerCase("tr")+" ısıtma");
+    y=oz.filter(function(o){return o!=="Krediye uygun"&&o!=="Takas"});
+    if(y.length)L.push("• "+y.join(", "));
+    L.push("• Tapu: "+$("tapu").value.toLocaleLowerCase("tr")+((oz.indexOf("Krediye uygun")>-1&&islem==="Satılık")?", krediye uygun":""));
+    if($("aidat").value)L.push("• Aidat: "+para($("aidat").value)+" TL");
+    if(oz.indexOf("Takas")>-1)L.push("• Takasa açık");
+    if($("not").value.trim()){L.push("");L.push($("not").value.trim())}
+    L.push("");
+    if(fik())L.push("Fikirtepe'nin tüm etaplarını, teslim takvimini ve 360° vaziyet planını yenifikirtepeburada.com'da inceleyebilirsiniz.");
+    L.push("Detaylı bilgi ve randevu için RE/MAX Doğuş'u arayın.");
+    $("aciklama").value=L.join("\n");
+  }
+}
+
+function kucult(file){
+  return new Promise(function(ok,no){
+    var r=new FileReader();
+    r.onload=function(){var img=new Image();img.onload=function(){
+      var M=1920,w=img.width,h=img.height,k=Math.min(1,M/Math.max(w,h));
+      var c=document.createElement("canvas");c.width=Math.round(w*k);c.height=Math.round(h*k);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      ok(c.toDataURL("image/jpeg",0.86));
+    };img.onerror=no;img.src=r.result};
+    r.onerror=no;r.readAsDataURL(file);
+  });
+}
+function fotoCiz(){
+  var p=$("photos");[].slice.call(p.querySelectorAll(".ph")).forEach(function(n){n.remove()});
+  var add=p.querySelector(".add");
+  fotolar.forEach(function(src,i){
+    var d=document.createElement("div");d.className="ph";
+    d.innerHTML='<img alt=""><span class="n">'+(i+1)+'</span><button type="button" aria-label="Kaldır">×</button>';
+    d.querySelector("img").src=src;
+    d.querySelector("button").onclick=function(){fotolar.splice(i,1);fotoCiz()};
+    p.insertBefore(d,add);
+  });
+  $("fSay").textContent=fotolar.length?"("+fotolar.length+")":"";
+}
+$("dosya").addEventListener("change",function(e){
+  var fs=[].slice.call(e.target.files);e.target.value="";
+  fs.reduce(function(pr,f){return pr.then(function(){return kucult(f).then(function(s){fotolar.push(s);fotoCiz()})})},Promise.resolve());
+});
+
+function post(o){
+  var b=new URLSearchParams();Object.keys(o).forEach(function(k){b.append(k,o[k])});b.append("pin",PIN);
+  return fetch(API,{method:"POST",body:b,redirect:"follow"}).then(function(r){return r.json()});
+}
+function durumSinif(d){return /yay/i.test(d)?"p-yayin":/onay|girildi/i.test(d)?"p-onay":/pasif/i.test(d)?"p-pasif":"p-hazir"}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function liste(){
+  return fetch(API+"?action=portfoyListe&pin="+encodeURIComponent(PIN),{redirect:"follow"}).then(function(r){return r.json()}).then(function(d){
+    if(d.status!=="ok")throw new Error(d.message||"hata");
+    var l=$("liste");
+    if(!d.kayitlar.length)l.innerHTML='<span class="hint">Henüz portföy yok. Yukarıdaki formla ilkini ekle.</span>';
+    else l.innerHTML=d.kayitlar.map(function(k){
+      return '<div class="item"><b>'+esc(k["No"])+' · '+esc(k["Mahalle"])+' '+esc(k["Oda"])+'</b><span class="pill '+durumSinif(k["Durum"])+'">'+esc(k["Durum"])+'</span>'+
+        '<span>'+esc(k["İşlem"])+' · '+esc(para(k["Fiyat"]))+' TL · '+esc(k["Foto Sayısı"])+' foto'+(k["Sahibinden No"]?' · ilan '+esc(k["Sahibinden No"]):'')+'</span><span>'+esc(k["Kayıt Tarihi"])+'</span></div>';
+    }).join("");
+    if(d.tablo){$("tabloLink").href=d.tablo;$("tabloLink").hidden=false}
+    return d;
+  });
+}
+
+function giris(){
+  PIN=$("pin").value.trim();if(!PIN)return;
+  $("girisBtn").disabled=true;$("girisHata").hidden=true;
+  liste().then(function(){
+    try{localStorage.setItem("portfoyPin",PIN)}catch(e){}
+    $("girisKart").hidden=true;$("f").hidden=false;$("listeKart").hidden=false;
+  }).catch(function(e){
+    $("girisHata").textContent=/şifre/i.test(e.message)?"Şifre hatalı.":"Bağlanılamadı, tekrar dene.";$("girisHata").hidden=false;
+    try{localStorage.removeItem("portfoyPin")}catch(x){}
+  }).then(function(){$("girisBtn").disabled=false});
+}
+$("girisBtn").onclick=giris;
+$("pin").addEventListener("keydown",function(e){if(e.key==="Enter")giris()});
+
+$("f").addEventListener("input",function(e){
+  if(e.target.id==="baslik")elle.baslik=true;
+  if(e.target.id==="aciklama")elle.aciklama=true;
+  if(e.target.id==="fiyat"||e.target.id==="aidat"){e.target.value=para(e.target.value)}
+  if(e.target.id!=="dosya")uret();
+});
+$("f").addEventListener("change",function(e){if(e.target.id==="etap")blokDoldur();if(e.target.id!=="dosya")uret()});
+
+$("f").addEventListener("submit",function(e){
+  e.preventDefault();
+  var s=$("sonuc"),btn=$("kaydet");
+  if(!$("brut").value||!$("kat").value||!$("fiyat").value){s.className="msg err";s.textContent="Brüt m², kat ve fiyat zorunlu.";s.hidden=false;return}
+  var kayit={islem:$("islem").value,tip:$("tip").value,ilce:$("ilce").value,mahalle:$("mahalle").value,
+    etap:fik()?$("etap").value:"",blok:fik()?$("blok").value:"",teslim:teslim()?trTarih(teslim()):"",
+    oda:$("oda").value,brut:$("brut").value,net:$("net").value,kat:$("kat").value,katSayisi:$("katSayisi").value,
+    banyo:$("banyo").value,yas:$("yas").value,isitma:$("isitma").value,cephe:$("cephe").value,kullanim:$("kullanim").value,
+    ozellikler:ozellikler(),fiyat:$("fiyat").value.replace(/\D/g,""),aidat:$("aidat").value.replace(/\D/g,""),tapu:$("tapu").value,not:$("not").value,
+    baslik:$("baslik").value,aciklama:$("aciklama").value};
+  btn.disabled=true;s.hidden=true;$("bar").hidden=false;$("barI").style.width="5%";
+  var no;
+  post({action:"portfoyKaydet",kayit:JSON.stringify(kayit)}).then(function(d){
+    if(d.status!=="ok")throw new Error(d.message);
+    no=d.no;var i=0,top=fotolar.length;
+    return fotolar.reduce(function(pr,src,j){return pr.then(function(){
+      return post({action:"portfoyFoto",no:no,ad:("0"+(j+1)).slice(-2)+".jpg",mime:"image/jpeg",veri:src.split(",")[1]}).then(function(r){
+        if(r.status!=="ok")throw new Error(r.message);i++;$("barI").style.width=(5+95*i/top)+"%";
+      });
+    })},Promise.resolve());
+  }).then(function(){
+    $("barI").style.width="100%";
+    s.className="msg";s.innerHTML="<b>"+no+" kaydedildi.</b> İlanı sahibinden'e girmem için Claude'a “"+no+" gir” yazman yeterli.";s.hidden=false;
+    fotolar=[];fotoCiz();elle={baslik:false,aciklama:false};
+    ["brut","net","kat","katSayisi","fiyat","aidat","not"].forEach(function(id){$(id).value=""});uret();
+    s.scrollIntoView({behavior:"smooth",block:"center"});
+    return liste();
+  }).catch(function(err){
+    s.className="msg err";s.textContent=(no?no+" kaydedildi ama fotoğraf yüklenemedi: ":"Kaydedilemedi: ")+(err.message||"bağlantı hatası");s.hidden=false;
+  }).then(function(){btn.disabled=false;setTimeout(function(){$("bar").hidden=true},800)});
+});
+
+etapDoldur();uret();
+try{var kay=localStorage.getItem("portfoyPin");if(kay){$("pin").value=kay;giris()}}catch(e){}
+</script>
+</body>
+</html>
