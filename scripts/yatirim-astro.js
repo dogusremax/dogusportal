@@ -33,7 +33,7 @@ function istem(gok, tema, gecmis) {
     const l = gecmis.map(g => g.burclar?.[k]).filter(Boolean).map(y => `${y.baslik} / ${y.yorum} / odak: ${y.odak}`);
     return l.length ? `${ad}: ${l.join(' | ')}` : '';
   }).filter(Boolean).join('\n') : '';
-  return `RE/MAX Doğuş (İstanbul Kadıköy, Fikirtepe'de kentsel dönüşüm bölgesinde daire ve iş yeri alım-satımı ve kiralaması yapan emlak ofisi) Instagram hesabı için her Pazartesi paylaşılan "Bu haftanın yatırım astrolojisi" karuselinin metinlerini yaz.
+  return `RE/MAX Doğuş emlak ofisinin Instagram hesabı için her Pazartesi paylaşılan "Bu haftanın yatırım astrolojisi" karuselinin metinlerini yaz.
 
 Bu haftanın GERÇEK gök olayları (Türkiye tarihleriyle; tarih ve olay uydurma, yalnızca bunları kullan):
 ${gok.olaylar.length ? gok.olaylar.map(o => '- ' + o).join('\n') : '- Bu hafta öne çıkan bir burç geçişi, retro başlangıcı/bitişi ya da Yeni Ay/Dolunay yok.'}
@@ -45,7 +45,7 @@ Kurallar:
 - 12 burcun her biri için: "baslik" (bu haftanın özü, 3-6 kelime, en fazla 34 karakter), "yorum" (2 cümle, en fazla 210 karakter), "odak" (1-3 kelimelik yatırım odağı, ör. "Kira sözleşmesi", "Portföy gözden geçirme"; en fazla 22 karakter), "yildiz" (bu haftanın yatırım enerjisi, 3 ile 5 arası tam sayı).
 - Her yorum burcun karakterinden ve yukarıdaki gerçek gök olaylarından en az birinden yola çıksın, konuyu gayrimenkul ve birikime bağlasın (ev bakmak, kira, pazarlık, tapu/evrak, kentsel dönüşüm, değerleme, birikim planı gibi).
 - Eğlenceli, sıcak, umut veren bir dil. Okura "sen" diye seslen. Korku, kriz, kayıp gibi olumsuz ifade kullanma.
-- YASAK: kesin kazanç, getiri ya da fiyat artışı vaadi; "al", "sat", "hemen yatırım yap" gibi doğrudan yatırım tavsiyesi; yüzde, fiyat ve para miktarı (gök olayının tarihini yazabilirsin); faiz, döviz, altın, borsa, kripto; villa, yazlık, müstakil ev, arsa, tarla; emoji ve hashtag.
+- YASAK: kesin kazanç, getiri ya da fiyat artışı vaadi; "al", "sat", "hemen yatırım yap" gibi doğrudan yatırım tavsiyesi; yüzde, fiyat ve para miktarı (gök olayının tarihini yazabilirsin); faiz, döviz, altın, borsa, kripto; emoji ve hashtag.
 - Merkür retrosunu "sözleşmeyi iki kez oku" gibi hafif bir dikkat notu olarak anlatabilirsin ama korkutma.
 - On iki burcun cümleleri birbirine benzemesin; aynı kalıpla başlamasın. Türkçe imla ve dilbilgisi kusursuz olsun.
 - Ayrıca "ozet": haftanın gökyüzünü yatırım diliyle anlatan tek cümle (en fazla 170 karakter, gönderi açıklamasında kullanılacak).
@@ -54,7 +54,7 @@ Sadece JSON döndür:
 {"ozet":"","burclar":{${BURCLAR.map(([k]) => `"${k}":{"baslik":"","yorum":"","odak":"","yildiz":4}`).join(',')}}}`;
 }
 
-const YASAK = /(%|₺|(?<!\p{L})TL(?!\p{L})|garanti|kesin kazan|kripto|borsa|bitcoin|(?<!\p{L})altın(?!d)|döviz|(?<!\p{L})faiz|villa|yazlık|müstakil|(?<!\p{L})arsa|(?<!\p{L})tarla|#|[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}])/iu;
+const YASAK = /(%|₺|(?<!\p{L})TL(?!\p{L})|garanti|kesin kazan|kripto|borsa|bitcoin|(?<!\p{L})altın(?!d)|döviz|(?<!\p{L})faiz|#|[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}])/iu;
 function dogrula(j) {
   const sorun = [];
   const temiz = s => String(s || '').replace(/\s+/g, ' ').trim();
