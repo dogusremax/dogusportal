@@ -5,9 +5,12 @@ const fs = require('fs');
 const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID;
 if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atlandı.'); process.exit(0); }
 const G = 'https://graph.facebook.com/v23.0', DIR = 'yatirim-astroloji';
+// STORY_MOD=elle (varsayılan): story otomatik atılmaz; görsel + gönderi linki Umut'a mail olarak gider,
+// o da link çıkartmasını ekleyip elle paylaşır (Graph API çıkartma desteklemiyor). STORY_MOD=otomatik: linksiz story atılır.
+const STORY_MOD = process.env.STORY_MOD || 'elle';
 const m = JSON.parse(fs.readFileSync(DIR + '/.media', 'utf8'));
 const isaret = f => { try { return fs.readFileSync(`${DIR}/${f}`, 'utf8').trim() === m.hafta; } catch (e) { return false; } };
-if (isaret('.pub') && (!m.story || isaret('.pub-story'))) { console.log('Bu hafta zaten paylaşılmış:', m.hafta); process.exit(0); }
+if (isaret('.pub') && (!m.story || STORY_MOD !== 'otomatik' || isaret('.pub-story'))) { console.log('Bu hafta zaten paylaşılmış:', m.hafta); process.exit(0); }
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function post(p, body) {
@@ -30,7 +33,20 @@ async function yayindaMi(url) {
 
 (async () => {
   if (!isaret('.pub')) await karusel(); else console.log('Karusel zaten paylaşılmış.');
-  if (m.story && !isaret('.pub-story')) {
+  if (m.story && STORY_MOD !== 'otomatik') {
+    let link = ''; try { link = fs.readFileSync(DIR + '/.permalink', 'utf8').trim(); } catch (e) {}
+    fs.writeFileSync(DIR + '/story-mail.txt',
+`Bu haftanın yatırım astrolojisi karuseli @remaxdogus'ta yayınlandı.
+
+Story görseli (telefonda açıp kaydet):
+${m.story}
+
+Story'ye link çıkartması olarak eklenecek gönderi linki:
+${link || 'https://www.instagram.com/remaxdogus/'}
+
+Instagram'da: Story ekle > görseli seç > çıkartma > Link > yukarıdaki linki yapıştır.`);
+    console.log('Story maili hazırlandı (elle paylaşılacak).');
+  } else if (m.story && !isaret('.pub-story')) {
     await wait(5000);   // story karuselden sonra düşsün
     await yayindaMi(m.story);
     const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: m.story });
@@ -54,4 +70,8 @@ async function karusel() {
   const pub = await post(`${UID}/media_publish`, { creation_id: kap.id });
   fs.writeFileSync(DIR + '/.pub', m.hafta);
   console.log('✓ Karusel yayınlandı:', pub.id);
+  try {
+    const p = await (await fetch(`${G}/${pub.id}?fields=permalink&access_token=${TOKEN}`)).json();
+    if (p.permalink) fs.writeFileSync(DIR + '/.permalink', p.permalink);
+  } catch (e) {}
 }
