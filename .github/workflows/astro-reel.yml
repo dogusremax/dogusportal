@@ -59,7 +59,7 @@ jobs:
         if: steps.karar.outputs.hazir != '1'
         run: |
           sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
-          pip -q install edge-tts faster-whisper==1.1.1
+          pip -q install edge-tts faster-whisper==1.1.1 requests
           node scripts/astro-reel.js ses
           ffmpeg -y -loglevel error -i reel-ses.mp3 -ar 16000 -ac 1 reel-ses.wav
       - name: SadTalker önbelleği
