@@ -1,5 +1,5 @@
 name: Haftalık yatırım astrolojisi karuseli
-# Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel → @remaxdogus (10:00 TR).
+# Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel + gönderiye yönlendiren story → @remaxdogus (10:00 TR).
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
 on:
   schedule:
@@ -76,7 +76,7 @@ jobs:
         run: |
           set -o pipefail
           ST=0; node scripts/yatirim-astro-ig.js 2>&1 | tee yatirim-astroloji/ig-log.txt || ST=$?
-          git add yatirim-astroloji/ig-log.txt yatirim-astroloji/.pub 2>/dev/null || true
+          for f in ig-log.txt .pub .pub-story; do [ -f yatirim-astroloji/$f ] && git add yatirim-astroloji/$f; done
           git diff --cached --quiet || (git commit -m "Yatırım astrolojisi: ig log" && git pull --rebase && git push)
           exit $ST
       - name: Paylaşım hatasını bildir

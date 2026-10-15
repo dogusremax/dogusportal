@@ -1,13 +1,13 @@
 // Haftalık yatırım astrolojisi karuselini @remaxdogus'a paylaşır (yatirim-astroloji/.media).
-// Aynı hafta iki kez paylaşılmaz (yatirim-astroloji/.pub).
+// Önce karusel, ardından gönderiye yönlendiren story. Her parça ayrı işaretlenir (.pub / .pub-story):
+// biri hata verirse tekrar denemede yayınlanmış olan yeniden atılmaz.
 const fs = require('fs');
 const TOKEN = process.env.IG_TOKEN, UID = process.env.IG_USER_ID;
 if (!TOKEN || !UID) { console.log('IG_TOKEN / IG_USER_ID yok, paylaşım atlandı.'); process.exit(0); }
 const G = 'https://graph.facebook.com/v23.0', DIR = 'yatirim-astroloji';
 const m = JSON.parse(fs.readFileSync(DIR + '/.media', 'utf8'));
-try {
-  if (fs.readFileSync(DIR + '/.pub', 'utf8').trim() === m.hafta) { console.log('Bu hafta zaten paylaşılmış:', m.hafta); process.exit(0); }
-} catch (e) {}
+const isaret = f => { try { return fs.readFileSync(`${DIR}/${f}`, 'utf8').trim() === m.hafta; } catch (e) { return false; } };
+if (isaret('.pub') && (!m.story || isaret('.pub-story'))) { console.log('Bu hafta zaten paylaşılmış:', m.hafta); process.exit(0); }
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function post(p, body) {
@@ -29,6 +29,19 @@ async function yayindaMi(url) {
 }
 
 (async () => {
+  if (!isaret('.pub')) await karusel(); else console.log('Karusel zaten paylaşılmış.');
+  if (m.story && !isaret('.pub-story')) {
+    await wait(5000);   // story karuselden sonra düşsün
+    await yayindaMi(m.story);
+    const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: m.story });
+    await hazirBekle(st.id);
+    const p = await post(`${UID}/media_publish`, { creation_id: st.id });
+    fs.writeFileSync(DIR + '/.pub-story', m.hafta);
+    console.log('✓ Story yayınlandı:', p.id);
+  }
+})().catch(e => { console.error('IG paylaşım hatası:', e.message); process.exit(1); });
+
+async function karusel() {
   for (const u of m.feed) await yayindaMi(u);
   const cocuklar = [];
   for (const u of m.feed) {
@@ -41,4 +54,4 @@ async function yayindaMi(url) {
   const pub = await post(`${UID}/media_publish`, { creation_id: kap.id });
   fs.writeFileSync(DIR + '/.pub', m.hafta);
   console.log('✓ Karusel yayınlandı:', pub.id);
-})().catch(e => { console.error('IG paylaşım hatası:', e.message); process.exit(1); });
+}
