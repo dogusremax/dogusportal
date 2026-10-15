@@ -1,6 +1,6 @@
 name: Haftalık yatırım astrolojisi karuseli
 # Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel → @remaxdogus (10:00 TR);
-# gönderiye yönlendiren story görseli + gönderi linki Umut'a mail gider, link çıkartmasıyla elle paylaşılır.
+# ardından gönderiye yönlendiren (linksiz) story otomatik atılır.
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
 on:
   schedule:
@@ -73,7 +73,7 @@ jobs:
         if: steps.karar.outputs.paylas == '1'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          STORY_MOD: elle   # otomatik yapılırsa story linksiz atılır
+          STORY_MOD: otomatik   # Umut onayı 2026-10-15: story linksiz otomatik; "elle" yapılırsa görsel + link maille gelir
         shell: bash
         run: |
           set -o pipefail
