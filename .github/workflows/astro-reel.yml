@@ -1,7 +1,9 @@
 name: Haftalık astrolog Reel'i
 # Her Pazartesi karuselden sonra: astrolog (assets/astrolog.png) haftanın yorumunu sesli anlatır → 9:16 Reel.
-# Ses: Umut yatirim-astroloji/<hafta>-ses.mp3 yüklediyse o (ör. ElevenLabs sitesinden), yoksa ücretsiz Gemini TTS / Edge TTS. Dudak senkronu: SadTalker (açık kaynak);
-# başarısız olursa görsel hafif yakınlaşmayla kullanılır. Altyazı + logo + "yapay zeka ile oluşturuldu" notu eklenir.
+# Ses: Umut yatirim-astroloji/<hafta>-ses.mp3 yüklediyse o (ör. ElevenLabs sitesinden), yoksa ücretsiz Gemini TTS / Edge TTS.
+# Yüz: SadTalker sesten baş hareketi + göz kırpma + dudak üretir (256 px yüz), LivePortrait bu hareketi tam görsele aktarır
+# (8 paralel parça, hepsi aynı referans kareyle → parça geçişinde sıçrama olmaz). Başarısız olursa görsel hafif yakınlaşmayla kullanılır.
+# Altyazı + logo + "yapay zeka ile oluşturuldu" notu eklenir.
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli-reel varken (Umut ilk örneği onaylayınca eklenir); yoksa video Umut'a maille onaya gider.
 on:
   schedule:
@@ -15,19 +17,24 @@ on:
         options: [onizle, yeniden, yayinla]
   push:
     branches: [claude/project-thread-h0cmgl]   # örnek video denemesi; birleştirmeden önce kaldırılır
-    paths: [.github/workflows/astro-reel.yml, scripts/astro-reel.js, 'yatirim-astroloji/*-ses.mp3']
+    paths: [.github/workflows/astro-reel.yml]
 permissions:
   contents: write
 concurrency:
   group: astro-reel
   cancel-in-progress: false
 jobs:
-  reel:
+  hazirla:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 180
     env:
       ISLEM: ${{ inputs.islem || (github.event_name == 'push' && 'onizle') || 'zamanli' }}
       GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+    outputs:
+      hafta: ${{ steps.karar.outputs.hafta }}
+      paylas: ${{ steps.karar.outputs.paylas }}
+      hazir: ${{ steps.karar.outputs.hazir }}
+      surucu: ${{ steps.surucu.outcome }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -62,83 +69,175 @@ jobs:
           pip -q install edge-tts faster-whisper==1.1.1 requests
           node scripts/astro-reel.js ses
           ffmpeg -y -loglevel error -i reel-ses.mp3 -ar 16000 -ac 1 reel-ses.wav
-      - name: SadTalker önbelleği
+      - uses: actions/cache/restore@v4
         if: steps.karar.outputs.hazir != '1'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/pip
-            st-modeller
-          key: sadtalker-v1
-      - name: Dudak senkronu (SadTalker, CPU)
+        with: { path: st-modeller, key: st-modeller-v1 }
+      - name: Yüz hareketi (SadTalker, baş + göz + dudak)
+        id: surucu
         if: steps.karar.outputs.hazir != '1'
         continue-on-error: true
-        timeout-minutes: 200
+        timeout-minutes: 150
         run: |
+          python -m venv /tmp/st && . /tmp/st/bin/activate && pip -q install -U pip "setuptools<70" wheel
           git clone -q --depth 1 https://github.com/OpenTalker/SadTalker.git st
-          pip -q install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu
+          pip -q install torch==2.0.1+cpu torchvision==0.15.2+cpu torchaudio==2.0.2+cpu --extra-index-url https://download.pytorch.org/whl/cpu
           pip -q install numpy==1.23.4 face_alignment==1.3.5 imageio==2.19.3 imageio-ffmpeg==0.4.7 librosa==0.9.2 numba resampy==0.3.1 \
             pydub==0.25.1 scipy==1.10.1 kornia==0.6.8 tqdm yacs==0.1.8 pyyaml joblib==1.1.0 scikit-image==0.19.3 basicsr==1.4.2 \
             facexlib==0.3.0 gfpgan av safetensors
           if [ ! -f st-modeller/checkpoints/SadTalker_V0.0.2_256.safetensors ]; then (cd st && bash scripts/download_models.sh) && mkdir -p st-modeller && mv st/checkpoints st/gfpgan st-modeller/; fi
           ln -sfn ../st-modeller/checkpoints st/checkpoints; ln -sfn ../st-modeller/gfpgan st/gfpgan
-          cd st && python inference.py --driven_audio ../reel-ses.wav --source_image ../assets/astrolog.png \
-            --result_dir ../st-cikti --still --preprocess full --size 256 --expression_scale 1.4 --enhancer gfpgan --cpu
-          cp "$(find ../st-cikti -name '*.mp4' | head -1)" ../yuz.mp4
-      - name: Videoyu birleştir (9:16)
+          cd st && S=$(date +%s)
+          python inference.py --driven_audio ../reel-ses.wav --source_image ../assets/astrolog.png --result_dir ../st-cikti \
+            --preprocess crop --size 256 --pose_style 6 --expression_scale 1.3 --cpu
+          echo "SadTalker: $(( $(date +%s) - S )) sn"
+          cp "$(find ../st-cikti -name '*.mp4' | head -1)" ../surucu.mp4
+      - uses: actions/cache/save@v4
+        if: steps.karar.outputs.hazir != '1' && hashFiles('st-modeller/checkpoints/*.safetensors') != ''
+        continue-on-error: true
+        with: { path: st-modeller, key: st-modeller-v1 }
+      - uses: actions/upload-artifact@v4
         if: steps.karar.outputs.hazir != '1'
+        with:
+          name: hazirlik
+          path: |
+            reel-ses.mp3
+            reel-zaman.json
+            yatirim-astroloji/*-reel.json
+            surucu.mp4
+          retention-days: 3
+
+  # Hareketi tam görsele aktarma CPU'da yavaş (9 sn ≈ 30 dk): 8 parçaya bölünüp paralel çalışır.
+  # Her parçanın başına sürücünün ilk karesi eklenir, böylece hepsi aynı referansa göre hareket eder; o kare sonra atılır.
+  aktar:
+    needs: hazirla
+    if: needs.hazirla.outputs.hazir != '1' && needs.hazirla.outputs.surucu == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        parca: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: assets }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.10" }
+      - uses: actions/download-artifact@v4
+        with: { name: hazirlik }
+      - uses: actions/cache/restore@v4
+        with: { path: lp-agirlik, key: lp-agirlik-v1 }
+      - name: LivePortrait kur
         run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
+          python -m venv /tmp/lp && . /tmp/lp/bin/activate && pip -q install -U pip "setuptools<70" wheel
+          git clone -q --depth 1 https://github.com/KwaiVGI/LivePortrait.git lp
+          pip -q install torch==2.3.0+cpu torchvision==0.18.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+          cd lp
+          if [ -f requirements_base.txt ]; then pip -q install -r requirements_base.txt; else grep -viE "onnxruntime-gpu|^torch" requirements.txt > r.txt; pip -q install -r r.txt; fi
+          pip -q install onnxruntime huggingface_hub requests
+          if [ ! -d ../lp-agirlik/liveportrait ]; then python -c "from huggingface_hub import snapshot_download as d; d('KwaiVGI/LivePortrait', local_dir='../lp-agirlik', ignore_patterns=['*.git*','README.md','docs/*'])"; fi
+          rm -rf pretrained_weights; ln -sfn ../lp-agirlik pretrained_weights
+          python inference.py --help > yardim.txt
+      - name: Parçayı aktar
+        run: |
+          P=${{ matrix.parca }}
+          N=$(ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of csv=p=0 surucu.mp4)
+          B=$(( (N + 7) / 8 )); BAS=$(( P * B )); SON=$(( BAS + B - 1 ))
+          [ $BAS -ge $N ] && { echo "boş parça"; exit 0; }
+          echo "kare $BAS-$SON / $N"
+          if [ $P -eq 0 ]; then SEC="between(n\,$BAS\,$SON)"; else SEC="eq(n\,0)+between(n\,$BAS\,$SON)"; fi
+          ffmpeg -y -loglevel error -i surucu.mp4 -an -vf "select='$SEC'" -vsync 0 -r 25 -c:v libx264 -crf 10 -pix_fmt yuv420p parca.mp4
+          . /tmp/lp/bin/activate; cd lp
+          B1=$(grep -oE -- '--flag[-_]force[-_]cpu' yardim.txt | head -1)
+          B2=$(grep -oE -- '--no[-_]flag[-_]use[-_]half[-_]precision' yardim.txt | head -1)
+          B3=$(grep -oE -- '--source[-_]max[-_]dim' yardim.txt | head -1)
+          [ -n "$B2" ] || { echo "tam hassasiyet bayrağı yok"; exit 1; }
+          S=$(date +%s)
+          python inference.py -s ../assets/astrolog.png -d ../parca.mp4 -o ../lp-cikti $B1 $B2 ${B3:+$B3 1536}
+          echo "LivePortrait: $(( $(date +%s) - S )) sn"
+          cd ..; V=$(find lp-cikti -name '*.mp4' ! -name '*concat*' | head -1)
+          if [ $P -eq 0 ]; then KES="null"; else KES="select='gte(n\,1)',setpts=N/25/TB"; fi
+          ffmpeg -y -loglevel error -i "$V" -an -vf "$KES" -r 25 -c:v libx264 -crf 14 -pix_fmt yuv420p yuz-$P.mp4
+          ffprobe -v error -count_frames -show_entries stream=nb_read_frames,width,height -of csv=p=0 yuz-$P.mp4
+      - uses: actions/upload-artifact@v4
+        with: { name: "yuz-${{ matrix.parca }}", path: "yuz-*.mp4", retention-days: 3, if-no-files-found: ignore }
+
+  reel:
+    needs: [hazirla, aktar]
+    if: always() && needs.hazirla.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      ISLEM: ${{ inputs.islem || (github.event_name == 'push' && 'onizle') || 'zamanli' }}
+      H: ${{ needs.hazirla.outputs.hafta }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/download-artifact@v4
+        if: needs.hazirla.outputs.hazir != '1'
+        with: { name: hazirlik }
+      - uses: actions/download-artifact@v4
+        if: needs.hazirla.outputs.hazir != '1' && needs.aktar.result == 'success'
+        with: { pattern: "yuz-*", merge-multiple: true }
+      - name: Videoyu birleştir (9:16)
+        if: needs.hazirla.outputs.hazir != '1'
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
+          if ls yuz-*.mp4 >/dev/null 2>&1; then
+            ls yuz-*.mp4 | sort -t- -k2 -n | sed "s/.*/file '&'/" > liste.txt; cat liste.txt
+            ffmpeg -y -loglevel error -f concat -safe 0 -i liste.txt -c copy yuz.mp4
+            ffprobe -v error -count_frames -show_entries stream=nb_read_frames -of csv=p=0 yuz.mp4
+          fi
           mkdir -p fontlar
           U=$(curl -sS "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700" | grep -o 'https://[^)]*\.ttf' | head -1)
           curl -sSL -o fontlar/PlusJakartaSans.ttf "$U"
           node scripts/astro-reel.js altyazi
-          H=${{ steps.karar.outputs.hafta }}
           D=$(ffprobe -v error -show_entries format=duration -of csv=p=0 reel-ses.mp3)
           T=$(node -p "($D+0.8).toFixed(2)")
           if [ -f yuz.mp4 ]; then
-            echo "Dudak senkronlu video kullanılıyor"
-            GIRIS="-i yuz.mp4"; TABAN="[0:v]scale=-2:1920,crop=1080:1920:iw-1080:0,fps=30,tpad=stop_mode=clone:stop_duration=2[b]"
+            echo "Hareketli astrolog videosu kullanılıyor"
+            GIRIS="-i yuz.mp4"; TABAN="[0:v]scale=-2:1920:flags=lanczos,crop=1080:1920:iw-1080:0,fps=30,tpad=stop_mode=clone:stop_duration=2[b]"
           else
-            echo "SadTalker yok: görsel yakınlaşmayla kullanılıyor"
+            echo "Hareketli video yok: görsel yakınlaşmayla kullanılıyor"
             GIRIS="-loop 1 -framerate 30 -t $T -i assets/astrolog.png"
             TABAN="[0:v]scale=-2:1920,crop=1080:1920:iw-1080:0,scale=2160:3840,zoompan=z='1+0.06*on/($T*30)':x='iw/2-(iw/zoom/2)':y='ih*0.28-(ih/zoom*0.28)':d=1:s=1080x1920:fps=30[b]"
           fi
           ffmpeg -y -loglevel error $GIRIS -i assets/dogus-logo.png -i reel-ses.mp3 -filter_complex \
             "$TABAN;[1]scale=267:-1[l];[b][l]overlay=W-w-82:77[bl];[bl]ass=reel.ass:fontsdir=fontlar,drawtext=fontfile=fontlar/PlusJakartaSans.ttf:text='Yapay zeka ile oluşturulmuştur':fontsize=26:fontcolor=white@0.8:x=48:y=96[v]" \
-            -map "[v]" -map 2:a -t $T -c:v libx264 -profile:v high -pix_fmt yuv420p -preset medium -crf 25 -r 30 -c:a aac -b:a 128k -ar 44100 -movflags +faststart \
+            -map "[v]" -map 2:a -t $T -c:v libx264 -profile:v high -pix_fmt yuv420p -preset medium -crf 23 -r 30 -c:a aac -b:a 128k -ar 44100 -movflags +faststart \
             "yatirim-astroloji/$H-reel.mp4"
           ffmpeg -y -loglevel error -ss 1.5 -i "yatirim-astroloji/$H-reel.mp4" -frames:v 1 -q:v 3 "yatirim-astroloji/$H-reel-kapak.jpg"
           node scripts/astro-reel.js medya
           ls -la yatirim-astroloji/$H-reel*
       - name: Kaydet
-        if: steps.karar.outputs.hazir != '1'
+        if: needs.hazirla.outputs.hazir != '1'
         run: |
           git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
           git add yatirim-astroloji/*-reel.json yatirim-astroloji/*-reel.mp4 yatirim-astroloji/*-reel-kapak.jpg yatirim-astroloji/.media-reel
-          git diff --cached --quiet || (git commit -m "Astrolog Reel'i: ${{ steps.karar.outputs.hafta }}" && git pull --rebase && git push)
+          git diff --cached --quiet || (git commit -m "Astrolog Reel'i: $H" && git pull --rebase && git push)
       - name: Onay maili (otomatik paylaşım kapalıyken)
-        if: steps.karar.outputs.paylas != '1' && github.event_name != 'push'
+        if: needs.hazirla.outputs.paylas != '1' && github.event_name != 'push'
         run: |
-          H=${{ steps.karar.outputs.hafta }}
           { echo "Bu haftanın astrolog Reel'i hazır, henüz paylaşılmadı."; echo
             echo "Video: https://dogusportal.com/yatirim-astroloji/$H-reel.mp4?cb=$(date +%s)"; echo
             echo "Paylaşmak için Claude'a 'reel yayınla' yazmanız yeterli."; } > reel-mail.txt
           sleep 90   # GitHub Pages yayına alsın
           node scripts/bildir.js "Astrolog Reel'i onayınızı bekliyor" reel-mail.txt
       - name: 11:00'i bekle
-        if: steps.karar.outputs.paylas == '1' && env.ISLEM == 'zamanli'
+        if: needs.hazirla.outputs.paylas == '1' && env.ISLEM == 'zamanli'
         run: |
           KALAN=$(( $(date -u -d 'today 08:00' +%s) - $(date -u +%s) ))
           if [ $KALAN -gt 0 ]; then echo "$KALAN sn bekleniyor"; sleep $KALAN; fi
       - name: Güncel IG token'ı al
-        if: steps.karar.outputs.paylas == '1'
+        if: needs.hazirla.outputs.paylas == '1'
         run: |
           T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
           if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
           echo "::add-mask::$T"
           echo "IG_TOKEN=$T" >> $GITHUB_ENV
       - name: Instagram'a Reel olarak paylaş
-        if: steps.karar.outputs.paylas == '1'
+        if: needs.hazirla.outputs.paylas == '1'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
         run: |
@@ -148,7 +247,7 @@ jobs:
           git diff --cached --quiet || (git commit -m "Astrolog Reel'i: ig log" && git pull --rebase && git push)
           exit $ST
       - name: Paylaşım hatasını bildir
-        if: failure() && steps.karar.outputs.paylas == '1'
+        if: failure() && needs.hazirla.outputs.paylas == '1'
         run: |
           { echo "Haftalık astrolog Reel'i paylaşılamadı."; echo; echo "Çalışma: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; echo; tail -20 yatirim-astroloji/reel-log.txt 2>/dev/null; } > hata.txt
           node scripts/bildir.js "Astrolog Reel'i paylaşım hatası" hata.txt
