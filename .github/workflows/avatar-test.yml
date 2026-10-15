@@ -19,12 +19,10 @@ jobs:
         run: |
           sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
           ffmpeg -y -loglevel error -i yatirim-astroloji/2026-10-19-ses.mp3 -t 9 -ar 16000 -ac 1 kisa.wav
-      - uses: actions/cache@v4
-        with:
-          path: |
-            st-modeller
-            lp-agirlik
-          key: avatar-modeller-v1
+      - uses: actions/cache/restore@v4
+        with: { path: st-modeller, key: st-modeller-v1 }
+      - uses: actions/cache/restore@v4
+        with: { path: lp-agirlik, key: lp-agirlik-v1 }
       - name: SadTalker (baş hareketli, crop)
         run: |
           python -m venv /tmp/st && . /tmp/st/bin/activate && pip -q install -U pip "setuptools<70" wheel
@@ -37,12 +35,22 @@ jobs:
           ln -sfn ../st-modeller/checkpoints st/checkpoints; ln -sfn ../st-modeller/gfpgan st/gfpgan
           cd st
           for P in 6 24; do
+            if [ -f ../avatar-test/surucu-$P.mp4 ]; then cp ../avatar-test/surucu-$P.mp4 ../surucu-$P.mp4; continue; fi
             S=$(date +%s)
             python inference.py --driven_audio ../kisa.wav --source_image ../assets/astrolog.png --result_dir ../st-$P \
               --preprocess crop --size 256 --pose_style $P --expression_scale 1.3 --cpu
             echo "pose $P: $(( $(date +%s) - S )) sn"
             cp "$(find ../st-$P -name '*.mp4' | head -1)" ../surucu-$P.mp4
           done
+      - uses: actions/cache/save@v4
+        if: hashFiles('st-modeller/checkpoints/*.safetensors') != ''
+        continue-on-error: true
+        with: { path: st-modeller, key: st-modeller-v1 }
+      - name: Sürücü videoları kaydet
+        run: |
+          mkdir -p avatar-test; cp surucu-*.mp4 avatar-test/
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add avatar-test; git diff --cached --quiet || (git commit -qm "Avatar deneme: SadTalker sürücü videoları" && git pull -q --rebase && git push -q)
       - name: LivePortrait kur
         run: |
           python -m venv /tmp/lp && . /tmp/lp/bin/activate && pip -q install -U pip "setuptools<70" wheel
@@ -50,10 +58,14 @@ jobs:
           pip -q install torch==2.3.0+cpu torchvision==0.18.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
           cd lp; ls requirements*
           if [ -f requirements_base.txt ]; then pip -q install -r requirements_base.txt; else grep -viE "onnxruntime-gpu|^torch" requirements.txt > r.txt; pip -q install -r r.txt; fi
-          pip -q install onnxruntime "huggingface_hub[cli]"
-          if [ ! -d ../lp-agirlik/liveportrait ]; then huggingface-cli download KwaiVGI/LivePortrait --local-dir ../lp-agirlik --exclude "*.git*" "README.md" "docs"; fi
+          pip -q install onnxruntime huggingface_hub
+          if [ ! -d ../lp-agirlik/liveportrait ]; then python -c "from huggingface_hub import snapshot_download as d; d('KwaiVGI/LivePortrait', local_dir='../lp-agirlik', ignore_patterns=['*.git*','README.md','docs/*'])"; fi
+          ls ../lp-agirlik
           rm -rf pretrained_weights; ln -sfn ../lp-agirlik pretrained_weights
           python inference.py --help | tee yardim.txt | head -120
+      - uses: actions/cache/save@v4
+        continue-on-error: true
+        with: { path: lp-agirlik, key: lp-agirlik-v1 }
       - name: LivePortrait ile tam görsele aktar
         run: |
           . /tmp/lp/bin/activate; cd lp
@@ -74,4 +86,4 @@ jobs:
           done
           ls -la avatar-test
           git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
-          git add avatar-test && git commit -m "Avatar deneme çıktıları" && git pull --rebase && git push
+          git add avatar-test; git diff --cached --quiet || (git commit -m "Avatar deneme çıktıları" && git pull --rebase && git push)
