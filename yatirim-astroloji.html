@@ -21,6 +21,7 @@
   .card{display:flex;flex-direction:column;gap:8px;align-items:center}
   .card small{font-size:11px;color:rgba(255,255,255,.5)}
   .slide{width:420px!important;height:560px!important;min-height:560px;max-height:560px;flex:0 0 420px;position:relative;overflow:hidden;border-radius:4px}
+  .story{width:420px!important;height:747px!important;min-height:747px;max-height:747px;flex:0 0 420px;position:relative;overflow:hidden;border-radius:4px}
   .sans{font-family:'Plus Jakarta Sans',sans-serif}
   .sym{font-family:'Noto Sans Symbols','DejaVu Sans',sans-serif;font-weight:500}
   .panel{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -157,6 +158,27 @@ Kadıköy ve Fikirtepe'de alım, satım ve kiralama için piyasa verisiyle deste
 ${foot('Bu içerik eğlence amaçlıdır, yatırım tavsiyesi değildir.')}</div>`;
 }
 
+// Tek karelik story (9:16): karusel gönderisine yönlendirir
+function hikaye(d){
+  const izgara=BURCLAR.map(b=>`<div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+<div class="sym" style="width:44px;height:44px;border-radius:50%;background:rgba(5,10,48,.55);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:21px;">${sym(b[2])}</div>
+<div class="sans" style="font-size:9.5px;font-weight:700;">${b[1]}</div></div>`).join('');
+  return `<div class="story" style="background:${RGRAD};">
+<div style="position:absolute;top:-140px;left:-170px;">${cark(560,.10)}</div>
+${logo()}
+<div style="position:absolute;left:32px;right:32px;top:130px;">
+<div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;padding:8px 14px;border-radius:9px;">YENİ GÖNDERİ</div>
+<div class="sans" style="font-size:40px;font-weight:800;letter-spacing:-1.5px;line-height:1.02;margin-top:16px;">Bu haftanın<br>yatırım<br>astrolojisi</div>
+<div class="sans" style="font-size:17px;font-weight:700;margin-top:12px;">${aralik(d.hafta)}</div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px 4px;margin-top:28px;">${izgara}</div>
+</div>
+<div style="position:absolute;left:32px;right:32px;bottom:90px;text-align:center;">
+<div class="sans" style="font-size:15px;line-height:1.45;font-weight:600;margin-bottom:14px;">Burcun bu hafta ne diyor?<br>Yorumların tamamı son gönderimizde.</div>
+<div class="sans" style="display:inline-flex;padding:13px 30px;background:${LB};color:${REDD};font-weight:800;font-size:15px;border-radius:28px;">Gönderiye git ↓</div>
+<div class="sans" style="font-size:10px;color:rgba(255,255,255,.7);margin-top:16px;">@remaxdogus · Eğlence amaçlıdır, yatırım tavsiyesi değildir.</div>
+</div></div>`;
+}
+
 function aciklamaMetni(d){
   if(!d||!d.hafta) return '';
   return `Bu haftanın yatırım astrolojisi ✨ ${aralik(d.hafta)}
@@ -181,8 +203,9 @@ async function yukle(){
   const g=document.getElementById('grid'); g.innerHTML='';
   const l=slaytlar(d);
   l.forEach((html,i)=>{const c=document.createElement('div');c.className='card';c.innerHTML=html+`<small>${i+1}/${l.length}</small>`;g.appendChild(c);});
+  const sc=document.createElement('div');sc.className='card';sc.innerHTML=hikaye(d)+'<small>Story · gönderiye yönlendirir</small>';g.appendChild(sc);
   document.getElementById('aciklama').textContent=aciklamaMetni(d);
-  document.getElementById('status').textContent=`Hafta: ${aralik(d.hafta)} · ${l.length} kare · 1080×1440`;
+  document.getElementById('status').textContent=`Hafta: ${aralik(d.hafta)} · ${l.length} kare (1080×1440) + story (1080×1920)`;
   await document.fonts.ready;
   document.body.dataset.hazir='1';
 }

@@ -1,7 +1,7 @@
 // Haftalık yatırım astrolojisi karuseli (@remaxdogus, her Pazartesi).
 //   node scripts/yatirim-astro.js uret  → haftanın gök olaylarını hesaplar (scripts/gok-hafta.py), Gemini ile 12 burç
 //                                          yorumunu yazar → data/yatirim-astroloji.json (+ yatirim-astroloji/.gecmis.json)
-//   node scripts/yatirim-astro.js ciz   → yatirim-astroloji.html'den 8 kare (1080×1440) → yatirim-astroloji/<hafta>-<n>.png + .media
+//   node scripts/yatirim-astro.js ciz   → yatirim-astroloji.html'den 8 kare (1080×1440) → yatirim-astroloji/<hafta>-<n>.png + <hafta>-story.png (9:16, gönderiye yönlendirir) + .media
 // HAFTA=yyyy-mm-dd ile hafta seçilir (varsayılan: içinde bulunulan haftanın Pazartesi'si, Türkiye saati).
 // Tekrar olmasın diye son 6 haftanın yorumları Gemini'ye gösterilir ve her hafta farklı bir ana tema seçilir.
 const fs = require('fs');
@@ -134,10 +134,13 @@ async function ciz() {
     await slides.nth(i).screenshot({ path: f });
     dosyalar.push(f);
   }
+  const story = `${DIR}/${veri.hafta}-story.png`;
+  await page.locator('.story').first().screenshot({ path: story });
   const aciklama = await page.evaluate(() => aciklamaMetni(window.VERI));
   await browser.close();
   fs.writeFileSync(DIR + '/.media', JSON.stringify({
-    hafta: veri.hafta, feed: dosyalar.map(f => 'https://dogusportal.com/' + f), aciklama }, null, 2));
+    hafta: veri.hafta, feed: dosyalar.map(f => 'https://dogusportal.com/' + f),
+    story: 'https://dogusportal.com/' + story, aciklama }, null, 2));
   console.log(`✓ ${n} kare üretildi:`, veri.hafta);
 }
 
