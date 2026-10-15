@@ -327,10 +327,10 @@
   <div><span>Daire fiyatı</span><b id="mFiyat">–</b></div>
   <div><span>KDV (%5)</span><b id="mKdv">–</b></div>
   <div><span>Damga vergisi (%0,5)</span><b id="mDamga">–</b></div>
-  <div><span>Tapu harcı (%6)</span><b id="mTapu">–</b></div>
+  <div><span>Tapu harcı (%4, tek ödeme)</span><b id="mTapu">–</b></div>
   <div class="ara"><span>Resmi masraflar toplamı</span><b id="kMasraf">–</b></div>
   <div class="mtop"><span>Toplam maliyet</span><b id="kToplam">–</b></div>
-  <p>Tapu harcı ilk alımda bir kereye mahsus %3 olabilir. Avukat ücreti ayrıca.</p></div>
+  <p>Tapu harcı tek ödemedir: %3 tapu harcı + %1 masraf (ilk taşınmaz alımı). Avukat ücreti ayrıca.</p></div>
   <div class="acts">
     <a class="wa" id="cSend" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="waPath" d=""/></svg>Müşteriye WhatsApp ile gönder</a>
     <button class="sec" id="cCopy">Bağlantıyı kopyala</button>
@@ -550,11 +550,11 @@
   function kpi(){var p=+$('fFiyat').value,r=+$('fKira').value,ok=p>0&&r>0;
     $('kGetiri').textContent=ok?'%'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1}):'–';
     $('kDonus').textContent=ok?(p/(r*12)).toLocaleString('tr-TR',{maximumFractionDigits:1})+' yıl':'–';
-    var pes=$('fPes').value!==''?+$('fPes').value:35,ay=$('fAy').value!==''?+$('fAy').value:24,pP=p*pes/100,tk=ay>0?(p-pP)/ay:0,ms=p*.115;
-    $('kPes').textContent=p?para(pP):'–';$('kTaksit').textContent=p&&ay>0?para(tk):'–';$('mFiyat').textContent=p?para(p):'–';$('mKdv').textContent=p?para(p*.05):'–';$('mDamga').textContent=p?para(p*.005):'–';$('mTapu').textContent=p?para(p*.06):'–';$('kMasraf').textContent=p?para(ms):'–';$('kToplam').textContent=p?para(p+ms):'–';
+    var pes=$('fPes').value!==''?+$('fPes').value:35,ay=$('fAy').value!==''?+$('fAy').value:24,pP=p*pes/100,tk=ay>0?(p-pP)/ay:0,ms=p*.095;
+    $('kPes').textContent=p?para(pP):'–';$('kTaksit').textContent=p&&ay>0?para(tk):'–';$('mFiyat').textContent=p?para(p):'–';$('mKdv').textContent=p?para(p*.05):'–';$('mDamga').textContent=p?para(p*.005):'–';$('mTapu').textContent=p?para(p*.04):'–';$('kMasraf').textContent=p?para(ms):'–';$('kToplam').textContent=p?para(p+ms):'–';
     var t='Merhaba, '+(TEK?TA:TA+' '+K[cur].g)+' projesini 360° gezebilirsiniz:\n'+link();
     if($('fAd').value)t+='\n\n'+$('fAd').value;
-    if(p)t+='\nFiyat: '+para(p)+'\nPeşinat (%'+pes+'): '+para(pP)+(ay>0?'\n'+ay+' ay taksit: aylık '+para(tk):'')+'\nKDV (%5): '+para(p*.05)+'\nDamga vergisi (%0,5): '+para(p*.005)+'\nTapu harcı (%6): '+para(p*.06)+'\nResmi masraflar toplamı: '+para(ms)+'\nToplam maliyet: '+para(p+ms);
+    if(p)t+='\nFiyat: '+para(p)+'\nPeşinat (%'+pes+'): '+para(pP)+(ay>0?'\n'+ay+' ay taksit: aylık '+para(tk):'')+'\nKDV (%5): '+para(p*.05)+'\nDamga vergisi (%0,5): '+para(p*.005)+'\nTapu harcı (%4, tek ödeme): '+para(p*.04)+'\nResmi masraflar toplamı: '+para(ms)+'\nToplam maliyet: '+para(p+ms);
     if(ok)t+='\nKira getirisi: yıllık yaklaşık %'+(r*12/p*100).toLocaleString('tr-TR',{maximumFractionDigits:1});
     if($('fTeslim').value)t+='\nTeslim: '+$('fTeslim').value;
     t+='\n\nRE/MAX Doğuş · 0216 315 15 15';

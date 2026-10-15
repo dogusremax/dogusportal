@@ -33,9 +33,9 @@ const translations = {
     stampDuty: "Damga (Pul) Vergisi",
     stampDutyRate: "%0,5",
     stampDutyTime: "Satış sözleşmesi imzalanırken",
-    titleDeed1: "Tapu Harcı (1. Ödeme)",
-    titleDeed1Rate: "%3",
-    titleDeed1Time: "Sözleşme tapuya işlendiğinde",
+    titleDeed1: "Tapu Harcı (Tek Ödeme)",
+    titleDeed1Rate: "%4",
+    titleDeed1Time: "%3 tapu harcı + %1 masraf, tek seferde ödenir",
     councilFee: "Yabancı Alıcı Bakanlar Kurulu Onay Harcı",
     councilFeeTime: "Sözleşmeden sonraki 1 ay içinde ödenir",
     councilFeeNote: "Bakanlık onayı ortalama 1 ay içerisinde sonuçlanmaktadır.",
@@ -79,9 +79,9 @@ const translations = {
     stampDuty: "Stamp Duty",
     stampDutyRate: "0.5%",
     stampDutyTime: "Upon signing the sales contract",
-    titleDeed1: "Title Deed Fee (1st Payment)",
-    titleDeed1Rate: "3%",
-    titleDeed1Time: "When contract is registered at land registry",
+    titleDeed1: "Title Deed Fee (Single Payment)",
+    titleDeed1Rate: "4%",
+    titleDeed1Time: "3% title deed fee + 1% charges, paid in one go",
     councilFee: "Foreign Buyer Council of Ministers Approval Fee",
     councilFeeTime: "Paid within 1 month after the contract",
     councilFeeNote: "Ministry approval typically concludes within 1 month.",
@@ -152,8 +152,8 @@ function App() {
   };
 
   const stampDuty = price * 0.005;
-  const titleDeed1 = price * 0.03;
-  const titleDeed2 = price * 0.03;
+  const titleDeed1 = price * 0.04;
+  const titleDeed2 = 0;
   const vat = price * 0.05;
   const percentTotal = stampDuty + titleDeed1 + titleDeed2 + vat;
   const ratio = price > 0 ? ((percentTotal / price) * 100).toFixed(2) : "0";
@@ -161,11 +161,10 @@ function App() {
   const phases = price > 0 ? [
     { label: t.phase1, color: phaseColors[0], items: [
       { name: t.stampDuty, rate: t.stampDutyRate, time: t.stampDutyTime, val: `£${fmt(stampDuty)}` },
-      { name: t.titleDeed1, rate: t.titleDeed1Rate, time: t.titleDeed1Time, val: `£${fmt(titleDeed1)}` },
       { name: t.councilFee, rate: null, time: t.councilFeeTime, val: `${fmt(COUNCIL_FEE_TL)} TL`, note: t.councilFeeNote || null },
     ]},
     { label: t.phase2, color: phaseColors[1], items: [
-      { name: t.titleDeed2, rate: t.titleDeed2Rate, time: t.titleDeed2Time, val: `£${fmt(titleDeed2)}` },
+      { name: t.titleDeed1, rate: t.titleDeed1Rate, time: t.titleDeed1Time, val: `£${fmt(titleDeed1)}` },
     ]},
     { label: t.phase3, color: phaseColors[2], items: [
       { name: t.vat, rate: t.vatRate, time: t.vatTime, val: `£${fmt(vat)}` },
@@ -555,8 +554,7 @@ function App() {
                 overflow: "hidden", gap: 2,
               }}>
                 <div style={{ flex: 0.5, background: "#6b8cce", borderRadius: "4px 0 0 4px" }} />
-                <div style={{ flex: 3, background: "#003DA5" }} />
-                <div style={{ flex: 3, background: "#1a5fd0" }} />
+                <div style={{ flex: 4, background: "#003DA5" }} />
                 <div style={{ flex: 5, background: "#CC0000", borderRadius: "0 4px 4px 0" }} />
               </div>
               <div style={{
@@ -565,8 +563,7 @@ function App() {
               }}>
                 {[
                   { c: "#6b8cce", l: t.stampDuty, r: "0.5%" },
-                  { c: "#003DA5", l: t.titleDeed1, r: "3%" },
-                  { c: "#1a5fd0", l: t.titleDeed2, r: "3%" },
+                  { c: "#003DA5", l: t.titleDeed1, r: "4%" },
                   { c: "#CC0000", l: t.vat, r: "5%" },
                 ].map((x, i) => (
                   <div key={i} style={{
