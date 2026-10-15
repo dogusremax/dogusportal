@@ -45,6 +45,11 @@ async function yayindaMi(url) {
   throw new Error('Medya yayında değil: ' + url);
 }
 
+// Story'de etiketlenecek danışmanlar (data/danismanlar.json → instagram; broker Umut hariç)
+let ETIKET = [];
+try { ETIKET = JSON.parse(fs.readFileSync('data/danismanlar.json', 'utf8')).filter(d => d.instagram && d.id !== 'umut').map(d => d.instagram.replace(/^@/, '')); } catch (e) {}
+console.log('Story etiketleri:', ETIKET.join(', ') || '(yok)');
+
 const aciklama =
 `${m.ay} kira artış oranı açıklandı: %${m.oran}
 
@@ -61,8 +66,14 @@ Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize
     const kareler = Array.isArray(m.story) ? m.story : [m.story];
     for (const u of kareler) await yayindaMi(u);
     for (let i = 0; i < kareler.length; i++) {
-      const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: kareler[i] });
-      await hazirBekle(st.id);
+      const sade = { media_type: 'STORIES', image_url: kareler[i] };
+      let st = null;
+      // İlk karede tüm danışmanlar etiketlenir; etiketle olmazsa kare etiketsiz paylaşılır
+      if (i === 0 && ETIKET.length) {
+        try { st = await post(`${UID}/media`, { ...sade, user_tags: ETIKET.map(username => ({ username })) }); await hazirBekle(st.id); }
+        catch (e) { console.log('! Etiketle olmadı, etiketsiz deneniyor:', e.message); st = null; }
+      }
+      if (!st) { st = await post(`${UID}/media`, sade); await hazirBekle(st.id); }
       const stPub = await post(`${UID}/media_publish`, { creation_id: st.id });
       console.log(`✓ Story ${i + 1}/${kareler.length} yayınlandı:`, stPub.id);
       if (i < kareler.length - 1) await wait(5000);   // sıra bozulmasın
