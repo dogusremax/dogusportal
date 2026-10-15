@@ -24,7 +24,7 @@ concurrency:
 jobs:
   reel:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 240
     env:
       ISLEM: ${{ inputs.islem || (github.event_name == 'push' && 'onizle') || 'zamanli' }}
       GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
@@ -73,7 +73,7 @@ jobs:
       - name: Dudak senkronu (SadTalker, CPU)
         if: steps.karar.outputs.hazir != '1'
         continue-on-error: true
-        timeout-minutes: 90
+        timeout-minutes: 200
         run: |
           git clone -q --depth 1 https://github.com/OpenTalker/SadTalker.git st
           pip -q install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu
@@ -83,7 +83,7 @@ jobs:
           if [ ! -f st-modeller/checkpoints/SadTalker_V0.0.2_256.safetensors ]; then (cd st && bash scripts/download_models.sh) && mkdir -p st-modeller && mv st/checkpoints st/gfpgan st-modeller/; fi
           ln -sfn ../st-modeller/checkpoints st/checkpoints; ln -sfn ../st-modeller/gfpgan st/gfpgan
           cd st && python inference.py --driven_audio ../reel-ses.wav --source_image ../assets/astrolog.png \
-            --result_dir ../st-cikti --still --preprocess full --size 256 --expression_scale 1.0 --cpu
+            --result_dir ../st-cikti --still --preprocess full --size 256 --expression_scale 1.4 --enhancer gfpgan --cpu
           cp "$(find ../st-cikti -name '*.mp4' | head -1)" ../yuz.mp4
       - name: Videoyu birleştir (9:16)
         if: steps.karar.outputs.hazir != '1'
