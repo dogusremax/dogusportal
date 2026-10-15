@@ -12,14 +12,12 @@ async function post(p, body) {
   const r = await fetch(`${G}/${p}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, access_token: TOKEN }) });
   const j = await r.json(); if (j.error) throw new Error(JSON.stringify(j.error)); return j;
 }
-// Nöbetçinin Instagram kullanıcı adı (data/danismanlar.json → instagram); "Aysun & Orhan" gibi ortak nöbette ikisi de etiketlenir
+// Takvimdeki nöbetçinin Instagram kullanıcı adı (data/danismanlar.json → instagram); sadece o kişi etiketlenir
 const kucuk = x => String(x || '').toLocaleLowerCase('tr').trim();
-const kim = kucuk(media.kim);
 let etiket = [];
 try {
-  const l = JSON.parse(fs.readFileSync('data/danismanlar.json', 'utf8')).filter(d => d.instagram);
-  const tam = l.filter(d => kim.includes(kucuk(d.ad)));
-  etiket = (tam.length ? tam : l.filter(d => kim.split(/[\s&,+\/-]+/).includes(kucuk(d.ad).split(' ')[0]))).map(d => d.instagram.replace(/^@/, ''));
+  const d = JSON.parse(fs.readFileSync('data/danismanlar.json', 'utf8')).find(d => d.instagram && kucuk(d.ad) === kucuk(media.kim));
+  if (d) etiket = [d.instagram.replace(/^@/, '')];
 } catch (e) {}
 console.log('Nöbetçi:', media.kim || '?', '| etiket:', etiket.join(', ') || '(yok)');
 (async () => {
