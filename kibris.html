@@ -688,6 +688,29 @@ body.lock{overflow:hidden}
 
 /* ---------- prensipler: yatay kaydırmalı büyük kartlar ---------- */
 .v2 .principles{border:0;padding-top:96px}
+.fbs{position:relative;overflow:hidden;padding-block:clamp(64px,10vw,120px);background:radial-gradient(120% 80% at 18% 30%,rgba(28,78,160,.45),transparent 60%),radial-gradient(90% 70% at 90% 90%,rgba(233,162,59,.12),transparent 60%),#050A30;color:#EAF3F5}
+.fbs-in{display:grid;grid-template-columns:1fr;gap:44px;align-items:center}
+.fbs-cov{position:relative;display:block;width:min(78vw,360px);margin-inline:auto;aspect-ratio:1080/1456;perspective:1400px;text-decoration:none}
+.fbs-card{position:absolute;inset:0;transform:rotateY(-12deg) rotateX(4deg) rotateZ(-1.5deg);transform-origin:60% 50%;transition:transform .9s cubic-bezier(.2,.8,.2,1);border-radius:4px 10px 10px 4px;box-shadow:-2px 0 0 rgba(255,255,255,.18) inset,0 40px 80px -24px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.06),0 0 90px -10px rgba(60,120,230,.45);overflow:hidden}
+.fbs-card img{display:block;width:100%;height:100%;object-fit:cover}
+.fbs-card::before{content:"";position:absolute;inset:0 auto 0 0;width:14px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.12) 45%,transparent);z-index:1}
+.fbs-card::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.28) 50%,transparent 58%);transform:translateX(-60%);animation:fbsGl 6s ease-in-out 1.2s infinite;z-index:2;pointer-events:none}
+@keyframes fbsGl{0%,70%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
+.fbs-cov:hover .fbs-card,.fbs-cov:focus-visible .fbs-card{transform:none}
+.fbs-badge{position:absolute;z-index:3;bottom:-16px;inset-inline-end:-18px;width:84px;height:84px;border-radius:50%;display:grid;place-content:center;text-align:center;background:radial-gradient(circle at 35% 30%,#FFF3C9,#E7B957 45%,#A8741B);color:#3A2606;box-shadow:0 12px 26px -8px rgba(0,0,0,.6),0 0 0 3px rgba(255,241,196,.35);transform:rotate(10deg)}
+.fbs-badge b{font:400 2.1rem/1 var(--f-display)}
+.fbs-badge span{font:700 .56rem var(--f-mono);letter-spacing:.12em}
+.fbs-cov::after{content:"";position:absolute;left:8%;right:8%;bottom:-34px;height:30px;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);filter:blur(4px)}
+.fbs-txt h2{color:#fff;margin:6px 0 0}
+.fbs-q{font:italic 400 clamp(1.25rem,3.4vw,1.6rem)/1.3 var(--f-display);color:var(--gold,#E2B04A);margin:22px 0 0;padding-inline-start:18px;border-inline-start:2px solid var(--red,#DC1C2E)}
+.fbs-txt .lead{color:rgba(234,243,245,.78);margin-top:18px}
+.fbs-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.fbs-links a{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;font-weight:700;font-size:.86rem;background:rgba(255,255,255,.04);transition:background .25s,border-color .25s}
+.fbs-links a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.5)}
+.fbs-links a i{font:700 .7rem var(--f-mono);letter-spacing:.1em;color:var(--gold,#E2B04A);font-style:normal}
+.fbs-m{font-size:.74rem;color:rgba(234,243,245,.5);margin-top:16px;line-height:1.5}
+@media(min-width:900px){.fbs-in{grid-template-columns:minmax(320px,420px) 1fr;gap:80px}.fbs-cov{width:100%}}
+@media (prefers-reduced-motion: reduce){.fbs-card{transform:none}.fbs-card::after{animation:none;display:none}}
 .v2 .pr-seal{width:84px;height:84px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
 .v2 .pr-list{counter-reset:pr;scroll-padding-inline:20px;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-20px;padding:6px 20px 18px;scrollbar-width:none}
 .v2 .pr-list::-webkit-scrollbar{display:none}
@@ -1286,6 +1309,22 @@ html{overflow-x:hidden}
   </div>
 </section>
     <div class="marq" aria-hidden="true"><div class="marq-t"><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>LONG BEACH</span><b>✦</b><span>BELLAPAIS</span><b>✦</b><span>DİPKARPAZ</span><b>✦</b><span>GİRNE</span><b>✦</b><span>ESENTEPE</span><b>✦</b><span>İSKELE</span><b>✦</b><span>KARPAZ</span><b>✦</b><span>ALTIN KUM</span><b>✦</b><span>LONG BEACH</span><b>✦</b><span>BELLAPAIS</span><b>✦</b><span>DİPKARPAZ</span><b>✦</b></div></div>
+    <section class="fbs" id="forbes">
+      <div class="wrap fbs-in">
+        <a class="fbs-cov" id="fb-cov" href="https://www.forbes.com/sites/kathleenpeddicord/2021/02/05/5-best-beachfront-buys-for-2021/" target="_blank" rel="noopener" data-ev="forbes_kapak">
+          <span class="fbs-card"><img id="fb-img" src="assets/kibris/forbes-iskele-kapak-720.webp" srcset="assets/kibris/forbes-iskele-kapak-720.webp 720w, assets/kibris/forbes-iskele-kapak.webp 1080w" sizes="(min-width:900px) 420px, 78vw" width="1080" height="1456" alt="" loading="lazy" decoding="async"></span>
+          <span class="fbs-badge" aria-hidden="true"><b>#1</b><span>FORBES</span></span>
+        </a>
+        <div class="fbs-txt">
+          <span class="eyebrow" id="fb-e"></span>
+          <h2 id="fb-h"></h2>
+          <p class="fbs-q" id="fb-q"></p>
+          <p class="lead" id="fb-p"></p>
+          <div class="fbs-links"><a href="https://www.forbes.com/sites/kathleenpeddicord/2021/02/05/5-best-beachfront-buys-for-2021/" target="_blank" rel="noopener" data-ev="forbes_2021"><i>2021</i>5 Best Beachfront Buys →</a><a href="https://www.forbes.com/sites/kathleenpeddicord/2023/11/30/the-5-cheapest-places-to-buy-property-abroad-in-2024/" target="_blank" rel="noopener" data-ev="forbes_2024"><i>2024</i>5 Affordable Places Abroad →</a></div>
+          <p class="fbs-m" id="fb-m"></p>
+        </div>
+      </div>
+    </section>
     <section class="quiz" id="test">
       <div class="wrap">
         <span class="eyebrow" data-qz="e"></span>
@@ -2506,6 +2545,11 @@ const PRESS={
  de:{k:"NORDZYPERN IN DER PRESSE",r:"Weltrangliste für Strandinvestitionen",q:"Das Beste des Mittelmeers zu einem Bruchteil der Kosten.",m:"Forbes · Februar 2021 · Global Property Survey von Live and Invest Overseas",c:"Artikel lesen →"},
  pl:{k:"CYPR PÓŁNOCNY W PRASIE",r:"Światowy ranking inwestycji przy plaży",q:"To, co najlepsze na Morzu Śródziemnym, za ułamek ceny.",m:"Forbes · luty 2021 · Global Property Survey, Live and Invest Overseas",c:"Przeczytaj artykuł →"}};
 const NMORE={tr:"Tüm başlıkları göster ({n})",en:"Show all stories ({n})",ru:"Показать все ({n})",fa:"نمایش همه ({n})",de:"Alle Meldungen zeigen ({n})",pl:"Pokaż wszystkie ({n})"};
+function renderForbes(){
+  const pr=PRESS[L]||PRESS.en, f=D().n.i.forbes;
+  $("fb-e").textContent=pr.k; $("fb-h").textContent=f[0]; $("fb-q").textContent="“"+pr.q+"”"; $("fb-p").textContent=f[1]; $("fb-m").textContent=pr.m;
+  $("fb-img").alt=f[0];
+}
 function renderNews(){
   const n=D().n, meta=NEWS.meta;
   $("n-e").textContent=n.e; $("n-h").innerHTML=n.h; $("n-l").textContent=n.l;
@@ -2756,7 +2800,7 @@ function applyLang(lang, user){
   document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-selected", b.dataset.lang===L));
   $("wa-sticky").href = waLink(sent);
   { const sl=SEAL[L]||SEAL.en; $("seal-ring").textContent=sl[0]; $("seal-l1").textContent=sl[1]; $("seal-l2").textContent=sl[2]; document.querySelector(".seal").setAttribute("aria-label",sl[1]+" "+sl[2]); } fitSeal();
-  buildRegions(); renderPartners(); renderNews(); renderCharts(); renderGuide(); calc(); render(); soundLabel();
+  buildRegions(); renderPartners(); renderForbes(); renderNews(); renderCharts(); renderGuide(); calc(); render(); soundLabel();
   try{ localStorage.setItem("kibris_lang", L); }catch(e){}
   if(user){
     try{ const u=new URL(location.href); u.searchParams.set("lang",L); history.replaceState(null,"",u); }catch(e){}
