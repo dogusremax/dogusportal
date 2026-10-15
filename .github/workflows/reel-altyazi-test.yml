@@ -22,7 +22,7 @@ jobs:
         with: { pattern: "yuz-*", merge-multiple: true, run-id: 38797972311, github-token: "${{ github.token }}" }
       - name: Altyazı zamanları (medium + ipucu)
         run: |
-          pip -q install faster-whisper==1.1.1
+          pip -q install faster-whisper==1.1.1 requests
           python scripts/ses-zaman.py reel-ses.mp3 reel-zaman.json
       - name: Videoyu birleştir
         run: |
