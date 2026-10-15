@@ -70,16 +70,20 @@ jobs:
         run: |
           . /tmp/lp/bin/activate; cd lp
           CPU=$(grep -oE -- '--flag[-_]force[-_]cpu' yardim.txt | head -1)
-          for P in 6 24; do
+          YARIM=$(grep -oE -- '--no[-_]flag[-_]use[-_]half[-_]precision' yardim.txt | head -1)
+          echo "bayraklar: $CPU $YARIM"
+          rm -rf ../lp-6 ../lp-24
+          for P in 6; do
             S=$(date +%s)
-            python inference.py -s ../assets/astrolog.png -d ../surucu-$P.mp4 -o ../lp-$P $CPU
+            python inference.py -s ../assets/astrolog.png -d ../surucu-$P.mp4 -o ../lp-$P $CPU $YARIM
             echo "LP pose $P: $(( $(date +%s) - S )) sn"
             ls -R ../lp-$P | head
           done
       - name: Kaydet
         run: |
           mkdir -p avatar-test
-          for P in 6 24; do
+          rm -f avatar-test/tam-*.mp4
+          for P in 6; do
             cp surucu-$P.mp4 avatar-test/surucu-$P.mp4 || true
             V=$(find lp-$P -name '*.mp4' ! -name '*concat*' | head -1)
             [ -n "$V" ] && ffmpeg -y -loglevel error -i "$V" -i kisa.wav -map 0:v -map 1:a -c:v libx264 -crf 24 -pix_fmt yuv420p -c:a aac -shortest avatar-test/tam-$P.mp4 || true
