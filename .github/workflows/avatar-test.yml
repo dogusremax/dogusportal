@@ -71,7 +71,7 @@ jobs:
           . /tmp/lp/bin/activate; cd lp
           CPU=$(grep -oE -- '--flag[-_]force[-_]cpu' yardim.txt | head -1)
           YARIM=$(grep -oE -- '--no[-_]flag[-_]use[-_]half[-_]precision' yardim.txt | head -1)
-          echo "bayraklar: $CPU $YARIM"
+          echo "bayraklar: $CPU $YARIM"; [ -n "$YARIM" ] || { grep -i half yardim.txt; exit 1; }
           rm -rf ../lp-6 ../lp-24
           for P in 6; do
             S=$(date +%s)
