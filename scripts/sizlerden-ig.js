@@ -31,6 +31,18 @@ async function yayindaMi(url) {
 
 // Son güvenlik: 4★ altı ya da metinsiz yorum hiçbir yoldan paylaşılmaz
 if (!(m.secim?.puan >= 4) || !m.secim?.metin?.trim()) { console.error('Paylaşım engellendi: 4 yıldız altı ya da metinsiz yorum', m.key); process.exit(1); }
+// Danışmanın Instagram kullanıcı adı (data/danismanlar.json → instagram). Yoksa etiketsiz/ortaksız paylaşılır.
+let ig = '';
+try { ig = (JSON.parse(fs.readFileSync('data/danismanlar.json', 'utf8')).find(d => d.id === m.secim.danisman) || {}).instagram || ''; } catch (e) {}
+ig = ig.replace(/^@/, '').trim();
+console.log('Danışman IG:', ig || '(yok, etiketsiz paylaşılacak)');
+// Etiketli/ortak deneme hata verirse (ör. hesap gizli, kullanıcı adı değişmiş) etiketsiz tekrar dener; paylaşım durmaz.
+async function ekliDene(p, ekli, sade, ne) {
+  const kur = async b => { const c = await post(p, b); await hazirBekle(c.id); return c; };
+  if (!ig) return kur(sade);
+  try { return await kur(ekli); }
+  catch (e) { console.log(`! ${ne} @${ig} ile olmadı, etiketsiz deneniyor:`, e.message); return kur(sade); }
+}
 const s = m.secim, kisa = s.metin.length > 900 ? s.metin.slice(0, 900).replace(/\s+\S*$/, '') + '…' : s.metin;
 const aciklama =
 `Sizlerden Gelenler 💬 ${s.ad}
@@ -47,8 +59,8 @@ Güveniniz için teşekkür ederiz. Satış, kiralama ve değerleme süreçlerin
 (async () => {
   if (!isaret('.pub-story')) {
     await yayindaMi(m.url);
-    const st = await post(`${UID}/media`, { media_type: 'STORIES', image_url: m.url });
-    await hazirBekle(st.id);
+    const sade = { media_type: 'STORIES', image_url: m.url };
+    const st = await ekliDene(`${UID}/media`, { ...sade, user_tags: [{ username: ig }] }, sade, 'Story etiketi');
     console.log('✓ Story yayınlandı:', (await post(`${UID}/media_publish`, { creation_id: st.id })).id);
     fs.writeFileSync(DIR + '/.pub-story', m.key);
   }
@@ -56,8 +68,9 @@ Güveniniz için teşekkür ederiz. Satış, kiralama ve değerleme süreçlerin
     for (const u of m.feed) await yayindaMi(u);
     const cocuklar = [];
     for (const u of m.feed) { const c = await post(`${UID}/media`, { image_url: u, is_carousel_item: true }); await hazirBekle(c.id); cocuklar.push(c.id); }
-    const kap = await post(`${UID}/media`, { media_type: 'CAROUSEL', children: cocuklar, caption: aciklama });
-    await hazirBekle(kap.id);
+    // Ortak gönderi: danışmana collab daveti gider, kabul edince gönderi onun profilinde de görünür
+    const sade = { media_type: 'CAROUSEL', children: cocuklar, caption: aciklama };
+    const kap = await ekliDene(`${UID}/media`, { ...sade, collaborators: [ig] }, sade, 'Ortak gönderi');
     console.log('✓ Karusel yayınlandı:', (await post(`${UID}/media_publish`, { creation_id: kap.id })).id);
   }
   fs.writeFileSync(DIR + '/.pub', m.key);
