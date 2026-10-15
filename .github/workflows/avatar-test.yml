@@ -1,0 +1,77 @@
+name: Avatar deneme (baş hareketi)
+# Kısa deneme: SadTalker baş hareketi + göz kırpma + dudak ile 256px yüz videosu üretir (crop modu, still kapalı),
+# LivePortrait bu hareketi tam astrolog görseline aktarır (yüzü kesintisiz yerine oturtur). Sadece deneme; paylaşım yok.
+on:
+  push:
+    branches: [claude/project-thread-h0cmgl]
+    paths: [.github/workflows/avatar-test.yml]
+permissions:
+  contents: write
+jobs:
+  deneme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.10" }
+      - name: Kısa ses parçası
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
+          ffmpeg -y -loglevel error -i yatirim-astroloji/2026-10-19-ses.mp3 -t 9 -ar 16000 -ac 1 kisa.wav
+      - uses: actions/cache@v4
+        with:
+          path: |
+            st-modeller
+            lp-agirlik
+          key: avatar-modeller-v1
+      - name: SadTalker (baş hareketli, crop)
+        run: |
+          python -m venv /tmp/st && . /tmp/st/bin/activate
+          git clone -q --depth 1 https://github.com/OpenTalker/SadTalker.git st
+          pip -q install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu
+          pip -q install numpy==1.23.4 face_alignment==1.3.5 imageio==2.19.3 imageio-ffmpeg==0.4.7 librosa==0.9.2 numba resampy==0.3.1 \
+            pydub==0.25.1 scipy==1.10.1 kornia==0.6.8 tqdm yacs==0.1.8 pyyaml joblib==1.1.0 scikit-image==0.19.3 basicsr==1.4.2 \
+            facexlib==0.3.0 gfpgan av safetensors
+          if [ ! -f st-modeller/checkpoints/SadTalker_V0.0.2_256.safetensors ]; then (cd st && bash scripts/download_models.sh) && mkdir -p st-modeller && mv st/checkpoints st/gfpgan st-modeller/; fi
+          ln -sfn ../st-modeller/checkpoints st/checkpoints; ln -sfn ../st-modeller/gfpgan st/gfpgan
+          cd st
+          for P in 6 24; do
+            S=$(date +%s)
+            python inference.py --driven_audio ../kisa.wav --source_image ../assets/astrolog.png --result_dir ../st-$P \
+              --preprocess crop --size 256 --pose_style $P --expression_scale 1.3 --cpu
+            echo "pose $P: $(( $(date +%s) - S )) sn"
+            cp "$(find ../st-$P -name '*.mp4' | head -1)" ../surucu-$P.mp4
+          done
+      - name: LivePortrait kur
+        run: |
+          python -m venv /tmp/lp && . /tmp/lp/bin/activate
+          git clone -q --depth 1 https://github.com/KwaiVGI/LivePortrait.git lp
+          pip -q install torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cpu
+          cd lp; ls requirements*
+          if [ -f requirements_base.txt ]; then pip -q install -r requirements_base.txt; else grep -viE "onnxruntime-gpu|^torch" requirements.txt > r.txt; pip -q install -r r.txt; fi
+          pip -q install onnxruntime "huggingface_hub[cli]"
+          if [ ! -d ../lp-agirlik/liveportrait ]; then huggingface-cli download KwaiVGI/LivePortrait --local-dir ../lp-agirlik --exclude "*.git*" "README.md" "docs"; fi
+          rm -rf pretrained_weights; ln -sfn ../lp-agirlik pretrained_weights
+          python inference.py --help | tee yardim.txt | head -120
+      - name: LivePortrait ile tam görsele aktar
+        run: |
+          . /tmp/lp/bin/activate; cd lp
+          CPU=$(grep -oE -- '--flag[-_]force[-_]cpu' yardim.txt | head -1)
+          for P in 6 24; do
+            S=$(date +%s)
+            python inference.py -s ../assets/astrolog.png -d ../surucu-$P.mp4 -o ../lp-$P $CPU || true
+            echo "LP pose $P: $(( $(date +%s) - S )) sn"
+            ls -R ../lp-$P | head
+          done
+      - name: Kaydet
+        run: |
+          mkdir -p avatar-test
+          for P in 6 24; do
+            cp surucu-$P.mp4 avatar-test/surucu-$P.mp4 || true
+            V=$(find lp-$P -name '*.mp4' ! -name '*concat*' | head -1)
+            [ -n "$V" ] && ffmpeg -y -loglevel error -i "$V" -i kisa.wav -map 0:v -map 1:a -c:v libx264 -crf 24 -pix_fmt yuv420p -c:a aac -shortest avatar-test/tam-$P.mp4 || true
+          done
+          ls -la avatar-test
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add avatar-test && git commit -m "Avatar deneme çıktıları" && git pull --rebase && git push
