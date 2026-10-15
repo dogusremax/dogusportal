@@ -56,7 +56,12 @@ async function videoYaDaGorsel(u, videoGovde, gorselGovde, hazirBekle) {
     console.log('✓ carousel yayınlandı:', pub.carousel);
   }
   for (let i = pub.story; i < media.story.length; i++) {
-    const id = await videoYaDaGorsel(media.story[i], url => ({ media_type: 'STORIES', video_url: url }), url => ({ media_type: 'STORIES', image_url: url }), true);
+    // Haftalık story'de karede adı geçen danışmanlar etiketlenir (donem.js → media.etiket); etiketle olmazsa etiketsiz paylaşılır
+    const et = ((media.etiket || [])[i] || []).map(username => ({ username }));
+    const yap = ek => videoYaDaGorsel(media.story[i], url => ({ media_type: 'STORIES', video_url: url, ...ek }), url => ({ media_type: 'STORIES', image_url: url, ...ek }), true);
+    let id = null;
+    if (et.length) { try { id = await yap({ user_tags: et }); } catch (e) { console.log('! etiketle olmadı, etiketsiz deneniyor:', e.message); } }
+    if (!id) id = await yap({});
     await post(`${UID}/media_publish`, { creation_id: id });
     pub.story = i + 1; kaydet();
     console.log('✓ story', i + 1, '/', media.story.length);

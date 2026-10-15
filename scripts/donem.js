@@ -8,6 +8,8 @@ const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 const RAW = 'https://raw.githubusercontent.com/dogusremax/dogusportal/main/';
 const BASE = process.env.DONEM_BASE || 'https://dogusportal.com/';
+const kucuk = x => String(x || '').toLocaleLowerCase('tr').trim();
+let IG = []; try { IG = JSON.parse(fs.readFileSync('data/danismanlar.json', 'utf8')).filter(d => d.instagram).map(d => ({ ad: d.ad, instagram: d.instagram.replace(/^@/, '') })); } catch (e) {}
 const bugunTR = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
 function varsayilan(donem) {
   const b = bugunTR();
@@ -42,6 +44,13 @@ function varsayilan(donem) {
     const f = path.join(out, `${tur}_${i + 1}.jpg`);
     await slides[i].screenshot({ path: f, type: 'jpeg', quality: 95 });
     media[tur].push(RAW + f.replace(/\\/g, '/'));
+    // Haftalık story: bu karede adı geçen danışmanlar Instagram'da etiketlenir (data/danismanlar.json → instagram)
+    if (donem === 'hafta') {
+      const metin = kucuk(await slides[i].evaluate(el => el.innerText)).replace(/\s+/g, ' ');
+      media.etiket = media.etiket || [];
+      media.etiket.push(IG.filter(d => { const p = kucuk(d.ad).split(' '); return metin.includes(p.join(' ')) || metin.includes(p[0] + ' ' + p[p.length - 1]); }).map(d => d.instagram));
+      console.log('  etiket:', media.etiket[i].join(', ') || '(yok)');
+    }
     console.log('✓', donem, key, tur, i + 1);
   }
   await browser.close();
