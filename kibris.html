@@ -690,20 +690,14 @@ body.lock{overflow:hidden}
 .v2 .principles{border:0;padding-top:96px}
 .fbs{position:relative;overflow:hidden;padding-block:clamp(64px,10vw,120px);background:radial-gradient(120% 80% at 18% 30%,rgba(28,78,160,.45),transparent 60%),radial-gradient(90% 70% at 90% 90%,rgba(233,162,59,.12),transparent 60%),#050A30;color:#EAF3F5}
 .fbs-in{display:grid;grid-template-columns:1fr;gap:44px;align-items:center}
-@property --c{syntax:"<length>";inherits:true;initial-value:0px}
-.fbs-cov{container-type:inline-size;position:relative;display:block;width:min(78vw,360px);margin-inline:auto;aspect-ratio:1080/1456;perspective:1400px;text-decoration:none}
-.fbs-card{--c:24cqw;position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%);animation:fbsPeel 3.4s ease-in-out infinite alternate;transform:rotateY(-12deg) rotateX(4deg) rotateZ(-1.5deg);transform-origin:60% 50%;transition:transform .9s cubic-bezier(.2,.8,.2,1),--c .7s cubic-bezier(.2,.8,.2,1);border-radius:4px 10px 10px 4px;box-shadow:-2px 0 0 rgba(255,255,255,.18) inset,0 40px 80px -24px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.06),0 0 90px -10px rgba(60,120,230,.45);overflow:hidden}
+.fbs-cov{position:relative;display:block;filter:drop-shadow(0 34px 40px rgba(0,0,0,.6)) drop-shadow(0 0 50px rgba(60,120,230,.35));width:min(78vw,360px);margin-inline:auto;aspect-ratio:1080/1456;perspective:1400px;text-decoration:none}
+.fbs-card{position:absolute;inset:0;-webkit-mask:url("assets/kibris/forbes-iskele-kapak-720.webp") 0 0/100% 100% no-repeat;mask:url("assets/kibris/forbes-iskele-kapak-720.webp") 0 0/100% 100% no-repeat;transform:rotateY(-12deg) rotateX(4deg) rotateZ(-1.5deg);transform-origin:60% 50%;transition:transform .9s cubic-bezier(.2,.8,.2,1);overflow:hidden}
 .fbs-card img{display:block;width:100%;height:100%;object-fit:cover}
 .fbs-card::before{content:"";position:absolute;inset:0 auto 0 0;width:14px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.12) 45%,transparent);z-index:1}
 .fbs-card::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.28) 50%,transparent 58%);transform:translateX(-60%);animation:fbsGl 6s ease-in-out 1.2s infinite;z-index:2;pointer-events:none}
 @keyframes fbsGl{0%,70%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
-.fbs-cov:hover .fbs-card,.fbs-cov:focus-visible .fbs-card{transform:none;animation:none;--c:42cqw}
-@keyframes fbsPeel{from{--c:20cqw}to{--c:28cqw}}
-.fbs-flap{position:absolute;z-index:3;right:0;bottom:0;width:var(--c);height:var(--c);filter:drop-shadow(-6px -6px 10px rgba(0,0,0,.45))}
-.fbs-flap i{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,0 100%);background:linear-gradient(135deg,#fbfcfe 0%,#e6eaf0 38%,#c3cad5 48%,#8f9aab 50%)}
-.fbs-badge{position:absolute;z-index:4;top:-20px;left:-20px;width:84px;height:84px;border-radius:50%;display:grid;place-content:center;text-align:center;background:radial-gradient(circle at 35% 30%,#FFF3C9,#E7B957 45%,#A8741B);color:#3A2606;box-shadow:0 12px 26px -8px rgba(0,0,0,.6),0 0 0 3px rgba(255,241,196,.35);transform:rotate(-10deg)}
-.fbs-badge b{font:400 2.1rem/1 var(--f-display)}
-.fbs-badge span{font:700 .56rem var(--f-mono);letter-spacing:.12em}
+.fbs-cov:hover .fbs-card,.fbs-cov:focus-visible .fbs-card{transform:none}
+
 .fbs-cov::after{content:"";position:absolute;left:8%;right:8%;bottom:-34px;height:30px;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);filter:blur(4px)}
 .fbs-txt h2{color:#fff;margin:6px 0 0}
 .fbs-q{font:italic 400 clamp(1.25rem,3.4vw,1.6rem)/1.3 var(--f-display);color:var(--gold,#E2B04A);margin:22px 0 0;padding-inline-start:18px;border-inline-start:2px solid var(--red,#DC1C2E)}
@@ -714,7 +708,7 @@ body.lock{overflow:hidden}
 .fbs-links a i{font:700 .7rem var(--f-mono);letter-spacing:.1em;color:var(--gold,#E2B04A);font-style:normal}
 .fbs-m{font-size:.74rem;color:rgba(234,243,245,.5);margin-top:16px;line-height:1.5}
 @media(min-width:900px){.fbs-in{grid-template-columns:minmax(320px,420px) 1fr;gap:80px}.fbs-cov{width:100%}}
-@media (prefers-reduced-motion: reduce){.fbs-card{transform:none;animation:none}.fbs-card::after{animation:none;display:none}}
+@media (prefers-reduced-motion: reduce){.fbs-card{transform:none}.fbs-card::after{animation:none;display:none}}
 .v2 .pr-seal{width:84px;height:84px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
 .v2 .pr-list{counter-reset:pr;scroll-padding-inline:20px;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-20px;padding:6px 20px 18px;scrollbar-width:none}
 .v2 .pr-list::-webkit-scrollbar{display:none}
@@ -1316,8 +1310,7 @@ html{overflow-x:hidden}
     <section class="fbs" id="forbes">
       <div class="wrap fbs-in">
         <a class="fbs-cov" id="fb-cov" href="https://www.forbes.com/sites/kathleenpeddicord/2021/02/05/5-best-beachfront-buys-for-2021/" target="_blank" rel="noopener" data-ev="forbes_kapak">
-          <span class="fbs-card"><span class="fbs-flap" aria-hidden="true"><i></i></span><img id="fb-img" src="assets/kibris/forbes-iskele-kapak-720.webp" srcset="assets/kibris/forbes-iskele-kapak-720.webp 720w, assets/kibris/forbes-iskele-kapak.webp 1080w" sizes="(min-width:900px) 420px, 78vw" width="1080" height="1456" alt="" loading="lazy" decoding="async"></span>
-          <span class="fbs-badge" aria-hidden="true"><b>#1</b><span>FORBES</span></span>
+          <span class="fbs-card"><img id="fb-img" src="assets/kibris/forbes-iskele-kapak-720.webp" srcset="assets/kibris/forbes-iskele-kapak-720.webp 720w, assets/kibris/forbes-iskele-kapak.webp 1080w" sizes="(min-width:900px) 420px, 78vw" width="1080" height="1456" alt="" loading="lazy" decoding="async"></span>
         </a>
         <div class="fbs-txt">
           <span class="eyebrow" id="fb-e"></span>
