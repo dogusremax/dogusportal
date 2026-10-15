@@ -119,7 +119,7 @@ function onizle() {
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
   $('onizle').innerHTML = '';
-  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nİyi çalışmalar.`);
+  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nBu mesaj RE/MAX Doğuş otomatik mesajıdır.`);
   const alt = document.createElement('small'); alt.textContent = 'RE/MAX Doğuş'; $('onizle').append(alt);
 }
 
