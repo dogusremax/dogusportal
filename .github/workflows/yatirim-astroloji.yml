@@ -1,5 +1,6 @@
 name: Haftalık yatırım astrolojisi karuseli
-# Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel + gönderiye yönlendiren story → @remaxdogus (10:00 TR).
+# Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel → @remaxdogus (10:00 TR);
+# gönderiye yönlendiren story görseli + gönderi linki Umut'a mail gider, link çıkartmasıyla elle paylaşılır.
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
 on:
   schedule:
@@ -72,13 +73,17 @@ jobs:
         if: steps.karar.outputs.paylas == '1'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          STORY_MOD: elle   # otomatik yapılırsa story linksiz atılır
         shell: bash
         run: |
           set -o pipefail
           ST=0; node scripts/yatirim-astro-ig.js 2>&1 | tee yatirim-astroloji/ig-log.txt || ST=$?
-          for f in ig-log.txt .pub .pub-story; do [ -f yatirim-astroloji/$f ] && git add yatirim-astroloji/$f; done
+          for f in ig-log.txt .pub .pub-story .permalink; do [ -f yatirim-astroloji/$f ] && git add yatirim-astroloji/$f; done
           git diff --cached --quiet || (git commit -m "Yatırım astrolojisi: ig log" && git pull --rebase && git push)
           exit $ST
+      - name: Story görselini ve gönderi linkini Umut'a mail at
+        if: steps.karar.outputs.paylas == '1' && hashFiles('yatirim-astroloji/story-mail.txt') != ''
+        run: node scripts/bildir.js "Yatırım astrolojisi story'si (link çıkartmasıyla paylaş)" yatirim-astroloji/story-mail.txt
       - name: Paylaşım hatasını bildir
         if: failure() && steps.karar.outputs.paylas == '1'
         run: |
