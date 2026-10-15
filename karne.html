@@ -124,6 +124,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .box h4 i{width:8px;height:8px;border-radius:50%;background:var(--c)}
 .box ul,.box ol{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:s}
 .box li{font-size:13.5px;padding-left:22px;position:relative;line-height:1.4}
+.box.hatir{margin-top:14px}.box.hatir p{margin:0 0 10px;font-size:12.5px;color:var(--dim)}
 .box ul li::before{content:"";position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:2px;background:var(--c);transform:rotate(45deg)}
 .box ol li{counter-increment:s}
 .box ol li::before{content:counter(s);position:absolute;left:0;top:0;width:16px;height:16px;border-radius:5px;background:var(--c);font-size:10.5px;font-weight:800;display:grid;place-items:center}
@@ -309,6 +310,7 @@ function goster(id){
         const govde = x.tur==='musteri' ? `<span class="sub">${x.metin.split('; ').map(s=>`<span>${s}</span>`).join('')}</span>` : x.metin;
         return `<li><span class="k" style="--c:${T.c}">${ICON[T.i]}</span><span><small>${T.ad}</small>${govde}</span></li>`; }).join('')}</ul></div>`
       : `<div class="fix temiz"><h4><span class="cnt">✓</span>Düzeltilecek evrak yok</h4><p>Kapanış belgelerin ve yer gösterme formların tam. Böyle devam!</p></div>`}
+    ${(d.hatirlat||[]).length ? `<div class="box hatir" style="--c:var(--blue)"><h4><i></i>Alışkanlığımız</h4><p>Zorunlu değil ama her kiralıkta tahliye taahhüdü alıyoruz.</p><ul>${d.hatirlat.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <div class="ins">
       <div class="box" style="--c:var(--good)"><h4><i></i>İyi yaptıkların</h4><ul>${(k.iyi.length?k.iyi:['bu hafta yeni bir sayfa açıyoruz']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="box" style="--c:var(--warn)"><h4><i></i>Geliştirmen gerekenler</h4><ul>${(k.gel.length?k.gel:['tüm haftalık hedeflerini tutturdun']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
