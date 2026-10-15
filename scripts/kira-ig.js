@@ -68,8 +68,8 @@ Kira tespiti, yenileme ve tahliye süreçlerinde doğru yol haritası için bize
     for (let i = 0; i < kareler.length; i++) {
       const sade = { media_type: 'STORIES', image_url: kareler[i] };
       let st = null;
-      // İlk karede tüm danışmanlar etiketlenir; etiketle olmazsa kare etiketsiz paylaşılır
-      if (i === 0 && ETIKET.length) {
+      // Her karede tüm danışmanlar etiketlenir; etiketle olmazsa kare etiketsiz paylaşılır
+      if (ETIKET.length) {
         try { st = await post(`${UID}/media`, { ...sade, user_tags: ETIKET.map(username => ({ username })) }); await hazirBekle(st.id); }
         catch (e) { console.log('! Etiketle olmadı, etiketsiz deneniyor:', e.message); st = null; }
       }
