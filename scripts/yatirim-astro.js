@@ -85,7 +85,7 @@ async function gemini(anahtar, metin) {
     if (r && (r.status === 429 || r.status === 503)) { await wait(30000); continue; }
     if (!r || !r.ok) { console.error('Gemini hatası', model, r?.status, j.error?.message?.slice(0, 150)); break; }
     const t = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
-    if (t) return t;
+    if (t) { console.log('Model:', model); return t; }
   }
   return null;
 }
