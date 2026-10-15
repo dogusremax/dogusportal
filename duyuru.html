@@ -119,8 +119,7 @@ function onizle() {
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
   $('onizle').innerHTML = '';
-  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nBu mesaj RE/MAX Doğuş otomatik mesajıdır.`);
-  const alt = document.createElement('small'); alt.textContent = 'RE/MAX Doğuş'; $('onizle').append(alt);
+  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
 }
 
 function butonlar() {
@@ -129,7 +128,7 @@ function butonlar() {
   $('testBtn').disabled = !m || !onayli;
   $('goBtn').disabled = !m || !n || !onayli;
   $('goBtn').textContent = n ? `${n} kişiye gönder` : 'Gönder';
-  if (!onayli) durum('ofis_duyuru şablonu henüz Meta onaylı değil (' + (SABLON || '?') + '). Onaylanınca gönderim açılır.', true);
+  if (!onayli) durum('Duyuru şablonu henüz Meta onaylı değil (' + (SABLON || '?') + '). Onaylanınca gönderim açılır.', true);
 }
 
 function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
