@@ -18,7 +18,11 @@ for w in kelimeler:
 if simdi: cumleler.append(simdi)
 # Whisper'ın bu seste bilinen yanlış duyuşları
 DUZELT = [(r"(?i)\b(re ?/? ?max|remex|rimeks|remaks)\b", "RE/MAX"), (r"(?i)\bastrologik\s+öşesine\b", "astroloji köşesine"),
-          (r"(?i)\böşesine\b", "köşesine"), (r"(?i)\bbuç buç\b", "Burç burç"), (r"(?i)\bkirabelge", "kira belge")]
+          (r"(?i)\böşesine\b", "köşesine"), (r"(?i)\bbuç buç\b", "Burç burç"), (r"(?i)\bkirabelge", "kira belge"),
+          (r"\bmadeli\b", "vadeli")]
+# Gezegen ve burç adları büyük harfle
+for ad in "Güneş Merkür Venüs Mars Jüpiter Satürn Koç Boğa İkizler Yengeç Aslan Başak Terazi Akrep Oğlak Kova Balık".split():
+    DUZELT.append((r"\b" + ("i" if ad[0] == "İ" else ad[0].lower()) + ad[1:] + r"(?=\b|'|\s)", ad))
 def duzelt(t):
     for a, b in DUZELT: t = re.sub(a, b, t)
     return t
