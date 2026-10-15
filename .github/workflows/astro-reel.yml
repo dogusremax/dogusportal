@@ -1,6 +1,6 @@
 name: Haftalık astrolog Reel'i
 # Her Pazartesi karuselden sonra: astrolog (assets/astrolog.png) haftanın yorumunu sesli anlatır → 9:16 Reel.
-# Ses: ElevenLabs (secrets ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID), yoksa ücretsiz Edge TTS. Dudak senkronu: SadTalker (açık kaynak);
+# Ses: Umut yatirim-astroloji/<hafta>-ses.mp3 yüklediyse o (ör. ElevenLabs sitesinden), yoksa ücretsiz Gemini TTS / Edge TTS. Dudak senkronu: SadTalker (açık kaynak);
 # başarısız olursa görsel hafif yakınlaşmayla kullanılır. Altyazı + logo + "yapay zeka ile oluşturuldu" notu eklenir.
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli-reel varken (Umut ilk örneği onaylayınca eklenir); yoksa video Umut'a maille onaya gider.
 on:
@@ -15,7 +15,7 @@ on:
         options: [onizle, yeniden, yayinla]
   push:
     branches: [claude/project-thread-h0cmgl]   # örnek video denemesi; birleştirmeden önce kaldırılır
-    paths: [.github/workflows/astro-reel.yml, scripts/astro-reel.js]
+    paths: [.github/workflows/astro-reel.yml, scripts/astro-reel.js, 'yatirim-astroloji/*-ses.mp3']
 permissions:
   contents: write
 concurrency:
@@ -27,8 +27,6 @@ jobs:
     timeout-minutes: 150
     env:
       ISLEM: ${{ inputs.islem || (github.event_name == 'push' && 'onizle') || 'zamanli' }}
-      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
       GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +59,7 @@ jobs:
         if: steps.karar.outputs.hazir != '1'
         run: |
           sudo apt-get -qq update && sudo apt-get -qq install -y ffmpeg >/dev/null
-          pip -q install edge-tts==7.0.2
+          pip -q install edge-tts faster-whisper==1.1.1
           node scripts/astro-reel.js ses
           ffmpeg -y -loglevel error -i reel-ses.mp3 -ar 16000 -ac 1 reel-ses.wav
       - name: SadTalker önbelleği

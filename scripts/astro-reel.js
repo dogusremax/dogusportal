@@ -1,7 +1,7 @@
 // Haftalık yatırım astrolojisi Reel'i: astrolog (assets/astrolog.png) haftanın yorumunu sesli anlatır.
 //   node scripts/astro-reel.js metin    → data/yatirim-astroloji.json'dan ~55 sn konuşma metni (Gemini, olmazsa kalıp) → yatirim-astroloji/<hafta>-reel.json
-//   node scripts/astro-reel.js ses      → ElevenLabs (ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID varsa), yoksa Edge TTS (ücretsiz)
-//                                         → reel-ses.mp3 + reel-zaman.json (cümle başına başlangıç/bitiş saniyesi)
+//   node scripts/astro-reel.js ses      → yatirim-astroloji/<hafta>-ses.mp3 yüklendiyse o; yoksa ücretsiz Gemini TTS / Edge TTS
+//                                         → reel-ses.mp3 + reel-zaman.json (cümle zamanları, faster-whisper ile sesten)
 //   node scripts/astro-reel.js altyazi  → reel.ass (9:16, alt bölümde altyazı)
 //   node scripts/astro-reel.js medya    → yatirim-astroloji/.media-reel (paylaşım bilgisi)
 // Video birleştirme (ffmpeg) ve dudak senkronu (SadTalker) .github/workflows/astro-reel.yml içinde.
@@ -84,51 +84,47 @@ async function metin() {
 
 const sure = f => +execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f], { encoding: 'utf8' });
 
-async function elevenlabs(c) {
-  const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${process.env.ELEVENLABS_VOICE_ID}/with-timestamps?output_format=mp3_44100_128`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': process.env.ELEVENLABS_API_KEY },
-    body: JSON.stringify({ text: c.join(' '), model_id: process.env.ELEVENLABS_MODEL || 'eleven_multilingual_v2', language_code: 'tr',
-      voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.2, use_speaker_boost: true } }),
-  });
-  const j = await r.json();
-  if (!r.ok) throw new Error('ElevenLabs: ' + r.status + ' ' + JSON.stringify(j).slice(0, 300));
-  fs.writeFileSync('reel-ses.mp3', Buffer.from(j.audio_base64, 'base64'));
-  const a = j.alignment, zaman = [];
-  let i = 0;
-  for (const t of c) {
-    const bas = i, son = i + t.length - 1;
-    zaman.push({ t, bas: a.character_start_times_seconds[bas], son: a.character_end_times_seconds[Math.min(son, a.characters.length - 1)] });
-    i = son + 2;   // cümleler arası boşluk
+// Ücretsiz Türkçe ses: önce Gemini TTS (mevcut Gemini anahtarı, ücretsiz kota), olmazsa Edge TTS
+async function geminiSes(metin) {
+  let anahtar = process.env.GEMINI_API_KEY;
+  if (!anahtar) try { anahtar = JSON.parse(process.env.GOOGLE_PLACES_KEY || '').gemini; } catch (e) {}
+  if (!anahtar) return false;
+  for (const model of ['gemini-2.5-flash-preview-tts', 'gemini-2.5-pro-preview-tts']) for (let d = 0; d < 2; d++) {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': anahtar },
+      body: JSON.stringify({ contents: [{ parts: [{ text: 'Sıcak, samimi ve hafif enerjik bir kadın astrolog sesiyle, doğal ve akıcı bir tempoda, Türkçe oku:\n\n' + metin }] }],
+        generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: process.env.GEMINI_SES || 'Aoede' } } } } }),
+    }).catch(() => null);
+    if (r && (r.status === 429 || r.status === 503)) { await wait(20000); continue; }
+    const j = r ? await r.json().catch(() => ({})) : {};
+    const b64 = j.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+    if (!b64) { console.error('Gemini TTS', model, r?.status, j.error?.message?.slice(0, 150)); break; }
+    fs.writeFileSync('ses.pcm', Buffer.from(b64, 'base64'));
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 's16le', '-ar', '24000', '-ac', '1', '-i', 'ses.pcm', '-ar', '44100', '-c:a', 'libmp3lame', '-b:a', '160k', 'reel-ses.mp3']);
+    console.log('Ses: Gemini TTS', model);
+    return true;
   }
-  return zaman;
+  return false;
 }
 
-function edge(c) {
-  // Her cümle ayrı okunur, aralarına kısa sessizlik konur; böylece altyazı zamanları kesin olur
-  const ses = process.env.EDGE_SES || 'tr-TR-EmelNeural', liste = [], zaman = [];
-  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'lavfi', '-i', 'anullsrc=r=24000:cl=mono', '-t', '0.35', '-c:a', 'libmp3lame', 'bosluk.mp3']);
-  let t0 = 0;
-  c.forEach((t, k) => {
-    const f = `parca-${k}.mp3`;
-    execFileSync('edge-tts', ['--voice', ses, '--rate=+4%', '--text', t, '--write-media', f]);
-    const d = sure(f);
-    zaman.push({ t, bas: t0, son: t0 + d });
-    t0 += d + 0.35;
-    liste.push(`file '${f}'`, `file 'bosluk.mp3'`);
-  });
-  fs.writeFileSync('liste.txt', liste.join('\n'));
-  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', 'liste.txt', '-ar', '44100', '-c:a', 'libmp3lame', '-b:a', '128k', 'reel-ses.mp3']);
-  return zaman;
+function edge(metin) {
+  fs.writeFileSync('metin.txt', metin);
+  execFileSync('edge-tts', ['--voice', process.env.EDGE_SES || 'tr-TR-EmelNeural', '--file', 'metin.txt', '--write-media', 'reel-ses.mp3']);
+  console.log('Ses: Edge TTS');
 }
 
 async function ses() {
-  const c = JSON.parse(fs.readFileSync(METIN, 'utf8')).cumleler;
-  let zaman = null;
-  if (process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_VOICE_ID) {
-    try { zaman = await elevenlabs(c); console.log('Ses: ElevenLabs'); } catch (e) { console.error(e.message, '→ Edge TTS ile devam'); }
+  // Umut'un yüklediği hazır ses (ör. ElevenLabs sitesinden indirilen) varsa o kullanılır
+  const hazir = `${DIR}/${veri.hafta}-ses.mp3`;
+  if (fs.existsSync(hazir)) {
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', hazir, '-ar', '44100', '-c:a', 'libmp3lame', '-b:a', '160k', 'reel-ses.mp3']);
+    console.log('Ses: yüklenen dosya', hazir);
+  } else {
+    const metin = JSON.parse(fs.readFileSync(METIN, 'utf8')).cumleler.join(' ');
+    if (!(await geminiSes(metin))) edge(metin);
   }
-  if (!zaman) { zaman = edge(c); console.log('Ses: Edge TTS'); }
-  fs.writeFileSync('reel-zaman.json', JSON.stringify(zaman, null, 1));
+  // Altyazı zamanları sesin kendisinden çıkarılır (faster-whisper)
+  execFileSync('python', ['scripts/ses-zaman.py', 'reel-ses.mp3', 'reel-zaman.json'], { stdio: 'inherit' });
   console.log('Süre:', sure('reel-ses.mp3').toFixed(1), 'sn');
 }
 
