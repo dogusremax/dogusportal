@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Haftalık Yatırım Astrolojisi · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Symbols:wght@500&display=swap" rel="stylesheet">
+<!--
+  Haftalık yatırım astrolojisi karuseli (3:4, 1080×1440): kapak + 6 slayt × 2 burç + kapanış.
+  Metinler data/yatirim-astroloji.json'dan gelir (scripts/yatirim-astro.js üretir, her Pazartesi).
+  Görseller scripts/yatirim-astro.js ciz ile bu sayfadan alınır.
+-->
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1;min-width:150px}
+  .status{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.6)}
+  .grid{display:flex;flex-wrap:wrap;gap:18px;padding:20px;justify-content:center}
+  .card{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .card small{font-size:11px;color:rgba(255,255,255,.5)}
+  .slide{width:420px!important;height:560px!important;min-height:560px;max-height:560px;flex:0 0 420px;position:relative;overflow:hidden;border-radius:4px}
+  .sans{font-family:'Plus Jakarta Sans',sans-serif}
+  .sym{font-family:'Noto Sans Symbols','DejaVu Sans',sans-serif;font-weight:500}
+  .panel{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .panel label{display:block;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px}
+  #aciklama{background:#161c44;border-radius:10px;padding:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;color:rgba(255,255,255,.9);max-width:640px}
+  @media(max-width:480px){
+    .grid{padding:12px;gap:10px}
+    .card{width:100%;height:470px;overflow:hidden}
+    .card .slide{transform:scale(.8);transform-origin:top center;margin-bottom:-112px}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="assets/dogus-logo.png" alt="Doğuş">
+  <h1>Haftalık Yatırım Astrolojisi · Karusel</h1>
+</div>
+<div class="status" id="status">Yükleniyor…</div>
+<div class="grid" id="grid"></div>
+<div class="panel">
+  <label>Gönderi açıklaması</label>
+  <div id="aciklama"></div>
+</div>
+
+<script>
+const NAVY="#050A30", RED="#DC1C2E", REDD="#910B19", CORAL="#FB5160", LB="#F6F3F1", GOLD="#FFC83D";
+const RGRAD=`linear-gradient(160deg,${REDD} 0%,${RED} 45%,${CORAL} 100%)`;
+const TEL="0216 315 15 15";
+const LOGO="assets/dogus-logo.png";
+const AYLAR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+// [anahtar, ad, sembol, tarih aralığı]
+const BURCLAR=[
+  ['koc','Koç','♈','21 Mart – 20 Nisan'],['boga','Boğa','♉','21 Nisan – 21 Mayıs'],
+  ['ikizler','İkizler','♊','22 Mayıs – 21 Haziran'],['yengec','Yengeç','♋','22 Haziran – 22 Temmuz'],
+  ['aslan','Aslan','♌','23 Temmuz – 22 Ağustos'],['basak','Başak','♍','23 Ağustos – 22 Eylül'],
+  ['terazi','Terazi','♎','23 Eylül – 22 Ekim'],['akrep','Akrep','♏','23 Ekim – 21 Kasım'],
+  ['yay','Yay','♐','22 Kasım – 21 Aralık'],['oglak','Oğlak','♑','22 Aralık – 21 Ocak'],
+  ['kova','Kova','♒','22 Ocak – 19 Şubat'],['balik','Balık','♓','20 Şubat – 20 Mart']];
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sym=c=>c+'︎';
+
+const logo=()=>`<img src="${LOGO}" style="position:absolute;top:30px;right:32px;width:104px;z-index:12;">`;
+const foot=t=>`<div class="sans" style="position:absolute;left:32px;right:120px;bottom:26px;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.4px;z-index:10;">${t}</div>`;
+const kaydir=()=>`<div class="sans" style="position:absolute;right:32px;bottom:26px;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.8);z-index:10;">KAYDIR →</div>`;
+
+function aralik(pzt){
+  const a=new Date(pzt+'T12:00:00Z'), b=new Date(a.getTime()+6*864e5);
+  return a.getUTCMonth()===b.getUTCMonth()
+    ? `${a.getUTCDate()} – ${b.getUTCDate()} ${AYLAR[b.getUTCMonth()]} ${b.getUTCFullYear()}`
+    : `${a.getUTCDate()} ${AYLAR[a.getUTCMonth()]} – ${b.getUTCDate()} ${AYLAR[b.getUTCMonth()]} ${b.getUTCFullYear()}`;
+}
+
+// Arka plandaki silik burç çarkı
+function cark(boy,op){
+  const r=boy/2, gl=BURCLAR.map((b,i)=>{
+    const a=(i*30-90)*Math.PI/180, x=r+Math.cos(a)*r*.78, y=r+Math.sin(a)*r*.78;
+    return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${(boy*.085).toFixed(0)}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Noto Sans Symbols,DejaVu Sans">${sym(b[2])}</text>`;
+  }).join('');
+  const cizgi=BURCLAR.map((b,i)=>{const a=(i*30-75)*Math.PI/180;
+    return `<line x1="${(r+Math.cos(a)*r*.64).toFixed(1)}" y1="${(r+Math.sin(a)*r*.64).toFixed(1)}" x2="${(r+Math.cos(a)*r*.93).toFixed(1)}" y2="${(r+Math.sin(a)*r*.93).toFixed(1)}" stroke="#fff" stroke-width="1.5"/>`;}).join('');
+  return `<svg width="${boy}" height="${boy}" viewBox="0 0 ${boy} ${boy}" style="opacity:${op}">
+<circle cx="${r}" cy="${r}" r="${r*.93}" fill="none" stroke="#fff" stroke-width="2"/>
+<circle cx="${r}" cy="${r}" r="${r*.64}" fill="none" stroke="#fff" stroke-width="1.5"/>
+<circle cx="${r}" cy="${r}" r="${r*.3}" fill="none" stroke="#fff" stroke-width="1"/>${cizgi}${gl}</svg>`;
+}
+
+function kapak(d){
+  const ol=(d.olaylar||[]).slice(0,4);
+  const satir=ol.length?ol.map(o=>{
+    const i=o.indexOf(':'); const t=i>0?o.slice(0,i):'', m=i>0?o.slice(i+1).trim():o;
+    return `<div style="display:flex;gap:10px;align-items:flex-start;margin-top:9px;">
+<span class="sans" style="flex:0 0 auto;background:rgba(5,10,48,.55);border-radius:7px;padding:4px 8px;font-size:10.5px;font-weight:800;letter-spacing:.3px;min-width:62px;text-align:center;">${esc(t)}</span>
+<span class="sans" style="font-size:12.5px;line-height:1.45;font-weight:500;color:rgba(255,255,255,.95);padding-top:2px;">${esc(m)}</span></div>`;
+  }).join(''):`<div class="sans" style="font-size:12.5px;margin-top:9px;color:rgba(255,255,255,.95);">${esc(d.ozet||'')}</div>`;
+  return `<div class="slide" style="background:${RGRAD};">
+<div style="position:absolute;top:-120px;left:-150px;">${cark(520,.10)}</div>
+${logo()}
+<div style="position:absolute;left:32px;right:32px;top:112px;">
+<div class="sans" style="display:inline-block;background:${NAVY};color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;padding:8px 14px;border-radius:9px;">HAFTALIK YORUM</div>
+<div class="sans" style="font-size:38px;font-weight:800;letter-spacing:-1.4px;line-height:1.02;margin-top:16px;">Bu haftanın<br>yatırım<br>astrolojisi</div>
+<div class="sans" style="font-size:16px;font-weight:700;margin-top:12px;color:rgba(255,255,255,.95);">${aralik(d.hafta)}</div>
+<div class="sans" style="margin-top:22px;font-size:10px;font-weight:800;letter-spacing:1.8px;color:rgba(255,255,255,.75);">HAFTANIN GÖKYÜZÜ</div>
+${satir}
+</div>
+${foot('RE/MAX DOĞUŞ · '+TEL)}${kaydir()}</div>`;
+}
+
+function yildiz(n){n=Math.max(1,Math.min(5,+n||3));
+  return `<span style="color:${GOLD};letter-spacing:1px;">${'★'.repeat(n)}</span><span style="color:rgba(255,255,255,.22);letter-spacing:1px;">${'★'.repeat(5-n)}</span>`;}
+
+function burcKart(b,y){
+  y=y||{};
+  return `<div style="flex:1 1 0;min-height:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:13px 16px 12px;display:flex;flex-direction:column;">
+<div style="display:flex;align-items:center;gap:12px;">
+<div class="sym" style="flex:0 0 42px;height:42px;border-radius:50%;background:${RGRAD};display:flex;align-items:center;justify-content:center;font-size:23px;color:#fff;">${sym(b[2])}</div>
+<div style="flex:1;min-width:0;">
+<div class="sans" style="font-size:21px;font-weight:800;letter-spacing:-.6px;line-height:1.1;">${b[1]}</div>
+<div class="sans" style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;">${b[3]}</div>
+</div>
+<div class="sans" style="font-size:14px;text-align:right;">${yildiz(y.yildiz)}</div>
+</div>
+<div class="sans" style="font-size:14px;font-weight:700;color:${CORAL};margin-top:9px;line-height:1.25;">${esc(y.baslik)}</div>
+<div class="sans" style="font-size:11.8px;line-height:1.48;color:rgba(255,255,255,.9);margin-top:4px;">${esc(y.yorum)}</div>
+<div style="margin-top:auto;padding-top:6px;"><span class="sans" style="display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:1.2px;background:rgba(251,81,96,.18);color:#fff;border-radius:6px;padding:4px 8px;">ODAK · ${esc(String(y.odak||'').toLocaleUpperCase('tr'))}</span></div>
+</div>`;
+}
+
+function burcSlayt(d,i){
+  const ikili=BURCLAR.slice(i*2,i*2+2);
+  return `<div class="slide" style="background:${NAVY};">
+<div style="position:absolute;bottom:-160px;right:-160px;">${cark(420,.05)}</div>
+${logo()}
+<div style="position:absolute;left:32px;right:32px;top:40px;">
+<div class="sans" style="display:inline-block;background:${CORAL};color:#fff;font-size:10px;font-weight:800;letter-spacing:1.6px;padding:6px 11px;border-radius:8px;">YATIRIM ASTROLOJİSİ</div>
+<div class="sans" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:7px;font-weight:600;">${aralik(d.hafta)}</div>
+</div>
+<div style="position:absolute;left:32px;right:32px;top:104px;bottom:52px;display:flex;flex-direction:column;gap:10px;">
+${ikili.map(b=>burcKart(b,(d.burclar||{})[b[0]])).join('')}
+</div>
+${foot('Eğlence amaçlıdır, yatırım tavsiyesi değildir.')}${i<5?kaydir():''}</div>`;
+}
+
+function kapanis(){
+  return `<div class="slide" style="background:${RGRAD};">
+<div style="position:absolute;top:150px;left:-120px;">${cark(560,.09)}</div>
+${logo()}
+<div style="position:absolute;left:34px;right:34px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;">
+<div class="sans" style="font-size:32px;font-weight:800;letter-spacing:-1.2px;line-height:1.06;margin-bottom:16px;">Yıldızlar ilham verir,<br>kararı birlikte<br>verelim.</div>
+<div class="sans" style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.92);margin-bottom:22px;">
+Kadıköy ve Fikirtepe'de alım, satım ve kiralama için piyasa verisiyle desteklenen, size özel bir yol haritası çıkaralım.</div>
+<div><div class="sans" style="display:inline-flex;padding:12px 32px;background:${LB};color:${REDD};font-weight:700;font-size:14px;border-radius:26px;">Hemen arayın</div></div>
+<div class="sans" style="font-size:12px;color:#fff;margin-top:20px;letter-spacing:.4px;">RE/MAX DOĞUŞ • ${TEL}</div>
+</div>
+${foot('Bu içerik eğlence amaçlıdır, yatırım tavsiyesi değildir.')}</div>`;
+}
+
+function aciklamaMetni(d){
+  if(!d||!d.hafta) return '';
+  return `Bu haftanın yatırım astrolojisi ✨ ${aralik(d.hafta)}
+
+${d.ozet||''}
+
+Burcunu bul, kaydır ve bu haftanın emlak ve yatırım odağını gör. Arkadaşını etiketle, onun burcu ne diyor? 👇
+
+Bu içerik eğlence amaçlıdır, yatırım tavsiyesi değildir. Gerçek kararlar için piyasa verisiyle konuşalım.
+📞 ${TEL} · RE/MAX Doğuş
+
+#astroloji #burçlar #haftalıkburç #yatırım #gayrimenkul #emlak #kadıköy #fikirtepe #remaxdoğuş`;
+}
+
+function slaytlar(d){ return [kapak(d),...[0,1,2,3,4,5].map(i=>burcSlayt(d,i)),kapanis()]; }
+
+async function yukle(){
+  const q=new URLSearchParams(location.search);
+  const kaynak=q.get('veri')||'data/yatirim-astroloji.json';
+  const d=await (await fetch(kaynak+'?cb='+Date.now())).json();
+  window.VERI=d;
+  const g=document.getElementById('grid'); g.innerHTML='';
+  const l=slaytlar(d);
+  l.forEach((html,i)=>{const c=document.createElement('div');c.className='card';c.innerHTML=html+`<small>${i+1}/${l.length}</small>`;g.appendChild(c);});
+  document.getElementById('aciklama').textContent=aciklamaMetni(d);
+  document.getElementById('status').textContent=`Hafta: ${aralik(d.hafta)} · ${l.length} kare · 1080×1440`;
+  await document.fonts.ready;
+  document.body.dataset.hazir='1';
+}
+yukle().catch(e=>{document.getElementById('status').textContent='Veri okunamadı: '+e.message;});
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+name: Haftalık yatırım astrolojisi karuseli
+# Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel → @remaxdogus (10:00 TR).
+# Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
+on:
+  schedule:
+    - cron: "0 6 * * 1"    # Pzt 09:00 TR: üret; paylaşım 10:00'u bekler
+    - cron: "30 8 * * 1"   # Pzt 11:30 TR yedek (.pub kilidi sayesinde mükerrer atmaz)
+  workflow_dispatch:
+    inputs:
+      islem:
+        description: 'onizle: yorum + görsel üret, paylaşma · yeniden: yorumları baştan yaz, paylaşma · yayinla: bu haftanınkini paylaş'
+        type: choice
+        default: onizle
+        options: [onizle, yeniden, yayinla]
+      hafta:
+        description: 'Hafta (Pazartesi, yyyy-mm-dd). Boş = bu hafta'
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: yatirim-astroloji
+  cancel-in-progress: false
+jobs:
+  karusel:
+    runs-on: ubuntu-latest
+    env:
+      HAFTA: ${{ inputs.hafta }}
+      ISLEM: ${{ inputs.islem || 'zamanli' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: pip install ephem==4.2.1
+      - name: Yorumları üret (bu hafta yoksa ya da "yeniden" seçildiyse)
+        env:
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+        run: |
+          H=${HAFTA:-$(node -e "const b=new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Istanbul'});const d=new Date(b+'T12:00:00Z');console.log(new Date(d-((d.getUTCDay()+6)%7)*864e5).toISOString().slice(0,10))")}
+          MEVCUT=$(node -e "try{console.log(require('./data/yatirim-astroloji.json').hafta)}catch(e){}")
+          if [ "$ISLEM" = "yeniden" ] || [ "$MEVCUT" != "$H" ]; then HAFTA=$H node scripts/yatirim-astro.js uret; else echo "Bu haftanın yorumları hazır: $H"; fi
+      - name: Görselleri üret
+        run: |
+          npm i playwright@1.47.0 && npx playwright install --with-deps chromium
+          python3 -m http.server 8000 >/dev/null 2>&1 &
+          sleep 2
+          SITE=http://localhost:8000 node scripts/yatirim-astro.js ciz
+      - name: Kaydet
+        run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add data/yatirim-astroloji.json yatirim-astroloji
+          git diff --cached --quiet || (git commit -m "Yatırım astrolojisi: $(node -p "require('./data/yatirim-astroloji.json').hafta")" && git pull --rebase && git push)
+      - name: Paylaşılacak mı?
+        id: karar
+        run: |
+          if [ "$ISLEM" = "yayinla" ]; then echo "paylas=1" >> $GITHUB_OUTPUT
+          elif [ "$ISLEM" = "zamanli" ] && [ -f yatirim-astroloji/.canli ]; then echo "paylas=1" >> $GITHUB_OUTPUT
+          else echo "Paylaşım yok (islem=$ISLEM, .canli $( [ -f yatirim-astroloji/.canli ] && echo var || echo yok ))"; fi
+      - name: 10:00'u bekle
+        if: steps.karar.outputs.paylas == '1' && env.ISLEM == 'zamanli'
+        run: |
+          KALAN=$(( $(date -u -d 'today 07:00' +%s) - $(date -u +%s) ))
+          if [ $KALAN -gt 0 ]; then echo "$KALAN sn bekleniyor"; sleep $KALAN; fi
+      - name: Güncel IG token'ı al
+        if: steps.karar.outputs.paylas == '1'
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        if: steps.karar.outputs.paylas == '1'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          set -o pipefail
+          ST=0; node scripts/yatirim-astro-ig.js 2>&1 | tee yatirim-astroloji/ig-log.txt || ST=$?
+          git add yatirim-astroloji/ig-log.txt yatirim-astroloji/.pub 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Yatırım astrolojisi: ig log" && git pull --rebase && git push)
+          exit $ST
+      - name: Paylaşım hatasını bildir
+        if: failure() && steps.karar.outputs.paylas == '1'
+        run: |
+          { echo "Haftalık yatırım astrolojisi karuseli paylaşılamadı."; echo; echo "Çalışma: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; echo; tail -20 yatirim-astroloji/ig-log.txt 2>/dev/null; } > hata.txt
+          node scripts/bildir.js "Yatırım astrolojisi paylaşım hatası" hata.txt
