@@ -58,11 +58,11 @@ jobs:
           pip -q install torch==2.3.0+cpu torchvision==0.18.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
           cd lp; ls requirements*
           if [ -f requirements_base.txt ]; then pip -q install -r requirements_base.txt; else grep -viE "onnxruntime-gpu|^torch" requirements.txt > r.txt; pip -q install -r r.txt; fi
-          pip -q install onnxruntime huggingface_hub
+          pip -q install onnxruntime huggingface_hub requests
           if [ ! -d ../lp-agirlik/liveportrait ]; then python -c "from huggingface_hub import snapshot_download as d; d('KwaiVGI/LivePortrait', local_dir='../lp-agirlik', ignore_patterns=['*.git*','README.md','docs/*'])"; fi
           ls ../lp-agirlik
           rm -rf pretrained_weights; ln -sfn ../lp-agirlik pretrained_weights
-          python inference.py --help | tee yardim.txt | head -120
+          python inference.py --help > yardim.txt; head -120 yardim.txt
       - uses: actions/cache/save@v4
         continue-on-error: true
         with: { path: lp-agirlik, key: lp-agirlik-v1 }
@@ -72,7 +72,7 @@ jobs:
           CPU=$(grep -oE -- '--flag[-_]force[-_]cpu' yardim.txt | head -1)
           for P in 6 24; do
             S=$(date +%s)
-            python inference.py -s ../assets/astrolog.png -d ../surucu-$P.mp4 -o ../lp-$P $CPU || true
+            python inference.py -s ../assets/astrolog.png -d ../surucu-$P.mp4 -o ../lp-$P $CPU
             echo "LP pose $P: $(( $(date +%s) - S )) sn"
             ls -R ../lp-$P | head
           done
