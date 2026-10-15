@@ -10,7 +10,8 @@ const { execFileSync } = require('child_process');
 const DIR = 'yatirim-astroloji', VERI = 'data/yatirim-astroloji.json', GECMIS = DIR + '/.gecmis.json';
 const GECMIS_HAFTA = 6;
 const SITE = (process.env.SITE || 'https://dogusportal.com').replace(/\/$/, '');
-const MODELLER = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-flash-lite-latest'];
+// "-latest" takma adları Google'ın en güncel modeline gider; önce Pro (haftada tek istek), olmazsa Flash
+const MODELLER = ['gemini-pro-latest', 'gemini-flash-latest', 'gemini-2.5-pro', 'gemini-2.5-flash'];
 const BURCLAR = [['koc', 'Koç'], ['boga', 'Boğa'], ['ikizler', 'İkizler'], ['yengec', 'Yengeç'], ['aslan', 'Aslan'], ['basak', 'Başak'],
   ['terazi', 'Terazi'], ['akrep', 'Akrep'], ['yay', 'Yay'], ['oglak', 'Oğlak'], ['kova', 'Kova'], ['balik', 'Balık']];
 // Her hafta farklı bir ana tema: yorumlar aynı kalıba oturmasın
@@ -78,7 +79,7 @@ async function gemini(anahtar, metin) {
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': anahtar },
       body: JSON.stringify({ contents: [{ parts: [{ text: metin }] }],
-        generationConfig: { temperature: 0.9, responseMimeType: 'application/json', maxOutputTokens: 8192 } }),
+        generationConfig: { temperature: 0.9, responseMimeType: 'application/json', maxOutputTokens: 32768 } }),
     }).catch(() => null);
     const j = r ? await r.json().catch(() => ({})) : {};
     if (r && (r.status === 429 || r.status === 503)) { await wait(30000); continue; }
