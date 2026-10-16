@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pip -q install faster-whisper==1.1.1
+      - run: pip -q install faster-whisper==1.1.1 "av==14.4.0"
       - run: python scripts/ses-zaman.py gecici/hafta-02-kasim.mp3 gecici/zaman-02-kasim.json
       - run: |
           git config user.name "github-actions[bot]"; git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
