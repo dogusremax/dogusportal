@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Ofis Duyurusu · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1}
+  main{max-width:680px;margin:0 auto;padding:18px 16px 60px;display:flex;flex-direction:column;gap:16px}
+  .kutu{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+  .kutu h2{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  textarea{width:100%;min-height:140px;resize:vertical;font:500 15px/1.5 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;outline:none}
+  textarea:focus{border-color:#FB5160}
+  .say{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px;text-align:right}
+  .say.asim{color:#ff8a95}
+  .kisiler{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+  .kisi{display:flex;align-items:center;gap:8px;background:#161c44;border-radius:10px;padding:9px 11px;font-size:14px;cursor:pointer}
+  .kisi input{width:17px;height:17px;accent-color:#DC1C2E}
+  .kisi.yok{opacity:.4}
+  .kisi .s{margin-left:auto;font-size:12px}
+  .hizli{display:flex;gap:8px;margin-bottom:10px}
+  button{font:700 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45;cursor:default}
+  button.ghost{background:rgba(255,255,255,.1);font-size:12px;padding:7px 12px}
+  .onizle{background:#e9f8e0;color:#111;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+  .onizle small{display:block;color:#666;margin-top:8px;font-size:12px}
+  .alt{display:flex;gap:10px;flex-wrap:wrap}
+  .alt .go{flex:1;background:#25D366;color:#0b2e17}
+  .durum{font-size:13px;color:rgba(255,255,255,.7)}
+  .durum.hata{color:#ff8a95}
+  #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
+  #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Ofis Duyurusu · WhatsApp</h1></div>
+
+<div id="giris">
+  <p class="durum">Gönderim PIN'i</p>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button id="girBtn">Giriş</button>
+  <p id="girisHata" class="durum hata"></p>
+</div>
+
+<main id="ana" hidden>
+  <div class="kutu">
+    <h2>Duyuru metni</h2>
+    <textarea id="metin" maxlength="900" placeholder="Örn: Cuma 10:00'da ofiste aylık toplantımız var, katılımınızı rica ederim."></textarea>
+    <div id="say" class="say">0 / 900</div>
+  </div>
+
+  <div class="kutu">
+    <h2>Kimlere</h2>
+    <div class="hizli"><button class="ghost" id="hepsi">Hepsini seç</button><button class="ghost" id="hicbiri">Temizle</button></div>
+    <div id="kisiler" class="kisiler"></div>
+  </div>
+
+  <div class="kutu">
+    <h2>Önizleme</h2>
+    <div id="onizle" class="onizle"></div>
+  </div>
+
+  <div class="alt">
+    <button id="testBtn" class="ghost" style="font-size:14px;padding:11px 16px">Bana test gönder</button>
+    <button id="goBtn" class="go">Gönder</button>
+  </div>
+  <p id="durum" class="durum"></p>
+</main>
+
+<script>
+// 0216 315 15 15 hattı (dogus-whatsapp-service). Hiçbir şey otomatik gitmez; sadece "Gönder"e basınca.
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const depo = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
+let PIN = '', KISILER = [], SONUC = {}, DUYURU_ID = '', SABLON = '';
+
+// Meta değişkende satır sonu kabul etmez: tek paragraf (sunucu da aynısını yapar)
+const temiz = m => m.replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ').trim();
+
+async function servis(veri) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+    body: JSON.stringify(Object.assign({ action: 'duyuru', pin: PIN }, veri)) });
+  return JSON.parse(await r.text());
+}
+
+async function giris(p) {
+  PIN = p; $('girisHata').textContent = 'Kontrol ediliyor…';
+  try {
+    const j = await servis({ islem: 'liste' });
+    if (!j.ok) { depo('duyuru_pin', null); $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
+    depo('duyuru_pin', p);
+    KISILER = j.kisiler || []; SABLON = j.sablonDurum || '';
+    $('giris').hidden = true; $('ana').hidden = false;
+    // Varsayılan: Umut hariç herkes (Umut testle kendine görür)
+    KISILER.forEach(k => { k.sec = k.numara && k.ad !== 'Umut Tokkuş'; });
+    ciz();
+  } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
+}
+
+function ciz() {
+  $('kisiler').innerHTML = KISILER.map((k, i) => {
+    const s = SONUC[k.ad];
+    const isaret = s ? (s.ok ? '<span class="s" style="color:#6ee7a0">gönderildi</span>' : `<span class="s" style="color:#ff8a95" title="${s.hata || ''}">hata</span>`) : (k.numara ? '' : '<span class="s">numara yok</span>');
+    return `<label class="kisi${k.numara ? '' : ' yok'}"><input type="checkbox" data-i="${i}" ${k.sec ? 'checked' : ''} ${k.numara ? '' : 'disabled'}>${k.ad}${isaret}</label>`;
+  }).join('');
+  $('kisiler').querySelectorAll('input').forEach(el => el.onchange = () => { KISILER[+el.dataset.i].sec = el.checked; butonlar(); });
+  onizle(); butonlar();
+}
+
+function onizle() {
+  const m = temiz($('metin').value);
+  $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
+  const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
+  $('onizle').innerHTML = '';
+  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
+}
+
+function butonlar() {
+  const m = temiz($('metin').value), n = KISILER.filter(k => k.sec).length;
+  const onayli = SABLON === 'APPROVED';
+  $('testBtn').disabled = !m || !onayli;
+  $('goBtn').disabled = !m || !n || !onayli;
+  $('goBtn').textContent = n ? `${n} kişiye gönder` : 'Gönder';
+  if (!onayli) durum('Duyuru şablonu henüz Meta onaylı değil (' + (SABLON || '?') + '). Onaylanınca gönderim açılır.', true);
+}
+
+function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
+
+$('metin').addEventListener('input', () => { DUYURU_ID = ''; SONUC = {}; ciz(); });
+$('hepsi').onclick = () => { KISILER.forEach(k => k.sec = k.numara); ciz(); };
+$('hicbiri').onclick = () => { KISILER.forEach(k => k.sec = false); ciz(); };
+
+$('testBtn').onclick = async () => {
+  if (!confirm('Duyuru SADECE senin test numarana gidecek. Devam?')) return;
+  $('testBtn').disabled = true; durum('Test gönderiliyor…');
+  try {
+    const j = await servis({ islem: 'test', metin: $('metin').value });
+    j.ok ? durum('Test gönderildi. Telefonunu kontrol et.') : durum('Test gidemedi: ' + j.error, true);
+  } catch (e) { durum('Test gidemedi: ' + e.message, true); }
+  butonlar();
+};
+
+$('goBtn').onclick = async () => {
+  const kimler = KISILER.filter(k => k.sec).map(k => k.ad);
+  if (!confirm(`Duyuru ${kimler.length} kişiye WhatsApp ile gidecek:\n\n${kimler.map(k => '• ' + k).join('\n')}\n\nOnaylıyor musun?`)) return;
+  // Aynı metin tekrar basılırsa aynı kimlik gider; sunucu aynı kişiye ikinci kez göndermez
+  if (!DUYURU_ID) DUYURU_ID = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  $('goBtn').disabled = $('testBtn').disabled = true; durum('Gönderiliyor…');
+  try {
+    const j = await servis({ islem: 'gonder', id: DUYURU_ID, metin: $('metin').value, kimler });
+    if (!j.ok) throw new Error(j.error || 'Gönderilemedi');
+    (j.sonuclar || []).forEach(s => SONUC[s.isim] = s);
+    const hata = (j.sonuclar || []).filter(s => !s.ok).length;
+    ciz();
+    hata ? durum(`${hata} kişiye gidemedi (kırmızı işaretli). Tekrar basarsan sadece gidemeyenlere denenir.`, true)
+         : durum(`Duyuru ${j.sonuclar.length} kişiye gönderildi.`);
+  } catch (e) { durum('Gönderim başarısız: ' + e.message, true); butonlar(); }
+};
+
+$('girBtn').onclick = () => giris($('pin').value.trim());
+$('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('girBtn').click(); });
+const kayitli = depo('duyuru_pin');
+if (kayitli) giris(kayitli); else $('pin').focus();
+</script>
+</body>
+</html>
