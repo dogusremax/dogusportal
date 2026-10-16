@@ -1,0 +1,68 @@
+# GEÇİCİ: Elvan sesi (ElevenLabs API) + Doğuş Astrolog avatarı (HeyGen Avatar IV) örnek videosu (birleştirmeden önce silinecek)
+name: HeyGen Elvan testi
+on:
+  workflow_dispatch:
+    inputs:
+      video: { description: "Videoyu da üret (1) ya da sadece sesi (0)", default: "1" }
+permissions: { contents: write }
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      AVATAR: 1488a5f81c834cf9a1e8a34ea720d4af
+      VIDEO: ${{ inputs.video }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Elvan sesi ve video
+        run: |
+          [ -n "$ELEVENLABS_API_KEY" ] || { echo "ELEVENLABS_API_KEY yok"; exit 1; }
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          def istek(url, veri=None, bas=None, ham=False, yontem=None):
+              h = bas or {}
+              if isinstance(veri, (dict, list)): veri = json.dumps(veri).encode(); h['Content-Type'] = 'application/json'
+              r = urllib.request.Request(url, data=veri, headers=h, method=yontem)
+              try:
+                  y = urllib.request.urlopen(r).read()
+                  return y if ham else json.loads(y)
+              except urllib.error.HTTPError as e: print('HATA', url, e.code, e.read().decode()[:800]); raise
+          E = {'xi-api-key': os.environ['ELEVENLABS_API_KEY']}
+          sesler = istek('https://api.elevenlabs.io/v1/voices', bas=dict(E))['voices']
+          print('Sesler:', [(v['name'], v['voice_id'], v.get('category')) for v in sesler])
+          elvan = next((v for v in sesler if 'elvan' in v['name'].lower()), None)
+          if not elvan:
+              ara = istek('https://api.elevenlabs.io/v1/shared-voices?search=Elvan&page_size=10', bas=dict(E))
+              print('Kütüphane:', [(v['name'], v['voice_id'], v.get('language')) for v in ara.get('voices', [])])
+              raise SystemExit('Elvan My Voices içinde yok')
+          print('Elvan:', elvan['voice_id'])
+          metin = open('avatar-test/heygen-metin.txt').read().replace('\n', ' ').strip()
+          mp3 = istek(f"https://api.elevenlabs.io/v1/text-to-speech/{elvan['voice_id']}?output_format=mp3_44100_128",
+                      {"text": metin, "model_id": "eleven_multilingual_v2", "language_code": "tr"}, dict(E), ham=True)
+          open('avatar-test/elvan-ses.mp3', 'wb').write(mp3); print('ses', len(mp3), 'bayt')
+          if os.environ.get('VIDEO') != '1': raise SystemExit(0)
+          H = {'X-Api-Key': os.environ['HEYGEN_API_KEY']}
+          up = istek('https://upload.heygen.com/v1/asset', mp3, dict(H, **{'Content-Type': 'audio/mpeg'}), yontem='POST')
+          print(up); ses_id = up['data']['id']
+          govde = {"video_inputs": [{
+              "character": {"type": "talking_photo", "talking_photo_id": os.environ['AVATAR'], "use_avatar_iv_model": True},
+              "voice": {"type": "audio", "audio_asset_id": ses_id}}],
+              "dimension": {"width": 1080, "height": 1920}, "title": "Astrolog Elvan deneme"}
+          r = istek('https://api.heygen.com/v2/video/generate', govde, dict(H)); print(r)
+          vid = r['data']['video_id']
+          for _ in range(160):
+              time.sleep(15)
+              s = istek(f'https://api.heygen.com/v1/video_status.get?video_id={vid}', bas=dict(H))['data']
+              print(s.get('status'), s.get('error'))
+              if s['status'] == 'completed':
+                  urllib.request.urlretrieve(s['video_url'], 'avatar-test/heygen-elvan.mp4'); break
+              if s['status'] == 'failed': raise SystemExit(json.dumps(s))
+          PY
+      - name: Kaydet
+        if: always()
+        run: |
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add avatar-test/elvan-ses.mp3 avatar-test/heygen-elvan.mp4 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "HeyGen Elvan örneği" && git pull --rebase && git push)
