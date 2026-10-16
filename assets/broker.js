@@ -17,15 +17,24 @@
   window.brokerKapi = function(){
     if (sessionStorage.getItem('perfAuth') === 'ok') return true;
     var q = new URLSearchParams(location.search), k = q.get('k');
-    if (k) {
-      document.documentElement.style.visibility = 'hidden';
-      brokerDogrula(k).then(function(ok){
-        if (!ok) { location.href = 'https://dogusportal.com'; return; }
+    document.documentElement.style.visibility = 'hidden';
+    q.delete('k');
+    var temiz = location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash;
+    /* PIN linkte yoksa ya da yanlışsa sor (e-postadaki linkler PIN taşımaz) */
+    var sor = function(){
+      var p = window.prompt('Broker PIN');
+      if (!p) { location.href = 'https://dogusportal.com'; return; }
+      brokerDogrula(p).then(function(ok){
+        if (!ok) { alert('Yanlış PIN'); sor(); return; }
         sessionStorage.setItem('perfAuth', 'ok');
-        q.delete('k');
-        location.replace(location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+        location.replace(temiz);
       });
-    } else location.href = 'https://dogusportal.com';
+    };
+    (k ? brokerDogrula(k) : Promise.resolve(false)).then(function(ok){
+      if (!ok) { setTimeout(sor, 0); return; }
+      sessionStorage.setItem('perfAuth', 'ok');
+      location.replace(temiz);
+    });
     throw new Error('auth');
   };
 })();

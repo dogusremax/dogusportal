@@ -115,6 +115,15 @@ Aktivitelerini uygulamaya girmeyi unutma 👉 dogusportal.com
 {{10}}
 
 Yeni hafta senin, bol kazançlı bir hafta dileriz! 🚀`,
+  karne_link:
+`Günaydın {{1}} ☀️
+*{{2}}* haftalık karnen hazır 📋
+
+🏅 Sıralama: {{3}}
+⭐ Puan: {{4}}
+🛠️ Düzeltilecek: {{5}}
+
+Karnende bu haftanın planı ve broker yorumu da var. Aşağıdaki tuşa dokunup aç 👇`,
   destek_mesaji:
 `Merhaba {{1}} 🌿
 {{2}}
@@ -130,6 +139,7 @@ Bir telefon kadar yakınız, iyi ki varsın 💙
 const ALAN = {
   carsamba_hatirlatma: [null, 'Motivasyon cümlesi', 'Listedeki durumu', 'Hafta sonuna kadar'],
   haftalik_karne: [null, null, 'Sıralama', 'Puan', 'Aktif gün', 'İyi yaptıkları', 'Geliştirmesi gerekenler', 'Broker yorumu', 'Bu haftanın planı', 'Kapanış satırı'],
+  karne_link: [null, null, 'Sıralama', 'Puan', 'Düzeltilecek'],
   destek_mesaji: [null, 'Açılış', 'Cümle', 'Mesaj'],
 };
 
@@ -190,7 +200,7 @@ function destek(d, L, gun, cumle) {
 // Tek seferlik: bu haftaların çarşamba mesajı Cuma gider. Onaylı çarşamba şablonunda sabit
 // "Çarşamba akşamı" satırı olduğu için bu haftalarda onaylı destek_mesaji şablonu kullanılır.
 // Anahtar: haftanın Pazartesi tarihi. Listede olmayan haftalar normal Çarşamba olarak devam eder.
-const CUMA_HAFTALARI = { '2026-09-28': true };
+const CUMA_HAFTALARI = { '2026-09-28': true, '2026-10-12': true };
 
 function carsamba(veri, tarih) {
   if (CUMA_HAFTALARI[iso(tarih)]) return cumaVersiyon(veri, tarih);
@@ -232,6 +242,31 @@ function cumaVersiyon(veri, tarih) {
 }
 
 // ---------- PAZARTESİ KARNE ----------
+// Meta "karne_link" şablonunu onaylayınca true: mesaj kısa özet + kişiye özel karne linki (Karnemi aç tuşu) olur.
+// false iken eski uzun haftalik_karne metni gider.
+// Elle açmaya gerek yok: sayfa açılınca Meta'da karne_link APPROVED ise kendiliğinden true olur.
+let KARNE_LINK = false;
+const KARNE_NOT = () => MOD === 'pazartesi' && !KARNE_LINK ? ' · Yeni karne (Karnemi aç tuşu) Meta onayında, şimdilik eski karne metni.' : '';
+async function karneLinkOnayli() {
+  try {
+    const r = await fetch(`${WA_SERVICE_URL}?action=sablonDurum&cb=${Date.now()}`, { redirect: 'follow' });
+    const j = JSON.parse(await r.text());
+    return !!(j.ok && (j.sablonlar || []).some(x => x.ad === 'karne_link' && x.durum === 'APPROVED'));
+  } catch (e) { return false; }
+}
+async function karneOzet(h) {
+  const r = await fetch(`${APPS_SCRIPT_URL}?action=karneOzet&hafta=${h}&k=${KEY}`, { redirect: 'follow' });
+  const j = JSON.parse(await r.text());
+  if (!j.ok || !j.liste) throw new Error('karne özeti yok');
+  return j;
+}
+function karneLinkMesaji(m, ozet, ort) {
+  const o = ozet.liste.find(x => x.id === m.d.id);
+  if (!o) return m;
+  const trend = (m.p[2].match(/ (⬆️|⬇️|➡️).*$/) || [''])[0];
+  return { d: m.d, sira: m.sira, sablon: 'karne_link', p: [m.d.first, ozet.etiket, `*${o.sira}/${ozet.n}*${trend}`,
+    `*${o.puan}* (ofis ortalaması ${ort})`, o.duzeltme ? `${o.duzeltme} madde, listesi karnende` : 'yok, tebrikler 👏'] };
+}
 function pazartesi(veri, onceki) {
   const L = veri.siralama, n = L.length;
   const say = L.filter(x => ozel(x).mod !== 'destek'), ort = Math.round(say.reduce((s, x) => s + x.puan, 0) / Math.max(1, say.length));
@@ -298,7 +333,7 @@ function onizleme(sablon, p) {
   return parca.map(x => { const k = x.match(/^\{\{(\d+)\}\}$/); return k ? `\u0001${esc(p[k[1] - 1])}\u0002` : esc(x); }).join('')
     .replace(/\*([^*\n]+)\*/g, '<b>$1</b>').replace(/(^|[\s"(\u0001])_([^_\n]+?)_(?=[\s".,!)\u0002]|$)/g, '$1<i>$2</i>')
     .replace(/\u0001/g, '<span class="v">').replace(/\u0002/g, '</span>').replace(/\n/g, '<br>') +
-    '<div class="alt">RE/MAX Doğuş</div>';
+    '<div class="alt">RE/MAX Doğuş</div>' + (sablon === 'karne_link' ? '<div class="alt" style="text-align:center;color:#53bdeb;border-top:1px solid #ffffff22;padding-top:6px;margin-top:6px">🔗 Karnemi aç</div>' : '');
 }
 
 function haftaSecenekleri() {
@@ -328,13 +363,18 @@ async function load() {
   const grid = document.getElementById('grid'), h = document.getElementById('hafta').value;
   durum('Veriler çekiliyor…'); grid.innerHTML = ''; LISTE = []; butonlar();
   try {
-    let veri, onceki = null;
+    let veri, onceki = null, ozet = null;
     if (MOD === 'pazartesi') {
+      KARNE_LINK = await karneLinkOnayli();
       const p = new Date(h + 'T12:00:00'); p.setDate(p.getDate() - 7);
-      [veri, onceki] = await Promise.all([haftalik(h), haftalik(iso(p)).catch(() => null)]);
+      [veri, onceki, ozet] = await Promise.all([haftalik(h), haftalik(iso(p)).catch(() => null), KARNE_LINK ? karneOzet(h).catch(() => null) : null]);
     } else veri = await haftalik(h);
     if (!veri || !veri.siralama || !veri.siralama.length) { grid.innerHTML = '<div class="empty">Bu hafta için henüz veri yok.</div>'; durum(''); return; }
     LISTE = MOD === 'pazartesi' ? pazartesi(veri, onceki) : carsamba(veri, new Date(h + 'T12:00:00'));
+    if (ozet) {
+      const ort = Math.round(ozet.liste.reduce((s, x) => s + x.puan, 0) / Math.max(1, ozet.liste.length));
+      LISTE = LISTE.map(m => m.sablon === 'haftalik_karne' ? karneLinkMesaji(m, ozet, ort) : m);
+    } else if (MOD === 'pazartesi' && KARNE_LINK) durum('Karne özeti alınamadı, eski karne metni kullanılıyor.');
     ciz();
   } catch (e) {
     console.warn(e); durum('Veri çekilemedi. İnterneti kontrol edip Yenile\'ye bas.');
@@ -380,7 +420,7 @@ function butonlar() {
   go.disabled = !bekleyen.length;
   go.textContent = bekleyen.length ? `✅ Onayla ve ${bekleyen.length} kişiye gönder` : (gid ? (gid === LISTE.length ? '✅ Hepsi gönderildi' : '✅ Seçilenler gönderildi') : '✅ Onayla ve gönder');
   document.getElementById('testbtn').disabled = !bekleyen.length;
-  if (LISTE.length) durum(`${LISTE.length} mesaj hazır · ${gid} gönderildi. Kontrol et, gerekirse düzenle, onayla.`);
+  if (LISTE.length) durum(`${LISTE.length} mesaj hazır · ${gid} gönderildi. Kontrol et, gerekirse düzenle, onayla.` + KARNE_NOT());
 }
 
 function pin() {
