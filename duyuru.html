@@ -84,8 +84,11 @@
   </div>
 
   <div class="kutu">
-    <h2>Önizleme</h2>
+    <h2>Önizleme · Gruba paylaş</h2>
+    <div id="onizleGrup" class="onizle"></div>
+    <h2 style="margin-top:14px">Önizleme · Kişilere gönder</h2>
     <div id="onizle" class="onizle"></div>
+    <p class="ipucu">Kişilere giden mesajda Meta kuralı gereği satır atlamaları kaldırılır, metin tek paragraf gider. Paragraflı göndermek için "Gruba paylaş"ı kullan.</p>
   </div>
 
   <div class="alt">
@@ -106,16 +109,22 @@ let PIN = '', KISILER = [], SONUC = {}, DUYURU_ID = '', SABLON = '';
 // Meta değişkende satır sonu kabul etmez: tek paragraf (sunucu da aynısını yapar)
 const temiz = m => m.replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ').trim();
 
-async function servis(veri) {
-  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
-    body: JSON.stringify(Object.assign({ action: 'duyuru', pin: PIN }, veri)) });
-  return JSON.parse(await r.text());
+async function servis(veri, sure) {
+  const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
+  try {
+    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ac.signal,
+      body: JSON.stringify(Object.assign({ action: 'duyuru', pin: PIN }, veri)) });
+    return JSON.parse(await r.text());
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'Sunucu yanıt vermedi, tekrar dene.' : e.message);
+  } finally { clearTimeout(z); }
 }
 
 async function giris(p) {
-  PIN = p; $('girisHata').textContent = 'Kontrol ediliyor…';
+  PIN = p; $('girisHata').textContent = 'Kontrol ediliyor…'; $('girBtn').disabled = true;
+  const yavas = setTimeout(() => { $('girisHata').textContent = 'Kontrol ediliyor… sunucu bazen 20-30 sn sürebiliyor, bekle.'; }, 5000);
   try {
-    const j = await servis({ islem: 'liste' });
+    const j = await servis({ islem: 'liste' }, 60000);
     if (!j.ok) { depo('duyuru_pin', null); $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
     depo('duyuru_pin', p);
     KISILER = j.kisiler || []; SABLON = j.sablonDurum || '';
@@ -124,6 +133,7 @@ async function giris(p) {
     KISILER.forEach(k => { k.sec = k.numara && k.ad !== 'Umut Tokkuş'; });
     ciz();
   } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
+  finally { clearTimeout(yavas); $('girBtn').disabled = false; }
 }
 
 function ciz() {
@@ -140,6 +150,7 @@ function onizle() {
   const m = temiz(metinWa());
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
+  $('onizleGrup').innerHTML = waBicim(metinWa() || '…');
   $('onizle').innerHTML = waBicim(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
 }
 
