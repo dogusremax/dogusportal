@@ -14,7 +14,14 @@ sure = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries",
 # tek kelime altyazı (ASS)
 def zm(t):
     return f"{int(t // 3600)}:{int(t % 3600 // 60):02d}:{t % 60:05.2f}"
-kelimeler = [k for c in cumle for k in c["k"]]
+kelimeler = []
+for k in (k for c in cumle for k in c["k"]):
+    if kelimeler and k["w"][:1] in "-'’":   # Whisper "RE", "-MAX" / "Doğuş", "'un" diye böler: birleştir
+        kelimeler[-1] = {**kelimeler[-1], "w": kelimeler[-1]["w"] + k["w"], "s": k["s"]}
+    else:
+        kelimeler.append(dict(k))
+for k in kelimeler:
+    k["w"] = re.sub(r"(?i)\bre[-/ ]?max\b", "RE/MAX", k["w"])
 ass = ["[Script Info]", "ScriptType: v4.00+", "PlayResX: 1080", "PlayResY: 1920", "",
        "[V4+ Styles]",
        "Format: Name, Fontname, Fontsize, PrimaryColour, OutlineColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV",
