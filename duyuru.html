@@ -89,6 +89,7 @@
   </div>
 
   <div class="alt">
+    <button id="grupBtn" class="ghost" style="font-size:14px;padding:11px 16px" title="WhatsApp açılır, danışman grubunu seçip kendi numarandan gönderirsin">Gruba paylaş</button>
     <button id="testBtn" class="ghost" style="font-size:14px;padding:11px 16px">Bana test gönder</button>
     <button id="goBtn" class="go">Gönder</button>
   </div>
@@ -254,6 +255,7 @@ $('emojiBtn').onclick = () => $('emojiler').classList.toggle('acik');
 function butonlar() {
   const m = temiz(metinWa()), n = KISILER.filter(k => k.sec).length;
   const onayli = SABLON === 'APPROVED';
+  $('grupBtn').disabled = !m;
   $('testBtn').disabled = !m || !onayli;
   $('goBtn').disabled = !m || !n || !onayli;
   $('goBtn').textContent = n ? `${n} kişiye gönder` : 'Gönder';
@@ -265,6 +267,12 @@ function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggl
 ed.addEventListener('input', () => { DUYURU_ID = ''; SONUC = {}; ciz(); });
 $('hepsi').onclick = () => { KISILER.forEach(k => k.sec = k.numara); ciz(); };
 $('hicbiri').onclick = () => { KISILER.forEach(k => k.sec = false); ciz(); };
+
+// Gruba: WhatsApp'ın paylaş ekranı açılır, Umut grubu seçip kendi numarasından gönderir (satır atlama korunur)
+$('grupBtn').onclick = () => {
+  const m = metinWa(); if (!m) return;
+  window.open('https://wa.me/?text=' + encodeURIComponent(m), '_blank');
+};
 
 $('testBtn').onclick = async () => {
   if (!confirm('Duyuru SADECE senin test numarana gidecek. Devam?')) return;
