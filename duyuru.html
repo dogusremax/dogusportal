@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
   body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
   .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
   .top img{height:30px}
@@ -17,7 +18,11 @@
   .kutu{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
   .kutu h2{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
   textarea{width:100%;min-height:140px;resize:vertical;font:500 15px/1.5 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;outline:none}
-  textarea:focus{border-color:#FB5160}
+  textarea:focus,#metin:focus{border-color:#FB5160}
+  #metin{width:100%;min-height:140px;font:500 15px/1.5 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;outline:none;white-space:pre-wrap;word-wrap:break-word}
+  #metin:empty:before{content:attr(data-ph);color:rgba(255,255,255,.35)}
+  #metin code{font-family:Menlo,Consolas,monospace;font-size:14px}
+  .arac button.on{background:#DC1C2E}
   .say{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px;text-align:right}
   .say.asim{color:#ff8a95}
   .kisiler{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
@@ -60,14 +65,14 @@
   <div class="kutu">
     <h2>Duyuru metni</h2>
     <div class="arac">
-      <button type="button" data-f="*" title="Kalın"><b>K</b></button>
-      <button type="button" data-f="_" title="İtalik"><i>İ</i></button>
-      <button type="button" data-f="~" title="Üstü çizili"><s>Ç</s></button>
-      <button type="button" data-f="```" title="Sabit genişlik yazı" style="font-family:Menlo,monospace">Aa</button>
+      <button type="button" data-f="b" title="Kalın"><b>K</b></button>
+      <button type="button" data-f="i" title="İtalik"><i>İ</i></button>
+      <button type="button" data-f="s" title="Üstü çizili"><s>Ç</s></button>
+      <button type="button" data-f="m" title="Sabit genişlik yazı" style="font-family:Menlo,monospace">Aa</button>
       <button type="button" id="emojiBtn" title="Emoji">😊</button>
     </div>
     <div id="emojiler" class="emojiler"></div>
-    <textarea id="metin" maxlength="900" placeholder="Örn: Cuma 10:00'da ofiste aylık toplantımız var, katılımınızı rica ederim."></textarea>
+    <div id="metin" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Örn: Cuma 10:00'da ofiste aylık toplantımız var, katılımınızı rica ederim."></div>
     <div id="say" class="say">0 / 900</div>
     <p class="ipucu">WhatsApp yalnızca kalın, italik, üstü çizili ve sabit genişlik yazıyı destekler; yazı tipi seçimi yoktur. Önizleme, danışmanın telefonunda göreceğinin aynısıdır.</p>
   </div>
@@ -84,6 +89,7 @@
   </div>
 
   <div class="alt">
+    <button id="grupBtn" class="ghost" style="font-size:14px;padding:11px 16px" title="WhatsApp açılır, danışman grubunu seçip kendi numarandan gönderirsin">Gruba paylaş</button>
     <button id="testBtn" class="ghost" style="font-size:14px;padding:11px 16px">Bana test gönder</button>
     <button id="goBtn" class="go">Gönder</button>
   </div>
@@ -131,7 +137,7 @@ function ciz() {
 }
 
 function onizle() {
-  const m = temiz($('metin').value);
+  const m = temiz(metinWa());
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
   $('onizle').innerHTML = waBicim(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
@@ -140,28 +146,116 @@ function onizle() {
 // WhatsApp biçimi: *kalın* _italik_ ~üstü çizili~ ```sabit```
 function waBicim(t) {
   t = t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  return t.replace(/```([^`]+?)```/g, '<code>$1</code>')
-          .replace(/(^|[\s(])\*(\S(?:[^*]*?\S)?)\*(?=$|[\s.,!?:;)])/g, '$1<b>$2</b>')
-          .replace(/(^|[\s(])_(\S(?:[^_]*?\S)?)_(?=$|[\s.,!?:;)])/g, '$1<i>$2</i>')
-          .replace(/(^|[\s(])~(\S(?:[^~]*?\S)?)~(?=$|[\s.,!?:;)])/g, '$1<s>$2</s>');
+  t = t.replace(/```([^`\n]+?)```/g, '<code>$1</code>');
+  // İç içe biçim (*_kalın italik_*) için iki tur; işaretin önü/arkası boşluk, noktalama ya da başka işaret olmalı
+  for (let k = 0; k < 2; k++) {
+    t = t.replace(/(^|[\s(>*_~])\*(\S(?:[^*\n]*?\S)?)\*(?=$|[\s.,!?:;)'’"\-<*_~])/g, '$1<b>$2</b>')
+         .replace(/(^|[\s(>*_~])_(\S(?:[^_\n]*?\S)?)_(?=$|[\s.,!?:;)'’"\-<*_~])/g, '$1<i>$2</i>')
+         .replace(/(^|[\s(>*_~])~(\S(?:[^~\n]*?\S)?)~(?=$|[\s.,!?:;)'’"\-<*_~])/g, '$1<s>$2</s>');
+  }
+  return t;
 }
 
-function ekle(bas, son) {
-  const ta = $('metin'), a = ta.selectionStart, b = ta.selectionEnd, v = ta.value;
-  const sec = v.slice(a, b) || (son ? 'yazı' : '');
-  ta.value = v.slice(0, a) + bas + sec + (son || '') + v.slice(b);
-  ta.focus(); ta.selectionStart = a + bas.length; ta.selectionEnd = a + bas.length + sec.length;
-  ta.dispatchEvent(new Event('input'));
+// Editör: yazarken kalın/italik görünür; gönderirken WhatsApp işaretlerine (*_~```) çevrilir
+const ed = $('metin');
+function stil(el, st) {
+  const n = Object.assign({}, st), tag = el.tagName, cs = el.style || {};
+  if (tag === 'B' || tag === 'STRONG' || /bold|[6-9]00/.test(cs.fontWeight || '')) n.b = true;
+  if (tag === 'I' || tag === 'EM' || cs.fontStyle === 'italic') n.i = true;
+  if (tag === 'S' || tag === 'STRIKE' || tag === 'DEL' || /line-through/.test(cs.textDecoration || cs.textDecorationLine || '')) n.s = true;
+  if (tag === 'CODE') n.m = true;
+  return n;
 }
-document.querySelectorAll('.arac [data-f]').forEach(b => b.onclick = () => ekle(b.dataset.f, b.dataset.f));
+function parcala(node, st, out) {
+  node.childNodes.forEach(c => {
+    if (c.nodeType === 3) { out.push(Object.assign({ t: c.nodeValue.replace(/\u00a0/g, ' ').replace(/\u200b/g, '') }, st)); return; }
+    if (c.nodeType !== 1) return;
+    if (c.tagName === 'BR') { out.push({ t: '\n' }); return; }
+    const blok = /^(DIV|P|LI)$/.test(c.tagName);
+    if (blok && out.length && !/\n$/.test(out[out.length - 1].t)) out.push({ t: '\n' });
+    parcala(c, stil(c, st), out);
+  });
+  return out;
+}
+function metinWa() {
+  const satirlar = [[]];
+  parcala(ed, {}, []).forEach(p => p.t.split('\n').forEach((t, k) => {
+    if (k) satirlar.push([]);
+    if (t) satirlar[satirlar.length - 1].push(Object.assign({}, p, { t }));
+  }));
+  const ayni = (x, y) => !!x.b === !!y.b && !!x.i === !!y.i && !!x.s === !!y.s && !!x.m === !!y.m;
+  return satirlar.map(sat => {
+    const bir = [];
+    sat.forEach(p => { const son = bir[bir.length - 1]; if (son && ayni(son, p)) son.t += p.t; else bir.push(Object.assign({}, p)); });
+    return bir.map(p => {
+      const m = p.t.match(/^(\s*)([\s\S]*?)(\s*)$/);
+      if (!m[2]) return p.t;
+      let ac = '', ka = '';
+      if (p.b) { ac += '*'; ka = '*' + ka; }
+      if (p.i) { ac += '_'; ka = '_' + ka; }
+      if (p.s) { ac += '~'; ka = '~' + ka; }
+      if (p.m) { ac += '```'; ka = '```' + ka; }
+      return m[1] + ac + m[2] + ka + m[3];
+    }).join('');
+  }).join('\n').replace(/\n+$/, '');
+}
+const KOMUT = { b: 'bold', i: 'italic', s: 'strikeThrough' };
+// İmleci düğümün hemen arkasına, biçimin dışına koy (görünmez ayraçla; gönderirken silinir)
+function arkasina(node) {
+  const z = document.createTextNode('​'); node.parentNode.insertBefore(z, node.nextSibling);
+  const r = document.createRange(); r.setStart(z, 1); r.collapse(true);
+  const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+}
+function sabitYazi() {
+  const sel = getSelection(); if (!sel.rangeCount || sel.isCollapsed) { alert('Önce sabit yazı yapılacak kelimeyi seç.'); return; }
+  const r = sel.getRangeAt(0); if (!ed.contains(r.commonAncestorContainer)) return;
+  const c = document.createElement('code'); c.appendChild(r.extractContents()); r.insertNode(c);
+  arkasina(c);
+}
+function bicimle(f) {
+  odakla();
+  const sel = getSelection(), secili = sel.rangeCount && !sel.isCollapsed && ed.contains(sel.anchorNode);
+  if (f === 'm') sabitYazi();
+  else {
+    document.execCommand(KOMUT[f], false, null);
+    // Seçili yazıya uygulandıysa imleç sona geçsin ve sonraki yazı düz devam etsin
+    if (secili) { sel.collapseToEnd(); if (document.queryCommandState(KOMUT[f])) document.execCommand(KOMUT[f], false, null); }
+  }
+  ed.dispatchEvent(new Event('input')); tuslariIsaretle();
+}
+function tuslariIsaretle() {
+  ['b', 'i', 's'].forEach(f => {
+    const on = document.queryCommandState(KOMUT[f]);
+    document.querySelector(`.arac [data-f="${f}"]`).classList.toggle('on', on && ed.contains(getSelection().anchorNode));
+  });
+}
+// Son imleç/seçim yerini sakla: tuşa basınca seçim kaybolsa da (Safari/iPhone) doğru yere uygulansın
+let sonAralik = null;
+document.addEventListener('selectionchange', () => {
+  const sel = getSelection();
+  if (sel.rangeCount && ed.contains(sel.anchorNode)) sonAralik = sel.getRangeAt(0).cloneRange();
+  tuslariIsaretle();
+});
+function odakla() {
+  ed.focus();
+  const sel = getSelection();
+  if (sonAralik && !(sel.rangeCount && ed.contains(sel.anchorNode) && !sel.getRangeAt(0).collapsed && sonAralik.collapsed)) {
+    sel.removeAllRanges(); sel.addRange(sonAralik);
+  }
+}
+// mousedown'da odak editörde kalsın (Safari/iPhone seçimi kaybetmesin)
+document.querySelectorAll('.arac button, #emojiler').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+document.querySelectorAll('.arac [data-f]').forEach(b => b.onclick = () => bicimle(b.dataset.f));
+ed.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain')); });
 const EMOJI = '📢 📣 🗓️ 📅 ⏰ 📍 🏢 🏠 🔑 📝 📌 ✅ ❗ ⚠️ ℹ️ 🎉 🎊 🥳 🎂 🏆 🥇 👏 💪 🙏 👍 👋 😊 😀 🤝 💼 💰 📈 🎯 🚀 ⭐ 🔥 ❤️ 💙 ☕ 🍽️ 🌿 ☀️ 🌙'.split(' ');
 $('emojiler').innerHTML = EMOJI.map(e => `<button type="button">${e}</button>`).join('');
-$('emojiler').querySelectorAll('button').forEach(b => b.onclick = () => ekle(b.textContent, ''));
+$('emojiler').querySelectorAll('button').forEach(b => b.onclick = () => { odakla(); document.execCommand('insertText', false, b.textContent); });
 $('emojiBtn').onclick = () => $('emojiler').classList.toggle('acik');
 
 function butonlar() {
-  const m = temiz($('metin').value), n = KISILER.filter(k => k.sec).length;
+  const m = temiz(metinWa()), n = KISILER.filter(k => k.sec).length;
   const onayli = SABLON === 'APPROVED';
+  $('grupBtn').disabled = !m;
   $('testBtn').disabled = !m || !onayli;
   $('goBtn').disabled = !m || !n || !onayli;
   $('goBtn').textContent = n ? `${n} kişiye gönder` : 'Gönder';
@@ -170,15 +264,21 @@ function butonlar() {
 
 function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
 
-$('metin').addEventListener('input', () => { DUYURU_ID = ''; SONUC = {}; ciz(); });
+ed.addEventListener('input', () => { DUYURU_ID = ''; SONUC = {}; ciz(); });
 $('hepsi').onclick = () => { KISILER.forEach(k => k.sec = k.numara); ciz(); };
 $('hicbiri').onclick = () => { KISILER.forEach(k => k.sec = false); ciz(); };
+
+// Gruba: WhatsApp'ın paylaş ekranı açılır, Umut grubu seçip kendi numarasından gönderir (satır atlama korunur)
+$('grupBtn').onclick = () => {
+  const m = metinWa(); if (!m) return;
+  window.open('https://wa.me/?text=' + encodeURIComponent(m), '_blank');
+};
 
 $('testBtn').onclick = async () => {
   if (!confirm('Duyuru SADECE senin test numarana gidecek. Devam?')) return;
   $('testBtn').disabled = true; durum('Test gönderiliyor…');
   try {
-    const j = await servis({ islem: 'test', metin: $('metin').value });
+    const j = await servis({ islem: 'test', metin: metinWa() });
     j.ok ? durum('Test gönderildi. Telefonunu kontrol et.') : durum('Test gidemedi: ' + j.error, true);
   } catch (e) { durum('Test gidemedi: ' + e.message, true); }
   butonlar();
@@ -191,7 +291,7 @@ $('goBtn').onclick = async () => {
   if (!DUYURU_ID) DUYURU_ID = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   $('goBtn').disabled = $('testBtn').disabled = true; durum('Gönderiliyor…');
   try {
-    const j = await servis({ islem: 'gonder', id: DUYURU_ID, metin: $('metin').value, kimler });
+    const j = await servis({ islem: 'gonder', id: DUYURU_ID, metin: metinWa(), kimler });
     if (!j.ok) throw new Error(j.error || 'Gönderilemedi');
     (j.sonuclar || []).forEach(s => SONUC[s.isim] = s);
     const hata = (j.sonuclar || []).filter(s => !s.ok).length;
