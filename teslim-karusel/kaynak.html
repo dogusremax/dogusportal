@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Teslimi Yaklaşan Etaplar · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;display:flex;flex-wrap:wrap;gap:20px;padding:20px}
+.slide{width:420px;height:560px;position:relative;overflow:hidden;flex:0 0 420px}
+.navy{background:#050A30}
+.grad{background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)}
+.logo{position:absolute;top:30px;right:32px;width:104px;z-index:12}
+.pill{display:inline-block;border-radius:8px;padding:6px 11px;font-size:10.5px;font-weight:800;letter-spacing:2px}
+.foot{position:absolute;left:32px;right:32px;bottom:26px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:rgba(255,255,255,.6)}
+.foot b{letter-spacing:3px;font-size:10.5px;color:rgba(255,255,255,.85);font-weight:800}
+.row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.badge{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.st{font-size:8.5px;font-weight:800;letter-spacing:1.2px;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.bar{height:8px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#DC1C2E,#FB5160);border-radius:5px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const BUGUN = new URLSearchParams(location.search).get('bugun') || '2026-10-16';
+const AY=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const P=s=>new Date(s+'T12:00:00');
+const g=s=>P(s).getDate()+' '+AY[P(s).getMonth()];
+const aralik=(a,b)=>{ if(a===b) return g(a); const A=P(a),B=P(b);
+  return A.getMonth()===B.getMonth()? A.getDate()+'–'+B.getDate()+' '+AY[B.getMonth()] : g(a)+' – '+g(b); };
+const durum=b=> b.bit<BUGUN?'bitti':(b.bas<=BUGUN?'suruyor':'sirada');
+const RGRAD='linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)';
+const logo='<img class="logo" src="../assets/dogus-logo.png">';
+const foot=(sol,kaydir=true)=>`<div class="foot"><span>${sol}</span>${kaydir?'<b>KAYDIR →</b>':''}</div>`;
+
+fetch('teslim-takvimi.json').then(r=>r.json()).then(d=>{
+  // yaklaşan: bitişi bugünden sonra olan etaplar
+  const E=d.etaplar.map(e=>({...e,bas:e.bloklar[0].bas,bit:e.bloklar.reduce((m,b)=>b.bit>m?b.bit:m,'')}))
+    .filter(e=>e.bit>=BUGUN).sort((a,b)=>a.bas<b.bas?-1:1);
+  const biten=d.etaplar.filter(e=>!E.includes(e)&&!E.find(x=>x.id===e.id));
+  const top=E.reduce((s,e)=>s+e.daire,0);
+  let h='';
+
+  // 1) Kapak
+  h+=`<div class="slide grad">${logo}
+  <svg style="position:absolute;right:-60px;bottom:70px;opacity:.10" width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+  <div style="position:absolute;left:32px;right:32px;top:118px">
+    <span class="pill" style="background:#050A30">YENİ FİKİRTEPE</span>
+    <div style="font-size:40px;font-weight:800;letter-spacing:-1.5px;line-height:1.02;margin-top:16px">Teslimi<br>yaklaşan<br>etaplar</div>
+    <div style="font-size:15px;font-weight:600;margin-top:14px;opacity:.95">Anahtar teslimleri sürüyor</div>
+    <div style="display:flex;gap:10px;margin-top:28px">
+      ${[[E.length,'etap'],[top.toLocaleString('tr-TR'),'daire'],[g(E[E.length-1].bit),'son teslim']].map(([n,t])=>
+      `<div style="flex:1;background:rgba(5,10,48,.35);border-radius:14px;padding:12px 12px 10px"><div style="font-size:24px;font-weight:800;letter-spacing:-.5px">${n}</div><div style="font-size:10.5px;opacity:.85;margin-top:2px">${t}</div></div>`).join('')}
+    </div>
+    <div style="font-size:11.5px;margin-top:16px;opacity:.9;line-height:1.5">${E.map(e=>e.ad).join(' · ')}</div>
+  </div>
+  ${foot('RE/MAX DOĞUŞ · 0216 315 15 15')}</div>`;
+
+  // 2) Genel takvim (Gantt)
+  const t0=(()=>{const a=P(E[0].bas);return new Date(a.getFullYear(),a.getMonth(),1,12)})(), t1=P(E.reduce((m,e)=>e.bit>m?e.bit:m,'')); t1.setDate(t1.getDate()+6);
+  const W=356, x=s=>((P(s)-t0)/(t1-t0))*W;
+  const aylar=[]; for(let m=new Date(t0);m<=t1;m=new Date(m.getFullYear(),m.getMonth()+1,1)) aylar.push(new Date(m));
+  h+=`<div class="slide navy">${logo}
+  <div style="position:absolute;left:32px;right:32px;top:40px">
+    <span class="pill" style="background:#FB5160">TESLİM TAKVİMİ</span>
+    <div style="font-size:24px;font-weight:800;letter-spacing:-.6px;margin-top:22px">Hangi etap ne zaman?</div>
+    <div style="font-size:11.5px;opacity:.65;margin-top:4px">Blok blok anahtar teslim dönemleri</div>
+    <div style="position:relative;height:300px;margin-top:26px">
+      ${aylar.map(m=>{const s=m.toISOString().slice(0,10);const xx=Math.max(0,x(s));return `<div style="position:absolute;left:${xx}px;top:0;bottom:0;border-left:1px dashed rgba(255,255,255,.14)"></div><div style="position:absolute;left:${xx+4}px;top:-2px;font-size:9.5px;font-weight:800;letter-spacing:1.5px;opacity:.55">${AY[m.getMonth()].toUpperCase()}</div>`}).join('')}
+      ${E.map((e,i)=>`<div style="position:absolute;left:0;top:${28+i*88}px;font-size:13px;font-weight:800;background:#050A30;padding-right:6px;z-index:3">${e.ad} <span style="font-weight:500;opacity:.6;font-size:10.5px">· ${e.daire} daire</span></div>
+        <div style="position:absolute;left:0;right:0;top:${52+i*88}px;height:22px">${e.bloklar.map(b=>{const st=durum(b);
+          const bg=st==='bitti'?'rgba(255,255,255,.28)':(st==='suruyor'?RGRAD:'rgba(251,81,96,.30)');
+          const w=Math.max(3,x(b.bit)-x(b.bas)+ (b.bas===b.bit?3:0));
+          return `<div style="position:absolute;left:${x(b.bas)}px;width:${w-1.5}px;top:0;height:22px;border-radius:4px;background:${bg};border:${st==='sirada'?'1px solid rgba(251,81,96,.6)':'none'}"></div>`}).join('')}</div>
+        <div style="position:absolute;left:0;top:${78+i*88}px;font-size:10px;color:rgba(255,255,255,.7);background:#050A30;padding-right:6px;z-index:3">${aralik(e.bas,e.bit)}</div>`).join('')}
+      <div style="position:absolute;left:${x(BUGUN)}px;top:14px;bottom:0;border-left:2px solid #fff;z-index:2"></div>
+      <div style="position:absolute;left:${x(BUGUN)-20}px;bottom:-18px;font-size:9px;font-weight:800;letter-spacing:1px;background:#fff;color:#050A30;border-radius:5px;padding:2px 6px">BUGÜN</div>
+    </div>
+    <div style="display:flex;gap:14px;margin-top:34px;font-size:10px;opacity:.85">
+      <span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(255,255,255,.28);vertical-align:-1px"></i> Teslim edildi</span>
+      <span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${RGRAD};vertical-align:-1px"></i> Teslim sürüyor</span>
+      <span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(251,81,96,.3);border:1px solid rgba(251,81,96,.6);vertical-align:-1px"></i> Sırada</span>
+    </div>
+  </div>
+  ${foot('Emlak Konut resmi programına göredir.')}</div>`;
+
+  // 3..) Etap detayları
+  E.forEach(e=>{
+    let bl=e.bloklar.map(b=>({...b,st:durum(b)}));
+    const biten=bl.filter(b=>b.st==='bitti'); let goster=bl.filter(b=>b.st!=='bitti');
+    // küçük bloklar tek satır
+    const kucuk=goster.filter(b=>b.daire<=12); if(kucuk.length>2){ goster=goster.filter(b=>b.daire>12);
+      goster.push({b:kucuk.map(k=>k.b).join(', '),bas:kucuk[0].bas,bit:kucuk.reduce((m,k)=>k.bit>m?k.bit:m,''),daire:kucuk.reduce((s,k)=>s+k.daire,0),st:durum({bas:kucuk[0].bas,bit:kucuk[kucuk.length-1].bit}),grup:true}); }
+    const tes=biten.reduce((s,b)=>s+b.daire,0), yuzde=Math.round(tes/e.daire*100);
+    const sur=bl.find(b=>b.st==='suruyor'), bas=e.bas>BUGUN;
+    const durumMetni= bas? `${g(e.bas).toUpperCase()}'DE BAŞLIYOR` : 'TESLİMLER SÜRÜYOR';
+    h+=`<div class="slide navy">${logo}
+    <div style="position:absolute;left:32px;right:32px;top:40px">
+      <span class="pill" style="background:#FB5160">TESLİM TAKVİMİ</span>
+      <div style="font-size:34px;font-weight:800;letter-spacing:-1px;margin-top:18px;line-height:1.05">${e.ad}</div>
+      <div style="font-size:12px;opacity:.7;margin-top:5px">${e.daire} daire · ${aralik(e.bas,e.bit)} 2026</div>
+      <div style="margin-top:14px;display:flex;align-items:center;gap:10px">
+        <span class="st" style="background:${bas?'rgba(251,81,96,.18)':RGRAD};color:${bas?'#FB5160':'#fff'};font-size:9.5px;padding:5px 9px">${durumMetni}</span>
+        ${tes?`<span style="font-size:11px;opacity:.8"><b>${tes}</b> daire teslim edildi · %${yuzde}</span>`:''}
+      </div>
+      ${tes?`<div class="bar" style="margin-top:10px"><i style="width:${Math.max(yuzde,2)}%"></i></div>`:''}
+      <div style="margin-top:${tes?12:16}px">
+      ${biten.length?`<div class="row" style="opacity:.55"><div class="badge" style="background:rgba(255,255,255,.12);font-size:13px">✓</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${biten.map(b=>b.b).join(', ')} Blok</div><div style="font-size:10px;opacity:.8">${aralik(biten[0].bas,biten[biten.length-1].bit)}</div></div><div style="font-size:10.5px">${tes} daire</div></div>`:''}
+      ${goster.map(b=>`<div class="row">
+        <div class="badge" style="background:${b.st==='suruyor'?RGRAD:'rgba(255,255,255,.08)'};${b.grup?'font-size:9px':''}">${b.grup?'+'+(b.b.split(',').length):b.b}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700">${b.grup?'Diğer bloklar':b.b+' Blok'}</div><div style="font-size:10px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.grup?b.b+' · ':''}${aralik(b.bas,b.bit)}</div></div>
+        <div style="font-size:10.5px;opacity:.8;margin-right:4px">${b.daire} daire</div>
+        <span class="st" style="${b.st==='suruyor'?'background:#DC1C2E':'background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)'}">${b.st==='suruyor'?'SÜRÜYOR':'SIRADA'}</span>
+      </div>`).join('')}
+      </div>
+      ${goster.length<5?(()=>{const n=bl.find(b=>b.st==='sirada');return n?`<div style="margin-top:18px;background:${RGRAD};border-radius:14px;padding:14px 16px"><div style="font-size:9.5px;font-weight:800;letter-spacing:1.6px;opacity:.85">SIRADAKİ BLOK</div><div style="font-size:19px;font-weight:800;margin-top:3px">${n.b} Blok · ${aralik(n.bas,n.bit)}</div><div style="font-size:11px;opacity:.9;margin-top:3px">${n.daire} daire için anahtar teslimi</div></div>`:''})():''}
+    </div>
+    ${foot('Kapı numaranla gününü öğren: yenifikirtepeburada.com')}</div>`;
+  });
+
+  // Kapanış
+  h+=`<div class="slide grad">${logo}
+  <div style="position:absolute;left:32px;right:32px;top:130px">
+    <span class="pill" style="background:#050A30">ANAHTARINI ALIYOR MUSUN?</span>
+    <div style="font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.08;margin-top:18px">Teslim günün<br>tek tıkla<br>elinde.</div>
+    <div style="font-size:13px;line-height:1.55;margin-top:16px;opacity:.95">Blok ve kapı numaranı gir, randevu gününü ve saatini hemen gör.</div>
+    <div style="margin-top:22px;background:rgba(5,10,48,.4);border-radius:14px;padding:14px 16px">
+      <div style="font-size:9.5px;font-weight:800;letter-spacing:1.6px;opacity:.8">TESLİM TAKVİMİ</div>
+      <div style="font-size:16px;font-weight:800;margin-top:4px">yenifikirtepeburada.com</div>
+    </div>
+    <div style="font-size:12px;line-height:1.55;margin-top:18px;opacity:.95">Teslim sonrası daireni kiraya vermeyi ya da satmayı mı düşünüyorsun? Anahtarı aldığın gün güncel değerini seninle paylaşalım.</div>
+  </div>
+  ${foot('RE/MAX DOĞUŞ · 0216 315 15 15',false)}</div>`;
+
+  document.getElementById('root').innerHTML=h;
+  document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>i.onload=r)))).then(()=>document.body.dataset.hazir='1');
+});
+</script>
+</body>
+</html>
