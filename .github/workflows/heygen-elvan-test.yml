@@ -1,4 +1,4 @@
-# GEÇİCİ (2): Elvan sesi (ElevenLabs API) + Doğuş Astrolog avatarı (HeyGen Avatar IV) örnek videosu (birleştirmeden önce silinecek)
+# GEÇİCİ (3): Elvan sesi (ElevenLabs API) + Doğuş Astrolog avatarı (HeyGen Avatar IV) örnek videosu (birleştirmeden önce silinecek)
 name: HeyGen Elvan testi
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
     env:
       HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-      AVATAR: 1488a5f81c834cf9a1e8a34ea720d4af
+      AVATAR: 3136c6b3b42c468285849e2b950dc5d1   # yaka kartlı görünüm
       VIDEO: ${{ inputs.video || '0' }}
     steps:
       - uses: actions/checkout@v4
@@ -35,8 +35,8 @@ jobs:
           E = {'xi-api-key': os.environ['ELEVENLABS_API_KEY']}
           sesler = istek('https://api.elevenlabs.io/v1/voices', bas=dict(E))['voices']
           print('Sesler:', [(v['name'], v['voice_id'], v.get('category')) for v in sesler])
-          elvan = next((v for v in sesler if 'elvan' in v['name'].lower()), None)
-          if not elvan:
+          elvan = next((v for v in sesler if 'elvan' in v['name'].lower()), None) or {'voice_id': 'JgYekNWmelei0oWTtYie'}  # kütüphanedeki Elvan
+          if False:
               ara = istek('https://api.elevenlabs.io/v1/shared-voices?search=Elvan&page_size=10', bas=dict(E))
               print('Kütüphane:', [(v['name'], v['voice_id'], v.get('language')) for v in ara.get('voices', [])])
               raise SystemExit('Elvan My Voices içinde yok')
