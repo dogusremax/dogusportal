@@ -137,6 +137,9 @@ async function ciz() {
   }
   const story = `${DIR}/${veri.hafta}-story.png`;
   await page.locator('.story').first().screenshot({ path: story });
+  // Umut'un o hafta için hazırladığı story varsa (hazir/<hafta>-story.png) otomatik story yerine o kullanılır
+  const hazirStory = `${DIR}/hazir/${veri.hafta}-story.png`;
+  if (fs.existsSync(hazirStory)) { fs.copyFileSync(hazirStory, story); console.log('Hazır story kullanıldı:', hazirStory); }
   // Umut'un o hafta için yazdığı açıklama varsa (hazir/<hafta>-aciklama.txt) otomatik metin yerine o kullanılır
   const hazirAciklama = `${DIR}/hazir/${veri.hafta}-aciklama.txt`;
   const aciklama = fs.existsSync(hazirAciklama) ? fs.readFileSync(hazirAciklama, 'utf8').trim()
