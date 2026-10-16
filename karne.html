@@ -207,7 +207,7 @@ function sec(id){ if (!KARNE[id]) return; goster(id); try{history.replaceState(n
 
 function siraCiz(){
 // podyum: 2 · 1 · 3
-const pod = document.getElementById('podium');
+const pod = document.getElementById('podium'); pod.innerHTML = '';
 [1,0,2].forEach((ix,k)=>{
   const d = DATA[ix]; if (!d) return;
   const h = ix===0 ? 150 : ix===1 ? 120 : 100, delay = [250,0,450][k];
@@ -218,7 +218,7 @@ const pod = document.getElementById('podium');
   pod.appendChild(b); say(b.querySelector('.pt'), d.puan, 1000, delay+200);
 });
 // liste: 4+
-const list = document.getElementById('list');
+const list = document.getElementById('list'); list.innerHTML = '';
 DATA.slice(3).forEach((d,i)=>{
   const b = document.createElement('button'); b.className='li'; b.id='l-'+d.id; b.setAttribute('role','tab');
   b.innerHTML = `<span class="n">${d.sira}</span><span class="av"><img src="${foto(d.id)}" alt=""></span>
@@ -324,29 +324,43 @@ function goster(id){
 }
 function kaydir(){ const el=document.getElementById('karne'); window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-12, behavior:reduce?'auto':'smooth'}); }
 function hata(m){ document.getElementById('hafta').textContent = 'Karne'; document.getElementById('karne').innerHTML = `<div class="durum">${m}</div>`; }
-async function yukle(){
-  const tok = Q.get('t');
-  if (!tok) return hata('Bu sayfa kişiye özel linkle açılır. Karneni WhatsApp mesajındaki <b>Karnemi aç</b> tuşundan aç.');
-  let res;
-  try {
-    const h = /^\d{4}-\d{2}-\d{2}$/.test(Q.get('hafta')||'') ? '&hafta='+Q.get('hafta') : '';
-    const r = await fetch(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}`, {redirect:'follow'});
-    res = JSON.parse(await r.text());
-  } catch (e) { return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
-  if (!res || !res.ok) return hata((res && res.hata) || 'Karne bulunamadı.');
+// Hız: son açılan karne telefonda saklanır, sayfa açılınca anında çizilir; sunucudan yenisi gelince
+// (üretim zamanı farklıysa) sessizce güncellenir.
+function sakla(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function oku(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }
+let CIZILDI = null, OLAY = false;
+function ciz(res){
   DATA = res.siralama; ort = res.ort; HEDEF = res.hedef || HEDEF; ETIKET = res.etiket;
   max = Math.max(1, ...DATA.map(d=>d.puan));
-  res.karneler.forEach(k=>KARNE[k.id]=k);
+  KARNE = {}; res.karneler.forEach(k=>KARNE[k.id]=k);
   document.getElementById('hafta').textContent = `${res.etiket} ${res.yil}`;
   document.title = `${res.etiket} Karne · RE/MAX Doğuş`;
   ofisCiz(res.ofis || {}); siraCiz();
   const h0 = (location.hash||'').slice(1);
   const ilkId = res.kim !== 'broker' ? res.kim : (KARNE[h0] ? h0 : DATA[0] && DATA[0].id);
   if (!ilkId || !KARNE[ilkId]) return hata('Bu hafta için karnen yok.');
+  const ilk = !CIZILDI; CIZILDI = res.uretim || '-';
   goster(ilkId);
-  if (res.kim !== 'broker' || KARNE[h0]) { if (matchMedia('(max-width: 900px)').matches) setTimeout(kaydir, 1700); }
+  if (ilk && (res.kim !== 'broker' || KARNE[h0])) { if (matchMedia('(max-width: 900px)').matches) setTimeout(kaydir, 1700); }
+  if (OLAY) return; OLAY = true;
   if (res.kim === 'broker') addEventListener('hashchange',()=>{ const x=location.hash.slice(1); if (KARNE[x]) goster(x); });
   else document.querySelector('.hint').textContent = 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
+}
+async function yukle(){
+  const tok = Q.get('t');
+  if (!tok) return hata('Bu sayfa kişiye özel linkle açılır. Karneni WhatsApp mesajındaki <b>Karnemi aç</b> tuşundan aç.');
+  const h = /^\d{4}-\d{2}-\d{2}$/.test(Q.get('hafta')||'') ? '&hafta='+Q.get('hafta') : '';
+  const ak = 'karne_' + tok + h, eski = oku(ak);
+  if (eski && eski.ok) ciz(eski);
+  let res;
+  try {
+    const r = await fetch(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}`, {redirect:'follow'});
+    res = JSON.parse(await r.text());
+  } catch (e) { if (CIZILDI) return; return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
+  if (!res || !res.ok) { if (CIZILDI) return; return hata((res && res.hata) || 'Karne bulunamadı.'); }
+  sakla(ak, res);
+  if (CIZILDI && CIZILDI === (res.uretim || '-')) return;
+  ciz(res);
 }
 yukle();
 </script>
