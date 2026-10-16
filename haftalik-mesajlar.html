@@ -244,7 +244,16 @@ function cumaVersiyon(veri, tarih) {
 // ---------- PAZARTESİ KARNE ----------
 // Meta "karne_link" şablonunu onaylayınca true: mesaj kısa özet + kişiye özel karne linki (Karnemi aç tuşu) olur.
 // false iken eski uzun haftalik_karne metni gider.
-const KARNE_LINK = false;
+// Elle açmaya gerek yok: sayfa açılınca Meta'da karne_link APPROVED ise kendiliğinden true olur.
+let KARNE_LINK = false;
+const KARNE_NOT = () => MOD === 'pazartesi' && !KARNE_LINK ? ' · Yeni karne (Karnemi aç tuşu) Meta onayında, şimdilik eski karne metni.' : '';
+async function karneLinkOnayli() {
+  try {
+    const r = await fetch(`${WA_SERVICE_URL}?action=sablonDurum&cb=${Date.now()}`, { redirect: 'follow' });
+    const j = JSON.parse(await r.text());
+    return !!(j.ok && (j.sablonlar || []).some(x => x.ad === 'karne_link' && x.durum === 'APPROVED'));
+  } catch (e) { return false; }
+}
 async function karneOzet(h) {
   const r = await fetch(`${APPS_SCRIPT_URL}?action=karneOzet&hafta=${h}&k=${KEY}`, { redirect: 'follow' });
   const j = JSON.parse(await r.text());
@@ -356,6 +365,7 @@ async function load() {
   try {
     let veri, onceki = null, ozet = null;
     if (MOD === 'pazartesi') {
+      KARNE_LINK = await karneLinkOnayli();
       const p = new Date(h + 'T12:00:00'); p.setDate(p.getDate() - 7);
       [veri, onceki, ozet] = await Promise.all([haftalik(h), haftalik(iso(p)).catch(() => null), KARNE_LINK ? karneOzet(h).catch(() => null) : null]);
     } else veri = await haftalik(h);
@@ -410,7 +420,7 @@ function butonlar() {
   go.disabled = !bekleyen.length;
   go.textContent = bekleyen.length ? `✅ Onayla ve ${bekleyen.length} kişiye gönder` : (gid ? (gid === LISTE.length ? '✅ Hepsi gönderildi' : '✅ Seçilenler gönderildi') : '✅ Onayla ve gönder');
   document.getElementById('testbtn').disabled = !bekleyen.length;
-  if (LISTE.length) durum(`${LISTE.length} mesaj hazır · ${gid} gönderildi. Kontrol et, gerekirse düzenle, onayla.`);
+  if (LISTE.length) durum(`${LISTE.length} mesaj hazır · ${gid} gönderildi. Kontrol et, gerekirse düzenle, onayla.` + KARNE_NOT());
 }
 
 function pin() {
