@@ -256,15 +256,14 @@ function karne(d){
   if (d.yorum) iyi.push(`${d.yorum} yeni Google yorumu`);
   if (d.musYeni>=3) iyi.push(`${d.musYeni} yeni müşteri kaydı`);
   if (dz) { gel.unshift(`${dz} kayıt düzeltilecek (listesi yukarıda)`); plan.unshift('Düzeltilecekler listesini hafta bitmeden tamamla'); }
-  if (d.musNotsuz) plan.push(`Notu olmayan ${d.musNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`);
-  else if (d.mus14) plan.push(`14 günden uzun süredir aramadığın ${d.mus14} müşteriyi ara`);
+  if (d.musYeniNotsuz) plan.push(`Bu hafta eklediğin notsuz ${d.musYeniNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`);
   if (d.kiraYenile) plan.push(`60 gün içinde yenilenecek ${d.kiraYenile} kira kontratı için mal sahibi ve kiracıyı ara`);
   const a = ilk(d.ad); let yorum;
   if (d.sira===1) yorum=`Haftanın lideri sensin ${a}! Ekibe örnek oluyorsun.`;
   else if (d.kapanis) yorum=`Kapanış yapmak her şeyin özeti, tebrikler ${a}! Şimdi yeni portföy ve aramalarla gelecek kapanışların zeminini hazırlayalım.`;
   else if (d.puan>=ort) yorum=`Sahada emek veriyorsun ${a}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim.`;
   else yorum=`${a}, potansiyelin bu listenin çok üstünde. Küçük ama her gün yapılan adımlarla bu hafta farkı birlikte göreceğiz.`;
-  if (d.musNotsuz>=5) yorum+=` Müşterilerinle yaptığın görüşmeleri Müşteri Takip'e not olarak girersen hiçbir fırsat kaçmaz.`;
+  if (d.musYeniNotsuz>=3) yorum+=` Müşterilerinle yaptığın görüşmeleri Müşteri Takip'e not olarak girersen hiçbir fırsat kaçmaz.`;
   if (!plan.length) plan.push('Bu tempoyu koru, yeni portföy ve gösterimlerle kapanışa odaklan');
   return {iyi,gel:gel.slice(0,5),plan:plan.slice(0,3),yorum};
 }
@@ -278,7 +277,7 @@ function goster(id){
   document.querySelectorAll('.pd,.li').forEach(r=>r.setAttribute('aria-selected', r.id.slice(2)===d.id));
   const k = karne(d), notlu = d.musAktif-d.musNotsuz, hata = d.hatalar || [];
   const adet = duzeltmeSay(d);
-  const TURAC = { musteri:'Müşteri Takip\'teki eksik ve hatalı kayıtlar', gosterim:'imzalı formu olmayan gösterimler', form:'bu haftanın eksik, hatalı ya da imzasız yer gösterme formları', kapanis:'son 8 haftanın kapanışlarında eksik belge ve istenmemiş Google yorumları' };
+  const TURAC = { musteri:'bu hafta eklenen müşteri kayıtlarındaki eksikler', gosterim:'imzalı formu olmayan gösterimler', form:'eksik, hatalı ya da imzasız yer gösterme formları', kapanis:'bu haftanın kapanışlarında eksik belge ve istenmemiş Google yorumları' };
   const acik = Object.keys(TURAC).filter(t=>hata.some(x=>x.tur===t)).map(t=>TURAC[t]);
   const evrak = Object.entries(d.evrakTur).map(([t,n])=>`${n} ${t.toLocaleLowerCase('tr')}`).join(', ');
   document.getElementById('karne').innerHTML = `
