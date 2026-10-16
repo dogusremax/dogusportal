@@ -38,7 +38,9 @@ jobs:
         run: |
           H=${HAFTA:-$(node -e "const b=new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Istanbul'});const d=new Date(b+'T12:00:00Z');console.log(new Date(d-((d.getUTCDay()+6)%7)*864e5).toISOString().slice(0,10))")}
           MEVCUT=$(node -e "try{console.log(require('./data/yatirim-astroloji.json').hafta)}catch(e){}")
-          if [ "$ISLEM" = "yeniden" ] || [ "$MEVCUT" != "$H" ]; then HAFTA=$H node scripts/yatirim-astro.js uret; else echo "Bu haftanın yorumları hazır: $H"; fi
+          # Önceden hazırlanıp onaylanan hafta (yatirim-astroloji/hazir/<hafta>.json) varsa yorumlar yeniden yazılmaz
+          if [ "$ISLEM" != "yeniden" ] && [ "$MEVCUT" != "$H" ] && [ -f "yatirim-astroloji/hazir/$H.json" ]; then cp "yatirim-astroloji/hazir/$H.json" data/yatirim-astroloji.json; echo "Hazır hafta kullanıldı: $H"
+          elif [ "$ISLEM" = "yeniden" ] || [ "$MEVCUT" != "$H" ]; then HAFTA=$H node scripts/yatirim-astro.js uret; else echo "Bu haftanın yorumları hazır: $H"; fi
       - name: Görselleri üret
         run: |
           npm i playwright@1.47.0 && npx playwright install --with-deps chromium
