@@ -7,6 +7,7 @@ import json, subprocess, sys, wave
 import numpy as np
 
 giris, zaman, cikis = sys.argv[1:4]
+KAPAK = float(sys.argv[4]) if len(sys.argv) > 4 else 0  # açılış kartının süresi
 YUZ_Y = 658          # yüzün dikey konumu (1080x1920 karede)
 SR = 44100
 cumle = json.load(open(zaman))
@@ -15,13 +16,14 @@ sure = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries",
 
 # (baslangic, sure, hedef zoom, ses tipi)
 plan = []
-if len(cumle) > 1:  # tanıtım cümlesinde yavaş yakınlaşma
-    a, b = cumle[1]["bas"], cumle[1]["son"]
+tanitim = next((k for k, c in enumerate(cumle[:2]) if "Güneş" in c["t"]), None)
+if tanitim is not None:  # tanıtım cümlesinde yavaş yakınlaşma (açılış kartı varsa ondan sonra)
+    a, b = max(cumle[tanitim]["bas"], KAPAK), cumle[tanitim]["son"]
     plan.append((a, b - a, 1.28, "vurus"))
 seviye = [1.0, 1.14, 1.0, 1.22]
 son_gecis = plan[-1][0] + plan[-1][1] if plan else 0
 i = 0
-for c in cumle[2:]:
+for c in cumle[(tanitim or 0) + 1:]:
     if c["bas"] - son_gecis < 3.5 or c["bas"] > sure - 5:
         continue
     plan.append((c["bas"] - 0.08, 0.22, seviye[i % len(seviye)], "whoosh"))
