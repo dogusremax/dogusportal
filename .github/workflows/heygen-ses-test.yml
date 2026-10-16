@@ -1,4 +1,4 @@
-# GEÇİCİ: HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
+# GEÇİCİ (2): HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
 name: HeyGen ses örnekleri
 on:
   workflow_dispatch:
@@ -32,6 +32,30 @@ jobs:
                   try: urllib.request.urlretrieve(x['preview_audio'], f"avatar-test/heygen-sesler/{ad}.mp3")
                   except Exception as e: print('indirilemedi', ad, e)
           json.dump(ozet, open('avatar-test/heygen-sesler/liste.json', 'w'), ensure_ascii=False, indent=1)
+          PY
+      - name: Özel avatar ve sesler
+        env: { HEYGEN_API_KEY: "${{ secrets.HEYGEN_API_KEY }}" }
+        run: |
+          H="X-Api-Key: $HEYGEN_API_KEY"
+          curl -sS -H "$H" https://api.heygen.com/v2/avatar_group.list?include_public=false > gruplar.json
+          curl -sS -H "$H" https://api.heygen.com/v2/avatars > avatarlar.json
+          curl -sS -H "$H" https://api.heygen.com/v2/user/remaining_quota > kota.json || true
+          python3 - <<'PY'
+          import json, subprocess, os
+          out = {}
+          g = json.load(open('gruplar.json')); out['gruplar'] = g.get('data', g)
+          for grp in (g.get('data') or {}).get('avatar_group_list', []):
+              r = subprocess.run(['curl', '-sS', '-H', 'X-Api-Key: ' + os.environ['HEYGEN_API_KEY'],
+                  f"https://api.heygen.com/v2/avatar_group/{grp['id']}/avatars"], capture_output=True, text=True).stdout
+              out.setdefault('grup_avatarlari', {})[grp['id']] = json.loads(r).get('data', r)
+          a = json.load(open('avatarlar.json')).get('data', {})
+          out['talking_photos'] = a.get('talking_photos', [])[:50]
+          out['ozel_avatarlar'] = [x for x in a.get('avatars', []) if not x.get('premium') and 'Astrolog' in json.dumps(x, ensure_ascii=False)]
+          v = json.load(open('sesler.json'))['data']['voices']
+          out['ozel_sesler'] = [x for x in v if not x.get('preview_audio') or 'custom' in json.dumps(x).lower() or (x.get('language') or '').lower() in ('', 'unknown')][:30]
+          out['kota'] = json.load(open('kota.json'))
+          json.dump(out, open('avatar-test/heygen-sesler/ozel.json', 'w'), ensure_ascii=False, indent=1)
+          print(json.dumps(out, ensure_ascii=False)[:3000])
           PY
       - name: Kaydet
         run: |
