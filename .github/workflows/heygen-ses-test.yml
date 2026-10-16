@@ -1,0 +1,40 @@
+# GEÇİCİ: HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
+name: HeyGen ses örnekleri
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-h0cmgl]
+    paths: [.github/workflows/heygen-ses-test.yml]
+permissions: { contents: write }
+jobs:
+  sesler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Türkçe kadın sesleri
+        env: { HEYGEN_API_KEY: "${{ secrets.HEYGEN_API_KEY }}" }
+        run: |
+          if [ -z "$HEYGEN_API_KEY" ]; then echo "HEYGEN_API_KEY henüz eklenmemiş"; exit 1; fi
+          curl -sS -H "X-Api-Key: $HEYGEN_API_KEY" https://api.heygen.com/v2/voices > sesler.json
+          mkdir -p avatar-test/heygen-sesler
+          python3 - <<'PY'
+          import json, urllib.request
+          d = json.load(open('sesler.json'))
+          if d.get('error'): raise SystemExit(f"HeyGen hata: {d['error']}")
+          v = [x for x in d['data']['voices'] if 'turk' in (x.get('language') or '').lower() and (x.get('gender') or '').lower() == 'female']
+          print(len(v), 'Türkçe kadın sesi')
+          ozet = []
+          for x in v:
+              print(x['voice_id'], '|', x.get('name'), '|', x.get('emotion_support'), '|', x.get('preview_audio'))
+              ozet.append({k: x.get(k) for k in ('voice_id', 'name', 'preview_audio', 'emotion_support', 'support_pause')})
+              if x.get('preview_audio'):
+                  ad = ''.join(c for c in (x.get('name') or x['voice_id']) if c.isalnum() or c in '-_')[:40]
+                  try: urllib.request.urlretrieve(x['preview_audio'], f"avatar-test/heygen-sesler/{ad}.mp3")
+                  except Exception as e: print('indirilemedi', ad, e)
+          json.dump(ozet, open('avatar-test/heygen-sesler/liste.json', 'w'), ensure_ascii=False, indent=1)
+          PY
+      - name: Kaydet
+        run: |
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add avatar-test/heygen-sesler
+          git diff --cached --quiet || (git commit -m "HeyGen Türkçe kadın ses önizlemeleri" && git pull --rebase && git push)
