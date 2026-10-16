@@ -200,7 +200,7 @@ function destek(d, L, gun, cumle) {
 // Tek seferlik: bu haftaların çarşamba mesajı Cuma gider. Onaylı çarşamba şablonunda sabit
 // "Çarşamba akşamı" satırı olduğu için bu haftalarda onaylı destek_mesaji şablonu kullanılır.
 // Anahtar: haftanın Pazartesi tarihi. Listede olmayan haftalar normal Çarşamba olarak devam eder.
-const CUMA_HAFTALARI = { '2026-09-28': true };
+const CUMA_HAFTALARI = { '2026-09-28': true, '2026-10-12': true };
 
 function carsamba(veri, tarih) {
   if (CUMA_HAFTALARI[iso(tarih)]) return cumaVersiyon(veri, tarih);
