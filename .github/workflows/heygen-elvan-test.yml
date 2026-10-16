@@ -1,9 +1,9 @@
-# GEÇİCİ: Elvan sesi (ElevenLabs API) + Doğuş Astrolog avatarı (HeyGen Avatar IV) örnek videosu (birleştirmeden önce silinecek)
+# GEÇİCİ (2): Elvan sesi (ElevenLabs API) + Doğuş Astrolog avatarı (HeyGen Avatar IV) örnek videosu (birleştirmeden önce silinecek)
 name: HeyGen Elvan testi
 on:
   workflow_dispatch:
     inputs:
-      video: { description: "Videoyu da üret (1) ya da sadece sesi (0)", default: "1" }
+      video: { description: "Videoyu da üret (1) ya da sadece sesi (0)", default: "0" }
   push:
     branches: [claude/project-thread-h0cmgl]
     paths: [.github/workflows/heygen-elvan-test.yml]
@@ -16,7 +16,7 @@ jobs:
       HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
       AVATAR: 1488a5f81c834cf9a1e8a34ea720d4af
-      VIDEO: ${{ inputs.video || '1' }}
+      VIDEO: ${{ inputs.video || '0' }}
     steps:
       - uses: actions/checkout@v4
       - name: Elvan sesi ve video
