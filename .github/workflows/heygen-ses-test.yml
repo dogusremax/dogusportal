@@ -1,4 +1,4 @@
-# GEÇİCİ (3): HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
+# GEÇİCİ (4): HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
 name: HeyGen ses örnekleri
 on:
   workflow_dispatch:
@@ -60,6 +60,8 @@ jobs:
           for x in out['ozel_sesler']:
               if x.get('name', '').startswith('Custom voice') and x.get('preview_audio'):
                   urllib.request.urlretrieve(x['preview_audio'], f"avatar-test/heygen-sesler/ozel-{x['voice_id']}.mp3")
+          for a in out['grup_avatarlari']['1488a5f81c834cf9a1e8a34ea720d4af']['avatar_list']:
+              urllib.request.urlretrieve(a['image_url'], f"avatar-test/heygen-sesler/gorunum-{a['id']}.webp")
           PY
       - name: Kaydet
         run: |
