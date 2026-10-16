@@ -179,7 +179,7 @@ const API = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A
 const Q = new URLSearchParams(location.search);
 const foto = id => `assets/ekip/karne/${id}.webp`;
 let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
-const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'} };
+const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'}, gosterim:{ad:'Gösterim',c:'#3D7BFF',i:'saha'} };
 const ilk = ad => ad.split(' ').slice(0,-1).join(' ');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ICON = {
@@ -235,29 +235,36 @@ function metrik(l, v, h, alt, ters){
     t = `<span class="t" style="--c:${c}"><i style="--p:${Math.max(p, v||ters?p:4)}%"></i></span>`; }
   return `<div class="m"><span>${l}</span><b><span data-n="${v}">${v}</span>${h&&!ters?`<small> / ${h}</small>`:''}</b>${t}${alt?`<em>${alt}</em>`:''}</div>`;
 }
+// Geliştirmen gerekenler: her haftalık hedef + düzeltilecekler. "Tüm hedeflerini tutturdun" sadece ikisi de temizse yazılır.
+function duzeltmeSay(d){ return (d.hatalar||[]).reduce((s,x)=>s+(x.tur==='musteri'?x.metin.split('; ').length:1),0); }
 function karne(d){
-  const iyi=[], gel=[], plan=[];
-  if (d.kapanis) iyi.push(`${d.kapanis} kapanış`);
+  const iyi=[], gel=[], plan=[], dz = duzeltmeSay(d);
+  const kp = d.kapanis ? (Number.isInteger(d.kapanis) ? `${d.kapanis} kapanış` : `${String(d.kapanis).replace('.',',')} kapanış (ortak)`) : '';
+  if (kp) iyi.push(kp);
   if (d.kapora) iyi.push(`${d.kapora} kapora`);
   if (d.aktifGun>=HEDEF.aktifGun) iyi.push(`${d.aktifGun} gün aktif`); else { gel.push(`aktif gün ${d.aktifGun}/${HEDEF.aktifGun}`); plan.push('Her gün en az 1 aktivite gir'); }
   if (d.gosterim && d.imzali>=d.gosterim) iyi.push(`${d.gosterim} gösterimin hepsi imzalı formlu`);
   else if (d.gosterim>=HEDEF.gosterim) iyi.push(`${d.gosterim} gösterim`);
+  if (d.gosterim<HEDEF.gosterim){ gel.push(`gösterim ${d.gosterim}/${HEDEF.gosterim}`); plan.push('Ilık müşterilerine 2 gösterim randevusu planla'); }
   if (d.gosterim>d.imzali && d.gosterim) gel.push(`${d.gosterim-d.imzali} gösterimde imzalı form yok`);
+  if (d.etki>=HEDEF.etki) iyi.push(`${d.etki} etki çevresi araması`); else { gel.push(`etki çevresi araması ${d.etki}/${HEDEF.etki}`); plan.push('Her sabah 1 etki çevresi araması'); }
+  if (d.fzbo>=HEDEF.fzbo) iyi.push(`${d.fzbo} FZBO araması`); else { gel.push(`FZBO araması ${d.fzbo}/${HEDEF.fzbo}`); plan.push('Salı ve Perşembe 3 FZBO araması'); }
+  if (d.sunum>=HEDEF.sunum) iyi.push(`${d.sunum} sunum`); else { gel.push(`sunum ${d.sunum}/${HEDEF.sunum}`); plan.push('En az 1 portföy sunumu randevusu al'); }
+  if (d.icerik>=HEDEF.icerik) iyi.push(`${d.icerik} içerik`); else { gel.push(`içerik ${d.icerik}/${HEDEF.icerik}`); plan.push(`${HEDEF.icerik} içerik paylaş, @remaxdogus'u etiketle`); }
   if (d.yorum) iyi.push(`${d.yorum} yeni Google yorumu`);
   if (d.musYeni>=3) iyi.push(`${d.musYeni} yeni müşteri kaydı`);
-  if (d.musNotsuz){ plan.push(`Notu olmayan ${d.musNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`); }
-  if (d.etki>=HEDEF.etki) iyi.push(`${d.etki} etki çevresi araması`); else gel.push(`etki çevresi araması ${d.etki}/${HEDEF.etki}`);
-  if (d.fzbo<HEDEF.fzbo){ gel.push(`FZBO araması ${d.fzbo}/${HEDEF.fzbo}`); plan.push('Salı ve Perşembe 3 FZBO araması'); }
-  if (d.icerik>=HEDEF.icerik) iyi.push(`${d.icerik} içerik`);
+  if (dz) { gel.unshift(`${dz} kayıt düzeltilecek (listesi yukarıda)`); plan.unshift('Düzeltilecekler listesini hafta bitmeden tamamla'); }
+  if (d.musNotsuz) plan.push(`Notu olmayan ${d.musNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`);
+  else if (d.mus14) plan.push(`14 günden uzun süredir aramadığın ${d.mus14} müşteriyi ara`);
   if (d.kiraYenile) plan.push(`60 gün içinde yenilenecek ${d.kiraYenile} kira kontratı için mal sahibi ve kiracıyı ara`);
-  if (d.gosterim<HEDEF.gosterim) plan.push('Ilık müşterilerine 2 gösterim randevusu planla');
   const a = ilk(d.ad); let yorum;
   if (d.sira===1) yorum=`Haftanın lideri sensin ${a}! Ekibe örnek oluyorsun.`;
   else if (d.kapanis) yorum=`Kapanış yapmak her şeyin özeti, tebrikler ${a}! Şimdi yeni portföy ve aramalarla gelecek kapanışların zeminini hazırlayalım.`;
   else if (d.puan>=ort) yorum=`Sahada emek veriyorsun ${a}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim.`;
   else yorum=`${a}, potansiyelin bu listenin çok üstünde. Küçük ama her gün yapılan adımlarla bu hafta farkı birlikte göreceğiz.`;
   if (d.musNotsuz>=5) yorum+=` Müşterilerinle yaptığın görüşmeleri Müşteri Takip'e not olarak girersen hiçbir fırsat kaçmaz.`;
-  return {iyi,gel:gel.slice(0,4),plan:plan.slice(0,3),yorum};
+  if (!plan.length) plan.push('Bu tempoyu koru, yeni portföy ve gösterimlerle kapanışa odaklan');
+  return {iyi,gel:gel.slice(0,5),plan:plan.slice(0,3),yorum};
 }
 function halka(p, r, w, renk){
   const C = 2*Math.PI*r;
@@ -268,7 +275,9 @@ function goster(id){
   const d = KARNE[id]; if (!d) return;
   document.querySelectorAll('.pd,.li').forEach(r=>r.setAttribute('aria-selected', r.id.slice(2)===d.id));
   const k = karne(d), notlu = d.musAktif-d.musNotsuz, hata = d.hatalar || [];
-  const adet = hata.reduce((s,x)=>s+(x.tur==='musteri'?x.metin.split('; ').length:1),0);
+  const adet = duzeltmeSay(d);
+  const TURAC = { musteri:'Müşteri Takip\'teki eksik ve hatalı kayıtlar', gosterim:'imzalı formu olmayan gösterimler', form:'bu haftanın eksik, hatalı ya da imzasız yer gösterme formları', kapanis:'son 8 haftanın kapanışlarında eksik belge ve istenmemiş Google yorumları' };
+  const acik = Object.keys(TURAC).filter(t=>hata.some(x=>x.tur===t)).map(t=>TURAC[t]);
   const evrak = Object.entries(d.evrakTur).map(([t,n])=>`${n} ${t.toLocaleLowerCase('tr')}`).join(', ');
   document.getElementById('karne').innerHTML = `
     <div class="kh">
@@ -307,7 +316,7 @@ function goster(id){
       </div>
     </div>
     ${hata.length ? `<div class="fix"><h4><span class="cnt">${adet}</span>Düzeltilecekler</h4>
-      <p>Müşteri Takip'teki eksik ve hatalı kayıtlar, bu haftanın eksik ya da imzasız yer gösterme formları, kapanışlarda eksik belge ve istenmemiş Google yorumları (son 8 hafta).</p>
+      <p>${acik.join(', ').replace(/^./, c=>c.toLocaleUpperCase('tr'))}.</p>
       <ul>${hata.map(x=>{ const T = TUR[x.tur];
         const govde = x.tur==='musteri' ? `<span class="sub">${x.metin.split('; ').map(s=>`<span>${s}</span>`).join('')}</span>` : x.metin;
         return `<li><span class="k" style="--c:${T.c}">${ICON[T.i]}</span><span><small>${T.ad}</small>${govde}</span></li>`; }).join('')}</ul></div>`
