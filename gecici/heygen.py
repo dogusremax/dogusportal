@@ -6,10 +6,10 @@ GRUP = "1488a5f81c834cf9a1e8a34ea720d4af"
 def goster(ad, r): print(ad, r.status_code, r.text[:600], flush=True)
 onceki = {a["id"] for a in requests.get(f"https://api.heygen.com/v2/avatar_group/{GRUP}/avatars", headers=H, timeout=60).json()["data"]["avatar_list"]}
 print("mevcut görünümler", onceki)
-r = requests.post("https://upload.heygen.com/v1/asset", headers={**H, "Content-Type": "image/png"}, data=open("gecici/gunes-ayakta.png", "rb").read(), timeout=120)
+r = requests.post("https://upload.heygen.com/v1/asset", headers={**H, "Content-Type": "image/png"}, data=open("gecici/gunes-kirmizi.png", "rb").read(), timeout=120)
 goster("gorsel", r); d = r.json()["data"]; anahtar = d.get("image_key") or d.get("key") or d.get("id")
 r = requests.post("https://api.heygen.com/v2/photo_avatar/avatar_group/add", headers=H, timeout=60,
-                  json={"group_id": GRUP, "image_keys": [anahtar], "name": "Güneş ayakta"})
+                  json={"group_id": GRUP, "image_keys": [anahtar], "name": "Güneş kırmızı"})
 goster("gorunum ekle", r)
 yeni = None
 for i in range(40):
@@ -39,4 +39,4 @@ for i in range(240):
     time.sleep(15)
 else: raise SystemExit("zaman aşımı")
 open("ham.mp4", "wb").write(requests.get(url, timeout=600).content)
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "0.6", "-i", "ham.mp4", "-c:v", "libx264", "-crf", "16", "-c:a", "aac", "-b:a", "192k", "gecici/gunes-26-ekim-ayakta.mp4"], check=True)
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "0.6", "-i", "ham.mp4", "-c:v", "libx264", "-crf", "15", "-preset", "slow", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "gecici/gunes-26-ekim-kirmizi.mp4"], check=True)
