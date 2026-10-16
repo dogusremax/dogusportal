@@ -30,6 +30,13 @@
   button:disabled{opacity:.45;cursor:default}
   button.ghost{background:rgba(255,255,255,.1);font-size:12px;padding:7px 12px}
   .onizle{background:#e9f8e0;color:#111;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+  .arac{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .arac button{background:#161c44;font-size:14px;padding:7px 11px;min-width:38px}
+  .emojiler{display:none;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:4px;background:#0b0f2a;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:8px;margin-bottom:8px}
+  .emojiler.acik{display:grid}
+  .emojiler button{background:transparent;font-size:22px;padding:4px;min-width:0}
+  .ipucu{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px}
+  .onizle code{font-family:Menlo,Consolas,monospace;font-size:13px}
   .onizle small{display:block;color:#666;margin-top:8px;font-size:12px}
   .alt{display:flex;gap:10px;flex-wrap:wrap}
   .alt .go{flex:1;background:#25D366;color:#0b2e17}
@@ -52,8 +59,17 @@
 <main id="ana" hidden>
   <div class="kutu">
     <h2>Duyuru metni</h2>
+    <div class="arac">
+      <button type="button" data-f="*" title="Kalın"><b>K</b></button>
+      <button type="button" data-f="_" title="İtalik"><i>İ</i></button>
+      <button type="button" data-f="~" title="Üstü çizili"><s>Ç</s></button>
+      <button type="button" data-f="```" title="Sabit genişlik yazı" style="font-family:Menlo,monospace">Aa</button>
+      <button type="button" id="emojiBtn" title="Emoji">😊</button>
+    </div>
+    <div id="emojiler" class="emojiler"></div>
     <textarea id="metin" maxlength="900" placeholder="Örn: Cuma 10:00'da ofiste aylık toplantımız var, katılımınızı rica ederim."></textarea>
     <div id="say" class="say">0 / 900</div>
+    <p class="ipucu">WhatsApp yalnızca kalın, italik, üstü çizili ve sabit genişlik yazıyı destekler; yazı tipi seçimi yoktur. Önizleme, danışmanın telefonunda göreceğinin aynısıdır.</p>
   </div>
 
   <div class="kutu">
@@ -118,9 +134,30 @@ function onizle() {
   const m = temiz($('metin').value);
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
-  $('onizle').innerHTML = '';
-  $('onizle').append(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
+  $('onizle').innerHTML = waBicim(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
 }
+
+// WhatsApp biçimi: *kalın* _italik_ ~üstü çizili~ ```sabit```
+function waBicim(t) {
+  t = t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  return t.replace(/```([^`]+?)```/g, '<code>$1</code>')
+          .replace(/(^|[\s(])\*(\S(?:[^*]*?\S)?)\*(?=$|[\s.,!?:;)])/g, '$1<b>$2</b>')
+          .replace(/(^|[\s(])_(\S(?:[^_]*?\S)?)_(?=$|[\s.,!?:;)])/g, '$1<i>$2</i>')
+          .replace(/(^|[\s(])~(\S(?:[^~]*?\S)?)~(?=$|[\s.,!?:;)])/g, '$1<s>$2</s>');
+}
+
+function ekle(bas, son) {
+  const ta = $('metin'), a = ta.selectionStart, b = ta.selectionEnd, v = ta.value;
+  const sec = v.slice(a, b) || (son ? 'yazı' : '');
+  ta.value = v.slice(0, a) + bas + sec + (son || '') + v.slice(b);
+  ta.focus(); ta.selectionStart = a + bas.length; ta.selectionEnd = a + bas.length + sec.length;
+  ta.dispatchEvent(new Event('input'));
+}
+document.querySelectorAll('.arac [data-f]').forEach(b => b.onclick = () => ekle(b.dataset.f, b.dataset.f));
+const EMOJI = '📢 📣 🗓️ 📅 ⏰ 📍 🏢 🏠 🔑 📝 📌 ✅ ❗ ⚠️ ℹ️ 🎉 🎊 🥳 🎂 🏆 🥇 👏 💪 🙏 👍 👋 😊 😀 🤝 💼 💰 📈 🎯 🚀 ⭐ 🔥 ❤️ 💙 ☕ 🍽️ 🌿 ☀️ 🌙'.split(' ');
+$('emojiler').innerHTML = EMOJI.map(e => `<button type="button">${e}</button>`).join('');
+$('emojiler').querySelectorAll('button').forEach(b => b.onclick = () => ekle(b.textContent, ''));
+$('emojiBtn').onclick = () => $('emojiler').classList.toggle('acik');
 
 function butonlar() {
   const m = temiz($('metin').value), n = KISILER.filter(k => k.sec).length;
