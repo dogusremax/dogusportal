@@ -40,7 +40,7 @@ jobs:
           print('Elvan:', elvan['voice_id'])
           metin = open('avatar-test/heygen-metin.txt').read().replace('\n', ' ').strip()
           mp3 = istek(f"https://api.elevenlabs.io/v1/text-to-speech/{elvan['voice_id']}?output_format=mp3_44100_128",
-                      {"text": metin, "model_id": "eleven_multilingual_v2", "language_code": "tr"}, dict(E), ham=True)
+                      {"text": metin, "model_id": "eleven_multilingual_v2"}, dict(E), ham=True)
           open('avatar-test/elvan-ses.mp3', 'wb').write(mp3); print('ses', len(mp3), 'bayt')
           if os.environ.get('VIDEO') != '1': raise SystemExit(0)
           H = {'X-Api-Key': os.environ['HEYGEN_API_KEY']}
