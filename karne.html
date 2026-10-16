@@ -369,8 +369,15 @@ async function yukle(){
   } catch (e) { if (CIZILDI) return; return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
   if (!res || !res.ok) { if (CIZILDI) return; return hata((res && res.hata) || 'Karne bulunamadı.'); }
   sakla(ak, res);
-  if (CIZILDI && CIZILDI === (res.uretim || '-')) return;
-  ciz(res);
+  if (!(CIZILDI && CIZILDI === (res.uretim || '-'))) ciz(res);
+  // Sunucu önbellekteki karneyi anında verir; 2 dakikadan eskiyse arka planda tazesini iste, gelince sessizce güncelle
+  if (Date.now() - new Date(res.uretim || 0).getTime() > 120000) {
+    try {
+      const r2 = await fetch(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}&yenile=1`, {redirect:'follow'});
+      const yeni = JSON.parse(await r2.text());
+      if (yeni && yeni.ok && yeni.uretim !== CIZILDI) { sakla(ak, yeni); ciz(yeni); }
+    } catch (e) {}
+  }
 }
 yukle();
 </script>
