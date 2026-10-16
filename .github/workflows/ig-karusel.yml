@@ -1,0 +1,40 @@
+name: Tek seferlik karusel paylaş
+# Umut onayladıktan sonra elle tetiklenir: klasördeki .media karuselini @remaxdogus'a atar.
+on:
+  workflow_dispatch:
+    inputs:
+      klasor:
+        description: 'Karusel klasörü (ör. teslim-karusel)'
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: ig-karusel
+  cancel-in-progress: false
+jobs:
+  paylas:
+    runs-on: ubuntu-latest
+    env:
+      KLASOR: ${{ inputs.klasor }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Güncel IG token'ı al
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        shell: bash
+        run: |
+          set -o pipefail
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          ST=0; node scripts/ig-karusel.js 2>&1 | tee "$KLASOR/ig-log.txt" || ST=$?
+          for f in ig-log.txt .pub .permalink; do [ -f "$KLASOR/$f" ] && git add "$KLASOR/$f"; done
+          git diff --cached --quiet || (git commit -m "$KLASOR: ig log" && git pull --rebase && git push)
+          exit $ST
