@@ -12,6 +12,8 @@ self.addEventListener('push', event => {
     icon: '/assets/app-ikon-192.png',
     badge: '/assets/app-ikon-192.png',
     tag: d.etiket || undefined,
+    renotify: !!d.etiket,   // aynı türden yeni bildirim de sesle uyarsın
+    silent: false,
     data: { link: d.link || '' }
   }));
 });
