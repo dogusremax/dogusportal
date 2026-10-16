@@ -1,0 +1,20 @@
+# GEÇİCİ: Güneş için kupasız poz örnekleri üretir (HeyGen harcaması yok)
+name: Güneş poz örnekleri
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-h0cmgl]
+    paths: [scripts/gunes-poz.py]
+permissions: { contents: write }
+jobs:
+  is:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip -q install requests && python scripts/gunes-poz.py
+        env: { GOOGLE_PLACES_KEY: "${{ secrets.GOOGLE_PLACES_KEY }}" }
+      - if: always()
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add avatar-test/poz || true; git commit -qm "Güneş poz örnekleri" || exit 0
+          for i in 1 2 3; do git pull -q --rebase origin claude/project-thread-h0cmgl && git push -q && break; sleep 5; done
