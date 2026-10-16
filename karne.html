@@ -177,6 +177,8 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
 const Q = new URLSearchParams(location.search);
+// WhatsApp tuşu linki "t=<anahtar>&hafta=YYYY-MM-DD" olarak kodlanmış (&→%26) gelebilir: ayır
+(() => { const t = Q.get('t') || '', m = t.match(/^([^&]+)&hafta=(\d{4}-\d{2}-\d{2})$/); if (m) { Q.set('t', m[1]); Q.set('hafta', m[2]); } })();
 const foto = id => `assets/ekip/karne/${id}.webp`;
 let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
 const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'}, gosterim:{ad:'Gösterim',c:'#3D7BFF',i:'saha'} };
