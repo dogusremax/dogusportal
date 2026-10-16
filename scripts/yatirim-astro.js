@@ -137,7 +137,10 @@ async function ciz() {
   }
   const story = `${DIR}/${veri.hafta}-story.png`;
   await page.locator('.story').first().screenshot({ path: story });
-  const aciklama = await page.evaluate(() => aciklamaMetni(window.VERI));
+  // Umut'un o hafta için yazdığı açıklama varsa (hazir/<hafta>-aciklama.txt) otomatik metin yerine o kullanılır
+  const hazirAciklama = `${DIR}/hazir/${veri.hafta}-aciklama.txt`;
+  const aciklama = fs.existsSync(hazirAciklama) ? fs.readFileSync(hazirAciklama, 'utf8').trim()
+    : await page.evaluate(() => aciklamaMetni(window.VERI));
   await browser.close();
   fs.writeFileSync(DIR + '/.media', JSON.stringify({
     hafta: veri.hafta, feed: dosyalar.map(f => 'https://dogusportal.com/' + f),
