@@ -1,4 +1,4 @@
-# GEÇİCİ (2): HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
+# GEÇİCİ (3): HeyGen'in Türkçe kadın seslerini listeler, ücretsiz önizleme seslerini indirir (birleştirmeden önce silinecek)
 name: HeyGen ses örnekleri
 on:
   workflow_dispatch:
@@ -56,6 +56,10 @@ jobs:
           out['kota'] = json.load(open('kota.json'))
           json.dump(out, open('avatar-test/heygen-sesler/ozel.json', 'w'), ensure_ascii=False, indent=1)
           print(json.dumps(out, ensure_ascii=False)[:3000])
+          import urllib.request
+          for x in out['ozel_sesler']:
+              if x.get('name', '').startswith('Custom voice') and x.get('preview_audio'):
+                  urllib.request.urlretrieve(x['preview_audio'], f"avatar-test/heygen-sesler/ozel-{x['voice_id']}.mp3")
           PY
       - name: Kaydet
         run: |
