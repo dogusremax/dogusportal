@@ -13,6 +13,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f7f9">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/assets/app-ikon-180.png">
+<meta name="apple-mobile-web-app-title" content="Doğuş Portal">
 <title>RE/MAX Doğuş — Uygulama Merkezi</title>
 <meta name="description" content="RE/MAX Doğuş ofis uygulamaları tek adreste.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -140,6 +143,14 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 
 <main>
   <div class="grid">
+    <a class="app wide" href="#" onclick="bildirimPaneli();return false;">
+      <div class="icon3d" style="--c1:#B8860B;--c2:#F5C542">
+        <div class="icon3d-gloss"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      </div>
+      <div><div class="app-name">Bildirimler</div>
+      <div class="app-desc" id="bldKartDesc">Yeni müşteri ve takip hatırlatmaları telefonuna gelsin</div></div>
+    </a>
 
     <a class="app" href="https://dogusportal.com/ajanda.html" target="_blank" rel="noopener">
       <div class="icon3d" style="--c1:#A3121F;--c2:#F2445A">
@@ -432,6 +443,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 </footer>
 
 <script src="assets/broker.js"></script>
+<script src="assets/bildirim.js"></script>
 <!-- PIN Modalı — Aylık Performans -->
 <div id="pinModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;font-family:'Inter',-apple-system,sans-serif">
   <div style="background:#fff;border-radius:20px;padding:40px 32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;max-width:320px;width:90%;animation:rise .3s ease">
