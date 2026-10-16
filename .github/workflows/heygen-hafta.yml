@@ -26,7 +26,7 @@ jobs:
         if: env.VIDEO != '1'
         run: |
           pip -q install faster-whisper==1.1.1 requests
-          for f in avatar-test/ses-*.mp3; do python scripts/ses-zaman.py "$f" "${f%.mp3}-zaman.json"; done
+          for f in avatar-test/hafta-*.mp3; do python scripts/ses-zaman.py "$f" "${f%.mp3}-zaman.json"; done
       - name: HeyGen videosu (tek istek)
         if: env.VIDEO == '1'
         run: |
