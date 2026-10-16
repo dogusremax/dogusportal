@@ -26,6 +26,7 @@ for ad in "Güneş Merkür Venüs Mars Jüpiter Satürn Koç Boğa İkizler Yeng
 def duzelt(t):
     for a, b in DUZELT: t = re.sub(a, b, t)
     return t
-z = [{"t": duzelt("".join(w.word for w in c).strip()), "bas": round(c[0].start, 2), "son": round(c[-1].end, 2)} for c in cumleler]
+z = [{"t": duzelt("".join(w.word for w in c).strip()), "bas": round(c[0].start, 2), "son": round(c[-1].end, 2),
+      "k": [{"w": duzelt(w.word.strip()), "b": round(w.start, 2), "s": round(w.end, 2)} for w in c]} for c in cumleler]
 json.dump(z, open(sys.argv[2], "w"), ensure_ascii=False, indent=1)
 print("\n".join(f'{x["bas"]:6.2f}-{x["son"]:6.2f} {x["t"]}' for x in z))
