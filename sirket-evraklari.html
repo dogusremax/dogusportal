@@ -122,6 +122,13 @@ button{font-family:inherit;cursor:pointer}
   box-shadow:0 10px 30px rgba(5,10,48,.3);max-width:calc(100vw - 32px)}
 .toast.gor{opacity:1;transform:translateX(-50%)}
 [hidden]{display:none!important}
+#gosterici{position:fixed;inset:0;z-index:50;background:var(--lacivert);display:none;flex-direction:column}
+#gosterici.gor{display:flex}
+#gosterici .gust{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;color:#fff}
+#gosterici .gad{flex:1;min-width:0;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gosterici .kck{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;text-decoration:none}
+#gosterici iframe{flex:1;width:100%;border:0;background:#fff}
+#gosterici .yuk{position:absolute;left:0;right:0;top:45%;text-align:center;color:#fff;font-size:13px;opacity:.8;pointer-events:none}
 </style>
 </head>
 <body>
@@ -152,6 +159,9 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="gosterici"><div class="gust"><span class="gad" id="gad"></span>
+  <a class="kck" id="gdrive" target="_blank" rel="noopener">Drive ↗</a><button class="kck" id="gkapat">✕ Kapat</button></div>
+  <div class="yuk" id="gyuk">Belge açılıyor…</div><iframe id="gcerceve" allow="autoplay" title="Belge"></iframe></div>
 
 <script>
 var API = 'https://script.google.com/macros/s/AKfycbyMU_jau9MsWaYq-nT56GRZRtQrTxjaPlh5qgMifmMbX09jt3U8kVj7lhANx8zieDMqNA/exec';
@@ -165,6 +175,20 @@ var MAX_MB = 200;
 var $ = function(id){ return document.getElementById(id); };
 var S = { pin:'', evraklar:[], q:'', kat:'hepsi', sira:'yeni', sec:{} };
 try { S.pin = sessionStorage.getItem('se_pin') || ''; S.sira = localStorage.getItem('se_sira') || 'yeni'; } catch(e){}
+/* Son liste telefonda saklanır: sayfa anında açılır, güncel liste arkadan gelir.
+   Saklanan listeyle birlikte PIN'in izi (SHA-256) tutulur; yeni sekmede PIN girilince iz tutarsa beklemeden açılır. */
+var LISTE_ANAHTAR = 'se_liste_v1';
+function saklananListe(){ try { var o = JSON.parse(localStorage.getItem(LISTE_ANAHTAR) || 'null'); return o && o.evraklar ? o : null; } catch(e){ return null; } }
+function pinIzi(pin){
+  if (!window.crypto || !crypto.subtle || !window.TextEncoder) return Promise.resolve('');
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode('dogus-se-v1:' + pin)).then(function(b){
+    return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join('');
+  }, function(){ return ''; });
+}
+function listeyiSakla(){
+  var pin = S.pin; if (!pin) return;
+  pinIzi(pin).then(function(iz){ if (iz && S.pin === pin) try { localStorage.setItem(LISTE_ANAHTAR, JSON.stringify({ iz:iz, evraklar:S.evraklar })); } catch(e){} });
+}
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); clearTimeout(toast._t); toast._t=setTimeout(function(){e.classList.remove('gor');},2600); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -210,22 +234,38 @@ function girisEkrani(mesaj){
   $('gir').onclick = function(){
     var p = $('pin').value.trim(); if (!p) return;
     $('gir').disabled = true; $('gir').textContent = 'Kontrol ediliyor…';
-    S.pin = p; yukle(true);
+    S.pin = p;
+    var o = saklananListe();
+    (o ? pinIzi(p) : Promise.resolve('')).then(function(iz){
+      if (o && iz && iz === o.iz) { try{ sessionStorage.setItem('se_pin', p); }catch(e){} listeyiAc(o.evraklar); yukle(false, true); } else yukle(true);
+    });
   };
   $('pin').addEventListener('keydown', function(e){ if(e.key==='Enter') $('gir').click(); });
   setTimeout(function(){ try{$('pin').focus();}catch(e){} }, 50);
 }
-$('cikis').onclick = function(){ try{ sessionStorage.removeItem('se_pin'); }catch(e){} S.evraklar=[]; S.sec={}; girisEkrani(); };
+$('cikis').onclick = function(){ try{ sessionStorage.removeItem('se_pin'); localStorage.removeItem(LISTE_ANAHTAR); }catch(e){} S.evraklar=[]; S.sec={}; girisEkrani(); };
 
-function yukle(ilk){
-  if (!ilk) $('icerik').innerHTML = '<div class="bos">Evraklar yükleniyor…</div>';
+function listeyiAc(evraklar){
+  S.evraklar = evraklar;
+  $('cikis').hidden = false; $('yukleAc').hidden = false;
+  anaEkran();
+}
+/* sessiz: saklanan liste ekranda, güncel liste arkadan gelir; değiştiyse yeniden çizilir */
+function yukle(ilk, sessiz){
+  if (!ilk && !sessiz) $('icerik').innerHTML = '<div class="bos">Evraklar yükleniyor…</div>';
   return istek(API + '?action=sirketListe&pin=' + encodeURIComponent(S.pin)).then(function(d){
-    if (!d.ok) { try{ sessionStorage.removeItem('se_pin'); }catch(e){} girisEkrani(d.hata === 'Yetki yok.' ? 'PIN hatalı.' : d.hata); return; }
+    if (!d.ok) { try{ sessionStorage.removeItem('se_pin'); if (d.hata === 'Yetki yok.') localStorage.removeItem(LISTE_ANAHTAR); }catch(e){} girisEkrani(d.hata === 'Yetki yok.' ? 'PIN hatalı.' : d.hata); return; }
     try{ sessionStorage.setItem('se_pin', S.pin); }catch(e){}
-    S.evraklar = d.evraklar || [];
-    $('cikis').hidden = false; $('yukleAc').hidden = false;
-    anaEkran();
+    var yeni = d.evraklar || [];
+    if (sessiz) {
+      if (JSON.stringify(yeni) === JSON.stringify(S.evraklar)) return;
+      S.evraklar = yeni;
+      if ($('liste') && !document.querySelector('.perde')) listeCiz(); else listeyiSakla();
+      return;
+    }
+    listeyiAc(yeni);
   }).catch(function(e){
+    if (sessiz) return;
     if (ilk) girisEkrani(e.message);
     else $('icerik').innerHTML = '<div class="kart bos"><b>'+esc(e.message)+'</b><button class="kck" onclick="yukle()">Tekrar dene</button></div>';
   });
@@ -272,6 +312,7 @@ function cipCiz(){
 }
 
 function listeCiz(){
+  listeyiSakla();
   cipCiz();
   Object.keys(S.sec).forEach(function(id){ if (!S.evraklar.some(function(d){return d.id===id;})) delete S.sec[id]; });
   var l = gorunenler();
@@ -288,6 +329,7 @@ function listeCiz(){
     l.forEach(function(d){
       var el = $('e_'+d.id);
       el.querySelector('input').onchange = function(){ if (this.checked) S.sec[d.id]=1; else delete S.sec[d.id]; listeCiz(); };
+      el.querySelector('[data-a=ac]').onclick = function(e){ if (belgeGoster(d)) e.preventDefault(); };
       el.querySelector('[data-a=gonder]').onclick = function(){ S.sec = {}; S.sec[d.id]=1; listeCiz(); gonderPenceresi(); };
       el.querySelector('[data-a=duzenle]').onclick = function(){ duzenlePenceresi(d); };
       el.querySelector('[data-a=sil]').onclick = function(){ silPenceresi(d); };
@@ -307,12 +349,30 @@ function satirHtml(d){
       d.etiketler.map(function(t){ return '<span class="etk">'+esc(t)+'</span>'; }).join('') + '</div>' +
       (d.not ? '<div class="not">'+esc(d.not)+'</div>' : '') +
       '<div class="bilgi">'+boyut(d.boyut)+' · '+tarih(d.yukleme)+(d.yukleyen?' · '+esc(d.yukleyen):'')+'</div></div>' +
-    '<div class="islem"><a class="kck" href="'+esc(d.link)+'" target="_blank" rel="noopener">Aç</a>' +
+    '<div class="islem"><a class="kck" href="'+esc(d.link)+'" target="_blank" rel="noopener" data-a="ac">Aç</a>' +
       '<a class="kck" href="'+esc(indirLink(d))+'" target="_blank" rel="noopener">İndir</a>' +
       '<button class="kck" data-a="gonder">Gönder</button><button class="kck" data-a="duzenle">Düzenle</button>' +
       '<button class="kck sil" data-a="sil">Sil</button></div></div>';
 }
 $('secTemizle').onclick = function(){ S.sec = {}; listeCiz(); };
+
+/* Belge portalın içinde tam ekran açılır (Drive önizleme çerçevesi); geri tuşu ve Kapat kapatır. */
+function belgeGoster(d){
+  if (!d.id) return false;
+  $('gad').textContent = d.ad; $('gdrive').href = d.link; $('gyuk').style.display = 'block';
+  $('gcerceve').onload = function(){ $('gyuk').style.display = 'none'; };
+  $('gcerceve').src = 'https://drive.google.com/file/d/' + encodeURIComponent(d.id) + '/preview';
+  $('gosterici').classList.add('gor'); document.body.style.overflow = 'hidden';
+  history.pushState({ belge:1 }, '', location.href);
+  return true;
+}
+function belgeKapat(){
+  if (!$('gosterici').classList.contains('gor')) return;
+  $('gosterici').classList.remove('gor'); $('gcerceve').src = 'about:blank'; document.body.style.overflow = '';
+}
+$('gkapat').onclick = function(){ if (history.state && history.state.belge) history.back(); else belgeKapat(); };
+window.addEventListener('popstate', belgeKapat);
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && $('gosterici').classList.contains('gor')) $('gkapat').click(); });
 
 /* ---------- pencere ---------- */
 function pencere(html){
@@ -509,7 +569,11 @@ function gonderPenceresi(){
 }
 $('gonderAc').onclick = gonderPenceresi;
 
-if (S.pin) { $('icerik').innerHTML = '<div class="bos">Evraklar yükleniyor…</div>'; yukle(true); } else girisEkrani();
+if (S.pin) {
+  var _o = saklananListe();
+  if (_o) pinIzi(S.pin).then(function(iz){ if (iz && iz === _o.iz) { listeyiAc(_o.evraklar); yukle(false, true); } else yukle(true); });
+  else { $('icerik').innerHTML = '<div class="bos">Evraklar yükleniyor…</div>'; yukle(true); }
+} else girisEkrani();
 </script>
 </body>
 </html>
