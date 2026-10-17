@@ -215,6 +215,8 @@
   .toast.on{opacity:1;transform:translate(-50%,0)}
   .ui{transition:opacity .5s,visibility 0s}
   body.pre .ui{opacity:0;visibility:hidden;pointer-events:none}
+  body.nohs #pano .hs{visibility:hidden!important}
+  #bPin .sl{display:none}body.nohs #bPin .sl{display:inline}
   body.clean .ui:not(.keep){opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s,visibility 0s .5s}
 
   @media (max-width:760px){
@@ -276,6 +278,7 @@
   <span class="sep"></span>
   <button class="zm" id="bOut" data-tip="Uzaklaş" aria-label="Uzaklaş"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
   <button class="zm" id="bIn" data-tip="Yakınlaş" aria-label="Yakınlaş"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
+  <button id="bPin" data-tip="İşaretleri gizle" aria-label="İşaretleri gizle veya göster" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/><path class="sl" d="M3 3l18 18"/></svg></button>
   <button id="bClean" data-tip="Sunum modu (yalnız görüntü)" aria-label="Sunum modu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
   <button class="fs" id="bFs" data-tip="Tam ekran" aria-label="Tam ekran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   <button id="bShare" data-tip="Müşteriye gönder" aria-label="Bu görünümü paylaş"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></svg></button>
@@ -506,6 +509,7 @@
   $('nx').onclick=function(){stopTour();stepG(1);};
   $('bIn').onclick=function(){if(pv)pv.zoom(-12);};
   $('bOut').onclick=function(){if(pv)pv.zoom(12);};
+  $('bPin').onclick=function(){var on=document.body.classList.toggle('nohs');this.classList.toggle('on',on);this.setAttribute('aria-pressed',on);this.setAttribute('data-tip',on?'İşaretleri göster':'İşaretleri gizle');toast(on?'İşaretler gizlendi':'İşaretler gösteriliyor');};
   $('bClean').onclick=function(){var on=document.body.classList.toggle('clean');$('bClean').classList.toggle('on',on);if(on)toast('Sunum modu: yalnızca görüntü');};
   var fsOk=document.fullscreenEnabled||document.webkitFullscreenEnabled;if(!fsOk)$('bFs').hidden=true;
   $('bFs').onclick=function(){var d=document,e=d.documentElement;if(d.fullscreenElement||d.webkitFullscreenElement)(d.exitFullscreen||d.webkitExitFullscreen).call(d);else(e.requestFullscreen||e.webkitRequestFullscreen).call(e);};
