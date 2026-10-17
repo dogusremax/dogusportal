@@ -296,7 +296,7 @@
 <aside class="drawer" id="drawer" aria-label="Menü" aria-hidden="true">
   <div class="dh"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><button class="xbtn" id="mClose" aria-label="Menüyü kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="sc">
-    <div id="dBroker" hidden style="margin-bottom:6px"><h4>Broker</h4><div class="dl"><a href="kibris-sunum.html">Kıbrıs sunumuna geç</a></div></div>
+    <div id="dBroker" hidden style="margin-bottom:6px"><h4>Sunum</h4><div class="dl"><a href="kibris-sunum.html">Kıbrıs sunumuna geç</a></div></div>
     <h4>Turlar</h4>
     <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=sapphire" data-tur="sapphire">Grand Sapphire</a><a href="?tur=dovec" data-tur="dovec">Döveç</a></div>
     <h4>Projeler</h4>
@@ -578,6 +578,6 @@
   listBuild();ui();init();
 })();
 </script>
-<script>try{if(window.top===window&&sessionStorage.getItem('perfAuth')==='ok')document.getElementById('dBroker').hidden=false}catch(e){}</script>
+<script>try{if(window.top===window&&(sessionStorage.getItem('perfAuth')==='ok'||sessionStorage.getItem('kibrisAuth')==='ok'))document.getElementById('dBroker').hidden=false}catch(e){}</script>
 </body>
 </html>

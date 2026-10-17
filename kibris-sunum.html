@@ -549,6 +549,14 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .gcols ul{list-style:none}
 .gcols li{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:20px;color:rgba(255,255,255,.6)}
 .gcols li b{display:block;font:600 26px/1.2 var(--fb);color:#fff;margin-bottom:4px}
+/* son slayt: giriş yapan danışman */
+.adv{display:flex;gap:44px;align-items:center;margin-top:64px}
+.adv .ph{width:250px;height:250px;border-radius:50%;overflow:hidden;background:linear-gradient(180deg,#fff,#dfe3ef);border:4px solid rgba(255,255,255,.5);box-shadow:0 24px 60px rgba(0,0,0,.45);flex:none}
+.adv .ph img{width:100%;height:auto;display:block;transform:translateY(6%)}
+.adv small{display:block;font:700 19px/1 var(--fb);letter-spacing:4px;text-transform:uppercase;color:#ff8e98}
+.adv b{display:block;font:400 72px/1.05 var(--fd);margin:14px 0 8px;letter-spacing:-.5px}
+.adv span{display:block;font-size:24px;opacity:.8}
+.contact .chip.big{font-size:30px;padding:18px 30px}
 @media (prefers-reduced-motion:reduce){.s.on .seal{animation:none;opacity:1}.s.on .kb img,.seal .ring,.s.on .flow svg.path path{animation:none}}
 </style>
 </head>
@@ -1377,11 +1385,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="ey a">Bir sonraki adım</div>
     <h2 class="a" style="--d:1">Denize karşı, <em>sterlinle.</em></h2>
     <p class="cta a" style="--d:2;color:#fff">Size uygun 3 projeyi 24 saatte seçelim; keşif gezinizi birlikte planlayalım.</p>
-    <div class="people a" style="--d:3">
+    <div class="people a" style="--d:3" id="sonKisi">
       <div class="person"><img src="assets/kibris/umut-tokkus.webp" alt="Umut Tokkuş"><div><b>Umut Tokkuş</b><span>RE/MAX Doğuş</span></div></div>
       <div class="person"><img src="assets/kibris/makbule-tokkus.webp" alt="Makbule Tokkuş"><div><b>Makbule Tokkuş</b><span>Yurt Dışı Proje Koordinatörü</span></div></div>
     </div>
-    <div class="contact a" style="--d:4"><span class="chip"><i></i>0532 478 13 31</span><span class="chip"><i></i>0216 315 15 15</span><span class="chip"><i></i>kibrisburda.com</span></div>
+    <div class="contact a" style="--d:4"><span class="chip" id="sonTel"><i></i>0532 478 13 31</span><span class="chip"><i></i>0216 315 15 15</span><span class="chip"><i></i>kibrisburda.com</span></div>
   </div>
   <div class="seal" style="--d:5"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
   <aside class="nt">
@@ -1461,6 +1469,17 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   function go(i,silent){i=Math.max(0,Math.min(N-1,i));if(i===cur&&S[i].classList.contains('on'))return;cur=i;render();if(!silent&&bc)bc.postMessage({go:cur});}
   function next(){go(cur+1);} function prev(){go(cur-1);}
 
+  // son slayt: sunuma kim girdiyse sadece onun fotoğrafı ve bilgileri
+  (function(){
+    var D={umut:['Umut Tokkuş','0532 472 41 48','Broker · RE/MAX Doğuş'],makbule:['Makbule Tokkuş','0532 478 13 31','Yurt Dışı Proje Koordinatörü'],
+      gizem:['Gizem Gök','0507 097 74 31'],aysegul:['Ayşegül Alpay','0532 456 79 56'],aysun:['Aysun Yılmaz','0532 363 35 54'],evsen:['Evşen Özazman','0532 518 11 67'],
+      gamze:['Gamze Yetkin','0538 354 41 65'],irem:['İrem Aleyna Tetik','0530 445 44 61'],orhan:['Orhan Özazman','0533 436 19 95'],ozlem:['Özlem Varol','0533 624 85 98']};
+    var id;try{id=sessionStorage.getItem('kibrisKim');}catch(e){}
+    var d=D[id];if(!d)return;
+    var box=$('sonKisi');box.className='adv a';
+    box.innerHTML='<div class="ph"><img src="assets/kibris/danisman/'+id+'.webp" alt="'+d[0]+'"></div><div><small>Danışmanınız</small><b>'+d[0]+'</b><span>'+(d[2]||'Gayrimenkul Danışmanı · RE/MAX Doğuş')+'</span></div>';
+    $('sonTel').innerHTML='<i></i>'+d[1];$('sonTel').classList.add('big');
+  })();
   // 360 katmanı
   function openTur(tur,p){
     var u='kibris-360-tur.html'+(tur&&tur!=='kibris'?'?tur='+tur:'')+(p?'#p='+p:'');
