@@ -53,10 +53,10 @@ header .cizgi{width:2px;height:28px;background:rgba(255,255,255,.4);border-radiu
 .sayilar .k{background:#fff;border-radius:22px;box-shadow:0 16px 40px rgba(5,10,48,.08);display:grid;grid-template-columns:repeat(3,1fr)}
 .sayilar .s{padding:22px 18px;text-align:center}
 .sayilar .s+.s{border-left:1px solid var(--line)}
-.sayilar b{display:block;font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.sayilar b{display:block;font-size:36px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
 .sayilar b em{font-style:normal;color:var(--red)}
-.sayilar span{font-size:13px;color:var(--dim);font-weight:600}
-@media(max-width:560px){.sayilar b{font-size:22px}.sayilar span{font-size:11px}.sayilar .s{padding:16px 8px}}
+.sayilar .s>span{font-size:13px;color:var(--dim);font-weight:600}
+@media(max-width:560px){.sayilar b{font-size:24px}.sayilar .s>span{font-size:11px}.sayilar .s{padding:16px 8px}}
 
 section{padding:72px 0 0}
 .bas{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
@@ -132,6 +132,19 @@ footer img{height:26px}
 .nb:last-child{background:var(--grad);color:#fff}
 .nb:last-child svg{color:#fff}
 @media(max-width:760px){.niyet{margin-left:auto;margin-right:auto}.nb{font-size:15px;padding:16px 10px}}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,10,48,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mk{position:relative;background:#fff;border-radius:24px;padding:28px 24px 24px;width:min(440px,100%);max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.mk h3{font-size:24px;font-weight:800;color:var(--navy);margin:2px 0 16px;letter-spacing:-.01em}
+.mk form{display:grid;gap:10px}
+.mk .btn{justify-content:center;margin-top:4px}
+.mk .btn[disabled]{opacity:.6;cursor:wait}
+.mx{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border-radius:50%;border:0;background:var(--bg);font-size:22px;line-height:1;color:var(--navy);cursor:pointer}
+.kvkk{font-size:11.5px;color:var(--dim);line-height:1.45}
+.mok{text-align:center;padding:10px 0 4px}
+.mok .tik{width:64px;height:64px;border-radius:50%;background:var(--grad);color:#fff;font-size:32px;display:grid;place-items:center;margin:0 auto 14px}
+.mok p{font-size:16px;color:#2b3254;font-weight:600}
+.mhata{color:var(--red);font-size:13px;font-weight:600}
 .orj{font-size:13px;color:var(--dim);margin:-12px 0 18px}
 .orj:empty{display:none}
 .hiz .c:last-child:nth-child(3n+1){grid-column:1/-1}
@@ -172,10 +185,7 @@ footer img{height:26px}
   <div class="portre"><img id="portre" alt=""><div class="bant"><b>RE/MAX DOĞUŞ</b><span data-i="bolge"></span></div></div>
 </div></div>
 
-<div class="w sayilar"><div class="k">
-  <div class="s"><b><em id="sPuan">4,9</em>★</b><span data-i="s1"></span></div>
-  <div class="s"><b id="sYorum">0</b><span data-i="s2"></span></div>
-  <div class="s"><b id="sToplam">0</b><span data-i="s3"></span></div>
+<div class="w sayilar"><div class="k" id="sayac">
 </div></div>
 
 <section id="hakkimda" class="hakkimda"><div class="w">
@@ -227,17 +237,32 @@ footer img{height:26px}
 
 <div class="yok hide" id="yok" data-i="yok"></div>
 
+<div class="modal" id="modal" hidden><div class="mk" role="dialog" aria-modal="true" aria-labelledby="mBaslik">
+  <button type="button" class="mx" id="mKapat" aria-label="×">×</button>
+  <div class="bas" id="mUst"></div>
+  <h3 id="mBaslik"></h3>
+  <form id="mForm">
+    <input id="mAd" data-ph="fad" required autocomplete="name">
+    <input id="mTel" type="tel" data-ph="ftel" required autocomplete="tel" dir="ltr">
+    <textarea id="mNot" data-ph="fmsj"></textarea>
+    <input id="mBot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+    <p class="kvkk" data-i="kvkk"></p>
+    <button class="btn btn-red" type="submit" id="mGonder" data-i="gonder2"></button>
+  </form>
+  <div class="mok" id="mOk" hidden><div class="tik">✓</div><p id="mOkYazi"></p></div>
+</div></div>
+
 <footer><div class="w"><span>© <span id="yil"></span> <span id="fAdi"></span> · RE/MAX Doğuş · <span data-i="bagimsiz"></span></span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"></div></footer>
 <a class="wa-sabit hide" id="waSabit" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
 
 <script>
 var DIL={
-tr:{al:'Almak istiyorum',sat:'Satmak istiyorum',ad:'Türkçe',n1:'Hakkımda',n2:'Hizmetler',n3:'Yorumlar',n4:'İletişim',bolge:'Fikirtepe · Kadıköy',unvan:'Profesyonel Gayrimenkul Danışmanı',wa:"WhatsApp'tan yazın",ara:'Hemen arayın',s1:'Google ofis puanı',s2:'yorumda adı geçiyor',s3:'ofis yorumu',k1:'Kısaca ben',h1:'Tanışalım',k2:'Ne yapıyorum?',h2:'Hizmetler',k3:'Sizlerden gelenler',h3:'Müşterilerim ne diyor?',orj:'',tum:'Tüm Google yorumlarını gör →',h4:'Güncel ilanlarım',p4:"Satılık ve kiralık portföyümü RE/MAX profilimde, günlük paylaşımlarımı Instagram'da bulabilirsiniz.",remax:'RE/MAX profilimdeki ilanlar',h5:'Evinizin değerini birlikte konuşalım',ofis:'Ofis',konum:'Fikirtepe / Kadıköy, İstanbul',fad:'Adınız Soyadınız',ftel:'Telefonunuz',fmsj:'Kısaca anlatın (bölge, oda sayısı, bütçe...)',gonder:'WhatsApp ile gönder',yok:'Danışman bulunamadı.',bagimsiz:'Her ofis bağımsız olarak sahiplenilir ve işletilir.',konular:['Evimi satmak istiyorum','Evimi kiraya vermek istiyorum','Ev almak istiyorum','Ev kiralamak istiyorum','Değerleme istiyorum','Yatırım danışmanlığı','Yurtdışı (Dubai, Kıbrıs, Yunanistan)'],selam:'Merhaba {h}, web sayfanızdan ulaşıyorum.',fAd:'Ad Soyad',fTel:'Telefon',fKonu:'Konu',fNot:'Not',yer:'tr-TR'},
-en:{al:'I want to buy',sat:'I want to sell',ad:'English',n1:'About',n2:'Services',n3:'Reviews',n4:'Contact',bolge:'Fikirtepe · Kadıköy',unvan:'Professional Real Estate Consultant',wa:'Message on WhatsApp',ara:'Call now',s1:'Google office rating',s2:'reviews mention by name',s3:'office reviews',k1:'About me',h1:"Let's meet",k2:'What I do',h2:'Services',k3:'Client reviews',h3:'What my clients say',orj:'Reviews are shown in their original language (Turkish), as posted on Google.',tum:'See all Google reviews →',h4:'Current listings',p4:'You can find my properties for sale and rent on my RE/MAX profile and my daily updates on Instagram.',remax:'Listings on my RE/MAX profile',h5:"Let's talk about your property",ofis:'Office',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Full name',ftel:'Phone',fmsj:'Tell me briefly (area, rooms, budget...)',gonder:'Send via WhatsApp',yok:'Consultant not found.',bagimsiz:'Each office is independently owned and operated.',konular:['I want to sell my home','I want to rent out my home','I want to buy a home','I want to rent a home','I need a valuation','Investment advice','Abroad (Dubai, Cyprus, Greece)'],selam:'Hello {h}, I am contacting you from your website.',fAd:'Name',fTel:'Phone',fKonu:'Topic',fNot:'Note',yer:'en-GB'},
-ru:{al:'Хочу купить',sat:'Хочу продать',ad:'Русский',n1:'Обо мне',n2:'Услуги',n3:'Отзывы',n4:'Контакты',bolge:'Фикиртепе · Кадыкёй',unvan:'Профессиональный консультант по недвижимости',wa:'Написать в WhatsApp',ara:'Позвонить',s1:'рейтинг офиса в Google',s2:'отзывов с упоминанием',s3:'отзывов об офисе',k1:'Коротко обо мне',h1:'Давайте знакомиться',k2:'Чем я занимаюсь',h2:'Услуги',k3:'Отзывы клиентов',h3:'Что говорят мои клиенты',orj:'Отзывы показаны на языке оригинала (турецком), как на Google.',tum:'Все отзывы в Google →',h4:'Актуальные объекты',p4:'Мои объекты на продажу и в аренду — в профиле RE/MAX, ежедневные новости — в Instagram.',remax:'Объекты в моём профиле RE/MAX',h5:'Обсудим вашу недвижимость',ofis:'Офис',konum:'Фикиртепе / Кадыкёй, Стамбул',fad:'Имя и фамилия',ftel:'Телефон',fmsj:'Коротко опишите (район, комнаты, бюджет...)',gonder:'Отправить в WhatsApp',yok:'Консультант не найден.',bagimsiz:'Каждый офис находится в независимой собственности и управлении.',konular:['Хочу продать жильё','Хочу сдать жильё','Хочу купить жильё','Хочу снять жильё','Нужна оценка','Инвестиционная консультация','За рубежом (Дубай, Кипр, Греция)'],selam:'Здравствуйте, {h}! Пишу вам с вашего сайта.',fAd:'Имя',fTel:'Телефон',fKonu:'Тема',fNot:'Комментарий',yer:'ru-RU'},
-fa:{al:'می‌خواهم بخرم',sat:'می‌خواهم بفروشم',ad:'فارسی',dir:'rtl',n1:'درباره من',n2:'خدمات',n3:'نظرات',n4:'تماس',bolge:'فیکیرتپه · کادیکوی',unvan:'مشاور حرفه‌ای املاک',wa:'پیام در واتساپ',ara:'تماس فوری',s1:'امتیاز گوگل دفتر',s2:'نظر با ذکر نام',s3:'نظر درباره دفتر',k1:'به‌طور خلاصه',h1:'آشنا شویم',k2:'چه کاری انجام می‌دهم؟',h2:'خدمات',k3:'نظرات مشتریان',h3:'مشتریانم چه می‌گویند؟',orj:'نظرات به زبان اصلی (ترکی) و همان‌طور که در گوگل ثبت شده‌اند نمایش داده می‌شوند.',tum:'همه نظرات گوگل ←',h4:'آگهی‌های فعلی',p4:'املاک فروشی و اجاره‌ای من در پروفایل RE/MAX و به‌روزرسانی‌های روزانه‌ام در اینستاگرام است.',remax:'آگهی‌ها در پروفایل RE/MAX من',h5:'درباره ملک شما گفت‌وگو کنیم',ofis:'دفتر',konum:'فیکیرتپه / کادیکوی، استانبول',fad:'نام و نام خانوادگی',ftel:'شماره تلفن',fmsj:'به‌طور خلاصه بنویسید (محله، تعداد اتاق، بودجه...)',gonder:'ارسال با واتساپ',yok:'مشاور یافت نشد.',bagimsiz:'هر دفتر به‌طور مستقل مالکیت و اداره می‌شود.',konular:['می‌خواهم خانه‌ام را بفروشم','می‌خواهم خانه‌ام را اجاره دهم','می‌خواهم خانه بخرم','می‌خواهم خانه اجاره کنم','ارزش‌گذاری می‌خواهم','مشاوره سرمایه‌گذاری','خارج از کشور (دبی، قبرس، یونان)'],selam:'سلام {h}، از طریق وب‌سایت شما پیام می‌دهم.',fAd:'نام',fTel:'تلفن',fKonu:'موضوع',fNot:'توضیح',yer:'fa-IR'},
-de:{al:'Ich möchte kaufen',sat:'Ich möchte verkaufen',ad:'Deutsch',n1:'Über mich',n2:'Leistungen',n3:'Bewertungen',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Professioneller Immobilienberater',wa:'Per WhatsApp schreiben',ara:'Jetzt anrufen',s1:'Google-Bewertung des Büros',s2:'Bewertungen mit Namen',s3:'Bewertungen des Büros',k1:'Kurz zu mir',h1:'Lernen wir uns kennen',k2:'Was ich tue',h2:'Leistungen',k3:'Kundenstimmen',h3:'Was meine Kunden sagen',orj:'Die Bewertungen werden in der Originalsprache (Türkisch) gezeigt, wie auf Google.',tum:'Alle Google-Bewertungen →',h4:'Aktuelle Angebote',p4:'Meine Kauf- und Mietangebote finden Sie in meinem RE/MAX-Profil, tägliche Neuigkeiten auf Instagram.',remax:'Angebote in meinem RE/MAX-Profil',h5:'Sprechen wir über Ihre Immobilie',ofis:'Büro',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Vor- und Nachname',ftel:'Telefon',fmsj:'Kurz beschreiben (Gegend, Zimmer, Budget...)',gonder:'Per WhatsApp senden',yok:'Berater nicht gefunden.',bagimsiz:'Jedes Büro ist unabhängig und selbstständig geführt.',konular:['Ich möchte verkaufen','Ich möchte vermieten','Ich möchte kaufen','Ich möchte mieten','Ich möchte eine Bewertung','Investitionsberatung','Ausland (Dubai, Zypern, Griechenland)'],selam:'Hallo {h}, ich melde mich über Ihre Webseite.',fAd:'Name',fTel:'Telefon',fKonu:'Thema',fNot:'Notiz',yer:'de-DE'},
-pl:{al:'Chcę kupić',sat:'Chcę sprzedać',ad:'Polski',n1:'O mnie',n2:'Usługi',n3:'Opinie',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Profesjonalny doradca ds. nieruchomości',wa:'Napisz na WhatsApp',ara:'Zadzwoń',s1:'ocena biura w Google',s2:'opinii z imieniem',s3:'opinii o biurze',k1:'Krótko o mnie',h1:'Poznajmy się',k2:'Czym się zajmuję',h2:'Usługi',k3:'Opinie klientów',h3:'Co mówią moi klienci',orj:'Opinie są pokazane w języku oryginału (tureckim), tak jak w Google.',tum:'Wszystkie opinie w Google →',h4:'Aktualne oferty',p4:'Moje oferty sprzedaży i najmu znajdziesz w profilu RE/MAX, a codzienne nowości na Instagramie.',remax:'Oferty w moim profilu RE/MAX',h5:'Porozmawiajmy o Twojej nieruchomości',ofis:'Biuro',konum:'Fikirtepe / Kadıköy, Stambuł',fad:'Imię i nazwisko',ftel:'Telefon',fmsj:'Opisz krótko (okolica, pokoje, budżet...)',gonder:'Wyślij przez WhatsApp',yok:'Nie znaleziono doradcy.',bagimsiz:'Każde biuro jest niezależnie prowadzone i zarządzane.',konular:['Chcę sprzedać mieszkanie','Chcę wynająć swoje mieszkanie','Chcę kupić mieszkanie','Chcę wynająć mieszkanie','Potrzebuję wyceny','Doradztwo inwestycyjne','Za granicą (Dubaj, Cypr, Grecja)'],selam:'Dzień dobry, {h}, piszę przez stronę internetową.',fAd:'Imię',fTel:'Telefon',fKonu:'Temat',fNot:'Uwagi',yer:'pl-PL'}
+tr:{c1:"yıllık tecrübe",c2:"mutlu müşteri",c3:"başarılı işlem",gonder2:"Gönder",mUst:"Talep formu",kvkk:"Gönder'e basarak bilgilerimin bu talep için RE/MAX Doğuş tarafından işlenmesini kabul ediyorum.",ok:"Talebiniz {ad} adlı danışmanımıza iletildi. En kısa sürede size dönüş yapılacak.",hata:"Gönderilemedi. Lütfen tekrar deneyin ya da WhatsApp'tan yazın.",al:'Almak istiyorum',sat:'Satmak istiyorum',ad:'Türkçe',n1:'Hakkımda',n2:'Hizmetler',n3:'Yorumlar',n4:'İletişim',bolge:'Fikirtepe · Kadıköy',unvan:'Profesyonel Gayrimenkul Danışmanı',wa:"WhatsApp'tan yazın",ara:'Hemen arayın',s1:'Google ofis puanı',s2:'yorumda adı geçiyor',s3:'ofis yorumu',k1:'Kısaca ben',h1:'Tanışalım',k2:'Ne yapıyorum?',h2:'Hizmetler',k3:'Sizlerden gelenler',h3:'Müşterilerim ne diyor?',orj:'',tum:'Tüm Google yorumlarını gör →',h4:'Güncel ilanlarım',p4:"Satılık ve kiralık portföyümü RE/MAX profilimde, günlük paylaşımlarımı Instagram'da bulabilirsiniz.",remax:'RE/MAX profilimdeki ilanlar',h5:'Evinizin değerini birlikte konuşalım',ofis:'Ofis',konum:'Fikirtepe / Kadıköy, İstanbul',fad:'Adınız Soyadınız',ftel:'Telefonunuz',fmsj:'Kısaca anlatın (bölge, oda sayısı, bütçe...)',gonder:'WhatsApp ile gönder',yok:'Danışman bulunamadı.',bagimsiz:'Her ofis bağımsız olarak sahiplenilir ve işletilir.',konular:['Evimi satmak istiyorum','Evimi kiraya vermek istiyorum','Ev almak istiyorum','Ev kiralamak istiyorum','Değerleme istiyorum','Yatırım danışmanlığı','Yurtdışı (Dubai, Kıbrıs, Yunanistan)'],selam:'Merhaba {h}, web sayfanızdan ulaşıyorum.',fAd:'Ad Soyad',fTel:'Telefon',fKonu:'Konu',fNot:'Not',yer:'tr-TR'},
+en:{c1:"years of experience",c2:"happy clients",c3:"transactions",gonder2:"Send",mUst:"Request form",kvkk:"By pressing Send, I agree that RE/MAX Doğuş may process my details for this request.",ok:"Your request has been sent to {ad}. You will be contacted shortly.",hata:"Could not be sent. Please try again or message on WhatsApp.",al:'I want to buy',sat:'I want to sell',ad:'English',n1:'About',n2:'Services',n3:'Reviews',n4:'Contact',bolge:'Fikirtepe · Kadıköy',unvan:'Professional Real Estate Consultant',wa:'Message on WhatsApp',ara:'Call now',s1:'Google office rating',s2:'reviews mention by name',s3:'office reviews',k1:'About me',h1:"Let's meet",k2:'What I do',h2:'Services',k3:'Client reviews',h3:'What my clients say',orj:'Reviews are shown in their original language (Turkish), as posted on Google.',tum:'See all Google reviews →',h4:'Current listings',p4:'You can find my properties for sale and rent on my RE/MAX profile and my daily updates on Instagram.',remax:'Listings on my RE/MAX profile',h5:"Let's talk about your property",ofis:'Office',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Full name',ftel:'Phone',fmsj:'Tell me briefly (area, rooms, budget...)',gonder:'Send via WhatsApp',yok:'Consultant not found.',bagimsiz:'Each office is independently owned and operated.',konular:['I want to sell my home','I want to rent out my home','I want to buy a home','I want to rent a home','I need a valuation','Investment advice','Abroad (Dubai, Cyprus, Greece)'],selam:'Hello {h}, I am contacting you from your website.',fAd:'Name',fTel:'Phone',fKonu:'Topic',fNot:'Note',yer:'en-GB'},
+ru:{c1:"лет опыта",c2:"довольных клиентов",c3:"сделок",gonder2:"Отправить",mUst:"Заявка",kvkk:"Нажимая «Отправить», я соглашаюсь на обработку моих данных RE/MAX Doğuş для этой заявки.",ok:"Ваша заявка передана консультанту: {ad}. С вами скоро свяжутся.",hata:"Не удалось отправить. Попробуйте ещё раз или напишите в WhatsApp.",al:'Хочу купить',sat:'Хочу продать',ad:'Русский',n1:'Обо мне',n2:'Услуги',n3:'Отзывы',n4:'Контакты',bolge:'Фикиртепе · Кадыкёй',unvan:'Профессиональный консультант по недвижимости',wa:'Написать в WhatsApp',ara:'Позвонить',s1:'рейтинг офиса в Google',s2:'отзывов с упоминанием',s3:'отзывов об офисе',k1:'Коротко обо мне',h1:'Давайте знакомиться',k2:'Чем я занимаюсь',h2:'Услуги',k3:'Отзывы клиентов',h3:'Что говорят мои клиенты',orj:'Отзывы показаны на языке оригинала (турецком), как на Google.',tum:'Все отзывы в Google →',h4:'Актуальные объекты',p4:'Мои объекты на продажу и в аренду — в профиле RE/MAX, ежедневные новости — в Instagram.',remax:'Объекты в моём профиле RE/MAX',h5:'Обсудим вашу недвижимость',ofis:'Офис',konum:'Фикиртепе / Кадыкёй, Стамбул',fad:'Имя и фамилия',ftel:'Телефон',fmsj:'Коротко опишите (район, комнаты, бюджет...)',gonder:'Отправить в WhatsApp',yok:'Консультант не найден.',bagimsiz:'Каждый офис находится в независимой собственности и управлении.',konular:['Хочу продать жильё','Хочу сдать жильё','Хочу купить жильё','Хочу снять жильё','Нужна оценка','Инвестиционная консультация','За рубежом (Дубай, Кипр, Греция)'],selam:'Здравствуйте, {h}! Пишу вам с вашего сайта.',fAd:'Имя',fTel:'Телефон',fKonu:'Тема',fNot:'Комментарий',yer:'ru-RU'},
+fa:{c1:"سال تجربه",c2:"مشتری راضی",c3:"معامله موفق",gonder2:"ارسال",mUst:"فرم درخواست",kvkk:"با زدن «ارسال»، با پردازش اطلاعاتم توسط RE/MAX Doğuş برای این درخواست موافقت می‌کنم.",ok:"درخواست شما برای {ad} ارسال شد. به‌زودی با شما تماس گرفته می‌شود.",hata:"ارسال نشد. لطفاً دوباره تلاش کنید یا در واتساپ پیام دهید.",al:'می‌خواهم بخرم',sat:'می‌خواهم بفروشم',ad:'فارسی',dir:'rtl',n1:'درباره من',n2:'خدمات',n3:'نظرات',n4:'تماس',bolge:'فیکیرتپه · کادیکوی',unvan:'مشاور حرفه‌ای املاک',wa:'پیام در واتساپ',ara:'تماس فوری',s1:'امتیاز گوگل دفتر',s2:'نظر با ذکر نام',s3:'نظر درباره دفتر',k1:'به‌طور خلاصه',h1:'آشنا شویم',k2:'چه کاری انجام می‌دهم؟',h2:'خدمات',k3:'نظرات مشتریان',h3:'مشتریانم چه می‌گویند؟',orj:'نظرات به زبان اصلی (ترکی) و همان‌طور که در گوگل ثبت شده‌اند نمایش داده می‌شوند.',tum:'همه نظرات گوگل ←',h4:'آگهی‌های فعلی',p4:'املاک فروشی و اجاره‌ای من در پروفایل RE/MAX و به‌روزرسانی‌های روزانه‌ام در اینستاگرام است.',remax:'آگهی‌ها در پروفایل RE/MAX من',h5:'درباره ملک شما گفت‌وگو کنیم',ofis:'دفتر',konum:'فیکیرتپه / کادیکوی، استانبول',fad:'نام و نام خانوادگی',ftel:'شماره تلفن',fmsj:'به‌طور خلاصه بنویسید (محله، تعداد اتاق، بودجه...)',gonder:'ارسال با واتساپ',yok:'مشاور یافت نشد.',bagimsiz:'هر دفتر به‌طور مستقل مالکیت و اداره می‌شود.',konular:['می‌خواهم خانه‌ام را بفروشم','می‌خواهم خانه‌ام را اجاره دهم','می‌خواهم خانه بخرم','می‌خواهم خانه اجاره کنم','ارزش‌گذاری می‌خواهم','مشاوره سرمایه‌گذاری','خارج از کشور (دبی، قبرس، یونان)'],selam:'سلام {h}، از طریق وب‌سایت شما پیام می‌دهم.',fAd:'نام',fTel:'تلفن',fKonu:'موضوع',fNot:'توضیح',yer:'fa-IR'},
+de:{c1:"Jahre Erfahrung",c2:"zufriedene Kunden",c3:"Transaktionen",gonder2:"Senden",mUst:"Anfrage",kvkk:"Mit „Senden“ stimme ich zu, dass RE/MAX Doğuş meine Angaben für diese Anfrage verarbeitet.",ok:"Ihre Anfrage wurde an {ad} gesendet. Sie werden in Kürze kontaktiert.",hata:"Senden fehlgeschlagen. Bitte erneut versuchen oder per WhatsApp schreiben.",al:'Ich möchte kaufen',sat:'Ich möchte verkaufen',ad:'Deutsch',n1:'Über mich',n2:'Leistungen',n3:'Bewertungen',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Professioneller Immobilienberater',wa:'Per WhatsApp schreiben',ara:'Jetzt anrufen',s1:'Google-Bewertung des Büros',s2:'Bewertungen mit Namen',s3:'Bewertungen des Büros',k1:'Kurz zu mir',h1:'Lernen wir uns kennen',k2:'Was ich tue',h2:'Leistungen',k3:'Kundenstimmen',h3:'Was meine Kunden sagen',orj:'Die Bewertungen werden in der Originalsprache (Türkisch) gezeigt, wie auf Google.',tum:'Alle Google-Bewertungen →',h4:'Aktuelle Angebote',p4:'Meine Kauf- und Mietangebote finden Sie in meinem RE/MAX-Profil, tägliche Neuigkeiten auf Instagram.',remax:'Angebote in meinem RE/MAX-Profil',h5:'Sprechen wir über Ihre Immobilie',ofis:'Büro',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Vor- und Nachname',ftel:'Telefon',fmsj:'Kurz beschreiben (Gegend, Zimmer, Budget...)',gonder:'Per WhatsApp senden',yok:'Berater nicht gefunden.',bagimsiz:'Jedes Büro ist unabhängig und selbstständig geführt.',konular:['Ich möchte verkaufen','Ich möchte vermieten','Ich möchte kaufen','Ich möchte mieten','Ich möchte eine Bewertung','Investitionsberatung','Ausland (Dubai, Zypern, Griechenland)'],selam:'Hallo {h}, ich melde mich über Ihre Webseite.',fAd:'Name',fTel:'Telefon',fKonu:'Thema',fNot:'Notiz',yer:'de-DE'},
+pl:{c1:"lat doświadczenia",c2:"zadowolonych klientów",c3:"transakcji",gonder2:"Wyślij",mUst:"Formularz",kvkk:"Klikając „Wyślij”, zgadzam się na przetwarzanie moich danych przez RE/MAX Doğuş w celu obsługi tego zgłoszenia.",ok:"Twoje zgłoszenie zostało wysłane do: {ad}. Wkrótce się z Tobą skontaktujemy.",hata:"Nie udało się wysłać. Spróbuj ponownie lub napisz na WhatsApp.",al:'Chcę kupić',sat:'Chcę sprzedać',ad:'Polski',n1:'O mnie',n2:'Usługi',n3:'Opinie',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Profesjonalny doradca ds. nieruchomości',wa:'Napisz na WhatsApp',ara:'Zadzwoń',s1:'ocena biura w Google',s2:'opinii z imieniem',s3:'opinii o biurze',k1:'Krótko o mnie',h1:'Poznajmy się',k2:'Czym się zajmuję',h2:'Usługi',k3:'Opinie klientów',h3:'Co mówią moi klienci',orj:'Opinie są pokazane w języku oryginału (tureckim), tak jak w Google.',tum:'Wszystkie opinie w Google →',h4:'Aktualne oferty',p4:'Moje oferty sprzedaży i najmu znajdziesz w profilu RE/MAX, a codzienne nowości na Instagramie.',remax:'Oferty w moim profilu RE/MAX',h5:'Porozmawiajmy o Twojej nieruchomości',ofis:'Biuro',konum:'Fikirtepe / Kadıköy, Stambuł',fad:'Imię i nazwisko',ftel:'Telefon',fmsj:'Opisz krótko (okolica, pokoje, budżet...)',gonder:'Wyślij przez WhatsApp',yok:'Nie znaleziono doradcy.',bagimsiz:'Każde biuro jest niezależnie prowadzone i zarządzane.',konular:['Chcę sprzedać mieszkanie','Chcę wynająć swoje mieszkanie','Chcę kupić mieszkanie','Chcę wynająć mieszkanie','Potrzebuję wyceny','Doradztwo inwestycyjne','Za granicą (Dubaj, Cypr, Grecja)'],selam:'Dzień dobry, {h}, piszę przez stronę internetową.',fAd:'Imię',fTel:'Telefon',fKonu:'Temat',fNot:'Uwagi',yer:'pl-PL'}
 };
 var SIRA=['tr','en','ru','fa','de','pl'];
 (async function(){
@@ -279,15 +304,8 @@ var SIRA=['tr','en','ru','fa','de','pl'];
   if(d.remax)e('remaxLink').href=d.remax;else e('remaxLink').classList.add('hide');
   if(d.instagram){e('igLink').href='https://www.instagram.com/'+d.instagram+'/';e('igLink').textContent='@'+d.instagram}else e('igLink').classList.add('hide');
   e('haritaLink').href=e('tumYorum').href=g.mapsUrl||'#';
-  e('sToplam').textContent=g.toplam||'';
-  e('sYorum').textContent=benim.length;
   if(!benim.length)e('yorumlar').classList.add('hide');
   e('yil').textContent=new Date().getFullYear();
-  document.querySelectorAll('[data-niyet]').forEach(function(x){x.addEventListener('click',function(){
-    e('fKonu').selectedIndex=+x.dataset.niyet;
-    e('iletisim').scrollIntoView({behavior:'smooth',block:'start'});
-    setTimeout(function(){e('fAd').focus({preventScroll:true})},500);
-  })});
   e('form').addEventListener('submit',function(ev){
     ev.preventDefault();
     var m=selam()+'\n'+T('fAd')+': '+e('fAd').value+'\n'+T('fTel')+': '+e('fTel').value+'\n'+T('fKonu')+': '+e('fKonu').value+(e('fMesaj').value?'\n'+T('fNot')+': '+e('fMesaj').value:'')+(dil!=='tr'?'\n('+DIL[dil].ad+')':'');
@@ -310,7 +328,9 @@ var SIRA=['tr','en','ru','fa','de','pl'];
     e('waHero').href=e('waSabit').href=wa(selam());
     e('hakkimdaMetin').innerHTML=(L(s.hakkimda)||[]).map(function(p){return '<p>'+esc(p)+'</p>'}).join('');
     e('hiz').innerHTML=(L(s.hizmetler)||L(site._hizmetler)||[]).map(function(h,i){return '<div class="c"><div class="n">'+(i+1)+'</div><h3>'+esc(h[0])+'</h3><p>'+esc(h[1])+'</p>'+(h[2]?'<ul>'+h[2].map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul>':'')+'</div>'}).join('');
-    e('sPuan').textContent=(g.puan||4.9).toLocaleString(T('yer'));
+    var sy=s.sayaclar||site._sayaclar||[{n:24,k:'c1'},{n:10000,k:'c2'},{n:500,k:'c3'}];
+    e('sayac').innerHTML=sy.map(function(x){return '<div class="s"><b><span class="sn" data-n="'+x.n+'">'+(sayacBitti?x.n.toLocaleString(T('yer')):'0')+'</span><em>+</em></b><span>'+esc(L(x.etiket)||T(x.k))+'</span></div>'}).join('');
+    if(!sayacBitti)sayacBaslat();
     e('fKonu').innerHTML=T('konular').map(function(k){return '<option>'+esc(k)+'</option>'}).join('');
     e('yor').innerHTML=benim.slice(0,6).map(function(y){
       var ay=y.tarih?new Date(y.tarih).toLocaleDateString(T('yer'),{month:'long',year:'numeric'}):'';
@@ -318,6 +338,46 @@ var SIRA=['tr','en','ru','fa','de','pl'];
       return '<div class="c"><div class="yildiz">'+'★★★★★'.slice(0,y.puan)+'</div><p lang="tr" dir="ltr">'+esc(y.metin)+'</p><div class="kim">'+av+'<div>'+esc(kisa(y.yazar))+'<small>Google · '+ay+'</small></div></div></div>';
     }).join('');
   }
+  var sayacBitti=false;
+  function sayacBaslat(){
+    var k=e('sayac');
+    var calis=function(){sayacBitti=true;var t0=performance.now();k.querySelectorAll('.sn').forEach(function(x){var n=+x.dataset.n;
+      (function ad(t){var p=Math.min(1,(t-t0)/1800),v=Math.round(n*(1-Math.pow(1-p,3)));x.textContent=v.toLocaleString(T('yer'));if(p<1)requestAnimationFrame(ad)})(t0)})};
+    if(!('IntersectionObserver' in window))return calis();
+    var io=new IntersectionObserver(function(en){if(en[0].isIntersecting){io.disconnect();calis()}},{threshold:.4});io.observe(k);
+  }
+
+  var GAS='https://script.google.com/macros/s/AKfycbzOv_EaqijVkLwoyxJ9NNG6f2tETYY3Sf9JxQ824CmUgEaNoehFVbCtHk1iGqpvaZpF/exec';
+  var niyet=null, TALEP={'2':'satın alma','0':'satılık değerleme'};
+  var modal=e('modal');
+  var kapat=function(){modal.hidden=true;document.body.style.overflow=''};
+  e('mKapat').addEventListener('click',kapat);
+  modal.addEventListener('click',function(ev){if(ev.target===modal)kapat()});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!modal.hidden)kapat()});
+  document.querySelectorAll('[data-niyet]').forEach(function(x){x.addEventListener('click',function(){
+    niyet=x.dataset.niyet;
+    e('mUst').textContent=T('mUst'); e('mBaslik').textContent=x.textContent.trim();
+    e('mForm').hidden=false; e('mOk').hidden=true; var h=e('mForm').querySelector('.mhata'); if(h)h.remove();
+    modal.hidden=false; document.body.style.overflow='hidden';
+    setTimeout(function(){e('mAd').focus()},50);
+  })});
+  e('mForm').addEventListener('submit',async function(ev){
+    ev.preventDefault();
+    var b=e('mGonder'); if(b.disabled)return; b.disabled=true;
+    var h=this.querySelector('.mhata'); if(h)h.remove();
+    var konu=DIL.tr.konular[+niyet];
+    var veri={action:'form',danisman:d.ad,ad:e('mAd').value,telefon:e('mTel').value,talep:TALEP[niyet]||'bilgi',bot:e('mBot').value,
+      detay:'Konu: '+konu+(e('mNot').value?'\nNot: '+e('mNot').value.replace(/\n/g,' '):'')+'\nDil: '+DIL[dil].ad,sayfa:location.href.split('#')[0]};
+    try{
+      var r=await fetch(GAS,{method:'POST',body:JSON.stringify(veri)}); var j=await r.json();
+      if(!j.ok)throw new Error(j.hata||'hata');
+      e('mForm').hidden=true; e('mOkYazi').textContent=T('ok').replace('{ad}',d.ad); e('mOk').hidden=false;
+      e('mForm').reset();
+    }catch(x){
+      var p=document.createElement('p');p.className='mhata';p.textContent=T('hata');b.before(p);
+    }
+    b.disabled=false;
+  });
   ciz();
   e('sayfa').classList.remove('hide');
 })();
