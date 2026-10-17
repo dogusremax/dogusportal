@@ -372,7 +372,7 @@ function izleCiz(d){
   if (!d.detay) return '';   // eski önbellek cevabı: döküm yoksa bant da yok
   const {ham} = olaylar(d), D = d.detay || {}, {gun, gecen, bos: hareketsiz, aktif} = gunDagilim(ham), son = ham[ham.length-1];
   const enY = gun.indexOf(Math.max(...gun));
-  const kaynak = [[(D.akis||[]).length,'Danışman Takip kaydı'],[(D.musteri||[]).filter(m=>!m.ofis).length,'kendi bulduğun müşteri'],[(D.notlar||[]).length,'takip notu'],
+  const kaynak = [[(D.akis||[]).length,'aktivite (arama, sunum, gösterim…)'],[(D.musteri||[]).filter(m=>!m.ofis).length,'kendi bulduğun müşteri'],[(D.notlar||[]).length,'takip notu'],
     [(D.formlar||[]).length,'form / evrak'],[(D.kapanislar||[]).length,'kapanış']].filter(x=>x[0]);
   const a = ilk(d.ad), fark = d.puan - ort;
   let ver, c;
