@@ -1,40 +1,29 @@
 // Kıbrıs sayfaları için Sunum girişi: köşede küçük bağlantı + şifre penceresi. Brokerlar (Umut, Makbule) ana sayfadaki
-// Broker PIN'iyle (assets/broker.js, perfAuth) girer; danışmanlar kendi PIN'iyle (aşağıdaki DANISMAN izleri, kibrisAuth)
-// sadece Kıbrıs sunumu ve 360'a girer. Giren kişi kibrisKim'e yazılır; sunumun son slaytı onu gösterir.
+// Broker PIN'iyle (assets/broker.js, perfAuth) girer; danışmanlar portalda zaten kullandıkları kendi PIN'leriyle
+// (Danışman Takip Apps Script'i, action:danismanGiris; gazete.html ve karusel.html ile aynı) sadece Kıbrıs sunumu ve 360'a girer (kibrisAuth). Giren kişi kibrisKim'e yazılır; sunumun son slaytı onu gösterir.
 // Statik sitede hafif bir kilit; gerçek güvenlik değildir.
 // Hedef mutlak adres: kibrisburda.com bu dosyayı dogusportal.com'dan yükler, göreli link orada 404 verir.
 (function(){
   var K = 'perfAuth', HEDEF = 'https://dogusportal.com/kibris-360-tur.html', SUNUM = 'https://dogusportal.com/kibris-sunum.html';
   var me = document.currentScript, gate = me && me.hasAttribute('data-gate');
-  /* Danışman PIN izleri (PBKDF2-SHA256, 150.000 tur, tuz dogus-kibris-v1) → danışman kimliği */
-  var DANISMAN = {
-    "f6172fa762daec01011979f8133d02d64019935c500903379ba30b730cabcb21": "gizem",
-    "0b0f6c757de321e9494f4ad8d4fb584e46365747977349698c75a392c81c3c99": "aysegul",
-    "1d72ea6f57b123300d6ff1aa8506b51742da4b3d8ac458d9e1e20bdcaaaa61cf": "aysun",
-    "f12f5ecddf3e3e1c396d196805581345e394f743935fdeebda46915aef41c8ea": "evsen",
-    "29edda42c3be5924b881f07141a9ff849527bd52b08c643e89ff491d6b9f6170": "gamze",
-    "3dd3a2d2cbe29c3a366c6b6da72761ac571d047730a5b541ab9977493cdad746": "irem",
-    "d5f8569a6ecd82bf1ba7e246d894fccd6980449a8a63fe06c414a499096dfd9a": "orhan",
-    "4bf6eb2bbbb143119de5949295bafa07c6902653480439619bcd1e6f189cbb21": "ozlem"
-    };
+  var API = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
+  var KIMLIK = {aysegul_alpay:'aysegul', ozlem_varol:'ozlem'};
   function ok(){ try{ return sessionStorage.getItem(K) === 'ok' || sessionStorage.getItem('kibrisAuth') === 'ok'; }catch(e){ return false; } }
-  function hex(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join(''); }
   function danismanKim(pin){
     pin = String(pin||'').trim();
-    if (!/^\d{4,6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve(null);
-    var enc = new TextEncoder();
-    return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits'])
-      .then(function(k){ return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt:enc.encode('dogus-kibris-v1'), iterations:150000 }, k, 256); })
-      .then(function(b){ return DANISMAN[hex(b)] || null; })
+    if (!pin) return Promise.resolve(null);
+    return fetch(API, {method:'POST', redirect:'follow', body:JSON.stringify({action:'danismanGiris', pin:pin})})
+      .then(function(r){ return r.json(); })
+      .then(function(r){ if(!r || !r.success) return null; var id = String(r.id||'').toLowerCase(); return KIMLIK[id] || id.split('_')[0] || null; })
       .catch(function(){ return null; });
   }
-  /* Önce danışman, sonra broker PIN'i; giren kişiyi kaydeder */
+  /* Önce broker PIN'i (yerel), sonra danışman PIN'i; giren kişiyi kaydeder */
   function giris(pin){
-    return danismanKim(pin).then(function(id){
-      if(id){ try{ sessionStorage.setItem('kibrisAuth', 'ok'); sessionStorage.setItem('kibrisKim', id); }catch(e){} return true; }
-      return (window.brokerKim ? window.brokerKim(pin) : Promise.resolve(null)).then(function(b){
-        if(!b) return false;
-        try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', b); }catch(e){}
+    return (window.brokerKim ? window.brokerKim(pin) : Promise.resolve(null)).then(function(b){
+      if(b){ try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', b); }catch(e){} return true; }
+      return danismanKim(pin).then(function(id){
+        if(!id) return false;
+        try{ sessionStorage.setItem('kibrisAuth', 'ok'); sessionStorage.setItem('kibrisKim', id); }catch(e){}
         return true;
       });
     });
@@ -62,6 +51,7 @@
     d.querySelector('.no').onclick = function(){ d.remove(); if(onCancel) onCancel(); };
     f.onsubmit = function(ev){
       ev.preventDefault();
+      e.textContent = 'Kontrol ediliyor…';
       giris(i.value).then(function(x){
         if(!x){ e.textContent = 'Şifre hatalı'; i.select(); return; }
         d.remove(); onOk();
