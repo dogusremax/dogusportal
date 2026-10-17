@@ -8,7 +8,12 @@
   var me = document.currentScript, gate = me && me.hasAttribute('data-gate');
   var API = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
   var KIMLIK = {aysegul_alpay:'aysegul', ozlem_varol:'ozlem'};
-  function ok(){ try{ return sessionStorage.getItem(K) === 'ok' || sessionStorage.getItem('kibrisAuth') === 'ok'; }catch(e){ return false; } }
+  function ok(){
+    try{ if (sessionStorage.getItem(K) === 'ok' || sessionStorage.getItem('kibrisAuth') === 'ok') return true; }catch(e){ return false; }
+    /* Portalda broker girişi yapıldıysa (broker.js PIN'i hatırlar) tekrar sorma */
+    if (window.brokerPinAl && brokerPinAl()) { try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', /makbule/i.test(brokerAdAl()) ? 'makbule' : 'umut'); }catch(e){} return true; }
+    return false;
+  }
   function danismanKim(pin){
     pin = String(pin||'').trim();
     if (!pin) return Promise.resolve(null);

@@ -9,7 +9,7 @@
   var KIMLER = ['umut', 'makbule'];
   /* PIN hangi brokera ait: 'umut' / 'makbule' ya da null */
   window.brokerKim = function(pin){
-    return izi(pin).then(function(h){ var i = IZLER.indexOf(h); return i >= 0 ? KIMLER[i] : null; });
+    return izi(pin).then(function(h){ var i = IZLER.indexOf(h); if (i >= 0) pinKaydet(pin, ADLAR[i]); return i >= 0 ? KIMLER[i] : null; });
   };
   window.brokerDogrula = function(pin){
     return izi(pin).then(function(h){ var i = IZLER.indexOf(h); if (i >= 0) pinKaydet(pin, ADLAR[i]); return i >= 0; });
