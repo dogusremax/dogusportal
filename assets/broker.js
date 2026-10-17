@@ -1,7 +1,9 @@
 /* RE/MAX Doğuş — broker PIN doğrulama.
    PIN'in kendisi burada YOK; sadece PBKDF2 izi (150.000 tur) tutulur. */
 (function(){
-  var IZ = '561cc65b3a47c38a75d5af5f24f13559f102d17d37138e114f0787a224d7d22d';
+  /* Brokerlar: Umut, Makbule */
+  var IZLER = ['561cc65b3a47c38a75d5af5f24f13559f102d17d37138e114f0787a224d7d22d',
+               '9e5d4c8fe3ad644d4f3fc480fe84c449474fdd5032d4f4674dc3707dc295450c'];
   var TUZ = 'dogus-broker-v1', TUR = 150000;
   function hex(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join(''); }
   window.brokerDogrula = function(pin){
@@ -10,7 +12,7 @@
     var enc = new TextEncoder();
     return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits'])
       .then(function(k){ return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt:enc.encode(TUZ), iterations:TUR }, k, 256); })
-      .then(function(b){ return hex(b) === IZ; })
+      .then(function(b){ return IZLER.indexOf(hex(b)) >= 0; })
       .catch(function(){ return false; });
   };
   /* Sayfa kapısı: ?k=PIN ile gelindiyse doğrula, adres çubuğundan PIN'i sil */
