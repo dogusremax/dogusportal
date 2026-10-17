@@ -136,6 +136,26 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
   main { max-width: none; padding: 0 40px 60px; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
 }
+/* Uygulama arama */
+.ara { position: relative; margin: 0 0 16px; }
+.ara input {
+  width: 100%; height: 50px; border: 1px solid var(--line); border-radius: 16px; background: #fff;
+  padding: 0 44px 0 46px; font: 500 16px 'Inter', sans-serif; color: var(--text); outline: none;
+  box-shadow: 0 1px 3px rgba(19,26,38,0.04); transition: border-color .15s, box-shadow .15s; -webkit-appearance: none;
+}
+.ara input::-webkit-search-cancel-button, .ara input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
+.ara input::placeholder { color: #9aa3b5; }
+.ara input:focus { border-color: var(--remax-blue); box-shadow: 0 0 0 4px rgba(0,61,165,0.10); }
+.ara-ikon { position: absolute; left: 16px; top: 50%; width: 19px; height: 19px; transform: translateY(-50%); color: #9aa3b5; pointer-events: none; }
+.ara-sil { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: none; color: #9aa3b5; font-size: 20px; line-height: 1; cursor: pointer; display: none; }
+.ara.dolu .ara-sil { display: block; }
+.ara-kisa { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font: 600 11px 'Inter', sans-serif; color: #9aa3b5; border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; pointer-events: none; }
+.ara.dolu .ara-kisa { display: none; }
+@media (hover: none) { .ara-kisa { display: none; } }
+.app.ara-gizli { display: none !important; }
+.app.ara-ilk { border-color: var(--remax-blue); box-shadow: 0 0 0 3px rgba(0,61,165,0.10); }
+.ara-yok { display: none; text-align: center; padding: 34px 10px; color: var(--text-dim); font-size: 14px; }
+@media (min-width: 760px) { .ara { max-width: 560px; margin: 0 auto 22px; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -147,6 +167,12 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 </header>
 
 <main>
+  <div class="ara" id="ara">
+    <svg class="ara-ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>
+    <input id="araInput" type="search" placeholder="Uygulama ara…" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="Uygulama ara">
+    <span class="ara-kisa">/</span>
+    <button class="ara-sil" type="button" aria-label="Temizle">&times;</button>
+  </div>
   <div class="grid">
     <a class="app wide" href="#" onclick="bildirimPaneli();return false;">
       <div class="icon3d" style="--c1:#B8860B;--c2:#F5C542">
@@ -449,7 +475,44 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
   </div>
+  <div class="ara-yok" id="araYok">Bu isimde uygulama yok.</div>
 </main>
+<script>
+(function(){
+  var kutu=document.getElementById('ara'), inp=document.getElementById('araInput'), yok=document.getElementById('araYok');
+  var kartlar=[].slice.call(document.querySelectorAll('.grid .app'));
+  function sade(t){return (t||'').toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c').replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u');}
+  function gorunur(a){return a.offsetParent!==null||getComputedStyle(a).display!=='none';}
+  function suz(){
+    var q=sade(inp.value).trim(), kelimeler=q?q.split(/\s+/):[], ilk=null, sayi=0;
+    kutu.classList.toggle('dolu',!!inp.value);
+    kartlar.forEach(function(a){
+      a.classList.remove('ara-gizli','ara-ilk');
+      if(!kelimeler.length)return;
+      var ad=sade((a.querySelector('.app-name')||{}).textContent), metin=ad+' '+sade((a.querySelector('.app-desc')||{}).textContent);
+      var uyar=kelimeler.every(function(k){return metin.indexOf(k)>-1;});
+      if(!uyar){a.classList.add('ara-gizli');return;}
+      var puan=ad.indexOf(q)===0?0:(ad.indexOf(kelimeler[0])>-1?1:2);
+      a.style.order=puan-3;
+      if(!gorunur(a))return;
+      sayi++; if(!ilk||puan<ilk._puan){ilk=a;ilk._puan=puan;}
+    });
+    kartlar.forEach(function(a){delete a._puan; if(!kelimeler.length)a.style.order='';});
+    if(ilk)ilk.classList.add('ara-ilk');
+    yok.style.display=(kelimeler.length&&!sayi)?'block':'none';
+    return ilk;
+  }
+  inp.addEventListener('input',suz);
+  inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){var a=suz(); if(a){e.preventDefault(); inp.blur(); a.click();}}
+    if(e.key==='Escape'){inp.value=''; suz(); inp.blur();}
+  });
+  kutu.querySelector('.ara-sil').addEventListener('click',function(){inp.value=''; suz(); inp.focus();});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='/'&&document.activeElement!==inp&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName)){e.preventDefault(); inp.focus();}
+  });
+})();
+</script>
 
 <footer>
   RE/MAX Doğuş<span class="sep">·</span>UMT GROUP Gayrimenkul<span class="sep">·</span>Fikirtepe, Kadıköy
