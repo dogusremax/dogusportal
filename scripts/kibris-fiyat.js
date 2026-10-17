@@ -27,6 +27,7 @@ const OUT = 'assets/kibris360/fiyatlar.json';
       // sunumdaki Kıbrıs Katalog katmanı için: tanıtım bilgisi (broşür projeleri), Drive klasörü, kaynak dosya
       aciklama: p.aciklama || '', uniteMix: p.uniteMix || '', olanaklar: p.olanaklar || '', brosur: p.katalogUrl || '',
       klasor: p.klasorUrl || '', kaynak: p.kaynakDosya || '', durumVar: String(p.durumVar) === 'true' || p.durumVar === true,
+      bolge: p.bolge || '', gorsel: p.gorsel || '', tur360: p.tur360 || '',
       uniteler: (p.uniteler || []).map(u => ({
         tip: u.tip, durum: u.durum, fiyat: sayi(u.fiyat), blok: u.blok || '', kat: u.kat === '' ? null : u.kat,
         no: u.daireNo === '' ? null : u.daireNo, m2: sayi(u.toplamM2), ic: sayi(u.daireM2),
