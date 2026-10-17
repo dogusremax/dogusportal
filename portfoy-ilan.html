@@ -57,6 +57,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--blue);outline-of
 .bar{height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -333,7 +334,7 @@ $("f").addEventListener("submit",function(e){
 });
 
 etapDoldur();uret();
-try{var kay=localStorage.getItem("portfoyPin");if(kay){$("pin").value=kay;giris()}}catch(e){}
+try{var kay=localStorage.getItem("portfoyPin")||(window.brokerPinAl&&brokerPinAl());if(kay){$("pin").value=kay;giris()}}catch(e){}
 </script>
 </body>
 </html>

@@ -187,6 +187,8 @@ function doLogin(){
   });
 }
 document.getElementById("pin").addEventListener("keyup",function(e){if(e.key==="Enter")doLogin();});
+/* Portalda broker girişi yapıldıysa şifre sorma */
+if(window.brokerPinAl&&brokerPinAl()){document.getElementById("pin").value=brokerPinAl();doLogin();}
 
 function setPeriod(p){
   PERIOD=p;

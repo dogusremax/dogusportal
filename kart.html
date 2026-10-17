@@ -101,6 +101,7 @@ body.pub{background:var(--pbg)}
 .bars{display:flex;align-items:flex-end;gap:3px;height:54px;margin-top:10px}
 .bars i{flex:1;background:var(--blue);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 
@@ -299,6 +300,8 @@ function vcard(){
 
 /* ---------- EDITOR ---------- */
 $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
+/* Portalda broker girişi yapıldıysa şifre sorma */
+if(window.brokerPinAl&&brokerPinAl()){ $("pin").value=brokerPinAl(); setTimeout(login,0); }
 async function login(){
   pin=$("pin").value.trim(); $("loginMsg").textContent="";
   try{

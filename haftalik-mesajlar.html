@@ -424,7 +424,7 @@ function butonlar() {
 }
 
 function pin() {
-  let p = store.get('hm_pin', '');
+  let p = store.get('hm_pin', '') || (window.brokerPinAl && brokerPinAl()) || '';
   if (!p) { p = (prompt('Gönderim PIN\'i (dogus-whatsapp-service Script Properties → ONAY_PIN; bu cihazda hatırlanır):') || '').trim(); if (p) store.set('hm_pin', p); }
   return p;
 }
