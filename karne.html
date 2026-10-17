@@ -150,6 +150,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .kay{display:flex;flex-wrap:wrap;gap:6px}
 .kay span{font-size:12px;font-weight:600;color:var(--dim);background:rgba(255,255,255,.06);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
 .kay span b{color:#fff;font-variant-numeric:tabular-nums}
+.kay span.ofis{background:rgba(61,123,255,.18);border-color:rgba(61,123,255,.45);color:#cfe0ff}
 .olc{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px;align-items:start}
 .cmp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0;animation:pop .5s both .15s}
 .cmp h4,.rit h4,.akis h4,.mus h4{margin:0 0 4px;font-size:13px;font-weight:800;letter-spacing:.04em}
@@ -196,7 +197,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .mus td:last-child{width:42%}.mus td.z{white-space:nowrap;color:var(--dim);font-variant-numeric:tabular-nums}
 @media (max-width:480px){.mus td.z{white-space:normal;width:44px}.mus td:last-child{width:auto}}
 .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin:0 3px 3px 0}
-.chip.ok{background:rgba(34,197,94,.16);color:#7ee2a0}.chip.no{background:rgba(220,28,46,.2);color:#ffb4bb}.chip.n{background:rgba(255,255,255,.07);color:var(--dim)}
+.chip.ok{background:rgba(34,197,94,.16);color:#7ee2a0}.chip.ofis{background:rgba(61,123,255,.2);color:#cfe0ff}.chip.no{background:rgba(220,28,46,.2);color:#ffb4bb}.chip.n{background:rgba(255,255,255,.07);color:var(--dim)}
 .mus .oz{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 
 @media (max-width:760px){.olc{grid-template-columns:1fr}}
@@ -319,7 +320,8 @@ function karne(d){
   if (d.sunum>=HEDEF.sunum) iyi.push(`${d.sunum} sunum`); else { gel.push(`sunum ${d.sunum}/${HEDEF.sunum}`); plan.push('En az 1 portföy sunumu randevusu al'); }
   if (d.icerik>=HEDEF.icerik) iyi.push(`${d.icerik} içerik`); else { gel.push(`içerik ${d.icerik}/${HEDEF.icerik}`); plan.push(`${HEDEF.icerik} içerik paylaş, @remaxdogus'u etiketle`); }
   if (d.yorum) iyi.push(`${d.yorum} yeni Google yorumu`);
-  if (d.musYeni>=3) iyi.push(`${d.musYeni} yeni müşteri kaydı`);
+  const kendi = d.musYeni-(d.musOfis||0);
+  if (kendi>=3) iyi.push(`kendi bulduğun ${kendi} yeni müşteri`);
   if (d.musNot>=3) iyi.push(`${d.musNot} takip notu`);
   if (d.story>=3) iyi.push(`${d.story} story / post`);
   if (dz) { gel.unshift(`${dz} kayıt düzeltilecek (listesi yukarıda)`); plan.unshift('Düzeltilecekler listesindeki kayıtları bu hafta tamamla'); }
@@ -354,7 +356,7 @@ function gunDagilim(ham){ const gun = Array(7).fill(0), b = bugunIx(); ham.forEa
 function olaylar(d){
   const D = d.detay || {}, E = [];
   (D.akis||[]).forEach(a=>{ const k = AKT[a.t] || [a.t,'#64748b']; E.push({g:a.g, s:a.t==='yorum'?'':a.s, ad:k[0], c:k[1], key:a.t}); });
-  (D.musteri||[]).forEach(m=>E.push({g:m.g, s:m.s, ad:'Yeni müşteri kaydı', c:'#16a34a', alt:[m.tip, m.emlak, kisa(m.bolge,22)].filter(Boolean).join(' · '),
+  (D.musteri||[]).forEach(m=>E.push({g:m.g, s:m.s, ad: m.ofis ? `Ofisin yönlendirdiği müşteri (${m.ofis==='WhatsApp'?'WhatsApp hattı':m.ofis.toLocaleLowerCase('tr')})` : 'Kendi bulduğun müşteri', c: m.ofis ? '#3D7BFF' : '#16a34a', alt:[m.tip, m.emlak, kisa(m.bolge,22)].filter(Boolean).join(' · '),
     durum: m.eksik.length ? `<span class="no">eksik: ${m.eksik.join(', ')}</span>` : '<span class="ok">bilgileri tam</span>'}));
   (D.notlar||[]).forEach(n=>E.push({g:n.g, s:n.s, ad:'Takip notu', c:'#16a34a', alt:n.kat, key:'not|'+n.kat}));
   (D.formlar||[]).forEach(f=>E.push(f.evrak ? {g:f.g, s:f.s, ad:'Evrak yüklendi', c:'#DC1C2E', alt:f.evrak}
@@ -370,7 +372,7 @@ function izleCiz(d){
   if (!d.detay) return '';   // eski önbellek cevabı: döküm yoksa bant da yok
   const {ham} = olaylar(d), D = d.detay || {}, {gun, gecen, bos: hareketsiz, aktif} = gunDagilim(ham), son = ham[ham.length-1];
   const enY = gun.indexOf(Math.max(...gun));
-  const kaynak = [[(D.akis||[]).length,'Danışman Takip kaydı'],[(D.musteri||[]).length,'müşteri kaydı'],[(D.notlar||[]).length,'takip notu'],
+  const kaynak = [[(D.akis||[]).length,'Danışman Takip kaydı'],[(D.musteri||[]).filter(m=>!m.ofis).length,'kendi bulduğun müşteri'],[(D.notlar||[]).length,'takip notu'],
     [(D.formlar||[]).length,'form / evrak'],[(D.kapanislar||[]).length,'kapanış']].filter(x=>x[0]);
   const a = ilk(d.ad), fark = d.puan - ort;
   let ver, c;
@@ -379,7 +381,7 @@ function izleCiz(d){
   else { ver = `Ofis ortalamasının <b>${-fark} puan</b> altındasın${hareketsiz?` ve ${hareketsiz} gün sistemde hiç hareketin yok`:''}. Daha aktif olmalısın.`; c='var(--coral)'; }
   return `<div class="izle"><div class="ust"><span class="canli"><i></i>Ofis takibi</span></div>
     <h3>Bu hafta sistemde <b data-n="${ham.length}">${ham.length}</b> hareketin kayıtlı${son?`, sonuncusu ${GUNU[gunIx(son.g)]||''}${son.s?' '+son.s:''}`:''}.</h3>
-    <div class="kay">${kaynak.map(([n,l])=>`<span><b>${n}</b> ${l}</span>`).join('') || '<span>Bu hafta kayıt yok</span>'}${ham.length?`<span>en yoğun gün <b>${GUNU[enY]}</b></span>`:''}</div>
+    <div class="kay">${kaynak.map(([n,l])=>`<span><b>${n}</b> ${l}</span>`).join('') || '<span>Bu hafta kayıt yok</span>'}${(D.musteri||[]).some(m=>m.ofis)?`<span class="ofis">Ofis sana <b>${(D.musteri||[]).filter(m=>m.ofis).length}</b> müşteri yönlendirdi</span>`:''}${ham.length?`<span>en yoğun gün <b>${GUNU[enY]}</b></span>`:''}</div>
     <p class="ver" style="--c:${c}">${ver}</p></div>`;
 }
 function olcCiz(d){
@@ -388,9 +390,9 @@ function olcCiz(d){
   const satir = [['Puan', d.puan, ort, P.puan],['Sıra', d.sira, null, P.sira, true],['Aktif gün', d.aktifGun, O.aktifGun, P.aktifGun],
     ['FZBO araması', d.fzbo, O.fzbo, P.fzbo],['Etki çevresi araması', d.etki, O.etki, P.etki],['Sunum', d.sunum, O.sunum, P.sunum],
     ['Gösterim', d.gosterim, O.gosterim, P.gosterim],['İçerik', d.icerik, O.icerik, P.icerik],['Story / post', d.story, O.story, P.story],
-    ['Yeni müşteri', d.musYeni, O.musYeni, null],['Takip notu', d.musNot, O.musNot, null],['Kapanış', d.kapanis, O.kapanis, P.kapanis]];
-  const rows = satir.map(([l,v,o,p,ters])=>{
-    const cls = o==null ? '' : (v>o ? 'u' : v<o ? 'a' : '');
+    ['Kendi bulduğun müşteri', d.musYeni-(d.musOfis||0), O.musYeni!=null ? O.musYeni-(O.musOfis||0) : null, null],['Ofisin yönlendirdiği müşteri', d.musOfis||0, O.musOfis, null, false, true],['Takip notu', d.musNot, O.musNot, null],['Kapanış', d.kapanis, O.kapanis, P.kapanis]];
+  const rows = satir.map(([l,v,o,p,ters,notr])=>{   // notr: ofisin katkısı, danışmanın başarısı gibi renklenmez
+    const cls = o==null || notr ? '' : (v>o ? 'u' : v<o ? 'a' : '');
     let dl = '<span class="dl ayni">–</span>';
     if (p!=null){ const f = ters ? p-v : v-p; dl = f>0 ? `<span class="dl art">▲${virg(Math.abs(f))}</span>` : f<0 ? `<span class="dl eks">▼${virg(Math.abs(f))}</span>` : '<span class="dl ayni">=</span>'; }
     return `<tr><td>${l}</td><td class="sen ${cls}">${virg(v||0)}</td><td>${o==null?'–':virg(o)}</td><td>${p==null?'–':virg(p)}${dl}</td></tr>`; }).join('');
@@ -406,11 +408,11 @@ function olcCiz(d){
 function musCiz(d){
   const M = (d.detay||{}).musteri || []; if (!M.length) return '';
   const tam = M.filter(m=>!m.eksik.length).length, notlu = M.filter(m=>m.not>0).length;
-  return `<div class="mus"><h4>Bu hafta girdiğin müşteriler</h4><p class="alt">Müşteri Takip'e eklediğin her kayıt, bilgilerinin ne kadar tam girildiğiyle. İsim ve telefon gösterilmez.</p>
-    <div class="oz"><span class="chip n">${M.length} kayıt</span><span class="chip ${tam===M.length?'ok':'no'}">${tam} kayıt bilgisi tam</span><span class="chip ${notlu===M.length?'ok':'no'}">${notlu} kayıtta takip notu var</span></div>
+  return `<div class="mus"><h4>Bu hafta sana kaydedilen müşteriler</h4><p class="alt">Bu hafta sana kaydedilen her müşteri: kendi bulduğun ve ofisin yönlendirdiği ayrı, bilgilerinin ne kadar tam girildiğiyle. İsim ve telefon gösterilmez.</p>
+    <div class="oz"><span class="chip n">${M.length} kayıt</span>${M.some(m=>m.ofis)?`<span class="chip n">${M.filter(m=>!m.ofis).length} kendi bulduğun</span><span class="chip ofis">${M.filter(m=>m.ofis).length} ofisin yönlendirdiği</span>`:''}<span class="chip ${tam===M.length?'ok':'no'}">${tam} kayıt bilgisi tam</span><span class="chip ${notlu===M.length?'ok':'no'}">${notlu} kayıtta takip notu var</span></div>
     <div class="tb"><table><thead><tr><th>Giriş</th><th>Müşteri</th><th>Takip ve bilgi</th></tr></thead><tbody>${M.map(m=>`<tr>
       <td class="z">${GUNK[gunIx(m.g)]||''} ${m.s}</td>
-      <td>${esc([m.tip, m.emlak].filter(Boolean).join(' · '))}<br><small style="color:var(--faint)">${esc(kisa(m.bolge,28)||'bölge yok')}</small></td>
+      <td>${m.ofis?`<span class="chip ofis">ofisten · ${({'WhatsApp':'WhatsApp','Site talebi':'site','Web formu':'web formu'})[m.ofis]||esc(m.ofis)}</span><br>`:''}${esc([m.tip, m.emlak].filter(Boolean).join(' · '))}<br><small style="color:var(--faint)">${esc(kisa(m.bolge,28)||'bölge yok')}</small></td>
       <td>${m.not?`<span class="chip ok">${m.not} not</span>`:'<span class="chip no">not yok</span>'}${m.durum?`<span class="chip n">${esc(m.durum)}</span>`:''}${m.tekrar?'<span class="chip no">ikinci kayıt</span>':''}${m.eksik.length?m.eksik.map(x=>`<span class="chip no">${x} yok</span>`).join(''):'<span class="chip ok">bilgi tam</span>'}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function akisCiz(d){
@@ -475,7 +477,8 @@ function goster(id){
       <div class="sec" style="--d:160ms"><h3><span class="ic" style="--c:#16a34a">${ICON.musteri}</span>Müşteri takibi</h3>
         <div class="donut"><svg width="74" height="74" viewBox="0 0 74 74">${halka(d.musAktif?notlu/d.musAktif:0,31,6,'#22c55e')}</svg>
           <p><b>${d.musAktif}</b> aktif müşterinin <b>${notlu}</b> tanesinde takip notu var</p></div>
-        ${metrik('Yeni müşteri', d.musYeni)}
+        ${metrik('Kendi bulduğun müşteri', d.musYeni-(d.musOfis||0))}
+        ${metrik('Ofisin yönlendirdiği müşteri', d.musOfis||0, null, d.musOfis ? 'WhatsApp hattı ve siteden gelen talepler' : '')}
         ${metrik('Girilen not', d.musNot)}
         ${metrik('14 günden uzun temassız', d.mus14, 0, '', true)}
       </div>
