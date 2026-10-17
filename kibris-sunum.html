@@ -584,7 +584,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .ktc label>span{font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2)}
 .ktc input,.ktc select,.ktc .msb{height:60px;padding:0 20px;border-radius:16px;border:2px solid var(--sand2);background:#fff;font:500 21px/1 var(--fb);color:var(--ink);outline:none;width:196px;text-align:left}
 .ktc input:focus,.ktc select:focus,.ktc .msb:focus{border-color:var(--navy)}
-.ktc .kq input{width:430px;padding-right:56px}
+.ktc .kq input{width:340px;padding-right:56px}
+.ktc .kfy input{width:150px}
+.ktc label:not(.kq):not(.kfy) select,.ktc .msb{width:176px}
 .ktc .qx{position:absolute;right:12px;bottom:12px;width:36px;height:36px;border-radius:50%;background:var(--sand);color:var(--ink2);font-size:18px}
 .ktc .kclr{height:60px;padding:0 24px;border-radius:16px;background:var(--sand2);font:700 19px/1 var(--fb);color:var(--ink)}
 .kto,.msp{position:absolute;top:calc(100% + 8px);left:0;min-width:100%;max-height:440px;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 70px -20px rgba(5,10,48,.45);padding:8px;z-index:10}
@@ -626,7 +628,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 /* proje ayrıntısı */
 .ktm{position:absolute;inset:0;z-index:8;background:rgba(5,10,48,.55);display:none;overflow:auto;overscroll-behavior:contain;padding:56px 0 120px}
 .ktm.on{display:block}
-.ktp{width:1360px;margin:0 auto;background:var(--sand);border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.45)}
+.ktp{width:1360px;margin:0 auto;background:var(--sand);border-radius:32px;overflow:hidden;overflow:clip;box-shadow:0 40px 100px rgba(0,0,0,.45)}
 .ktp .kgl{position:relative;height:340px;background:var(--navy2) center/cover}
 .ktp .kgl::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.75),transparent 60%)}
 .ktp .kgl .ktt{position:absolute;left:56px;bottom:40px;right:56px;z-index:1;color:#fff}
@@ -656,6 +658,17 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .ktp .kdu.kso{background:#ecebe6;color:#8a8578}.ktp .kdu.kred{background:#fbeedd;color:#b5651a}
 .ktp tr.ksel td{background:#f1ece2}
 .ktp tbody tr{cursor:pointer}
+.ktp:has(.ksp){width:1820px}.ktp:has(.ksp) .kgl{height:200px}.ktp:has(.ksp) .kgl h3{font-size:64px}.ktp:has(.ksp) .kbx{padding:24px 36px 32px}
+.ksp{display:grid;grid-template-columns:minmax(0,1fr) 640px;gap:24px;align-items:start;margin-top:14px}
+.ksp .ktyp{margin-top:0}.ksp .ktyp button{padding:9px 14px;font-size:15px}
+.ksp .ktw{margin-top:12px;max-height:700px}
+.ksp table{font-size:17px}.ksp th{padding:13px 14px 10px}.ksp td{padding:8px 14px}.ksp td small{font-size:14px;margin-top:1px}.ksp td.p{font-size:23px}.ksp .kdu{padding:5px 10px;font-size:13px}
+.ksr{position:sticky;top:0}
+.ksr .kc{margin-top:0;padding:22px 26px;border-radius:22px}.ksr .kc h5{font-size:32px}.ksr .kc h5 small{display:block;margin:8px 0 0}.ksr .kc .kpl{font-size:15px;margin-top:8px}
+.ksr .kc .kgr{grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.ksr .kc .kgr label:first-child{grid-column:1/-1}.ksr .kc label#kcPf0{display:none}
+.ksr .kc input,.ksr .kc select{height:46px;font-size:17px;padding:0 14px}
+.ksr .kc .kout{grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.ksr .kc .kout div{padding:10px 14px;border-radius:14px}.ksr .kc .kout span{font-size:13.5px}.ksr .kc .kout b{font-size:26px}
+.ksr .kc .kms{margin-top:14px;padding-top:12px}.ksr .kc .kms h6{font-size:12px;margin-bottom:8px}.ksr .kc .kms .kout b{font-size:21px}.ksr .kc .kmsl{font-size:14px;margin-top:10px}.ksr .kc .nt3{font-size:13px;margin-top:10px}
 .kc{margin-top:30px;background:var(--navy);color:#fff;border-radius:26px;padding:34px 40px}
 .kc h5{font:400 44px/1 var(--fd)}.kc h5 small{font:500 17px/1 var(--fb);opacity:.7;margin-left:12px}
 .kc .kpl{margin-top:10px;font-size:18px;opacity:.75}
@@ -1525,7 +1538,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       <label><span>Firma</span><select id="ktF"><option value="">Tümü</option></select></label>
       <label><span>Daire tipi</span><button type="button" class="msb" id="ktTb">Tümü ▾</button><div class="msp" id="ktTp" hidden></div></label>
       <label><span>Özellik</span><button type="button" class="msb" id="ktZb">Tümü ▾</button><div class="msp" id="ktZp" hidden></div></label>
-      <label><span>En fazla (£)</span><input id="ktM" type="number" inputmode="numeric" min="0" step="5000" placeholder="Maks £"></label>
+      <label class="kfy"><span>En az (£)</span><input id="ktMn" type="number" inputmode="numeric" min="0" step="5000" placeholder="Min £"></label><label class="kfy"><span>En fazla (£)</span><input id="ktM" type="number" inputmode="numeric" min="0" step="5000" placeholder="Maks £"></label>
       <label><span>Sırala</span><select id="ktSo"><option value="artan">Fiyat ↑</option><option value="azalan">Fiyat ↓</option><option value="ad">İsme göre</option></select></label>
       <button type="button" class="kclr" id="ktClr">Temizle</button>
     </form>
@@ -1662,11 +1675,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     function minF(p,l){l=l||p.uniteler;var f=l.map(function(u){return u.fiyat;}).filter(Boolean);return f.length?Math.min.apply(null,f):((M[p.proje]||[])[4]||0);}
     function musaitMi(u){return !/sat[ıi]ld|sold|rezerv/i.test(u.durum||'');}
     function q(){return low($k('ktQ').value.trim());}
-    function eslesen(p){var s=q(),mx=+$k('ktM').value||Infinity,t=Object.keys(TS),z=Object.keys(ZS);
+    function eslesen(p){var s=q(),mx=+$k('ktM').value||Infinity,mn=+$k('ktMn').value||0,t=Object.keys(TS),z=Object.keys(ZS);
       var ad=!s||low(p.proje+' '+bol(p)+' '+p.firma).indexOf(s)>=0;
-      return p.uniteler.filter(function(u){return (!t.length||TS[u.tip])&&(!z.length||(u.manzara&&ZS[u.manzara]))&&u.fiyat<=mx&&
+      return p.uniteler.filter(function(u){return (!t.length||TS[u.tip])&&(!z.length||(u.manzara&&ZS[u.manzara]))&&u.fiyat<=mx&&u.fiyat>=mn&&
         (ad||low(u.tip+' '+u.blok+' '+u.manzara+' '+ozTr(u.manzara)).indexOf(s)>=0);});}
-    function brosurGorunur(p){var s=q();if(Object.keys(TS).length||Object.keys(ZS).length)return false;var mx=+$k('ktM').value;if(mx&&minF(p)>mx)return false;
+    function brosurGorunur(p){var s=q();if(Object.keys(TS).length||Object.keys(ZS).length)return false;var mx=+$k('ktM').value,mn=+$k('ktMn').value;if(mn||(mx&&minF(p)>mx))return false;
       return !s||low(p.proje+' '+bol(p)+' '+p.firma).indexOf(s)>=0;}
     function hepsi(alan){var o={};P.forEach(function(p){p.uniteler.forEach(function(u){if(u[alan])o[u[alan]]=1;});});return Object.keys(o).sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});}
     function ms(id,alan,sec,ad){var v=hepsi(alan);$k(id+'p').innerHTML=v.map(function(x){return '<label><input type="checkbox" data-v="'+esc(x)+'"'+(sec[x]?' checked':'')+'><span>'+esc(alan==='manzara'?ozTr(x):x)+'</span></label>';}).join('')+'<div class="kft"><button type="button">Seçimi temizle</button></div>';
@@ -1714,7 +1727,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
     function kcH(p,l){var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
       return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
-        '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u){return '<option value="'+u.fiyat+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
+        '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
         '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
         '<div class="kms"><h6>Resmi masraflar · yabancı alıcı, ilk taşınmaz</h6><div class="kout" id="kcM"></div><button type="button" class="kmsl" onclick="openMs()">Ayrıntılı masraf hesaplayıcı ve müşteriye PDF ↗</button></div><div class="nt3">'+esc(pl.not)+'</div></div>';}
@@ -1735,13 +1748,13 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       var tl=[];es.forEach(function(u){if(tl.indexOf(u.tip)<0)tl.push(u.tip);});tl.sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});if(mTip&&tl.indexOf(mTip)<0)mTip='';
       var l=es.filter(function(u){return !mTip||u.tip===mTip;}).sort(function(a,b){return a.fiyat-b.fiyat;}),pl=plan(p);
       var h='<div class="kmt">'+esc(p.firma)+' · '+es.length+' ünite · kaynak: '+esc(p.kaynak)+(p.durumVar?' · müsaitlik listeden':' · listede olan müsait')+'</div>'+
-        (cc(p)?'<div class="nt2">Fiyatlar firmanın PDF fiyat listesinden alındı; en güncel durumu satış temsilcisiyle teyit edin.</div>':'')+
+        (/cyprus/i.test(p.firma)?'<div class="nt2">Fiyatlar firmanın PDF fiyat listesinden alındı; en güncel durumu satış temsilcisiyle teyit edin.</div>':'')+
         (tl.length>1?'<div class="ktyp"><button type="button" data-t="" class="'+(mTip?'':'on')+'">Tümü · '+es.length+'</button>'+tl.map(function(t){return '<button type="button" data-t="'+esc(t)+'" class="'+(t===mTip?'on':'')+'">'+esc(t)+' · '+es.filter(function(u){return u.tip===t;}).length+'</button>';}).join('')+'</div>':'')+
-        '<div class="ktw"><table><thead><tr><th>Tip</th><th>Konum</th><th>Net / brüt m²</th><th>Fiyat</th><th>Durum</th></tr></thead><tbody>'+
+        '<div class="ksp"><div class="ksl"><div class="ktw"><table><thead><tr><th>Tip</th><th>Konum</th><th>Net / brüt m²</th><th>Fiyat</th><th>Durum</th></tr></thead><tbody>'+
         l.map(function(u,k){var d=u.durum||'Müsait',c=/sat/i.test(d)?' kso':/rezerv/i.test(d)?' kred':'',alt=[ozTr(u.manzara),u.not].filter(Boolean).join(' · ');
-          return '<tr data-f="'+u.fiyat+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+katY(u.kat)+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
-            '<td>'+sayi(u.ic)+(u.m2?' <small style="display:inline">/ '+sayi(u.m2)+'</small>':'')+'</td><td class="p">'+para(u.fiyat)+'</td><td><span class="kdu'+c+'">'+esc(d)+'</span></td></tr>';}).join('')+'</tbody></table></div>'+
-        kcH(p,l)+(ac||$k('ktB').querySelector('.kac').outerHTML);
+          return '<tr data-f="'+u.fiyat+'" data-k="'+k+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+katY(u.kat)+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
+            '<td>'+sayi(u.ic)+(u.m2?' <small style="display:inline">/ '+sayi(u.m2)+'</small>':'')+'</td><td class="p">'+para(u.fiyat)+'</td><td><span class="kdu'+c+'">'+esc(d)+'</span></td></tr>';}).join('')+'</tbody></table></div></div><div class="ksr">'+
+        kcH(p,l)+'</div></div>'+(ac||$k('ktB').querySelector('.kac').outerHTML);
       $k('ktB').innerHTML=h;hesap();}
     window.ktKapat=function(){$k('ktm').classList.remove('on');$k('fyo').classList.remove('det');$k('ktm').innerHTML='';acik=-1;};
     $k('ktG').addEventListener('click',function(e){var b=e.target.closest('.ktk');if(b)ac(+b.dataset.i);});
@@ -1749,7 +1762,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       if(e.target===$k('ktm')||e.target.closest('#ktmX')){ktKapat();return;}
       var t=e.target.closest('[data-tur]');if(t){e.stopPropagation();openTur(t.dataset.tur,t.dataset.p);return;}
       var f=e.target.closest('.ktyp button');if(f){mTip=f.getAttribute('data-t');tablo();return;}
-      var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
+      var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){var o=s.querySelector('option[data-k="'+r.dataset.k+'"]');if(o)o.selected=true;else s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
     $k('ktm').addEventListener('input',function(e){if(/^kc/.test(e.target.id))hesap();});
     $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();});
     $k('ktQ').addEventListener('input',function(){ciz();oneri(true);});$k('ktQ').addEventListener('focus',function(){oneri(true);});
@@ -1760,8 +1773,8 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       $k(id+'p').addEventListener('change',function(e){var v=e.target.dataset.v;if(e.target.checked)sec[v]=1;else delete sec[v];var n=Object.keys(sec).length;$k(id+'b').textContent=(n?n+' seçili':'Tümü')+' ▾';ciz();});
       $k(id+'p').addEventListener('click',function(e){e.stopPropagation();if(e.target.closest('.kft button')){Object.keys(sec).forEach(function(k){delete sec[k];});msKur();ciz();}});});
     $k('fyo').addEventListener('click',function(e){if(!e.target.closest('.msp,.msb'))$k('ktTp').hidden=$k('ktZp').hidden=true;if(!e.target.closest('.kq'))oneri(false);});
-    $k('ktF').onchange=ciz;$k('ktSo').onchange=ciz;$k('ktM').addEventListener('input',ciz);
-    $k('ktClr').onclick=function(){$k('ktQ').value='';$k('ktM').value='';$k('ktF').value='';$k('ktSo').value='artan';Object.keys(TS).forEach(function(k){delete TS[k];});Object.keys(ZS).forEach(function(k){delete ZS[k];});msKur();ciz();};
+    $k('ktF').onchange=ciz;$k('ktSo').onchange=ciz;$k('ktM').addEventListener('input',ciz);$k('ktMn').addEventListener('input',ciz);
+    $k('ktClr').onclick=function(){$k('ktQ').value='';$k('ktM').value='';$k('ktMn').value='';$k('ktF').value='';$k('ktSo').value='artan';Object.keys(TS).forEach(function(k){delete TS[k];});Object.keys(ZS).forEach(function(k){delete ZS[k];});msKur();ciz();};
     function yukle(){fetch('assets/kibris360/fiyatlar.json?t='+Math.floor(Date.now()/9e5)).then(function(r){return r.json();}).then(function(d){
       D=d;P=d.projeler.map(function(p){p.uniteler=p.uniteler||[];return p;});var g=new Date(d.guncel);
       $k('ktSync').textContent=isNaN(g)?'—':g.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})+' '+g.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
