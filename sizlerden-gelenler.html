@@ -213,7 +213,7 @@ function ck(e){
     });
   }
 }
-(function(){var q=new URLSearchParams(location.search),k=q.get('k');if(sessionStorage.getItem('perfAuth')==='ok'){document.getElementById('pin').style.display='none';return;}if(k)brokerDogrula(k).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');document.getElementById('pin').style.display='none';}q.delete('k');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));});})();
+(function(){var q=new URLSearchParams(location.search),k=q.get('k')||(window.brokerPinAl&&brokerPinAl());if(sessionStorage.getItem('perfAuth')==='ok'){document.getElementById('pin').style.display='none';return;}if(k)brokerDogrula(k).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');document.getElementById('pin').style.display='none';}q.delete('k');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));});})();
 </script>
 </body>
 </html>

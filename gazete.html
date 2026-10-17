@@ -610,6 +610,8 @@ function buildPad(){
   if(v==='⌫')entered=entered.slice(0,-1);else if(entered.length<6)entered+=v;
   drawDots();$('#lgErr').textContent='';};
  drawDots();
+ /* Portalda broker girişi yapıldıysa şifre sorma */
+ if(window.brokerPinAl&&brokerPinAl())brokerDogrula(brokerPinAl()).then(function(ok){if(ok)girisTamam('broker')});
 }
 function checkLogin(){let ok=false;try{ok=!!sessionStorage.getItem('fg_ok')||sessionStorage.getItem('perfAuth')==='ok'}catch(e){}
  if(ok)$('#login').style.display='none';else buildPad()}

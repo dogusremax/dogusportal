@@ -554,7 +554,8 @@ document.addEventListener('DOMContentLoaded',function(){var pi=document.getEleme
 function brokerLinki(a){var u=a.href.split('#')[0],p=window.brokerPinAl?brokerPinAl():'';a.href=(document.body.classList.contains('broker')&&p)?u+'#bk='+p:u;}
 function brokerAc(){try{localStorage.setItem('dogusBroker','ok');}catch(e){}sessionStorage.setItem('perfAuth','ok');document.body.classList.add('broker');var l=document.getElementById('brokerLink');if(l)l.textContent='Broker modundan çık';}
 function brokerToggle(){if(document.body.classList.contains('broker')){try{localStorage.removeItem('dogusBroker');}catch(e){}if(window.brokerCikis)brokerCikis();sessionStorage.removeItem('perfAuth');document.body.classList.remove('broker');document.getElementById('brokerLink').textContent='Broker';}else perfPinOpen(null,'Broker girişi');}
-try{if(localStorage.getItem('dogusBroker')==='ok')brokerAc();}catch(e){}
+/* Broker modu yalnız PIN bu cihazda kayıtlıysa kendiliğinden açılır (yoksa bir kez Broker girişi istenir, sonra uygulamalar sormaz) */
+try{if(localStorage.getItem('dogusBroker')==='ok'){if(window.brokerPinAl&&brokerPinAl())brokerAc();else localStorage.removeItem('dogusBroker');}}catch(e){}
 // Google Yorumları kartı: canlı puan
 fetch('data/google-yorumlar.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.toplam)return;var el=document.getElementById('gYorumDesc');if(el)el.textContent='★ '+d.puan.toLocaleString('tr-TR',{minimumFractionDigits:1})+' · '+d.toplam+' yorum';}).catch(function(){});
 </script>
