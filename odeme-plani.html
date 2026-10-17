@@ -147,16 +147,22 @@ tr.tt td.a{font-size:23px}
     var w=html2pdf().set({margin:0,filename:dosyaAdi(),image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,windowWidth:Math.max(innerWidth,800)},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(k);
     return w;}
   function yazdir(){try{window.focus();window.print();}catch(e){window.open(link(),'_blank');}}
-  $('bYaz').onclick=yazdir;
-  $('bPdf').onclick=function(){dur('PDF hazırlanıyor…');
+  // Apps Script portalının korumalı çerçevesinde indirme ve yazdırma engellenebilir; orada plan yeni sekmede açılıp işlem orada yapılır
+  var yabanci=false;try{yabanci=gomulu&&window.top.location.host!==location.host;}catch(e){yabanci=gomulu;}
+  function sekme(is){window.open(link()+'&'+is+'=1','_blank');}
+  if(/[#&]pdf=1/.test(location.hash))window.addEventListener('load',function(){setTimeout(function(){$('bPdf').click();},600);});
+  if(/[#&]yaz=1/.test(location.hash))window.addEventListener('load',function(){setTimeout(yazdir,600);});
+  $('bYaz').onclick=function(){if(yabanci)sekme('yaz');else yazdir();};
+  $('bPdf').onclick=function(){if(yabanci){sekme('pdf');return;}dur('PDF hazırlanıyor…');
     try{pdf().save().then(function(){dur('');},function(){dur('');yazdir();});}catch(e){dur('');yazdir();}};
   // Telefonda dosya paylaşımı varsa PDF'in kendisi gönderilir; yoksa plan bağlantısıyla mesaj açılır
+  var direkt=false;
   function paylas(tip){
-    var dosyaOlur=navigator.canShare&&window.File&&window.html2pdf&&/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+    var dosyaOlur=!direkt&&!yabanci&&navigator.canShare&&window.File&&window.html2pdf&&/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
     if(dosyaOlur){dur('PDF hazırlanıyor…');
       return Promise.resolve().then(function(){return pdf().outputPdf('blob');}).then(function(b){var f=new File([b],dosyaAdi(),{type:'application/pdf'});
         if(!navigator.canShare({files:[f]}))throw 0;dur('');return navigator.share({files:[f],title:(D.p||'')+' ödeme planı',text:ozet()});})
-        .catch(function(e){dur('');if(e&&e.name==='AbortError')return;ac(tip);});}
+        .catch(function(e){if(e&&e.name==='AbortError'){dur('');return;}direkt=true;dur('PDF dosyası paylaşılamadı. Tekrar dokunun, plan bağlantısıyla gönderilir.');});}
     ac(tip);}
   function ac(tip){var t=ozet();
     if(tip==='wa')window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
