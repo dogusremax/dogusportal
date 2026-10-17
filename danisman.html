@@ -211,12 +211,13 @@ footer img{height:26px}
 .vm{position:fixed;inset:0;z-index:300;background:rgba(5,10,48,.92);display:grid;place-items:center;padding:16px;animation:vmA .3s}
 .vm[hidden]{display:none}
 @keyframes vmA{from{opacity:0}to{opacity:1}}
-.vm .vmk{width:min(380px,100%);aspect-ratio:9/16;max-height:calc(100vh - 90px);border-radius:18px;overflow:hidden;background:#000;animation:vmB .35s cubic-bezier(.2,.8,.2,1)}
-.vm .vmk.ig{background:#fff;aspect-ratio:9/17;overflow-y:auto}
-.vm .vmk.yatay{width:min(900px,100%);aspect-ratio:16/9}
-@keyframes vmB{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
-.vm iframe{width:100%;height:100%;border:0;display:block}
-.vm .vmk.ig iframe{height:auto;min-height:100%;aspect-ratio:9/19.5}
+.vm .vmk{border-radius:18px;overflow:hidden;background:#000;position:relative}
+.vm .vmk.ig{background:#fff}
+.vm .vmk:before{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;animation:vmD .8s linear infinite}
+.vm .vmk.ig:before{border-color:rgba(5,10,48,.15);border-top-color:var(--red)}
+@keyframes vmD{to{transform:rotate(360deg)}}
+.vm iframe{position:relative;width:100%;height:100%;border:0;display:block;opacity:0;transition:opacity .25s}
+.vm iframe.hazir{opacity:1}
 @media(max-width:700px){.va{display:none}.vid{gap:10px;margin:0 -16px;padding-inline:16px;scroll-padding-inline:16px}.vid .v{flex-basis:132px}.vid .v.yatay{flex-basis:240px}}
 .ofs{background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden}
 .ofs .foto{position:relative;aspect-ratio:1044/520;max-height:520px;width:100%;background:var(--navy) 50% 40%/cover no-repeat}
@@ -546,11 +547,22 @@ var SIRA=['tr','en','ru','fa','de','pl'];
   window.addEventListener('resize',vDurum);
   e('vaP').addEventListener('click',function(){e('vid').scrollBy({left:-vAdim()*2*rtl(),behavior:'smooth'})});
   e('vaN').addEventListener('click',function(){e('vid').scrollBy({left:vAdim()*2*rtl(),behavior:'smooth'})});
-  function vmAc(i){var ks=vKart();if(i<0||i>=ks.length)return;vmI=i;var b=ks[i],k=e('vmK');
-    if(b.dataset.ig){k.className='vmk ig';k.innerHTML='<iframe scrolling="no" allowtransparency="true" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" title="Instagram Reels" src="https://www.instagram.com/reel/'+encodeURIComponent(b.dataset.ig)+'/embed/"></iframe>'}
-    else{k.className='vmk'+(b.classList.contains('yatay')?' yatay':'');k.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(b.dataset.yt)+'?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="'+esc(b.getAttribute('aria-label'))+'"></iframe>'}
+  // Oynatıcı kutusu iframe yüklenmeden önce videonun gerçek ölçüsüyle (dikey 9:16, yatay 16:9) piksel olarak ayarlanır; sonradan boyut değişmez
+  function vmOlcu(b){var vw=Math.min(window.innerWidth,document.documentElement.clientWidth)-32,vh=window.innerHeight-110,w,h;
+    if(b.dataset.ig){var ek=190;w=Math.min(vw,400,(vh-ek)*9/16);h=Math.min(vh,w*16/9+ek)}
+    else if(b.classList.contains('yatay')){w=Math.min(vw,960,vh*16/9);h=w*9/16}
+    else{w=Math.min(vw,400,vh*9/16);h=w*16/9}
+    return [Math.floor(w),Math.floor(h)]}
+  function vmAc(i){var ks=vKart();if(i<0||i>=ks.length)return;vmI=i;var b=ks[i],k=e('vmK'),o=vmOlcu(b);
+    k.className='vmk'+(b.dataset.ig?' ig':'');k.style.width=o[0]+'px';k.style.height=o[1]+'px';
+    var f=document.createElement('iframe');f.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');f.allowFullscreen=true;
+    f.onload=function(){f.classList.add('hazir')};
+    if(b.dataset.ig){f.scrolling='no';f.title='Instagram Reels';f.src='https://www.instagram.com/reel/'+encodeURIComponent(b.dataset.ig)+'/embed/'}
+    else{f.title=b.getAttribute('aria-label')||'';f.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(b.dataset.yt)+'?autoplay=1&playsinline=1&rel=0'}
+    k.innerHTML='';k.appendChild(f);
     e('vmP').hidden=i===0;e('vmN').hidden=i===ks.length-1;e('vm').hidden=false;document.body.style.overflow='hidden';
     b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
+  window.addEventListener('resize',function(){if(vmI<0)return;var o=vmOlcu(vKart()[vmI]),k=e('vmK');k.style.width=o[0]+'px';k.style.height=o[1]+'px'});
   function vmKapat(){e('vm').hidden=true;e('vmK').innerHTML='';document.body.style.overflow='';vmI=-1}
   e('vid').addEventListener('click',function(ev){var b=ev.target.closest('.v');if(b)vmAc(vKart().indexOf(b))});
   e('vmX').addEventListener('click',vmKapat);
