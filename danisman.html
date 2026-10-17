@@ -23,8 +23,10 @@ header .ad{color:#fff;font-weight:800;font-size:15px;letter-spacing:-.01em;white
 header nav{display:flex;gap:18px;margin-left:auto}
 header nav a{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
 header nav a:hover{color:#fff}
-header .logo{height:30px;width:auto;margin-left:6px}
-@media(max-width:760px){header nav{display:none}header .logo{margin-left:auto}}
+header .marka{display:flex;align-items:center;gap:14px}
+header .logo{height:30px;width:auto;display:block}
+header .cizgi{width:2px;height:28px;background:rgba(255,255,255,.4);border-radius:1px;display:block}
+@media(max-width:760px){header nav{display:none}}
 
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:999px;font-weight:700;font-size:15px;border:0;cursor:pointer;font-family:inherit}
 .btn-red{background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(220,28,46,.35)}
@@ -110,9 +112,8 @@ footer img{height:26px}
 </head>
 <body>
 <header><div class="w">
-  <a class="ad" href="#tepe" id="hAd">RE/MAX Doğuş</a>
+  <a class="marka" href="#tepe"><img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş"><i class="cizgi"></i><span class="ad" id="hAd">RE/MAX Doğuş</span></a>
   <nav><a href="#hakkimda">Hakkımda</a><a href="#hizmetler">Hizmetler</a><a href="#yorumlar">Yorumlar</a><a href="#iletisim">İletişim</a></nav>
-  <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
 </div></header>
 
 <main id="sayfa" class="hide">
