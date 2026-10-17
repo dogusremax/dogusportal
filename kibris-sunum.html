@@ -381,6 +381,9 @@ aside.nt{display:none}
 /* 360 katmanı */
 #tur{position:fixed;inset:0;z-index:80;background:#02051c;display:none}
 #tur.on{display:block;animation:fi .5s ease}
+/* 360 tur açıkken arkadaki sunum çizilmesin (video, animasyonlar, bulanık cam) */
+body.turon>*:not(#tur){visibility:hidden}
+body.turon *:not(#tur){animation-play-state:paused!important}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 #tur iframe{width:100%;height:100%;border:0;display:block}
 #tur .x{position:absolute;right:18px;top:18px;z-index:2;height:46px;padding:0 18px;border-radius:999px;background:var(--red);color:#fff;font:700 15px/46px var(--fb);box-shadow:0 8px 24px rgba(0,0,0,.4)}
@@ -1483,9 +1486,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   // 360 katmanı
   function openTur(tur,p){
     var u='kibris-360-tur.html'+(tur&&tur!=='kibris'?'?tur='+tur:'')+(p?'#p='+p:'');
-    $('turF').src=u;$('tur').classList.add('on');
+    $('turF').src=u;$('tur').classList.add('on');document.body.classList.add('turon');var hv=$('hv');if(hv)hv.pause();
   }
-  function closeTur(){$('tur').classList.remove('on');$('turF').src='about:blank';}
+  function closeTur(){$('tur').classList.remove('on');$('turF').src='about:blank';document.body.classList.remove('turon');var hv=$('hv');if(hv&&cur===0){var p=hv.play();if(p&&p.catch)p.catch(function(){});}}
   $('turX').onclick=closeTur;
   $('b360').onclick=function(){openTur('kibris');};
   [].forEach.call(document.querySelectorAll('[data-tur]'),function(el){el.addEventListener('click',function(e){e.stopPropagation();openTur(el.dataset.tur,el.dataset.p);});});

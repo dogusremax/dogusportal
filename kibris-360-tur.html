@@ -424,7 +424,9 @@
   function init(){
     // telefon ve tablette (özellikle iOS ve uygulama içi tarayıcılar) bellek sınırlı: en net seviye (4096 px yüz) yüklenmez
     var lite=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform))||(matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400);
-    pv=new K360V($('pano'),{minFov:20,maxFov:120,maxFace:lite?2048:0,maxDpr:lite?2:1.25});
+    // bilgisayarda da telefondaki gibi en fazla 2048 px yüz (telefonda akıcı); Firefox çok katmanlı 3B görüntüde daha yavaş
+    var ff=/Firefox\//.test(navigator.userAgent);
+    pv=new K360V($('pano'),{minFov:20,maxFov:120,maxFace:2048,maxDpr:lite?2:ff?1:1.25});
     if(q.has('test'))window.K360P=pv;
     pv.on('load',onLoad);
     pv.on('down',function(){hint(false);if(touring)stopTour();});
