@@ -1,4 +1,4 @@
-name: Danışman video kapaklarını indir
+name: Danışman video kapaklarını ve reels videolarını indir
 on:
   workflow_dispatch:
 permissions:
@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - run: npm i --no-save sharp@0.33.5
+      - run: npm i --no-save sharp@0.33.5 && (command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg))
       - name: Güncel IG token'ı al
         run: |
           T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
@@ -23,5 +23,5 @@ jobs:
       - run: |
           git config user.name "dogus-bot"
           git config user.email "bot@dogusremax.com"
-          git add assets/video-kapak
+          git add assets/video-kapak assets/reels
           git diff --cached --quiet || (git commit -m "Danışman video kapakları indirildi" && git pull --rebase && git push)
