@@ -100,6 +100,34 @@ textarea:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0
 .serit span{flex:1 1 220px}
 @media (prefers-color-scheme:dark){ .serit.sari{color:#ffcc66} }
 .ara{margin:0 0 12px}
+.ikidgm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ikidgm .ana{padding:15px 10px}
+.ana.lac{background:linear-gradient(135deg,var(--lacivert),var(--lacivert2));box-shadow:0 8px 20px rgba(5,10,48,.25)}
+.kisi{border:1px solid var(--cizgi);border-radius:16px;margin-bottom:10px;background:var(--kart);box-shadow:var(--golge);overflow:hidden}
+.kisi .satir{border:none;box-shadow:none;margin:0;border-radius:0}
+.avatar{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,var(--lacivert2),var(--kirmizi))}
+.ok{display:inline-block;color:var(--soluk);font-size:20px;line-height:1;transition:transform .15s}
+.kisi.acik .ok{transform:rotate(90deg)}
+.dosyalar{display:none;padding:0 12px 12px}
+.kisi.acik .dosyalar{display:block}
+.bolum{font-size:11px;font-weight:700;color:var(--soluk);text-transform:uppercase;letter-spacing:.06em;margin:10px 4px 6px}
+.dosya{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--dolgu);margin-bottom:6px;
+  text-decoration:none;color:var(--yazi)}
+.dosya .ad{flex:1;min-width:0;font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dosya .ne{font-size:11.5px;color:var(--soluk);white-space:nowrap}
+.tur{font-size:10px;font-weight:700;padding:4px 6px;border-radius:7px;flex:0 0 auto;background:rgba(220,28,46,.12);color:var(--kirmizi)}
+.tur.g{background:rgba(10,125,90,.12);color:var(--yesil)}
+.tur.d{background:rgba(14,26,92,.12);color:var(--lacivert2)}
+@media (prefers-color-scheme:dark){ .tur.d{color:#9fb0ff} }
+#gosterici{position:fixed;inset:0;z-index:40;background:var(--lacivert);display:none;flex-direction:column}
+#gosterici.gor{display:flex}
+#gosterici .gust{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;color:#fff}
+#gosterici .gad{flex:1;min-width:0;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gosterici .kck{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;text-decoration:none}
+#gosterici iframe{flex:1;width:100%;border:0;background:#fff}
+#gosterici .yuk{position:absolute;left:0;right:0;top:45%;text-align:center;color:#fff;font-size:13px;opacity:.8;pointer-events:none}
+mark{background:rgba(255,170,0,.35);color:inherit;border-radius:3px;padding:0 1px}
 </style>
 </head>
 <body>
@@ -119,6 +147,9 @@ textarea:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0
   <a class="geri" href="https://dogusportal.com">← Portala dön</a>
 </div>
 <div class="toast" id="toast"></div>
+<div id="gosterici"><div class="gust"><span class="gad" id="gad"></span>
+  <a class="kck" id="gdrive" target="_blank" rel="noopener">Drive ↗</a><button class="kck" id="gkapat">✕ Kapat</button></div>
+  <div class="yuk" id="gyuk">Belge açılıyor…</div><iframe id="gcerceve" allow="autoplay" title="Belge"></iframe></div>
 
 <script>
 var API = 'https://script.google.com/macros/s/AKfycbyMU_jau9MsWaYq-nT56GRZRtQrTxjaPlh5qgMifmMbX09jt3U8kVj7lhANx8zieDMqNA/exec';
@@ -126,7 +157,7 @@ var WA_SERVIS = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6
 var FORM_ADRES = 'https://dogusportal.com/danisman-form.html?k=';
 
 var $ = function(id){ return document.getElementById(id); };
-var S = { pin:'', liste:[], katalog:[], etiket:{}, linkGun:7, sablon:'', q:'' };
+var S = { pin:'', liste:[], katalog:[], etiket:{}, linkGun:7, sablon:'', q:'', mevcut:null, mq:'' };
 try { S.pin = sessionStorage.getItem('de_pin') || ''; } catch(e){}
 
 function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
@@ -185,7 +216,7 @@ function girisEkrani(mesaj){
   $('pin').addEventListener('keydown', function(e){ if(e.key==='Enter') $('gir').click(); });
   setTimeout(function(){ try{$('pin').focus();}catch(e){} }, 50);
 }
-$('cikis').onclick = function(){ try{ sessionStorage.removeItem('de_pin'); }catch(e){} S.liste=[]; girisEkrani(); };
+$('cikis').onclick = function(){ try{ sessionStorage.removeItem('de_pin'); localStorage.removeItem(MEVCUT_ANAHTAR); }catch(e){} S.mevcut=null; S.liste=[]; girisEkrani(); };
 
 function yukle(){
   return istek(API + '?action=deListe&pin=' + encodeURIComponent(S.pin)).then(function(d){
@@ -194,8 +225,11 @@ function yukle(){
     S.liste=d.liste||[]; S.katalog=d.katalog||[]; S.etiket=d.etiket||{}; S.linkGun=d.linkGun||7;
     $('cikis').style.display='block';
     sablonKontrol();
+    mevcutCek();   // Mevcut Danışmanlar arkada hazırlansın, düğmeye basınca beklemesin
     var k = new URLSearchParams(location.search).get('k');
-    if(k && bul(k)) detayEkrani(k); else listeEkrani();
+    if(k && bul(k)) detayEkrani(k);
+    else if(new URLSearchParams(location.search).get('g') === 'mevcut') mevcutEkrani();
+    else listeEkrani();
   }).catch(function(e){
     $('icerik').innerHTML='<div class="kart" style="text-align:center"><p style="font-weight:700">'+esc(e.message)+'</p><button class="ana" id="tekrar">Tekrar dene</button></div>';
     $('tekrar').onclick=yukle;
@@ -229,7 +263,8 @@ function seritYaz(){
 /* ---------- liste ---------- */
 function listeEkrani(){
   history.replaceState(null,'',location.pathname);
-  var h = '<div id="serit"></div><button class="ana" id="yeni">+ Yeni danışman</button>' +
+  var h = '<div id="serit"></div><div class="ikidgm"><button class="ana" id="yeni">+ Yeni danışman</button>' +
+          '<button class="ana lac" id="mevcut">Mevcut Danışmanlar</button></div>' +
           '<div class="grup">Danışmanlar</div>';
   if(S.liste.length > 6) h += '<input class="ara" id="ara" placeholder="Ara: ad ya da telefon" value="'+esc(S.q)+'">';
   h += '<div id="satirlar"></div>' +
@@ -237,6 +272,7 @@ function listeEkrani(){
   $('icerik').innerHTML = h;
   seritYaz();
   $('yeni').onclick = yeniEkrani;
+  $('mevcut').onclick = function(){ mevcutEkrani(); };
   if($('ara')) $('ara').oninput = function(){ S.q=this.value; satirlariCiz(); };
   satirlariCiz();
 }
@@ -253,6 +289,116 @@ function satirlariCiz(){
       '<span class="rozet '+d.s+'">'+d.ad+'</span></div>';
   }).join('') : '<div class="bos">'+(q ? 'Eşleşen kayıt yok.' : 'Henüz kimseye link gönderilmedi.<br>Yeni anlaştığın danışman için "+ Yeni danışman"a bas.')+'</div>';
   Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function(r){ r.onclick=function(){ detayEkrani(r.dataset.t); }; });
+}
+
+/* ---------- mevcut danışmanlar (Drive: DANIŞMAN ÖZLÜK DOSYALARI + online formlar) ---------- */
+/* Şirket Evrakları gibi: liste portalın kendi tablosundan gelir ve telefonda da saklanır, ekran anında açılır.
+   Drive taraması yalnız "Drive'dan yenile"de ya da tablo eskiyince arkada çalışır. */
+var MEVCUT_ANAHTAR = 'de_mevcut_v1';
+try { var _m = JSON.parse(localStorage.getItem(MEVCUT_ANAHTAR) || 'null'); if (_m && _m.kisiler) S.mevcut = _m; } catch(e){}
+var mevcutIstek = null;
+function mevcutCek(yenile){
+  if (mevcutIstek && !yenile) return mevcutIstek;
+  var p = istek(API + '?action=deMevcut&pin=' + encodeURIComponent(S.pin) + (yenile ? '&yenile=1' : ''), null, 90).then(function(d){
+    if(!d.ok) throw new Error(d.hata || 'Liste alınamadı');
+    S.mevcut = d;
+    try { localStorage.setItem(MEVCUT_ANAHTAR, JSON.stringify(d)); } catch(e){}
+    if($('kisiler')) kisileriCiz();
+    /* Tablo eskiyse (6 saat ya da yeni form geldi) Drive taraması arkada bir kez çalışır; ekran beklemez */
+    if(!yenile && !S.esitlendi && Date.now() - (d.esitleme || 0) > (d.eskiSn || 21600) * 1000){ S.esitlendi = true; mevcutCek(true).catch(function(){}); }
+    return d;
+  });
+  p.then(function(){ mevcutIstek = null; }, function(){ mevcutIstek = null; });
+  mevcutIstek = p;
+  return p;
+}
+function mevcutEkrani(yenile){
+  history.replaceState(null,'',location.pathname+'?g=mevcut');
+  $('icerik').innerHTML = '<div class="grup" style="margin-top:4px">Mevcut Danışmanlar</div>' +
+    '<input class="ara" id="mara" type="search" placeholder="Ara: isim ya da belge (örn. MYK, kimlik)" value="'+esc(S.mq)+'">' +
+    '<div id="kisiler"></div>' +
+    '<div class="dgmler" style="margin-top:14px"><button class="kck" id="geri">← Listeye dön</button>' +
+    '<button class="kck" id="myenile">Drive\'dan yenile</button><span id="mkok"></span></div>';
+  $('geri').onclick = listeEkrani;
+  $('myenile').onclick = function(){
+    var b=this; b.disabled=true; b.textContent='Yenileniyor…';
+    mevcutCek(true).then(function(){ toast('Liste güncellendi'); }, function(e){ toast(e.message); })
+      .then(function(){ if($('myenile')){ b.disabled=false; b.textContent='Drive\'dan yenile'; } });
+  };
+  $('mara').oninput = function(){ S.mq=this.value; kisileriCiz(); };
+  if(S.mevcut){ kisileriCiz(); if(!yenile) mevcutCek(); return; }
+  $('kisiler').innerHTML = '<div class="bos">Evraklar Drive\'dan çekiliyor…</div>';
+  mevcutCek(yenile).catch(function(e){
+    if(!$('kisiler') || S.mevcut) return;
+    $('kisiler').innerHTML = '<div class="kart" style="text-align:center"><p style="font-weight:700">'+esc(e.message)+'</p><button class="ana" id="mtekrar">Tekrar dene</button></div>';
+    $('mtekrar').onclick = function(){ mevcutEkrani(true); };
+  });
+}
+/* Belge portalın içinde açılır (Drive önizleme çerçevesi); geri tuşu ve Kapat kapatır. */
+function belgeGoster(url, ad){
+  var m = /\/file\/d\/([\w-]+)/.exec(url); if(!m) return false;
+  $('gad').textContent = ad; $('gdrive').href = url; $('gyuk').style.display='block';
+  $('gcerceve').onload = function(){ $('gyuk').style.display='none'; };
+  $('gcerceve').src = 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  $('gosterici').classList.add('gor'); document.body.style.overflow='hidden';
+  history.pushState({ belge:1 }, '', location.href);
+  return true;
+}
+function belgeKapat(){
+  if(!$('gosterici').classList.contains('gor')) return;
+  $('gosterici').classList.remove('gor'); $('gcerceve').src='about:blank'; document.body.style.overflow='';
+}
+$('gkapat').onclick = function(){ if(history.state && history.state.belge) history.back(); else belgeKapat(); };
+window.addEventListener('popstate', belgeKapat);
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') $('gkapat').click(); });
+
+function kucuk(s){ return String(s||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i'); }
+function isaretle(metin, q){
+  if(!q) return esc(metin);
+  var k = kucuk(metin), i = k.indexOf(q);
+  if(i < 0 || k.length !== metin.length) return esc(metin);
+  return esc(metin.slice(0,i)) + '<mark>' + esc(metin.slice(i,i+q.length)) + '</mark>' + esc(metin.slice(i+q.length));
+}
+function dosyaTuru(d){
+  if(/pdf/.test(d.tur)) return '<span class="tur">PDF</span>';
+  if(/^image\//.test(d.tur)) return '<span class="tur g">FOTO</span>';
+  if(/document|word/.test(d.tur)) return '<span class="tur d">DOC</span>';
+  if(/sheet|excel/.test(d.tur)) return '<span class="tur g">XLS</span>';
+  return '<span class="tur d">DOSYA</span>';
+}
+function bas(ad){ return ad.split(' ').filter(String).map(function(w){ return w.charAt(0); }).slice(0,2).join(''); }
+function kisileriCiz(){
+  var m = S.mevcut, q = kucuk(S.mq).trim(), acik = {};
+  Array.prototype.forEach.call(document.querySelectorAll('.kisi.acik .bas'), function(e){ acik[e.textContent] = 1; });
+  if($('mkok') && m.kok) $('mkok').innerHTML = '<a class="kck" href="'+esc(m.kok)+'" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">Drive klasörü ↗</a>';
+  var sonuc = [];
+  m.kisiler.forEach(function(p){
+    var adEs = !q || kucuk(p.ad).indexOf(q) > -1;
+    var dosyalar = adEs ? p.dosyalar : p.dosyalar.filter(function(d){ return kucuk(d.ad + ' ' + d.bolum).indexOf(q) > -1; });
+    if(adEs || dosyalar.length) sonuc.push({ p:p, dosyalar:dosyalar, ac:(!!q && !adEs) || !!acik[p.ad] });
+  });
+  if(!sonuc.length){ $('kisiler').innerHTML = '<div class="bos">'+(q ? 'Eşleşen danışman ya da belge yok.' : 'Drive klasöründe danışman bulunamadı.')+'</div>'; return; }
+  $('kisiler').innerHTML = '<p class="mini" style="margin:0 2px 10px">'+sonuc.length+' danışman'+(q ? ' bulundu' : '')+'</p>' + sonuc.map(function(x, i){
+    var p = x.p, son = 0, h = '', bolum = null;
+    p.dosyalar.forEach(function(d){ if(d.tarih > son) son = d.tarih; });
+    x.dosyalar.forEach(function(d){
+      var b = d.kaynak === 'form' ? 'Online form' + (d.bolum ? ' / ' + d.bolum : '') : d.bolum;
+      if(b !== bolum){ bolum = b; if(b) h += '<div class="bolum">'+esc(b)+'</div>'; }
+      h += '<a class="dosya" href="'+esc(d.url)+'" target="_blank" rel="noopener" data-goster>'+dosyaTuru(d)+
+        '<span class="ad">'+isaretle(d.ad, q)+'</span><span class="ne">'+esc(tarih(d.tarih))+'</span></a>';
+    });
+    if(!x.dosyalar.length) h += '<div class="bos" style="padding:14px">Klasörde belge yok.</div>';
+    h += '<div class="dgmler" style="margin-top:8px">' + p.klasorler.map(function(k){
+      return '<a class="kck" style="text-decoration:none" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+(k.kaynak === 'form' ? 'Form klasörü ↗' : 'Drive\'da aç ↗')+'</a>';
+    }).join('') + '</div>';
+    return '<div class="kisi'+(x.ac ? ' acik' : '')+'"><div class="satir" data-k="'+i+'"><span class="avatar">'+esc(bas(p.ad))+'</span>' +
+      '<div class="ort"><div class="bas">'+isaretle(p.ad, q)+'</div><div class="alt">'+p.dosyalar.length+' belge'+(son ? ' · son: '+tarih(son) : '')+'</div></div>' +
+      '<span class="ok">›</span></div><div class="dosyalar">'+h+'</div></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-k]'), function(r){ r.onclick=function(){ r.parentNode.classList.toggle('acik'); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-goster]'), function(a){
+    a.onclick=function(e){ if(belgeGoster(a.href, a.querySelector('.ad').textContent)) e.preventDefault(); };
+  });
 }
 
 /* ---------- yeni ---------- */
