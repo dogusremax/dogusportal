@@ -218,6 +218,8 @@ footer img{height:26px}
 @keyframes vmD{to{transform:rotate(360deg)}}
 .vm iframe{position:relative;width:100%;height:100%;border:0;display:block;opacity:0;transition:opacity .25s}
 .vm iframe.hazir{opacity:1}
+.vm .vmk.vd:before{display:none}
+.vm video{position:relative;width:100%;height:100%;display:block;object-fit:contain;background:#000}
 @media(max-width:700px){.va{display:none}.vid{gap:10px;margin:0 -16px;padding-inline:16px;scroll-padding-inline:16px}.vid .v{flex-basis:132px}.vid .v.yatay{flex-basis:240px}}
 .ofs{background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden}
 .ofs .ic{display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:44px;align-items:center;padding:40px}
@@ -543,12 +545,20 @@ var SIRA=['tr','en','ru','fa','de','pl'];
   e('vaN').addEventListener('click',function(){e('vid').scrollBy({left:vAdim()*2*rtl(),behavior:'smooth'})});
   // Oynatıcı kutusu iframe yüklenmeden önce videonun gerçek ölçüsüyle (dikey 9:16, yatay 16:9) piksel olarak ayarlanır; sonradan boyut değişmez
   function vmOlcu(b){var vw=Math.min(window.innerWidth,document.documentElement.clientWidth)-32,vh=window.innerHeight-110,w,h;
-    if(b.dataset.ig){var ek=190;w=Math.min(vw,400,(vh-ek)*9/16);h=Math.min(vh,w*16/9+ek)}
+    if(b.dataset.ig&&!vKendi(b)){var ek=190;w=Math.min(vw,400,(vh-ek)*9/16);h=Math.min(vh,w*16/9+ek)}
     else if(b.classList.contains('yatay')){w=Math.min(vw,960,vh*16/9);h=w*9/16}
     else{w=Math.min(vw,400,vh*9/16);h=w*16/9}
     return [Math.floor(w),Math.floor(h)]}
+  // Siteye indirilmiş reels (assets/reels/{kod}.mp4) kendi oynatıcımızda gerçek oranıyla açılır; olmayanlar Instagram gömmesiyle
+  var VIDS={};fetch('assets/video-kapak/sonuc.json').then(function(r){return r.ok?r.json():{}}).then(function(j){(j.videolar||[]).forEach(function(k){VIDS[k]=1})}).catch(function(){});
+  var vKendi=function(b){return b.dataset.ig&&VIDS[b.dataset.ig]};
   function vmAc(i){var ks=vKart();if(i<0||i>=ks.length)return;vmI=i;var b=ks[i],k=e('vmK'),o=vmOlcu(b);
-    k.className='vmk'+(b.dataset.ig?' ig':'');k.style.width=o[0]+'px';k.style.height=o[1]+'px';
+    k.className='vmk'+(b.dataset.ig&&!vKendi(b)?' ig':'');k.style.width=o[0]+'px';k.style.height=o[1]+'px';
+    if(vKendi(b)){var vd=document.createElement('video');vd.src='assets/reels/'+encodeURIComponent(b.dataset.ig)+'.mp4';vd.poster='assets/video-kapak/'+encodeURIComponent(b.dataset.ig)+'.webp';
+      vd.controls=vd.autoplay=vd.playsInline=true;vd.setAttribute('playsinline','');vd.preload='auto';
+      k.classList.add('vd');k.innerHTML='';k.appendChild(vd);vd.play&&vd.play().catch(function(){});
+      e('vmP').hidden=i===0;e('vmN').hidden=i===ks.length-1;e('vm').hidden=false;document.body.style.overflow='hidden';
+      b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});return}
     var f=document.createElement('iframe');f.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');f.allowFullscreen=true;
     f.onload=function(){f.classList.add('hazir')};
     if(b.dataset.ig){f.scrolling='no';f.title='Instagram Reels';f.src='https://www.instagram.com/reel/'+encodeURIComponent(b.dataset.ig)+'/embed/'}
