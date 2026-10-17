@@ -12,8 +12,15 @@
     return izi(pin).then(function(h){ var i = IZLER.indexOf(h); return i >= 0 ? KIMLER[i] : null; });
   };
   window.brokerDogrula = function(pin){
-    return izi(pin).then(function(h){ return IZLER.indexOf(h) >= 0; });
+    return izi(pin).then(function(h){ var i = IZLER.indexOf(h); if (i >= 0) pinKaydet(pin, ADLAR[i]); return i >= 0; });
   };
+  /* Tek giriş: broker PIN'i bir kez doğrulanınca bu cihazda hatırlanır, uygulamalar bir daha sormaz.
+     Portaldaki "Broker modundan çık" brokerCikis() ile siler. */
+  var ADLAR = ['Umut Tokkuş', 'Makbule Tokkuş'];
+  function pinKaydet(pin, ad){ try { localStorage.setItem('dogusBrokerPin', String(pin).trim()); localStorage.setItem('dogusBrokerAd', ad); } catch(e){} }
+  window.brokerPinAl = function(){ try { return localStorage.getItem('dogusBrokerPin') || ''; } catch(e){ return ''; } };
+  window.brokerAdAl = function(){ try { return localStorage.getItem('dogusBrokerAd') || ''; } catch(e){ return ''; } };
+  window.brokerCikis = function(){ try { localStorage.removeItem('dogusBrokerPin'); localStorage.removeItem('dogusBrokerAd'); } catch(e){} };
   function izi(pin){
     pin = String(pin||'').trim();
     if (!/^\d{4,6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve('');
@@ -40,8 +47,9 @@
         location.replace(temiz);
       });
     };
-    (k ? brokerDogrula(k) : Promise.resolve(false)).then(function(ok){
-      if (!ok) { setTimeout(sor, 0); return; }
+    var kayitli = brokerPinAl();
+    (k ? brokerDogrula(k) : kayitli ? brokerDogrula(kayitli) : Promise.resolve(false)).then(function(ok){
+      if (!ok) { if (!k && kayitli) brokerCikis(); setTimeout(sor, 0); return; }
       sessionStorage.setItem('perfAuth', 'ok');
       location.replace(temiz);
     });

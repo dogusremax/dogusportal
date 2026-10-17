@@ -192,7 +192,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Müşteri, portföy ve takvim — danışmanın günlük defteri</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec" target="_blank" rel="noopener">
+    <a class="app" href="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec" target="_blank" rel="noopener" onclick="brokerLinki(this)">
       <div class="icon3d" style="--c1:#2952c8;--c2:#6b9bff">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V12M10 19V5M16 19v-9M22 19H2" stroke-linecap="round"/></svg>
@@ -246,7 +246,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">KKTC resmi masraf ve vergi hesaplama</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://script.google.com/macros/s/AKfycbxO_8XnwUg88hl54DVwovsWRQmPF7_4kLuNNCsUXCrgDAEjZigdC_26ITobSAaAU2lG/exec" target="_blank" rel="noopener">
+    <a class="app" href="https://script.google.com/macros/s/AKfycbxO_8XnwUg88hl54DVwovsWRQmPF7_4kLuNNCsUXCrgDAEjZigdC_26ITobSAaAU2lG/exec" target="_blank" rel="noopener" onclick="brokerLinki(this)">
       <div class="icon3d" style="--c1:#047857;--c2:#2ee6a8">
         <div class="icon3d-gloss"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -550,8 +550,10 @@ function perfPinClose(){document.getElementById('pinModal').style.display='none'
 function perfPinCheck(){var p=document.getElementById('pinInput').value;brokerDogrula(p).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}});}
 document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===6)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});
 // Broker modu: gizli kartları göster, bu cihazda hatırla
+/* Broker modunda Apps Script uygulamalarına PIN'i adresin # kısmında götür (sunucuya gitmez); uygulama şifre sormaz */
+function brokerLinki(a){var u=a.href.split('#')[0],p=window.brokerPinAl?brokerPinAl():'';a.href=(document.body.classList.contains('broker')&&p)?u+'#bk='+p:u;}
 function brokerAc(){try{localStorage.setItem('dogusBroker','ok');}catch(e){}sessionStorage.setItem('perfAuth','ok');document.body.classList.add('broker');var l=document.getElementById('brokerLink');if(l)l.textContent='Broker modundan çık';}
-function brokerToggle(){if(document.body.classList.contains('broker')){try{localStorage.removeItem('dogusBroker');}catch(e){}sessionStorage.removeItem('perfAuth');document.body.classList.remove('broker');document.getElementById('brokerLink').textContent='Broker';}else perfPinOpen(null,'Broker girişi');}
+function brokerToggle(){if(document.body.classList.contains('broker')){try{localStorage.removeItem('dogusBroker');}catch(e){}if(window.brokerCikis)brokerCikis();sessionStorage.removeItem('perfAuth');document.body.classList.remove('broker');document.getElementById('brokerLink').textContent='Broker';}else perfPinOpen(null,'Broker girişi');}
 try{if(localStorage.getItem('dogusBroker')==='ok')brokerAc();}catch(e){}
 // Google Yorumları kartı: canlı puan
 fetch('data/google-yorumlar.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.toplam)return;var el=document.getElementById('gYorumDesc');if(el)el.textContent='★ '+d.puan.toLocaleString('tr-TR',{minimumFractionDigits:1})+' · '+d.toplam+' yorum';}).catch(function(){});
