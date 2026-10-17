@@ -122,7 +122,7 @@
       v.set(a.y0+a.dy*e,a.p0+(a.p1-a.p0)*e,a.f0+(a.f1-a.f0)*e);if(u>=1){v.anim=null;if(a.cb)a.cb();}}
     else if(!v.down){
       if(Math.abs(v.vy)>.002||Math.abs(v.vp)>.002){var k=Math.pow(.9,dt/16.7);v.set(v.yaw+v.vy*dt,v.pitch+v.vp*dt);v.vy*=k;v.vp*=k;}
-      else if(v.rot&&t-v.idle>3500&&sc&&!sc.pend)v.set(v.yaw+v.rot*dt/1000);}
+      else if(v.rot&&t-v.idle>3500&&(!v.rotFor||t-v.idle<3500+v.rotFor)&&sc&&!sc.pend)v.set(v.yaw+v.rot*dt/1000);}
     if(sc&&v.due&&t-v.needT>120){v.needT=t;v.due=false;sc.need();}
     if(!v.dirty)return;v.dirty=false;v.due=true;
     var M=Math.max(v.W,v.H);v.P=M/2/Math.tan(v.fov*D2R/2);

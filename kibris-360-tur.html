@@ -210,7 +210,7 @@
   .hint{position:fixed;z-index:12;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-size:.8rem;font-weight:700;pointer-events:none;transition:opacity .6s}
   .hint svg{width:22px;height:22px;animation:sway 2.2s ease-in-out infinite}
   @keyframes sway{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
-  .hint.off{opacity:0}
+  .hint.off{opacity:0}.hint.off svg{animation:none}
   .toast{position:fixed;z-index:70;left:50%;bottom:calc(84px + var(--sab));transform:translate(-50%,20px);padding:10px 16px;border-radius:12px;background:var(--glass2);font-size:.8rem;font-weight:700;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
   .toast.on{opacity:1;transform:translate(-50%,0)}
   .ui{transition:opacity .5s,visibility 0s}
@@ -354,7 +354,7 @@
   function turYukle(t,cb){if(TDATA[t])return cb(TDATA[t]);var sc=document.createElement('script');sc.src=TURLAR[t].js;
     sc.onload=function(){TDATA[t]=window.K360||[];cb(TDATA[t]);};sc.onerror=function(){cb(null);};document.head.appendChild(sc);}
 </script>
-<script src="assets/kibris360/k360v.js?v=3"></script>
+<script src="assets/kibris360/k360v.js?v=4"></script>
 <script>
 (function(){
   'use strict';
@@ -478,8 +478,11 @@
   $('srch').addEventListener('input',function(){var v=this.value.trim().toLocaleLowerCase('tr-TR');[].forEach.call($('dg').children,function(b){b.hidden=v&&b.getAttribute('data-n').indexOf(v)<0;});});
 
   /* üst üste binen etiketler: yakın (alttaki) öncelikli */
-  var dcT=0;
+  // görüntü yerinde dururken hesaplanmaz (boşta işlemci/fan çalışmasın)
+  var dcT=0,dcK='',dcS=null;
   function declutter(t){if(t-dcT<150)return;dcT=t;
+    var k=pv.yaw.toFixed(2)+'/'+pv.pitch.toFixed(2)+'/'+pv.fov.toFixed(2)+'/'+innerWidth+'/'+innerHeight+'/'+document.querySelectorAll('#pano .hs').length;
+    if(k===dcK&&dcS===pv.cur)return;dcK=k;dcS=pv.cur;
     var it=[].slice.call(document.querySelectorAll('#pano .hs')).filter(function(p){return p.style.visibility!=='hidden';}).map(function(p){
       var r=p.getBoundingClientRect(),b=p.querySelector('.b'),w=b?b.offsetWidth:60,h=b?b.offsetHeight:26;
       return {p:p,g:p.classList.contains('go'),b:[r.left-w/2-3,r.top-8-h-3,r.left+w/2+3,r.top-5],y:r.top};});
@@ -492,7 +495,7 @@
 
   /* ---------- dönme ve otomatik tur ---------- */
   var rot=!RM,touring=false,tourT0=0,TOUR=15000;
-  function rotState(){if(!pv)return;if(rot||touring)pv.startAutoRotate(touring?3:1.6);else pv.stopAutoRotate();$('bRot').classList.toggle('on',rot);}
+  function rotState(){if(!pv)return;pv.rotFor=touring?0:30000;if(rot||touring)pv.startAutoRotate(touring?3:1.6);else pv.stopAutoRotate();$('bRot').classList.toggle('on',rot);}
   $('bRot').onclick=function(){rot=!rot;rotState();toast(rot?'Kendiliğinden dönme açık':'Kendiliğinden dönme kapalı');};
   function startTour(){touring=true;tourT0=performance.now();$('ctl').classList.add('touring');$('bTour').classList.add('on');$('icTour').innerHTML='<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>';rotState();}
   function stopTour(){if(!touring)return;touring=false;$('ctl').classList.remove('touring');$('bTour').classList.remove('on');$('icTour').innerHTML='<path d="M8 5.5v13l10.5-6.5z"/>';$('tourbar').style.width=0;rotState();}
