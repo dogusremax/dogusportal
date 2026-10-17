@@ -137,6 +137,68 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 @media (hover:hover){.li:disabled:hover{transform:none;border-color:var(--line)}}
 .foot{font-size:11.5px;color:var(--faint);margin:0}
 
+/* takip: haftanın hareket dökümü */
+.izle{position:relative;overflow:hidden;background:linear-gradient(135deg,#131a46,#0f1436);border:1px solid rgba(61,123,255,.35);border-radius:20px;padding:16px 18px;display:grid;gap:12px;animation:pop .5s both .1s}
+.izle .ust{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.izle .canli{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9fbcff}
+.izle .canli i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:nab 1.8s infinite}
+@keyframes nab{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.izle h3{margin:0;font-size:clamp(18px,3.2vw,22px);font-weight:800;line-height:1.25}
+.izle h3 b{font-variant-numeric:tabular-nums;color:#fff}
+.izle .ver{margin:0;font-size:13.5px;line-height:1.45;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border-left:3px solid var(--c)}
+.kay{display:flex;flex-wrap:wrap;gap:6px}
+.kay span{font-size:12px;font-weight:600;color:var(--dim);background:rgba(255,255,255,.06);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
+.kay span b{color:#fff;font-variant-numeric:tabular-nums}
+.olc{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px;align-items:start}
+.cmp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0;animation:pop .5s both .15s}
+.cmp h4,.rit h4,.akis h4,.mus h4{margin:0 0 4px;font-size:13px;font-weight:800;letter-spacing:.04em}
+.cmp p.alt,.rit p.alt,.akis p.alt,.mus p.alt{margin:0 0 10px;font-size:12px;color:var(--faint)}
+.cmp table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.cmp th{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 4px 6px}
+.cmp th:first-child{text-align:left}
+.cmp td{padding:6px 4px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+.cmp td:first-child{text-align:left;color:var(--dim);white-space:normal}
+.cmp td.sen{font-weight:800;font-size:14px}
+.cmp td.sen.u{color:#7ee2a0}.cmp td.sen.a{color:#ffb4bb}
+.cmp td .dl{display:inline-block;min-width:34px;font-size:11px;font-weight:700;padding:1px 5px;border-radius:6px;margin-left:5px;text-align:center}
+.dl.art{background:rgba(34,197,94,.16);color:#7ee2a0}.dl.eks{background:rgba(220,28,46,.2);color:#ffb4bb}.dl.ayni{background:rgba(255,255,255,.07);color:var(--faint)}
+.rit{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0;display:grid;align-content:start;animation:pop .5s both .2s}
+.gun7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;height:150px;margin-top:6px}
+.gun7 .g{display:grid;grid-template-rows:auto 1fr auto;justify-items:center;gap:4px;height:100%}
+.gun7 .g b{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.gun7 .g .c{width:100%;max-width:34px;align-self:end;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--coral),var(--blue));height:var(--h);min-height:4px;transform-origin:bottom;animation:rise .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d)}
+.gun7 .g.bos .c{background:repeating-linear-gradient(45deg,rgba(220,28,46,.5) 0 4px,rgba(220,28,46,.15) 4px 8px);height:8px}
+.gun7 .g.gel .c{background:rgba(255,255,255,.06);height:8px}
+.gun7 .g span{font-size:11px;color:var(--faint);font-weight:700}
+.gun7 .g.bos span{color:var(--coral)}
+.rit .not{margin:10px 0 0;font-size:12.5px;color:var(--dim)}
+.akis,.mus{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0}
+.akis details{border-top:1px solid var(--line)}
+.akis details:first-of-type{border-top:0}
+.akis summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 2px;font-weight:700;font-size:14px}
+.akis summary::-webkit-details-marker{display:none}
+.akis summary .say{margin-left:auto;font-size:12px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums}
+.akis summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);margin:-4px 4px 0 2px;transition:transform .2s}
+.akis details[open] summary::after{transform:rotate(225deg);margin-top:4px}
+.akis summary .gd{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.tl{list-style:none;margin:0 0 12px;padding:0 0 0 12px;display:grid;gap:2px;border-left:2px solid rgba(255,255,255,.08);margin-left:4px}
+.tl li{position:relative;display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px;padding:6px 0 6px 6px;font-size:13.5px;line-height:1.35}
+.tl li::before{content:"";position:absolute;left:-18px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--bg)}
+.tl li time{font-size:12px;font-weight:700;color:var(--faint);font-variant-numeric:tabular-nums;padding-top:1px}
+.tl li small{display:block;font-size:12px;color:var(--faint);margin-top:1px}
+.tl li .x{font-size:11px;font-weight:800;color:var(--dim);background:rgba(255,255,255,.07);border-radius:6px;padding:0 5px;margin-left:4px}
+.tl li .ok{color:#7ee2a0}.tl li .no{color:#ffb4bb}
+.mus .tb{overflow-x:auto;margin:0 -4px}
+.mus table{width:100%;border-collapse:collapse;font-size:12.5px}
+.mus th{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);text-align:left;padding:0 6px 6px}
+.mus td{padding:7px 6px;border-top:1px solid var(--line);vertical-align:top}
+.mus td:last-child{width:42%}.mus td.z{white-space:nowrap;color:var(--dim);font-variant-numeric:tabular-nums}
+@media (max-width:480px){.mus td.z{white-space:normal;width:44px}.mus td:last-child{width:auto}}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin:0 3px 3px 0}
+.chip.ok{background:rgba(34,197,94,.16);color:#7ee2a0}.chip.no{background:rgba(220,28,46,.2);color:#ffb4bb}.chip.n{background:rgba(255,255,255,.07);color:var(--dim)}
+.mus .oz{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+
+@media (max-width:760px){.olc{grid-template-columns:1fr}}
 @media (max-width:640px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .kh{grid-template-columns:1fr auto;padding:18px}
@@ -171,7 +233,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
   </section>
 
   <section class="karne" id="karne" aria-live="polite"><div class="durum" id="durum">Karnen hazırlanıyor…</div></section>
-  <p class="foot" id="foot">Kaynaklar Danışman Takip, Kapanış Formu, Matbu Evraklar, Müşteri Takip, Google yorumları ve Instagram etiketleri. Müşteri adları gösterilmez.</p>
+  <p class="foot" id="foot">Kaynaklar Danışman Takip, Kapanış Formu, Matbu Evraklar, Müşteri Takip, Google yorumları ve Instagram etiketleri. Her hareket giriş saatiyle kayıt altında. Müşteri adı ve telefonu gösterilmez.</p>
 </div>
 
 <script>
@@ -180,7 +242,7 @@ const Q = new URLSearchParams(location.search);
 // WhatsApp tuşu linki "t=<anahtar>&hafta=YYYY-MM-DD" olarak kodlanmış (&→%26) gelebilir: ayır
 (() => { const t = Q.get('t') || '', m = t.match(/^([^&]+)&hafta=(\d{4}-\d{2}-\d{2})$/); if (m) { Q.set('t', m[1]); Q.set('hafta', m[2]); } })();
 const foto = id => `assets/ekip/karne/${id}.webp`;
-let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
+let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', HAFTA = '', ORTM = {}, ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
 const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'}, gosterim:{ad:'Gösterim',c:'#3D7BFF',i:'saha'} };
 const ilk = ad => ad.split(' ').slice(0,-1).join(' ');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -267,6 +329,93 @@ function karne(d){
   if (!plan.length) plan.push('Bu tempoyu koru, yeni portföy ve gösterimlerle kapanışa odaklan');
   return {iyi,gel:gel.slice(0,5),plan:plan.slice(0,3),yorum};
 }
+// Takip dökümü: haftanın her kaydı gün ve saatiyle (Danışman Takip, Müşteri Takip, Matbu Evraklar, Kapanış Formu).
+const GUNK = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'], GUNU = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+const AKT = { fzbo:['FZBO araması','#3D7BFF'], etki:['Etki çevresi araması','#3D7BFF'], sunum1:['1. sunum','#f5b041'], sunum2:['2. sunum','#f5b041'],
+  kibris_sunum:['Kıbrıs sunumu','#f5b041'], yetki:['Yetki alındı','#DC1C2E'], kapora:['Kapora alındı','#DC1C2E'], gosterim:['Gösterim','#38bdf8'],
+  gosterim_imza:['İmzalı gösterim','#38bdf8'], gosterim_coop:['Ortak gösterim','#38bdf8'], emlak_nobet:['Emlak Konut nöbeti','#a78bfa'],
+  brosur:['Broşür dağıtımı','#a78bfa'], story:['Story / post','#c026d3'], sosyal_medya:['İçerik paylaşımı','#c026d3'], egitim:['Eğitim','#a78bfa'],
+  yorum:['Google yorumu','#FFCE5C'] };
+const kisa = (t, n=26) => { t = String(t||'').replace(/\s+/g,' ').trim(); return t.length>n ? t.slice(0,n-1)+'…' : t; };
+const esc = t => String(t||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const virg = v => String(Math.round(v*10)/10).replace('.',',');
+function gunIx(g){ const a = new Date(HAFTA+'T00:00:00Z'), b = new Date(g+'T00:00:00Z'); return Math.round((b-a)/86400000); }
+function bugunIx(){ return gunIx(new Date(Date.now()+3*3600000).toISOString().slice(0,10)); }
+// gün dağılımı: geçmiş günlerde hareket yoksa "boş" (bugün henüz bitmediği için boş sayılmaz)
+function gunDagilim(ham){ const gun = Array(7).fill(0), b = bugunIx(); ham.forEach(e=>{ const i = gunIx(e.g); if (i>=0 && i<7) gun[i]++; });
+  const bitti = Math.max(0, Math.min(7, b)), gecen = Math.max(1, Math.min(7, b+1));
+  return {gun, b, gecen, bos: gun.slice(0,bitti).filter(x=>!x).length, aktif: gun.slice(0,gecen).filter(x=>x).length}; }
+function olaylar(d){
+  const D = d.detay || {}, E = [];
+  (D.akis||[]).forEach(a=>{ const k = AKT[a.t] || [a.t,'#64748b']; E.push({g:a.g, s:a.t==='yorum'?'':a.s, ad:k[0], c:k[1], key:a.t}); });
+  (D.musteri||[]).forEach(m=>E.push({g:m.g, s:m.s, ad:'Yeni müşteri kaydı', c:'#16a34a', alt:[m.tip, m.emlak, kisa(m.bolge,22)].filter(Boolean).join(' · '),
+    durum: m.eksik.length ? `<span class="no">eksik: ${m.eksik.join(', ')}</span>` : '<span class="ok">bilgileri tam</span>'}));
+  (D.notlar||[]).forEach(n=>E.push({g:n.g, s:n.s, ad:'Takip notu', c:'#16a34a', alt:n.kat, key:'not|'+n.kat}));
+  (D.formlar||[]).forEach(f=>E.push(f.evrak ? {g:f.g, s:f.s, ad:'Evrak yüklendi', c:'#DC1C2E', alt:f.evrak}
+    : {g:f.g, s:f.s, ad:'Yer gösterme formu', c:'#38bdf8', alt:kisa(f.adres,30), durum: f.eks.length ? `<span class="no">${f.eks.join(', ')}</span>` : '<span class="ok">eksiksiz</span>'}));
+  (D.kapanislar||[]).forEach(k=>E.push({g:k.g, s:'', ad:`${k.tur} kapanış`, c:'#DC1C2E', alt:kisa(k.adres,30), durum: k.eks.length ? `<span class="no">${k.eks.join('; ')}</span>` : '<span class="ok">evrakı tam</span>'}));
+  E.sort((a,b)=> (a.g+(a.s||'00:00')) < (b.g+(b.s||'00:00')) ? -1 : 1);
+  // aynı dakikada art arda girilen aynı kayıt tek satır: "×3"
+  const T = [];
+  E.forEach(e=>{ const o = T[T.length-1]; if (o && e.key && o.key===e.key && o.g===e.g && o.s===e.s) o.n++; else T.push(Object.assign({n:1}, e)); });
+  return {ham:E, tek:T};
+}
+function izleCiz(d){
+  const {ham} = olaylar(d), D = d.detay || {}, {gun, gecen, bos: hareketsiz, aktif} = gunDagilim(ham), son = ham[ham.length-1];
+  const enY = gun.indexOf(Math.max(...gun));
+  const kaynak = [[(D.akis||[]).length,'Danışman Takip kaydı'],[(D.musteri||[]).length,'müşteri kaydı'],[(D.notlar||[]).length,'takip notu'],
+    [(D.formlar||[]).length,'form / evrak'],[(D.kapanislar||[]).length,'kapanış']].filter(x=>x[0]);
+  const a = ilk(d.ad), fark = d.puan - ort;
+  let ver, c;
+  if (d.puan>=ort && hareketsiz<=Math.max(0,gecen-HEDEF.aktifGun)) { ver = `Tebrikler ${a}. Ofis ortalamasının <b>${fark} puan</b> üstündesin ve haftanın ${gecen} gününün ${aktif} gününde sistemde hareketin var.`; c='var(--good)'; }
+  else if (d.puan>=ort) { ver = `Ofis ortalamasının <b>${fark} puan</b> üstündesin ama ${hareketsiz} gün sistemde hiç hareketin yok. Daha istikrarlı olmalısın.`; c='var(--warn)'; }
+  else { ver = `Ofis ortalamasının <b>${-fark} puan</b> altındasın${hareketsiz?` ve ${hareketsiz} gün sistemde hiç hareketin yok`:''}. Daha aktif olmalısın.`; c='var(--coral)'; }
+  return `<div class="izle"><div class="ust"><span class="canli"><i></i>Ofis takibi</span></div>
+    <h3>Bu hafta sistemde <b data-n="${ham.length}">${ham.length}</b> hareketin kayıtlı${son?`, sonuncusu ${GUNU[gunIx(son.g)]||''}${son.s?' '+son.s:''}`:''}.</h3>
+    <div class="kay">${kaynak.map(([n,l])=>`<span><b>${n}</b> ${l}</span>`).join('') || '<span>Bu hafta kayıt yok</span>'}${ham.length?`<span>en yoğun gün <b>${GUNU[enY]}</b></span>`:''}</div>
+    <p class="ver" style="--c:${c}">${ver}</p></div>`;
+}
+function olcCiz(d){
+  const O = ORTM || {}, P = d.onceki || {};
+  const satir = [['Puan', d.puan, ort, P.puan],['Sıra', d.sira, null, P.sira, true],['Aktif gün', d.aktifGun, O.aktifGun, P.aktifGun],
+    ['FZBO araması', d.fzbo, O.fzbo, P.fzbo],['Etki çevresi araması', d.etki, O.etki, P.etki],['Sunum', d.sunum, O.sunum, P.sunum],
+    ['Gösterim', d.gosterim, O.gosterim, P.gosterim],['İçerik', d.icerik, O.icerik, P.icerik],['Story / post', d.story, O.story, P.story],
+    ['Yeni müşteri', d.musYeni, O.musYeni, null],['Takip notu', d.musNot, O.musNot, null],['Kapanış', d.kapanis, O.kapanis, P.kapanis]];
+  const rows = satir.map(([l,v,o,p,ters])=>{
+    const cls = o==null ? '' : (v>o ? 'u' : v<o ? 'a' : '');
+    let dl = '<span class="dl ayni">–</span>';
+    if (p!=null){ const f = ters ? p-v : v-p; dl = f>0 ? `<span class="dl art">▲${virg(Math.abs(f))}</span>` : f<0 ? `<span class="dl eks">▼${virg(Math.abs(f))}</span>` : '<span class="dl ayni">=</span>'; }
+    return `<tr><td>${l}</td><td class="sen ${cls}">${virg(v||0)}</td><td>${o==null?'–':virg(o)}</td><td>${p==null?'–':virg(p)}${dl}</td></tr>`; }).join('');
+  const {gun, b, bos} = gunDagilim(olaylar(d).ham), mx = Math.max(1, ...gun);
+  const bars = gun.map((n,i)=>{ const gel = i>b || (i===b && !n); return `<div class="g ${gel?'gel':!n?'bos':''}"><b>${gel?'':n}</b><i class="c" style="--h:${Math.max(6,n/mx*100)}%;--d:${i*70}ms"></i><span>${GUNK[i]}</span></div>`; }).join('');
+  return `<div class="olc">
+    <div class="cmp"><h4>Ofis seni ölçüyor</h4><p class="alt">Senin sayıların, ofis ortalaması ve geçen haftan</p>
+      <table><thead><tr><th>Ölçüm</th><th>Sen</th><th>Ofis ort.</th><th>Geçen hafta</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="rit"><h4>Haftalık ritmin</h4><p class="alt">Gün gün sisteme girdiğin hareket sayısı</p><div class="gun7">${bars}</div>
+      <p class="not">${bos ? `<b style="color:var(--coral)">${bos} gün</b> sistemde hiç hareketin yok. Her gün en az bir kayıt istikrar puanı getirir.` : 'Biten her gün sistemde hareketin var. İstikrarın tam!'}</p></div>
+  </div>`;
+}
+function musCiz(d){
+  const M = (d.detay||{}).musteri || []; if (!M.length) return '';
+  const tam = M.filter(m=>!m.eksik.length).length, notlu = M.filter(m=>m.not>0).length;
+  return `<div class="mus"><h4>Bu hafta girdiğin müşteriler</h4><p class="alt">Müşteri Takip'e eklediğin her kayıt, bilgilerinin ne kadar tam girildiğiyle. İsim ve telefon gösterilmez.</p>
+    <div class="oz"><span class="chip n">${M.length} kayıt</span><span class="chip ${tam===M.length?'ok':'no'}">${tam} kayıt bilgisi tam</span><span class="chip ${notlu===M.length?'ok':'no'}">${notlu} kayıtta takip notu var</span></div>
+    <div class="tb"><table><thead><tr><th>Giriş</th><th>Müşteri</th><th>Takip ve bilgi</th></tr></thead><tbody>${M.map(m=>`<tr>
+      <td class="z">${GUNK[gunIx(m.g)]||''} ${m.s}</td>
+      <td>${esc([m.tip, m.emlak].filter(Boolean).join(' · '))}<br><small style="color:var(--faint)">${esc(kisa(m.bolge,28)||'bölge yok')}</small></td>
+      <td>${m.not?`<span class="chip ok">${m.not} not</span>`:'<span class="chip no">not yok</span>'}${m.durum?`<span class="chip n">${esc(m.durum)}</span>`:''}${m.tekrar?'<span class="chip no">ikinci kayıt</span>':''}${m.eksik.length?m.eksik.map(x=>`<span class="chip no">${x} yok</span>`).join(''):'<span class="chip ok">bilgi tam</span>'}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function akisCiz(d){
+  const {tek} = olaylar(d); if (!tek.length) return '';
+  const G = {}; tek.forEach(e=>(G[e.g]=G[e.g]||[]).push(e));
+  const gunler = Object.keys(G).sort();
+  return `<div class="akis"><h4>Gün gün hareket dökümün</h4><p class="alt">Sisteme girdiğin her kayıt, giriş saatiyle</p>
+    ${gunler.map((g,i)=>{ const L = G[g], top = L.reduce((s,e)=>s+e.n,0);
+      return `<details ${i===gunler.length-1?'open':''}><summary><span class="gd" style="--c:var(--coral)"></span>${GUNU[gunIx(g)]||''} ${karneTarih(g)}<span class="say">${top} hareket</span></summary>
+      <ul class="tl">${L.map(e=>`<li style="--c:${e.c}"><time>${e.s||'–'}</time><span>${e.ad}${e.n>1?`<span class="x">×${e.n}</span>`:''}${e.alt||e.durum?`<small>${esc(e.alt||'')}${e.alt&&e.durum?' · ':''}${e.durum||''}</small>`:''}</span></li>`).join('')}</ul></details>`; }).join('')}</div>`;
+}
+const AYK = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+function karneTarih(g){ return `${+g.slice(8,10)} ${AYK[+g.slice(5,7)-1]}`; }
 function halka(p, r, w, renk){
   const C = 2*Math.PI*r;
   return `<circle cx="${r+w}" cy="${r+w}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${w}"/>
@@ -288,6 +437,8 @@ function goster(id){
       <div class="ring"><svg viewBox="0 0 112 112">${halka(d.puan/max,48,8,'url(#gr)')}<defs><linearGradient id="gr"><stop offset="0" stop-color="#3D7BFF"/><stop offset="1" stop-color="#FB5160"/></linearGradient></defs></svg>
         <div class="v"><b data-n="${d.puan}">${d.puan}</b><span>puan</span></div></div>
     </div>
+    ${izleCiz(d)}
+    ${olcCiz(d)}
     <div class="secs">
       <div class="sec" style="--d:0ms"><h3><span class="ic" style="--c:#3D7BFF">${ICON.saha}</span>Saha</h3>
         ${metrik('Etki çevresi araması', d.etki, HEDEF.etki)}
@@ -322,6 +473,8 @@ function goster(id){
         const govde = x.tur==='musteri' ? `<span class="sub">${x.metin.split('; ').map(s=>`<span>${s}</span>`).join('')}</span>` : x.metin;
         return `<li><span class="k" style="--c:${T.c}">${ICON[T.i]}</span><span><small>${T.ad}</small>${govde}</span></li>`; }).join('')}</ul></div>`
       : `<div class="fix temiz"><h4><span class="cnt">✓</span>Düzeltilecek evrak yok</h4><p>Kapanış belgelerin ve yer gösterme formların tam. Böyle devam!</p></div>`}
+    ${musCiz(d)}
+    ${akisCiz(d)}
     ${(d.hatirlat||[]).length ? `<div class="box hatir" style="--c:var(--blue)"><h4><i></i>Alışkanlığımız</h4><p>Zorunlu değil ama her kiralıkta tahliye taahhüdü alıyoruz.</p><ul>${d.hatirlat.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <div class="ins">
       <div class="box" style="--c:var(--good)"><h4><i></i>İyi yaptıkların</h4><ul>${(k.iyi.length?k.iyi:['bu hafta yeni bir sayfa açıyoruz']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
@@ -330,6 +483,7 @@ function goster(id){
     </div>
     <div class="quote">“${k.yorum}”<small>BROKER YORUMU · U.T / M.T</small></div>`;
   say(document.querySelector('.ring b'), d.puan, 1000);
+  const hz = document.querySelector('.izle h3 b'); if (hz) say(hz, +hz.dataset.n, 900, 150);
   document.querySelectorAll('.m b [data-n]').forEach(b=>say(b,+b.dataset.n,700,200));
 }
 function kaydir(){ const el=document.getElementById('karne'); window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-12, behavior:reduce?'auto':'smooth'}); }
@@ -340,7 +494,7 @@ function sakla(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(
 function oku(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }
 let CIZILDI = null, OLAY = false;
 function ciz(res){
-  DATA = res.siralama; ort = res.ort; HEDEF = res.hedef || HEDEF; ETIKET = res.etiket;
+  DATA = res.siralama; ort = res.ort; HAFTA = res.hafta; ORTM = res.ortMetrik || {}; HEDEF = res.hedef || HEDEF; ETIKET = res.etiket;
   max = Math.max(1, ...DATA.map(d=>d.puan));
   KARNE = {}; res.karneler.forEach(k=>KARNE[k.id]=k);
   document.getElementById('hafta').textContent = `${res.etiket} ${res.yil}`;
