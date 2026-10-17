@@ -176,7 +176,7 @@ function guncelle(k){ var i=S.liste.map(function(x){return x.token;}).indexOf(k.
 function girisEkrani(mesaj){
   S.pin=''; $('cikis').style.display='none';
   $('icerik').innerHTML =
-    '<div class="kart" style="max-width:420px"><span class="etiket">Broker PIN</span>' +
+    '<div class="kart" style="max-width:420px;margin:0 auto 14px"><span class="etiket">Broker PIN</span>' +
     '<input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="••••">' +
     '<button class="ana" id="gir">Giriş</button>' +
     (mesaj ? '<p class="mini" style="margin-top:10px;color:var(--kirmizi)">'+esc(mesaj)+'</p>' : '') +
