@@ -3,12 +3,12 @@
 (function(){
   /* Brokerlar: Umut, Makbule */
   var IZLER = ['561cc65b3a47c38a75d5af5f24f13559f102d17d37138e114f0787a224d7d22d',
-               '9e5d4c8fe3ad644d4f3fc480fe84c449474fdd5032d4f4674dc3707dc295450c'];
+               'f0cb3c4bf033518764b926abdcfe76d6e27edeca848d256fc20752cb9be2b319'];
   var TUZ = 'dogus-broker-v1', TUR = 150000;
   function hex(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join(''); }
   window.brokerDogrula = function(pin){
     pin = String(pin||'').trim();
-    if (!/^\d{6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve(false);
+    if (!/^\d{4,6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve(false);
     var enc = new TextEncoder();
     return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits'])
       .then(function(k){ return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt:enc.encode(TUZ), iterations:TUR }, k, 256); })

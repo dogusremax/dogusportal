@@ -204,6 +204,8 @@ async function sh(){
 
 function ck(e){
   const v=document.getElementById('pinIn').value;
+  /* 4 haneli broker PIN'i (Makbule): sessizce dene, tutmazsa 6 haneye devam edilir */
+  if(v.length===4){brokerDogrula(v).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');document.getElementById('pin').style.display='none';}});return;}
   if(v.length===6){
     brokerDogrula(v).then(function(ok){
       if(ok){sessionStorage.setItem('perfAuth','ok');document.getElementById('pin').style.display='none';}
