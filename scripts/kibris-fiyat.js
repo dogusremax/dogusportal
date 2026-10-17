@@ -1,5 +1,5 @@
 // Kıbrıs Katalog (Apps Script web app, Drive'daki fiyat listelerinden beslenir) sayfasındaki DATA'yı çekip
-// 360 tur için assets/kibris360/fiyatlar.json yazar. GitHub Actions'ta yarım saatte bir çalışır (kibris-fiyat.yml).
+// 360 tur ve Kıbrıs sunumu (fiyat listesi slaytı) için assets/kibris360/fiyatlar.json yazar. GitHub Actions'ta yarım saatte bir çalışır (kibris-fiyat.yml).
 const fs = require('fs');
 const URL_ = 'https://script.google.com/macros/s/AKfycbwnyN9V87vndjSd2KIohl2XO6h_gn72W8fGSvjHoaCjDETSbrAmOJQH3Dgx0OLrc8dO/exec';
 const OUT = 'assets/kibris360/fiyatlar.json';
@@ -24,6 +24,8 @@ const OUT = 'assets/kibris360/fiyatlar.json';
     guncel: d.sonSenkron,
     projeler: d.projeler.map(p => ({
       proje: p.proje, firma: p.firma, para: p.paraBirimi || '£', minFiyat: sayi(p.minFiyat),
+      // fiyat listesi olmayan (broşür) projeler için sunumdaki tanıtım bilgisi
+      aciklama: p.aciklama || '', uniteMix: p.uniteMix || '', olanaklar: p.olanaklar || '', brosur: p.katalogUrl || '',
       uniteler: (p.uniteler || []).map(u => ({
         tip: u.tip, durum: u.durum, fiyat: sayi(u.fiyat), blok: u.blok || '', kat: u.kat === '' ? null : u.kat,
         no: u.daireNo === '' ? null : u.daireNo, m2: sayi(u.toplamM2), ic: sayi(u.daireM2),
