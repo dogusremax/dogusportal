@@ -131,6 +131,11 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 .app:nth-child(10) { animation-delay: 0.5s; }
 .app:nth-child(11) { animation-delay: 0.55s; }
 @media (min-width: 500px) { .grid { gap: 15px; } .logo-img { height: 72px; } }
+/* Masaüstü: kartlar ekran genişliğine yayılır; telefon düzeni aynı kalır */
+@media (min-width: 760px) {
+  main { max-width: none; padding: 0 40px 60px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+}
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
