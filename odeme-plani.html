@@ -35,8 +35,11 @@ button,input{font:inherit;color:inherit}
 .cv .k{font:700 11.5px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;opacity:.9}
 .cv h2{font:400 42px/1 var(--fd);margin-top:6px}
 .bd{padding:16px 36px 18px}
-.kim{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-bottom:10px}.kim b{color:var(--ink)}
-.kim:empty{display:none}
+.kim{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:12px}.kim b{color:var(--ink)}
+.kim small{display:block;font:700 10px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
+.kim .dn{display:flex;align-items:center;gap:12px;margin-left:auto}.kim .dn img{width:54px;height:54px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid var(--sand2)}
+.kim .dn b{display:block;font-size:15px}.kim .dn span{font-size:12px}
+.bar form{display:flex;gap:6px}.bar form[hidden]{display:none}#bDan img{margin-left:-6px}
 .top{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
 .box{background:var(--sand);border-radius:14px;padding:11px 16px}
 .box small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
@@ -80,7 +83,8 @@ tr.tt td.a{font-size:23px}
 <body>
 <div class="bar" id="bar">
   <input id="iMus" placeholder="Müşteri adı" autocomplete="off">
-  <input id="iDan" placeholder="Danışman adı / tel" autocomplete="off">
+  <button type="button" class="kp" id="bDan">Danışman girişi</button>
+  <form id="fDan" hidden><input id="iPin" type="password" inputmode="numeric" autocomplete="off" placeholder="Danışman şifresi"><button>Giriş</button><button type="button" class="kp" id="bDanX">Vazgeç</button></form>
   <span class="sp"></span>
   <button type="button" id="bPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>PDF indir</button>
   <button type="button" id="bYaz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Yazdır</button>
@@ -90,6 +94,7 @@ tr.tt td.a{font-size:23px}
   <div class="dur" id="dur"></div>
 </div>
 <div class="wrap"><div class="sheet" id="sheet"></div></div>
+<script src="assets/broker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
 (function(){
@@ -105,17 +110,34 @@ tr.tt td.a{font-size:23px}
   function fmt(n){return Math.round(+n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
   function para(n,c){c=c||C;return c==='TL'?fmt(n)+' TL':c+fmt(n);}
   var tarih=new Date(D.t||Date.now()),gun=tarih.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
-  try{$('iMus').value=D.mus||'';$('iDan').value=D.dan||localStorage.getItem('kpaDan')||'';}catch(e){}
+  try{$('iMus').value=D.mus||'';}catch(e){}
+  // Danışman: planı hazırlayanın girişinden (sunumda kibrisKim, burada kayıtlı şifre girişi ya da portal broker girişi); fotoğraf assets/kibris/danisman/<id>.webp
+  var DAN={umut:['Umut Tokkuş','0532 472 41 48','Broker · RE/MAX Doğuş'],makbule:['Makbule Tokkuş','0532 478 13 31','Yurt Dışı Proje Koordinatörü'],
+    gizem:['Gizem Gök','0507 097 74 31'],aysegul:['Ayşegül Alpay','0532 456 79 56'],aysun:['Aysun Yılmaz','0532 363 35 54'],evsen:['Evşen Özazman','0532 518 11 67'],
+    gamze:['Gamze Yetkin','0538 354 41 65'],irem:['İrem Aleyna Tetik','0530 445 44 61'],orhan:['Orhan Özazman','0533 436 19 95'],ozlem:['Özlem Varol','0533 624 85 98']};
+  var API='https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec',KIMLIK={aysegul_alpay:'aysegul',ozlem_varol:'ozlem'};
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k)||'';if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return '';}}
+  var KIM=D.dk||ls('kpaKim')||(/makbule/i.test(ls('dogusBrokerAd'))?'makbule':ls('dogusBrokerAd')?'umut':'');
+  function danis(){var d=DAN[KIM];return d?{id:KIM,ad:d[0],tel:d[1],un:d[2]||'Gayrimenkul Danışmanı · RE/MAX Doğuş'}:null;}
+  function danBtn(){var d=danis();$('bDan').innerHTML=d?'<img src="assets/kibris/danisman/'+d.id+'.webp" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover">'+esc(d.ad):'Danışman girişi';}
+  $('bDan').onclick=function(){$('fDan').hidden=false;$('bDan').hidden=true;$('iPin').value='';$('iPin').focus();};
+  $('bDanX').onclick=function(){$('fDan').hidden=true;$('bDan').hidden=false;};
+  $('fDan').onsubmit=function(e){e.preventDefault();var pin=$('iPin').value.trim();if(!pin)return;dur('Kontrol ediliyor…');
+    (window.brokerKim?brokerKim(pin):Promise.resolve(null)).then(function(b){if(b)return b;
+      return fetch(API,{method:'POST',redirect:'follow',body:JSON.stringify({action:'danismanGiris',pin:pin})}).then(function(r){return r.json();})
+        .then(function(r){if(!r||!r.success)return null;var id=String(r.id||'').toLowerCase();return KIMLIK[id]||id.split('_')[0]||null;}).catch(function(){return null;});})
+    .then(function(id){if(!id||!DAN[id]){dur('Şifre hatalı.');$('iPin').select();return;}KIM=id;ls('kpaKim',id);dur('');$('fDan').hidden=true;$('bDan').hidden=false;danBtn();ciz();});};
 
   function ciz(){
-    var mus=$('iMus').value.trim(),dan=$('iDan').value.trim();
+    var mus=$('iMus').value.trim(),dn=danis();
     var ms=(D.m||[]),msL=ms.filter(function(x){return (x[2]||C)!=='TL';}),msT=ms.filter(function(x){return x[2]==='TL';});
     var msTop=msL.reduce(function(a,x){return a+(+x[1]||0);},0),tlTop=msT.reduce(function(a,x){return a+(+x[1]||0);},0);
     var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş">'+
       '<div class="br"><b>RE/MAX DOĞUŞ</b><span>Kuzey Kıbrıs gayrimenkul danışmanlığı</span></div>'+
       '<div class="rt"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div></div>'+
       '<div class="cv" style="'+(D.img?"background-image:url('"+esc(D.img)+"')":'')+'"><div class="t"><div class="k">'+esc([D.f,D.b].filter(Boolean).join(' · '))+'</div><h2>'+esc(D.p||'')+'</h2></div></div>'+
-      '<div class="bd"><div class="kim">'+(mus?'<span>Sayın <b>'+esc(mus)+'</b></span>':'')+(dan?'<span>Danışman: <b>'+esc(dan)+'</b></span>':'')+'</div>'+
+      '<div class="bd">'+(mus||dn?'<div class="kim"><div class="mus">'+(mus?'<small>Hazırlandı</small>Sayın <b>'+esc(mus)+'</b>':'')+'</div>'+
+        (dn?'<div class="dn"><img src="assets/kibris/danisman/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+' · '+esc(dn.tel)+'</span></div></div>':'')+'</div>':'')+
       '<div class="top"><div class="box"><small>Daire</small><div class="v">'+esc(D.u||'Özel tutar')+(D.ux?'<span>'+esc(D.ux)+'</span>':'')+'</div></div>'+
       '<div class="box fy"><small>Liste fiyatı</small><div class="v">'+para(D.fy)+'</div></div></div>'+
       '<h3>Ödeme takvimi</h3><table>'+(D.r||[]).map(function(x){return '<tr'+(x[3]?' class="on"':'')+'><td>'+esc(x[0])+(x[2]?'<small>'+esc(x[2])+'</small>':'')+'</td><td class="a">'+para(x[1])+'</td></tr>';}).join('')+
@@ -126,19 +148,19 @@ tr.tt td.a{font-size:23px}
       h+='<div class="gt"><div><small>Fiyat + masraflar</small><span>'+(msT.length?'TL kalemler hariç; ':'')+'tahmini toplam maliyet</span></div><b>'+para((+D.fy||0)+msTop)+(msT.length?' + '+para(tlTop,'TL'):'')+'</b></div>';
     }
     h+='<div class="nt">'+(D.n?esc(D.n)+' ':'')+'Bu plan bilgilendirme amaçlıdır; fiyat, müsaitlik ve vergi oranları değişebilir. Kesin tutarlar satış sözleşmesinde belirlenir.</div></div>'+
-      '<div class="ft"><b>RE/MAX Doğuş</b><a href="tel:+902163151515">+90 216 315 15 15</a><a href="mailto:dogusremax@gmail.com">dogusremax@gmail.com</a><a href="https://kibrisburda.com">kibrisburda.com</a></div>';
+      '<div class="ft"><b>RE/MAX Doğuş</b>'+(dn?'<a href="tel:'+dn.tel.replace(/\s/g,'')+'">'+esc(dn.ad)+' · '+esc(dn.tel)+'</a>':'')+'<a href="tel:+902163151515">+90 216 315 15 15</a><a href="mailto:dogusremax@gmail.com">dogusremax@gmail.com</a><a href="https://kibrisburda.com">kibrisburda.com</a></div>';
     $('sheet').innerHTML=h;
   }
-  ciz();
-  ['iMus','iDan'].forEach(function(id){$(id).addEventListener('input',function(){ciz();if(id==='iDan')try{localStorage.setItem('kpaDan',$(id).value);}catch(e){}});});
+  danBtn();ciz();
+  $('iMus').addEventListener('input',ciz);
 
-  function link(){var d=JSON.parse(JSON.stringify(D));d.mus=$('iMus').value.trim();d.dan=$('iDan').value.trim();
+  function link(){var d=JSON.parse(JSON.stringify(D));d.mus=$('iMus').value.trim();d.dk=KIM||'';
     var b=btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     return 'https://dogusportal.com/odeme-plani.html#d='+b;}
   function ozet(){var mus=$('iMus').value.trim(),s=(mus?'Sayın '+mus+',\n\n':'')+(D.p||'')+' ödeme planı ('+gun+')\n'+(D.u?D.u+'\n':'')+'Liste fiyatı: '+para(D.fy)+'\n';
     (D.r||[]).forEach(function(x){if(x[3])s+=x[0]+': '+para(x[1])+'\n';});
     var msL=(D.m||[]).filter(function(x){return x[2]!=='TL';});if(msL.length)s+='Masraflar: '+para(msL.reduce(function(a,x){return a+(+x[1]||0);},0))+'\n';
-    return s+'\nPlanın tamamı (PDF olarak indirilebilir):\n'+link()+'\n\nRE/MAX Doğuş · +90 216 315 15 15';}
+    var dn=danis();return s+'\nPlanın tamamı (PDF olarak indirilebilir):\n'+link()+'\n\n'+(dn?dn.ad+' · '+dn.tel+'\n':'')+'RE/MAX Doğuş · +90 216 315 15 15';}
   function dur(t){var d=$('dur');d.textContent=t||'';d.classList.toggle('on',!!t);}
   function dosyaAdi(){return ('Odeme-Plani-'+(D.p||'')+'-'+($('iMus').value.trim()||'')).replace(/[^\wğüşöçıİĞÜŞÖÇ-]+/g,'-').replace(/-+$/,'')+'.pdf';}
   // sayfanın ortalı görünümü PDF'i kaydırmasın diye A4 genişliğinde bir kopya üzerinden çizilir

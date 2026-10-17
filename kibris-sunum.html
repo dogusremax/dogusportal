@@ -1722,7 +1722,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       return cc(p)?{ad:'Genel plan',pe:35,tk:65,ts:0,ay:0,not:'Tahmini hesap (%35 peşinat + %65 teslime kadar). Resmi ödeme planı için firmanın sözleşmesini esas alın.'}
       :{ad:'Döveç planı',pe:35,tk:45,ts:20,ay:12,not:'Döveç planı: %35 peşinat, anahtar teslimine kadar %45 (teslime kalan aylara bölünür), teslimden sonra %20 (12 ay, faizsiz). Toplam liste fiyatıdır.'+(/courtyard platinum/i.test(p.proje)?' Courtyard Platinum: bloklara göre teslim Ara 2025 / Ara 2026 / May 2027; peşinat ve vadeye göre indirim olabilir.':'')+' Hesap tahminidir; kesin tutarı satış temsilcisiyle teyit edin.'};}
     function hesap(){var sel=$k('kcU');if(!sel)return;var p=P[acik],pl=plan(p),f=sel.value==='m'?(+$k('kcP').value||0):+sel.value;$k('kcPf').hidden=sel.value!=='m';
+      // oranlar elle değiştirilebilir; teslime kadar kısmı kalan yüzde (toplam hep %100)
+      var yz=function(id,v){var e=$k(id);return e&&e.value!==''?Math.max(0,Math.min(100,+e.value||0)):v;};
+      pl=Object.assign({},pl,{pe:yz('kcPe',pl.pe),tl:yz('kcTl',pl.tl||0),ts:yz('kcTs',pl.ts||0)});pl.tk=Math.round((100-pl.pe-pl.tl-pl.ts)*100)/100;
       var ay=Math.max(1,+$k('kcA').value||1),sa=pl.ts?Math.max(1,+$k('kcS').value||1):0;
+      $k('kcPl').textContent='Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra ('+sa+' ay)':'')+'.'+(pl.tk<0?' Oranların toplamı %100\'ü aşıyor.':'');
       if(!$k('kcM').getAttribute('data-kpa')||$k('kcM').innerHTML==='')KPA.masrafKur($k('kcM'),'£',p.proje);KPA.fiyat(f);
       if(!(f>0)){SON=null;$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';return;}
       var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1],['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]];
@@ -1738,9 +1742,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     function katY(k){if(k==null||k==='')return '-';var t=String(k).trim(),m;if(k===0||/^(0|g|gf|ground|zemin)\.?$/i.test(t))return 'zemin';if(/^first$/i.test(t))return '1. kat';if(/^second$/i.test(t))return '2. kat';
       if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
     function kcH(p,l){SON_L=l;var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
-      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
+      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
         '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
-        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
+        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label><label>Peşinat (%)<input id="kcPe" type="number" min="0" max="100" value="'+pl.pe+'"></label>'+
+        '<label>Teslimde (%)<input id="kcTl" type="number" min="0" max="100" value="'+(pl.tl||0)+'"></label><label>Teslim sonrası taksit (%)<input id="kcTs" type="number" min="0" max="100" value="'+(pl.ts||0)+'"></label>'+
+        '<label>Teslim sonrası (ay)<input id="kcS" type="number" min="1" value="'+(pl.ay||12)+'"></label>'+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
         '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3">'+esc(pl.not)+'</div></div>';}
     function ac(i){acik=i;mTip='';KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];

@@ -107,6 +107,7 @@
     dugme: function () { stil(); return '<button type="button" class="kpa-pl" data-kpa-plan><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>Plan hazırla · PDF, e-posta, WhatsApp</button>'; },
     link: function (d) {
       d.t = d.t || new Date().toISOString(); d.c = d.c || C;
+      if (!d.dk) try { d.dk = sessionStorage.getItem('kibrisKim') || ''; } catch (e) {} // sunuma şifreyle giren danışman
       var b = btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
       return KOK + 'odeme-plani.html#d=' + b;
     },
