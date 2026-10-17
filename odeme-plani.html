@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ödeme Planı · RE/MAX Doğuş</title>
+<!-- Kıbrıs kataloğundaki (portal + kibris-sunum) hesaplayıcının hazırladığı müşteri ödeme planı. Veri adresin #d= kısmında (base64 JSON), plan-arac.js üretir. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--navy:#050A30;--red:#DC1C2E;--blue:#1E5BB8;--sand:#F4EFE7;--sand2:#E9E1D4;--ink:#0E1330;--ink2:#4A5070;
+  --fd:"Instrument Serif","PT Serif",Georgia,serif;--fb:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#d9d4ca;color:var(--ink);font:400 14px/1.45 var(--fb);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+button,input{font:inherit;color:inherit}
+.bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;background:var(--navy);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.bar input{height:38px;border-radius:10px;border:0;padding:0 12px;background:rgba(255,255,255,.12);color:#fff;min-width:0;width:170px}
+.bar input::placeholder{color:rgba(255,255,255,.6)}
+.bar .sp{flex:1}
+.bar button{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;border-radius:999px;border:0;background:#fff;color:var(--navy);font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.bar button svg{width:17px;height:17px}
+.bar .wa{background:#25D366;color:#fff}.bar .ml{background:var(--red);color:#fff}.bar .kp{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
+.bar .dur{font-size:13px;opacity:.85;width:100%;display:none}.bar .dur.on{display:block}
+.wrap{padding:22px 12px 40px}
+.sheet{width:794px;max-width:100%;margin:0 auto;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.18);border-radius:6px;overflow:hidden}
+.hd{display:flex;align-items:center;gap:16px;padding:20px 36px 14px;border-bottom:3px solid var(--navy)}
+.hd .lg{height:40px}.hd .bl{height:44px}
+.hd .br{line-height:1.15}.hd .br b{display:block;font:800 15px/1.1 var(--fb);letter-spacing:.5px;color:var(--navy)}.hd .br span{font-size:11.5px;color:var(--ink2)}
+.hd .rt{margin-left:auto;text-align:right}.hd .rt h1{font:400 34px/1 var(--fd);color:var(--navy)}.hd .rt div{font-size:12px;color:var(--ink2);margin-top:4px}
+.cv{position:relative;height:150px;background:var(--navy) center/cover}
+.cv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.82),rgba(5,10,48,.05) 70%)}
+.cv .t{position:absolute;left:36px;right:36px;bottom:16px;z-index:1;color:#fff}
+.cv .k{font:700 11.5px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;opacity:.9}
+.cv h2{font:400 42px/1 var(--fd);margin-top:6px}
+.bd{padding:16px 36px 18px}
+.kim{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-bottom:10px}.kim b{color:var(--ink)}
+.kim:empty{display:none}
+.top{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.box{background:var(--sand);border-radius:14px;padding:11px 16px}
+.box small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
+.box .v{font-size:15px;font-weight:600}.box .v span{display:block;font-weight:400;font-size:12.5px;color:var(--ink2);margin-top:3px}
+.box.fy{background:var(--navy);color:#fff}.box.fy small{color:rgba(255,255,255,.7)}.box.fy .v{font:400 34px/1 var(--fd)}
+h3{font:700 11.5px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin:16px 0 4px;display:flex;align-items:center;gap:10px}
+h3::after{content:"";flex:1;height:1px;background:var(--sand2)}
+table{width:100%;border-collapse:collapse}
+td{padding:5px 4px;border-bottom:1px solid #efe9de;vertical-align:baseline;line-height:1.25}
+td.a{text-align:right;white-space:nowrap;font:400 19px/1 var(--fd);color:var(--navy)}
+td small{display:inline;font-size:11.5px;color:var(--ink2);margin-left:8px}
+tr.on td.a{color:var(--red)}
+tr.tt td{border-bottom:0;border-top:2px solid var(--navy);font-weight:700;padding-top:8px}
+tr.tt td.a{font-size:23px}
+.gt{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:var(--sand);border-radius:14px;padding:11px 18px;border-left:5px solid var(--red)}
+.gt small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.gt span{font-size:12px;color:var(--ink2)}
+.gt b{font:400 32px/1 var(--fd);color:var(--navy);white-space:nowrap}
+.nt{margin-top:12px;font-size:11.5px;line-height:1.5;color:var(--ink2)}
+.ft{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:14px 36px;background:var(--navy);color:#fff;font-size:12px}
+.ft b{font-weight:700;letter-spacing:.4px}.ft a{color:#fff;text-decoration:none}
+.yok{max-width:520px;margin:80px auto;background:#fff;border-radius:16px;padding:28px;text-align:center}
+@media (max-width:700px){
+  td small{display:block;margin:2px 0 0}
+  .bar input{width:calc(50% - 4px)}.bar .sp{display:none}.bar button{flex:1 1 auto;justify-content:center}
+  .wrap{padding:12px 8px 30px}
+  .hd{padding:18px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .bl{height:34px}.hd .rt{width:100%;text-align:left;margin-left:0}.hd .rt h1{font-size:28px}
+  .cv{height:150px}.cv .t{left:18px;right:18px}.cv h2{font-size:34px}
+  .bd{padding:18px 18px 22px}.top{grid-template-columns:1fr}.box.fy .v{font-size:32px}
+  td.a{font-size:18px}.gt b{font-size:26px}.ft{padding:12px 18px}
+}
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff}.bar{display:none}.wrap{padding:0}
+  .sheet{width:210mm;max-width:none;box-shadow:none;border-radius:0;margin:0}
+  .hd{padding:10mm 14mm 4mm}.cv{height:38mm}.cv .t{left:14mm;right:14mm}.bd{padding:5mm 14mm 4mm}.ft{padding:5mm 14mm}
+  tr,.gt,.box{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <input id="iMus" placeholder="Müşteri adı" autocomplete="off">
+  <input id="iDan" placeholder="Danışman adı / tel" autocomplete="off">
+  <span class="sp"></span>
+  <button type="button" id="bPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>PDF indir</button>
+  <button type="button" id="bYaz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Yazdır</button>
+  <button type="button" class="ml" id="bMail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>E-posta</button>
+  <button type="button" class="wa" id="bWa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.4 2.5 1.5.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.2z"/></svg>WhatsApp</button>
+  <button type="button" class="kp" id="bKap" hidden>✕ Kapat</button>
+  <div class="dur" id="dur"></div>
+</div>
+<div class="wrap"><div class="sheet" id="sheet"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function oku(){var m=/[#&]d=([^&]+)/.exec(location.hash);if(!m)return null;
+    try{var b=m[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(escape(atob(b))));}catch(e){return null;}}
+  var D=oku(),gomulu=window.parent!==window;
+  if(gomulu)$('bKap').hidden=false;
+  $('bKap').onclick=function(){try{window.parent.postMessage({kpa:'kapat'},'*');}catch(e){}};
+  if(!D){$('sheet').outerHTML='<div class="yok">Plan bilgisi bulunamadı. Kataloğun hesaplayıcısından “Plan hazırla”ya basarak açın.</div>';$('bar').hidden=true;return;}
+  var C=D.c||'£';
+  function fmt(n){return Math.round(+n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+  function para(n,c){c=c||C;return c==='TL'?fmt(n)+' TL':c+fmt(n);}
+  var tarih=new Date(D.t||Date.now()),gun=tarih.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  try{$('iMus').value=D.mus||'';$('iDan').value=D.dan||localStorage.getItem('kpaDan')||'';}catch(e){}
+
+  function ciz(){
+    var mus=$('iMus').value.trim(),dan=$('iDan').value.trim();
+    var ms=(D.m||[]),msL=ms.filter(function(x){return (x[2]||C)!=='TL';}),msT=ms.filter(function(x){return x[2]==='TL';});
+    var msTop=msL.reduce(function(a,x){return a+(+x[1]||0);},0),tlTop=msT.reduce(function(a,x){return a+(+x[1]||0);},0);
+    var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş"><img class="bl" src="assets/kibris/remax-balon.webp" alt="RE/MAX">'+
+      '<div class="br"><b>RE/MAX DOĞUŞ</b><span>Kuzey Kıbrıs gayrimenkul danışmanlığı</span></div>'+
+      '<div class="rt"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div></div>'+
+      '<div class="cv" style="'+(D.img?"background-image:url('"+esc(D.img)+"')":'')+'"><div class="t"><div class="k">'+esc([D.f,D.b].filter(Boolean).join(' · '))+'</div><h2>'+esc(D.p||'')+'</h2></div></div>'+
+      '<div class="bd"><div class="kim">'+(mus?'<span>Sayın <b>'+esc(mus)+'</b></span>':'')+(dan?'<span>Danışman: <b>'+esc(dan)+'</b></span>':'')+'</div>'+
+      '<div class="top"><div class="box"><small>Daire</small><div class="v">'+esc(D.u||'Özel tutar')+(D.ux?'<span>'+esc(D.ux)+'</span>':'')+'</div></div>'+
+      '<div class="box fy"><small>Liste fiyatı</small><div class="v">'+para(D.fy)+'</div></div></div>'+
+      '<h3>Ödeme takvimi</h3><table>'+(D.r||[]).map(function(x){return '<tr'+(x[3]?' class="on"':'')+'><td>'+esc(x[0])+(x[2]?'<small>'+esc(x[2])+'</small>':'')+'</td><td class="a">'+para(x[1])+'</td></tr>';}).join('')+
+      '<tr class="tt"><td>Toplam (liste fiyatı)</td><td class="a">'+para(D.fy)+'</td></tr></table>';
+    if(ms.length){
+      h+='<h3>Resmi masraflar ve ek giderler</h3><table>'+ms.map(function(x){return '<tr><td>'+esc(x[0])+(x[3]?'<small>'+esc(x[3])+'</small>':'')+'</td><td class="a">'+para(x[1],x[2]||C)+'</td></tr>';}).join('')+
+        '<tr class="tt"><td>Masraf toplamı</td><td class="a">'+(msL.length?para(msTop):'')+(msL.length&&msT.length?' + ':'')+(msT.length?para(tlTop,'TL'):'')+'</td></tr></table>';
+      h+='<div class="gt"><div><small>Fiyat + masraflar</small><span>'+(msT.length?'TL kalemler hariç; ':'')+'tahmini toplam maliyet</span></div><b>'+para((+D.fy||0)+msTop)+(msT.length?' + '+para(tlTop,'TL'):'')+'</b></div>';
+    }
+    h+='<div class="nt">'+(D.n?esc(D.n)+' ':'')+'Bu plan bilgilendirme amaçlıdır; fiyat, müsaitlik ve vergi oranları değişebilir. Kesin tutarlar satış sözleşmesinde belirlenir.</div></div>'+
+      '<div class="ft"><b>RE/MAX Doğuş</b><a href="tel:+902163151515">+90 216 315 15 15</a><a href="mailto:dogusremax@gmail.com">dogusremax@gmail.com</a><a href="https://kibrisburda.com">kibrisburda.com</a></div>';
+    $('sheet').innerHTML=h;
+  }
+  ciz();
+  ['iMus','iDan'].forEach(function(id){$(id).addEventListener('input',function(){ciz();if(id==='iDan')try{localStorage.setItem('kpaDan',$(id).value);}catch(e){}});});
+
+  function link(){var d=JSON.parse(JSON.stringify(D));d.mus=$('iMus').value.trim();d.dan=$('iDan').value.trim();
+    var b=btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    return 'https://dogusportal.com/odeme-plani.html#d='+b;}
+  function ozet(){var mus=$('iMus').value.trim(),s=(mus?'Sayın '+mus+',\n\n':'')+(D.p||'')+' ödeme planı ('+gun+')\n'+(D.u?D.u+'\n':'')+'Liste fiyatı: '+para(D.fy)+'\n';
+    (D.r||[]).forEach(function(x){if(x[3])s+=x[0]+': '+para(x[1])+'\n';});
+    var msL=(D.m||[]).filter(function(x){return x[2]!=='TL';});if(msL.length)s+='Masraflar: '+para(msL.reduce(function(a,x){return a+(+x[1]||0);},0))+'\n';
+    return s+'\nPlanın tamamı (PDF olarak indirilebilir):\n'+link()+'\n\nRE/MAX Doğuş · +90 216 315 15 15';}
+  function dur(t){var d=$('dur');d.textContent=t||'';d.classList.toggle('on',!!t);}
+  function dosyaAdi(){return ('Odeme-Plani-'+(D.p||'')+'-'+($('iMus').value.trim()||'')).replace(/[^\wğüşöçıİĞÜŞÖÇ-]+/g,'-').replace(/-+$/,'')+'.pdf';}
+  // sayfanın ortalı görünümü PDF'i kaydırmasın diye A4 genişliğinde bir kopya üzerinden çizilir
+  function pdf(){if(!window.html2pdf)throw 'yok';
+    var k=$('sheet').cloneNode(true);k.removeAttribute('id');k.style.cssText='width:794px;max-width:none;margin:0;border-radius:0;box-shadow:none';
+    var w=html2pdf().set({margin:0,filename:dosyaAdi(),image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,windowWidth:Math.max(innerWidth,800)},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(k);
+    return w;}
+  function yazdir(){try{window.focus();window.print();}catch(e){window.open(link(),'_blank');}}
+  $('bYaz').onclick=yazdir;
+  $('bPdf').onclick=function(){dur('PDF hazırlanıyor…');
+    try{pdf().save().then(function(){dur('');},function(){dur('');yazdir();});}catch(e){dur('');yazdir();}};
+  // Telefonda dosya paylaşımı varsa PDF'in kendisi gönderilir; yoksa plan bağlantısıyla mesaj açılır
+  function paylas(tip){
+    var dosyaOlur=navigator.canShare&&window.File&&window.html2pdf&&/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+    if(dosyaOlur){dur('PDF hazırlanıyor…');
+      return Promise.resolve().then(function(){return pdf().outputPdf('blob');}).then(function(b){var f=new File([b],dosyaAdi(),{type:'application/pdf'});
+        if(!navigator.canShare({files:[f]}))throw 0;dur('');return navigator.share({files:[f],title:(D.p||'')+' ödeme planı',text:ozet()});})
+        .catch(function(e){dur('');if(e&&e.name==='AbortError')return;ac(tip);});}
+    ac(tip);}
+  function ac(tip){var t=ozet();
+    if(tip==='wa')window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+    else{var a=document.createElement('a');a.href='mailto:?subject='+encodeURIComponent((D.p||'')+' ödeme planı · RE/MAX Doğuş')+'&body='+encodeURIComponent(t);a.target='_blank';document.body.appendChild(a);a.click();a.remove();}}
+  $('bWa').onclick=function(){paylas('wa');};
+  $('bMail').onclick=function(){paylas('mail');};
+})();
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 <head>
 <script src="assets/broker.js"></script>
 <script src="assets/broker-kibris.js" data-gate></script>
+<script src="assets/kibris/plan-arac.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
@@ -613,6 +614,13 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .kc .kms h6{font:700 15px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin:0 0 14px}
 .kc .kms .kout{margin-top:0}.kc .kms .kout b{font-size:32px}
 .kc .kmsl{display:inline-block;margin-top:14px;color:var(--navy);font:600 16px/1 var(--fb);text-decoration:underline;background:none;border:0;cursor:pointer;padding:0}
+.kc .kpa{font-size:18px;color:var(--ink)}
+.kc .kpa input,.kc .kpa select{height:42px;border-radius:10px;padding:0 10px;font:600 18px/1 var(--fb);background:var(--sand);border:1.5px solid var(--sand2);color:var(--ink);text-transform:none;letter-spacing:0}
+.kc .kpa input[type=checkbox]{width:22px;height:22px;padding:0;accent-color:var(--navy)}
+.kc .kpa .kpa-ad input{font-weight:500}.kc .kpa .kpa-r{border-bottom-color:var(--sand2)}
+.kc .kpa .kpa-top b{font:400 30px/1 var(--fd);color:var(--navy)}
+.kc .kpa-pl{font:700 19px/1 var(--fb);padding:18px 20px;margin-top:18px}
+.ksr .kc .kpa{font-size:15px}.ksr .kc .kpa input,.ksr .kc .kpa select{height:36px;font-size:15px}.ksr .kc .kpa .kpa-top b{font-size:24px}.ksr .kc .kpa-pl{font-size:16px;padding:13px 16px;margin-top:12px}
 .kth .kmsb{margin-left:auto;padding:12px 22px;border-radius:999px;background:var(--navy);color:#fff;font:700 17px/1 var(--fb);border:0;cursor:pointer}
 .ktk .kch{position:absolute;left:18px;bottom:16px;z-index:1;padding:8px 14px;border-radius:999px;font:700 15px/1 var(--fb);background:#e3efe6;color:#1b6b3a}
 .ktk .kch.ktn2{background:#fff;color:var(--navy)}
@@ -1659,7 +1667,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       'n':'Kuzey cephe','s':'Güney cephe','e':'Doğu cephe','w':'Batı cephe','nw':'Kuzeybatı cephe','ne':'Kuzeydoğu cephe','sw':'Güneybatı cephe','se':'Güneydoğu cephe'};
     var OZ_K={open:'açık',north:'kuzey',south:'güney',east:'doğu',west:'batı',sea:'deniz',view:'manzara',garden:'bahçe',pool:'havuz',mountain:'dağ',ph:'penthouse',luxus:'lüks',luxury:'lüks',
       front:'ön',back:'arka',side:'yan',corner:'köşe',floor:'kat',ground:'zemin',duplex:'dubleks',left:'sol',right:'sağ',outdoor:'dış',indoor:'iç',street:'cadde',and:'ve','açık':'açık'};
-    var $k=function(id){return document.getElementById(id);},D=null,P=[],TS={},ZS={},acik=-1,mTip='',yuk=false;
+    var SON=null,SON_L=[];var $k=function(id){return document.getElementById(id);},D=null,P=[],TS={},ZS={},acik=-1,mTip='',yuk=false;
     function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
     function low(t){return String(t||'').toLocaleLowerCase('tr');}
     function para(n){return '£'+Math.round(n).toLocaleString('tr-TR');}
@@ -1715,23 +1723,27 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       :{ad:'Döveç planı',pe:35,tk:45,ts:20,ay:12,not:'Döveç planı: %35 peşinat, anahtar teslimine kadar %45 (teslime kalan aylara bölünür), teslimden sonra %20 (12 ay, faizsiz). Toplam liste fiyatıdır.'+(/courtyard platinum/i.test(p.proje)?' Courtyard Platinum: bloklara göre teslim Ara 2025 / Ara 2026 / May 2027; peşinat ve vadeye göre indirim olabilir.':'')+' Hesap tahminidir; kesin tutarı satış temsilcisiyle teyit edin.'};}
     function hesap(){var sel=$k('kcU');if(!sel)return;var p=P[acik],pl=plan(p),f=sel.value==='m'?(+$k('kcP').value||0):+sel.value;$k('kcPf').hidden=sel.value!=='m';
       var ay=Math.max(1,+$k('kcA').value||1),sa=pl.ts?Math.max(1,+$k('kcS').value||1):0;
-      if(!(f>0)){$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';$k('kcM').innerHTML='';return;}
-      $k('kcM').innerHTML=[['Damga vergisi %0,5 · sözleşmede',para(f*0.005)],['Tapu harcı %4 · tek ödeme',para(f*0.04)],['KDV %5 · teslimde',para(f*0.05)],['Yüzdeli masraflar toplamı %9,5',para(f*0.095),1],['Bakanlar Kurulu onay harcı','35.447 TL'],['Trafo bedeli · avukat ücreti','Belirlenecek']]
-        .map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');
+      if(!$k('kcM').getAttribute('data-kpa')||$k('kcM').innerHTML==='')KPA.masrafKur($k('kcM'),'£',p.proje);KPA.fiyat(f);
+      if(!(f>0)){SON=null;$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';return;}
       var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1],['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]];
       if(pl.tl)o.push(['Teslimde (%'+pl.tl+')',para(f*pl.tl/100),1]);
       if(pl.ts)o.push(['Teslimden sonra (%'+pl.ts+' · '+sa+' ay)',para(f*pl.ts/100)],['Aylık taksit, teslimden sonra',para(f*pl.ts/100/sa),1]);
+      var o2=sel.selectedOptions&&sel.selectedOptions[0],u=sel.value!=='m'&&o2&&o2.dataset.k!=null?SON_L[+o2.dataset.k]:null;
+      SON={p:p.proje,f:p.firma,b:bol(p),img:'https://dogusportal.com/'+(/url\('([^']+)'\)/.exec(kapak(p,1))||[0,''])[1].replace(/^https:\/\/dogusportal\.com\//,''),pl:pl.ad,fy:f,c:'£',n:pl.not,
+        u:u?u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' · No '+u.no:''):'',ux:u?[katY(u.kat).replace(/&amp;/g,'&'),u.ic?u.ic+' m² net'+(u.m2?' / '+u.m2+' m² brüt':''):'',ozTr(u.manzara),u.not].filter(Boolean).join(' · '):'',
+        r:[['Peşinat (%'+pl.pe+')',f*pl.pe/100,'sözleşmede',1],['Teslime kadar taksitler (%'+pl.tk+')',f*pl.tk/100,ay+' ay × '+para(f*pl.tk/100/ay)+' aylık',1]]
+          .concat(pl.tl?[['Teslimde (%'+pl.tl+')',f*pl.tl/100,'anahtar tesliminde',1]]:[]).concat(pl.ts?[['Teslimden sonra (%'+pl.ts+')',f*pl.ts/100,sa+' ay × '+para(f*pl.ts/100/sa)+' aylık, faizsiz',1]]:[])};
       o.unshift(['Liste fiyatı',para(f)]);
       $k('kcO').innerHTML=o.map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');}
     function katY(k){if(k==null||k==='')return '-';var t=String(k).trim(),m;if(k===0||/^(0|g|gf|ground|zemin)\.?$/i.test(t))return 'zemin';if(/^first$/i.test(t))return '1. kat';if(/^second$/i.test(t))return '2. kat';
       if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
-    function kcH(p,l){var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
+    function kcH(p,l){SON_L=l;var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
       return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
         '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
         '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
-        '<div class="kms"><h6>Resmi masraflar · yabancı alıcı, ilk taşınmaz</h6><div class="kout" id="kcM"></div><button type="button" class="kmsl" onclick="openMs()">Ayrıntılı masraf hesaplayıcı ve müşteriye PDF ↗</button></div><div class="nt3">'+esc(pl.not)+'</div></div>';}
-    function ac(i){acik=i;mTip='';var p=P[i],m=M[p.proje]||['','','',''];
+        '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3">'+esc(pl.not)+'</div></div>';}
+    function ac(i){acik=i;mTip='';KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];
       var ac='<div class="kac">'+(m[2]?'<button type="button" class="kred" data-tur="'+m[2]+'" data-p="'+m[3]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
         (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.tur360&&!m[2]?'<a href="'+esc(p.tur360)+'" target="_blank" rel="noopener">360° tur ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">'+(/drive\.google/.test(p.klasor)?'Drive klasörü':'Proje sayfası')+' ↗</a>':'')+'</div>';
       var h='<div class="ktp"><div class="kgl" style="'+kapak(p,1)+'"><button type="button" class="kx" id="ktmX">✕</button><div class="ktt"><div class="kk">'+esc(p.firma)+(bol(p)?' · '+esc(bol(p)):'')+'</div><h3>'+esc(p.proje)+'</h3></div></div><div class="kbx" id="ktB">';
@@ -1762,6 +1774,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       if(e.target===$k('ktm')||e.target.closest('#ktmX')){ktKapat();return;}
       var t=e.target.closest('[data-tur]');if(t){e.stopPropagation();openTur(t.dataset.tur,t.dataset.p);return;}
       var f=e.target.closest('.ktyp button');if(f){mTip=f.getAttribute('data-t');tablo();return;}
+      if(e.target.closest('[data-kpa-plan]')){hesap();if(!SON||!(SON.fy>0)){alert('Önce daire seçin ya da tutar yazın.');return;}SON.m=KPA.secili();KPA.planAc(SON);return;}
       var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){var o=s.querySelector('option[data-k="'+r.dataset.k+'"]');if(o)o.selected=true;else s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
     $k('ktm').addEventListener('input',function(e){if(/^kc/.test(e.target.id))hesap();});
     $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();});
