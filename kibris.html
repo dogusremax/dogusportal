@@ -1154,6 +1154,36 @@ html{overflow-x:hidden}
 .kr-r b{white-space:nowrap}
 .kr-c .kr-n{font-size:.8rem;color:var(--muted);margin:0}
 .kr-c .btn{margin-top:auto;align-self:flex-start;padding:10px 16px;font-size:.85rem;background:#003B95;color:#fff}
+/* ===== Golden Visa (oturma izni) ===== */
+.gv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:28px}
+.gv-g{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.gv-g h3{margin:0;font-size:1.15rem;display:flex;align-items:center;gap:10px}
+.gv-g h3 i{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sea-soft);color:var(--gold,var(--sun))}
+.gv-g>p{margin:-6px 0 0;font-size:.82rem;color:var(--muted)}
+.gv-t{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gv-c{border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.gv-c span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.gv-c b{font:800 2.6rem/1 var(--f-head,inherit);letter-spacing:-.03em;margin-top:6px}
+.gv-c b small{font-size:.95rem;font-weight:700;letter-spacing:0;margin-inline-start:6px;color:var(--muted)}
+.gv-c em{font-style:normal;font-size:.84rem;line-height:1.35;color:var(--ok,#3DBB82);margin-top:4px}
+.gv-c.inc em{color:var(--sun)}
+.gv-c.gv-hi{border-color:var(--gold,var(--sun));background:linear-gradient(160deg,rgba(233,194,122,.16),transparent 70%)}
+.gv-c.gv-hi b{color:var(--gold,var(--sun))}
+.gv-fx{font-size:.82rem;color:var(--muted);margin:12px 0 0}
+.gv-pts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin-top:32px}
+.gv-pts h3{margin:0 0 6px;font-size:1.02rem}
+.gv-pts p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.gv-w{margin-top:16px;display:grid;gap:14px}
+@media (min-width:860px){.gv-w{grid-template-columns:auto 1fr;align-items:center}}
+.gv-w .gv-n{display:flex;gap:18px;flex-wrap:wrap}
+.gv-w .gv-n div{display:flex;flex-direction:column}
+.gv-w .gv-n b{font:800 1.6rem/1.1 var(--f-head,inherit);white-space:nowrap}
+.gv-w .gv-n span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.gv-w h3{margin:0 0 6px;font-size:1.02rem}
+.gv-w p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.gv-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:28px}
+.gv-cta p{margin:0;font-weight:600}
+[lang="fa"] .gv-c span,[lang="fa"] .gv-w .gv-n span{letter-spacing:0;text-transform:none}
 .uc-box{margin-top:24px}
 .uc-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
 .uc-f label{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted)}
@@ -1706,6 +1736,14 @@ html{overflow-x:hidden}
   </div>
   <div class="view" data-view="surec" hidden>
     <header class="ph"><span class="ph-n">09</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 11</i></span></header>
+    <section class="gvisa" id="golden-visa">
+      <div class="wrap">
+        <span class="eyebrow" data-gv="e"></span>
+        <h2 data-gv="h"></h2>
+        <p class="lead" data-gv="l"></p>
+        <div id="gv-box"></div>
+      </div>
+    </section>
     <section class="adimlar" id="adimlar">
       <div class="wrap">
         <span class="eyebrow" data-tl="e"></span>
@@ -2890,7 +2928,7 @@ const NV={
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={hakkimizda:"home",maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={hakkimizda:"home",maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","golden-visa":"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -4016,6 +4054,79 @@ addEventListener("keydown",e=>{ if(!lb) return; const rtl=document.documentEleme
 addEventListener("popstate",closeLB);
 hero.addEventListener("click",e=>{ if(e.target.closest("#ab-play")){ cat="all"; renderChips(); renderGrid(); openLB(MIX.indexOf(HERO[hi]),true); return; } cat="all"; renderChips(); renderGrid(); openLB(MIX.indexOf(HERO[hi])); });
 hero.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); hero.click(); } });
+})();
+/* ================= GOLDEN VISA: KKTC oturma izni (İkamet İzinleri ve Vizeler (Değişiklik) Tüzüğü) ================= */
+(()=>{
+const GV={
+tr:{e:"Golden Visa · KKTC",h:"Ev alana <em>10 yıla kadar</em> oturma izni",l:"KKTC'de değişen İkamet İzinleri ve Vizeler Tüzüğü'ne göre, taşınmaz alan yabancıya verilen oturma izninin süresi elinizdeki belgeye ve taşınmazın değerine bağlı.",
+ g:[["Tapu koçanı kendi adınıza","Madde 4 · birden fazla taşınmazın toplam değeri sayılır"],["Pullu ve onaylı satış sözleşmesi","Tapusu henüz çıkmamış alıcılar · Gelir ve Vergi Dairesi'nden"]],
+ ge:"£300.000 ve üzeri",lt:"£300.000 altı",u:"yıl",no:"Gelir şartı yok",inc:"Gelir şartı: aylık 1 asgari ücret",n:["10","5","5","5"],
+ fx:"£300.000 veya Euro, Dolar ya da TL cinsinden karşılığı.",
+ p:[["10 yıl için tapu şart","10 yıllık izin yalnızca tapu koçanı kendi adına olan alıcıya verilir. £300.000 ve üzeri satış sözleşmesi olan alıcı 5 yıl alır."],["Sözleşme pullu olmalı","Satış sözleşmesi Gelir ve Vergi Dairesi'nden pullanmış ve onaylı olmalı; pulsuz sözleşme yeterli değil. Başvuru Bakanlığa yapılır."],["Aile ikamet izni","Aile İkamet İzni artık her defasında en fazla 10 yıl için verilebilir."],["6 yaş altı çocuklar","Tüzük yürürlüğe girdiğinde KKTC'de bulunan 6 yaş altı yabancı çocukların izinsiz kalış dönemine ait para cezaları silinir."]],
+ wn:["Net / ay","Brüt / ay"],w:["61.677 TL","70.893 TL"],wt:"Gelir şartı rakamlarla",wp:"1 asgari ücret, 1 Temmuz 2026'dan bu yana aylık net 61.677 TL, brüt 70.893 TL. Kendi ülkenizden apostilli belge ya da yurt içi veya yurt dışındaki bir bankadan alınan belgeyle kanıtlanır. Asgari ücret yılda iki kez (Ocak ve Temmuz) güncellenir; gelir şartı da buna göre değişir.",
+ src:"Kaynak: KKTC Resmî Gazetesi Ek III, Sayı 932 (s. 4543; satış sözleşmesi hükmü s. 4580), İkamet İzinleri ve Vizeler (Değişiklik) Tüzüğü. Resmî Gazete'de yayımlandığı gün yürürlüğe girer.",
+ warn:"Bu özet bilgilendirme amaçlıdır, hukuki danışmanlık değildir. Bağlayıcı olan Resmî Gazete metnidir; başvurudan önce Muhaceret Dairesi veya avukatla teyit edin.",
+ cq:"Hangi yolun size uygun olduğunu birlikte netleştirelim.",cb:"Danışmana sorun"},
+en:{e:"Golden Visa · North Cyprus",h:"Buy a home, get <em>up to 10 years</em> of residence",l:"Under North Cyprus's amended Residence Permits and Visas Regulation, the permit a foreign buyer receives depends on the document you hold and the value of the property.",
+ g:[["Title deed in your own name","Article 4 · several properties count by their total value"],["Stamped, approved sales contract","Buyers whose title deed is not issued yet · stamped by the Inland Revenue Office"]],
+ ge:"£300,000 or more",lt:"Below £300,000",u:"years",no:"No income requirement",inc:"Income of 1 minimum wage a month",n:["10","5","5","5"],
+ fx:"£300,000 or its equivalent in euros, dollars or Turkish lira.",
+ p:[["A title deed is needed for 10 years","The 10-year permit is only for buyers with a title deed in their own name. A buyer with a sales contract of £300,000 or more gets 5 years."],["The contract must be stamped","The sales contract must be stamped and approved by the Inland Revenue Office; an unstamped contract is not enough. The application is made to the Ministry."],["Family residence permit","A Family Residence Permit can now be granted for up to 10 years each time."],["Children under 6","When the regulation takes effect, fines for unauthorised stay owed by foreign children under 6 who are in North Cyprus are waived."]],
+ wn:["Net / month","Gross / month"],w:["61,677 TL","70,893 TL"],wt:"The income requirement in numbers",wp:"Since 1 July 2026, 1 minimum wage is 61,677 TL net or 70,893 TL gross a month. It is proven with an apostilled document from your home country or a letter from any bank in Cyprus or abroad. The minimum wage is updated twice a year (January and July), so the requirement changes with it.",
+ src:"Source: TRNC Official Gazette, Annex III, No. 932 (p. 4543; the sales contract provision on p. 4580), Residence Permits and Visas (Amendment) Regulation. It takes effect on the day it is published.",
+ warn:"This summary is for information only and is not legal advice. The text published in the Official Gazette is binding; confirm with the Immigration Office or a lawyer before applying.",
+ cq:"Let's work out which route fits you.",cb:"Ask an advisor"},
+ru:{e:"Golden Visa · Северный Кипр",h:"Купите жильё и получите <em>ВНЖ до 10 лет</em>",l:"По изменённому Регламенту о видах на жительство и визах ТРСК срок ВНЖ для иностранного покупателя зависит от документа на руках и стоимости недвижимости.",
+ g:[["Кочан (свидетельство о собственности) на ваше имя","Статья 4 · стоимость нескольких объектов суммируется"],["Договор купли-продажи с печатью и подтверждением","Для покупателей, у которых ещё нет кочана · заверен в Налоговом управлении"]],
+ ge:"£300 000 и выше",lt:"Ниже £300 000",u:"лет",no:"Без требования к доходу",inc:"Доход 1 минимальная зарплата в месяц",n:["10","5","5","5"],
+ fx:"£300 000 или эквивалент в евро, долларах или турецких лирах.",
+ p:[["Для 10 лет нужен кочан","ВНЖ на 10 лет дают только покупателям, у которых кочан оформлен на их имя. Покупатель с договором на £300 000 и выше получает 5 лет."],["Договор должен быть заверен","Договор купли-продажи должен быть проштампован и подтверждён Налоговым управлением; договора без печати недостаточно. Заявление подаётся в Министерство."],["Семейный ВНЖ","Семейный вид на жительство теперь может выдаваться каждый раз на срок до 10 лет."],["Дети до 6 лет","С вступлением регламента в силу штрафы за незаконное пребывание иностранных детей до 6 лет, находящихся в ТРСК, списываются."]],
+ wn:["Нетто / мес.","Брутто / мес."],w:["61 677 TL","70 893 TL"],wt:"Требование к доходу в цифрах",wp:"С 1 июля 2026 года 1 минимальная зарплата составляет 61 677 TL нетто или 70 893 TL брутто в месяц. Доход подтверждается апостилированным документом из вашей страны или справкой из любого банка на Кипре или за рубежом. Минимальная зарплата пересматривается дважды в год (январь и июль), вместе с ней меняется и требование.",
+ src:"Источник: Официальная газета ТРСК, Приложение III, № 932 (с. 4543; положение о договоре — с. 4580), Регламент о видах на жительство и визах (изменения). Вступает в силу в день публикации.",
+ warn:"Это краткий обзор для информации, а не юридическая консультация. Обязательную силу имеет текст в Официальной газете; перед подачей уточните детали в Иммиграционном управлении или у юриста.",
+ cq:"Давайте вместе определим, какой путь подходит вам.",cb:"Спросить консультанта"},
+fa:{e:"Golden Visa · قبرس شمالی",h:"خانه بخرید، <em>تا ۱۰ سال</em> اقامت بگیرید",l:"طبق آیین‌نامهٔ اصلاح‌شدهٔ اجازهٔ اقامت و ویزای قبرس شمالی، مدت اقامتی که به خریدار خارجی داده می‌شود به سندی که در دست دارید و ارزش ملک بستگی دارد.",
+ g:[["سند مالکیت (کوچان) به نام خودتان","مادهٔ ۴ · ارزش چند ملک با هم جمع می‌شود"],["قرارداد فروش مهرشده و تأییدشده","خریدارانی که هنوز سند ندارند · مهرشده در ادارهٔ درآمد و مالیات"]],
+ ge:"£300,000 و بیشتر",lt:"کمتر از £300,000",u:"سال",no:"بدون شرط درآمد",inc:"درآمد ماهانه به اندازهٔ ۱ حداقل دستمزد",n:["۱۰","۵","۵","۵"],
+ fx:"£300,000 یا معادل آن به یورو، دلار یا لیر ترکیه.",
+ p:[["برای ۱۰ سال سند لازم است","اقامت ۱۰ ساله فقط به خریدارانی داده می‌شود که سند مالکیت به نام خودشان است. خریدار با قرارداد فروش £300,000 یا بیشتر ۵ سال اقامت می‌گیرد."],["قرارداد باید مهر شده باشد","قرارداد فروش باید در ادارهٔ درآمد و مالیات مهر و تأیید شده باشد؛ قرارداد بدون مهر کافی نیست. درخواست به وزارتخانه داده می‌شود."],["اقامت خانوادگی","اجازهٔ اقامت خانوادگی اکنون هر بار حداکثر برای ۱۰ سال صادر می‌شود."],["کودکان زیر ۶ سال","با اجرای آیین‌نامه، جریمه‌های اقامت غیرمجاز کودکان خارجی زیر ۶ سال که در قبرس شمالی هستند بخشیده می‌شود."]],
+ wn:["خالص / ماه","ناخالص / ماه"],w:["61,677 TL","70,893 TL"],wt:"شرط درآمد به عدد",wp:"از ۱ ژوئیهٔ ۲۰۲۶، ۱ حداقل دستمزد ماهانه 61,677 لیر خالص یا 70,893 لیر ناخالص است. درآمد با سند آپوستیل‌شده از کشور خودتان یا نامهٔ هر بانکی در قبرس یا خارج از آن اثبات می‌شود. حداقل دستمزد سالی دو بار (ژانویه و ژوئیه) به‌روز می‌شود و شرط درآمد هم با آن تغییر می‌کند.",
+ src:"منبع: روزنامهٔ رسمی قبرس شمالی، پیوست III، شمارهٔ 932 (ص. 4543؛ بند قرارداد فروش ص. 4580)، آیین‌نامهٔ اجازهٔ اقامت و ویزا (اصلاحیه). از روز انتشار اجرا می‌شود.",
+ warn:"این خلاصه فقط برای اطلاع است و مشاورهٔ حقوقی نیست. متن منتشرشده در روزنامهٔ رسمی ملاک است؛ پیش از درخواست با ادارهٔ مهاجرت یا وکیل تأیید کنید.",
+ cq:"بیایید با هم ببینیم کدام مسیر برای شما مناسب است.",cb:"از مشاور بپرسید"},
+de:{e:"Golden Visa · Nordzypern",h:"Immobilie kaufen, <em>bis zu 10 Jahre</em> Aufenthalt",l:"Nach der geänderten Verordnung über Aufenthaltsgenehmigungen und Visa der TRNC hängt die Dauer der Genehmigung für ausländische Käufer vom Dokument ab, das Sie besitzen, und vom Wert der Immobilie.",
+ g:[["Grundbuchtitel (Koçan) auf Ihren Namen","Artikel 4 · mehrere Immobilien zählen mit ihrem Gesamtwert"],["Gestempelter, bestätigter Kaufvertrag","Käufer ohne ausgestellten Titel · vom Finanzamt gestempelt"]],
+ ge:"£300.000 oder mehr",lt:"Unter £300.000",u:"Jahre",no:"Kein Einkommensnachweis",inc:"Einkommen von 1 Mindestlohn pro Monat",n:["10","5","5","5"],
+ fx:"£300.000 oder der Gegenwert in Euro, Dollar oder türkischer Lira.",
+ p:[["Für 10 Jahre braucht es den Titel","Die 10-jährige Genehmigung gibt es nur mit einem Grundbuchtitel auf den eigenen Namen. Wer einen Kaufvertrag über £300.000 oder mehr hat, erhält 5 Jahre."],["Der Vertrag muss gestempelt sein","Der Kaufvertrag muss vom Finanzamt (Gelir ve Vergi Dairesi) gestempelt und bestätigt sein; ein ungestempelter Vertrag reicht nicht. Der Antrag geht an das Ministerium."],["Familienaufenthalt","Die Familienaufenthaltsgenehmigung kann jetzt jeweils für bis zu 10 Jahre erteilt werden."],["Kinder unter 6","Mit Inkrafttreten entfallen Bußgelder für unerlaubten Aufenthalt ausländischer Kinder unter 6 Jahren, die sich in Nordzypern aufhalten."]],
+ wn:["Netto / Monat","Brutto / Monat"],w:["61.677 TL","70.893 TL"],wt:"Der Einkommensnachweis in Zahlen",wp:"Seit 1. Juli 2026 beträgt 1 Mindestlohn monatlich 61.677 TL netto bzw. 70.893 TL brutto. Nachgewiesen wird er mit einem apostillierten Dokument aus Ihrem Heimatland oder einer Bescheinigung einer beliebigen Bank im In- oder Ausland. Der Mindestlohn wird zweimal jährlich (Januar und Juli) angepasst, der Nachweis ändert sich entsprechend.",
+ src:"Quelle: Amtsblatt der TRNC, Anhang III, Nr. 932 (S. 4543; Bestimmung zum Kaufvertrag S. 4580), Verordnung über Aufenthaltsgenehmigungen und Visa (Änderung). Sie tritt am Tag der Veröffentlichung in Kraft.",
+ warn:"Diese Übersicht dient nur der Information und ist keine Rechtsberatung. Verbindlich ist der im Amtsblatt veröffentlichte Text; klären Sie Details vor dem Antrag mit der Einwanderungsbehörde oder einem Anwalt.",
+ cq:"Finden wir gemeinsam heraus, welcher Weg zu Ihnen passt.",cb:"Berater fragen"},
+pl:{e:"Golden Visa · Cypr Północny",h:"Kup dom i zyskaj <em>do 10 lat</em> pobytu",l:"Zgodnie ze zmienionym Rozporządzeniem o zezwoleniach na pobyt i wizach TRNC okres zezwolenia dla zagranicznego nabywcy zależy od posiadanego dokumentu i wartości nieruchomości.",
+ g:[["Akt własności (koçan) na Twoje nazwisko","Art. 4 · wartość kilku nieruchomości się sumuje"],["Ostemplowana, zatwierdzona umowa sprzedaży","Nabywcy bez wydanego aktu · ostemplowana w Urzędzie Skarbowym"]],
+ ge:"£300 000 i więcej",lt:"Poniżej £300 000",u:"lat",no:"Bez wymogu dochodu",inc:"Dochód 1 płacy minimalnej miesięcznie",n:["10","5","5","5"],
+ fx:"£300 000 lub równowartość w euro, dolarach lub lirach tureckich.",
+ p:[["Na 10 lat potrzebny jest akt","Zezwolenie na 10 lat dostają tylko nabywcy z aktem własności na własne nazwisko. Nabywca z umową sprzedaży na £300 000 lub więcej dostaje 5 lat."],["Umowa musi być ostemplowana","Umowa sprzedaży musi być ostemplowana i zatwierdzona przez Urząd Skarbowy; umowa bez stempla nie wystarczy. Wniosek składa się do Ministerstwa."],["Rodzinne zezwolenie na pobyt","Rodzinne zezwolenie na pobyt może być teraz wydawane za każdym razem na maksymalnie 10 lat."],["Dzieci poniżej 6 lat","Z wejściem przepisów w życie kary za nielegalny pobyt cudzoziemskich dzieci poniżej 6 lat przebywających na Cyprze Północnym zostają umorzone."]],
+ wn:["Netto / mies.","Brutto / mies."],w:["61 677 TL","70 893 TL"],wt:"Wymóg dochodu w liczbach",wp:"Od 1 lipca 2026 r. 1 płaca minimalna wynosi 61 677 TL netto lub 70 893 TL brutto miesięcznie. Dochód potwierdza się dokumentem z apostille z kraju pochodzenia lub zaświadczeniem z dowolnego banku na Cyprze lub za granicą. Płaca minimalna jest aktualizowana dwa razy w roku (styczeń i lipiec), więc wymóg zmienia się razem z nią.",
+ src:"Źródło: Dziennik Urzędowy TRNC, Załącznik III, nr 932 (s. 4543; przepis o umowie sprzedaży s. 4580), Rozporządzenie o zezwoleniach na pobyt i wizach (zmiana). Wchodzi w życie w dniu publikacji.",
+ warn:"To podsumowanie ma charakter informacyjny i nie jest poradą prawną. Wiążący jest tekst opublikowany w Dzienniku Urzędowym; przed złożeniem wniosku potwierdź szczegóły w Urzędzie Imigracyjnym lub u prawnika.",
+ cq:"Ustalmy razem, która ścieżka jest dla Ciebie.",cb:"Zapytaj doradcę"}
+};
+const root=document.documentElement, $$=id=>document.getElementById(id);
+const IC=['<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>','<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><circle cx="12" cy="15" r="2.5"/></svg>'];
+function gv(){
+  const t=GV[root.lang]||GV.en, box=$$("gv-box"); if(!box) return;
+  document.querySelectorAll("[data-gv]").forEach(el=>{ const k=el.getAttribute("data-gv"); if(t[k]!=null) el.innerHTML=t[k]; });
+  const tile=(i,cls)=>`<div class="gv-c${cls}"><span>${i%2?t.lt:t.ge}</span><b>${t.n[i]}<small>${t.u}</small></b><em>${i===3?t.inc:t.no}</em></div>`;
+  box.innerHTML=`<div class="gv-grid">${t.g.map(([h,s],g)=>`<article class="gv-g"><h3><i>${IC[g]}</i>${h}</h3><p>${s}</p><div class="gv-t">${tile(g*2,g?"":" gv-hi")}${tile(g*2+1,g?" inc":"")}</div></article>`).join("")}</div>
+   <p class="gv-fx">${t.fx}</p>
+   <div class="gv-pts">${t.p.map(([h,p])=>`<div><h3>${h}</h3><p>${p}</p></div>`).join("")}</div>
+   <div class="gv-w panel"><div class="gv-n">${t.w.map((v,i)=>`<div><b dir="ltr">${v}</b><span>${t.wn[i]}</span></div>`).join("")}</div><div><h3>${t.wt}</h3><p>${t.wp}</p></div></div>
+   <div class="gv-cta"><p>${t.cq}</p><a class="btn btn-sun" href="#/form" data-go="form" data-ev="golden_visa_cta">${t.cb} →</a></div>
+   <p class="note">${t.src}</p><p class="note">${t.warn}</p>`;
+}
+gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
 </script>
 </body>
