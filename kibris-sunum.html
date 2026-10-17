@@ -606,6 +606,12 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .ktk .kcv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.55),transparent 55%)}
 .ktk .kfb{position:absolute;top:16px;right:16px;z-index:1;padding:8px 14px;border-radius:999px;font:700 14px/1 var(--fb);letter-spacing:.5px;color:#fff;background:rgba(5,10,48,.85)}
 .ktk .kfb.kcc{background:rgba(220,28,46,.92)}
+.ktk .kfb.knl{background:rgba(43,58,103,.92)}.ktk .kfb.kny{background:rgba(176,112,32,.95)}
+.kc .kms{margin-top:22px;padding-top:20px;border-top:1px dashed rgba(255,255,255,.25)}
+.kc .kms h6{font:700 15px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;opacity:.85;margin:0 0 14px}
+.kc .kms .kout{margin-top:0}.kc .kms .kout b{font-size:32px}
+.kc .kmsl{display:inline-block;margin-top:14px;color:#fff;opacity:.8;font:600 16px/1 var(--fb);text-decoration:underline;background:none;border:0;cursor:pointer;padding:0}
+.kth .kmsb{margin-left:auto;padding:12px 22px;border-radius:999px;background:var(--navy);color:#fff;font:700 17px/1 var(--fb);border:0;cursor:pointer}
 .ktk .kch{position:absolute;left:18px;bottom:16px;z-index:1;padding:8px 14px;border-radius:999px;font:700 15px/1 var(--fb);background:#e3efe6;color:#1b6b3a}
 .ktk .kch.ktn2{background:#fff;color:var(--navy)}
 .ktk .kin{padding:24px 26px 26px;display:flex;flex-direction:column;gap:8px;flex:1;width:100%}
@@ -1512,7 +1518,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   <div class="kt" id="kt">
     <div class="ey">Kıbrıs Katalog · RE/MAX Doğuş</div>
     <h2>Doğuş Kuzey Kıbrıs <em>projeleri.</em></h2>
-    <div class="kth"><span class="ktl"><i></i>Canlı · Drive</span><span>Döveç'ten son güncelleme: <b id="ktSync">—</b></span><span>Döveç İnşaat ve Cyprus Constructions projeleri</span></div>
+    <div class="kth"><span class="ktl"><i></i>Canlı · Drive</span><span>Döveç'ten son güncelleme: <b id="ktSync">—</b></span><span>Döveç, Cyprus Constructions, Northernland ve Noyanlar projeleri</span><button type="button" class="kmsb" id="ktMs">Masraf hesaplayıcı</button></div>
     <div class="kts" id="ktS"></div>
     <form class="ktc" id="ktC" onsubmit="return false" autocomplete="off">
       <label class="kq"><span>Proje veya tip ara</span><input id="ktQ" type="text" placeholder="Örn. Querencia, 2+1, penthouse…"><button type="button" class="qx" id="ktQx" hidden>✕</button><div class="kto" id="ktO" hidden></div></label>
@@ -1524,7 +1530,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       <button type="button" class="kclr" id="ktClr">Temizle</button>
     </form>
     <div class="ktg" id="ktG"><div class="ktn">Katalog yükleniyor…</div></div>
-    <div class="ktf">Döveç fiyatları Drive'daki Excel listelerinden yarım saatte bir otomatik okunur. Cyprus Constructions projelerinde fiyat listesi PDF'ten alınır ya da tanıtım bilgisi gösterilir.<br>Fiyatlara KDV ve resmi masraflar dahil değildir; müsaitliği satıştan önce firmadan teyit edin.</div>
+    <div class="ktf">Döveç fiyatları Drive'daki Excel listelerinden yarım saatte bir otomatik okunur. Northernland fiyatları da Drive'daki listelerden okunur. Cyprus Constructions projelerinde fiyat listesi PDF'ten alınır ya da tanıtım bilgisi gösterilir; Noyanlar projeleri firmanın sitesinden tanıtım olarak eklendi.<br>Fiyatlara KDV ve resmi masraflar dahil değildir; müsaitliği satıştan önce firmadan teyit edin.</div>
   </div>
   <div class="ktm" id="ktm"></div>
 </div>
@@ -1538,6 +1544,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   <div id="prog"></div>
   <button class="b" id="b360" title="360° turlar (V)"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg><span class="lbl">360° VR</span></button>
   <button class="b" id="bFy" title="Kıbrıs Katalog: projeler ve güncel fiyatlar (L)"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><span class="lbl">Kıbrıs Katalog</span></button>
+  <button class="b" id="bMs" title="Masraf hesaplayıcı: tapu, damga, KDV (M)"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h8"/></svg><span class="lbl">Masraf</span></button>
   <button class="b" id="bOv" title="Genel bakış (G)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="lbl">Slaytlar</span></button>
   <button class="b" id="bRh" title="Konuşmacı rehberi (R)"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h6"/></svg><span class="lbl">Rehber</span></button>
   <button class="b" id="bSun" title="Sunucu ekranı: notlar ayrı pencerede (S)"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="13" height="10" rx="1"/><rect x="17" y="8" width="5" height="10" rx="1"/><path d="M6 18h5"/></svg><span class="lbl">Sunucu</span></button>
@@ -1619,6 +1626,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   }
   function closeTur(){$('tur').classList.remove('on');$('turF').src='about:blank';document.body.classList.remove('turon');var hv=$('hv');if(hv&&cur===0){var p=hv.play();if(p&&p.catch)p.catch(function(){});}}
   $('turX').onclick=closeTur;
+  // masraf hesaplayıcı (portaldaki sayfa, 360 turun katmanında açılır)
+  window.openMs=function(){$('turF').src='masraf-hesaplayici.html';$('tur').classList.add('on');document.body.classList.add('turon');var hv=$('hv');if(hv)hv.pause();};
+  $('bMs').onclick=openMs;
   $('b360').onclick=function(){openTur('kibris');};
   [].forEach.call(document.querySelectorAll('[data-tur]'),function(el){el.addEventListener('click',function(e){e.stopPropagation();openTur(el.dataset.tur,el.dataset.p);});});
 
@@ -1645,23 +1655,27 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       return String(v).replace(/[A-Za-zçğıöşüÇĞİÖŞÜ]+/g,function(w){return OZ_K[low(w)]||low(w);}).replace(/^./,function(c){return c.toLocaleUpperCase('tr');});}
     function brosur(p){return !p.uniteler.length;}
     function cc(p){return !/döveç/i.test(p.firma);}
+    function fk(p){return /döveç/i.test(p.firma)?'':/northern/i.test(p.firma)?'knl':/noyan/i.test(p.firma)?'kny':'kcc';}
+    function fad(p){return /döveç/i.test(p.firma)?'Döveç':p.firma;}
+    function bol(p){return (M[p.proje]||[])[0]||p.bolge||'';}
+    function yerel(u){return String(u||'').replace(/^https:\/\/dogusportal\.com\//,'');}
     function minF(p,l){l=l||p.uniteler;var f=l.map(function(u){return u.fiyat;}).filter(Boolean);return f.length?Math.min.apply(null,f):((M[p.proje]||[])[4]||0);}
     function musaitMi(u){return !/sat[ıi]ld|sold|rezerv/i.test(u.durum||'');}
     function q(){return low($k('ktQ').value.trim());}
     function eslesen(p){var s=q(),mx=+$k('ktM').value||Infinity,t=Object.keys(TS),z=Object.keys(ZS);
-      var ad=!s||low(p.proje+' '+(M[p.proje]||[''])[0]).indexOf(s)>=0;
+      var ad=!s||low(p.proje+' '+bol(p)+' '+p.firma).indexOf(s)>=0;
       return p.uniteler.filter(function(u){return (!t.length||TS[u.tip])&&(!z.length||(u.manzara&&ZS[u.manzara]))&&u.fiyat<=mx&&
         (ad||low(u.tip+' '+u.blok+' '+u.manzara+' '+ozTr(u.manzara)).indexOf(s)>=0);});}
     function brosurGorunur(p){var s=q();if(Object.keys(TS).length||Object.keys(ZS).length)return false;var mx=+$k('ktM').value;if(mx&&minF(p)>mx)return false;
-      return !s||low(p.proje+' '+(M[p.proje]||[''])[0]).indexOf(s)>=0;}
+      return !s||low(p.proje+' '+bol(p)+' '+p.firma).indexOf(s)>=0;}
     function hepsi(alan){var o={};P.forEach(function(p){p.uniteler.forEach(function(u){if(u[alan])o[u[alan]]=1;});});return Object.keys(o).sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});}
     function ms(id,alan,sec,ad){var v=hepsi(alan);$k(id+'p').innerHTML=v.map(function(x){return '<label><input type="checkbox" data-v="'+esc(x)+'"'+(sec[x]?' checked':'')+'><span>'+esc(alan==='manzara'?ozTr(x):x)+'</span></label>';}).join('')+'<div class="kft"><button type="button">Seçimi temizle</button></div>';
       var n=Object.keys(sec).length;$k(id+'b').textContent=(n?n+' seçili':'Tümü')+' ▾';}
     function msKur(){ms('ktT','tip',TS);ms('ktZ','manzara',ZS);}
     function stats(){var d=P.filter(function(p){return !brosur(p);}),u=d.reduce(function(a,p){return a+p.uniteler.length;},0),m=d.reduce(function(a,p){return a+p.uniteler.filter(musaitMi).length;},0);
       $k('ktS').innerHTML=[[d.length,'Fiyatlı proje'],[u,'Ünite'],[m,'Müsait ünite'],[P.length-d.length,'Tanıtım projesi']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
-    function kapak(p){var m=M[p.proje];return m&&m[1]?"background-image:url('assets/kibris/sunum/"+m[1]+".webp')":'';}
-    function bd(p){return '<span class="kfb'+(cc(p)?' kcc':'')+'">'+(cc(p)?'Cyprus Constructions':'Döveç')+'</span>';}
+    function kapak(p){var m=M[p.proje];return m&&m[1]?"background-image:url('assets/kibris/sunum/"+m[1]+".webp')":p.gorsel?"background-image:url('"+esc(yerel(p.gorsel))+"')":'';}
+    function bd(p){return '<span class="kfb'+(fk(p)?' '+fk(p):'')+'">'+esc(fad(p))+'</span>';}
     function ciz(){
       var so=$k('ktSo').value,ff=$k('ktF').value;$k('ktQx').hidden=!$k('ktQ').value;
       var fp=P.map(function(p,i){p._i=i;return p;}).filter(function(p){return !ff||p.firma===ff;});
@@ -1671,36 +1685,50 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       br.sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
       var r=pr.concat(br);
       $k('ktG').innerHTML=r.length?r.map(function(p){var m=M[p.proje]||[''];
-        if(brosur(p))return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch ktn2">Tanıtım</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc([m[0],p.uniteMix].filter(Boolean).join(' · ')||'Kuzey Kıbrıs')+'</div>'+
+        if(brosur(p))return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch ktn2">Tanıtım</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc([bol(p),p.uniteMix].filter(Boolean).join(' · ')||'Kuzey Kıbrıs')+'</div>'+
           '<div class="kpr"><div><small>Başlangıç</small><b>'+(minF(p)?para(minF(p)):'—')+'</b></div><i>Bilgi ve katalog →</i></div></div></button>';
-        return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch">Satışta</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc(m[0])+'</div>'+
+        return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch">Satışta</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc(bol(p))+'</div>'+
           '<div class="kpr"><div><small>Başlangıç</small><b>'+para(minF(p,p._e))+'</b></div><i>'+p._e.length+' ünite</i></div></div></button>';}).join('')
         :'<div class="ktn">Bu süzgeçlere uygun proje bulunamadı.</div>';
     }
     function oneri(goster){var o=$k('ktO');if(!goster){o.hidden=true;return;}var s=q(),ff=$k('ktF').value,l=P.filter(function(p){return !ff||p.firma===ff;});
       var tam=l.some(function(p){return low(p.proje)===s;});l=l.filter(function(p){return !s||tam||low(p.proje).indexOf(s)>=0;}).sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
-      o.innerHTML=l.length?l.map(function(p){return '<button type="button" data-ad="'+esc(p.proje)+'"><span>'+esc(p.proje)+'</span><small>'+(cc(p)?'Cyprus Constructions':'Döveç')+'</small></button>';}).join(''):'<button type="button" disabled><small>Eşleşen proje yok</small></button>';o.hidden=false;}
+      o.innerHTML=l.length?l.map(function(p){return '<button type="button" data-ad="'+esc(p.proje)+'"><span>'+esc(p.proje)+'</span><small>'+esc(fad(p))+'</small></button>';}).join(''):'<button type="button" disabled><small>Eşleşen proje yok</small></button>';o.hidden=false;}
     // ödeme planı (katalogdaki gibi): Döveç %35 peşinat + teslime kadar %45 + teslimden sonra %20 (12 ay); diğerleri %35 + %65
-    function plan(p){return cc(p)?{ad:'Genel plan',pe:35,tk:65,ts:0,ay:0,not:'Tahmini hesap (%35 peşinat + %65 teslime kadar). Resmi ödeme planı için firmanın sözleşmesini esas alın.'}
+    function plan(p){
+      if(/noyan/i.test(p.firma))return {ad:'Noyanlar planı',pe:35,tk:50,tl:15,ts:0,ay:0,kalan:48,not:'Noyanlar standart planı (firmanın sitesi): %35 peşinat, %50 48 aya kadar taksit, teslimde %15. Aylık taksit £2.500\'den başlar; projeye göre değişebilir, kesin planı satış temsilcisiyle teyit edin.'};
+      if(/northern/i.test(p.firma))return {ad:'Northernland planı',pe:35,tk:65,ts:0,ay:0,not:'Northernland resmi ödeme planı paylaşmadığı için genel tahmin: %35 peşinat + teslime kadar %65 eşit taksit. Kesin plan için satış temsilcisi ya da sözleşme esas alınır.'};
+      return cc(p)?{ad:'Genel plan',pe:35,tk:65,ts:0,ay:0,not:'Tahmini hesap (%35 peşinat + %65 teslime kadar). Resmi ödeme planı için firmanın sözleşmesini esas alın.'}
       :{ad:'Döveç planı',pe:35,tk:45,ts:20,ay:12,not:'Döveç planı: %35 peşinat, anahtar teslimine kadar %45 (teslime kalan aylara bölünür), teslimden sonra %20 (12 ay, faizsiz). Toplam liste fiyatıdır.'+(/courtyard platinum/i.test(p.proje)?' Courtyard Platinum: bloklara göre teslim Ara 2025 / Ara 2026 / May 2027; peşinat ve vadeye göre indirim olabilir.':'')+' Hesap tahminidir; kesin tutarı satış temsilcisiyle teyit edin.'};}
     function hesap(){var sel=$k('kcU');if(!sel)return;var p=P[acik],pl=plan(p),f=sel.value==='m'?(+$k('kcP').value||0):+sel.value;$k('kcPf').hidden=sel.value!=='m';
       var ay=Math.max(1,+$k('kcA').value||1),sa=pl.ts?Math.max(1,+$k('kcS').value||1):0;
-      if(!(f>0)){$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';return;}
+      if(!(f>0)){$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';$k('kcM').innerHTML='';return;}
+      $k('kcM').innerHTML=[['Damga vergisi %0,5 · sözleşmede',para(f*0.005)],['Tapu harcı %4 · tek ödeme',para(f*0.04)],['KDV %5 · teslimde',para(f*0.05)],['Yüzdeli masraflar toplamı %9,5',para(f*0.095),1],['Bakanlar Kurulu onay harcı','35.447 TL'],['Trafo bedeli · avukat ücreti','Belirlenecek']]
+        .map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');
       var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1],['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]];
+      if(pl.tl)o.push(['Teslimde (%'+pl.tl+')',para(f*pl.tl/100),1]);
       if(pl.ts)o.push(['Teslimden sonra (%'+pl.ts+' · '+sa+' ay)',para(f*pl.ts/100)],['Aylık taksit, teslimden sonra',para(f*pl.ts/100/sa),1]);
       o.unshift(['Liste fiyatı',para(f)]);
       $k('kcO').innerHTML=o.map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');}
+    function katY(k){if(k==null||k==='')return '-';var t=String(k).trim(),m;if(k===0||/^(0|g|gf|ground|zemin)\.?$/i.test(t))return 'zemin';if(/^first$/i.test(t))return '1. kat';if(/^second$/i.test(t))return '2. kat';
+      if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
+    function kcH(p,l){var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
+      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
+        '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u){return '<option value="'+u.fiyat+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
+        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
+        (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
+        '<div class="kms"><h6>Resmi masraflar · yabancı alıcı, ilk taşınmaz</h6><div class="kout" id="kcM"></div><button type="button" class="kmsl" onclick="openMs()">Ayrıntılı masraf hesaplayıcı ve müşteriye PDF ↗</button></div><div class="nt3">'+esc(pl.not)+'</div></div>';}
     function ac(i){acik=i;mTip='';var p=P[i],m=M[p.proje]||['','','',''];
       var ac='<div class="kac">'+(m[2]?'<button type="button" class="kred" data-tur="'+m[2]+'" data-p="'+m[3]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
-        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">Drive klasörü ↗</a>':'')+'</div>';
-      var h='<div class="ktp"><div class="kgl" style="'+kapak(p)+'"><button type="button" class="kx" id="ktmX">✕</button><div class="ktt"><div class="kk">'+esc(p.firma)+(m[0]?' · '+esc(m[0]):'')+'</div><h3>'+esc(p.proje)+'</h3></div></div><div class="kbx" id="ktB">';
+        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.tur360&&!m[2]?'<a href="'+esc(p.tur360)+'" target="_blank" rel="noopener">360° tur ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">'+(/drive\.google/.test(p.klasor)?'Drive klasörü':'Proje sayfası')+' ↗</a>':'')+'</div>';
+      var h='<div class="ktp"><div class="kgl" style="'+kapak(p)+'"><button type="button" class="kx" id="ktmX">✕</button><div class="ktt"><div class="kk">'+esc(p.firma)+(bol(p)?' · '+esc(bol(p)):'')+'</div><h3>'+esc(p.proje)+'</h3></div></div><div class="kbx" id="ktB">';
       if(brosur(p)){
         var ds=p.aciklama&&!/detaylar, görseller/i.test(p.aciklama)?p.aciklama:'';
-        h+='<div class="kmt">'+esc(p.firma)+' · Kuzey Kıbrıs'+(minF(p)?' · '+para(minF(p))+'\'den başlayan fiyatlar (firmanın Temmuz 2025 sunumu)':'')+'</div>'+(ds?'<p class="kds">'+esc(ds)+'</p>':'')+
+        h+='<div class="kmt">'+esc(p.firma)+' · '+esc(bol(p)||'Kuzey Kıbrıs')+(minF(p)?' · '+para(minF(p))+'\'den başlayan fiyatlar (firmanın Temmuz 2025 sunumu)':'')+'</div>'+(ds?'<p class="kds">'+esc(ds)+'</p>':'')+
           (p.uniteMix?'<div class="kv"><b>Ünite dağılımı</b><div>'+p.uniteMix.split('·').map(function(x){return '<span>'+esc(x.trim())+'</span>';}).join('')+'</div></div>':'')+
           (p.olanaklar?'<div class="kv"><b>Olanaklar</b><div>'+p.olanaklar.split('·').map(function(x){return '<span>'+esc(x.trim())+'</span>';}).join('')+'</div></div>':'')+
-          '<div class="nt2">Bu projede dijital fiyat listesi paylaşılmadığı için ünite ve fiyat tablosu yok. Güncel fiyat için katalog PDF\'ini ya da Drive klasörünü açın.</div>'+ac;
-        h+='</div></div>';$k('ktm').innerHTML=h;
+          '<div class="nt2">Bu projede dijital fiyat listesi paylaşılmadığı için ünite ve fiyat tablosu yok. Güncel fiyat için katalog PDF\'ini, proje sayfasını ya da Drive klasörünü açın; aşağıya tutar yazarak ödeme planını ve masrafları hesaplayabilirsiniz.</div>'+kcH(p,[])+ac;
+        h+='</div></div>';$k('ktm').innerHTML=h;hesap();
       }else{$k('ktm').innerHTML=h+'</div></div>';tablo(ac);}
       $k('ktm').classList.add('on');$k('fyo').classList.add('det');$k('ktm').scrollTop=0;}
     function tablo(ac){var p=P[acik],es=eslesen(p);if(!es.length)es=p.uniteler;
@@ -1711,12 +1739,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
         (tl.length>1?'<div class="ktyp"><button type="button" data-t="" class="'+(mTip?'':'on')+'">Tümü · '+es.length+'</button>'+tl.map(function(t){return '<button type="button" data-t="'+esc(t)+'" class="'+(t===mTip?'on':'')+'">'+esc(t)+' · '+es.filter(function(u){return u.tip===t;}).length+'</button>';}).join('')+'</div>':'')+
         '<div class="ktw"><table><thead><tr><th>Tip</th><th>Konum</th><th>Net / brüt m²</th><th>Fiyat</th><th>Durum</th></tr></thead><tbody>'+
         l.map(function(u,k){var d=u.durum||'Müsait',c=/sat/i.test(d)?' kso':/rezerv/i.test(d)?' kred':'',alt=[ozTr(u.manzara),u.not].filter(Boolean).join(' · ');
-          return '<tr data-f="'+u.fiyat+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+(u.kat==null?'-':u.kat===0?'zemin':esc(u.kat)+'. kat')+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
+          return '<tr data-f="'+u.fiyat+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+katY(u.kat)+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
             '<td>'+sayi(u.ic)+(u.m2?' <small style="display:inline">/ '+sayi(u.m2)+'</small>':'')+'</td><td class="p">'+para(u.fiyat)+'</td><td><span class="kdu'+c+'">'+esc(d)+'</span></td></tr>';}).join('')+'</tbody></table></div>'+
-        '<div class="kc"><h5>Ödeme planı hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'. Tablodan bir satıra basınca o daire seçilir.</div>'+
-        '<div class="kgr"><label>Daire<select id="kcU">'+l.map(function(u){return '<option value="'+u.fiyat+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m">Özel tutar gir…</option></select></label>'+
-        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="24"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
-        '<label id="kcPf" hidden>Tutar (£)<input id="kcP" type="number" min="0" placeholder="0"></label></div><div class="kout" id="kcO"></div><div class="nt3">'+esc(pl.not)+'</div></div>'+(ac||$k('ktB').querySelector('.kac').outerHTML);
+        kcH(p,l)+(ac||$k('ktB').querySelector('.kac').outerHTML);
       $k('ktB').innerHTML=h;hesap();}
     window.ktKapat=function(){$k('ktm').classList.remove('on');$k('fyo').classList.remove('det');$k('ktm').innerHTML='';acik=-1;};
     $k('ktG').addEventListener('click',function(e){var b=e.target.closest('.ktk');if(b)ac(+b.dataset.i);});
@@ -1744,7 +1769,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       stats();msKur();ciz();
     }).catch(function(){$k('ktG').innerHTML='<div class="ktn">Katalog şu an alınamadı. İnternet bağlantısını kontrol edip sayfayı yenileyin.</div>';yuk=false;});}
     window.fyAc=function(on){var o=$k('fyo');if(on===undefined)on=!o.classList.contains('on');o.classList.toggle('on',on);o.setAttribute('aria-hidden',!on);$k('bFy').classList.toggle('on',on);if(!on)ktKapat();if(on&&!yuk){yuk=true;yukle();}};
-    $k('bFy').onclick=function(){fyAc();};$k('fyX').onclick=function(){fyAc(false);};
+    $k('bFy').onclick=function(){fyAc();};$k('ktMs').onclick=function(){openMs();};$k('fyX').onclick=function(){fyAc(false);};
   })();
 
   // genel bakış
@@ -1768,6 +1793,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     if(k==='Escape'){if($('tur').classList.contains('on'))closeTur();else if($('ktm').classList.contains('on'))ktKapat();else if($('fyo').classList.contains('on'))fyAc(false);else if($('ov').classList.contains('on'))toggleOv();else if(B.classList.contains('rh'))toggleRh();return;}
     if($('tur').classList.contains('on'))return;
     if(k==='l'||k==='L'){fyAc();return;}
+    if(k==='m'||k==='M'){openMs();return;}
     if($('fyo').classList.contains('on'))return;
     if(k==='ArrowRight'||k==='ArrowDown'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();next();}
     else if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
