@@ -562,52 +562,106 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .contact .chip.big{font-size:30px;padding:18px 30px}
 @media (prefers-reduced-motion:reduce){.s.on .seal{animation:none;opacity:1}.s.on .kb img,.seal .ring,.s.on .flow svg.path path{animation:none}}
 
-/* güncel fiyat listesi (Kıbrıs Katalog verisi: assets/kibris360/fiyatlar.json, yarım saatte bir güncellenir) */
-.fy{position:absolute;inset:0;padding:104px 96px 110px 128px;display:flex;flex-direction:column}
-.fy h2{font-size:76px;color:var(--navy)}
-.fyc{display:inline-flex;align-items:center;gap:10px;margin-left:22px;padding:9px 16px;border-radius:999px;background:#e3efe6;color:#1b6b3a;font:700 16px/1 var(--fb);letter-spacing:.5px;text-transform:none;vertical-align:4px}
-.fyc i{width:9px;height:9px;border-radius:50%;background:#1b6b3a;display:block}
-.fyb{flex:1;min-height:0;display:grid;grid-template-columns:560px 1fr;gap:36px;margin-top:34px}
-.fyl{display:flex;flex-direction:column;gap:4px;min-height:0;overflow:auto}
-.fyl button{display:grid;grid-template-columns:1fr auto;align-items:center;gap:1px 16px;text-align:left;padding:5px 20px;border-radius:16px;color:var(--ink);transition:background .2s}
-.fyl button:hover{background:#ece5d9}
-.fyl button.on{background:var(--navy);color:#fff}
-.fyl b{font:700 20px/1.12 var(--fb)}
-.fyl small{grid-column:1;font-size:14px;color:var(--ink2)}
-.fyl button.on small{color:rgba(255,255,255,.7)}
-.fyl em{grid-row:1/3;grid-column:2;font:400 27px/1 var(--fd);font-style:normal;color:var(--navy)}
-.fyl button.on em{color:#fff}
-.fyl .g{font:700 13px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;color:var(--red);padding:12px 20px 5px}
-.fyl .g:first-child{padding-top:2px}
-.fyr{background:#fff;border-radius:28px;box-shadow:0 20px 60px rgba(14,19,48,.08);padding:30px 36px;display:flex;flex-direction:column;min-height:0}
-.fyt,.fyf,.fyx{flex-shrink:0}
-.fyt{display:grid;grid-template-columns:200px 1fr auto;gap:28px;align-items:center}
-.fyt img{width:200px;height:124px;object-fit:cover;border-radius:18px;display:block;background:var(--sand2)}
-.fyt h3{font:400 54px/1 var(--fd);color:var(--navy);letter-spacing:-.5px}
-.fyt .k{font:700 15px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;color:var(--ink2);margin-bottom:10px}
-.fyt .fyst{font-size:20px;color:var(--ink2);margin-top:10px}.fyt .fyst b{color:var(--ink)}
-.fyt .ac{display:flex;flex-direction:column;gap:10px}
-.fyt .ac button,.fyt .ac a{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border-radius:999px;font:700 18px/1 var(--fb);background:var(--red);color:#fff;text-decoration:none;white-space:nowrap}
-.fyt .ac a{background:#fff;color:var(--navy);border:2px solid var(--navy)}
-.fyt .ac svg{width:22px;height:22px}
-.fyf{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 10px}
-.fyf button{padding:9px 16px;border-radius:999px;font:600 16px/1 var(--fb);background:var(--sand);color:var(--ink)}
-.fyf button.on{background:var(--navy);color:#fff}
-.fys{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;margin:0 -12px;padding:0 12px}
-.fys table{width:100%;border-collapse:collapse;font-size:19px}
-.fys th{position:sticky;top:0;background:#fff;font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);text-align:left;padding:12px 10px;border-bottom:2px solid var(--navy)}
-.fys td{padding:11px 10px;border-bottom:1px solid #ece5d9;color:var(--ink);white-space:nowrap}
-.fys td:first-child{font-weight:700;color:var(--navy)}
-.fys td.p,.fys th.p{text-align:right}
-.fys td.p{font:400 27px/1 var(--fd);color:var(--navy)}
-.fys td.mz{white-space:normal;color:var(--ink2);font-size:17px}
-.fyx{margin-top:22px;font-size:21px;line-height:1.5;color:var(--ink2)}
-.fyx p{font-size:21px}
-.fyx .ol{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.fyx .ol span{padding:9px 15px;border-radius:999px;background:var(--sand);color:var(--ink);font:600 16px/1 var(--fb)}
-.fyx .bp{margin-top:22px;padding:20px 24px;border-radius:18px;background:var(--sand);font-size:19px;color:var(--ink)}
-.fyx .bp b{font:400 34px/1 var(--fd);color:var(--navy);margin-right:8px}
-.fyn{font-size:20px;color:var(--ink2);padding:30px 0}
+/* Kıbrıs Katalog katmanı (alt menü "Kıbrıs Katalog", L tuşu). Portaldaki Apps Script kataloğunun sunum tasarımlı hali;
+   veri assets/kibris360/fiyatlar.json (scripts/kibris-fiyat.js, yarım saatte bir Drive'daki listelerden) */
+.fyo{position:absolute;inset:0;z-index:30;background:var(--sand);color:var(--ink);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
+.fyo.on{opacity:1;visibility:visible;transition:opacity .35s ease,visibility 0s}
+.fyo p{color:var(--ink2)}
+.fyX{position:absolute;right:96px;top:64px;z-index:6;padding:18px 28px;border-radius:999px;background:var(--navy);color:#fff!important;font:700 22px/1 var(--fb);box-shadow:0 10px 30px rgba(5,10,48,.25)}
+.kt{position:absolute;inset:0;overflow:auto;overscroll-behavior:contain;padding:72px 128px 140px}
+.kt h2{font-size:84px;color:var(--navy);margin-top:18px}
+.kth{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:22px;font-size:21px;color:var(--ink2)}
+.kth b{color:var(--ink)}
+.ktl{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:#e3efe6;color:#1b6b3a;font:700 18px/1 var(--fb)}
+.ktl i{width:10px;height:10px;border-radius:50%;background:#1b6b3a;display:block}
+.kts{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:34px 0 28px}
+.kts div{background:#fff;border-radius:22px;padding:24px 30px;box-shadow:0 14px 40px rgba(14,19,48,.06)}
+.kts b{display:block;font:400 64px/1 var(--fd);color:var(--navy)}
+.kts span{font-size:19px;color:var(--ink2)}
+.ktc{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;position:relative;z-index:3}
+.ktc label{display:flex;flex-direction:column;gap:8px;position:relative}
+.ktc label>span{font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2)}
+.ktc input,.ktc select,.ktc .msb{height:60px;padding:0 20px;border-radius:16px;border:2px solid var(--sand2);background:#fff;font:500 21px/1 var(--fb);color:var(--ink);outline:none;width:196px;text-align:left}
+.ktc input:focus,.ktc select:focus,.ktc .msb:focus{border-color:var(--navy)}
+.ktc .kq input{width:430px;padding-right:56px}
+.ktc .qx{position:absolute;right:12px;bottom:12px;width:36px;height:36px;border-radius:50%;background:var(--sand);color:var(--ink2);font-size:18px}
+.ktc .kclr{height:60px;padding:0 24px;border-radius:16px;background:var(--sand2);font:700 19px/1 var(--fb);color:var(--ink)}
+.kto,.msp{position:absolute;top:calc(100% + 8px);left:0;min-width:100%;max-height:440px;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 70px -20px rgba(5,10,48,.45);padding:8px;z-index:10}
+.kto[hidden],.msp[hidden]{display:none}
+.kto button{display:flex;justify-content:space-between;gap:16px;width:100%;padding:13px 16px;border-radius:12px;font:500 20px/1.2 var(--fb);color:var(--ink);text-align:left}
+.kto button:hover,.msp label:hover{background:var(--sand)}
+.kto small{font-size:15px;color:var(--ink2);white-space:nowrap}
+.msp{min-width:300px}
+.msp label{display:flex!important;flex-direction:row!important;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;font-size:19px;cursor:pointer}
+.msp input{width:20px;height:20px;accent-color:var(--navy)}
+.msp label span{font:500 19px/1.25 var(--fb);letter-spacing:0;text-transform:none;color:var(--ink)}
+.fyo.det .fyX{display:none}
+.msp .kft{display:flex;justify-content:flex-end;border-top:1px solid var(--sand2);margin-top:6px;padding:8px 8px 2px}
+.msp .kft button{color:var(--red);font:700 16px/1 var(--fb)}
+.ktg{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:34px}
+.ktk{display:flex;flex-direction:column;background:#fff;border-radius:26px;overflow:hidden;text-align:left;box-shadow:0 18px 50px rgba(14,19,48,.07);transition:transform .25s,box-shadow .25s}
+.ktk:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(14,19,48,.16)}
+.ktk .kcv{position:relative;height:230px;background:var(--navy2) center/cover}
+.ktk .kcv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.55),transparent 55%)}
+.ktk .kfb{position:absolute;top:16px;right:16px;z-index:1;padding:8px 14px;border-radius:999px;font:700 14px/1 var(--fb);letter-spacing:.5px;color:#fff;background:rgba(5,10,48,.85)}
+.ktk .kfb.kcc{background:rgba(220,28,46,.92)}
+.ktk .kch{position:absolute;left:18px;bottom:16px;z-index:1;padding:8px 14px;border-radius:999px;font:700 15px/1 var(--fb);background:#e3efe6;color:#1b6b3a}
+.ktk .kch.ktn2{background:#fff;color:var(--navy)}
+.ktk .kin{padding:24px 26px 26px;display:flex;flex-direction:column;gap:8px;flex:1;width:100%}
+.ktk h4{font:400 40px/1.05 var(--fd);color:var(--navy)}
+.ktk .kmt{font-size:17px;color:var(--ink2);line-height:1.35}
+.ktk .kpr{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;padding-top:16px;border-top:1px dashed var(--sand2)}
+.ktk .kpr small{display:block;font-size:15px;color:var(--ink2)}
+.ktk .kpr b{font:400 40px/1 var(--fd);color:var(--navy)}
+.ktk .kpr i{font:700 18px/1 var(--fb);font-style:normal;color:var(--red)}
+.ktn{grid-column:1/-1;text-align:center;padding:80px 20px;font-size:24px;color:var(--ink2)}
+.ktf{margin-top:40px;text-align:center;font-size:18px;line-height:1.6;color:var(--ink2)}
+/* proje ayrıntısı */
+.ktm{position:absolute;inset:0;z-index:8;background:rgba(5,10,48,.55);display:none;overflow:auto;overscroll-behavior:contain;padding:56px 0 120px}
+.ktm.on{display:block}
+.ktp{width:1360px;margin:0 auto;background:var(--sand);border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.45)}
+.ktp .kgl{position:relative;height:340px;background:var(--navy2) center/cover}
+.ktp .kgl::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.75),transparent 60%)}
+.ktp .kgl .ktt{position:absolute;left:56px;bottom:40px;right:56px;z-index:1;color:#fff}
+.ktp .kgl .kk{font:700 17px/1 var(--fb);letter-spacing:3px;text-transform:uppercase;opacity:.85}
+.ktp .kgl h3{font:400 84px/1 var(--fd);margin-top:12px}
+.ktp .kgl .kx{position:absolute;top:26px;right:26px;z-index:2;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--navy);font-size:24px}
+.ktp .kbx{padding:40px 56px 48px}
+.ktp .kmt{font-size:21px;color:var(--ink2)}
+.ktp .kac{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.ktp .kac a,.ktp .kac button{display:inline-flex;align-items:center;gap:10px;padding:16px 26px;border-radius:999px;font:700 19px/1 var(--fb);text-decoration:none;background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.ktp .kac .kred{background:var(--red);border-color:var(--red);color:#fff}
+.ktp .kac svg{width:22px;height:22px}
+.ktp .nt2{margin-top:22px;padding:18px 24px;border-radius:16px;background:#fbeedd;color:#8a4b12;font-size:19px;line-height:1.45}
+.ktp .kds{margin-top:22px;font-size:22px;line-height:1.55;color:var(--ink)}
+.ktp .kv{margin-top:22px}.ktp .kv b{display:block;font:700 14px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin-bottom:10px}
+.ktp .kv div{display:flex;flex-wrap:wrap;gap:8px}.ktp .kv span{padding:10px 16px;border-radius:999px;background:#fff;font:600 18px/1 var(--fb)}
+.ktp .ktyp{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.ktp .ktyp button{padding:11px 18px;border-radius:999px;font:600 17px/1 var(--fb);background:#fff;color:var(--ink)}
+.ktp .ktyp button.on{background:var(--navy);color:#fff}
+.ktp .ktw{margin-top:18px;background:#fff;border-radius:22px;max-height:620px;overflow:auto;overscroll-behavior:contain}
+.ktp table{width:100%;border-collapse:collapse;font-size:20px}
+.ktp th{position:sticky;top:0;background:#fff;font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);text-align:left;padding:18px 18px 14px;border-bottom:2px solid var(--navy)}
+.ktp td{padding:14px 18px;border-bottom:1px solid #efe9de;vertical-align:middle}
+.ktp td b{color:var(--navy)}.ktp td small{display:block;font-size:16px;color:var(--ink2);margin-top:3px}
+.ktp td.p{font:400 30px/1 var(--fd);color:var(--navy);white-space:nowrap}
+.ktp .kdu{display:inline-block;padding:7px 12px;border-radius:999px;font:700 14px/1 var(--fb);background:#e3efe6;color:#1b6b3a}
+.ktp .kdu.kso{background:#ecebe6;color:#8a8578}.ktp .kdu.kred{background:#fbeedd;color:#b5651a}
+.ktp tr.ksel td{background:#f1ece2}
+.ktp tbody tr{cursor:pointer}
+.kc{margin-top:30px;background:var(--navy);color:#fff;border-radius:26px;padding:34px 40px}
+.kc h5{font:400 44px/1 var(--fd)}.kc h5 small{font:500 17px/1 var(--fb);opacity:.7;margin-left:12px}
+.kc .kpl{margin-top:10px;font-size:18px;opacity:.75}
+.kc .kgr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;margin-top:22px}
+.kc label{display:flex;flex-direction:column;gap:8px;font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;opacity:.9}
+.kc label[hidden]{display:none}
+.kc input,.kc select{height:58px;padding:0 18px;border-radius:14px;border:0;background:rgba(255,255,255,.12);color:#fff;font:500 20px/1 var(--fb);outline:none;letter-spacing:0;text-transform:none}
+.kc select option{color:var(--ink)}
+.kc .kout{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.kc .kout div{background:rgba(255,255,255,.08);border-radius:18px;padding:18px 22px}
+.kc .kout span{display:block;font-size:16px;opacity:.75}.kc .kout b{font:400 40px/1.1 var(--fd)}
+.kc .kout .kbig{background:var(--red)}
+.kc .nt3{margin-top:16px;font-size:16px;line-height:1.5;opacity:.7}
 </style>
 </head>
 <body>
@@ -643,7 +697,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="road">
       <div class="card a" style="--d:2"><span class="n">I</span><span class="k">Giriş</span><h3>Neden Kuzey Kıbrıs?</h3><ul><li>Talebi kendi içinde bir ada</li><li>Altyapı, tarih ve yaşam</li><li>Sterlin ve yatırımcı avantajları</li></ul></div>
       <div class="card a" style="--d:3"><span class="n">II</span><span class="k">Gelişme</span><h3>Nerede, hangi proje?</h3><ul><li>Çalışma prensibimiz</li><li>Dört kıyı, iki güçlü partner</li><li>Projeler, çevre ve 360° tur</li></ul></div>
-      <div class="card a" style="--d:4"><span class="n">III</span><span class="k">Sonuç</span><h3>Rakamlar ve yol haritası</h3><ul><li>Güncel fiyat listesi ve ödeme planı</li><li>Getiri ve vergi</li><li>Süreç ve koçan tipleri</li></ul></div>
+      <div class="card a" style="--d:4"><span class="n">III</span><span class="k">Sonuç</span><h3>Rakamlar ve yol haritası</h3><ul><li>Ödeme planı ve kolaylıklar</li><li>Getiri ve vergi</li><li>Süreç ve koçan tipleri</li></ul></div>
     </div>
   </div>
   <div class="pg">02</div>
@@ -1282,30 +1336,10 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   <div class="in"><div class="ey a">Sonuç</div><h2 class="a" style="--d:1">Rakamlar ve <em>yol haritası.</em></h2><p class="a" style="--d:2">Ne ödersiniz, ne kazanırsınız, tapuya nasıl ulaşırsınız.</p></div>
   <aside class="nt">
     <h5>Anlat</h5><p>Bölüm geçişi. Duygusal kısım bitti, şimdi net rakamlar. Ses tonunu sakin ve kendinden emin tut.</p>
-    <h5>Geçiş</h5><p>"Önce bugün satışta ne var, fiyat listesine bakalım."</p>
+    <h5>Geçiş</h5><p>"Somut bir örnekle başlayalım: £185.000'lik bir daire."</p>
   </aside>
 </section>
 
-<section class="s light" id="s-fiyat" data-sec="Sonuç" data-t="Güncel fiyat listesi">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
-  <div class="fy">
-    <div class="ey a">Güncel fiyat listesi · Döveç ve Cyprus Constructions<span class="fyc" id="fyGun"><i></i>Canlı liste</span></div>
-    <h2 class="a" style="--d:1">Bugün satışta olan <em>daireler.</em></h2>
-    <div class="fyb a" style="--d:2">
-      <div class="fyl" id="fyL"><div class="fyn">Fiyat listesi yükleniyor…</div></div>
-      <div class="fyr" id="fyR"></div>
-    </div>
-  </div>
-  <div class="src" style="color:var(--ink)">Döveç fiyatları firmanın Drive'daki listelerinden otomatik okunur. Fiyatlara KDV ve resmi masraflar dahil değildir.</div>
-  <div class="pg" style="color:var(--ink)">00</div>
-  <aside class="nt">
-    <h5>Anlat</h5><p>Kıbrıs Katalog'daki canlı fiyat listesi: soldan projeyi seç, sağda o projenin bugün müsait daireleri en ucuzdan pahalıya sıralı. Üstteki düğmelerle daire tipine göre süz (stüdyo, 1+1, 2+1…).</p>
-    <ul><li>Döveç projelerinin listesi firmanın Drive'daki Excel'lerinden yarım saatte bir yenilenir; üstteki yeşil etiket son güncelleme zamanını gösterir.</li><li>Cyprus Constructions'ta yalnız Bahamas'ın daire listesi var; diğerlerinde tanıtım, olanaklar ve başlangıç fiyatı görünür, broşür Drive'dan açılır.</li><li>"360° gez" düğmesi o projenin turunu açar.</li></ul>
-    <h5>Sor</h5><p>"Hangi tip ve bütçe aralığı size uygun? İki üç daireyi not alalım, ödeme planını onların üzerinden çıkaralım."</p>
-    <h5>Dikkat</h5><p>Liste canlı ama satış hızlı; beğenilen dairenin müsaitliğini firmadan teyit etmeden söz verme. Fiyatlara %5 KDV ve resmi masraflar eklenir.</p>
-    <h5>Geçiş</h5><p>"Somut bir örnekle bakalım: £185.000'lik bir daire nasıl ödenir?"</p>
-  </aside>
-</section>
 
 <section class="s light" id="s-plan" data-sec="Sonuç" data-t="Örnek ödeme planı">
   <img class="logo pill" src="assets/dogus-logo.png" alt="">
@@ -1470,6 +1504,28 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   </aside>
 </section>
 
+<!-- Kıbrıs Katalog katmanı (alt menüdeki "Kıbrıs Katalog" düğmesi, L tuşu) -->
+<div class="fyo" id="fyo" aria-hidden="true">
+  <button class="fyX" id="fyX">✕ Sunuma dön</button>
+  <div class="kt" id="kt">
+    <div class="ey">Kıbrıs Katalog · RE/MAX Doğuş</div>
+    <h2>Doğuş Kuzey Kıbrıs <em>projeleri.</em></h2>
+    <div class="kth"><span class="ktl"><i></i>Canlı · Drive</span><span>Döveç'ten son güncelleme: <b id="ktSync">—</b></span><span>Döveç İnşaat ve Cyprus Constructions projeleri</span></div>
+    <div class="kts" id="ktS"></div>
+    <form class="ktc" id="ktC" onsubmit="return false" autocomplete="off">
+      <label class="kq"><span>Proje veya tip ara</span><input id="ktQ" type="text" placeholder="Örn. Querencia, 2+1, penthouse…"><button type="button" class="qx" id="ktQx" hidden>✕</button><div class="kto" id="ktO" hidden></div></label>
+      <label><span>Firma</span><select id="ktF"><option value="">Tümü</option></select></label>
+      <label><span>Daire tipi</span><button type="button" class="msb" id="ktTb">Tümü ▾</button><div class="msp" id="ktTp" hidden></div></label>
+      <label><span>Özellik</span><button type="button" class="msb" id="ktZb">Tümü ▾</button><div class="msp" id="ktZp" hidden></div></label>
+      <label><span>En fazla (£)</span><input id="ktM" type="number" inputmode="numeric" min="0" step="5000" placeholder="Maks £"></label>
+      <label><span>Sırala</span><select id="ktSo"><option value="artan">Fiyat ↑</option><option value="azalan">Fiyat ↓</option><option value="ad">İsme göre</option></select></label>
+      <button type="button" class="kclr" id="ktClr">Temizle</button>
+    </form>
+    <div class="ktg" id="ktG"><div class="ktn">Katalog yükleniyor…</div></div>
+    <div class="ktf">Döveç fiyatları Drive'daki Excel listelerinden yarım saatte bir otomatik okunur. Cyprus Constructions projelerinde fiyat listesi PDF'ten alınır ya da tanıtım bilgisi gösterilir.<br>Fiyatlara KDV ve resmi masraflar dahil değildir; müsaitliği satıştan önce firmadan teyit edin.</div>
+  </div>
+  <div class="ktm" id="ktm"></div>
+</div>
 </div></div>
 
 <!-- arayüz -->
@@ -1479,6 +1535,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   <span id="cnt"></span>
   <div id="prog"></div>
   <button class="b" id="b360" title="360° turlar (V)"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg><span class="lbl">360° VR</span></button>
+  <button class="b" id="bFy" title="Kıbrıs Katalog: projeler ve güncel fiyatlar (L)"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><span class="lbl">Kıbrıs Katalog</span></button>
   <button class="b" id="bOv" title="Genel bakış (G)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="lbl">Slaytlar</span></button>
   <button class="b" id="bRh" title="Konuşmacı rehberi (R)"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h6"/></svg><span class="lbl">Rehber</span></button>
   <button class="b" id="bSun" title="Sunucu ekranı: notlar ayrı pencerede (S)"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="13" height="10" rx="1"/><rect x="17" y="8" width="5" height="10" rx="1"/><path d="M6 18h5"/></svg><span class="lbl">Sunucu</span></button>
@@ -1561,9 +1618,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   $('b360').onclick=function(){openTur('kibris');};
   [].forEach.call(document.querySelectorAll('[data-tur]'),function(el){el.addEventListener('click',function(e){e.stopPropagation();openTur(el.dataset.tur,el.dataset.p);});});
 
-  // güncel fiyat listesi: Kıbrıs Katalog (Drive) -> assets/kibris360/fiyatlar.json (scripts/kibris-fiyat.js, yarım saatte bir)
+  // Kıbrıs Katalog (alt menüde düğme, L tuşu): portaldaki Apps Script kataloğunun aynısı, sunum tasarımında.
+  // Veri: assets/kibris360/fiyatlar.json (scripts/kibris-fiyat.js, yarım saatte bir Drive'daki listelerden)
   (function(){
-    var L=$('fyL'),R=$('fyR');if(!L)return;
     // proje adı -> [bölge, görsel, 360 turu, tur içi proje, başlangıç (liste yoksa, firmanın Temmuz 2025 sunumu)]
     var M={'D-Point':['İskele · Long Beach','dpoint','dovec',''],'Four Vision Life III':['İskele · Long Beach','d-longbeach','dovec',''],
       'La Casalia':['Esentepe','d-lacasalia','dovec','E66FB7E6'],'Natulux':['Tatlısu','d-natulux','dovec','EFDF0772'],
@@ -1571,53 +1628,119 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       'Bahamas Homes':['Esentepe','c-bahamas','esentepe','EEA4A7B4'],'Aloha Beach Resort':['Esentepe','c-aloha','esentepe','FE2CD7FF',232250],
       'Phuket Health & Wellness Resort':['Esentepe','c-phuket','esentepe','D9C7C004',165000],'Hawaii Homes':['Esentepe','c-hawaii','esentepe','E9491522',165000],
       'Mykonos Homes':['Esentepe','c-mykonos','esentepe','BA993E0B',495000],'Pearl Island Homes':['Esentepe','c-pearl','esentepe','D9A15379',194995]};
-    var TIP={'STUDIO':'Stüdyo','STD':'Stüdyo','Studio':'Stüdyo','Grand Studio':'Grand stüdyo','Office':'Ofis','Shop':'Dükkan','Studio Garden':'Stüdyo bahçe','Studio Penthouse':'Stüdyo penthouse'};
-    var MZ={back:'arka',front:'ön',left:'sol',right:'sağ',corner:'köşe',garden:'bahçe',pool:'havuz',outdoor:'dış',indoor:'iç',street:'cadde',mountain:'dağ',sea:'deniz',view:'manzara',side:'yan',and:'ve',open:'açık',south:'güney',north:'kuzey',east:'doğu',west:'batı',city:'şehir',park:'park'};
-    var D=null,sel=0,tip='';
+    var OZ_TR={'poolhouse':'Havuz katı','gardenhouse':'Bahçe katı','penthouse':'Çatı katı (penthouse)','garden':'Bahçe katı','seaview':'Deniz manzarası','sea view':'Deniz manzarası','mountainview':'Dağ manzarası','mountain view':'Dağ manzarası',
+      'n':'Kuzey cephe','s':'Güney cephe','e':'Doğu cephe','w':'Batı cephe','nw':'Kuzeybatı cephe','ne':'Kuzeydoğu cephe','sw':'Güneybatı cephe','se':'Güneydoğu cephe'};
+    var OZ_K={open:'açık',north:'kuzey',south:'güney',east:'doğu',west:'batı',sea:'deniz',view:'manzara',garden:'bahçe',pool:'havuz',mountain:'dağ',ph:'penthouse',luxus:'lüks',luxury:'lüks',
+      front:'ön',back:'arka',side:'yan',corner:'köşe',floor:'kat',ground:'zemin',duplex:'dubleks',left:'sol',right:'sağ',outdoor:'dış',indoor:'iç',street:'cadde',and:'ve','açık':'açık'};
+    var $k=function(id){return document.getElementById(id);},D=null,P=[],TS={},ZS={},acik=-1,mTip='',yuk=false;
     function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+    function low(t){return String(t||'').toLocaleLowerCase('tr');}
     function para(n){return '£'+Math.round(n).toLocaleString('tr-TR');}
-    function tipAd(t){return TIP[t]||t.replace(/\bLOFT\b/,'loft').replace(/\bDeluxe\b/,'deluxe').replace(/\bDuplex Villa\b/,'dubleks villa').replace(/\bDuplex\b/,'dubleks').replace(/\bPH\b|\bPenthouse\b/,'penthouse');}
-    function mz(t){return String(t||'').replace(/[A-Za-zçÇ]+/g,function(w){var k=w.toLocaleLowerCase('tr');return MZ[k]||w.toLocaleLowerCase('tr');}).replace(/^./,function(c){return c.toLocaleUpperCase('tr');});}
-    function musait(p){return p.uniteler.filter(function(u){return /müsait|available/i.test(u.durum)&&u.fiyat;});}
-    function bas(p){var us=musait(p);return us.length?Math.min.apply(null,us.map(function(u){return u.fiyat;})):((M[p.proje]||[])[4]||null);}
+    function sayi(n){return n==null||n===''?'':Number(n).toLocaleString('tr-TR');}
+    function ozTr(v){if(!v)return '';var k=low(v).trim();if(OZ_TR[k])return OZ_TR[k];
+      return String(v).replace(/[A-Za-zçğıöşüÇĞİÖŞÜ]+/g,function(w){return OZ_K[low(w)]||low(w);}).replace(/^./,function(c){return c.toLocaleUpperCase('tr');});}
+    function brosur(p){return !p.uniteler.length;}
+    function cc(p){return !/döveç/i.test(p.firma);}
+    function minF(p,l){l=l||p.uniteler;var f=l.map(function(u){return u.fiyat;}).filter(Boolean);return f.length?Math.min.apply(null,f):((M[p.proje]||[])[4]||0);}
+    function musaitMi(u){return !/sat[ıi]ld|sold|rezerv/i.test(u.durum||'');}
+    function q(){return low($k('ktQ').value.trim());}
+    function eslesen(p){var s=q(),mx=+$k('ktM').value||Infinity,t=Object.keys(TS),z=Object.keys(ZS);
+      var ad=!s||low(p.proje+' '+(M[p.proje]||[''])[0]).indexOf(s)>=0;
+      return p.uniteler.filter(function(u){return (!t.length||TS[u.tip])&&(!z.length||(u.manzara&&ZS[u.manzara]))&&u.fiyat<=mx&&
+        (ad||low(u.tip+' '+u.blok+' '+u.manzara+' '+ozTr(u.manzara)).indexOf(s)>=0);});}
+    function brosurGorunur(p){var s=q();if(Object.keys(TS).length||Object.keys(ZS).length)return false;var mx=+$k('ktM').value;if(mx&&minF(p)>mx)return false;
+      return !s||low(p.proje+' '+(M[p.proje]||[''])[0]).indexOf(s)>=0;}
+    function hepsi(alan){var o={};P.forEach(function(p){p.uniteler.forEach(function(u){if(u[alan])o[u[alan]]=1;});});return Object.keys(o).sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});}
+    function ms(id,alan,sec,ad){var v=hepsi(alan);$k(id+'p').innerHTML=v.map(function(x){return '<label><input type="checkbox" data-v="'+esc(x)+'"'+(sec[x]?' checked':'')+'><span>'+esc(alan==='manzara'?ozTr(x):x)+'</span></label>';}).join('')+'<div class="kft"><button type="button">Seçimi temizle</button></div>';
+      var n=Object.keys(sec).length;$k(id+'b').textContent=(n?n+' seçili':'Tümü')+' ▾';}
+    function msKur(){ms('ktT','tip',TS);ms('ktZ','manzara',ZS);}
+    function stats(){var d=P.filter(function(p){return !brosur(p);}),u=d.reduce(function(a,p){return a+p.uniteler.length;},0),m=d.reduce(function(a,p){return a+p.uniteler.filter(musaitMi).length;},0);
+      $k('ktS').innerHTML=[[d.length,'Fiyatlı proje'],[u,'Ünite'],[m,'Müsait ünite'],[P.length-d.length,'Tanıtım projesi']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
+    function kapak(p){var m=M[p.proje];return m&&m[1]?"background-image:url('assets/kibris/sunum/"+m[1]+".webp')":'';}
+    function bd(p){return '<span class="kfb'+(cc(p)?' kcc':'')+'">'+(cc(p)?'Cyprus Constructions':'Döveç')+'</span>';}
     function ciz(){
-      var h='',fi='';
-      D.projeler.forEach(function(p,i){
-        var m=M[p.proje]||['','','',''],us=musait(p),b=bas(p),f=/döveç/i.test(p.firma)?'Döveç İnşaat':'Cyprus Constructions';
-        if(f!==fi){h+='<div class="g">'+f+'</div>';fi=f;}
-        h+='<button data-i="'+i+'" class="'+(i===sel?'on':'')+'"><b>'+esc(p.proje)+'</b><em>'+(b?para(b):'')+'</em><small>'+esc(m[0])+(us.length?' · '+us.length+' müsait':' · tanıtım')+'</small></button>';
-      });
-      L.innerHTML=h;
-      var p=D.projeler[sel],m=M[p.proje]||['','','',''],us=musait(p),b=bas(p);
-      var ac=(m[2]?'<button data-tur="'+m[2]+'" data-p="'+m[3]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
-        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Broşür ↗</a>':'');
-      var r='<div class="fyt">'+(m[1]?'<img src="assets/kibris/sunum/'+m[1]+'.webp" alt="">':'<span></span>')+'<div><div class="k">'+esc(p.firma)+(m[0]?' · '+esc(m[0]):'')+'</div><h3>'+esc(p.proje)+'</h3>'+
-        '<div class="fyst">'+(us.length?'<b>'+us.length+'</b> müsait ünite · <b>'+para(b)+'</b>\'den başlayan':(b?'Başlangıç <b>'+para(b)+'</b> · daire listesi firmadan alınır':'Daire listesi firmadan alınır'))+'</div></div><div class="ac">'+ac+'</div></div>';
-      if(us.length){
-        var tl=[];us.forEach(function(u){if(tl.indexOf(u.tip)<0)tl.push(u.tip);});
-        tl.sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});if(tip&&tl.indexOf(tip)<0)tip='';
-        r+='<div class="fyf">'+(tl.length>1?'<button data-t="" class="'+(tip?'':'on')+'">Tümü · '+us.length+'</button>'+tl.map(function(t){var n=us.filter(function(u){return u.tip===t;}).length;return '<button data-t="'+esc(t)+'" class="'+(t===tip?'on':'')+'">'+esc(tipAd(t))+' · '+n+'</button>';}).join(''):'')+'</div>';
-        var l=us.filter(function(u){return !tip||u.tip===tip;}).sort(function(a,b){return a.fiyat-b.fiyat;});
-        var yer=l.some(function(u){return u.blok||u.kat!=null||u.no!=null;}),man=l.some(function(u){return u.manzara;}),net=l.some(function(u){return u.ic;});
-        r+='<div class="fys"><table><tr><th>Tip</th>'+(yer?'<th>Blok · kat · no</th>':'')+'<th>'+(net?'Brüt / net m²':'m²')+'</th>'+(man?'<th>Konum</th>':'')+'<th class="p">Fiyat</th></tr>'+
-          l.map(function(u){var y=[u.blok?u.blok:'',u.kat!=null?(u.kat===0||u.kat==='0'?'zemin':u.kat+'. kat'):'',u.no!=null?'no '+u.no:''].filter(Boolean).join(' · ');
-            return '<tr><td>'+esc(tipAd(u.tip))+'</td>'+(yer?'<td>'+esc(y)+'</td>':'')+'<td>'+(u.m2?u.m2.toLocaleString('tr-TR'):'')+(net&&u.ic?' / '+u.ic.toLocaleString('tr-TR'):'')+'</td>'+(man?'<td class="mz">'+esc(mz(u.manzara))+'</td>':'')+'<td class="p">'+para(u.fiyat)+'</td></tr>';}).join('')+'</table></div>';
-      }else{
-        var ac2=p.aciklama&&!/detaylar, görseller/i.test(p.aciklama)?p.aciklama:'';
-        r+='<div class="fyx">'+(ac2?'<p>'+esc(ac2)+'</p>':'')+(p.uniteMix?'<p style="margin-top:12px"><b style="color:var(--ink)">Ünite tipleri:</b> '+esc(p.uniteMix)+'</p>':'')+
-          (p.olanaklar?'<div class="ol">'+p.olanaklar.split('·').map(function(o){return '<span>'+esc(o.trim())+'</span>';}).join('')+'</div>':'')+
-          '<div class="bp">'+(b?'<b>'+para(b)+'</b>\'den başlayan fiyatlar (firmanın Temmuz 2025 sunumu). ':'')+'Güncel müsait daire listesi ve fiyatları firmadan ön görüşmede alınır.</div></div>';
-      }
-      R.innerHTML=r;
-      [].forEach.call(R.querySelectorAll('[data-tur]'),function(el){el.onclick=function(e){e.stopPropagation();openTur(el.dataset.tur,el.dataset.p);};});
+      var so=$k('ktSo').value,ff=$k('ktF').value;$k('ktQx').hidden=!$k('ktQ').value;
+      var fp=P.map(function(p,i){p._i=i;return p;}).filter(function(p){return !ff||p.firma===ff;});
+      var pr=fp.filter(function(p){return !brosur(p);}).map(function(p){p._e=eslesen(p);return p;}).filter(function(p){return p._e.length;});
+      var br=fp.filter(brosur).filter(brosurGorunur);
+      pr.sort(function(a,b){return so==='artan'?minF(a)-minF(b):so==='azalan'?minF(b)-minF(a):a.proje.localeCompare(b.proje,'tr');});
+      br.sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
+      var r=pr.concat(br);
+      $k('ktG').innerHTML=r.length?r.map(function(p){var m=M[p.proje]||[''];
+        if(brosur(p))return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch ktn2">Tanıtım</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc([m[0],p.uniteMix].filter(Boolean).join(' · ')||'Kuzey Kıbrıs')+'</div>'+
+          '<div class="kpr"><div><small>Başlangıç</small><b>'+(minF(p)?para(minF(p)):'—')+'</b></div><i>Bilgi ve katalog →</i></div></div></button>';
+        return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch">Satışta</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc(m[0])+'</div>'+
+          '<div class="kpr"><div><small>Başlangıç</small><b>'+para(minF(p,p._e))+'</b></div><i>'+p._e.length+' ünite</i></div></div></button>';}).join('')
+        :'<div class="ktn">Bu süzgeçlere uygun proje bulunamadı.</div>';
     }
-    L.onclick=function(e){var b=e.target.closest('button[data-i]');if(!b)return;sel=+b.dataset.i;tip='';ciz();var t=R.querySelector('.fys');if(t)t.scrollTop=0;};
-    R.addEventListener('click',function(e){var b=e.target.closest('.fyf button');if(!b)return;tip=b.getAttribute('data-t');ciz();});
-    fetch('assets/kibris360/fiyatlar.json?t='+Math.floor(Date.now()/9e5)).then(function(r){return r.json();}).then(function(d){
-      D=d;var g=new Date(d.guncel);
-      if(!isNaN(g))$('fyGun').innerHTML='<i></i>Canlı liste · '+g.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+' '+g.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
-      ciz();
-    }).catch(function(){L.innerHTML='<div class="fyn">Fiyat listesi şu an alınamadı. İnternet bağlantısını kontrol edip sayfayı yenileyin.</div>';});
+    function oneri(goster){var o=$k('ktO');if(!goster){o.hidden=true;return;}var s=q(),ff=$k('ktF').value,l=P.filter(function(p){return !ff||p.firma===ff;});
+      var tam=l.some(function(p){return low(p.proje)===s;});l=l.filter(function(p){return !s||tam||low(p.proje).indexOf(s)>=0;}).sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
+      o.innerHTML=l.length?l.map(function(p){return '<button type="button" data-ad="'+esc(p.proje)+'"><span>'+esc(p.proje)+'</span><small>'+(cc(p)?'Cyprus Constructions':'Döveç')+'</small></button>';}).join(''):'<button type="button" disabled><small>Eşleşen proje yok</small></button>';o.hidden=false;}
+    // ödeme planı (katalogdaki gibi): Döveç %35 peşinat + teslime kadar %45 + teslimden sonra %20 (12 ay); diğerleri %35 + %65
+    function plan(p){return cc(p)?{ad:'Genel plan',pe:35,tk:65,ts:0,ay:0,not:'Tahmini hesap (%35 peşinat + %65 teslime kadar). Resmi ödeme planı için firmanın sözleşmesini esas alın.'}
+      :{ad:'Döveç planı',pe:35,tk:45,ts:20,ay:12,not:'Döveç planı: %35 peşinat, anahtar teslimine kadar %45 (teslime kalan aylara bölünür), teslimden sonra %20 (12 ay, faizsiz). Toplam liste fiyatıdır.'+(/courtyard platinum/i.test(p.proje)?' Courtyard Platinum: bloklara göre teslim Ara 2025 / Ara 2026 / May 2027; peşinat ve vadeye göre indirim olabilir.':'')+' Hesap tahminidir; kesin tutarı satış temsilcisiyle teyit edin.'};}
+    function hesap(){var sel=$k('kcU');if(!sel)return;var p=P[acik],pl=plan(p),f=sel.value==='m'?(+$k('kcP').value||0):+sel.value;$k('kcPf').hidden=sel.value!=='m';
+      var ay=Math.max(1,+$k('kcA').value||1),sa=pl.ts?Math.max(1,+$k('kcS').value||1):0;
+      if(!(f>0)){$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';return;}
+      var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1],['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]];
+      if(pl.ts)o.push(['Teslimden sonra (%'+pl.ts+' · '+sa+' ay)',para(f*pl.ts/100)],['Aylık taksit, teslimden sonra',para(f*pl.ts/100/sa),1]);
+      o.unshift(['Liste fiyatı',para(f)]);
+      $k('kcO').innerHTML=o.map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');}
+    function ac(i){acik=i;mTip='';var p=P[i],m=M[p.proje]||['','','',''];
+      var ac='<div class="kac">'+(m[2]?'<button type="button" class="kred" data-tur="'+m[2]+'" data-p="'+m[3]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
+        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">Drive klasörü ↗</a>':'')+'</div>';
+      var h='<div class="ktp"><div class="kgl" style="'+kapak(p)+'"><button type="button" class="kx" id="ktmX">✕</button><div class="ktt"><div class="kk">'+esc(p.firma)+(m[0]?' · '+esc(m[0]):'')+'</div><h3>'+esc(p.proje)+'</h3></div></div><div class="kbx" id="ktB">';
+      if(brosur(p)){
+        var ds=p.aciklama&&!/detaylar, görseller/i.test(p.aciklama)?p.aciklama:'';
+        h+='<div class="kmt">'+esc(p.firma)+' · Kuzey Kıbrıs'+(minF(p)?' · '+para(minF(p))+'\'den başlayan fiyatlar (firmanın Temmuz 2025 sunumu)':'')+'</div>'+(ds?'<p class="kds">'+esc(ds)+'</p>':'')+
+          (p.uniteMix?'<div class="kv"><b>Ünite dağılımı</b><div>'+p.uniteMix.split('·').map(function(x){return '<span>'+esc(x.trim())+'</span>';}).join('')+'</div></div>':'')+
+          (p.olanaklar?'<div class="kv"><b>Olanaklar</b><div>'+p.olanaklar.split('·').map(function(x){return '<span>'+esc(x.trim())+'</span>';}).join('')+'</div></div>':'')+
+          '<div class="nt2">Bu projede dijital fiyat listesi paylaşılmadığı için ünite ve fiyat tablosu yok. Güncel fiyat için katalog PDF\'ini ya da Drive klasörünü açın.</div>'+ac;
+        h+='</div></div>';$k('ktm').innerHTML=h;
+      }else{$k('ktm').innerHTML=h+'</div></div>';tablo(ac);}
+      $k('ktm').classList.add('on');$k('fyo').classList.add('det');$k('ktm').scrollTop=0;}
+    function tablo(ac){var p=P[acik],es=eslesen(p);if(!es.length)es=p.uniteler;
+      var tl=[];es.forEach(function(u){if(tl.indexOf(u.tip)<0)tl.push(u.tip);});tl.sort(function(a,b){return a.localeCompare(b,'tr',{numeric:true});});if(mTip&&tl.indexOf(mTip)<0)mTip='';
+      var l=es.filter(function(u){return !mTip||u.tip===mTip;}).sort(function(a,b){return a.fiyat-b.fiyat;}),pl=plan(p);
+      var h='<div class="kmt">'+esc(p.firma)+' · '+es.length+' ünite · kaynak: '+esc(p.kaynak)+(p.durumVar?' · müsaitlik listeden':' · listede olan müsait')+'</div>'+
+        (cc(p)?'<div class="nt2">Fiyatlar firmanın PDF fiyat listesinden alındı; en güncel durumu satış temsilcisiyle teyit edin.</div>':'')+
+        (tl.length>1?'<div class="ktyp"><button type="button" data-t="" class="'+(mTip?'':'on')+'">Tümü · '+es.length+'</button>'+tl.map(function(t){return '<button type="button" data-t="'+esc(t)+'" class="'+(t===mTip?'on':'')+'">'+esc(t)+' · '+es.filter(function(u){return u.tip===t;}).length+'</button>';}).join('')+'</div>':'')+
+        '<div class="ktw"><table><thead><tr><th>Tip</th><th>Konum</th><th>Net / brüt m²</th><th>Fiyat</th><th>Durum</th></tr></thead><tbody>'+
+        l.map(function(u,k){var d=u.durum||'Müsait',c=/sat/i.test(d)?' kso':/rezerv/i.test(d)?' kred':'',alt=[ozTr(u.manzara),u.not].filter(Boolean).join(' · ');
+          return '<tr data-f="'+u.fiyat+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+(u.kat==null?'-':u.kat===0?'zemin':esc(u.kat)+'. kat')+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
+            '<td>'+sayi(u.ic)+(u.m2?' <small style="display:inline">/ '+sayi(u.m2)+'</small>':'')+'</td><td class="p">'+para(u.fiyat)+'</td><td><span class="kdu'+c+'">'+esc(d)+'</span></td></tr>';}).join('')+'</tbody></table></div>'+
+        '<div class="kc"><h5>Ödeme planı hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'. Tablodan bir satıra basınca o daire seçilir.</div>'+
+        '<div class="kgr"><label>Daire<select id="kcU">'+l.map(function(u){return '<option value="'+u.fiyat+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m">Özel tutar gir…</option></select></label>'+
+        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="24"></label>'+(pl.ts?'<label>Teslimden sonra (ay)<input id="kcS" type="number" min="1" value="'+pl.ay+'"></label>':'<label id="kcPf0"></label>')+
+        '<label id="kcPf" hidden>Tutar (£)<input id="kcP" type="number" min="0" placeholder="0"></label></div><div class="kout" id="kcO"></div><div class="nt3">'+esc(pl.not)+'</div></div>'+(ac||$k('ktB').querySelector('.kac').outerHTML);
+      $k('ktB').innerHTML=h;hesap();}
+    window.ktKapat=function(){$k('ktm').classList.remove('on');$k('fyo').classList.remove('det');$k('ktm').innerHTML='';acik=-1;};
+    $k('ktG').addEventListener('click',function(e){var b=e.target.closest('.ktk');if(b)ac(+b.dataset.i);});
+    $k('ktm').addEventListener('click',function(e){
+      if(e.target===$k('ktm')||e.target.closest('#ktmX')){ktKapat();return;}
+      var t=e.target.closest('[data-tur]');if(t){e.stopPropagation();openTur(t.dataset.tur,t.dataset.p);return;}
+      var f=e.target.closest('.ktyp button');if(f){mTip=f.getAttribute('data-t');tablo();return;}
+      var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
+    $k('ktm').addEventListener('input',function(e){if(/^kc/.test(e.target.id))hesap();});
+    $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();});
+    $k('ktQ').addEventListener('input',function(){ciz();oneri(true);});$k('ktQ').addEventListener('focus',function(){oneri(true);});
+    $k('ktO').addEventListener('mousedown',function(e){var b=e.target.closest('button[data-ad]');if(!b)return;e.preventDefault();$k('ktQ').value=b.dataset.ad;oneri(false);ciz();$k('ktQ').blur();});
+    $k('ktQx').onclick=function(){$k('ktQ').value='';ciz();oneri(false);};
+    [['ktT',TS],['ktZ',ZS]].forEach(function(x){var id=x[0],sec=x[1];
+      $k(id+'b').onclick=function(e){e.stopPropagation();var o=$k(id+'p'),h=o.hidden;$k('ktTp').hidden=$k('ktZp').hidden=true;o.hidden=!h;};
+      $k(id+'p').addEventListener('change',function(e){var v=e.target.dataset.v;if(e.target.checked)sec[v]=1;else delete sec[v];var n=Object.keys(sec).length;$k(id+'b').textContent=(n?n+' seçili':'Tümü')+' ▾';ciz();});
+      $k(id+'p').addEventListener('click',function(e){e.stopPropagation();if(e.target.closest('.kft button')){Object.keys(sec).forEach(function(k){delete sec[k];});msKur();ciz();}});});
+    $k('fyo').addEventListener('click',function(e){if(!e.target.closest('.msp,.msb'))$k('ktTp').hidden=$k('ktZp').hidden=true;if(!e.target.closest('.kq'))oneri(false);});
+    $k('ktF').onchange=ciz;$k('ktSo').onchange=ciz;$k('ktM').addEventListener('input',ciz);
+    $k('ktClr').onclick=function(){$k('ktQ').value='';$k('ktM').value='';$k('ktF').value='';$k('ktSo').value='artan';Object.keys(TS).forEach(function(k){delete TS[k];});Object.keys(ZS).forEach(function(k){delete ZS[k];});msKur();ciz();};
+    function yukle(){fetch('assets/kibris360/fiyatlar.json?t='+Math.floor(Date.now()/9e5)).then(function(r){return r.json();}).then(function(d){
+      D=d;P=d.projeler.map(function(p){p.uniteler=p.uniteler||[];return p;});var g=new Date(d.guncel);
+      $k('ktSync').textContent=isNaN(g)?'—':g.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})+' '+g.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+      var fs={};P.forEach(function(p){fs[p.firma]=1;});$k('ktF').innerHTML='<option value="">Tümü</option>'+Object.keys(fs).sort().map(function(f){return '<option>'+esc(f)+'</option>';}).join('');
+      stats();msKur();ciz();
+    }).catch(function(){$k('ktG').innerHTML='<div class="ktn">Katalog şu an alınamadı. İnternet bağlantısını kontrol edip sayfayı yenileyin.</div>';yuk=false;});}
+    window.fyAc=function(on){var o=$k('fyo');if(on===undefined)on=!o.classList.contains('on');o.classList.toggle('on',on);o.setAttribute('aria-hidden',!on);$k('bFy').classList.toggle('on',on);if(!on)ktKapat();if(on&&!yuk){yuk=true;yukle();}};
+    $k('bFy').onclick=function(){fyAc();};$k('fyX').onclick=function(){fyAc(false);};
   })();
 
   // genel bakış
@@ -1636,9 +1759,12 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
   document.addEventListener('keydown',function(e){
     if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(e.target.closest&&e.target.closest('input,select,textarea')){if(e.key==='Escape')e.target.blur();return;}
     var k=e.key;
-    if(k==='Escape'){if($('tur').classList.contains('on'))closeTur();else if($('ov').classList.contains('on'))toggleOv();else if(B.classList.contains('rh'))toggleRh();return;}
+    if(k==='Escape'){if($('tur').classList.contains('on'))closeTur();else if($('ktm').classList.contains('on'))ktKapat();else if($('fyo').classList.contains('on'))fyAc(false);else if($('ov').classList.contains('on'))toggleOv();else if(B.classList.contains('rh'))toggleRh();return;}
     if($('tur').classList.contains('on'))return;
+    if(k==='l'||k==='L'){fyAc();return;}
+    if($('fyo').classList.contains('on'))return;
     if(k==='ArrowRight'||k==='ArrowDown'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();next();}
     else if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
     else if(k==='Home')go(0);else if(k==='End')go(N-1);
@@ -1647,9 +1773,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   // dokunmatik kaydırma
   var tx=null,ty=null;
   $('wrap').addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
-  $('wrap').addEventListener('touchend',function(e){if(tx===null)return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))dx<0?next():prev();tx=null;});
+  $('wrap').addEventListener('touchend',function(e){if(tx===null||$('fyo').classList.contains('on'))return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))dx<0?next():prev();tx=null;});
   // sahneye tıklama: sağ yarı ileri, sol yarı geri (buton ve tablo hariç)
-  deck.addEventListener('click',function(e){if(e.target.closest('button,a,tr.go,.fyb'))return;var r=deck.getBoundingClientRect();(e.clientX-r.left)>r.width/2?next():prev();});
+  deck.addEventListener('click',function(e){if(e.target.closest('button,a,tr.go,.fyo'))return;var r=deck.getBoundingClientRect();(e.clientX-r.left)>r.width/2?next():prev();});
   // boşta arayüzü gizle
   var it;function wake(){B.classList.remove('idle');clearTimeout(it);it=setTimeout(function(){if(!B.classList.contains('rh'))B.classList.add('idle');},3000);}
   ['mousemove','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,wake,{passive:true});});
