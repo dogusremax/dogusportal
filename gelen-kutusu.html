@@ -132,6 +132,7 @@ input,textarea{font:inherit;color:inherit}
 }
 @media (min-width:761px){ .geri{display:none} }
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 
@@ -501,7 +502,7 @@ $('geriBtn').onclick = function () {
 /* Açılış */
 (function () {
   var q = new URLSearchParams(location.search).get('k');
-  var kayitli = q || depo('gk_pin');
+  var kayitli = q || depo('gk_pin') || (window.brokerPinAl && brokerPinAl());
   if (kayitli) giris(kayitli, true);
   else $('pinInput').focus();
 })();

@@ -102,6 +102,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes r{to{transform:rotate(360deg)}}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -277,6 +278,8 @@ async function api(body){
 /* ---- giriş ---- */
 $("pin").addEventListener("input",e=>{ if(e.target.value.length>=PIN_LEN) login(); });
 $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") login(); });
+/* Portalda broker girişi yapıldıysa şifre sorma */
+if(window.brokerPinAl&&brokerPinAl()){ $("pin").value=brokerPinAl(); setTimeout(login,0); }
 async function login(){
   pin=$("pin").value.trim(); $("pinMsg").textContent="";
   try{

@@ -87,6 +87,7 @@ button{font-family:inherit;cursor:pointer}
 .belgeler a{font-size:12.5px;font-weight:700;text-decoration:none;color:var(--yazi);background:var(--dolgu);
   border-radius:10px;padding:8px 12px}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -129,6 +130,8 @@ function rolAdi(rol){
 var pin = '', benim = '', $ = function(id){ return document.getElementById(id); };
 
 try { pin = sessionStorage.getItem('kd_pin') || ''; benim = localStorage.getItem('kd_dan') || ''; } catch(e){}
+/* Portalda broker girişi yapıldıysa şifre sorma */
+if (!pin && window.brokerPinAl && brokerPinAl()) { pin = brokerPinAl(); benim = brokerAdAl() || benim; }
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
 /* Apps Script bazen yavaş/hatalı cevap verir: 25 sn zaman aşımı, JSON değilse anlaşılır hata */

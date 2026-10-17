@@ -50,6 +50,7 @@
   #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 <div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Ofis Duyurusu · WhatsApp</h1></div>
@@ -314,7 +315,7 @@ $('goBtn').onclick = async () => {
 
 $('girBtn').onclick = () => giris($('pin').value.trim());
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('girBtn').click(); });
-const kayitli = depo('duyuru_pin');
+const kayitli = depo('duyuru_pin') || (window.brokerPinAl && brokerPinAl());
 if (kayitli) giris(kayitli); else $('pin').focus();
 </script>
 </body>

@@ -140,6 +140,7 @@ main{padding:14px 14px 90px;max-width:620px;margin:0 auto}
 .yukleniyor{text-align:center;padding:50px;color:var(--soluk)}
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
+<script src="assets/broker.js"></script>
 </head>
 <body>
 
@@ -682,7 +683,7 @@ async function kaydet(){
 
 /* ---------- açılış ---------- */
 (function(){
-  const kayitli = localStorage.getItem('kiraPin');
+  const kayitli = localStorage.getItem('kiraPin') || (window.brokerPinAl && brokerPinAl());
   if(!kayitli){ $('#pin').focus(); return; }
   PIN = kayitli;
   $('#pin').value = kayitli;
