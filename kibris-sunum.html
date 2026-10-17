@@ -58,10 +58,10 @@ p{font-size:30px;line-height:1.45}
 .pg{position:absolute;right:96px;bottom:56px;font:600 20px/1 var(--fb);letter-spacing:3px;opacity:.5}
 
 /* ortak bileşenler */
-.chip{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border-radius:999px;font:600 26px/1 var(--fb);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.chip{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border-radius:999px;font:600 26px/1 var(--fb);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
 .chip i{width:12px;height:12px;border-radius:50%;background:#ff6b78;display:block}
 .card{background:#fff;border-radius:28px;padding:44px;box-shadow:0 20px 60px rgba(14,19,48,.08)}
-.glass{background:rgba(5,10,48,.62);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border-radius:32px}
+.glass{background:rgba(5,10,48,.8);border:1px solid rgba(255,255,255,.16);border-radius:32px}
 .btn360{display:inline-flex;align-items:center;gap:14px;padding:20px 32px;border-radius:999px;background:var(--red);color:#fff;font:700 26px/1 var(--fb);letter-spacing:.3px;box-shadow:0 14px 40px rgba(220,28,46,.4);transition:transform .2s,box-shadow .2s}
 .btn360:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(220,28,46,.55)}
 .btn360 svg{width:34px;height:34px}
@@ -203,7 +203,7 @@ hr.r{border:0;width:80px;height:3px;background:var(--red)}
 .flow{position:relative;margin-top:80px;height:560px}
 .flow svg.path{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .flow svg.path path{fill:none;stroke:rgba(255,255,255,.22);stroke-width:3;stroke-dasharray:10 12}
-.s.on .flow svg.path path{animation:dash 30s linear infinite}
+.s.on .flow svg.path path{animation:dash 30s linear 1}
 @keyframes dash{to{stroke-dashoffset:-600}}
 .st{position:absolute;width:300px;text-align:center}
 .st .o{width:120px;height:120px;border-radius:50%;margin:0 auto 22px;display:grid;place-items:center;background:var(--navy2);border:2px solid rgba(255,255,255,.2);position:relative}
@@ -245,7 +245,7 @@ table.tb{width:100%;border-collapse:collapse;margin-top:44px;font-size:24px}
 .mos div{border-radius:22px;overflow:hidden;position:relative}
 .mos div:first-child{grid-column:span 2}
 .mos img{width:100%;height:100%;object-fit:cover;display:block}
-.mos span{position:absolute;left:16px;bottom:14px;font:600 18px/1 var(--fb);color:#fff;background:rgba(5,10,48,.6);padding:8px 12px;border-radius:99px;backdrop-filter:blur(6px)}
+.mos span{position:absolute;left:16px;bottom:14px;font:600 18px/1 var(--fb);color:#fff;background:rgba(5,10,48,.78);padding:8px 12px;border-radius:99px}
 
 /* 17 galeri */
 .gal{position:absolute;inset:0;display:grid;grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr;gap:10px;background:var(--navy)}
@@ -281,7 +281,7 @@ table.tb{width:100%;border-collapse:collapse;margin-top:44px;font-size:24px}
 .tile p{font-size:21px;margin-top:10px;color:rgba(255,255,255,.8)}
 .tile .pl{position:absolute;right:26px;top:26px;z-index:2;width:76px;height:76px;border-radius:50%;background:var(--red);display:grid;place-items:center;box-shadow:0 10px 30px rgba(220,28,46,.5)}
 .tile .pl svg{width:40px;height:40px}
-.s.on .tile .pl{animation:pulse 2.4s ease-in-out infinite}
+.s.on .tile .pl{animation:pulse 2.4s ease-in-out 3}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,28,46,.6)}50%{box-shadow:0 0 0 18px rgba(220,28,46,0)}}
 
 /* 21 ödeme planı */
@@ -609,9 +609,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-ada" data-sec="Giriş" data-t="Talebi kendi içinde bir ada">
-  <div class="bg kb"><img src="assets/kibris/album/f13.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/album/f13.webp" alt=""></div>
   <div class="sh"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad" style="display:flex;flex-direction:column;justify-content:center">
     <div class="ey a">Giriş · Neden Kuzey Kıbrıs</div>
     <h2 class="a" style="--d:1">Tatil bölgesi değil, <em>talebi kendi içinde</em> olan bir ada.</h2>
@@ -628,7 +628,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-rakam" data-sec="Giriş" data-t="Rakamlarla ada">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Rakamlarla ada</div>
     <h2 class="a" style="--d:1">Talep sahada, <em>rakamlar ortada.</em></h2>
@@ -648,7 +648,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-talep" data-sec="Giriş" data-t="Talebin kaynakları">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Öğrenci · turist · hasta</div>
     <h2 class="a" style="--d:1">Kiracı her yıl <em>daha fazla.</em></h2>
@@ -659,7 +659,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
         <div class="a" style="--d:4"><b><sup>%</sup><span class="cnt" data-to="100">0</span></b><div><p>otel doluluğu, 2025 yaz sezonunda rekor</p><div class="fill"><i></i></div></div></div>
         <div class="a" style="--d:5"><b><span class="cnt" data-to="50000">0</span><sup>+</sup></b><p>yabancı hasta her yıl KKTC hastanelerinde tedavi oluyor</p></div>
       </div>
-      <div class="imgcard a" style="--d:3"><img src="assets/kibris/sunum/universiteler.webp" alt="KKTC üniversiteleri haritası"></div>
+      <div class="imgcard a" style="--d:3"><img data-src="assets/kibris/sunum/universiteler.webp" alt="KKTC üniversiteleri haritası"></div>
     </div>
   </div>
   <div class="src">Kaynak: geliştirici sunumları (Döveç 2026), RE/MAX Doğuş Kıbrıs sunumu.</div>
@@ -673,8 +673,8 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-altyapi" data-sec="Giriş" data-t="Altyapı yatırımları">
-  <div class="bg kb"><img src="assets/kibris/album/f20.webp" alt=""></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <div class="bg kb"><img data-src="assets/kibris/album/f20.webp" alt=""></div>
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Büyüyen ada</div>
     <h2 class="a" style="--d:1;max-width:1100px">Altyapı <em>büyümeye</em> hazırlanıyor.</h2>
@@ -697,8 +697,8 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-miras" data-sec="Giriş" data-t="Tarih ve İngiliz mirası">
-  <div class="bg kb"><img src="assets/kibris/sunum/tarih-girne.webp" alt="Girne antik liman"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <div class="bg kb"><img data-src="assets/kibris/sunum/tarih-girne.webp" alt="Girne antik liman"></div>
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="txt">
     <div class="ey a">Tarih ve düzen</div>
     <h2 class="a" style="--d:1">Tarihle doğa, <em>İngiliz düzeniyle</em> buluşuyor.</h2>
@@ -738,7 +738,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     </div>
     <div class="acts a" style="--d:5"><span>Golf</span><span>Binicilik</span><span>Su sporları</span><span>Dağcılık</span><span>Kamp</span><span>Doğa yürüyüşü</span></div>
   </div>
-  <div class="ph a" style="--d:2"><div><img src="assets/kibris/sunum/emekli.webp" alt=""></div><div><img src="assets/kibris/sunum/emekli-kafe.webp" alt=""></div></div>
+  <div class="ph a" style="--d:2"><div><img data-src="assets/kibris/sunum/emekli.webp" alt=""></div><div><img data-src="assets/kibris/sunum/emekli-kafe.webp" alt=""></div></div>
   <div class="pg" style="color:var(--ink)">00</div>
   <aside class="nt">
     <h5>Anlat</h5><p>Kuzey Kıbrıs Avrupa'ya göre daha uygun maliyetle daha yüksek yaşam kalitesi sunuyor. Her yıl artan sayıda yabancı emekli adayı seçiyor.</p>
@@ -750,7 +750,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-sterlin" data-sec="Giriş" data-t="Sterlin ve güvence">
-  <div class="bg kb"><img src="assets/kibris/album/f04.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/album/f04.webp" alt=""></div>
   <div class="txt">
     <div class="ey a">Güvence</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Sterlinle alınır, <em>sterlinle kiralanır.</em></h2>
@@ -760,7 +760,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       <div class="it a" style="--d:4"><i>TC</i><div><h3>Türk vatandaşlarına ek hak</h3><p>KKTC, TC vatandaşlarına diğer yabancılardan daha geniş konut edinme hakkı tanır.</p></div></div>
     </div>
   </div>
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pg" style="color:var(--ink)">06</div>
   <aside class="nt">
     <h5>Anlat</h5><p>Türk yatırımcının en büyük kaygısı kur. Burada fiyat da kira da sterlin; taksitler faizsiz. Kur riski sadece TL'den çevirdiğin anla sınırlı.</p>
@@ -770,7 +770,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-avantaj" data-sec="Giriş" data-t="Yatırımcı avantajları">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Yatırımcıya tanınan haklar</div>
     <h2 class="a" style="--d:1">Mülkle gelen <em>avantajlar.</em></h2>
@@ -795,9 +795,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 <!-- ======================= GELİŞME ======================= -->
 
 <section class="s dark sec" id="s-gelisme" data-sec="Gelişme" data-t="Bölüm: Gelişme">
-  <div class="bg kb"><img src="assets/kibris/sunum/c-sahilyolu.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/c-sahilyolu.webp" alt=""></div>
   <div class="sh"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="rn a">II</div>
   <div class="in"><div class="ey a">Gelişme</div><h2 class="a" style="--d:1">Doğru kıyı, <em>doğru proje.</em></h2><p class="a" style="--d:2">Her projeyi değil, kendini kanıtlamış olanları anlatacağım.</p></div>
   <aside class="nt">
@@ -807,7 +807,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-prensip" data-sec="Gelişme" data-t="Çalışma prensibimiz">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Çalışma prensibimiz</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Her projeyi değil, <em>sadece kendini kanıtlamış olanları</em> öneriyoruz.</h2>
@@ -819,7 +819,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
         <div class="it a" style="--d:5"><b>04</b><h3>Yüksek ve sürekli kira</h3><p>Yıl boyu kiracı bulan, kendini kısa sürede amorti eden projeler.</p></div>
         <div class="it a" style="--d:6"><b>05</b><h3>Hızlı geri dönüş</h3><p>Satarken de kiralarken de nakde kolay dönen projeler.</p></div>
       </div>
-      <div class="seal" style="--d:4"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
+      <div class="seal" style="--d:4"><img class="ring" data-src="assets/kibris/odullu-muhur-halka.webp" alt=""><img data-src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
     </div>
   </div>
   <div class="pg" style="color:var(--ink)">08</div>
@@ -832,15 +832,15 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-bolge" data-sec="Gelişme" data-t="Dört kıyı">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Bölgeyi tanıyın</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Hangi kıyı <em>size</em> göre?</h2>
     <div class="regs">
-      <div class="reg a" style="--d:2"><img src="assets/kibris/sunum/girne.webp" alt="Girne limanı"><div class="t"><h3>Girne</h3><div class="tg">Tarihî liman · yerleşik yaşam</div><p>Adanın en köklü yaşam merkezi; restoran ve hastaneye yakın.</p><div class="fit"><span>Yaşam</span><span>Emeklilik</span><span>Uzun dönem kira</span></div></div></div>
-      <div class="reg a" style="--d:3"><img src="assets/kibris/sunum/c-golf.webp" alt="Esentepe golf sahası"><div class="t"><h3>Esentepe</h3><div class="tg">Girne doğusu · golf ve sakin koylar</div><p>Girne'ye 25–30 dakika, dağ ile deniz arasında butik siteler.</p><div class="fit"><span>Tatil evi</span><span>Kısa dönem kira</span><span>Doğa</span></div></div></div>
-      <div class="reg a" style="--d:4"><img src="assets/kibris/album/f44.webp" alt="İskele Long Beach"><div class="t"><h3>İskele</h3><div class="tg">Long Beach · en hızlı büyüyen kıyı</div><p>Kilometrelerce kumsal ve yeni nesil siteler; maketten alımda değer artışı.</p><div class="fit"><span>Yatırım</span><span>Tatil kirası</span><span>Maketten alım</span></div></div></div>
-      <div class="reg a" style="--d:5"><img src="assets/kibris/album/f13.webp" alt="Bakir koy"><div class="t"><h3>Karpaz</h3><div class="tg">Kuzeydoğu · bakir doğa, Altın Kum</div><p>Adanın en az yapılaşmış kıyısı; milli park ve sakin kumsallar.</p><div class="fit"><span>Doğa</span><span>Tatil evi</span><span>Uzun vadeli</span></div></div></div>
+      <div class="reg a" style="--d:2"><img data-src="assets/kibris/sunum/girne.webp" alt="Girne limanı"><div class="t"><h3>Girne</h3><div class="tg">Tarihî liman · yerleşik yaşam</div><p>Adanın en köklü yaşam merkezi; restoran ve hastaneye yakın.</p><div class="fit"><span>Yaşam</span><span>Emeklilik</span><span>Uzun dönem kira</span></div></div></div>
+      <div class="reg a" style="--d:3"><img data-src="assets/kibris/sunum/c-golf.webp" alt="Esentepe golf sahası"><div class="t"><h3>Esentepe</h3><div class="tg">Girne doğusu · golf ve sakin koylar</div><p>Girne'ye 25–30 dakika, dağ ile deniz arasında butik siteler.</p><div class="fit"><span>Tatil evi</span><span>Kısa dönem kira</span><span>Doğa</span></div></div></div>
+      <div class="reg a" style="--d:4"><img data-src="assets/kibris/album/f44.webp" alt="İskele Long Beach"><div class="t"><h3>İskele</h3><div class="tg">Long Beach · en hızlı büyüyen kıyı</div><p>Kilometrelerce kumsal ve yeni nesil siteler; maketten alımda değer artışı.</p><div class="fit"><span>Yatırım</span><span>Tatil kirası</span><span>Maketten alım</span></div></div></div>
+      <div class="reg a" style="--d:5"><img data-src="assets/kibris/album/f13.webp" alt="Bakir koy"><div class="t"><h3>Karpaz</h3><div class="tg">Kuzeydoğu · bakir doğa, Altın Kum</div><p>Adanın en az yapılaşmış kıyısı; milli park ve sakin kumsallar.</p><div class="fit"><span>Doğa</span><span>Tatil evi</span><span>Uzun vadeli</span></div></div></div>
     </div>
   </div>
   <div class="pg" style="color:var(--ink)">09</div>
@@ -854,11 +854,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
 <section class="s dark" id="s-partner" data-sec="Gelişme" data-t="Partner geliştiriciler">
   <div class="duo">
-    <div class="h"><img src="assets/kibris/sunum/d-longbeach.webp" alt=""><div class="c a" style="--d:2"><div class="k">İskele · Esentepe · Mağusa</div><h3>Döveç Group</h3><div class="stats"><div><b><span class="cnt" data-to="37">0</span></b><span>yıllık deneyim</span></div><div><b><span class="cnt" data-to="100">0</span>+</b><span>tamamlanan proje</span></div><div><b><span class="cnt" data-to="5000">0</span>+</b><span>ev sahibi</span></div><div><b><span class="cnt" data-to="50">0</span>+</b><span>ülkeden müşteri</span></div><div><b><span class="cnt" data-to="400">0</span>+</b><span>uzman ekip</span></div><div><b><span class="cnt" data-to="10">0</span>+</b><span>sektörde faaliyet</span></div></div><div class="aw"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>2025 PropertyNC Platinum ve Gold ödülleri</div></div></div>
-    <div class="h"><img src="assets/kibris/sunum/c-site.webp" alt=""><div class="c a" style="--d:3"><div class="k">Esentepe · Tatlısu sahili</div><h3>Cyprus Constructions</h3><div class="stats"><div><b><span class="cnt" data-to="28">0</span></b><span>yıllık deneyim</span></div><div><b><span class="cnt" data-to="60">0</span>+</b><span>ülkeden alıcı</span></div><div><b><span class="cnt" data-to="8">0</span></b><span>sahil projesi</span></div><div><b class="w">Bireysel tapu</b><span>her daireye</span></div><div><b class="w">Zamanında teslim</b><span>firma taahhüdü</span></div><div><b class="w">Kira yönetimi</b><span>firmanın kendi hizmeti</span></div></div><div class="aw"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>2025 PropertyNC Platinum ödülü</div></div></div>
+    <div class="h"><img data-src="assets/kibris/sunum/d-longbeach.webp" alt=""><div class="c a" style="--d:2"><div class="k">İskele · Esentepe · Mağusa</div><h3>Döveç Group</h3><div class="stats"><div><b><span class="cnt" data-to="37">0</span></b><span>yıllık deneyim</span></div><div><b><span class="cnt" data-to="100">0</span>+</b><span>tamamlanan proje</span></div><div><b><span class="cnt" data-to="5000">0</span>+</b><span>ev sahibi</span></div><div><b><span class="cnt" data-to="50">0</span>+</b><span>ülkeden müşteri</span></div><div><b><span class="cnt" data-to="400">0</span>+</b><span>uzman ekip</span></div><div><b><span class="cnt" data-to="10">0</span>+</b><span>sektörde faaliyet</span></div></div><div class="aw"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>2025 PropertyNC Platinum ve Gold ödülleri</div></div></div>
+    <div class="h"><img data-src="assets/kibris/sunum/c-site.webp" alt=""><div class="c a" style="--d:3"><div class="k">Esentepe · Tatlısu sahili</div><h3>Cyprus Constructions</h3><div class="stats"><div><b><span class="cnt" data-to="28">0</span></b><span>yıllık deneyim</span></div><div><b><span class="cnt" data-to="60">0</span>+</b><span>ülkeden alıcı</span></div><div><b><span class="cnt" data-to="8">0</span></b><span>sahil projesi</span></div><div><b class="w">Bireysel tapu</b><span>her daireye</span></div><div><b class="w">Zamanında teslim</b><span>firma taahhüdü</span></div><div><b class="w">Kira yönetimi</b><span>firmanın kendi hizmeti</span></div></div><div class="aw"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>2025 PropertyNC Platinum ödülü</div></div></div>
   </div>
   <div class="toptitle"><div class="ey a">Partnerlerimiz</div><h2 class="a" style="--d:1">İki köklü, <em>ödüllü</em> yüklenici.</h2></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Döveç Group</h5><ul><li>37 yıl, 100+ tamamlanmış proje, 5.000+ ev sahibi, 50+ ülkeden müşteri.</li><li>2025'te PropertyNC'de çok sayıda Platinum ve Gold ödül; "Best Builder".</li><li>Sadece inşaat değil: otel işletmesi, market, fitness, okul gibi grup şirketleri var. Bu yüzden kira ve işletme tarafı güçlü.</li></ul>
     <h5>Cyprus Constructions</h5><ul><li>28 yıllık firma; Esentepe–Tatlısu sahil hattında Aloha, Phuket, Bahamas, Hawaii, Mykonos, Pearl Island, Idyll, Maldives projeleri.</li><li>Her daireye bireysel tapu; zamanında teslim; 60+ ülkeden alıcı.</li><li>Kendi kira yönetimi ve otel sistemi var (Kira yönetimi slaytı).</li></ul>
@@ -881,7 +881,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       <div class="a" style="--d:6"><h4>Eğitim ve yatırım</h4><ul><li><b>Döveç Academy</b>Eğitim</li><li><b>D-Farm</b>Tarım ve hayvancılık</li><li><b>Döveç Ventures</b>Girişim yatırımları</li></ul></div>
     </div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pg">00</div>
   <aside class="nt">
     <h5>Anlat</h5><p>Döveç sadece inşaat firması değil; adada 15 şirketlik bir grup. Bu, alıcı için "teslimden sonra da arkasında biri var" demek.</p>
@@ -892,9 +892,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark proj" id="s-iskele" data-sec="Gelişme" data-t="İskele · Long Beach">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-longbeach.webp" alt="İskele Long Beach havadan"></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-longbeach.webp" alt="İskele Long Beach havadan"></div>
   <div class="sh" style="background:linear-gradient(20deg,rgba(5,10,48,.92) 0%,rgba(5,10,48,.5) 35%,rgba(5,10,48,0) 55%),linear-gradient(90deg,rgba(5,10,48,0) 40%,rgba(5,10,48,.55))"></div>
-  <img class="forbes a" style="--d:3" src="assets/kibris/forbes-iskele-kapak-v2-720.webp" alt="Forbes kapağı: Dünyanın en iyi sahil yatırımı İskele">
+  <img class="forbes a" style="--d:3" data-src="assets/kibris/forbes-iskele-kapak-v2-720.webp" alt="Forbes kapağı: Dünyanın en iyi sahil yatırımı İskele">
   <div class="forbes-cap a" style="--d:4">“Dünyanın en iyi sahil yatırımı: İskele.”<small>Forbes kapağı</small></div>
   <div class="pc glass a" style="--d:1">
     <div class="k">İskele · Long Beach</div>
@@ -903,7 +903,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="facts"><div class="fact"><b><span class="cnt" data-to="7">0</span></b><span>Döveç projesi aynı sahil hattında</span></div><div class="fact"><b>£127K</b><span>'dan başlayan fiyatlar</span></div></div>
     <div class="foot"><button class="btn360" data-tur="dovec" data-p="0B7BD4EB"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>Havadan 360° gez</button></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>Long Beach'i havadan göster. Etiketlerde Döveç'in projeleri görünüyor: Querencia, Courtyard Platinum, Courtyard Long Beach, D-Point.</p>
     <h5>Vurgula</h5><ul><li>Forbes kapağı: "Dünyanın en iyi sahil yatırımı İskele". Uluslararası bir onay.</li><li>Bölgenin en büyük gücü kumsal ve tatil kirası.</li><li>Fiyatlar £127.000'den başlıyor (12 Ekim 2026 fiyat listesi, Courtyard Platinum stüdyo).</li></ul>
@@ -913,13 +913,13 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-lbharita" data-sec="Gelişme" data-t="Long Beach'te Döveç">
-  <div class="bg kb2"><img src="assets/kibris/sunum/lb-harita.webp" alt="Long Beach Döveç projeleri haritası"></div>
+  <div class="bg kb2"><img data-src="assets/kibris/sunum/lb-harita.webp" alt="Long Beach Döveç projeleri haritası"></div>
   <div class="fcap glass a" style="--d:2;width:560px;padding:30px 36px">
     <div class="k">İskele · Long Beach</div>
     <h2 style="font-size:54px">Bir sahil, <em>yedi Döveç projesi</em></h2>
     <p>Querencia, Courtyard, otel, kumarhane ve beach club aynı hatta.</p>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>Haritada Long Beach'teki Döveç projelerini tek tek göster:</p>
     <ul><li>Panorama Long Beach ve Courtyard Long Beach (tamamlanmış, yaşayan projeler).</li><li>Resort Project ve Querencia Residences (yeni yükselen kuleler).</li><li>Hotel &amp; Casino, Hotel ve Beach Club projeleri sahil şeridinde.</li></ul>
@@ -929,7 +929,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark proj" id="s-querencia" data-sec="Gelişme" data-t="Querencia">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-querencia.webp" alt="Querencia Hotel and Residence" style="object-position:70% 50%"></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-querencia.webp" alt="Querencia Hotel and Residence" style="object-position:70% 50%"></div>
   <div class="sh" style="background:linear-gradient(90deg,rgba(5,10,48,.7),rgba(5,10,48,0) 55%)"></div>
   <div class="pc l glass a" style="--d:1">
     <div class="k">İskele · Long Beach · Döveç</div>
@@ -938,7 +938,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="facts"><div class="fact"><b><span class="cnt" data-to="705">0</span></b><span>konut</span></div><div class="fact"><b>%<span class="cnt" data-to="87">0</span></b><span>deniz manzarası</span></div><div class="fact"><b>400 m</b><span>denize en uzak konut</span></div><div class="fact"><b>1 blok</b><span>otel olarak hizmet verecek</span></div></div>
     <div class="foot"><div class="price"><small>Başlangıç</small>£156.000</div><button class="btn360" data-tur="dovec" data-p="0FE17CA1"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360° gez</button></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><ul><li>705 konut, %87'si deniz manzaralı; projenin en arkadaki konutu bile denize 400 metre.</li><li>Bir blok otel olarak işletilecek: güvenlik, hizmet, kiralama kolaylığı.</li><li>Hemen karşısında Döveç'in 5 yıldızlı otel ve kumarhane projesi, önünde 2,5 katlı AVM planlanıyor. Bölge değeri bu yatırımlarla artar.</li><li>Tüm blokların zemininde mağaza ve restoranlar.</li></ul>
     <h5>Fiyat</h5><p>£156.000'den başlıyor (12 Ekim 2026 listesi); 1+1'den 4+1 penthouse'a kadar seçenek. Güncel stoku canlı listeden teyit et.</p>
@@ -948,7 +948,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark proj" id="s-platinum" data-sec="Gelişme" data-t="Courtyard Platinum">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-platinum.webp" alt="Courtyard Platinum havadan"></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-platinum.webp" alt="Courtyard Platinum havadan"></div>
   <div class="sh" style="background:linear-gradient(90deg,rgba(5,10,48,.65),rgba(5,10,48,.15) 55%)"></div>
   <div class="pc l glass a" style="--d:1">
     <div class="k">İskele · Long Beach · Döveç</div>
@@ -957,7 +957,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="facts"><div class="fact"><b><span class="cnt" data-to="952">0</span></b><span>konut</span></div><div class="fact"><b><span class="cnt" data-to="20000">0</span> m²</b><span>sosyal alan</span></div><div class="fact"><b>Stüdyo</b><span>'dan 3+1 dubleks'e</span></div><div class="fact"><b>Beach Club</b><span>sitelilere özel plaj</span></div></div>
     <div class="foot"><div class="price"><small>Başlangıç</small>£127.000</div><button class="btn360" data-tur="dovec" data-p="A5CE7BD5"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360° gez</button></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><ul><li>952 konutluk büyük bir yaşam alanı; 20.000 m² sosyal alan: kapalı havuz, spa, spor salonu, restoran, çocuk alanları.</li><li>Sahilde sitelilere özel Platinum Beach Club; shuttle ile ulaşım.</li><li>Stüdyo, 1+1, dubleks ve 3+1 seçenekleri.</li></ul>
     <h5>Fiyat</h5><p>£127.000'den başlıyor (12 Ekim 2026 listesi). Sunumdaki en uygun giriş fiyatı; ilk yatırımını yapacak müşteriye bu projeyle başla.</p>
@@ -966,15 +966,15 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-yasamrez" data-sec="Gelişme" data-t="Yaşam Rezidansları">
-  <div class="bg kb"><img src="assets/kibris/sunum/yasam-havuz.webp" alt="Yaşam Rezidansları havuz"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <div class="bg kb"><img data-src="assets/kibris/sunum/yasam-havuz.webp" alt="Yaşam Rezidansları havuz"></div>
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="txt">
     <div class="k a">Döveç</div>
     <h2 class="a" style="--d:1">Yaşam Rezidansları</h2>
     <p class="lead a" style="--d:2">Doğayla iç içe 16 blok; yüzme havuzu, fitness merkezi, peyzaj alanları ve otopark. Güvenli site yaşamı.</p>
     <div class="mixbar a" style="--d:3"><div style="width:33.3%;background:var(--red)">Stüdyo</div><div style="width:51%;background:#3a4383">1+1</div><div style="width:15.7%;background:#6d76b8">2+1</div></div>
     <div class="mixlab a" style="--d:4"><div class="fact"><b><span class="cnt" data-to="306">0</span></b><span>daire, 16 blok</span></div><div class="fact"><b><span class="cnt" data-to="102">0</span></b><span>stüdyo</span></div><div class="fact"><b><span class="cnt" data-to="156">0</span></b><span>1+1</span></div><div class="fact"><b><span class="cnt" data-to="48">0</span></b><span>2+1</span></div></div>
-    <div class="plans a" style="--d:5"><div><img src="assets/kibris/sunum/plan-studyo.webp" alt=""><span>Stüdyo</span></div><div><img src="assets/kibris/sunum/plan-1-1.webp" alt=""><span>1+1</span></div><div><img src="assets/kibris/sunum/plan-2-1.webp" alt=""><span>2+1</span></div></div>
+    <div class="plans a" style="--d:5"><div><img data-src="assets/kibris/sunum/plan-studyo.webp" alt=""><span>Stüdyo</span></div><div><img data-src="assets/kibris/sunum/plan-1-1.webp" alt=""><span>1+1</span></div><div><img data-src="assets/kibris/sunum/plan-2-1.webp" alt=""><span>2+1</span></div></div>
   </div>
   <div class="pg">00</div>
   <aside class="nt">
@@ -985,13 +985,13 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-dpoint" data-sec="Gelişme" data-t="D-Point ve yol projesi">
-  <div class="bg kb2"><img src="assets/kibris/sunum/yasam-vaziyet.webp" alt="Yaşam Rezidansları vaziyet planı ve D-Point"></div>
+  <div class="bg kb2"><img data-src="assets/kibris/sunum/yasam-vaziyet.webp" alt="Yaşam Rezidansları vaziyet planı ve D-Point"></div>
   <div class="fcap t glass a" style="--d:2;width:640px;padding:30px 38px">
     <div class="k">Döveç · çevre yatırımları</div>
     <h2 style="font-size:54px">Yeni bir <em>merkez doğuyor</em></h2>
     <p>D-Point iş ve yaşam merkezi, çift şeritli yol ve planlanan yürüyüş yolu ile alışveriş caddesi.</p>
   </div>
-  <div class="ins imgcard a" style="--d:3"><img src="assets/kibris/sunum/dpoint.webp" alt="D-Point Lifestyle and Business Hub"></div>
+  <div class="ins imgcard a" style="--d:3"><img data-src="assets/kibris/sunum/dpoint.webp" alt="D-Point Lifestyle and Business Hub"></div>
   <aside class="nt">
     <h5>Anlat</h5><ul><li>Vaziyet planında Yaşam Rezidansları'nın 16 bloğu (B1–B8, C1–C8) görünüyor.</li><li>Yanında D-Point: Döveç'in ödüllü iş ve yaşam merkezi (ofis, mağaza, restoran).</li><li>Önünden geçen çift şeritli yol projesi ve planlanan yürüyüş yolu ile alışveriş caddesi.</li></ul>
     <h5>Vurgula</h5><p>"Yol, ticaret ve sosyal yaşam aynı anda geliyor. Bu tür altyapı, konutun değerini taşıyan şeydir."</p>
@@ -1001,7 +1001,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-otel" data-sec="Gelişme" data-t="Otel işletim sistemi">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Courtyard Long Beach · Otel işletim sistemi</div>
     <h2 class="a" style="--d:1">Siz yokken daireniz <em>otel gibi çalışır.</em></h2>
@@ -1028,10 +1028,10 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
 <section class="s dark" id="s-esentepe" data-sec="Gelişme" data-t="Esentepe · Tatlısu">
   <div class="twin">
-    <div class="h"><img src="assets/kibris/sunum/d-natulux.webp" alt="Natulux"><div class="c a" style="--d:1"><div class="k">Tatlısu · Döveç</div><h3>Natulux</h3><p class="lead">Denizle bütünleşen tasarım: kayalık kıyının üstünde villalar ve daireler.</p><div class="row"><div class="fact"><b>Mayıs 2027</b><span>teslim</span></div><div class="fact"><b>35/35/30</b><span>peşinat / taksit / teslim sonrası</span></div></div><div class="ft"><div class="price"><small>Başlangıç</small>£214.000</div><button class="btn360" data-tur="dovec" data-p="EFDF0772"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360°</button></div></div></div>
-    <div class="h"><img src="assets/kibris/sunum/d-lacasalia.webp" alt="La Casalia marina"><div class="c a" style="--d:2"><div class="k">Esentepe · Döveç</div><h3>La Casalia</h3><p class="lead">Özel marina, bağlar ve orman arasında 355 dönümlük bir yaşam köyü.</p><div class="row"><div class="fact"><b><span class="cnt" data-to="454">0</span></b><span>konut</span></div><div class="fact"><b><span class="cnt" data-to="166">0</span> dönüm</b><span>yeşil alan</span></div><div class="fact"><b>8 km</b><span>yürüyüş parkuru</span></div></div><div class="ft"><div class="price"><small>Başlangıç</small>£154.000</div><button class="btn360" data-tur="dovec" data-p="E66FB7E6"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360°</button></div></div></div>
+    <div class="h"><img data-src="assets/kibris/sunum/d-natulux.webp" alt="Natulux"><div class="c a" style="--d:1"><div class="k">Tatlısu · Döveç</div><h3>Natulux</h3><p class="lead">Denizle bütünleşen tasarım: kayalık kıyının üstünde villalar ve daireler.</p><div class="row"><div class="fact"><b>Mayıs 2027</b><span>teslim</span></div><div class="fact"><b>35/35/30</b><span>peşinat / taksit / teslim sonrası</span></div></div><div class="ft"><div class="price"><small>Başlangıç</small>£214.000</div><button class="btn360" data-tur="dovec" data-p="EFDF0772"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360°</button></div></div></div>
+    <div class="h"><img data-src="assets/kibris/sunum/d-lacasalia.webp" alt="La Casalia marina"><div class="c a" style="--d:2"><div class="k">Esentepe · Döveç</div><h3>La Casalia</h3><p class="lead">Özel marina, bağlar ve orman arasında 355 dönümlük bir yaşam köyü.</p><div class="row"><div class="fact"><b><span class="cnt" data-to="454">0</span></b><span>konut</span></div><div class="fact"><b><span class="cnt" data-to="166">0</span> dönüm</b><span>yeşil alan</span></div><div class="fact"><b>8 km</b><span>yürüyüş parkuru</span></div></div><div class="ft"><div class="price"><small>Başlangıç</small>£154.000</div><button class="btn360" data-tur="dovec" data-p="E66FB7E6"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360°</button></div></div></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Natulux (Tatlısu)</h5><ul><li>Kayalık kıyıda, denizle iç içe villa ve daireler (A ve B tipi villa, C-D-E tipi apartman blokları).</li><li>Teslim Mayıs 2027. Ödeme: %35 peşinat, %35 teslime kadar taksit, %30 teslimden sonra 1 yıl içinde.</li><li>£214.000'den başlıyor (12 Ekim 2026 listesi); sınırlı stok.</li></ul>
     <h5>La Casalia (Esentepe)</h5><ul><li>355 dönüm arazi, 166 dönüm yeşil alan, 454 konut.</li><li>Özel marina ve uluslararası yat kulübü, bağcılık ve şarap üretimi, wellness otel, 2.500 kişilik amfitiyatro, 5 dünya mutfağı restoranı, organik bahçeler.</li><li>Stüdyodan 3+1 dubleks villaya; £154.000'den başlıyor.</li></ul>
@@ -1041,7 +1041,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-natmesafe" data-sec="Gelişme" data-t="Natulux: her yere yakın">
-  <div class="bg kb2"><img src="assets/kibris/sunum/natulux-mesafe.webp" alt="Natulux mesafe haritası"></div>
+  <div class="bg kb2"><img data-src="assets/kibris/sunum/natulux-mesafe.webp" alt="Natulux mesafe haritası"></div>
   <div class="fcap r glass a" style="--d:2;width:600px;padding:30px 38px">
     <div class="k">Natulux · Tatlısu</div>
     <h2 style="font-size:54px">Her yere <em>yakın</em></h2>
@@ -1056,7 +1056,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark proj" id="s-casalia" data-sec="Gelişme" data-t="La Casalia: yaşam köyü">
-  <div class="bg kb"><img src="assets/kibris/sunum/casalia-marina.webp" alt="La Casalia marina"></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/casalia-marina.webp" alt="La Casalia marina"></div>
   <div class="sh" style="background:linear-gradient(90deg,rgba(5,10,48,.7),rgba(5,10,48,0) 55%)"></div>
   <div class="pc l glass a" style="--d:1">
     <div class="k">Esentepe · Döveç</div>
@@ -1070,7 +1070,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     </div>
     <div class="foot"><div class="price"><small>Başlangıç</small>£154.000</div><button class="btn360" data-tur="dovec" data-p="E66FB7E6"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>360° gez</button></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>La Casalia bir site değil, bir köy: 355 dönüm arazi, 454 konut.</p>
     <ul><li>Özel marina ve uluslararası yat kulübü; wellness konseptli otel.</li><li>2.500 kişilik amfitiyatro, 5 dünya mutfağı restoranı.</li><li>Bağcılık ve şarap üretimi, organik tarım ve hobi bahçeleri.</li><li>169.000 m² orman alanı, 8 km orman yolu, kumsal plaj ve su sporları, yoga alanı.</li></ul>
@@ -1080,7 +1080,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-ccharita" data-sec="Gelişme" data-t="Esentepe–Tatlısu sahil haritası">
-  <div class="bg kb2" style="background:#fff"><img src="assets/kibris/sunum/cc-harita.webp" alt="Esentepe Tatlısu sahili Cyprus Constructions projeleri"></div>
+  <div class="bg kb2" style="background:#fff"><img data-src="assets/kibris/sunum/cc-harita.webp" alt="Esentepe Tatlısu sahili Cyprus Constructions projeleri"></div>
   <aside class="nt">
     <h5>Anlat</h5><p>Cyprus Constructions'ın dokuz projesi aynı sahil hattında, batıdan doğuya: Hawaii, Aloha, Phuket, Bahamas, Maldives, Mykonos, Pearl Island, Moonlight Villas, Idyll.</p>
     <h5>Vurgula</h5><p>Firmanın sloganı: "Sadece ev değil, yeni bir yaşam tarzı inşa ediyoruz." Hepsi denize yakın, dağ ile deniz arasında.</p>
@@ -1104,11 +1104,11 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <p class="sm a" style="--d:3;margin-top:22px;color:var(--ink2)">Fiyatlar firmanın Temmuz 2025 sunumundan, Bahamas 12 Ekim 2026 listesinden. Güncel stok ön görüşmede teyit edilir.</p>
   </div>
   <div class="mos a" style="--d:2">
-    <div><img src="assets/kibris/sunum/c-aloha.webp" alt=""><span>Aloha Beach Resort</span></div>
-    <div><img src="assets/kibris/sunum/c-phuket.webp" alt=""><span>Phuket</span></div>
-    <div><img src="assets/kibris/sunum/c-hawaii.webp" alt=""><span>Hawaii</span></div>
-    <div><img src="assets/kibris/sunum/c-pearl.webp" alt=""><span>Pearl Island</span></div>
-    <div><img src="assets/kibris/sunum/c-mykonos.webp" alt=""><span>Mykonos</span></div>
+    <div><img data-src="assets/kibris/sunum/c-aloha.webp" alt=""><span>Aloha Beach Resort</span></div>
+    <div><img data-src="assets/kibris/sunum/c-phuket.webp" alt=""><span>Phuket</span></div>
+    <div><img data-src="assets/kibris/sunum/c-hawaii.webp" alt=""><span>Hawaii</span></div>
+    <div><img data-src="assets/kibris/sunum/c-pearl.webp" alt=""><span>Pearl Island</span></div>
+    <div><img data-src="assets/kibris/sunum/c-mykonos.webp" alt=""><span>Mykonos</span></div>
   </div>
   <aside class="nt">
     <h5>Anlat</h5><p>Aynı sahil hattında altı proje; her biri farklı bir bütçe ve yaşam tarzı. Tablodaki satıra tıklayınca o projenin 360° turu açılır.</p>
@@ -1120,14 +1120,14 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-cevre" data-sec="Gelişme" data-t="Esentepe'nin çevresi">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Esentepe'nin çevresi</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Golf, <em>kaplumbağalar</em> ve marina.</h2>
     <div class="regs r3">
-      <div class="reg a" style="--d:2"><img src="assets/kibris/sunum/cc-golf.webp" alt="Esentepe golf sahası"><div class="t"><h3>Golf sahası</h3><div class="tg">Dünyada <span class="cnt" data-to="42">0</span>. sırada</div><p>Dağ ile deniz arasında, dünya standartlarında 18 delikli golf.</p></div></div>
-      <div class="reg a" style="--d:3"><img src="assets/kibris/sunum/cc-alagadi.webp" alt="Alagadi kaplumbağa plajı"><div class="t"><h3>Alagadi Plajı</h3><div class="tg">AB koruma alanı</div><p>Deniz kaplumbağalarının yumurtladığı korunan kumsal.</p></div></div>
-      <div class="reg a" style="--d:4"><img src="assets/kibris/sunum/cc-marina.webp" alt="Esentepe otel ve marina projesi"><div class="t"><h3>Otel ve marina</h3><div class="tg">Esentepe · proje</div><p>Yat limanı, otel ve villalarla Esentepe'nin yeni merkezi.</p></div></div>
+      <div class="reg a" style="--d:2"><img data-src="assets/kibris/sunum/cc-golf.webp" alt="Esentepe golf sahası"><div class="t"><h3>Golf sahası</h3><div class="tg">Dünyada <span class="cnt" data-to="42">0</span>. sırada</div><p>Dağ ile deniz arasında, dünya standartlarında 18 delikli golf.</p></div></div>
+      <div class="reg a" style="--d:3"><img data-src="assets/kibris/sunum/cc-alagadi.webp" alt="Alagadi kaplumbağa plajı"><div class="t"><h3>Alagadi Plajı</h3><div class="tg">AB koruma alanı</div><p>Deniz kaplumbağalarının yumurtladığı korunan kumsal.</p></div></div>
+      <div class="reg a" style="--d:4"><img data-src="assets/kibris/sunum/cc-marina.webp" alt="Esentepe otel ve marina projesi"><div class="t"><h3>Otel ve marina</h3><div class="tg">Esentepe · proje</div><p>Yat limanı, otel ve villalarla Esentepe'nin yeni merkezi.</p></div></div>
     </div>
   </div>
   <div class="pg" style="color:var(--ink)">00</div>
@@ -1140,15 +1140,15 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
 <section class="s dark" id="s-ccgal" data-sec="Gelişme" data-t="Mykonos, Pearl, Phuket">
   <div class="gal6">
-    <div><img src="assets/kibris/sunum/cc-g1.webp" alt=""><span>Mykonos · havuzlu villa</span></div>
-    <div><img src="assets/kibris/sunum/cc-g3.webp" alt=""><span>Pearl Island · sonsuzluk havuzu</span></div>
-    <div><img src="assets/kibris/sunum/cc-g4.webp" alt=""><span>Phuket · wellness resort</span></div>
-    <div><img src="assets/kibris/sunum/cc-g2.webp" alt=""><span>Mykonos · gün batımı</span></div>
-    <div><img src="assets/kibris/sunum/cc-g5.webp" alt=""><span>Phuket · plaj kulübü</span></div>
-    <div><img src="assets/kibris/sunum/cc-g6.webp" alt=""><span>Phuket · villa</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g1.webp" alt=""><span>Mykonos · havuzlu villa</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g3.webp" alt=""><span>Pearl Island · sonsuzluk havuzu</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g4.webp" alt=""><span>Phuket · wellness resort</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g2.webp" alt=""><span>Mykonos · gün batımı</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g5.webp" alt=""><span>Phuket · plaj kulübü</span></div>
+    <div><img data-src="assets/kibris/sunum/cc-g6.webp" alt=""><span>Phuket · villa</span></div>
   </div>
   <div class="gcap2"><div class="ey a">Cyprus Constructions</div><h2 class="a" style="--d:1">Mykonos, Pearl, <em>Phuket.</em></h2></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="" style="z-index:4">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="" style="z-index:4">
   <aside class="nt">
     <h5>Anlat</h5><p>Konuşmayı azalt, görseller anlatsın. Her karede projenin adını söyle yeter.</p>
     <ul><li><b>Mykonos</b>: hazır; bahçe daireler ve havuzlu villalar, üst segment (£495.000'den).</li><li><b>Pearl Island</b>: hazır stüdyolar, sonsuzluk havuzu (£194.995).</li><li><b>Phuket</b>: wellness resort ve plaj kulübü; fazlara göre 2027–2028 teslim.</li></ul>
@@ -1158,12 +1158,12 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
 <section class="s dark" id="s-galeri" data-sec="Gelişme" data-t="Yaşam tarzı">
   <div class="gal">
-    <div class="kb"><img src="assets/kibris/sunum/c-phuket-plaj.webp" alt=""><span>Phuket · plaj kulübü</span></div>
-    <div><img src="assets/kibris/sunum/c-aloha2.webp" alt=""><span>Aloha · havuz evleri</span></div>
-    <div><img src="assets/kibris/sunum/d-natulux-gece.webp" alt=""><span>Natulux · gece</span></div>
+    <div class="kb"><img data-src="assets/kibris/sunum/c-phuket-plaj.webp" alt=""><span>Phuket · plaj kulübü</span></div>
+    <div><img data-src="assets/kibris/sunum/c-aloha2.webp" alt=""><span>Aloha · havuz evleri</span></div>
+    <div><img data-src="assets/kibris/sunum/d-natulux-gece.webp" alt=""><span>Natulux · gece</span></div>
   </div>
   <div class="galcap"><div class="ey a">Yaşam tarzı</div><h2 class="a" style="--d:1">Sadece bir ev değil, <em>yeni bir hayat.</em></h2></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>Bu slaytta konuşmayı azalt, görsellerin çalışmasına izin ver. 5-10 saniye sessiz kal.</p>
     <q>"Sabah plaj kulübünde kahve, akşam havuz başında gün batımı. Kiracınızın da sizin de satın aldığı şey bu."</q>
@@ -1173,7 +1173,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kira" data-sec="Gelişme" data-t="Kira yönetimi">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Kira yönetimi</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Anahtarı verin, <em>gerisini yönetim halleder.</em></h2>
@@ -1208,15 +1208,15 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-show" data-sec="Gelişme" data-t="360° hava turu">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">360° show</div>
     <h2 class="a" style="--d:1">Şimdi projeleri <em>havadan</em> gezelim.</h2>
     <div class="tiles">
-      <button class="tile a" style="--d:2" data-tur="dovec" data-p="0B7BD4EB"><img src="assets/kibris/album/f28.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>İskele Long Beach</h3><p>Querencia, Courtyard, D-Point</p></div></button>
-      <button class="tile a" style="--d:3" data-tur="esentepe" data-p="FE2CD7FF"><img src="assets/kibris/sunum/c-site.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Esentepe sahili</h3><p>Aloha, Phuket, Bahamas, Pearl Island</p></div></button>
-      <button class="tile a" style="--d:4" data-tur="dovec" data-p="EFDF0772"><img src="assets/kibris/sunum/d-natulux-hava.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Tatlısu</h3><p>Natulux ve La Casalia</p></div></button>
-      <button class="tile a" style="--d:5" data-tur="kibris" data-p="B48AF92A"><img src="assets/kibris/album/f36.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Boğaz ve Karpaz</h3><p>Adanın bakir kıyıları</p></div></button>
+      <button class="tile a" style="--d:2" data-tur="dovec" data-p="0B7BD4EB"><img data-src="assets/kibris/album/f28.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>İskele Long Beach</h3><p>Querencia, Courtyard, D-Point</p></div></button>
+      <button class="tile a" style="--d:3" data-tur="esentepe" data-p="FE2CD7FF"><img data-src="assets/kibris/sunum/c-site.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Esentepe sahili</h3><p>Aloha, Phuket, Bahamas, Pearl Island</p></div></button>
+      <button class="tile a" style="--d:4" data-tur="dovec" data-p="EFDF0772"><img data-src="assets/kibris/sunum/d-natulux-hava.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Tatlısu</h3><p>Natulux ve La Casalia</p></div></button>
+      <button class="tile a" style="--d:5" data-tur="kibris" data-p="B48AF92A"><img data-src="assets/kibris/album/f36.webp" alt=""><span class="pl"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span><div class="t"><h3>Boğaz ve Karpaz</h3><p>Adanın bakir kıyıları</p></div></button>
     </div>
   </div>
   <div class="pg">19</div>
@@ -1230,9 +1230,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 <!-- ======================= SONUÇ ======================= -->
 
 <section class="s dark sec" id="s-sonuc" data-sec="Sonuç" data-t="Bölüm: Sonuç">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-natulux-hava.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-natulux-hava.webp" alt=""></div>
   <div class="sh"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="rn a">III</div>
   <div class="in"><div class="ey a">Sonuç</div><h2 class="a" style="--d:1">Rakamlar ve <em>yol haritası.</em></h2><p class="a" style="--d:2">Ne ödersiniz, ne kazanırsınız, tapuya nasıl ulaşırsınız.</p></div>
   <aside class="nt">
@@ -1242,7 +1242,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-plan" data-sec="Sonuç" data-t="Örnek ödeme planı">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Örnek ödeme planı · £185.000 daire</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Peşinat, <em>faizsiz</em> taksit, teslim.</h2>
@@ -1274,7 +1274,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kolay" data-sec="Sonuç" data-t="Döveç'ten ek kolaylıklar">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Döveç ödeme kolaylıkları</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Ödemede ve eşyada <em>ek kolaylık.</em></h2>
@@ -1295,7 +1295,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-getiri" data-sec="Sonuç" data-t="Getiri ve vergi">
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">Getiri</div>
     <h2 class="a" style="--d:1">Kendini <em>8–12 yılda</em> amorti eden projeler.</h2>
@@ -1319,7 +1319,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-surec" data-sec="Sonuç" data-t="Satın alma süreci">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Satın alma süreci</div>
     <h2 class="a" style="--d:1;color:var(--navy)">İstanbul'dan <em>tapuya</em>, beş adım.</h2>
@@ -1340,7 +1340,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kocan" data-sec="Sonuç" data-t="Koçan tipleri">
-  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
+  <img class="logo koyu" data-src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Tapu (koçan) tipleri</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Ne aldığınızı <em>bilerek alın.</em></h2>
@@ -1361,9 +1361,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-dogus" data-sec="Sonuç" data-t="Neden RE/MAX Doğuş">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-interior.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-interior.webp" alt=""></div>
   <div class="sh" style="background:linear-gradient(0deg,rgba(5,10,48,.96) 30%,rgba(5,10,48,.7))"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad">
     <div class="ey a">RE/MAX Doğuş ayrıcalığı</div>
     <h2 class="a" style="--d:1">Aynı fiyat. <em>Daha güçlü pazarlık.</em></h2>
@@ -1383,20 +1383,20 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s dark" id="s-son" data-sec="Sonuç" data-t="Kapanış">
-  <div class="bg kb"><img src="assets/kibris/sunum/d-natulux-gece.webp" alt=""></div>
+  <div class="bg kb"><img data-src="assets/kibris/sunum/d-natulux-gece.webp" alt=""></div>
   <div class="sh"></div>
-  <img class="logo" src="assets/dogus-logo.png" alt="">
+  <img class="logo" data-src="assets/dogus-logo.png" alt="">
   <div class="pad" style="display:flex;flex-direction:column;justify-content:center">
     <div class="ey a">Bir sonraki adım</div>
     <h2 class="a" style="--d:1">Denize karşı, <em>sterlinle.</em></h2>
     <p class="cta a" style="--d:2;color:#fff">Size uygun 3 projeyi 24 saatte seçelim; keşif gezinizi birlikte planlayalım.</p>
     <div class="people a" style="--d:3" id="sonKisi">
-      <div class="person"><img src="assets/kibris/umut-tokkus.webp" alt="Umut Tokkuş"><div><b>Umut Tokkuş</b><span>RE/MAX Doğuş</span></div></div>
-      <div class="person"><img src="assets/kibris/makbule-tokkus.webp" alt="Makbule Tokkuş"><div><b>Makbule Tokkuş</b><span>Yurt Dışı Proje Koordinatörü</span></div></div>
+      <div class="person"><img data-src="assets/kibris/umut-tokkus.webp" alt="Umut Tokkuş"><div><b>Umut Tokkuş</b><span>RE/MAX Doğuş</span></div></div>
+      <div class="person"><img data-src="assets/kibris/makbule-tokkus.webp" alt="Makbule Tokkuş"><div><b>Makbule Tokkuş</b><span>Yurt Dışı Proje Koordinatörü</span></div></div>
     </div>
     <div class="contact a" style="--d:4"><span class="chip" id="sonTel"><i></i>0532 478 13 31</span><span class="chip"><i></i>0216 315 15 15</span><span class="chip"><i></i>kibrisburda.com</span></div>
   </div>
-  <div class="seal" style="--d:5"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
+  <div class="seal" style="--d:5"><img class="ring" data-src="assets/kibris/odullu-muhur-halka.webp" alt=""><img data-src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
   <aside class="nt">
     <h5>Kapanış</h5><p>Prensip slaytında müşterinin seçtiği önceliği hatırlat: "Sizin için en önemlisi ... demiştiniz; o yüzden size ... ve ... projelerini öneriyorum."</p>
     <h5>Somut adım iste</h5><ul><li>"Önümüzdeki iki hafta içinde adaya gelebilir misiniz? Keşif gezisini biz organize ediyoruz."</li><li>Gelemiyorsa: "Bu hafta canlı video turla daireyi gösterelim."</li><li>Beğendiği daire için: "£2.000 ile iki haftalığına bloke edebiliriz" (Cyprus Constructions); Döveç'te rezervasyon koşulunu teyit et.</li></ul>
@@ -1461,6 +1461,8 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 
   function render(){
     S.forEach(function(s,i){s.classList.toggle('on',i===cur);});
+    // görseller yalnız bu slayt ve yakınındakiler için yüklenir (97 görselin hepsi açılışta inmesin)
+    for(var k=cur-1;k<=cur+2;k++)if(S[k])[].forEach.call(S[k].querySelectorAll('img[data-src]'),function(im){im.src=im.getAttribute('data-src');im.removeAttribute('data-src');});
     var v=$('hv');if(v){if(cur===0){var p=v.play();if(p&&p.catch)p.catch(function(){});}else v.pause();}
     count(S[cur]);
     $('cnt').textContent=(cur+1)+' / '+N;
