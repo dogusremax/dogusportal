@@ -25,10 +25,10 @@
   /* Önce broker PIN'i (yerel), sonra danışman PIN'i; giren kişiyi kaydeder */
   function giris(pin){
     return (window.brokerKim ? window.brokerKim(pin) : Promise.resolve(null)).then(function(b){
-      if(b){ try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', b); }catch(e){} return true; }
+      if(b){ try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', b); sessionStorage.setItem('kibrisPin', String(pin).trim()); }catch(e){} return true; }
       return danismanKim(pin).then(function(id){
         if(!id) return false;
-        try{ sessionStorage.setItem('kibrisAuth', 'ok'); sessionStorage.setItem('kibrisKim', id); }catch(e){}
+        try{ sessionStorage.setItem('kibrisAuth', 'ok'); sessionStorage.setItem('kibrisKim', id); sessionStorage.setItem('kibrisPin', String(pin).trim()); }catch(e){}
         return true;
       });
     });
@@ -63,18 +63,27 @@
       });
     };
   }
+  /* kibrisburda.com'dan dogusportal.com'a geçerken oturum taşınmaz (ayrı site); şifre adresin # kısmında götürülür, sunucuya gitmez */
+  function devir(u){
+    var p = ''; try{ p = sessionStorage.getItem('kibrisPin') || ''; }catch(e){}
+    if (!p && window.brokerPinAl) p = brokerPinAl();
+    return p ? u + '#g=' + encodeURIComponent(p) : u;
+  }
   function menu(){
     css();
     var d = document.createElement('div'); d.id = 'brokerGate';
-    d.innerHTML = '<form><b>Sunum</b><a class="ch" href="' + HEDEF + '">360° VR turlar<small>Projeleri havadan ve içeriden gez</small></a><a class="ch" href="' + SUNUM + '">Kıbrıs sunumu<small>Müşteriye sunum, konuşmacı notlarıyla</small></a><div class="r"><button type="button" class="no">Kapat</button></div></form>';
+    d.innerHTML = '<form><b>Sunum</b><a class="ch" href="' + devir(HEDEF) + '">360° VR turlar<small>Projeleri havadan ve içeriden gez</small></a><a class="ch" href="' + devir(SUNUM) + '">Kıbrıs sunumu<small>Müşteriye sunum, konuşmacı notlarıyla</small></a><div class="r"><button type="button" class="no">Kapat</button></div></form>';
     document.body.appendChild(d);
     d.querySelector('.no').onclick = function(){ d.remove(); };
     d.onclick = function(ev){ if(ev.target === d) d.remove(); };
   }
   function ready(fn){ document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn(); }
+  var gelen = (location.hash.match(/(?:^#|&)g=(\d{4,6})/) || [])[1];
+  if (gelen) try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
   if(gate){
     if(ok()) return;
     css();
+    if (gelen) { giris(gelen).then(function(x){ if(x){ var s = document.getElementById('brokerCss'); if(s) s.remove(); } else ready(function(){ ask(function(){ var s = document.getElementById('brokerCss'); if(s) s.remove(); }, function(){ location.href = 'kibris.html'; }); }); }); return; }
     ready(function(){ ask(function(){ var s = document.getElementById('brokerCss'); if(s) s.remove(); }, function(){ location.href = 'kibris.html'; }); });
     return;
   }

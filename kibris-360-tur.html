@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script>/* kibrisburda.com'dan gelen şifre (#g=), sayfa adresi değiştirmeden önce alınır */window.__kibrisG=(location.hash.match(/(?:^#|&)g=(\d{4,6})/)||[])[1]||'';if(window.__kibrisG)try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}</script>
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
@@ -580,6 +581,16 @@
   listBuild();ui();init();
 })();
 </script>
-<script>try{if(window.top===window&&(sessionStorage.getItem('perfAuth')==='ok'||sessionStorage.getItem('kibrisAuth')==='ok'))document.getElementById('dBroker').hidden=false}catch(e){}</script>
+<script src="assets/broker.js"></script>
+<script>(function(){
+  function goster(){try{if(window.top===window&&(sessionStorage.getItem('perfAuth')==='ok'||sessionStorage.getItem('kibrisAuth')==='ok'))document.getElementById('dBroker').hidden=false}catch(e){}}
+  goster();
+  /* kibrisburda.com'dan Sunum menüsüyle gelindiyse şifre adresin # kısmındadır: tekrar sorma */
+  var g=window.__kibrisG; if(!g) return;
+  (window.brokerKim?brokerKim(g):Promise.resolve(null)).then(function(b){
+    if(b){try{sessionStorage.setItem('perfAuth','ok');sessionStorage.setItem('kibrisKim',b)}catch(e){}goster();return;}
+    return fetch('https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec',{method:'POST',redirect:'follow',body:JSON.stringify({action:'danismanGiris',pin:g})}).then(function(r){return r.json()}).then(function(r){if(r&&r.success){try{sessionStorage.setItem('kibrisAuth','ok');sessionStorage.setItem('kibrisKim',String(r.id||'').split('_')[0])}catch(e){}goster();}});
+  }).catch(function(){});
+})();</script>
 </body>
 </html>
