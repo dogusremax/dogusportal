@@ -2,7 +2,7 @@
    PIN'in kendisi burada YOK; sadece PBKDF2 izi (150.000 tur) tutulur. */
 (function(){
   /* Brokerlar: Umut, Makbule */
-  var IZLER = ['561cc65b3a47c38a75d5af5f24f13559f102d17d37138e114f0787a224d7d22d',
+  var IZLER = ['30092762b4b93cdbcbfbead48d5c8e2fd7e36e79722664c5ab938b4bc423bbac',
                'f0cb3c4bf033518764b926abdcfe76d6e27edeca848d256fc20752cb9be2b319'];
   var TUZ = 'dogus-broker-v1', TUR = 150000;
   function hex(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join(''); }
