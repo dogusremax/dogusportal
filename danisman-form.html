@@ -133,6 +133,11 @@ button.ana:disabled{opacity:.5;cursor:not-allowed}
 .oniztab{display:flex;gap:6px;justify-content:center;margin-top:8px}
 .oniztab a{flex:1;max-width:130px;padding:7px 8px;border-radius:9px;background:rgba(5,10,48,.1);color:#16203A;text-decoration:none;font-weight:700}
 .oniztab a.aktif{background:#050A30;color:#fff}
+.taslak{background:var(--dolgu);border-radius:13px;padding:12px;font-size:13px;line-height:1.55;white-space:pre-wrap;margin-bottom:10px}
+.taslak b{display:block;font-size:12px;color:var(--soluk);margin-bottom:2px}
+.mailbtn{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.mailbtn button{flex:1 1 140px;border:1.5px solid var(--cizgi);background:var(--kart);color:var(--yazi);border-radius:12px;padding:11px 12px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.mailbtn button.ana2{background:var(--lacivert);border-color:var(--lacivert);color:#fff}
 .onceki{display:block;font-size:12px;color:var(--yesil);font-weight:700;margin-top:9px}
 .mini{font-size:12px;color:var(--soluk);text-align:center;margin:14px 0 0;line-height:1.6}
 </style>
@@ -243,6 +248,12 @@ function ciz(d) {
         h += '<label><input type="radio" name="s_' + a.k + '" value="' + s + '"><span>' + s + '</span></label>';
       });
       h += '</div>';
+    } else if (a.bilgi) {
+      /* forma yüklenmez: danışman kendisi e-postayla yollar, taslak hazır, "gönderdim" onayı istenir */
+      h += '<div class="taslak" id="tsl_' + a.k + '"></div>' +
+           '<div class="mailbtn"><button type="button" class="ana2" data-mail="' + a.k + '">✉️ E-postayı hazırla</button>' +
+           '<button type="button" data-kopyala="' + a.k + '">📋 Taslağı kopyala</button></div>' +
+           '<label class="onay" style="margin-top:0"><input type="checkbox" id="a_' + a.k + '" value="Gönderdim"><span>' + (a.onay || 'Gönderdim') + '</span></label>';
     } else if (a.belge) {
       /* İki ayrı giriş: biri doğrudan kamera, biri galeri/dosya. (capture özniteliği galeriyi
          kapatıp yalnızca kamerayı açtığı için ikisi ayrı tutuluyor.) Kimlik dışında PDF de kabul. */
@@ -294,6 +305,11 @@ function ciz(d) {
       return;
     }
     var el = $('a_' + a.k);
+    if (a.bilgi) {
+      taslakYaz(a);
+      el.addEventListener('change', function () { yerelYaz(); $('fld_' + a.k).classList.remove('hata'); });
+      return;
+    }
     if (a.belge) {
       BELGELER[a.k] = [];
       [el, $('c_' + a.k)].forEach(function (giris) {
@@ -333,6 +349,7 @@ function ciz(d) {
   });
   onDegerleriYaz(d.onDeger || {});
   if (yereliUygula()) devamSeridi();
+  d.alanlar.forEach(function (a) { if (a.bilgi) taslakYaz(a); });
   kosulUygula();
   $('gonder').onclick = gonder;
 }
@@ -340,13 +357,46 @@ function ciz(d) {
 /* Ofisin bildiği bilgiler (ad, telefon; yeniden açılan formda önceki cevaplar) hazır gelir */
 function onDegerleriYaz(o) {
   ((TANIM && TANIM.alanlar) || []).forEach(function (a) {
-    if (!a.k || a.belge || !o[a.k]) return;
+    if (!a.k || a.belge || a.bilgi || !o[a.k]) return;
     if (a.tip === 'secim') {
       Array.prototype.forEach.call(document.getElementsByName('s_' + a.k), function (r) { if (r.value === o[a.k]) r.checked = true; });
     } else {
       var el = $('a_' + a.k); if (el) el.value = a.tip === 'tel' ? telBicim(o[a.k]) : o[a.k];
     }
   });
+}
+
+/* E-posta taslağı: {ad} {tc} {tel} formdaki değerlerle dolar */
+function taslakMetni(a) {
+  var deg = function (k) { var el = $('a_' + k); return el && el.value ? el.value.trim() : '…'; };
+  var doldur = function (t) { return String(t || '').replace(/\{(ad|tc|tel)\}/g, function (x, k) { return deg(k); }); };
+  return { kime: a.mail.kime, konu: doldur(a.mail.konu), govde: doldur(a.mail.govde) };
+}
+function taslakYaz(a) {
+  var kutu = $('tsl_' + a.k); if (!kutu || !a.mail) return;
+  var t = taslakMetni(a);
+  kutu.innerHTML = '<b>Kime</b><span class="t1"></span><br><br><b>Konu</b><span class="t2"></span><br><br><b>Mesaj</b><span class="t3"></span>' +
+    '<br><br><b>⚠️ Adli sicil PDF’ini e-postaya eklemeyi unutmayın.</b>';
+  kutu.querySelector('.t1').textContent = t.kime;
+  kutu.querySelector('.t2').textContent = t.konu;
+  kutu.querySelector('.t3').textContent = t.govde;
+  var gor = kutu.parentNode.querySelector('[data-mail]'), kop = kutu.parentNode.querySelector('[data-kopyala]');
+  gor.onclick = function () {
+    var m = taslakMetni(a);
+    location.href = 'mailto:' + m.kime + '?subject=' + encodeURIComponent(m.konu) + '&body=' + encodeURIComponent(m.govde);
+  };
+  kop.onclick = function () {
+    var m = taslakMetni(a), metin = 'Kime: ' + m.kime + '\nKonu: ' + m.konu + '\n\n' + m.govde;
+    var bitti = function () { kop.textContent = '✓ Kopyalandı'; setTimeout(function () { kop.textContent = '📋 Taslağı kopyala'; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(metin).then(bitti, function () { window.prompt('Taslağı kopyalayın:', metin); });
+    else window.prompt('Taslağı kopyalayın:', metin);
+  };
+  if (!taslakYaz._bagli) {   /* ad / T.C. / telefon yazıldıkça taslak güncellensin */
+    taslakYaz._bagli = true;
+    ['ad', 'tc', 'tel'].forEach(function (k) {
+      var el = $('a_' + k); if (el) el.addEventListener('blur', function () { (TANIM.alanlar || []).forEach(function (x) { if (x.bilgi) taslakYaz(x); }); });
+    });
+  }
 }
 
 /* ---------- kimlik tarayıcı: kart çerçevesi + kalite kontrolü ---------- */
@@ -538,7 +588,7 @@ function yereliUygula() {
           if (r.value === d) r.checked = true;
         });
       } else {
-        var el = $('a_' + a.k); if (el) el.value = d;
+        var el = $('a_' + a.k); if (el && a.bilgi) el.checked = true; else if (el) el.value = d;
       }
       doluAlan++;
     }
@@ -823,6 +873,9 @@ function gonder() {
       if (ok.length) belgeler[a.k] = ok.map(function (b) { return b.link; });
       if (a.z && !ok.length && TANIM.yuklu.indexOf(a.k) < 0) { eksik.push(a.e); }
       if ((BELGELER[a.k] || []).some(function (b) { return /hazirlaniyor|sirada|yukleniyor/.test(b.durum); })) eksik.push(a.e + ' (yükleme sürüyor, birkaç saniye bekleyin)');
+    } else if (a.bilgi) {
+      if (el.checked) { veri[a.k] = 'Gönderdim'; kutu.classList.remove('hata'); }
+      else if (a.z) { eksik.push(a.e + ' (gönderdiğinizi işaretleyin)'); kutu.classList.add('hata'); }
     } else {
       var v = (el.value || '').trim();
       if (a.tip === 'iban') {
@@ -883,6 +936,7 @@ function alanDeger(a) {
     return s ? s.value : '';
   }
   var el = $('a_' + a.k);
+  if (el && a.bilgi) return el.checked ? 'Gönderdim' : '';
   return el ? (el.value || '').trim() : '';
 }
 function kosulSaglandi(a) {
