@@ -16,14 +16,14 @@
 <link rel="preconnect" href="https://360.noyanlar.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--navy:#050A30;--red:#DC1C2E;--coral:#FB5160;--glass:rgba(5,10,48,.62);--glass2:rgba(5,10,48,.84);--line:rgba(255,255,255,.14);--mut:rgba(255,255,255,.66);
+  :root{--navy:#050A30;--red:#DC1C2E;--coral:#FB5160;--glass:rgba(5,10,48,.8);--glass2:rgba(5,10,48,.84);--line:rgba(255,255,255,.14);--mut:rgba(255,255,255,.66);
     --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px)}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:var(--navy);color:#fff;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   a{color:inherit;text-decoration:none}
   input{font:inherit}
-  .glass{background:var(--glass);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid var(--line)}
+  .glass{background:var(--glass);border:1px solid var(--line)}
   #pano{position:fixed;inset:0;background:#2b5f93}
   .k3v{overflow:hidden;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;outline:0}
   .k3v:active{cursor:grabbing}
@@ -123,7 +123,7 @@
   .hs.go:hover{z-index:6}
   .hs.go:hover .b{background:var(--coral);transform:translateX(-50%) scale(1.07)}
   .hs.go:hover .b i{background:#fff;color:var(--navy)}
-  .hs.pl .b{padding:3px 10px;background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+  .hs.pl .b{padding:3px 10px;background:rgba(5,10,48,.6);font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
   .hs.pl .b i{display:none}
   .hs.pl .dt{box-shadow:none;width:6px;height:6px;left:-3px;top:-3px}
   .hs.cmp .b{opacity:0;visibility:hidden;pointer-events:none}
@@ -135,7 +135,7 @@
   /* menü */
   .scrim{position:fixed;inset:0;z-index:40;background:rgba(5,10,48,.35);opacity:0;visibility:hidden;transition:opacity .4s,visibility 0s .4s}
   .scrim.on{opacity:1;visibility:visible;transition:opacity .4s}
-  .drawer{position:fixed;z-index:45;top:0;bottom:0;left:0;width:min(440px,90vw);background:rgba(5,10,48,.92);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border-right:1px solid var(--line);transform:translateX(-102%);transition:transform .5s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding-top:var(--sat);padding-left:var(--sal)}
+  .drawer{position:fixed;z-index:45;top:0;bottom:0;left:0;width:min(440px,90vw);background:rgba(5,10,48,.92);border-right:1px solid var(--line);transform:translateX(-102%);transition:transform .5s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding-top:var(--sat);padding-left:var(--sal)}
   .drawer.on{transform:none}
   .drawer .dh{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px}
   .drawer .dh img{height:30px;width:auto}
@@ -165,7 +165,7 @@
   .note{margin-top:18px;font-size:.66rem;color:rgba(255,255,255,.42);line-height:1.5}
 
   /* yatırım paneli */
-  .panel{position:fixed;z-index:30;top:calc(76px + var(--sat));right:calc(16px + var(--sar));width:360px;max-height:calc(100% - 170px - var(--sat) - var(--sab));overflow:auto;border-radius:22px;background:rgba(5,10,48,.88);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--line);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);transform:translateX(calc(100% + 30px));opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s;scrollbar-width:none;padding:20px}
+  .panel{position:fixed;z-index:30;top:calc(76px + var(--sat));right:calc(16px + var(--sar));width:360px;max-height:calc(100% - 170px - var(--sat) - var(--sab));overflow:auto;border-radius:22px;background:rgba(5,10,48,.88);border:1px solid var(--line);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);transform:translateX(calc(100% + 30px));opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s;scrollbar-width:none;padding:20px}
   .panel::-webkit-scrollbar{display:none}
   .panel.on{transform:none;opacity:1}
   .panel .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -226,7 +226,7 @@
     .ttl{padding:6px 10px 7px;max-width:none;flex:1;border-radius:13px}
     .ttl b{font-size:.92rem}
     .ttl .vw{max-width:100%}
-    .rail{top:auto;left:0;right:0;width:auto;bottom:calc(68px + var(--sab));height:auto;border-radius:0;background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+    .rail{top:auto;left:0;right:0;width:auto;bottom:calc(68px + var(--sab));height:auto;border-radius:0;background:none;border:0;}
     .rail .rh{display:none}
     .rail .ls{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 12px;scrollbar-width:none}
     .rail .ls::-webkit-scrollbar{display:none}
@@ -237,7 +237,7 @@
     .rail .it small{display:none}
     .rail .tt{flex-wrap:nowrap;overflow-x:auto;padding:0 12px 2px;scrollbar-width:none}
     .rail .tt::-webkit-scrollbar{display:none}
-    .tt button{flex:none;height:26px;font-size:.62rem;background:rgba(5,10,48,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+    .tt button{flex:none;height:26px;font-size:.62rem;background:rgba(5,10,48,.55);}
     .rtab,.nav{display:none}
     .ctl{left:10px;right:10px;transform:none;bottom:calc(10px + var(--sab));justify-content:space-between;border-radius:16px}
     .ctl .sep,.ctl .zm,.ctl .fs{display:none}
@@ -424,7 +424,7 @@
   function init(){
     // telefon ve tablette (özellikle iOS ve uygulama içi tarayıcılar) bellek sınırlı: en net seviye (4096 px yüz) yüklenmez
     var lite=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform))||(matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400);
-    pv=new K360V($('pano'),{minFov:20,maxFov:120,maxFace:lite?2048:0,maxDpr:lite?2:0});
+    pv=new K360V($('pano'),{minFov:20,maxFov:120,maxFace:lite?2048:0,maxDpr:lite?2:1.25});
     if(q.has('test'))window.K360P=pv;
     pv.on('load',onLoad);
     pv.on('down',function(){hint(false);if(touring)stopTour();});
