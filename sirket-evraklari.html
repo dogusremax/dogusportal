@@ -157,7 +157,10 @@ button{font-family:inherit;cursor:pointer}
 var API = 'https://script.google.com/macros/s/AKfycbyMU_jau9MsWaYq-nT56GRZRtQrTxjaPlh5qgMifmMbX09jt3U8kVj7lhANx8zieDMqNA/exec';
 var KATEGORILER = ['Ticaret Sicil Gazetesi','Vergi Levhası','İmza Sirküleri','Faaliyet Belgesi','Yetki Belgesi',
   'Sözleşmeler','Vekaletname','Sigorta / Poliçe','Banka Evrakları','Kimlik / Temsilci','Teklif & Sunum','Diğer'];
-var MAX_MB = 20;
+/* Büyük dosyalar 4 MB'lık parçalar hâlinde kapanis-matbu projesi üzerinden Drive'a aktarılır */
+var KOPRU = 'https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec';
+var PARCA = 4 * 1024 * 1024;   /* Drive resumable upload: 256 KB'ın katı olmalı */
+var MAX_MB = 200;
 
 var $ = function(id){ return document.getElementById(id); };
 var S = { pin:'', evraklar:[], q:'', kat:'hepsi', sira:'yeni', sec:{} };
@@ -174,9 +177,9 @@ function istek(url, secenek, sn){
     try { return JSON.parse(t); } catch(e){ throw new Error('Sunucudan beklenmeyen cevap geldi'); }
   }, function(e){ clearTimeout(zm); throw new Error(e && e.name === 'AbortError' ? 'Sunucu zamanında cevap vermedi' : 'Bağlantı kurulamadı'); });
 }
-function apiPost(action, veri, sn){
+function apiPost(action, veri, sn, adres){
   veri.pin = S.pin;
-  return istek(API, { method:'POST', body:new URLSearchParams({ action:action, data:JSON.stringify(veri) }) }, sn);
+  return istek(adres || API, { method:'POST', body:new URLSearchParams({ action:action, data:JSON.stringify(veri) }) }, sn);
 }
 
 /* Türkçe duyarsız arama: "imza" → "İmza Sirküleri" */
@@ -339,7 +342,7 @@ function yuklePenceresi(){
     bekleyen.forEach(function(b, i){
       var r = document.createElement('div'); r.className = 'ditem';
       r.innerHTML = '<input value="'+esc(b.ad)+'" aria-label="Evrak adı"><span class="d'+(b.durum==='hata'?' h':b.durum==='tamam'?' t':'')+'">'+
-        esc(b.durum==='hata'?b.hata:b.durum==='tamam'?'Yüklendi':b.durum==='gidiyor'?'Yükleniyor…':boyut(b.f.size))+'</span><button class="kck" aria-label="Çıkar">✕</button>';
+        esc(b.durum==='hata'?b.hata:b.durum==='tamam'?'Yüklendi':b.durum==='gidiyor'?'Yükleniyor… %'+(b.yuzde||0):boyut(b.f.size))+'</span><button class="kck" aria-label="Çıkar">✕</button>';
       r.querySelector('input').oninput = function(){ b.ad = this.value; };
       r.querySelector('button').onclick = function(){ bekleyen.splice(i,1); ciz(); };
       dl.appendChild(r);
@@ -373,9 +376,9 @@ function yuklePenceresi(){
         return;
       }
       b.durum = 'gidiyor'; ciz();
-      oku(b.f).then(function(b64){
-        return apiPost('sirketYukle', { ad:(b.ad||b.f.name).trim(), dosyaAdi:b.f.name, tur:b.f.type||'application/octet-stream', icerik:b64,
-          kategori:ortak.kategori, bitis:ortak.bitis, etiketler:ortak.etiketler, not:ortak.not }, 120);
+      parcaliYukle(b, ortak.kategori, ciz).then(function(dosyaId){
+        return apiPost('sirketYuklemeBitir', { dosyaId:dosyaId, ad:(b.ad||b.f.name).trim(), dosyaAdi:b.f.name,
+          kategori:ortak.kategori, bitis:ortak.bitis, etiketler:ortak.etiketler, not:ortak.not }, 60);
       }).then(function(d){
         if (!d.ok) throw new Error(d.hata || 'Yüklenemedi');
         S.evraklar.push(d.evrak); b.durum = 'tamam'; tamam++;
@@ -383,6 +386,28 @@ function yuklePenceresi(){
         .then(function(){ ciz(); sonraki(); });
     })();
   };
+}
+/* Dosyayı Drive'a parça parça yükler, Drive dosya kimliğini döner */
+function parcaliYukle(b, kategori, ciz){
+  var f = b.f, tur = f.type || 'application/octet-stream';
+  return apiPost('sirketOturum', { dosyaAdi:f.name, tur:tur, boyut:f.size, kategori:kategori }, 60, KOPRU).then(function(d){
+    if (!d.ok) throw new Error(d.hata || 'Yükleme başlatılamadı');
+    var oturum = d.oturum;
+    function gonder(bas, deneme){
+      return oku(f.slice(bas, Math.min(bas + PARCA, f.size))).then(function(b64){
+        return apiPost('sirketParca', { oturum:oturum, bas:bas, toplam:f.size, icerik:b64 }, 120, KOPRU);
+      }).then(function(r){
+        if (!r.ok) throw new Error(r.hata || 'Parça yüklenemedi');
+        var son = Math.min(bas + PARCA, f.size);
+        b.yuzde = Math.round(son / f.size * 100); ciz();
+        return r.dosyaId ? r.dosyaId : gonder(son, 0);
+      }, function(e){
+        if (deneme < 2) return gonder(bas, deneme + 1);   /* kopan parçayı iki kez daha dene */
+        throw e;
+      });
+    }
+    return gonder(0, 0);
+  });
 }
 function oku(f){
   return new Promise(function(ok, hata){
