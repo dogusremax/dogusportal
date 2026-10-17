@@ -6,15 +6,23 @@
                'f0cb3c4bf033518764b926abdcfe76d6e27edeca848d256fc20752cb9be2b319'];
   var TUZ = 'dogus-broker-v1', TUR = 150000;
   function hex(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join(''); }
+  var KIMLER = ['umut', 'makbule'];
+  /* PIN hangi brokera ait: 'umut' / 'makbule' ya da null */
+  window.brokerKim = function(pin){
+    return izi(pin).then(function(h){ var i = IZLER.indexOf(h); return i >= 0 ? KIMLER[i] : null; });
+  };
   window.brokerDogrula = function(pin){
+    return izi(pin).then(function(h){ return IZLER.indexOf(h) >= 0; });
+  };
+  function izi(pin){
     pin = String(pin||'').trim();
-    if (!/^\d{4,6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve(false);
+    if (!/^\d{4,6}$/.test(pin) || !window.crypto || !crypto.subtle) return Promise.resolve('');
     var enc = new TextEncoder();
     return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits'])
       .then(function(k){ return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt:enc.encode(TUZ), iterations:TUR }, k, 256); })
-      .then(function(b){ return IZLER.indexOf(hex(b)) >= 0; })
-      .catch(function(){ return false; });
-  };
+      .then(function(b){ return hex(b); })
+      .catch(function(){ return ''; });
+  }
   /* Sayfa kapısı: ?k=PIN ile gelindiyse doğrula, adres çubuğundan PIN'i sil */
   window.brokerKapi = function(){
     if (sessionStorage.getItem('perfAuth') === 'ok') return true;
