@@ -159,7 +159,7 @@ var KATEGORILER = ['Ticaret Sicil Gazetesi','Vergi Levhası','İmza Sirküleri',
   'Sözleşmeler','Vekaletname','Sigorta / Poliçe','Banka Evrakları','Kimlik / Temsilci','Teklif & Sunum','Diğer'];
 /* Büyük dosyalar 4 MB'lık parçalar hâlinde kapanis-matbu projesi üzerinden Drive'a aktarılır */
 var KOPRU = 'https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec';
-var PARCA = 4 * 1024 * 1024;   /* Drive resumable upload: 256 KB'ın katı olmalı */
+var PARCA = 8 * 1024 * 1024;   /* yedek yol parça boyu; Drive resumable upload: 256 KB'ın katı olmalı */
 var MAX_MB = 200;
 
 var $ = function(id){ return document.getElementById(id); };
@@ -387,12 +387,27 @@ function yuklePenceresi(){
     })();
   };
 }
-/* Dosyayı Drive'a parça parça yükler, Drive dosya kimliğini döner */
+/* Dosyayı Drive'a yükler, Drive dosya kimliğini döner.
+   Önce dosyayı tarayıcıdan oturum adresine doğrudan gönderir (en hızlısı);
+   olmazsa kalan kısmı parça parça kapanis-matbu üzerinden aktarır. */
 function parcaliYukle(b, kategori, ciz){
   var f = b.f, tur = f.type || 'application/octet-stream';
   return apiPost('sirketOturum', { dosyaAdi:f.name, tur:tur, boyut:f.size, kategori:kategori }, 60, KOPRU).then(function(d){
     if (!d.ok) throw new Error(d.hata || 'Yükleme başlatılamadı');
     var oturum = d.oturum;
+    function dogrudan(){
+      return new Promise(function(ok, hata){
+        var x = new XMLHttpRequest();
+        x.open('PUT', oturum);
+        x.upload.onprogress = function(e){ if (e.lengthComputable) { b.yuzde = Math.min(99, Math.round(e.loaded / e.total * 100)); ciz(); } };
+        x.onload = function(){
+          var id = ''; try { id = JSON.parse(x.responseText).id; } catch(e){}
+          if ((x.status === 200 || x.status === 201) && id) ok(id); else hata(new Error('dogrudan ' + x.status));
+        };
+        x.onerror = x.ontimeout = function(){ hata(new Error('dogrudan')); };
+        x.send(f);
+      });
+    }
     function gonder(bas, deneme){
       return oku(f.slice(bas, Math.min(bas + PARCA, f.size))).then(function(b64){
         return apiPost('sirketParca', { oturum:oturum, bas:bas, toplam:f.size, icerik:b64 }, 120, KOPRU);
@@ -406,7 +421,13 @@ function parcaliYukle(b, kategori, ciz){
         throw e;
       });
     }
-    return gonder(0, 0);
+    return dogrudan().catch(function(){
+      /* Drive'ın aldığı kadarını sor, kalanını köprüden gönder */
+      return apiPost('sirketParca', { oturum:oturum, sorgu:true, toplam:f.size }, 60, KOPRU).then(function(r){
+        if (r.ok && r.dosyaId) return r.dosyaId;
+        return gonder(r.ok ? (r.alinan || 0) : 0, 0);
+      });
+    });
   });
 }
 function oku(f){
