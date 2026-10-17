@@ -84,6 +84,9 @@ hr.r{border:0;width:80px;height:3px;background:var(--red)}
 .seal{position:absolute;right:150px;bottom:150px;width:260px;height:260px;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
 .seal img{position:absolute;inset:0;width:100%;height:100%}
 .seal .ring{animation:spin 40s linear infinite}
+.seal{opacity:0;transform:rotate(8deg)}
+.s.on .seal{animation:sealin 1s cubic-bezier(.2,1.3,.4,1) calc(.4s + var(--d,0) * .12s) both}
+@keyframes sealin{from{opacity:0;transform:translateY(-30px) rotate(30deg) scale(1.3)}to{opacity:1;transform:rotate(8deg) scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* 2 yol haritası */
@@ -546,7 +549,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .gcols ul{list-style:none}
 .gcols li{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:20px;color:rgba(255,255,255,.6)}
 .gcols li b{display:block;font:600 26px/1.2 var(--fb);color:#fff;margin-bottom:4px}
-@media (prefers-reduced-motion:reduce){.s.on .kb img,.seal .ring,.s.on .flow svg.path path{animation:none}}
+@media (prefers-reduced-motion:reduce){.s.on .seal{animation:none;opacity:1}.s.on .kb img,.seal .ring,.s.on .flow svg.path path{animation:none}}
 </style>
 </head>
 <body>
@@ -564,7 +567,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="sub a" style="--d:2">Denize karşı, <em>sterlinle.</em></div>
     <div class="meta a" style="--d:3"><span class="chip"><i></i>Girne</span><span class="chip"><i></i>Esentepe</span><span class="chip"><i></i>İskele</span><span class="chip"><i></i>Karpaz</span></div>
   </div>
-  <div class="seal a" style="--d:4"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
+  <div class="seal" style="--d:4"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
   <aside class="nt">
     <h5>Açılış</h5><p>Kendini ve ofisi kısaca tanıt: RE/MAX Doğuş, Fikirtepe. Kuzey Kıbrıs masası İstanbul'dan Kıbrıs'a uçtan uca satış yürütüyor.</p>
     <q>"Bugün size yarım saatte adayı, çalıştığımız projeleri ve rakamları göstereceğim. Sonunda size uygun 2-3 projeyi birlikte seçelim."</q>
@@ -804,7 +807,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
         <div class="it a" style="--d:5"><b>04</b><h3>Yüksek ve sürekli kira</h3><p>Yıl boyu kiracı bulan, kendini kısa sürede amorti eden projeler.</p></div>
         <div class="it a" style="--d:6"><b>05</b><h3>Hızlı geri dönüş</h3><p>Satarken de kiralarken de nakde kolay dönen projeler.</p></div>
       </div>
-      <div class="seal a" style="--d:4"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
+      <div class="seal" style="--d:4"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
     </div>
   </div>
   <div class="pg" style="color:var(--ink)">08</div>
@@ -1380,7 +1383,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     </div>
     <div class="contact a" style="--d:4"><span class="chip"><i></i>0532 478 13 31</span><span class="chip"><i></i>0216 315 15 15</span><span class="chip"><i></i>kibrisburda.com</span></div>
   </div>
-  <div class="seal a" style="--d:5"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
+  <div class="seal" style="--d:5"><img class="ring" src="assets/kibris/odullu-muhur-halka.webp" alt=""><img src="assets/kibris/odullu-muhur-merkez.webp" alt="Sadece ödüllü projeler"></div>
   <aside class="nt">
     <h5>Kapanış</h5><p>Prensip slaytında müşterinin seçtiği önceliği hatırlat: "Sizin için en önemlisi ... demiştiniz; o yüzden size ... ve ... projelerini öneriyorum."</p>
     <h5>Somut adım iste</h5><ul><li>"Önümüzdeki iki hafta içinde adaya gelebilir misiniz? Keşif gezisini biz organize ediyoruz."</li><li>Gelemiyorsa: "Bu hafta canlı video turla daireyi gösterelim."</li><li>Beğendiği daire için: "£2.000 ile iki haftalığına bloke edebiliriz" (Cyprus Constructions); Döveç'te rezervasyon koşulunu teyit et.</li></ul>
