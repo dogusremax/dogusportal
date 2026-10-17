@@ -94,8 +94,8 @@ h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.02em;color:va
 @media(max-width:700px){.ilan{grid-template-columns:1fr;padding:28px}}
 
 .form{display:grid;grid-template-columns:1fr 1.2fr;gap:30px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px}
-.form .bilgi a{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-weight:600;color:var(--navy)}
-.form .bilgi a span{width:38px;height:38px;border-radius:12px;background:#fdecee;color:var(--red);display:grid;place-items:center;flex:none}
+.form .bilgi a{display:flex;align-items:center;gap:12px;min-width:0;padding:12px 0;border-bottom:1px solid var(--line);font-weight:600;color:var(--navy)}
+.form .bilgi a>span:first-child{width:38px;height:38px;border-radius:12px;background:#fdecee;color:var(--red);display:grid;place-items:center;flex:none}
 .form .bilgi svg{width:18px;height:18px}
 form{display:grid;gap:12px}
 form .iki{display:grid;grid-template-columns:1fr 1fr;gap:12px}
