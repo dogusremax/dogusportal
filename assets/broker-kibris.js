@@ -1,7 +1,8 @@
 // Kıbrıs sayfaları için Broker girişi: köşede küçük bağlantı + şifre penceresi. Doğrulama assets/broker.js'teki
 // brokerDogrula ile (ana sayfadaki Broker PIN'i ve aynı oturum işareti). Statik sitede hafif bir kilit; gerçek güvenlik değildir.
+// Hedef mutlak adres: kibrisburda.com bu dosyayı dogusportal.com'dan yükler, göreli link orada 404 verir.
 (function(){
-  var K = 'perfAuth', HEDEF = 'kibris-360-tur.html';
+  var K = 'perfAuth', HEDEF = 'https://dogusportal.com/kibris-360-tur.html';
   var me = document.currentScript, gate = me && me.hasAttribute('data-gate');
   function ok(){ try{ return sessionStorage.getItem(K) === 'ok'; }catch(e){ return false; } }
   function css(){
