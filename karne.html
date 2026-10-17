@@ -408,11 +408,11 @@ function olcCiz(d){
 function musCiz(d){
   const M = (d.detay||{}).musteri || []; if (!M.length) return '';
   const tam = M.filter(m=>!m.eksik.length).length, notlu = M.filter(m=>m.not>0).length;
-  return `<div class="mus"><h4>Bu hafta girdiğin müşteriler</h4><p class="alt">Bu hafta sana kaydedilen her müşteri: kendi bulduğun ve ofisin yönlendirdiği ayrı, bilgilerinin ne kadar tam girildiğiyle. İsim ve telefon gösterilmez.</p>
+  return `<div class="mus"><h4>Bu hafta sana kaydedilen müşteriler</h4><p class="alt">Bu hafta sana kaydedilen her müşteri: kendi bulduğun ve ofisin yönlendirdiği ayrı, bilgilerinin ne kadar tam girildiğiyle. İsim ve telefon gösterilmez.</p>
     <div class="oz"><span class="chip n">${M.length} kayıt</span>${M.some(m=>m.ofis)?`<span class="chip n">${M.filter(m=>!m.ofis).length} kendi bulduğun</span><span class="chip ofis">${M.filter(m=>m.ofis).length} ofisin yönlendirdiği</span>`:''}<span class="chip ${tam===M.length?'ok':'no'}">${tam} kayıt bilgisi tam</span><span class="chip ${notlu===M.length?'ok':'no'}">${notlu} kayıtta takip notu var</span></div>
     <div class="tb"><table><thead><tr><th>Giriş</th><th>Müşteri</th><th>Takip ve bilgi</th></tr></thead><tbody>${M.map(m=>`<tr>
       <td class="z">${GUNK[gunIx(m.g)]||''} ${m.s}</td>
-      <td>${m.ofis?`<span class="chip ofis">ofisten · ${m.ofis==='WhatsApp'?'WhatsApp hattı':esc(m.ofis.toLocaleLowerCase('tr'))}</span><br>`:''}${esc([m.tip, m.emlak].filter(Boolean).join(' · '))}<br><small style="color:var(--faint)">${esc(kisa(m.bolge,28)||'bölge yok')}</small></td>
+      <td>${m.ofis?`<span class="chip ofis">ofisten · ${({'WhatsApp':'WhatsApp','Site talebi':'site','Web formu':'web formu'})[m.ofis]||esc(m.ofis)}</span><br>`:''}${esc([m.tip, m.emlak].filter(Boolean).join(' · '))}<br><small style="color:var(--faint)">${esc(kisa(m.bolge,28)||'bölge yok')}</small></td>
       <td>${m.not?`<span class="chip ok">${m.not} not</span>`:'<span class="chip no">not yok</span>'}${m.durum?`<span class="chip n">${esc(m.durum)}</span>`:''}${m.tekrar?'<span class="chip no">ikinci kayıt</span>':''}${m.eksik.length?m.eksik.map(x=>`<span class="chip no">${x} yok</span>`).join(''):'<span class="chip ok">bilgi tam</span>'}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function akisCiz(d){
