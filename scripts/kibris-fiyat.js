@@ -1,11 +1,12 @@
 // Kıbrıs Katalog (Apps Script web app, Drive'daki fiyat listelerinden beslenir) sayfasındaki DATA'yı çekip
-// 360 tur ve Kıbrıs sunumu (fiyat listesi slaytı) için assets/kibris360/fiyatlar.json yazar. GitHub Actions'ta yarım saatte bir çalışır (kibris-fiyat.yml).
+// 360 tur ve Kıbrıs sunumu (fiyat listesi slaytı) için assets/kibris360/fiyatlar.json yazar. GitHub Actions'ta yarım saatte bir çalışır (kibris-fiyat.yml);
+// ?refresh=1 ile önce Drive senkronu çalışır (Döveç/Northernland fiyat dosyaları ve Noyanlar Excel klasörü).
 const fs = require('fs');
 const URL_ = 'https://script.google.com/macros/s/AKfycbwnyN9V87vndjSd2KIohl2XO6h_gn72W8fGSvjHoaCjDETSbrAmOJQH3Dgx0OLrc8dO/exec';
 const OUT = 'assets/kibris360/fiyatlar.json';
 
 (async () => {
-  const r = await fetch(URL_, { headers: { 'User-Agent': 'Mozilla/5.0' }, redirect: 'follow' });
+  const r = await fetch(URL_ + '?refresh=1', { headers: { 'User-Agent': 'Mozilla/5.0' }, redirect: 'follow' });
   if (!r.ok) throw new Error('katalog ' + r.status);
   let t = await r.text();
   t = t.replace(/\\x([0-9a-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
