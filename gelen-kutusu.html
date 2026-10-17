@@ -502,7 +502,7 @@ $('geriBtn').onclick = function () {
 /* Açılış */
 (function () {
   var q = new URLSearchParams(location.search).get('k');
-  var kayitli = q || depo('gk_pin') || (window.brokerPinAl && brokerPinAl());
+  var kayitli = q || (window.brokerPinAl && brokerPinAl()) || depo('gk_pin');
   if (kayitli) giris(kayitli, true);
   else $('pinInput').focus();
 })();

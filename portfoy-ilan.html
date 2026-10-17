@@ -334,7 +334,7 @@ $("f").addEventListener("submit",function(e){
 });
 
 etapDoldur();uret();
-try{var kay=localStorage.getItem("portfoyPin")||(window.brokerPinAl&&brokerPinAl());if(kay){$("pin").value=kay;giris()}}catch(e){}
+try{var kay=(window.brokerPinAl&&brokerPinAl())||localStorage.getItem("portfoyPin");if(kay){$("pin").value=kay;giris()}}catch(e){}
 </script>
 </body>
 </html>

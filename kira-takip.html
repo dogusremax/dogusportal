@@ -683,7 +683,7 @@ async function kaydet(){
 
 /* ---------- açılış ---------- */
 (function(){
-  const kayitli = localStorage.getItem('kiraPin') || (window.brokerPinAl && brokerPinAl());
+  const kayitli = (window.brokerPinAl && brokerPinAl()) || localStorage.getItem('kiraPin');
   if(!kayitli){ $('#pin').focus(); return; }
   PIN = kayitli;
   $('#pin').value = kayitli;

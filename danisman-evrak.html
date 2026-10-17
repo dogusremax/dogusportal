@@ -159,7 +159,7 @@ var FORM_ADRES = 'https://dogusportal.com/danisman-form.html?k=';
 
 var $ = function(id){ return document.getElementById(id); };
 var S = { pin:'', liste:[], katalog:[], etiket:{}, linkGun:7, sablon:'', q:'', mevcut:null, mq:'' };
-try { S.pin = sessionStorage.getItem('de_pin') || (window.brokerPinAl && brokerPinAl()) || ''; } catch(e){}
+try { S.pin = (window.brokerPinAl && brokerPinAl()) || sessionStorage.getItem('de_pin') || ''; } catch(e){}
 
 function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},2200); }
