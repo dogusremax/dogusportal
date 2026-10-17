@@ -315,7 +315,7 @@ $('goBtn').onclick = async () => {
 
 $('girBtn').onclick = () => giris($('pin').value.trim());
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('girBtn').click(); });
-const kayitli = depo('duyuru_pin') || (window.brokerPinAl && brokerPinAl());
+const kayitli = (window.brokerPinAl && brokerPinAl()) || depo('duyuru_pin');
 if (kayitli) giris(kayitli); else $('pin').focus();
 </script>
 </body>

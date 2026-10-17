@@ -131,7 +131,7 @@ var pin = '', benim = '', $ = function(id){ return document.getElementById(id); 
 
 try { pin = sessionStorage.getItem('kd_pin') || ''; benim = localStorage.getItem('kd_dan') || ''; } catch(e){}
 /* Portalda broker girişi yapıldıysa şifre sorma */
-if (!pin && window.brokerPinAl && brokerPinAl()) { pin = brokerPinAl(); benim = brokerAdAl() || benim; }
+if (window.brokerPinAl && brokerPinAl()) { pin = brokerPinAl(); benim = brokerAdAl() || benim; }
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
 /* Apps Script bazen yavaş/hatalı cevap verir: 25 sn zaman aşımı, JSON değilse anlaşılır hata */

@@ -293,7 +293,7 @@ async function login(){
   }catch(e){ $("pinMsg").textContent=e.message==="Hatalı PIN"?"PIN yanlış.":"Bağlantı hatası: "+e.message; }
 }
 function resetApp(){sessionStorage.clear();localStorage.clear();plan=[];location.reload();}
-if(sessionStorage.getItem("nobet_pin")){ $("pin").value=sessionStorage.getItem("nobet_pin"); login(); }
+if(!(window.brokerPinAl&&brokerPinAl()) && sessionStorage.getItem("nobet_pin")){ $("pin").value=sessionStorage.getItem("nobet_pin"); login(); }
 
 /* ---- ekip ---- */
 function renderPeople(){

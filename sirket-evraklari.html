@@ -175,7 +175,7 @@ var MAX_MB = 200;
 
 var $ = function(id){ return document.getElementById(id); };
 var S = { pin:'', evraklar:[], q:'', kat:'hepsi', sira:'yeni', sec:{} };
-try { S.pin = sessionStorage.getItem('se_pin') || (window.brokerPinAl && brokerPinAl()) || ''; S.sira = localStorage.getItem('se_sira') || 'yeni'; } catch(e){}
+try { S.pin = (window.brokerPinAl && brokerPinAl()) || sessionStorage.getItem('se_pin') || ''; S.sira = localStorage.getItem('se_sira') || 'yeni'; } catch(e){}
 /* Son liste telefonda saklanır: sayfa anında açılır, güncel liste arkadan gelir.
    Saklanan listeyle birlikte PIN'in izi (SHA-256) tutulur; yeni sekmede PIN girilince iz tutarsa beklemeden açılır. */
 var LISTE_ANAHTAR = 'se_liste_v1';
