@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#050A30">
 <meta name="robots" content="noindex">
 <title>Danışman Bilgi Formu — RE/MAX Doğuş</title>
+<!-- WhatsApp önizlemesi: küçük kare görsel → büyük afiş yerine yanda küçük resim -->
+<meta property="og:title" content="Danışman Bilgi Formu — RE/MAX Doğuş">
+<meta property="og:description" content="İşe başlangıç bilgilerinizi ve belgelerinizi telefonunuzdan yükleyin.">
+<meta property="og:image" content="https://dogusportal.com/assets/og-kare.png">
+<meta property="og:image:width" content="256">
+<meta property="og:image:height" content="256">
+<meta property="og:type" content="website">
 <link rel="icon" href="assets/dogus-logo.png">
 <style>
 :root{
@@ -172,28 +179,54 @@ function istekAt(url, secenek, sn) {
 }
 function bekle(ms) { return new Promise(function (coz) { setTimeout(coz, ms); }); }
 
+/* Herkese sorulan bilgiler — Apps Script'teki DE_BILGI ve _deKvkk() kopyası. Form sunucuyu beklemeden
+   anında açılsın diye sayfaya gömülü; belgeler (kişiye göre değişir) sunucu cevap verince eklenir.
+   DanismanEvrak.js'de DE_BILGI / KVKK değişirse burayı da güncelleyin. */
+var GOMULU = {"bilgi":[{"grup":"Kişi bilgileri"},{"k":"ad","e":"Ad Soyad","tip":"isim","z":true},{"k":"tc","e":"T.C. Kimlik No","tip":"tc","z":true,"a":"Kimlik kartınızdaki 11 haneli numara"},{"k":"dogum","e":"Doğum Tarihi","tip":"tarih","z":true},{"k":"dogumYeri","e":"Doğum Yeri","tip":"metin"},{"k":"medeni","e":"Medeni Durumu","tip":"secim","sec":["Evli","Bekâr"]},{"grup":"İletişim"},{"k":"tel","e":"Cep Telefonu","tip":"tel","z":true},{"k":"mail","e":"E-posta","tip":"mail","z":true,"a":"Ofis hesaplarınız bu adrese açılacak"},{"k":"adres","e":"İkamet Adresi","tip":"uzunmetin","z":true},{"k":"instagram","e":"Instagram Kullanıcı Adı","tip":"metin","a":"Varsa — paylaşımlarda sizi etiketleyebilmemiz için"},{"grup":"Eğitim"},{"k":"egitim","e":"Eğitim Durumu","tip":"secim","sec":["Lise","Ön lisans","Lisans","Yüksek lisans"],"z":true},{"k":"okul","e":"Mezun Olduğu Okul / Bölüm","tip":"metin"},{"grup":"Ödeme bilgisi"},{"k":"iban","e":"IBAN","tip":"iban","z":true,"a":"Komisyon ödemeleriniz bu hesaba yapılacak. Hesap kendi adınıza olmalı."},{"grup":"Acil durumda ulaşılacak kişi"},{"k":"acilAd","e":"Ad Soyad","tip":"isim","z":true},{"k":"acilYakin","e":"Yakınlığı","tip":"metin","a":"Örn. eşi, annesi, kardeşi"},{"k":"acilTel","e":"Telefonu","tip":"tel","z":true}],"kvkk":"RE/MAX Doğuş (UMT GROUP Gayrimenkul Yatırım Danışmanlık) olarak, ofisimizle çalışma ilişkinizin kurulması, sözleşmenizin hazırlanması, Taşınmaz Ticareti Bilgi Sistemi ve RE/MAX kayıtlarınızın açılması ve komisyon ödemelerinizin yapılması amacıyla kimlik, iletişim, eğitim, banka ve belge bilgilerinizi işliyoruz. Bu veriler çalışma ilişkimiz süresince ve mevzuatın öngördüğü saklama süresi boyunca saklanır; yalnızca ofis yönetimi, RE/MAX Türkiye ve yasal olarak yetkili kurumlarla paylaşılır. 6698 sayılı Kanun kapsamında verilerinize erişme, düzeltilmesini ve silinmesini isteme haklarınız vardır. Talepleriniz için: dogusremax@gmail.com · 0216 315 15 15","ofisTel":"0216 315 15 15"};
+var SESSIZ = false, ILK_YEREL = false;
+
 /* ---------- yükleme ---------- */
 if (!token && !ONIZLE) { $('durum').textContent = 'Bağlantı eksik görünüyor. Ofisimizden yeni bağlantı isteyin.'; }
 else {
+  if (!ONIZLE) ciz({ ok: true, bekliyor: true, ad: '', alanlar: JSON.parse(JSON.stringify(GOMULU.bilgi)),
+                     kvkk: GOMULU.kvkk, ofisTel: GOMULU.ofisTel, onDeger: {} });   /* form hemen açılır */
   formuGetir(1);
-  setTimeout(function () {
-    var d = $('durum'); if (d) d.innerHTML = '<div class="yukleme"></div>Formunuz hazırlanıyor…<br><span class="mini">Bağlantınıza göre birkaç saniye sürebilir.</span>';
-  }, 3000);
 }
 
 function formuGetir(deneme) {
   var q = ONIZLE ? '?action=deForm&onizle=1' : '?action=deForm&k=' + encodeURIComponent(token);
   istekAt(API + q, null, 25).then(function (d) {
     if (!d.ok) { mesajGoster(d.gonderildi ? 'tamam' : 'hata', d.hata); return; }
+    if (TANIM && TANIM.bekliyor) { tamCiz(d); return; }
     ciz(d);
     if (ONIZLE) onizlemeSeridi();
   }).catch(function () {
     if (deneme < 3) { bekle(1500 * deneme).then(function () { formuGetir(deneme + 1); }); return; }
+    var b = $('belgeBekle');
+    if (b) {
+      b.innerHTML = 'Belge listesi alınamadı. İnternet bağlantınızı kontrol edip tekrar deneyin. Yazdıklarınız kaybolmaz.<br>' +
+                    '<button type="button" class="tekrarBtn" id="tekrarAc">Tekrar dene</button>';
+      $('tekrarAc').onclick = function () { b.innerHTML = '<div class="yukleme"></div>Belgeleriniz hazırlanıyor…'; formuGetir(1); };
+      return;
+    }
     var d = $('durum'); if (!d) return;
     d.innerHTML = 'Form açılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.<br>' +
                   '<button type="button" class="tekrarBtn" id="tekrarAc">Tekrar dene</button>';
     $('tekrarAc').onclick = function () { d.innerHTML = '<div class="yukleme"></div>Formunuz açılıyor…'; formuGetir(1); };
   });
+}
+
+/* Sunucu cevap verince formu belgelerle yeniden çiz; yazılanlar, onay ve imleç yerinde kalır */
+function tamCiz(d) {
+  yerelYaz();
+  var odak = document.activeElement, odakId = odak && odak.id, bas = null, son = null;
+  try { bas = odak.selectionStart; son = odak.selectionEnd; } catch (e) {}
+  var kvkk = $('kvkk') && $('kvkk').checked, y = window.scrollY;
+  SESSIZ = true; ciz(d); SESSIZ = false;
+  if (kvkk) $('kvkk').checked = true;
+  window.scrollTo(0, y);
+  var el = odakId && $(odakId);
+  if (el && el.focus) { el.focus({ preventScroll: true }); try { if (bas != null) el.setSelectionRange(bas, son); } catch (e) {} }
 }
 
 function onizlemeSeridi() {
@@ -284,6 +317,8 @@ function ciz(d) {
     h += '</div>';
   });
   h += '</div>';
+  if (d.bekliyor) h += '<div class="grup">Belgeler</div><div class="kart"><div class="durum" id="belgeBekle" style="padding:18px 6px">' +
+                       '<div class="yukleme"></div>Belgeleriniz hazırlanıyor…<br><span class="mini">Bu arada bilgilerinizi doldurmaya başlayabilirsiniz.</span></div></div>';
 
   h += '<div class="grup">Kişisel verileriniz</div><div class="kart">' +
        '<div class="kvkk">' + d.kvkk + '</div>' +
@@ -348,7 +383,8 @@ function ciz(d) {
     };
   });
   onDegerleriYaz(d.onDeger || {});
-  if (yereliUygula()) devamSeridi();
+  var geri = yereliUygula();
+  if (d.bekliyor) ILK_YEREL = geri; else if (SESSIZ ? ILK_YEREL : geri) devamSeridi();
   d.alanlar.forEach(function (a) { if (a.bilgi) taslakYaz(a); });
   kosulUygula();
   $('gonder').onclick = gonder;
@@ -857,6 +893,7 @@ function belgeleriCiz(alan) {
 /* ---------- gönder ---------- */
 function gonder() {
   if (gonderiliyor) return;
+  if (TANIM.bekliyor) { uyar('Belge listeniz hazırlanıyor, birkaç saniye sonra tekrar deneyin.'); return; }
   var veri = {}, belgeler = {}, eksik = [];
   TANIM.alanlar.forEach(function (a) {
     if (!a.k) return;
