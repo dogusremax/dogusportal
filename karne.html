@@ -118,6 +118,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .fix li .sub span::before{content:"• ";color:var(--coral)}
 .fix.temiz{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.4)}
 .fix.temiz .cnt{background:var(--good)}
+.fix.bos{background:var(--card);border-color:var(--line)}.fix.bos .cnt{background:rgba(255,255,255,.12)}
 .pill.f{background:transparent;box-shadow:0 0 0 1.5px var(--coral) inset;color:#ffd2d6}
 .ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0}
@@ -306,24 +307,29 @@ function karne(d){
   const kp = d.kapanis ? (Number.isInteger(d.kapanis) ? `${d.kapanis} kapanış` : `${String(d.kapanis).replace('.',',')} kapanış (ortak)`) : '';
   if (kp) iyi.push(kp);
   if (d.kapora) iyi.push(`${d.kapora} kapora`);
+  if (d.yetki) iyi.push(`${d.yetki} yetki alındı`);
   if (d.aktifGun>=HEDEF.aktifGun) iyi.push(`${d.aktifGun} gün aktif`); else { gel.push(`aktif gün ${d.aktifGun}/${HEDEF.aktifGun}`); plan.push('Her gün en az 1 aktivite gir'); }
-  if (d.gosterim && d.imzali>=d.gosterim) iyi.push(`${d.gosterim} gösterimin hepsi imzalı formlu`);
+  if (d.gosterim && d.imzali>=d.gosterim) iyi.push(d.gosterim===1 ? 'gösterimin imzalı yer gösterme formlu' : `${d.gosterim} gösterimin hepsi imzalı formlu`);
   else if (d.gosterim>=HEDEF.gosterim) iyi.push(`${d.gosterim} gösterim`);
   if (d.gosterim<HEDEF.gosterim){ gel.push(`gösterim ${d.gosterim}/${HEDEF.gosterim}`); plan.push('Ilık müşterilerine 2 gösterim randevusu planla'); }
-  if (d.gosterim>d.imzali && d.gosterim) gel.push(`${d.gosterim-d.imzali} gösterimde imzalı form yok`);
+  const imzasiz = (d.hatalar||[]).filter(x=>x.tur==='gosterim').length;   // ortak gösterim form istemez: sadece karnenin saydıkları
+  if (imzasiz) gel.push(`${imzasiz} gösterimde imzalı form yok`);
   if (d.etki>=HEDEF.etki) iyi.push(`${d.etki} etki çevresi araması`); else { gel.push(`etki çevresi araması ${d.etki}/${HEDEF.etki}`); plan.push('Her sabah 1 etki çevresi araması'); }
   if (d.fzbo>=HEDEF.fzbo) iyi.push(`${d.fzbo} FZBO araması`); else { gel.push(`FZBO araması ${d.fzbo}/${HEDEF.fzbo}`); plan.push('Salı ve Perşembe 3 FZBO araması'); }
   if (d.sunum>=HEDEF.sunum) iyi.push(`${d.sunum} sunum`); else { gel.push(`sunum ${d.sunum}/${HEDEF.sunum}`); plan.push('En az 1 portföy sunumu randevusu al'); }
   if (d.icerik>=HEDEF.icerik) iyi.push(`${d.icerik} içerik`); else { gel.push(`içerik ${d.icerik}/${HEDEF.icerik}`); plan.push(`${HEDEF.icerik} içerik paylaş, @remaxdogus'u etiketle`); }
   if (d.yorum) iyi.push(`${d.yorum} yeni Google yorumu`);
   if (d.musYeni>=3) iyi.push(`${d.musYeni} yeni müşteri kaydı`);
-  if (dz) { gel.unshift(`${dz} kayıt düzeltilecek (listesi yukarıda)`); plan.unshift('Düzeltilecekler listesini hafta bitmeden tamamla'); }
+  if (d.musNot>=3) iyi.push(`${d.musNot} takip notu`);
+  if (d.story>=3) iyi.push(`${d.story} story / post`);
+  if (dz) { gel.unshift(`${dz} kayıt düzeltilecek (listesi yukarıda)`); plan.unshift('Düzeltilecekler listesindeki kayıtları bu hafta tamamla'); }
   if (d.musYeniNotsuz) plan.push(`Bu hafta eklediğin notsuz ${d.musYeniNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`);
   if (d.kiraYenile) plan.push(`60 gün içinde yenilenecek ${d.kiraYenile} kira kontratı için mal sahibi ve kiracıyı ara`);
   const a = ilk(d.ad); let yorum;
   if (d.sira===1) yorum=`Haftanın lideri sensin ${a}! Ekibe örnek oluyorsun.`;
   else if (d.kapanis) yorum=`Kapanış yapmak her şeyin özeti, tebrikler ${a}! Şimdi yeni portföy ve aramalarla gelecek kapanışların zeminini hazırlayalım.`;
-  else if (d.puan>=ort) yorum=`Sahada emek veriyorsun ${a}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim.`;
+  else if (d.puan>=ort && (d.fzbo+d.etki+d.sunum+d.gosterim+(d.yetki||0)+(d.kapora||0))>0) yorum=`Sahada emek veriyorsun ${a}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim.`;
+  else if (d.puan>=ort) yorum=`Ofis ortalamasının üstündesin ${a}, ama bu hafta sahada arama, sunum ya da gösterim yok. Puanı sahadan da toplayalım.`;
   else yorum=`${a}, potansiyelin bu listenin çok üstünde. Küçük ama her gün yapılan adımlarla bu hafta farkı birlikte göreceğiz.`;
   if (d.musYeniNotsuz>=3) yorum+=` Müşterilerinle yaptığın görüşmeleri Müşteri Takip'e not olarak girersen hiçbir fırsat kaçmaz.`;
   if (!plan.length) plan.push('Bu tempoyu koru, yeni portföy ve gösterimlerle kapanışa odaklan');
@@ -361,14 +367,15 @@ function olaylar(d){
   return {ham:E, tek:T};
 }
 function izleCiz(d){
+  if (!d.detay) return '';   // eski önbellek cevabı: döküm yoksa bant da yok
   const {ham} = olaylar(d), D = d.detay || {}, {gun, gecen, bos: hareketsiz, aktif} = gunDagilim(ham), son = ham[ham.length-1];
   const enY = gun.indexOf(Math.max(...gun));
   const kaynak = [[(D.akis||[]).length,'Danışman Takip kaydı'],[(D.musteri||[]).length,'müşteri kaydı'],[(D.notlar||[]).length,'takip notu'],
     [(D.formlar||[]).length,'form / evrak'],[(D.kapanislar||[]).length,'kapanış']].filter(x=>x[0]);
   const a = ilk(d.ad), fark = d.puan - ort;
   let ver, c;
-  if (d.puan>=ort && hareketsiz<=Math.max(0,gecen-HEDEF.aktifGun)) { ver = `Tebrikler ${a}. Ofis ortalamasının <b>${fark} puan</b> üstündesin ve haftanın ${gecen} gününün ${aktif} gününde sistemde hareketin var.`; c='var(--good)'; }
-  else if (d.puan>=ort) { ver = `Ofis ortalamasının <b>${fark} puan</b> üstündesin ama ${hareketsiz} gün sistemde hiç hareketin yok. Daha istikrarlı olmalısın.`; c='var(--warn)'; }
+  if (d.puan>=ort && hareketsiz<=Math.max(0,gecen-HEDEF.aktifGun)) { ver = `Tebrikler ${a}. ${fark ? `Ofis ortalamasının <b>${fark} puan</b> üstündesin` : 'Tam ofis ortalamasındasın'} ve haftanın ${gecen} gününün ${aktif} gününde sistemde hareketin var.`; c='var(--good)'; }
+  else if (d.puan>=ort) { ver = `${fark ? `Ofis ortalamasının <b>${fark} puan</b> üstündesin` : 'Ofis ortalamasındasın'} ama ${hareketsiz} gün sistemde hiç hareketin yok. Daha istikrarlı olmalısın.`; c='var(--warn)'; }
   else { ver = `Ofis ortalamasının <b>${-fark} puan</b> altındasın${hareketsiz?` ve ${hareketsiz} gün sistemde hiç hareketin yok`:''}. Daha aktif olmalısın.`; c='var(--coral)'; }
   return `<div class="izle"><div class="ust"><span class="canli"><i></i>Ofis takibi</span></div>
     <h3>Bu hafta sistemde <b data-n="${ham.length}">${ham.length}</b> hareketin kayıtlı${son?`, sonuncusu ${GUNU[gunIx(son.g)]||''}${son.s?' '+son.s:''}`:''}.</h3>
@@ -376,6 +383,7 @@ function izleCiz(d){
     <p class="ver" style="--c:${c}">${ver}</p></div>`;
 }
 function olcCiz(d){
+  if (!d.detay) return '';
   const O = ORTM || {}, P = d.onceki || {};
   const satir = [['Puan', d.puan, ort, P.puan],['Sıra', d.sira, null, P.sira, true],['Aktif gün', d.aktifGun, O.aktifGun, P.aktifGun],
     ['FZBO araması', d.fzbo, O.fzbo, P.fzbo],['Etki çevresi araması', d.etki, O.etki, P.etki],['Sunum', d.sunum, O.sunum, P.sunum],
@@ -392,7 +400,7 @@ function olcCiz(d){
     <div class="cmp"><h4>Ofis seni ölçüyor</h4><p class="alt">Senin sayıların, ofis ortalaması ve geçen haftan</p>
       <table><thead><tr><th>Ölçüm</th><th>Sen</th><th>Ofis ort.</th><th>Geçen hafta</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="rit"><h4>Haftalık ritmin</h4><p class="alt">Gün gün sisteme girdiğin hareket sayısı</p><div class="gun7">${bars}</div>
-      <p class="not">${bos ? `<b style="color:var(--coral)">${bos} gün</b> sistemde hiç hareketin yok. Her gün en az bir kayıt istikrar puanı getirir.` : 'Biten her gün sistemde hareketin var. İstikrarın tam!'}</p></div>
+      <p class="not">${b<=0 ? 'Hafta yeni başladı. Her gün en az bir kayıt istikrar puanı getirir.' : bos ? `<b style="color:var(--coral)">${bos} gün</b> sistemde hiç hareketin yok. Her gün en az bir kayıt istikrar puanı getirir.` : 'Biten her gün sistemde hareketin var. İstikrarın tam!'}</p></div>
   </div>`;
 }
 function musCiz(d){
@@ -421,13 +429,24 @@ function halka(p, r, w, renk){
   return `<circle cx="${r+w}" cy="${r+w}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${w}"/>
     <circle cx="${r+w}" cy="${r+w}" r="${r}" fill="none" stroke="${renk}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${C*p} ${C}">${reduce?'':`<animate attributeName="stroke-dasharray" from="0 ${C}" to="${C*p} ${C}" dur="1.1s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1" keyTimes="0;1"/>`}</circle>`;
 }
+function temizKutu(d){
+  // övgü sadece kontrol edilecek belge varsa: hiç kapanış/form/gösterim yoksa "tam" demek çelişki olur
+  const kp = (d.detay && d.detay.kapanislar ? d.detay.kapanislar.length : 0) || (d.kapanis ? 1 : 0), yg = d.ygForm || 0, gs = d.gosterim || 0;
+  if (!kp && !yg && !gs && !d.evrak) return `<div class="fix bos"><h4><span class="cnt">0</span>Kontrol edilecek evrak yok</h4><p>Bu hafta kapanış, gösterim ve yer gösterme formu girilmedi. Sahaya çıkıp gösterimleri formla kayda geçir.</p></div>`;
+  const neler = [kp ? 'kapanış belgelerin' : '', yg ? 'yer gösterme formların' : '', gs && !yg ? 'gösterim kayıtların' : '', d.evrak && !kp && !yg ? 'yüklediğin evrak' : ''].filter(Boolean);
+  const metin = neler.length>1 ? neler.slice(0,-1).join(', ')+' ve '+neler[neler.length-1] : neler[0];
+  return `<div class="fix temiz"><h4><span class="cnt">✓</span>Düzeltilecek kayıt yok</h4><p>Bu haftaki ${metin} eksiksiz. Böyle devam!</p></div>`;
+}
+// Ek bölümlerden biri hata verirse karnenin geri kalanı yine çizilir (sayfa "hazırlanıyor"da kalmaz)
+function guvenli(fn, d){ try { return fn(d); } catch(e){ console.error(fn.name, e); return ''; } }
 function goster(id){
   const d = KARNE[id]; if (!d) return;
   document.querySelectorAll('.pd,.li').forEach(r=>r.setAttribute('aria-selected', r.id.slice(2)===d.id));
   const k = karne(d), notlu = d.musAktif-d.musNotsuz, hata = d.hatalar || [];
   const adet = duzeltmeSay(d);
-  const TURAC = { musteri:'bu hafta eklenen müşteri kayıtlarındaki eksikler', gosterim:'imzalı formu olmayan gösterimler', form:'eksik, hatalı ya da imzasız yer gösterme formları', kapanis:'bu haftanın kapanışlarında eksik belge ve istenmemiş Google yorumları' };
+  const TURAC = { musteri:'bu hafta eklenen müşteri kayıtlarındaki eksikler', gosterim:'imzalı formu olmayan gösterimler', form:'hatalı ya da eksik yer gösterme formları', kapanis:'bu haftanın kapanışlarında eksik belge ve istenmemiş Google yorumları' };
   const acik = Object.keys(TURAC).filter(t=>hata.some(x=>x.tur===t)).map(t=>TURAC[t]);
+  const acikMetin = acik.length>1 ? acik.slice(0,-1).join(', ')+' ve '+acik[acik.length-1] : (acik[0]||'');
   const evrak = Object.entries(d.evrakTur).map(([t,n])=>`${n} ${t.toLocaleLowerCase('tr')}`).join(', ');
   document.getElementById('karne').innerHTML = `
     <div class="kh">
@@ -437,8 +456,8 @@ function goster(id){
       <div class="ring"><svg viewBox="0 0 112 112">${halka(d.puan/max,48,8,'url(#gr)')}<defs><linearGradient id="gr"><stop offset="0" stop-color="#3D7BFF"/><stop offset="1" stop-color="#FB5160"/></linearGradient></defs></svg>
         <div class="v"><b data-n="${d.puan}">${d.puan}</b><span>puan</span></div></div>
     </div>
-    ${izleCiz(d)}
-    ${olcCiz(d)}
+    ${guvenli(izleCiz, d)}
+    ${guvenli(olcCiz, d)}
     <div class="secs">
       <div class="sec" style="--d:0ms"><h3><span class="ic" style="--c:#3D7BFF">${ICON.saha}</span>Saha</h3>
         ${metrik('Etki çevresi araması', d.etki, HEDEF.etki)}
@@ -468,16 +487,16 @@ function goster(id){
       </div>
     </div>
     ${hata.length ? `<div class="fix"><h4><span class="cnt">${adet}</span>Düzeltilecekler</h4>
-      <p>${acik.join(', ').replace(/^./, c=>c.toLocaleUpperCase('tr'))}.</p>
+      <p>${acikMetin.replace(/^./, c=>c.toLocaleUpperCase('tr'))}.</p>
       <ul>${hata.map(x=>{ const T = TUR[x.tur];
         const govde = x.tur==='musteri' ? `<span class="sub">${x.metin.split('; ').map(s=>`<span>${s}</span>`).join('')}</span>` : x.metin;
         return `<li><span class="k" style="--c:${T.c}">${ICON[T.i]}</span><span><small>${T.ad}</small>${govde}</span></li>`; }).join('')}</ul></div>`
-      : `<div class="fix temiz"><h4><span class="cnt">✓</span>Düzeltilecek evrak yok</h4><p>Kapanış belgelerin ve yer gösterme formların tam. Böyle devam!</p></div>`}
-    ${musCiz(d)}
-    ${akisCiz(d)}
+      : temizKutu(d)}
+    ${guvenli(musCiz, d)}
+    ${guvenli(akisCiz, d)}
     ${(d.hatirlat||[]).length ? `<div class="box hatir" style="--c:var(--blue)"><h4><i></i>Alışkanlığımız</h4><p>Zorunlu değil ama her kiralıkta tahliye taahhüdü alıyoruz.</p><ul>${d.hatirlat.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <div class="ins">
-      <div class="box" style="--c:var(--good)"><h4><i></i>İyi yaptıkların</h4><ul>${(k.iyi.length?k.iyi:['bu hafta yeni bir sayfa açıyoruz']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="box" style="--c:var(--good)"><h4><i></i>İyi yaptıkların</h4><ul>${(k.iyi.length?k.iyi:['bu hafta öne çıkan bir sonuç yok, birlikte dolduralım']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="box" style="--c:var(--warn)"><h4><i></i>Geliştirmen gerekenler</h4><ul>${(k.gel.length?k.gel:['tüm haftalık hedeflerini tutturdun']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="box" style="--c:var(--blue)"><h4><i></i>Bu haftanın planı</h4><ol>${k.plan.map(x=>`<li>${x}</li>`).join('')}</ol></div>
     </div>
@@ -504,12 +523,24 @@ function ciz(res){
   const ilkId = res.kim !== 'broker' ? res.kim : (KARNE[h0] ? h0 : DATA[0] && DATA[0].id);
   if (!ilkId || !KARNE[ilkId]) return hata('Bu hafta için karnen yok.');
   const ilk = !CIZILDI; CIZILDI = res.uretim || '-';
-  goster(ilkId);
+  try { goster(ilkId); } catch(e){ console.error(e); return hata('Karne çizilemedi: '+e.message+'. Sayfayı yenile.'); }
   if (ilk && (res.kim !== 'broker' || KARNE[h0])) { if (matchMedia('(max-width: 900px)').matches) setTimeout(kaydir, 1700); }
   if (OLAY) return; OLAY = true;
   if (res.kim === 'broker') addEventListener('hashchange',()=>{ const x=location.hash.slice(1); if (KARNE[x]) goster(x); });
   else document.querySelector('.hint').textContent = 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
 }
+// Sunucu bazen geç uyanır: 12 sn'de cevap yoksa bekleyeni bırakmadan ikinci istek atılır, hangisi önce gelirse o çizilir
+function getir(url){
+  const tek = () => fetch(url, {redirect:'follow'}).then(r=>r.text()).then(t=>JSON.parse(t));
+  return new Promise((ok, red) => {
+    let bitti = false, hatalar = 0;
+    const son = v => { if (!bitti) { bitti = true; ok(v); } }, kot = e => { if (++hatalar >= 2 && !bitti) red(e); };
+    tek().then(son, kot);
+    setTimeout(() => { if (bitti) return; const d = document.getElementById('durum'); if (d) d.textContent = 'Karnen hazırlanıyor, sunucu yanıt veriyor…'; tek().then(son, kot); }, 12000);
+    setTimeout(() => { if (!bitti) { bitti = true; red(new Error('zaman aşımı')); } }, 60000);
+  });
+}
+window.addEventListener('error', e => { const d = document.getElementById('durum'); if (d) d.textContent = 'Karne açılamadı (' + (e.message||'hata') + '). Sayfayı yenile.'; });
 async function yukle(){
   const tok = Q.get('t');
   if (!tok) return hata('Bu sayfa kişiye özel linkle açılır. Karneni WhatsApp mesajındaki <b>Karnemi aç</b> tuşundan aç.');
@@ -518,8 +549,7 @@ async function yukle(){
   if (eski && eski.ok) ciz(eski);
   let res;
   try {
-    const r = await fetch(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}`, {redirect:'follow'});
-    res = JSON.parse(await r.text());
+    res = await getir(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}`);
   } catch (e) { if (CIZILDI) return; return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
   if (!res || !res.ok) { if (CIZILDI) return; return hata((res && res.hata) || 'Karne bulunamadı.'); }
   sakla(ak, res);
