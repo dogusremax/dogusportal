@@ -53,8 +53,8 @@ p{font-size:30px;line-height:1.45}
 .sm{font-size:22px;line-height:1.4;opacity:.75}
 .src{position:absolute;left:128px;bottom:56px;font-size:20px;opacity:.6;letter-spacing:.3px}
 .pad{position:absolute;inset:0;padding:120px 128px 128px}
-.logo{position:absolute;right:96px;top:72px;height:44px;width:auto;z-index:5;filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}
-.logo.pill{background:var(--navy);padding:12px 22px;height:68px;border-radius:999px}
+.logo{position:absolute;right:96px;top:72px;height:44px;width:auto;z-index:5;filter:drop-shadow(0 2px 6px rgba(0,0,0,.28))}
+.logo.koyu{filter:drop-shadow(0 2px 6px rgba(14,19,48,.18))}
 .pg{position:absolute;right:96px;bottom:56px;font:600 20px/1 var(--fb);letter-spacing:3px;opacity:.5}
 
 /* ortak bileşenler */
@@ -185,6 +185,7 @@ hr.r{border:0;width:80px;height:3px;background:var(--red)}
 /* proje slaytları */
 .proj .sh{background:linear-gradient(90deg,rgba(5,10,48,0) 40%,rgba(5,10,48,.55) 100%)}
 .proj .pc{position:absolute;right:96px;top:96px;bottom:96px;width:720px;padding:60px 56px;display:flex;flex-direction:column}
+#s-iskele .pc{top:150px}
 .proj .pc.l{right:auto;left:96px}
 .proj .pc .k{font:700 20px/1 var(--fb);letter-spacing:5px;text-transform:uppercase;color:#ff8e98}
 .proj .pc h2{font-size:96px;margin:20px 0 10px}
@@ -589,7 +590,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-yol" data-sec="Giriş" data-t="Yol haritası">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Bugünkü sunum</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Üç adımda <em>Kuzey Kıbrıs.</em></h2>
@@ -759,7 +760,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       <div class="it a" style="--d:4"><i>TC</i><div><h3>Türk vatandaşlarına ek hak</h3><p>KKTC, TC vatandaşlarına diğer yabancılardan daha geniş konut edinme hakkı tanır.</p></div></div>
     </div>
   </div>
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pg" style="color:var(--ink)">06</div>
   <aside class="nt">
     <h5>Anlat</h5><p>Türk yatırımcının en büyük kaygısı kur. Burada fiyat da kira da sterlin; taksitler faizsiz. Kur riski sadece TL'den çevirdiğin anla sınırlı.</p>
@@ -806,7 +807,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-prensip" data-sec="Gelişme" data-t="Çalışma prensibimiz">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Çalışma prensibimiz</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Her projeyi değil, <em>sadece kendini kanıtlamış olanları</em> öneriyoruz.</h2>
@@ -831,7 +832,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-bolge" data-sec="Gelişme" data-t="Dört kıyı">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Bölgeyi tanıyın</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Hangi kıyı <em>size</em> göre?</h2>
@@ -902,7 +903,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <div class="facts"><div class="fact"><b><span class="cnt" data-to="7">0</span></b><span>Döveç projesi aynı sahil hattında</span></div><div class="fact"><b>£127K</b><span>'dan başlayan fiyatlar</span></div></div>
     <div class="foot"><button class="btn360" data-tur="dovec" data-p="0B7BD4EB"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>Havadan 360° gez</button></div>
   </div>
-  <img class="logo" src="assets/dogus-logo.png" alt="" style="right:auto;left:96px">
+  <img class="logo" src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>Long Beach'i havadan göster. Etiketlerde Döveç'in projeleri görünüyor: Querencia, Courtyard Platinum, Courtyard Long Beach, D-Point.</p>
     <h5>Vurgula</h5><ul><li>Forbes kapağı: "Dünyanın en iyi sahil yatırımı İskele". Uluslararası bir onay.</li><li>Bölgenin en büyük gücü kumsal ve tatil kirası.</li><li>Fiyatlar £127.000'den başlıyor (12 Ekim 2026 fiyat listesi, Courtyard Platinum stüdyo).</li></ul>
@@ -918,6 +919,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     <h2 style="font-size:54px">Bir sahil, <em>yedi Döveç projesi</em></h2>
     <p>Querencia, Courtyard, otel, kumarhane ve beach club aynı hatta.</p>
   </div>
+  <img class="logo" src="assets/dogus-logo.png" alt="">
   <aside class="nt">
     <h5>Anlat</h5><p>Haritada Long Beach'teki Döveç projelerini tek tek göster:</p>
     <ul><li>Panorama Long Beach ve Courtyard Long Beach (tamamlanmış, yaşayan projeler).</li><li>Resort Project ve Querencia Residences (yeni yükselen kuleler).</li><li>Hotel &amp; Casino, Hotel ve Beach Club projeleri sahil şeridinde.</li></ul>
@@ -1118,7 +1120,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-cevre" data-sec="Gelişme" data-t="Esentepe'nin çevresi">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Esentepe'nin çevresi</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Golf, <em>kaplumbağalar</em> ve marina.</h2>
@@ -1171,7 +1173,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kira" data-sec="Gelişme" data-t="Kira yönetimi">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Kira yönetimi</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Anahtarı verin, <em>gerisini yönetim halleder.</em></h2>
@@ -1240,7 +1242,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-plan" data-sec="Sonuç" data-t="Örnek ödeme planı">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Örnek ödeme planı · £185.000 daire</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Peşinat, <em>faizsiz</em> taksit, teslim.</h2>
@@ -1272,7 +1274,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kolay" data-sec="Sonuç" data-t="Döveç'ten ek kolaylıklar">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Döveç ödeme kolaylıkları</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Ödemede ve eşyada <em>ek kolaylık.</em></h2>
@@ -1317,7 +1319,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-surec" data-sec="Sonuç" data-t="Satın alma süreci">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Satın alma süreci</div>
     <h2 class="a" style="--d:1;color:var(--navy)">İstanbul'dan <em>tapuya</em>, beş adım.</h2>
@@ -1338,7 +1340,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 </section>
 
 <section class="s light" id="s-kocan" data-sec="Sonuç" data-t="Koçan tipleri">
-  <img class="logo pill" src="assets/dogus-logo.png" alt="">
+  <img class="logo koyu" src="assets/dogus-logo-koyu.webp" alt="">
   <div class="pad">
     <div class="ey a">Tapu (koçan) tipleri</div>
     <h2 class="a" style="--d:1;color:var(--navy)">Ne aldığınızı <em>bilerek alın.</em></h2>
