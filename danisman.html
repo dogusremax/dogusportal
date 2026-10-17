@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Danışman · RE/MAX Doğuş</title>
+<meta name="description" content="RE/MAX Doğuş gayrimenkul danışmanı">
+<meta name="theme-color" content="#050A30">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--ink:#0d1330;--dim:#5d6585;--line:#e6e8f0;--bg:#f6f7fb;--grad:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+a{color:inherit;text-decoration:none}
+.w{max-width:1080px;margin:0 auto;padding:0 20px}
+.hide{display:none!important}
+
+header{position:sticky;top:0;z-index:20;background:rgba(5,10,48,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+header .w{display:flex;align-items:center;gap:18px;height:64px}
+header .ad{color:#fff;font-weight:800;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+header nav{display:flex;gap:18px;margin-left:auto}
+header nav a{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+header nav a:hover{color:#fff}
+header .logo{height:30px;width:auto;margin-left:6px}
+@media(max-width:760px){header nav{display:none}header .logo{margin-left:auto}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:999px;font-weight:700;font-size:15px;border:0;cursor:pointer;font-family:inherit}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(220,28,46,.35)}
+.btn-red:hover{background:var(--redd)}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn svg{width:18px;height:18px}
+
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;right:-180px;top:-160px;width:560px;height:560px;border-radius:50%;background:var(--grad);opacity:.9}
+.hero .w{position:relative;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:72px}
+.kicker{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);margin-bottom:14px}
+.hero h1{font-size:clamp(36px,6vw,58px);line-height:1.05;font-weight:800;letter-spacing:-.03em}
+.hero .unvan{font-size:17px;font-weight:600;color:rgba(255,255,255,.8);margin-top:10px}
+.hero .ozet{font-size:17px;color:rgba(255,255,255,.72);margin:20px 0 28px;max-width:520px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.portre{justify-self:center;position:relative;width:min(340px,80vw);aspect-ratio:4/5;background:var(--grad);border-radius:28px;overflow:hidden;border:6px solid rgba(255,255,255,.12);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.portre img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.portre .rozet{position:absolute;left:14px;bottom:14px;background:#fff;color:var(--navy);font-size:12px;font-weight:700;padding:8px 12px;border-radius:999px;display:flex;align-items:center;gap:6px}
+.portre .rozet i{width:8px;height:8px;border-radius:50%;background:var(--red);display:block}
+@media(max-width:760px){.hero .w{grid-template-columns:1fr;padding-top:36px;padding-bottom:48px;gap:32px}.portre{order:-1;width:min(260px,70vw)}.hero{text-align:center}.hero .ozet{margin-left:auto;margin-right:auto}.hero .cta{justify-content:center}}
+
+.sayilar{margin-top:-34px;position:relative;z-index:2}
+.sayilar .k{background:#fff;border-radius:22px;box-shadow:0 16px 40px rgba(5,10,48,.08);display:grid;grid-template-columns:repeat(3,1fr)}
+.sayilar .s{padding:22px 18px;text-align:center}
+.sayilar .s+.s{border-left:1px solid var(--line)}
+.sayilar b{display:block;font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.sayilar b em{font-style:normal;color:var(--red)}
+.sayilar span{font-size:13px;color:var(--dim);font-weight:600}
+@media(max-width:560px){.sayilar b{font-size:22px}.sayilar span{font-size:11px}.sayilar .s{padding:16px 8px}}
+
+section{padding:72px 0 0}
+.bas{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.02em;color:var(--navy);margin-bottom:22px}
+.hakkimda p{font-size:17px;color:#2b3254;max-width:760px;margin-bottom:14px}
+
+.hiz{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.hiz .c{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+.hiz .n{width:40px;height:40px;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;display:grid;place-items:center;margin-bottom:14px}
+.hiz h3{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.hiz p{font-size:14px;color:var(--dim)}
+@media(max-width:900px){.hiz{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.hiz{grid-template-columns:1fr}}
+
+.yor{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.yor .c{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.yor .yildiz{color:#F5A623;letter-spacing:2px;font-size:15px}
+.yor p{font-size:14.5px;color:#2b3254;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
+.yor .kim{display:flex;align-items:center;gap:10px;margin-top:auto;font-size:13px;font-weight:700;color:var(--navy)}
+.yor .kim img,.yor .kim .bas-h{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:13px}
+.yor .kim small{display:block;font-weight:500;color:var(--dim)}
+.tum{margin-top:18px;display:inline-flex;font-weight:700;color:var(--red);font-size:14px}
+@media(max-width:900px){.yor{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.yor{grid-template-columns:1fr}}
+
+.ilan{background:var(--navy);color:#fff;border-radius:28px;padding:38px;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;position:relative;overflow:hidden}
+.ilan:after{content:"";position:absolute;right:-90px;bottom:-120px;width:300px;height:300px;border-radius:50%;background:var(--grad);opacity:.85}
+.ilan h2{color:#fff;margin-bottom:8px}
+.ilan p{color:rgba(255,255,255,.72)}
+.ilan .cta{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.ilan .btn{justify-content:center}
+@media(max-width:700px){.ilan{grid-template-columns:1fr;padding:28px}}
+
+.form{display:grid;grid-template-columns:1fr 1.2fr;gap:30px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px}
+.form .bilgi a{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-weight:600;color:var(--navy)}
+.form .bilgi a span{width:38px;height:38px;border-radius:12px;background:#fdecee;color:var(--red);display:grid;place-items:center;flex:none}
+.form .bilgi svg{width:18px;height:18px}
+form{display:grid;gap:12px}
+form .iki{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;font:15px 'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+textarea{height:96px;resize:vertical}
+form .btn{justify-content:center}
+@media(max-width:760px){.form{grid-template-columns:1fr;padding:24px}form .iki{grid-template-columns:1fr}}
+
+footer{margin-top:80px;background:var(--navy);color:rgba(255,255,255,.6);font-size:13px}
+footer .w{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:26px 20px;flex-wrap:wrap}
+footer img{height:26px}
+
+.wa-sabit{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:30}
+.wa-sabit svg{width:30px;height:30px;fill:#fff}
+.yok{padding:120px 20px;text-align:center;color:var(--dim)}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <a class="ad" href="#tepe" id="hAd">RE/MAX Doğuş</a>
+  <nav><a href="#hakkimda">Hakkımda</a><a href="#hizmetler">Hizmetler</a><a href="#yorumlar">Yorumlar</a><a href="#iletisim">İletişim</a></nav>
+  <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+</div></header>
+
+<main id="sayfa" class="hide">
+<div class="hero" id="tepe"><div class="w">
+  <div>
+    <span class="kicker" id="bolge">Fikirtepe · Kadıköy</span>
+    <h1 id="ad"></h1>
+    <div class="unvan" id="unvan"></div>
+    <p class="ozet" id="ozet"></p>
+    <div class="cta">
+      <a class="btn btn-red" id="waHero" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp'tan yazın</a>
+      <a class="btn btn-ghost" id="telHero"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Hemen arayın</a>
+    </div>
+  </div>
+  <div class="portre"><img id="portre" alt=""><div class="rozet"><i></i>RE/MAX Doğuş</div></div>
+</div></div>
+
+<div class="w sayilar"><div class="k">
+  <div class="s"><b><em id="sPuan">4,9</em>★</b><span>Google ofis puanı</span></div>
+  <div class="s"><b id="sYorum">0</b><span>yorumda adı geçiyor</span></div>
+  <div class="s"><b id="sToplam">0</b><span>ofis yorumu</span></div>
+</div></div>
+
+<section id="hakkimda" class="hakkimda"><div class="w">
+  <div class="bas">Kısaca ben</div>
+  <h2>Tanışalım</h2>
+  <div id="hakkimdaMetin"></div>
+</div></section>
+
+<section id="hizmetler"><div class="w">
+  <div class="bas">Ne yapıyorum?</div>
+  <h2>Hizmetler</h2>
+  <div class="hiz" id="hiz"></div>
+</div></section>
+
+<section id="yorumlar"><div class="w">
+  <div class="bas">Sizlerden gelenler</div>
+  <h2>Müşterilerim ne diyor?</h2>
+  <div class="yor" id="yor"></div>
+  <a class="tum" id="tumYorum" target="_blank" rel="noopener">Tüm Google yorumlarını gör →</a>
+</div></section>
+
+<section id="ilanlar"><div class="w"><div class="ilan">
+  <div><h2>Güncel ilanlarım</h2><p>Satılık ve kiralık portföyümü RE/MAX profilimde, günlük paylaşımlarımı Instagram'da bulabilirsiniz.</p></div>
+  <div class="cta">
+    <a class="btn btn-red" id="remaxLink" target="_blank" rel="noopener">RE/MAX profilimdeki ilanlar</a>
+    <a class="btn btn-ghost" id="igLink" target="_blank" rel="noopener"></a>
+  </div>
+</div></div></section>
+
+<section id="iletisim"><div class="w">
+  <div class="bas">İletişim</div>
+  <h2>Evinizin değerini birlikte konuşalım</h2>
+  <div class="form">
+    <div class="bilgi">
+      <a id="telBilgi"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span><b id="telYazi"></b></a>
+      <a href="tel:+902163151515"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></span>Ofis · 0216 315 15 15</a>
+      <a id="haritaLink" target="_blank" rel="noopener"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Fikirtepe / Kadıköy, İstanbul</a>
+    </div>
+    <form id="form">
+      <div class="iki"><input id="fAd" placeholder="Adınız Soyadınız" required><input id="fTel" type="tel" placeholder="Telefonunuz" required></div>
+      <select id="fKonu"><option>Evimi satmak istiyorum</option><option>Evimi kiraya vermek istiyorum</option><option>Ev almak istiyorum</option><option>Ev kiralamak istiyorum</option><option>Değerleme istiyorum</option><option>Yatırım danışmanlığı</option></select>
+      <textarea id="fMesaj" placeholder="Kısaca anlatın (bölge, oda sayısı, bütçe...)"></textarea>
+      <button class="btn btn-red" type="submit">WhatsApp ile gönder</button>
+    </form>
+  </div>
+</div></section>
+</main>
+
+<div class="yok hide" id="yok">Danışman bulunamadı.</div>
+
+<footer><div class="w"><span>© <span id="yil"></span> <span id="fAdi"></span> · RE/MAX Doğuş · Her ofis bağımsız olarak sahiplenilir ve işletilir.</span><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"></div></footer>
+<a class="wa-sabit hide" id="waSabit" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+
+<script>
+(async function(){
+  var id=(new URLSearchParams(location.search).get('id')||'').toLowerCase();
+  var cb='?cb='+Date.now();
+  var e=function(s){return document.getElementById(s)};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var j=async function(u){try{var r=await fetch(u+cb);return r.ok?await r.json():null}catch(x){return null}};
+  var res=await Promise.all([j('data/danismanlar.json'),j('data/danisman-site.json'),j('data/google-yorumlar.json')]);
+  var d=(res[0]||[]).find(function(x){return x.id===id}), s=(res[1]||{})[id], g=res[2]||{yorumlar:[]};
+  if(!d||!s){e('yok').classList.remove('hide');return}
+
+  var ofis='902163151515', tel=s.telefon||ofis;
+  var tTel=tel.replace(/^90/,'0').replace(/(\d{4})(\d{3})(\d{2})(\d{2})/,'$1 $2 $3 $4');
+  var wa=function(m){return 'https://wa.me/'+tel+'?text='+encodeURIComponent(m)};
+  var selam='Merhaba '+d.ad.split(' ')[0]+' Bey/Hanım, web sayfanızdan ulaşıyorum.';
+  if(s.hitap)selam='Merhaba '+s.hitap+', web sayfanızdan ulaşıyorum.';
+
+  document.title=d.ad+' · RE/MAX Doğuş';
+  e('hAd').textContent=d.ad; e('ad').textContent=d.ad; e('fAdi').textContent=d.ad;
+  e('unvan').textContent=s.unvan||'Gayrimenkul Danışmanı';
+  e('ozet').textContent=s.ozet||'';
+  if(s.bolge)e('bolge').textContent=s.bolge;
+  e('portre').src=s.portre||('assets/ekip/'+id+'.png'); e('portre').alt=d.ad;
+  e('waHero').href=e('waSabit').href=wa(selam);
+  e('waSabit').classList.remove('hide');
+  e('telHero').href=e('telBilgi').href='tel:+'+tel; e('telYazi').textContent=tTel;
+  e('hakkimdaMetin').innerHTML=(s.hakkimda||[]).map(function(p){return '<p>'+esc(p)+'</p>'}).join('');
+  e('hiz').innerHTML=(s.hizmetler||[]).map(function(h,i){return '<div class="c"><div class="n">'+(i+1)+'</div><h3>'+esc(h[0])+'</h3><p>'+esc(h[1])+'</p></div>'}).join('');
+
+  if(d.remax)e('remaxLink').href=d.remax;else e('remaxLink').classList.add('hide');
+  if(d.instagram){e('igLink').href='https://www.instagram.com/'+d.instagram+'/';e('igLink').textContent='@'+d.instagram}else e('igLink').classList.add('hide');
+  e('haritaLink').href=e('tumYorum').href=g.mapsUrl||'#';
+
+  var benim=(g.yorumlar||[]).filter(function(y){return (y.danismanlar||[]).indexOf(id)>=0&&y.puan>=4&&y.metin});
+  benim.sort(function(a,b){return (b.tarih||'').localeCompare(a.tarih||'')});
+  e('sPuan').textContent=String(g.puan||'4.9').replace('.',',');
+  e('sToplam').textContent=g.toplam||'';
+  e('sYorum').textContent=benim.length;
+  var kisa=function(n){n=String(n||'').trim().split(/\s+/);return n.length>1?n[0]+' '+n[n.length-1][0].toLocaleUpperCase('tr')+'.':n[0]};
+  e('yor').innerHTML=benim.slice(0,6).map(function(y){
+    var ay=y.tarih?new Date(y.tarih).toLocaleDateString('tr-TR',{month:'long',year:'numeric'}):'';
+    var av=y.foto?'<img src="'+esc(y.foto)+'" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML=\'<span class=bas-h>'+esc(kisa(y.yazar)[0])+'</span>\'">':'<span class="bas-h">'+esc(kisa(y.yazar)[0])+'</span>';
+    return '<div class="c"><div class="yildiz">'+'★★★★★'.slice(0,y.puan)+'</div><p>'+esc(y.metin)+'</p><div class="kim">'+av+'<div>'+esc(kisa(y.yazar))+'<small>Google · '+ay+'</small></div></div></div>';
+  }).join('');
+  if(!benim.length)e('yorumlar').classList.add('hide');
+
+  e('yil').textContent=new Date().getFullYear();
+  e('form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var m=selam+'\nAd Soyad: '+e('fAd').value+'\nTelefon: '+e('fTel').value+'\nKonu: '+e('fKonu').value+(e('fMesaj').value?'\nNot: '+e('fMesaj').value:'');
+    window.open(wa(m),'_blank');
+  });
+  e('sayfa').classList.remove('hide');
+})();
+</script>
+</body>
+</html>
