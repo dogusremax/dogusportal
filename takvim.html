@@ -160,7 +160,11 @@ form textarea{min-height:80px;resize:vertical}
 .kutu{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-top:12px}
 .kutu input{width:20px;height:20px}
 .durum{font-size:13px;color:var(--dim);text-align:center;min-height:18px;margin-top:10px}
-@media(max-width:599px){.wrap{padding:10px 6px}.nobet{margin:0 4px 12px}.bugunkutu{margin:-2px 4px 14px}.arac{margin-left:4px;margin-right:4px}.bugunkutu .yaklasan{display:none}.hucre .no{font-size:8.5px;width:15px;height:15px}}
+@media(max-width:599px){.wrap{padding:8px 8px}.nobet{margin:0 4px 8px;padding:6px 10px;border-radius:14px}.nfoto.fig{width:58px;height:54px;margin:-8px 0 -7px -4px}.nobet b{font-size:16px}.nobet span{font-size:11.5px}.nobet .ikonbtn{width:34px;height:34px}
+.bugunkutu{margin:-2px 4px 8px}.bugunkutu .yaklasan,.bugunkutu .bos,.bugunkutu.bosgun{display:none}.bugunkutu h3{font-size:13.5px;margin-bottom:6px}.bugunkutu .olay{padding:8px 12px;margin-bottom:6px}
+.arac{margin:0 4px 8px}.izgara{border-radius:14px}.gunler{padding:6px 0}
+.hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:64%;max-width:110%}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .is{width:14px;height:14px;font-size:8.5px}.hucre .is-dogumgunu{font-size:11px}
+.arac{gap:4px}.arac .ekle{position:static;width:36px;height:36px;padding:0;justify-content:center;border-radius:11px;box-shadow:none;flex:none}.arac .ekle span{font-size:24px!important}.ekyazi{display:none}.ay b{font-size:17px;padding:0 2px}.ay button{width:26px}.sekme button{padding:7px 9px}}
 @media(max-width:420px){header h1{font-size:19px}.sekme button{padding:7px 10px}.ay b{font-size:17px}}
 .yukleniyor{text-align:center;color:var(--dim);padding:30px;font-size:14px}
 </style>
@@ -204,12 +208,12 @@ form textarea{min-height:80px;resize:vertical}
     <div class="sekme" id="gorunum">
       <button data-g="ay" class="on">Ay</button><button data-g="liste">Liste</button><button data-g="benim">Benim</button>
     </div>
+    <button class="ekle" id="ekleBtn" aria-label="Etkinlik ekle"><span style="font-size:22px;line-height:1">+</span><b class="ekyazi"> Etkinlik</b></button>
   </div>
 
   <div id="icerik"><div class="yukleniyor">Takvim yükleniyor…</div></div>
 </div>
 
-<button class="ekle" id="ekleBtn"><span style="font-size:22px;line-height:1">+</span> Etkinlik</button>
 
 <div class="perde" id="perde"><div class="sayfa" id="sayfa"></div></div>
 
@@ -361,7 +365,7 @@ function bugunCiz(){
       h+=`<div class="ygun">${f===1?'Yarın':x.getDate()+' '+AYLAR[x.getMonth()]} · ${GUNLER[x.getDay()]}</div>`; onceki=o.tarih; } h+=olayKart(o); });
     h+='</div>';
   }
-  $('bugunKutu').hidden=false; $('bugunKutu').innerHTML=h;
+  $('bugunKutu').hidden=false; $('bugunKutu').innerHTML=h; $('bugunKutu').classList.toggle('bosgun', !liste.length);
   $('bugunKutu').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
 }
 // Nöbetçinin dekupe fotoğrafı kutunun sağ altında, yazıların arkasında (Umut 18 Eki); Ofis günlerinde yok
@@ -372,6 +376,16 @@ function nobetFig(o){
   const u=fotoUrl(o.nobetci), id=u && u.split('/').pop().replace('.webp','');
   return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/nobet/${id}.webp?v=2" alt="" loading="lazy">` : '';
 }
+// Telefonda ay ızgarası ekranın kalanını kaplar, kutular uzun (Umut 18 Eki, seçenek A)
+function izgaraBoyut(){
+  const hc=[...document.querySelectorAll('.hucre')], ic=document.querySelector('.hucreler');
+  if (!ic || !hc.length) return;
+  if (innerWidth>=600){ hc.forEach(x=>x.style.height=''); return; }
+  const ust=ic.getBoundingClientRect().top+scrollY, sat=hc.length/7;
+  const y=Math.max(70, Math.floor((innerHeight-ust-12)/sat)-1);
+  hc.forEach(x=>x.style.height=y+'px');
+}
+addEventListener('resize', ()=>{ if (S.gorunum==='ay') izgaraBoyut(); });
 function gunAc(g){
   const liste=S.olaylar.filter(o=>o.tarih===g);
   ac(gunListesi(g, liste)+`<div class="dugmeler"><button class="btn" onclick="kapat()">Kapat</button></div>`);
@@ -400,6 +414,9 @@ function ayCiz(){
   }
   h+='</div></div>';
   $('icerik').innerHTML=h;
+  const hc=[...$('icerik').querySelectorAll('.hucre')];
+  if (innerWidth<600 && hc.slice(35).every(x=>x.classList.contains('dis'))) hc.slice(35).forEach(x=>x.remove());
+  izgaraBoyut();
   // Kutuya dokununca o günün ayrıntısı açılır (Umut 18 Eki)
   $('icerik').querySelectorAll('.hucre').forEach(c=>c.onclick=()=>gunAc(c.dataset.g));
   baglaOlay();
