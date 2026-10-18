@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>E-posta İmzası · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  main{max-width:720px;margin:0 auto;padding:20px 16px 60px;display:flex;flex-direction:column;gap:16px}
+  .kisiler{display:flex;flex-wrap:wrap;gap:8px}
+  .kisi{display:flex;align-items:center;gap:8px;background:#161c44;border:2px solid transparent;border-radius:30px;padding:4px 14px 4px 4px;font:600 13px 'Plus Jakarta Sans',sans-serif;color:#fff;cursor:pointer}
+  .kisi img{width:34px;height:34px;border-radius:50%}
+  .kisi.on{border-color:#DC1C2E;background:#1d2557}
+  .onizle{background:#fff;border-radius:14px;padding:22px}
+  button.ana{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:13px 18px;cursor:pointer;background:#DC1C2E;color:#fff}
+  .durum{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6}
+  .ipucu{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;font-size:13px;line-height:1.7;color:rgba(255,255,255,.8)}
+  .ipucu b{color:#fff}
+</style>
+<script src="assets/imza.js"></script>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>E-posta İmzası</h1></div>
+<main>
+  <div class="kisiler" id="kisiler"></div>
+  <div class="onizle" id="onizle"></div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <button class="ana" id="kopyala">İmzayı kopyala</button>
+    <span class="durum" id="durum"></span>
+  </div>
+  <div class="ipucu">
+    <b>Nasıl eklenir?</b><br>
+    <b>Gmail:</b> Ayarlar → Tüm ayarları gör → İmza → yeni imza → yapıştır (⌘V / Ctrl+V) → en altta Değişiklikleri kaydet.<br>
+    <b>iPhone Mail:</b> Ayarlar → Mail → İmza → yapıştır.<br>
+    <b>Outlook:</b> Ayarlar → Posta → Oluştur ve yanıtla → İmza → yapıştır.<br>
+    <b>Doğuş Posta:</b> İmza ve ayarlar → Hazır imza → Kaydet.
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let SECILI = new URLSearchParams(location.search).get('k') || 'umut';
+function ciz() {
+  $('kisiler').innerHTML = IMZA_KISILER.map(k => '<button class="kisi' + (k.id === SECILI ? ' on' : '') + '" data-id="' + k.id + '"><img src="assets/imza/' + k.id + '.png" alt="">' + k.ad + '</button>').join('');
+  $('kisiler').querySelectorAll('.kisi').forEach(b => b.onclick = () => { SECILI = b.dataset.id; history.replaceState(null, '', '?k=' + SECILI); $('durum').textContent = ''; ciz(); });
+  $('onizle').innerHTML = imzaHtml(SECILI);
+}
+$('kopyala').onclick = async () => {
+  const html = imzaHtml(SECILI), duz = $('onizle').innerText;
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([duz], { type: 'text/plain' }) })]);
+  } catch (e) {
+    // Eski tarayıcılar: önizlemeyi seçip kopyala
+    const r = document.createRange(); r.selectNodeContents($('onizle'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges();
+  }
+  $('durum').textContent = 'Kopyalandı ✓ Şimdi posta programının imza alanına yapıştır.';
+};
+ciz();
+</script>
+</body>
+</html>

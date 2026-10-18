@@ -167,6 +167,7 @@
   }
 </style>
 <script src="assets/broker.js"></script>
+<script src="assets/imza.js"></script>
 </head>
 <body>
 
@@ -352,6 +353,7 @@ $('kSifre').addEventListener('keydown', e => { if (e.key === 'Enter') $('kBtn').
 
 function anaAc() {
   $('ana').hidden = false; $('hesap').textContent = HESAP.adres;
+  imzaGecir();
   if (ONBELLEK.gelen) { MESAJLAR = Object.assign(ONBELLEK.gelen.mesajlar.slice(), { dahaVar: ONBELLEK.gelen.dahaVar }); sayilar(ONBELLEK.sayilar); ciz(); }
   hepsiYukle();
   setInterval(() => { if (!document.hidden) listeYukle(false, true); }, 60000);
@@ -886,13 +888,16 @@ function ayarAc() {
   $('aHesap').textContent = HESAP.adres + ' · Markum posta sunucusuna bağlı'; $('aSifre').value = '';
   $('ayarPen').hidden = false;
 }
+// Umut'un istediği yeni imza formatına (18 Ekim) bir kez otomatik geçiş: imza yoksa ya da eski hazır imzaysa
+function imzaGecir() {
+  const i = HESAP.imza || '';
+  if (i.includes('assets/imza/') || (i && !i.includes('dogus-logo-koyu.png'))) return;
+  servis({ islem: 'imza', ad: HESAP.ad || 'Umut Tokkuş', imza: imzaHtml('umut', HESAP.ad || 'Umut Tokkuş') })
+    .then(j => { if (j.ok) { HESAP = j; hesapSakla(); } }).catch(() => {});
+}
 function imzaHazir() {
-  const ad = kac($('aAd').value || 'Umut Tokkuş');
-  $('aImza').innerHTML = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#050A30;line-height:1.5">' +
-    '<b style="font-size:15px">' + ad + '</b><br><span style="color:#DC1C2E;font-weight:bold">Broker · RE/MAX Doğuş</span><br>' +
-    '📞 0216 315 15 15 · <a href="https://dogusportal.com" style="color:#050A30">dogusportal.com</a><br>' +
-    'Fikirtepe / Kadıköy, İstanbul<br>' +
-    '<img src="https://dogusportal.com/assets/dogus-logo-koyu.png" alt="RE/MAX Doğuş" height="44" style="height:44px;margin-top:6px"></div>';
+  // assets/imza.js: Umut'un formatı (yuvarlak fotoğraf, Broker · RE/MAX Doğuş, telefon, site, adres, logo)
+  $('aImza').innerHTML = imzaHtml('umut', $('aAd').value.trim() || 'Umut Tokkuş');
 }
 async function imzaKaydet() {
   const d = $('aDurum'); d.className = 'durum'; d.textContent = 'Kaydediliyor…';
