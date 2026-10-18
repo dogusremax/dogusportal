@@ -1,0 +1,21 @@
+name: Ofis takvimi hızlı açılış dosyası
+on:
+  schedule:
+    - cron: "5,35 * * * *"   # yarım saatte bir — nöbet/bayram/toplantı listesi statik dosyaya
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: takvim-genel
+  cancel-in-progress: false
+jobs:
+  genel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/takvim-genel.sh
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add assets/takvim-genel.json
+          git diff --cached --quiet || (git commit -m "Ofis takvimi hızlı açılış dosyası güncellendi" && git pull --rebase && git push)
