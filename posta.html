@@ -49,6 +49,7 @@
   .kutular button{display:flex;align-items:center;gap:8px;width:100%;background:#161c44;border:1px solid transparent;border-radius:10px;padding:6px 8px;font-size:12.5px;font-weight:600;color:#cfd3ea;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .kutular button.on{border-color:var(--red);color:#fff;background:#1d2557}
   .kutular img,.kutular .ik{width:24px;height:24px;flex:none;border-radius:50%;object-fit:cover;object-position:center top}
+  .kutular img.balon{border-radius:0;object-fit:contain;object-position:center}
   .kutular .ik{display:inline-flex;align-items:center;justify-content:center;background:var(--red);font-size:12px}
   .yan .logo img{height:26px}
   .yan .logo b{font-size:14px}
@@ -168,7 +169,7 @@
   @media (max-width:820px){
     #ana{grid-template-columns:1fr;position:relative}
     .yan{display:none}
-    #ana.menu .yan{display:flex;position:absolute;inset:0 14% 0 0;background:var(--kart);z-index:10;box-shadow:10px 0 40px rgba(0,0,0,.5)}
+    #ana.menu .yan{display:flex;position:absolute;top:0;bottom:0;left:0;width:min(68%,260px);background:var(--kart);z-index:10;box-shadow:10px 0 40px rgba(0,0,0,.5)}
     #ana.menu::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:9}
     .hamburger{background:#DC1C2E!important;border-color:#DC1C2E!important;color:#fff}
     .liste .ust .geri,.okuma .ust .geri{display:inline-flex}
@@ -412,14 +413,14 @@ $('kSifre').addEventListener('keydown', e => { if (e.key === 'Enter') $('kBtn').
 // Adres tek satıra sığsın: gerekirse yazı küçülür (en az 10 px), yine sığmazsa … ile biter
 function hesapSigdir() {
   const h = $('hesap'); h.style.fontSize = '';
-  for (let px = 12; px > 10 && h.scrollWidth > h.clientWidth; px -= 0.5) h.style.fontSize = px - 0.5 + 'px';
+  for (let px = 12; px > 9 && h.scrollWidth > h.clientWidth; px -= 0.5) h.style.fontSize = px - 0.5 + 'px';
 }
 // Posta kutusu seçici: yalnız ortak kutuya yetkisi olanlarda görünür (yetkiyi sunucu denetler)
 function kutularCiz() {
   const l = HESAP.hesaplar || [], aktif = AKTIF || KIM;
   $('kutular').hidden = l.length < 2;
   $('kutular').innerHTML = l.map(h => '<button class="' + (h.id === aktif ? 'on' : '') + '" data-id="' + kac(h.id) + '" title="' + kac(h.ad) + '">' +
-    (h.ortak ? '<span class="ik">✉</span>' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? h.ad.split('@')[0] + '@ · ortak kutu' : 'Kendi kutum') + '</span></button>').join('');
+    (h.ortak ? '<img src="assets/imza/info.png" alt="">' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? 'RE/MAX-info' : h.ad) + '</span></button>').join('');
   $('kutular').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.id !== aktif) kutuSec(b.dataset.id); });
 }
 async function kutuSec(id) {
