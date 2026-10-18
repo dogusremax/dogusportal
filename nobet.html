@@ -103,6 +103,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
 @keyframes r{to{transform:rotate(360deg)}}
 </style>
 <script src="assets/broker.js"></script>
+<script src="assets/imza.js?v=4"></script>
 </head>
 <body>
 <div class="wrap">
@@ -228,7 +229,7 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
       <div class="stats" id="stats"></div>
       <div style="height:12px"></div>
       <div class="btns">
-        <button class="btn full" id="sendBtn" onclick="sendPlan()">Takvime gönder</button>
+        <button class="btn full" id="sendBtn" onclick="sendPlan()">Gönder (Doğuş Posta)</button>
         <button class="btn danger full" onclick="clearMonth()">Bu ayın nöbetlerini sil</button>
       </div>
     </div>
@@ -469,7 +470,7 @@ async function loadTaslak(ay){
     if(!j.taslak){ setStatus(`${AY[cur.getMonth()]} için otomatik taslak bulunamadı.`,"err"); return; }
     plan=j.taslak.plan.map(p=>({date:p.date,name:p.name}));
     renderPlan(); previewCal();
-    setStatus(`Otomatik taslak yüklendi (henüz takvime yazılmadı). Değiştirmek istediğin günleri düzelt, sonra <b>Takvime gönder</b>'e bas.`,"ok");
+    setStatus(`Otomatik taslak yüklendi (henüz takvime yazılmadı). Değiştirmek istediğin günleri düzelt, sonra <b>Gönder</b>'e bas.`,"ok");
     $("planCard").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(e){ setStatus("Taslak okunamadı: "+e.message,"err"); }
 }
@@ -487,15 +488,59 @@ async function readCalendar(){
   }catch(e){ setStatus(e.message,"err"); }
 }
 
+// Gönder: plan takvime davetsiz/bildirimsiz yazılır, herkese Doğuş Posta'dan
+// "X ayı nöbet takvimi oluşturuldu" maili gider; linke basan portal takviminde o ayı açar (Umut, 18 Eki 2026).
+const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+async function posta(body){
+  const r=await fetch(SERVIS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action:"eposta"},body))});
+  const j=await r.json(); if(!j.ok) throw new Error(j.message||j.error||"Posta hatası"); return j;
+}
+// Gönderen: broker'ın kendi Doğuş Posta kutusu. Açık oturum varsa onu kullanır, yoksa nöbet PIN'iyle girer.
+async function postaOturum(){
+  let o="", k=""; try{ o=localStorage.getItem("posta_oturum")||""; k=localStorage.getItem("posta_kim")||""; }catch(_){}
+  if(o && (k==="umut"||k==="makbule")){ try{ await posta({islem:"durum",oturum:o}); return {oturum:o,kim:k}; }catch(_){} }
+  const ad=(window.brokerAdAl&&brokerAdAl())||"";
+  let kim=/makbule/i.test(ad)?"makbule":"umut", j;
+  try{ j=await posta({islem:"giris",kim,pin}); }
+  catch(e){ if(ad) throw e; kim="makbule"; j=await posta({islem:"giris",kim,pin}); }
+  if(!o){ try{ localStorage.setItem("posta_oturum",j.oturum); localStorage.setItem("posta_kim",kim); }catch(_){} }
+  return {oturum:j.oturum,kim};
+}
+const ayniKisi=(a,b)=>{ const x=String(a||"").toLocaleLowerCase("tr").split(/\s+/), y=String(b||"").toLocaleLowerCase("tr").split(/\s+/); return x[0]===y[0] && x[x.length-1]===y[y.length-1]; };
+function nobetMaili(kisi, gunler, ayAd, link, gonderen){
+  const ilk=kisi.ad.split(" ")[0];
+  const satir=gunler.map(d=>{ const t=new Date(d+"T12:00:00"), hs=t.getDay()===0||t.getDay()===6;
+    return `<li>${t.getDate()} ${ayAd.split(" ")[0]} ${["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"][t.getDay()]} · ofiste ${hs?"10:30":"09:30"}</li>`; }).join("");
+  return `<p>Merhaba ${ilk},</p><p><b>${ayAd} nöbet takvimi oluşturuldu.</b></p>`+
+    (gunler.length?`<p>Senin nöbet günlerin:</p><ul>${satir}</ul>`:`<p>Bu ay nöbet günün yok.</p>`)+
+    `<p><a href="${link}" style="display:inline-block;background:#003DA5;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold">Nöbet takvimini aç</a></p>`+
+    `<p>Nöbet günün değişirse benimle konuş lütfen.</p><br>`+(window.imzaHtml?imzaHtml(gonderen):"");
+}
 async function sendPlan(){
   if(!plan.length) return;
-  if(!confirm(`${AY[cur.getMonth()]} ayı için ${plan.length} nöbet takvime yazılacak.\nAynı günlerdeki eski nöbetler sessizce silinir, yenileri davetiyeli gider.\nDevam?`)) return;
+  const ayAd=`${AY[cur.getMonth()]} ${cur.getFullYear()}`;
+  if(!confirm(`${ayAd} için ${plan.length} günlük nöbet planı takvime yazılacak (Google daveti gitmez).\nSonra herkese Doğuş Posta'dan "${AY[cur.getMonth()]} ayı nöbet takvimi oluşturuldu" maili gider.\nDevam?`)) return;
   $("sendBtn").disabled=true; setStatus("Takvime yazılıyor… (≈1 dk)","busy");
   try{
-    const body=plan.map(p=>({date:p.date,name:p.name,emails:p.name===OFFICE?[]:(byName(p.name)||{}).emails||[]}));
-    const j=await api({action:"create",plan:body,replace:true});
-    setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi. yenifikirtepeburada.com nöbetçi kartı otomatik güncellenir.`,"ok");
-    try{ await showCalendar(`Takvime yazıldı — ${AY[cur.getMonth()]} ${cur.getFullYear()}`); setStatus(`✓ ${j.created} nöbet takvime eklendi, davetler gönderildi.`,"ok"); }catch(_){ console.warn('Sessiz hata:', _); }
+    const body=plan.map(p=>({date:p.date,name:p.name,emails:[]}));
+    const j=await api({action:"create",plan:body,replace:true,davetsiz:true});
+    setStatus(`✓ ${j.created} nöbet takvime yazıldı. Doğuş Posta'dan gönderiliyor…`,"busy");
+    const ot=await postaOturum();
+    const link=`https://dogusportal.com/takvim.html?ay=${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
+    const alicilar=(window.IMZA_KISILER||[]).filter(k=>k.id!==ot.kim);
+    const sonuc=[];
+    for(let i=0;i<alicilar.length;i+=3){
+      await Promise.all(alicilar.slice(i,i+3).map(async k=>{
+        const gunler=plan.filter(p=>p.name!==OFFICE && ayniKisi(p.name,k.ad)).map(p=>p.date);
+        try{ await posta({islem:"gonder",oturum:ot.oturum,kime:k.eposta,konu:`${ayAd} nöbet takvimi oluşturuldu`,html:nobetMaili(k,gunler,ayAd,link,ot.kim)}); sonuc.push({ad:k.ad,ok:true}); }
+        catch(e){ sonuc.push({ad:k.ad,ok:false,hata:e.message}); }
+      }));
+      setStatus(`✓ ${j.created} nöbet takvime yazıldı. Gönderiliyor… ${sonuc.length}/${alicilar.length}`,"busy");
+    }
+    const hatali=sonuc.filter(s=>!s.ok);
+    setStatus(`✓ ${j.created} nöbet takvime yazıldı, ${sonuc.length-hatali.length} kişiye Doğuş Posta'dan gönderildi.`+
+      (hatali.length?`<br>Gönderilemedi: ${hatali.map(s=>s.ad+" ("+s.hata+")").join(", ")}`:""), hatali.length?"err":"ok");
+    try{ await showCalendar(`Takvime yazıldı — ${ayAd}`); }catch(_){ console.warn('Sessiz hata:', _); }
   }catch(e){ setStatus("Hata: "+e.message,"err"); }
   $("sendBtn").disabled=false;
 }
