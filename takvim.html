@@ -83,7 +83,7 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .hucre{position:relative;overflow:hidden;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .hucre .no,.hucre .et,.hucre .isaretler{position:relative;z-index:1;display:flex;gap:2px;margin-top:1px;padding-left:1px}
 .hucre .is{font-style:normal;font-size:7px;font-weight:800;line-height:1;width:11px;height:11px;border-radius:3px;display:grid;place-items:center;color:#fff}
-.hucre .is-tatil{background:#64748b}.hucre .is-anma{background:none;width:auto!important;height:auto!important}.hucre .is-anma svg{display:block;width:18px;height:12px;border-radius:2px;box-shadow:0 0 0 .5px rgba(0,0,0,.15)}@media(min-width:1000px){.hucre .is-anma svg{width:27px;height:18px}}.hucre .is-toplanti{background:var(--mavi)}.hucre .is-dogumgunu{background:none;font-size:9px}
+.hucre .is-tatil{background:#64748b}.hucre .is-anma{background:none;width:auto!important;height:auto!important}.hucre .is-anma img{display:block;width:18px;height:18px;border-radius:4px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.35)}@media(min-width:1000px){.hucre .is-anma img{width:28px;height:28px;border-radius:5px}}.hucre .is-toplanti{background:var(--mavi)}.hucre .is-dogumgunu{background:none;font-size:9px}
 @media(min-width:600px){.hucre .is{width:14px;height:14px;font-size:8.5px}.hucre .is-dogumgunu{font-size:11px}}
 .hucre .daha{position:relative;z-index:1}
 .hucre .nfig{position:absolute;right:0;bottom:0;height:52%;max-width:92%;object-fit:contain;object-position:right bottom;pointer-events:none;z-index:0}
@@ -99,8 +99,7 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .hucre.bugun{background:var(--kirmizi)!important}
 /* 10 Kasım: siyah kutu, sol altta Atatürk (Umut 18 Eki) */
 .hucre.anmagun{background:#0a0a0a!important}.hucre.anmagun .no,.hucre.anmagun .et{color:#fff!important}
-@media(max-width:599px){.hucre.anmagun .nfig{height:44%!important}.hucre .ataturk{height:62%!important;max-width:70%!important}}
-.hucre .ataturk{position:absolute;left:0;bottom:0;height:62%;width:auto;max-width:70%;object-fit:cover;object-position:left bottom;pointer-events:none;z-index:0;-webkit-mask-image:linear-gradient(to top,#000 75%,transparent);mask-image:linear-gradient(to top,#000 75%,transparent)}
+
 .hucre.bugun .no{color:#fff;font-weight:800}
 .hucre.bugun .et.nb{color:#fff;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .hucre .et{display:block;font-size:10px;font-weight:600;line-height:1.25;padding:1px 3px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
@@ -443,7 +442,7 @@ function bugunCiz(){
 // Nöbetçinin dekupe fotoğrafı kutunun sağ altında, yazıların arkasında (Umut 18 Eki); Ofis günlerinde yok
 // Ofis (toplantı) günlerinde "Doğuş'la Gülen Yüzler" görseli (Umut 18 Eki)
 const OFIS_FIG='assets/ekip/nobet/ofis.webp?v=2';
-const BAYRAK='<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" rx="2" fill="#e30a17"/><circle cx="11.25" cy="10" r="5" fill="#fff"/><circle cx="12.5" cy="10" r="4" fill="#e30a17"/><polygon fill="#fff" points="14.30,10.00 16.05,9.38 16.10,7.53 17.22,9.00 19.00,8.47 17.95,10.00 19.00,11.53 17.22,11.00 16.10,12.47 16.05,10.62"/></svg>';
+const ATA='<img src="assets/ekip/nobet/ataturk-kucuk.webp?v=1" alt="Atatürk">';
 const NOBET_FIG = {aysegul:1,aysun:1,evsen:1,gamze:1,gizem:1,irem:1,orhan:1,ozlem:1};
 // Nöbetçi resimleri baştan indirilsin, ızgarada sonradan belirmesin (Umut 18 Eki)
 new Image().src=OFIS_FIG;
@@ -486,16 +485,15 @@ function ayCiz(){
     const cls=['hucre', d.getMonth()!==ay?'dis':'', (d.getDay()===0||d.getDay()===6)?'hs':'', tatil[g]?'tatil':'', g.slice(5)==='11-10'?'anmagun':'', g===bugun()?'bugun':'', g===S.secili?'secili':''].join(' ');
     // Bayram B, doğum günü 🎁 (pasta beyazda seçilmiyordu), toplantı T (Umut 18 Eki)
     const ISARET={tatil:'B',dogumgunu:'🎁',toplanti:'T'};
-    // 10 Kasım: B yerine Türk bayrağı (Atatürk'ü Anma Günü, Umut 18 Eki); emoji bayrak Windows'ta çıkmadığı için SVG
+    // 10 Kasım: B yerine küçük Atatürk resmi, doğum günü işareti boyunda (Atatürk'ü Anma Günü, Umut 18 Eki)
     const anma=o=>o.tur==='tatil' && o.tarih.slice(5)==='11-10';
-    const isaret=o=>anma(o)?BAYRAK:ISARET[o.tur], sinif=o=>anma(o)?'anma':o.tur;
+    const isaret=o=>anma(o)?ATA:ISARET[o.tur], sinif=o=>anma(o)?'anma':o.tur;
     const isaretli=sirali.filter(o=>ISARET[o.tur]), yazili=sirali.filter(o=>!ISARET[o.tur]);
     const sinir=innerWidth>=1000?4:2, gor=yazili.slice(0, yazili.length>sinir?sinir-1:sinir);
     h+=`<div class="${cls}" role="button" tabindex="0" data-g="${g}"><span class="no">${d.getDate()}</span>`+
        gor.map(o=>`<span class="et${o.tur==='nobet'?' nb':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
        (yazili.length>gor.length?`<span class="daha">+${yazili.length-gor.length}</span>`:'')+
        (isaretli.length?'<span class="isaretler">'+isaretli.map(o=>`<i class="is is-${sinif(o)}" title="${esc(o.baslik||'')}">${isaret(o)}</i>`).join('')+'</span>':'')+
-       (g.slice(5)==='11-10'?'<img class="ataturk" src="assets/ekip/nobet/ataturk.webp?v=2" alt="">':'')+
        nobetFig(sirali[0])+'</div>';
   }
   h+='</div></div>';
