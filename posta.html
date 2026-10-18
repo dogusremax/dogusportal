@@ -170,7 +170,7 @@
 </head>
 <body>
 
-<div id="giris">
+<div id="giris" hidden>
   <img src="assets/dogus-logo.png" alt="">
   <p class="durum">Doğuş Posta · PIN</p>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
@@ -930,8 +930,8 @@ if (kayitli && hesapKayit && hesapKayit.kurulu) {
     HESAP = j; hesapSakla();
     if (!j.kurulu) { $('ana').hidden = true; $('kurulum').hidden = false; }
   }).catch(() => {});
-} else if (kayitli) giris(kayitli);
-else $('pin').focus();
+} else if (kayitli) { $('giris').hidden = false; giris(kayitli); }
+else { $('giris').hidden = false; $('pin').focus(); }
 </script>
 </body>
 </html>
