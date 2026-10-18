@@ -336,7 +336,22 @@ function onbellekOku() { try { ONBELLEK = JSON.parse(depo(onbellekAnahtar()) || 
 onbellekOku(); depo('posta_onbellek', null);
 const MSJ = new Map();
 function onbellekYaz() { try { depo(onbellekAnahtar(), JSON.stringify(ONBELLEK)); } catch (e) {} }
-function msjSakla(m) { MSJ.set(m.id, m); if (MSJ.size > 60) MSJ.delete(MSJ.keys().next().value); }
+// Açılan / önceden alınan postalar bu cihazda da saklanır (en yeni 40, çok büyükler hariç): sayfa yeniden açılınca da anında açılır
+function msjAnahtar() { return 'posta_msj_' + KIM + (AKTIF ? '_' + AKTIF : ''); }
+function msjOku() {
+  MSJ.clear();
+  try { (JSON.parse(depo(msjAnahtar()) || '[]') || []).forEach(m => m && m.id && MSJ.set(m.id, m)); } catch (e) {}
+}
+let msjZ;
+function msjYaz() {
+  clearTimeout(msjZ);
+  msjZ = setTimeout(() => {
+    const l = [...MSJ.values()].filter(m => (m.html || m.duz || '').length < 120000).slice(-40);
+    try { depo(msjAnahtar(), JSON.stringify(l)); } catch (e) { try { depo(msjAnahtar(), JSON.stringify(l.slice(-15))); } catch (e2) {} }
+  }, 800);
+}
+function msjSakla(m) { MSJ.delete(m.id); MSJ.set(m.id, m); if (MSJ.size > 60) MSJ.delete(MSJ.keys().next().value); msjYaz(); }
+msjOku();
 
 async function servis(veri, sure) {
   const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
@@ -429,7 +444,7 @@ function kutularCiz() {
 }
 async function kutuSec(id) {
   AKTIF = id === KIM ? '' : id; depo('posta_aktif', AKTIF || null);
-  MESAJLAR = []; MSJ.clear(); SECILENLER.clear(); ACIK = null; SECILI = null; onbellekOku();
+  MESAJLAR = []; SECILENLER.clear(); ACIK = null; SECILI = null; onbellekOku(); msjOku();
   $('okumaIc').hidden = true; $('okumaBos').hidden = false;
   $('ana').classList.remove('menu', 'oku'); $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>';
   try {
@@ -464,6 +479,9 @@ async function hepsiYukle() {
     if (!$('ara').value.trim() && ONBELLEK[KLASOR]) { listeyiKoy(ONBELLEK[KLASOR], false); }
     ILK = false; SONKONTROL = Date.now();
     onYukle();
+    // Gelen ve Giden'in en üstteki postaları da arkada hazırlanır: tıklayınca beklemeden açılsın
+    const ust = k => ((ONBELLEK[k] || {}).mesajlar || []).slice(0, 15).map(m => m.id);
+    onYukle(ust('gelen').concat(ust('giden')));
   } catch (e) { listeYukle(); }
 }
 function listeyiKoy(v, daha) {
@@ -475,7 +493,7 @@ function listeyiKoy(v, daha) {
   return yeniler;
 }
 // Listedeki postalar arkada, 10'arlı tek çağrılarla önceden alınır (okundu işaretlenmez) → tıklayınca anında açılır
-let onYukleniyor = false, onKuyruk = [];
+let onYukleniyor = false, onKuyruk = [], ilkPaket = true;
 function onYukle(ids) {
   const liste = ids || MESAJLAR.slice(0, 20).map(m => m.id);
   liste.forEach(id => { if (!MSJ.has(id) && !onKuyruk.includes(id)) onKuyruk.push(id); });
@@ -485,7 +503,7 @@ async function onCalis() {
   if (onYukleniyor) return; onYukleniyor = true;
   try {
     while (onKuyruk.length && !document.hidden) {
-      const paket = onKuyruk.splice(0, 10).filter(id => !MSJ.has(id));
+      const paket = onKuyruk.splice(0, ilkPaket ? 4 : 10).filter(id => !MSJ.has(id)); ilkPaket = false;   // ilk paket küçük: en üsttekiler çabuk hazır
       if (!paket.length) continue;
       const j = await servis({ islem: 'okuToplu', ids: paket }).catch(() => null);
       if (!j || !j.ok) break;
@@ -687,13 +705,19 @@ async function oku(id) {
     if (okunmamisti) mesajIslem('okundu', id).then(listeSayiTazele).catch(() => {});
     return;
   }
-  $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Açılıyor…'; $('okumaIc').hidden = true;
+  if (m) {   // gövde gelene kadar başlık listeden hemen görünür
+    ACIK = null; $('okumaBos').hidden = true; $('okumaIc').hidden = false;
+    $('oKonu').textContent = m.konu || '(konu yok)'; $('yildizBtn').textContent = m.yildiz ? '★' : '☆';
+    $('oKisi').innerHTML = '<b>' + kisiYaz(m.kimden) + '</b><br>' + new Date(m.tarih).toLocaleString('tr-TR', { dateStyle: 'long', timeStyle: 'short' });
+    $('oEkler').innerHTML = ''; $('govde').style.height = '120px';
+    $('govde').srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:18px 20px;font:14px/1.5 Arial,sans-serif;color:#888">' + kac(m.ozet || '') + '<p>Yükleniyor…</p></body></html>';
+  } else { $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Açılıyor…'; $('okumaIc').hidden = true; }
   try {
     const j = await servis({ islem: 'oku', id });
     if (SECILI !== id) return;
-    if (!j.ok) { $('okumaBos').lastChild.textContent = j.error; return; }
+    if (!j.ok) { $('okumaIc').hidden = true; $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = j.error; return; }
     ACIK = j.mesaj; msjSakla(j.mesaj); okumaCiz(); listeSayiTazele();
-  } catch (e) { $('okumaBos').lastChild.textContent = e.message; }
+  } catch (e) { if (SECILI !== id) return; $('okumaIc').hidden = true; $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = e.message; }
 }
 function listeSayiTazele() { servis({ islem: 'klasorler' }).then(j => j.ok && sayilar(j.klasorler)).catch(() => {}); }
 
@@ -759,17 +783,20 @@ async function ekIndir(e, b) {
 
 async function mesajIslem(tur, id) { const j = await servis({ islem: 'islem', tur, id }); if (!j.ok) throw new Error(j.error); }
 async function yildiz() {
+  if (!ACIK) return;
   const m = ACIK; m.yildiz = !m.yildiz; $('yildizBtn').textContent = m.yildiz ? '★' : '☆';
   const l = MESAJLAR.find(x => x.id === m.id); if (l) { l.yildiz = m.yildiz; ciz(); }
   mesajIslem(m.yildiz ? 'yildiz' : 'yildizsiz', m.id).catch(e => bildir(e.message));
 }
 async function okunmadi() {
+  if (!ACIK) return;
   const id = ACIK.id; const l = MESAJLAR.find(x => x.id === id); if (l) l.okunmamis = true;
   SECILI = null; ACIK = null; $('okumaIc').hidden = true; $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Okumak için bir posta seç';
   $('ana').classList.remove('oku'); ciz();
   mesajIslem('okunmadi', id).then(listeSayiTazele).catch(e => bildir(e.message));
 }
 async function cope() {
+  if (!ACIK) return;
   const id = ACIK.id;
   if (KLASOR === 'cop' && !confirm('Bu posta çöpte. Gelen Kutusu\'na geri alınsın mı?')) return;
   // Silince sıradaki posta açılır (↑/↓ ile gezerken hızlı temizlik)
