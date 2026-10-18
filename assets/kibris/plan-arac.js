@@ -115,7 +115,7 @@
       stil(); KPA.kapat();
       var o = document.createElement('div'); o.className = 'kpa-ov'; o.id = 'kpaOv';
       o.innerHTML = '<iframe allow="web-share; clipboard-write" title="Ödeme planı"></iframe>';
-      o.addEventListener('click', function (e) { if (e.target === o) KPA.kapat(); });
+      // dışına tıklayınca kapanmaz: Apps Script çerçevesinde plan içindeki tıklamalar da arka plana düşüyordu; Kapat düğmesi ve Esc kapatır
       document.body.appendChild(o); o.firstChild.src = KPA.link(d);
     },
     kapat: function () { var o = document.getElementById('kpaOv'); if (o) o.remove(); }
