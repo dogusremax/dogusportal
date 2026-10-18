@@ -293,7 +293,7 @@ $('girBtn').onclick=girisYap;
 $('pin').addEventListener('keydown',e=>{ if(e.key==='Enter') girisYap(); });
 $('cikisBtn').onclick=$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
 function cikis(m){
-  ['posta_oturum','posta_kim','posta_hesap'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  ['posta_oturum','posta_kim','posta_hesap','ot_onbellek'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.aralik=''; girisGoster(m);
 }
 
@@ -311,17 +311,27 @@ function gorunurAralik(){
   const son=new Date(bas); son.setDate(son.getDate()+41);
   return [ymd(bas), ymd(son)];
 }
+const OB='ot_onbellek'; let YUKLE_NO=0;
+function onbellekAl(k){ try{ const m=JSON.parse(ls(OB)||'{}'); return m[k]||null; }catch(e){ return null; } }
+function onbellekYaz(k,j){ try{ const m=JSON.parse(ls(OB)||'{}'); m[k]={t:Date.now(),olaylar:j.olaylar,broker:!!j.broker,ad:j.ad||''};
+  const ks=Object.keys(m).sort((x,y)=>m[y].t-m[x].t); ks.slice(4).forEach(x=>delete m[x]); ls(OB,JSON.stringify(m)); }catch(e){} }
 async function yukle(zorla){
   const [b,e]=gorunurAralik(); const ar=b+'_'+e;
   // bugün/yarın nöbetçisi için bugünü de kapsa
   const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),14)? e : gunEkle(bugun(),14);
   if (!zorla && S.aralik===bb+'_'+ee) { ciz(); return; }
+  // Sunucu (Apps Script) birkaç saniye sürüyor: son alınan veriyi hemen göster, arkada tazele (Umut 18 Eki "çok bekletiyor")
+  const istek=YUKLE_NO=(YUKLE_NO||0)+1, anah=(S.kim||'')+'|'+bb+'_'+ee, onb=onbellekAl(anah);
+  if (onb){ S.olaylar=onb.olaylar; S.aralik=bb+'_'+ee; S.broker=!!onb.broker; if(onb.ad) S.ad=onb.ad; benFoto(); ciz(); }
   try{
     const j = await api({islem:'liste', bas:bb, bit:ee});
     if (S.oturum && !j.ad){ cikis('Oturumun kapanmış, tekrar gir.'); return; }
+    onbellekYaz(anah, j);
+    if (istek!==YUKLE_NO) return; // bu arada başka aya geçildi
+    if (onb && JSON.stringify(onb.olaylar)===JSON.stringify(j.olaylar) && !!onb.broker===!!j.broker) return;
     S.olaylar=j.olaylar; S.aralik=bb+'_'+ee; S.broker=!!j.broker; if(j.ad) S.ad=j.ad; benFoto();
     ciz();
-  }catch(err){ $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
+  }catch(err){ if (onb) return; $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
 }
 
 /* ---- süzgeç ---- */
