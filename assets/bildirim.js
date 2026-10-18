@@ -98,7 +98,7 @@
     } else if (!destekli()) {
       acik.textContent = 'Bu telefon ya da tarayıcı bildirimleri desteklemiyor. iPhone\'da iOS 16.4 veya üstü gerekir; portalı ana ekrandan sildirip yeniden eklemek gerekebilir.';
     } else if (Notification.permission === 'denied') {
-      acik.innerHTML = 'Bildirim izni kapalı. ' + (ios ? 'Ayarlar &gt; Bildirimler &gt; <b>Doğuş Portal</b>' : 'Tarayıcı ayarlarında bu site için Bildirimler') + ' iznini açıp tekrar dene.';
+      acik.innerHTML = 'Bildirim izni kapalı. ' + (ios ? 'Ayarlar &gt; Bildirimler &gt; <b>RE/MAX Doğuş</b>' : 'Tarayıcı ayarlarında bu site için Bildirimler') + ' iznini açıp tekrar dene.';
     } else if (acikMi()) {
       acik.textContent = 'Bildirimler bu telefonda açık (' + ls('bld_kisi') + '). Sana yeni müşteri yönlendirildiğinde ve sabah aranacak müşterilerin için bildirim gelir.';
       goster($('bldTest'), true); goster($('bldKapa'), true);
