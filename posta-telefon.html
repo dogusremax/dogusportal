@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Doğuş Posta · Telefon görünümü</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b0f2a;font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#cfd3ea}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden}
+  .ust{display:flex;gap:10px;align-items:center;font-size:13px}
+  .ust button{background:#1b2150;color:#fff;border:1px solid #2c3470;border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+  .ust button.sec{background:#dc1c2e;border-color:#dc1c2e}
+  .sahne{transform-origin:top center}
+  .telefon{position:relative;width:390px;height:844px;border-radius:56px;background:#000;padding:14px;box-shadow:0 0 0 2px #3a3f5c,0 30px 80px rgba(0,0,0,.6)}
+  .telefon iframe{width:390px;height:844px;border:0;border-radius:44px;background:#fff;display:block;margin:-0px}
+  .ada{position:absolute;top:24px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:2;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="ust">
+  <span>Telefon görünümü</span>
+  <button class="sec" data-w="390" data-h="844">iPhone 14</button>
+  <button data-w="375" data-h="667">iPhone SE</button>
+  <button data-w="430" data-h="932">iPhone Pro Max</button>
+  <button onclick="document.querySelector('iframe').src='posta.html?cb='+Date.now()">↻ Yenile</button>
+</div>
+<div class="sahne" id="sahne">
+  <div class="telefon" id="tel"><div class="ada"></div><iframe id="ekran" title="Doğuş Posta"></iframe></div>
+</div>
+<script>
+const ekran = document.getElementById('ekran'), tel = document.getElementById('tel'), sahne = document.getElementById('sahne');
+let W = 390, H = 844;
+function boyut() {
+  tel.style.width = W + 'px'; tel.style.height = H + 'px'; ekran.style.width = W + 'px'; ekran.style.height = H + 'px';
+  const s = Math.min(1, (innerHeight - 70) / (H + 28), (innerWidth - 20) / (W + 28));
+  sahne.style.transform = 'scale(' + s + ')'; sahne.style.height = (H + 28) * s + 'px';
+}
+document.querySelectorAll('[data-w]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-w]').forEach(x => x.classList.remove('sec')); b.classList.add('sec');
+  W = +b.dataset.w; H = +b.dataset.h; boyut();
+});
+addEventListener('resize', boyut); boyut();
+ekran.src = 'posta.html?cb=' + Date.now();
+</script>
+</body>
+</html>
