@@ -59,11 +59,12 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .nobet span{font-size:12.5px;color:var(--dim);font-weight:600}
 .nobet b{display:block;font-family:'Archivo',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.01em;margin-top:1px}
 .nfoto{width:52px;height:52px;border-radius:50%;flex:none;background:#f0f3f8;display:grid;place-items:center;font-size:22px;overflow:hidden}
-.bugun{margin:-4px 0 16px}
-.bugun h3{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
-.bugun h3 small{font-family:'Inter';font-size:12px;color:var(--dim);font-weight:500}
-.bugun .olay{box-shadow:0 2px 10px rgba(19,26,38,.04)}
-.bugun .bos{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-size:13.5px}
+.bugunkutu{margin:-4px 0 16px}
+.bugunkutu h3{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
+.bugunkutu h3 small{font-family:'Inter';font-size:12px;color:var(--dim);font-weight:500}
+.bugunkutu .ygun{font-size:12.5px;font-weight:700;color:var(--dim);margin:10px 2px 6px}
+.bugunkutu .olay{box-shadow:0 2px 10px rgba(19,26,38,.04)}
+.bugunkutu .bos{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-size:13.5px}
 .nfoto img{width:100%;height:100%;object-fit:cover;display:block}
 .arac{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sekme{display:flex;background:#e9edf4;border-radius:11px;padding:3px}
@@ -72,17 +73,21 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .ay{display:flex;align-items:center;gap:2px}
 .ay b{font-family:'Archivo',sans-serif;font-size:18px;font-weight:800;white-space:nowrap;padding:0 4px;cursor:pointer}
 .ay button{width:32px;height:32px;border-radius:50%;font-size:20px;color:var(--dim)}
-.izgara{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 6px 8px}
-.gunler{display:grid;grid-template-columns:repeat(7,1fr);font-size:11px;font-weight:600;color:#9aa3b5;text-align:center;padding:6px 0}
-.hucreler{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px}
-.hucre{height:48px;display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:3px}
-.hucre .no{font-size:14px;font-weight:500;width:32px;height:32px;display:grid;place-items:center;border-radius:50%}
-.hucre.dis .no{color:#c8ced9}
+.izgara{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.gunler{display:grid;grid-template-columns:repeat(7,1fr);font-size:11px;font-weight:700;color:#8a93a6;text-align:center;padding:8px 0;border-bottom:1px solid var(--line);background:#f8f9fc}
+.hucreler{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.hucre{min-height:84px;height:100%;align-self:stretch;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:3px 2px 4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;min-width:0}
+.hucre:nth-child(7n){border-right:0}
+.hucre:nth-last-child(-n+7){border-bottom:0}
+.hucre .no{font-size:12.5px;font-weight:600;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;margin:0 0 1px 1px}
+.hucre.dis{background:#fafbfd}.hucre.dis .no,.hucre.dis .et{opacity:.45}
 .hucre.tatil .no{color:var(--kirmizi)}
-.hucre.secili .no{background:#e8eefb;color:var(--mavi);font-weight:700}
+.hucre.secili{background:#eef3fc}
 .hucre.bugun .no{background:var(--mavi);color:#fff;font-weight:700}
-.hucre .noktalar{display:flex;gap:3px;height:5px}
-.hucre .noktalar i{width:5px;height:5px;border-radius:50%;display:block}
+.hucre .et{display:block;font-size:10px;font-weight:600;line-height:1.25;padding:1px 3px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.hucre .et.acik{background:#f0f3f8!important;color:var(--dim)}
+.hucre .daha{font-size:10px;color:var(--dim);font-weight:600;padding-left:3px}
+@media(min-width:600px){.hucre{min-height:100px;padding:4px}.hucre .et{font-size:11.5px;padding:2px 5px}.hucre .no{font-size:13.5px;width:26px;height:26px}}
 .gunbaslik{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;margin:16px 2px 8px;display:flex;align-items:baseline;gap:8px}
 .gunbaslik small{font-family:'Inter';font-size:12px;color:var(--dim);font-weight:500}
 .olay{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;text-align:left;width:100%;align-items:center}
@@ -169,7 +174,7 @@ form textarea{min-height:80px;resize:vertical}
     <div style="min-width:0"><span>Bugün nöbette</span><b id="nobetAd">—</b></div>
   </div>
 
-  <div class="bugun" id="bugunKutu" hidden></div>
+  <div class="bugunkutu" id="bugunKutu" hidden></div>
 
   <div class="arac">
     <div class="ay">
@@ -284,7 +289,7 @@ function gorunurAralik(){
 async function yukle(zorla){
   const [b,e]=gorunurAralik(); const ar=b+'_'+e;
   // bugün/yarın nöbetçisi için bugünü de kapsa
-  const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),1)? e : gunEkle(bugun(),1);
+  const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),14)? e : gunEkle(bugun(),14);
   if (!zorla && S.aralik===bb+'_'+ee) { ciz(); return; }
   try{
     const j = await api({islem:'liste', bas:bb, bit:ee});
@@ -322,10 +327,18 @@ function nobetCiz(){
 // Telefonda ilk ekranda bugünün etkinlikleri yazılı dursun (Umut 18 Eki); nöbet üstteki kartta
 function bugunCiz(){
   if (!S.aralik){ $('bugunKutu').hidden=true; return; }
-  const g=bugun(), d=gunAl(g), liste=S.olaylar.filter(o=>o.tarih===g && o.tur!=='nobet');
-  $('bugunKutu').hidden=false;
-  $('bugunKutu').innerHTML=`<h3>Bugün<small>${d.getDate()} ${AYLAR[d.getMonth()]} ${GUNLER[d.getDay()]}</small></h3>`+
+  const g=bugun(), d=gunAl(g), son=gunEkle(g,14);
+  const liste=S.olaylar.filter(o=>o.tarih===g && o.tur!=='nobet');
+  // Bugün boşsa da ekran boş kalmasın: önümüzdeki 14 günün etkinlikleri kutu kutu (Umut 18 Eki)
+  const yakin=S.olaylar.filter(o=>o.tarih>g && o.tarih<=son && o.tur!=='nobet').slice(0,6);
+  let h=`<h3>Bugün<small>${d.getDate()} ${AYLAR[d.getMonth()]} ${GUNLER[d.getDay()]}</small></h3>`+
     (liste.length ? liste.map(olayKart).join('') : '<div class="bos">Bugün nöbet dışında etkinlik yok.</div>');
+  if (yakin.length){
+    h+='<h3 style="margin-top:16px">Yaklaşanlar</h3>'; let onceki='';
+    yakin.forEach(o=>{ if(o.tarih!==onceki){ const x=gunAl(o.tarih), f=Math.round((x-d)/864e5);
+      h+=`<div class="ygun">${f===1?'Yarın':x.getDate()+' '+AYLAR[x.getMonth()]} · ${GUNLER[x.getDay()]}</div>`; onceki=o.tarih; } h+=olayKart(o); });
+  }
+  $('bugunKutu').hidden=false; $('bugunKutu').innerHTML=h;
   $('bugunKutu').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
 }
 function ayCiz(){
@@ -335,10 +348,14 @@ function ayCiz(){
   let h='<div class="izgara"><div class="gunler">'+KISA.map(k=>`<div>${k}</div>`).join('')+'</div><div class="hucreler">';
   for(let i=0;i<42;i++){
     const g=gunEkle(b,i), d=gunAl(g), liste=(gunde[g]||[]);
-    const diger=liste.filter(o=>o.tur!=='nobet'&&o.tur!=='tatil');
+    // Izgara kutuları: her günün içinde kısa yazıyla etkinlikler (Umut 18 Eki); nöbetçi en üstte
+    const sirali=liste.slice().sort((x,y)=>(x.tur==='nobet'?0:x.tur==='tatil'?1:2)-(y.tur==='nobet'?0:y.tur==='tatil'?1:2));
+    const kisa=o=>o.tur==='nobet'?(o.nobetci==='Ofis'?'Ofis':ilkAd(o.nobetci)):o.tur==='dogumgunu'?'🎂 '+ilkAd(String(o.baslik).replace(/^\W+/,'')):String(o.baslik||'').replace((TURLER[o.tur]||{}).ikon||'~','').trim();
     const cls=['hucre', d.getMonth()!==ay?'dis':'', (d.getDay()===0||d.getDay()===6)?'hs':'', tatil[g]?'tatil':'', g===bugun()?'bugun':'', g===S.secili?'secili':''].join(' ');
-    h+=`<button class="${cls}" data-g="${g}"><span class="no">${d.getDate()}</span><span class="noktalar">`+
-       diger.slice(0,3).map(o=>`<i style="background:${renk(o.renk||TURLER[o.tur].renk)}"></i>`).join('')+'</span></button>';
+    const sinir=3, gor=sirali.slice(0, sirali.length>sinir?sinir-1:sinir);
+    h+=`<button class="${cls}" data-g="${g}"><span class="no">${d.getDate()}</span>`+
+       gor.map(o=>`<span class="et${o.tur==='tatil'?' acik':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
+       (sirali.length>gor.length?`<span class="daha">+${sirali.length-gor.length}</span>`:'')+'</button>';
   }
   h+='</div></div>';
   if (S.secili!==bugun()) h+=gunListesi(S.secili, gunde[S.secili]||[]);
