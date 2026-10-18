@@ -27,10 +27,14 @@
   #giris,#kurulum{max-width:380px;margin:70px auto;display:flex;flex-direction:column;gap:12px;padding:0 16px;text-align:center}
   #giris img,#kurulum img{height:38px;margin:0 auto 6px}
   #giris{max-width:460px}
-  .kimler{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-  .kimler button{display:flex;align-items:center;gap:7px;background:#161c44;border:2px solid transparent;border-radius:30px;padding:3px 12px 3px 3px;font-size:12px;font-weight:600}
-  .kimler button img{width:30px;height:30px;border-radius:50%}
-  .kimler button.on{border-color:var(--red);background:#1d2557}
+  .kimler{position:relative;text-align:left}
+  .kimSec{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;background:#161c44;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 12px 8px 8px;font-size:15px;font-weight:600;color:#fff;cursor:pointer}
+  .kimSec .ok{margin-left:auto;opacity:.7}
+  #giris .kimler img{margin:0;width:34px;height:34px;flex:none;border-radius:50%;object-fit:cover;object-position:center top;background:#0b0f2a}
+  .kimListe{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#161c44;border:1px solid rgba(255,255,255,.15);border-radius:12px;max-height:300px;overflow-y:auto;z-index:20;box-shadow:0 14px 40px rgba(0,0,0,.5);padding:4px}
+  .kimListe button{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;background:none;border:0;border-radius:9px;padding:6px 8px;font-size:14px;color:#fff;cursor:pointer;text-align:left}
+  .kimListe button:hover,.kimListe button.on{background:#1d2557}
+  .kimListe small{display:block;font-weight:400;opacity:.6;font-size:11px}
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px}
   #kurulum{text-align:left}
   #kurulum label{font-size:12px;font-weight:700;color:var(--soluk);text-transform:uppercase;letter-spacing:.4px;margin-bottom:-6px}
@@ -341,12 +345,19 @@ function bildir(m, sure) {
 // ── Giriş ────────────────────────────────────────────────
 // Kim giriyor: fotoğraflı kişi listesi (assets/imza.js), son seçilen hatırlanır
 let SECILEN_KIM = KIM || depo('posta_son_kim') || 'umut';
-function kimlerCiz() {
-  $('kimler').innerHTML = IMZA_KISILER.map(k => '<button class="' + (k.id === SECILEN_KIM ? 'on' : '') + '" data-id="' + k.id + '"><img src="assets/imza/' + k.id + '.png" alt="">' + k.ad.split(' ')[0] + '</button>').join('');
-  $('kimler').querySelectorAll('button').forEach(b => b.onclick = () => { SECILEN_KIM = b.dataset.id; depo('posta_son_kim', SECILEN_KIM); kimlerCiz(); $('pin').focus(); });
-  const k = IMZA_KISILER.find(x => x.id === SECILEN_KIM);
-  $('pinEtiket').textContent = k ? k.ad + ' · ' + (k.unvan === 'Broker' ? 'broker PIN\'in' : 'Danışman Takip PIN\'in') : 'PIN\'in';
+function kimlerCiz(acik) {
+  // Açılır liste, alfabetik (Umut 18 Eki); fotoğraflar oranı bozulmadan yuvarlak
+  const sirali = IMZA_KISILER.slice().sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
+  const k = IMZA_KISILER.find(x => x.id === SECILEN_KIM) || sirali[0];
+  const foto = x => '<img src="assets/imza/' + x.id + '.png" alt="">';
+  $('kimler').innerHTML = '<button type="button" class="kimSec">' + foto(k) + '<span>' + kac(k.ad) + '</span><span class="ok">▾</span></button>' +
+    (acik ? '<div class="kimListe">' + sirali.map(x => '<button type="button" data-id="' + x.id + '" class="' + (x.id === k.id ? 'on' : '') + '">' + foto(x) +
+      '<span>' + kac(x.ad) + '<small>' + kac(x.unvan) + '</small></span></button>').join('') + '</div>' : '');
+  $('kimler').querySelector('.kimSec').onclick = e => { e.stopPropagation(); kimlerCiz(!acik); };
+  $('kimler').querySelectorAll('.kimListe button').forEach(b => b.onclick = () => { SECILEN_KIM = b.dataset.id; depo('posta_son_kim', SECILEN_KIM); kimlerCiz(); $('pin').focus(); });
+  $('pinEtiket').textContent = k.ad + ' · ' + (k.unvan === 'Broker' ? 'broker PIN\'in' : 'Danışman Takip PIN\'in');
 }
+document.addEventListener('click', e => { if ($('kimler').querySelector('.kimListe') && !$('kimler').contains(e.target)) kimlerCiz(); });
 kimlerCiz();
 
 function oturumAc(j) {
