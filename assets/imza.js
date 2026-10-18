@@ -18,7 +18,7 @@
       '<tr><td style="padding:0 0 8px 0"><img src="' + KOK + 'imza/' + k.id + '.png" width="84" height="84" alt="' + ad + '" style="display:block;width:84px;height:84px;border-radius:50%;border:0"></td></tr>' +
       '<tr><td style="' + t + 'font-size:15px;line-height:21px;font-weight:bold">' + ad + '</td></tr>' +
       '<tr><td style="' + t + 'color:#DC1C2E;font-weight:bold">' + k.unvan + ' · RE/MAX Doğuş</td></tr>' +
-      '<tr><td style="' + t + '">📞 <a href="tel:+902163151515" style="color:#050A30;text-decoration:none">0216 315 15 15</a></td></tr>' +
+      '<tr><td style="' + t + '">☎ <a href="tel:+902163151515" style="color:#050A30;text-decoration:none">0216 315 15 15</a></td></tr>' +
       '<tr><td style="' + t + '"><a href="https://www.remaxdogus.com.tr" style="color:#050A30;text-decoration:underline">www.remaxdogus.com.tr</a></td></tr>' +
       '<tr><td style="' + t + '">Fikirtepe / Kadıköy, İstanbul</td></tr>' +
       '<tr><td style="padding:8px 0 0 0"><img src="' + KOK + 'dogus-logo-koyu.png" height="38" alt="RE/MAX Doğuş" style="display:block;height:38px;border:0"></td></tr>' +
