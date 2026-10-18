@@ -62,6 +62,11 @@ main{max-width:560px;margin:-30px auto 0;padding:0 16px;position:relative;z-inde
 .altyazi .sn{flex:none;font-size:11px;font-weight:700;background:var(--red);border-radius:99px;padding:3px 8px;letter-spacing:.02em}
 .altyazi span{transition:opacity .25s}
 .altyazi span.sol{opacity:0}
+.sesli{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--redd),var(--red));color:#fff;
+  font-weight:700;font-size:14.5px;padding:11px 20px;border-radius:99px;box-shadow:0 8px 18px -8px rgba(220,28,46,.6)}
+.sesli.calar{background:var(--navy);box-shadow:none}
+.sesli.calar .ik{animation:nabiz 1s ease-in-out infinite}
+@keyframes nabiz{50%{transform:scale(1.25)}}
 
 .liste{margin:16px 6px 0;counter-reset:s;list-style:none}
 .liste li{counter-increment:s;position:relative;padding:0 0 10px 32px;font-size:14.5px;line-height:1.5}
@@ -379,6 +384,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
           </div>
         </div>
         <div class="altyazi"><b class="sn"></b><span></span></div>
+        <button class="sesli" type="button"><span class="ik">🔊</span> <span class="yz">Sesli izle</span></button>
       </div>
       <ol class="liste">
         <li><b>Safari</b> ile <a href="https://dogusportal.com/" onclick="this.href='https://dogusportal.com/?cb='+Date.now()">dogusportal.com</a> adresini aç.</li>
@@ -429,6 +435,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
           </div>
         </div>
         <div class="altyazi"><b class="sn"></b><span></span></div>
+        <button class="sesli" type="button"><span class="ik">🔊</span> <span class="yz">Sesli izle</span></button>
       </div>
       <ol class="liste">
         <li><b>Chrome</b> ile <a href="https://dogusportal.com/" onclick="this.href='https://dogusportal.com/?cb='+Date.now()">dogusportal.com</a> adresini aç.</li>
@@ -490,6 +497,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
         </div>
       </div>
       <div class="altyazi"><b class="sn"></b><span></span></div>
+        <button class="sesli" type="button"><span class="ik">🔊</span> <span class="yz">Sesli izle</span></button>
     </div>
     <ol class="liste">
       <li>Portalı <b>ana ekrandaki RE/MAX Doğuş simgesinden</b> aç.</li>
@@ -561,6 +569,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
         </div>
       </div>
       <div class="altyazi"><b class="sn"></b><span></span></div>
+        <button class="sesli" type="button"><span class="ik">🔊</span> <span class="yz">Sesli izle</span></button>
     </div>
     <ol class="liste">
       <li>Portalda <b>Doğuş Posta</b> kartına dokun.</li>
@@ -605,6 +614,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
         </div>
       </div>
       <div class="altyazi"><b class="sn"></b><span></span></div>
+        <button class="sesli" type="button"><span class="ik">🔊</span> <span class="yz">Sesli izle</span></button>
     </div>
     <ol class="liste">
       <li>Doğuş Posta'da sağ üstteki kırmızı <b>✎</b> tuşuna dokun.</li>
@@ -689,6 +699,21 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
     ]
   };
 
+  /* Elvan seslendirmesi: her akış bir mp3, sayılar her altyazının sesteki başlangıç saniyesi (cümle araları) */
+  const SES = {
+    iosEkle: ['assets/rehber-ses/1-iphone.mp3', [0, 4.44, 6.96, 9.28, 11.35, 13.18, 16.19, 18.34]],
+    andEkle: ['assets/rehber-ses/2-android.mp3', [0, 3.81, 6.35, 12.01, 14.40, 15.56]],
+    bildirim: ['assets/rehber-ses/3-bildirim.mp3', [0, 5.07, 7.61, 9.60, 11.43, 14.12, 16.96]],
+    posta: ['assets/rehber-ses/4-posta.mp3', [0, 2.70, 4.64, 7.68, 8.91, 13.51, 18.06, 19.37]],
+    test: ['assets/rehber-ses/5-test.mp3', [0, 3.94, 10.24, 12.59, 13.99, 15.26]]
+  };
+  const ses = new Audio(); ses.preload = 'none';
+  let sesliTel = null;
+  function sesDurdur() {
+    ses.pause();
+    if (sesliTel) { const t = sesliTel; sesliTel = null; t._dugme(false); t._oyna(); }
+  }
+
   function Oynatici(tel) {
     const ekranlar = tel.querySelector('.ekranlar');
     const sahne = tel.closest('.sahne');
@@ -696,7 +721,8 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
     const akis = AKIS[tel.dataset.akis];
     const toplam = akis.filter(x => x.t).length;
     const ilk = ekranlar.innerHTML;
-    let gorunur = false, nesil = 0;
+    let gorunur = false, nesil = 0, hiz = 1;
+    const dur = ms => bekle(ms * hiz);
     const q = s => ekranlar.querySelector(s);
 
     new IntersectionObserver(es => { gorunur = es[0].isIntersecting && !tel.closest('[hidden]'); }, { threshold: 0.35 }).observe(tel);
@@ -707,29 +733,49 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
       const el = q(sel), p = q('.parmak'); if (!el || !p) return;
       const r = el.getBoundingClientRect(), k = ekranlar.getBoundingClientRect();
       p.style.left = (r.left - k.left + r.width / 2) + 'px'; p.style.top = (r.top - k.top + r.height / 2) + 'px';
-      p.classList.add('gor'); await bekle(650);
+      p.classList.add('gor'); await dur(650);
       p.classList.remove('bas'); void p.offsetWidth; p.classList.add('bas');
       el.classList.remove('vurgu'); void el.offsetWidth; el.classList.add('vurgu');
-      await bekle(520);
+      await dur(520);
     }
     async function yaz(sel, metin, n) {
       const el = q(sel); el.classList.add('yaz-imleç'); el.textContent = '';
-      for (const c of metin) { if (n !== nesil) return; el.textContent += c; await bekle(metin.length > 20 ? 45 : 110); }
-      await bekle(350); el.classList.remove('yaz-imleç');
+      for (const c of metin) { if (n !== nesil) return; el.textContent += c; await dur(metin.length > 20 ? 45 : 110); }
+      await dur(350); el.classList.remove('yaz-imleç');
     }
     function altyazi(t, i) {
       alt.classList.add('sol');
       setTimeout(() => { alt.textContent = t; sn.textContent = i + '/' + toplam; alt.classList.remove('sol'); }, 180);
     }
 
-    async function oyna() {
+    const dugme = sahne.querySelector('.sesli'), bilgi = SES[tel.dataset.akis];
+    tel._dugme = on => { dugme.classList.toggle('calar', on); dugme.querySelector('.yz').textContent = on ? 'Durdur' : 'Sesli izle'; };
+    dugme.onclick = () => {
+      if (sesliTel === tel) { sesDurdur(); return; }
+      sesDurdur();
+      sesliTel = tel; tel._dugme(true);
+      ses.src = bilgi[0] + '?v=1'; ses.currentTime = 0;
+      ses.play().catch(() => sesDurdur());
+      oyna(true);
+    };
+    // Ses, altyazının başlangıç saniyesine gelene kadar bekle (animasyon önde giderse)
+    async function sesBekle(sn, n) {
+      while (n === nesil && sesliTel === tel && !ses.ended && (ses.paused || ses.currentTime < sn)) {
+        if (ses.paused && ses.currentTime > 0 && !ses.ended) break;
+        await bekle(40);
+      }
+    }
+
+    async function oyna(sesli) {
       const n = ++nesil;
       while (n === nesil) {
+        hiz = sesli ? 0.5 : 1;
         ekranlar.innerHTML = ilk;
         let no = 0;
         for (const a of akis) {
-          await bekleGor(n); if (n !== nesil) return;
-          if (a.t) altyazi(a.t, ++no);
+          if (!sesli) await bekleGor(n);
+          if (n !== nesil) return;
+          if (a.t) { if (sesli) await sesBekle(bilgi[1][no], n); if (n !== nesil) return; altyazi(a.t, ++no); }
           if (a.e) { ekranlar.querySelectorAll('.ekran').forEach(e => e.classList.toggle('on', e.dataset.e === a.e)); const p = q('.parmak'); if (p) p.classList.remove('gor'); }
           if (a.k) q(a.k[0]).style.transform = 'translateY(' + a.k[1] + 'px)';
           if (a.d) await dokun(a.d);
@@ -739,13 +785,20 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
           for (const key of ['h', 'h2']) if (a[key]) q(a[key][0]).textContent = a[key][1];
           for (const key of ['s', 's2']) if (a[key]) q(a[key][0]).style.cssText += ';' + a[key][1];
           if (a.d && !a.w) { const p = q('.parmak'); p.classList.remove('gor'); }
-          await bekle(a.w || (a.d ? 250 : 450));
+          await dur(a.w || (a.d ? 250 : 450));
         }
         q('.parmak').classList.remove('gor');
+        if (sesli) {
+          while (n === nesil && sesliTel === tel && !ses.ended && !ses.paused) await bekle(100);
+          await bekle(1500);
+          if (n !== nesil) return;
+          if (sesliTel === tel) { sesliTel = null; tel._dugme(false); }
+          sesli = false; continue;
+        }
         await bekle(1200);
       }
     }
-    tel._oyna = oyna;
+    tel._oyna = () => oyna(false);
     oyna();
   }
   document.querySelectorAll('.telefon[data-akis]').forEach(Oynatici);
@@ -754,6 +807,7 @@ details p{font-size:13.5px;color:#3c4659;line-height:1.55;margin-top:8px}
   document.querySelectorAll('[data-sekme]').forEach(sk => {
     const adim = sk.closest('.adim');
     function sec(p) {
+      if (sesliTel && sesliTel.closest('.adim') === adim) sesDurdur();
       sk.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
       adim.querySelectorAll('[data-panel]').forEach(pn => { pn.hidden = pn.dataset.panel !== p; if (!pn.hidden) { const t = pn.querySelector('.telefon'); t && t._oyna && t._oyna(); } });
     }
