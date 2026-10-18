@@ -165,6 +165,31 @@ form textarea{min-height:80px;resize:vertical}
 .arac{margin:0 4px 8px}.izgara{border-radius:14px}.gunler{padding:6px 0}
 .hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:68%;width:auto;max-width:none}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .isaretler{position:absolute;top:3px;right:3px;margin:0;padding:0;z-index:2;flex-direction:column}.hucre .is{width:15px;height:15px;font-size:9px}.hucre .is-dogumgunu{font-size:14px}
 .arac{gap:4px}.arac .ekle{position:static;width:36px;height:36px;padding:0;justify-content:center;border-radius:11px;box-shadow:none;flex:none}.arac .ekle span{font-size:24px!important}.ekyazi{display:none}.ay b{font-size:17px;padding:0 2px}.ay button{width:26px}.sekme button{padding:7px 9px}}
+/* Bilgisayarda Google Takvim gibi tam ekran: solda nöbetçi ve bugün, sağda ekranı dolduran ay ızgarası (Umut 18 Eki) */
+@media(min-width:1000px){
+body{padding-bottom:0}
+.wrap{max-width:none;height:100vh;padding:16px 20px;display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);column-gap:20px;overflow:hidden}
+.nobet{grid-column:1;grid-row:1/span 2;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:48px 14px 0;margin:0 0 14px;position:relative;border-left:1px solid var(--line);border-top:4px solid var(--kirmizi);overflow:hidden}
+.nobet .nikon{position:absolute;top:10px;right:10px}
+.nobet .nfoto.fig{order:2;width:200px;height:190px;margin:4px 0 0;align-self:center}
+.nobet b{font-size:21px}.nobet span{font-size:13px}
+.bugunkutu{grid-column:1;grid-row:3;margin:0;overflow-y:auto;min-height:0;padding-right:4px}
+.arac{grid-column:2;grid-row:1;margin:0 0 12px;align-self:end}
+.ay b{font-size:24px}
+#icerik{grid-column:2;grid-row:2/span 2;min-height:0;overflow-y:auto}
+.izgara{height:100%;display:flex;flex-direction:column}
+.hucreler{flex:1;grid-auto-rows:1fr}
+.hucre{aspect-ratio:auto;height:auto!important;padding:6px 8px}
+.hucre .no{font-size:13px;width:26px;height:26px}
+.hucre .et{font-size:12.5px;padding:2px 6px;max-width:62%}
+.hucre .et.nb{font-size:12px;margin-top:-2px;max-width:none}
+.hucre .nfig,.hucre.bugun .nfig{height:72%;max-width:60%}
+.hucre .isaretler{position:absolute;top:7px;right:8px;margin:0;z-index:2;gap:4px}
+.hucre .is{width:20px;height:20px;font-size:11px;border-radius:5px}.hucre .is-dogumgunu{font-size:17px}
+.gunler{font-size:12.5px;padding:10px 0}
+.arac .ekle{position:static;height:38px;padding:0 16px;border-radius:12px;font-size:14px;box-shadow:none}
+.arac .ekle span{font-size:20px!important}
+}
 @media(max-width:420px){header h1{font-size:19px}.sekme button{padding:7px 10px}.ay b{font-size:17px}}
 .yukleniyor{text-align:center;color:var(--dim);padding:30px;font-size:14px}
 </style>
@@ -293,7 +318,7 @@ $('girBtn').onclick=girisYap;
 $('pin').addEventListener('keydown',e=>{ if(e.key==='Enter') girisYap(); });
 $('cikisBtn').onclick=$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
 function cikis(m){
-  ['posta_oturum','posta_kim','posta_hesap'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  ['posta_oturum','posta_kim','posta_hesap','ot_onbellek'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.aralik=''; girisGoster(m);
 }
 
@@ -311,17 +336,27 @@ function gorunurAralik(){
   const son=new Date(bas); son.setDate(son.getDate()+41);
   return [ymd(bas), ymd(son)];
 }
+const OB='ot_onbellek'; let YUKLE_NO=0;
+function onbellekAl(k){ try{ const m=JSON.parse(ls(OB)||'{}'); return m[k]||null; }catch(e){ return null; } }
+function onbellekYaz(k,j){ try{ const m=JSON.parse(ls(OB)||'{}'); m[k]={t:Date.now(),olaylar:j.olaylar,broker:!!j.broker,ad:j.ad||''};
+  const ks=Object.keys(m).sort((x,y)=>m[y].t-m[x].t); ks.slice(4).forEach(x=>delete m[x]); ls(OB,JSON.stringify(m)); }catch(e){} }
 async function yukle(zorla){
   const [b,e]=gorunurAralik(); const ar=b+'_'+e;
   // bugün/yarın nöbetçisi için bugünü de kapsa
   const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),14)? e : gunEkle(bugun(),14);
   if (!zorla && S.aralik===bb+'_'+ee) { ciz(); return; }
+  // Sunucu (Apps Script) birkaç saniye sürüyor: son alınan veriyi hemen göster, arkada tazele (Umut 18 Eki "çok bekletiyor")
+  const istek=YUKLE_NO=(YUKLE_NO||0)+1, anah=(S.kim||'')+'|'+bb+'_'+ee, onb=onbellekAl(anah);
+  if (onb){ S.olaylar=onb.olaylar; S.aralik=bb+'_'+ee; S.broker=!!onb.broker; if(onb.ad) S.ad=onb.ad; benFoto(); ciz(); }
   try{
     const j = await api({islem:'liste', bas:bb, bit:ee});
     if (S.oturum && !j.ad){ cikis('Oturumun kapanmış, tekrar gir.'); return; }
+    onbellekYaz(anah, j);
+    if (istek!==YUKLE_NO) return; // bu arada başka aya geçildi
+    if (onb && JSON.stringify(onb.olaylar)===JSON.stringify(j.olaylar) && !!onb.broker===!!j.broker) return;
     S.olaylar=j.olaylar; S.aralik=bb+'_'+ee; S.broker=!!j.broker; if(j.ad) S.ad=j.ad; benFoto();
     ciz();
-  }catch(err){ $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
+  }catch(err){ if (onb) return; $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
 }
 
 /* ---- süzgeç ---- */
@@ -411,7 +446,7 @@ function ayCiz(){
     // Bayram B, doğum günü 🎂, toplantı T: kısa işaretler tek satırda (Umut 18 Eki)
     const ISARET={tatil:'B',dogumgunu:'🎂',toplanti:'T'};
     const isaretli=sirali.filter(o=>ISARET[o.tur]), yazili=sirali.filter(o=>!ISARET[o.tur]);
-    const sinir=2, gor=yazili.slice(0, yazili.length>sinir?sinir-1:sinir);
+    const sinir=innerWidth>=1000?4:2, gor=yazili.slice(0, yazili.length>sinir?sinir-1:sinir);
     h+=`<div class="${cls}" role="button" tabindex="0" data-g="${g}"><span class="no">${d.getDate()}</span>`+
        gor.map(o=>`<span class="et${o.tur==='nobet'?' nb':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
        (yazili.length>gor.length?`<span class="daha">+${yazili.length-gor.length}</span>`:'')+
@@ -421,7 +456,7 @@ function ayCiz(){
   h+='</div></div>';
   $('icerik').innerHTML=h;
   const hc=[...$('icerik').querySelectorAll('.hucre')];
-  if (innerWidth<600 && hc.slice(35).every(x=>x.classList.contains('dis'))) hc.slice(35).forEach(x=>x.remove());
+  if ((innerWidth<600 || innerWidth>=1000) && hc.slice(35).every(x=>x.classList.contains('dis'))) hc.slice(35).forEach(x=>x.remove());
   izgaraBoyut();
   // Kutuya dokununca o günün ayrıntısı açılır (Umut 18 Eki)
   $('icerik').querySelectorAll('.hucre').forEach(c=>c.onclick=()=>gunAc(c.dataset.g));
