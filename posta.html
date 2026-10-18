@@ -1007,10 +1007,9 @@ if (OTURUM && hesapKayit && hesapKayit.kurulu) {
 } else if (OTURUM) {
   servis({ islem: 'durum' }, 60000).then(j => { if (j.ok) { HESAP = j; hesapSakla(); j.kurulu ? anaAc() : kurulumAc(); } }).catch(() => { $('giris').hidden = false; });
 } else {
-  // İlk sürümden geçiş: bu cihazda Umut'un PIN'i kayıtlıysa sessizce oturuma çevir
-  const eski = depo('posta_pin') || (window.brokerPinAl && brokerPinAl());
-  if (eski) { giris(eski, 'umut').then(ok => { if (!ok) { $('giris').hidden = false; $('girisHata').textContent = ''; $('pin').focus(); } }); }
-  else { $('giris').hidden = false; $('pin').focus(); }
+  // Oturum yoksa her zaman PIN sorulur (kayıtlı broker PIN'iyle otomatik giriş yok: Çıkış'tan sonra kendiliğinden giriyordu)
+  depo('posta_pin', null);
+  $('giris').hidden = false; $('pin').focus();
 }
 </script>
 </body>
