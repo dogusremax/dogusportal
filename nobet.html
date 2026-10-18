@@ -228,7 +228,8 @@ textarea{width:100%;height:110px;border-radius:10px;border:1px solid var(--line)
       <div class="stats" id="stats"></div>
       <div style="height:12px"></div>
       <div class="btns">
-        <button class="btn full" id="sendBtn" onclick="sendPlan()">Gönder (bildirim)</button>
+        <button class="btn full" id="sendBtn" onclick="sendPlan()">Takvime gönder</button>
+        <button class="btn full" id="notifyBtn" onclick="notifyPlan()">Bildirim gönder</button>
         <button class="btn danger full" onclick="clearMonth()">Bu ayın nöbetlerini sil</button>
       </div>
     </div>
@@ -350,7 +351,7 @@ function renderCal(map,title){
   $("calCard").scrollIntoView({behavior:"smooth",block:"start"});
 }
 async function showCalendar(title){
-  const j=await api({action:"list",from:ymd(firstDay()),to:ymd(lastDay())});
+  const j=await nobetList(ymd(firstDay()),ymd(lastDay()));
   const map={}; j.items.forEach(it=>map[it.date]=it.name);
   renderCal(map,title); return j.items.length;
 }
@@ -406,8 +407,9 @@ async function renderMonth(){
   $("anchor").textContent="Son nöbet okunuyor…"; lastDuty=null;
   try{
     const prev=new Date(cur.getFullYear(),cur.getMonth()-1,1), prevEnd=new Date(cur.getFullYear(),cur.getMonth(),0);
-    const [j,pl]=await Promise.all([api({action:"last",before:ymd(firstDay())}), api({action:"list",from:ymd(prev),to:ymd(prevEnd)})]);
-    lastDuty=j.last; prevCounts={}; pl.items.forEach(it=>{ if(it.name!==OFFICE) prevCounts[it.name]=(prevCounts[it.name]||0)+1; });
+    const f40=new Date(cur.getFullYear(),cur.getMonth(),1-40);
+    const [j,pl]=await Promise.all([nobetList(ymd(f40),ymd(prevEnd)), nobetList(ymd(prev),ymd(prevEnd))]);
+    lastDuty=j.items.length?j.items[j.items.length-1]:null; prevCounts={}; pl.items.forEach(it=>{ if(it.name!==OFFICE) prevCounts[it.name]=(prevCounts[it.name]||0)+1; });
     if(lastDuty){
       const d=new Date(lastDuty.date+"T12:00:00");
       const best=pickStart();
@@ -469,7 +471,7 @@ async function loadTaslak(ay){
     if(!j.taslak){ setStatus(`${AY[cur.getMonth()]} için otomatik taslak bulunamadı.`,"err"); return; }
     plan=j.taslak.plan.map(p=>({date:p.date,name:p.name}));
     renderPlan(); previewCal();
-    setStatus(`Otomatik taslak yüklendi (henüz takvime yazılmadı). Değiştirmek istediğin günleri düzelt, sonra <b>Gönder</b>'e bas.`,"ok");
+    setStatus(`Otomatik taslak yüklendi (henüz takvime yazılmadı). Değiştirmek istediğin günleri düzelt, sonra <b>Takvime gönder</b>'e bas.`,"ok");
     $("planCard").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(e){ setStatus("Taslak okunamadı: "+e.message,"err"); }
 }
@@ -477,7 +479,7 @@ async function loadTaslak(ay){
 async function readCalendar(){
   setStatus("Takvim okunuyor…","busy");
   try{
-    const j=await api({action:"list",from:ymd(firstDay()),to:ymd(lastDay())});
+    const j=await nobetList(ymd(firstDay()),ymd(lastDay()));
     if(!j.items.length){ setStatus("Bu ayda takvimde nöbet yok.","err"); return; }
     const m={}; j.items.forEach(it=>m[it.date]=it.name);
     const days=lastDay().getDate(); plan=[];
@@ -495,40 +497,65 @@ async function bildirim(body){
   const j=JSON.parse(await r.text()); if(!j.ok) throw new Error(j.error||"Bildirim hatası"); return j;
 }
 const ayniKisi=(a,b)=>{ const x=String(a||"").toLocaleLowerCase("tr").split(/\s+/), y=String(b||"").toLocaleLowerCase("tr").split(/\s+/); return x[0]===y[0] && x[x.length-1]===y[y.length-1]; };
+// Takvime gönder: nöbetler Posta takvimine (portal Ofis Takvimi) yazılır, Google'a değil (Umut, 18 Eki 2026).
+// Bildirim ayrı butonla, istenince. Eski aylar Google'da: okurken ikisi birleşir, aynı günde Posta geçerli.
+async function takvim(body){
+  const r=await fetch(SERVIS+"?cb="+Date.now(),{method:"POST",redirect:"follow",body:JSON.stringify(Object.assign({action:"takvim",pin},body))});
+  const j=JSON.parse(await r.text()); if(!j.ok) throw new Error(j.error||"Takvim hatası"); return j;
+}
+async function nobetList(from,to){
+  const [g,p]=await Promise.all([api({action:"list",from,to}).catch(()=>({items:[]})), takvim({islem:"nobetListe",bas:from,bit:to})]);
+  const m={}; g.items.forEach(it=>m[it.date]=it.name); p.items.forEach(it=>m[it.date]=it.name);
+  return {items:Object.keys(m).sort().map(d=>({date:d,name:m[d]}))};
+}
 async function sendPlan(){
   if(!plan.length) return;
-  const ayAd=AY[cur.getMonth()], ay=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
-  if(!confirm(`${ayAd} ${cur.getFullYear()} için ${plan.length} günlük nöbet planı takvime yazılacak (Google daveti gitmez).\nSonra herkesin telefonuna "${ayAd} ayı nöbet takvimi oluşturuldu" bildirimi gider.\nDevam?`)) return;
-  $("sendBtn").disabled=true; setStatus("Takvime yazılıyor… (≈1 dk)","busy");
+  const ayAd=`${AY[cur.getMonth()]} ${cur.getFullYear()}`;
+  if(!confirm(`${ayAd} için ${plan.length} günlük nöbet planı Posta takvimine yazılacak.\nAynı günlerdeki eski nöbetler silinir. Kimseye davet ya da bildirim gitmez.\nDevam?`)) return;
+  $("sendBtn").disabled=true; setStatus("Posta takvimine yazılıyor…","busy");
   try{
-    const body=plan.map(p=>({date:p.date,name:p.name,emails:[]}));
-    const j=await api({action:"create",plan:body,replace:true,davetsiz:true});
-    setStatus(`✓ ${j.created} nöbet takvime yazıldı. Bildirim gönderiliyor…`,"busy");
-    const l=await bildirim({islem:"liste"});
-    const link=`https://dogusportal.com/takvim.html?ay=${ay}`, kok="n"+Date.now().toString(36);
+    const j=await takvim({islem:"nobetYaz",plan:plan.map(p=>({date:p.date,name:p.name}))});
+    // Story, site kartı ve adil dağıtım sayımı nöbet servisinden okur: aynı plan oraya da (Google'a değil)
+    try{ await api({action:"posta_kaydet",plan:plan.map(p=>({date:p.date,name:p.name}))}); }catch(e){ console.warn("posta_kaydet:", e); }
+    setStatus(`✓ ${j.sonuc.created} nöbet Posta takvimine yazıldı, kimseye bir şey gitmedi. Herkese haber vermek için <b>Bildirim gönder</b>'e bas.`,"ok");
+    try{ const m={}; plan.forEach(p=>m[p.date]=p.name); renderCal(m,`Posta takvimine yazıldı — ${ayAd}`); }catch(_){ console.warn('Sessiz hata:', _); }
+  }catch(e){ setStatus("Hata: "+e.message,"err"); }
+  $("sendBtn").disabled=false;
+}
+
+// Bildirim gönder: takvimdeki bu ayın nöbetlerine göre herkese "X ayı nöbet takvimi oluşturuldu" bildirimi;
+// dokununca portal takviminde o ay açılır.
+async function notifyPlan(){
+  const ayAd=AY[cur.getMonth()], ay=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
+  $("notifyBtn").disabled=true; setStatus("Takvim ve bildirim listesi okunuyor…","busy");
+  try{
+    const [t,l]=await Promise.all([takvim({islem:"nobetListe",bas:ymd(firstDay()),bit:ymd(lastDay())}), bildirim({islem:"liste"})]);
+    if(!t.items.length) throw new Error(`${ayAd} Posta takviminde yok. Önce Takvime gönder'e bas.`);
     const acik=l.kisiler.filter(k=>k.cihaz>0), kapali=l.kisiler.filter(k=>!k.cihaz).map(k=>k.ad);
+    if(!confirm(`${acik.length} kişiye "${ayAd} ayı nöbet takvimi oluşturuldu" bildirimi gidecek.`+(kapali.length?`\nBildirimi kapalı olduğu için gitmeyecek: ${kapali.join(", ")}`:"")+`\nDevam?`)){ setStatus(""); $("notifyBtn").disabled=false; return; }
+    setStatus("Bildirim gönderiliyor…","busy");
+    const link=`https://dogusportal.com/takvim.html?ay=${ay}`, kok="n"+Date.now().toString(36);
     const sonuc=[];
     for(let i=0;i<acik.length;i+=3){
       await Promise.all(acik.slice(i,i+3).map(async(k,n)=>{
-        const gunler=plan.filter(p=>p.name!==OFFICE && ayniKisi(p.name,k.ad)).map(p=>{ const t=new Date(p.date+"T12:00:00"); return `${t.getDate()} ${GUN[t.getDay()]}`; });
+        const gunler=t.items.filter(it=>it.name!==OFFICE && ayniKisi(it.name,k.ad)).map(it=>{ const d=new Date(it.date+"T12:00:00"); return `${d.getDate()} ${GUN[d.getDay()]}`; });
         const metin=(gunler.length?`Nöbet günlerin: ${gunler.join(", ")}.`:`Bu ay nöbet günün yok.`)+" Takvimi açmak için dokun.";
         try{ const r=await bildirim({islem:"gonder",id:`${kok}_${i+n}`,baslik:`${ayAd} ayı nöbet takvimi oluşturuldu`,metin,kimler:[k.ad],link}); sonuc.push({ad:k.ad,ok:(r.sonuclar||[]).some(s=>s.cihaz>0)}); }
         catch(e){ sonuc.push({ad:k.ad,ok:false,hata:e.message}); }
       }));
     }
     const gitti=sonuc.filter(s=>s.ok), gitmedi=sonuc.filter(s=>!s.ok);
-    setStatus(`✓ ${j.created} nöbet takvime yazıldı, ${gitti.length} kişiye bildirim gitti.`+
+    setStatus(`✓ ${gitti.length} kişiye bildirim gitti.`+
       (gitmedi.length?`<br>Gitmedi: ${gitmedi.map(s=>s.ad+(s.hata?" ("+s.hata+")":"")).join(", ")}`:"")+
-      (kapali.length?`<br>Bildirimi kapalı (gitmez): ${kapali.join(", ")}`:""), gitti.length?"ok":"err");
-    try{ await showCalendar(`Takvime yazıldı — ${ayAd} ${cur.getFullYear()}`); }catch(_){ console.warn('Sessiz hata:', _); }
+      (kapali.length?`<br>Bildirimi kapalı: ${kapali.join(", ")}. Açtıklarında tekrar basabilirsin.`:""), gitti.length?"ok":"err");
   }catch(e){ setStatus("Hata: "+e.message,"err"); }
-  $("sendBtn").disabled=false;
+  $("notifyBtn").disabled=false;
 }
 
 async function clearMonth(){
   if(!confirm(`${AY[cur.getMonth()]} ${cur.getFullYear()} nöbetlerinin tamamı silinecek (danışmanlara iptal maili gitmez). Emin misin?`)) return;
   setStatus("Siliniyor…","busy");
-  try{ const j=await api({action:"clear",from:ymd(firstDay()),to:ymd(lastDay())}); setStatus(`${j.deleted} nöbet silindi.`,"ok"); plan=[]; $("planCard").classList.add("hide"); renderCal({},"Takvim boş"); }
+  try{ const [g,p]=await Promise.all([api({action:"clear",from:ymd(firstDay()),to:ymd(lastDay())}).catch(()=>({deleted:0})), takvim({islem:"nobetSil",bas:ymd(firstDay()),bit:ymd(lastDay())}), api({action:"posta_sil",from:ymd(firstDay()),to:ymd(lastDay())}).catch(()=>({}))]); setStatus(`${(g.deleted||0)+(p.sonuc.silinen||0)} nöbet silindi.`,"ok"); plan=[]; $("planCard").classList.add("hide"); renderCal({},"Takvim boş"); }
   catch(e){ setStatus(e.message,"err"); }
 }
 
