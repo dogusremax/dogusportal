@@ -66,6 +66,8 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .bugunkutu .olay{box-shadow:0 2px 10px rgba(19,26,38,.04)}
 .bugunkutu .bos{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-size:13.5px}
 .nfoto img{width:100%;height:100%;object-fit:cover;display:block}
+.nfoto.fig{width:84px;height:80px;border-radius:0;background:none;overflow:visible;align-self:flex-end;margin:-10px 0 -12px -6px}
+.nfoto.fig img{height:100%;width:100%;object-fit:contain;object-position:center bottom}
 .arac{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sekme{display:flex;background:#e9edf4;border-radius:11px;padding:3px}
 .sekme button{padding:7px 12px;border-radius:9px;font-size:13px;font-weight:600;color:var(--dim)}
@@ -76,18 +78,25 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .izgara{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .gunler{display:grid;grid-template-columns:repeat(7,1fr);font-size:11px;font-weight:700;color:#8a93a6;text-align:center;padding:8px 0;border-bottom:1px solid var(--line);background:#f8f9fc}
 .hucreler{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
-.hucre{min-height:84px;height:100%;align-self:stretch;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:3px 2px 4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;min-width:0}
+.hucre{aspect-ratio:1/1;min-height:0;height:auto;align-self:stretch;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:3px 2px 4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;min-width:0}
+.hucre{position:relative;overflow:hidden}
+.hucre .no,.hucre .et,.hucre .daha{position:relative;z-index:1}
+.hucre .nfig{position:absolute;right:0;bottom:0;height:52%;max-width:92%;object-fit:contain;object-position:right bottom;pointer-events:none;z-index:0}
+.hucre.bugun .nfig{height:60%}
+.hucre.dis .nfig{opacity:.45}
 .hucre:nth-child(7n){border-right:0}
 .hucre:nth-last-child(-n+7){border-bottom:0}
-.hucre .no{font-size:12.5px;font-weight:600;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;margin:0 0 1px 1px}
+.hucre .no{font-size:10.5px;font-weight:600;width:19px;height:19px;display:grid;place-items:center;border-radius:50%;margin:0 0 1px 1px}
 .hucre.dis{background:#fafbfd}.hucre.dis .no,.hucre.dis .et{opacity:.45}
 .hucre.tatil .no{color:var(--kirmizi)}
 .hucre.secili{background:#eef3fc}
 .hucre.bugun .no{background:var(--mavi);color:#fff;font-weight:700}
 .hucre .et{display:block;font-size:10px;font-weight:600;line-height:1.25;padding:1px 3px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.hucre .et.nb{background:none!important;color:var(--ink);font-weight:500;font-size:7.5px;line-height:1.1;padding:0 0 0 2px;margin-top:-3px;color:var(--dim);text-shadow:0 0 3px #fff,0 0 3px #fff}
+@media(min-width:600px){.hucre .et.nb{font-size:9px;margin-top:-4px}}
 .hucre .et.acik{background:#f0f3f8!important;color:var(--dim)}
 .hucre .daha{font-size:10px;color:var(--dim);font-weight:600;padding-left:3px}
-@media(min-width:600px){.hucre{min-height:100px;padding:4px}.hucre .et{font-size:11.5px;padding:2px 5px}.hucre .no{font-size:13.5px;width:26px;height:26px}}
+@media(min-width:600px){.hucre .nfig,.hucre.bugun .nfig{height:62%}.hucre{padding:4px}.hucre .et{font-size:11.5px;padding:2px 5px}.hucre .no{font-size:11.5px;width:22px;height:22px}}
 .gunbaslik{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;margin:16px 2px 8px;display:flex;align-items:baseline;gap:8px}
 .gunbaslik small{font-family:'Inter';font-size:12px;color:var(--dim);font-weight:500}
 .olay{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;text-align:left;width:100%;align-items:center}
@@ -104,6 +113,7 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .kisirozet{display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 2px}
 .kisirozet img{width:20px;height:20px;border-radius:50%;object-fit:cover}
 .olay .yuz{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:-5px;margin-right:2px}
+.olay .yuz.fig{width:auto;height:30px;border-radius:0;object-fit:contain;vertical-align:-9px}
 .bos{color:var(--dim);font-size:13.5px;text-align:center;padding:22px 10px;background:#fff;border:1px dashed var(--line);border-radius:14px}
 
 .ekle{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom));height:56px;padding:0 20px;border-radius:18px;background:var(--mavi);color:#fff;font-weight:700;font-size:15px;box-shadow:0 12px 28px rgba(0,61,165,.35);display:none;align-items:center;gap:8px;z-index:20}
@@ -203,7 +213,7 @@ const TURLER = {
   nobet:{ad:'Nöbet',renk:'kirmizi',ikon:'🛡️'}, toplanti:{ad:'Toplantı',renk:'mavi',ikon:'👥'},
   birebir:{ad:'Bire bir',renk:'mor',ikon:'🤝'}, egitim:{ad:'Eğitim',renk:'turuncu',ikon:'🎓'},
   dogumgunu:{ad:'Doğum günü',renk:'pembe',ikon:'🎂'}, etkinlik:{ad:'Etkinlik',renk:'turkuaz',ikon:'📌'},
-  izin:{ad:'İzin',renk:'yesil',ikon:'🌴'}, tatil:{ad:'Resmi tatil',renk:'gri',ikon:'🇹🇷'}
+  izin:{ad:'İzin',renk:'yesil',ikon:'🌴'}, duyuru:{ad:'Duyuru',renk:'sari',ikon:'📢'}, tatil:{ad:'Resmi tatil',renk:'gri',ikon:'🇹🇷'}
 };
 const RENKLER = ['kirmizi','mavi','yesil','mor','turuncu','pembe','sari','turkuaz','gri'];
 const TEKRAR = {'':'Tekrar yok','haftalik':'Her hafta','aylik':'Her ay (aynı gün)','aylik-hafta':'Her ay (ör. ilk pazartesi)','yillik':'Her yıl'};
@@ -322,7 +332,9 @@ function nobetCiz(){
   $('nobetKart').style.display = a ? 'flex' : 'none';
   if (!a) return;
   $('nobetAd').textContent = a==='Ofis' ? 'Ofis' : a;
-  $('nobetFoto').innerHTML = a!=='Ofis' ? fotoHtml(a,'🛡️') : '🏢';
+  const f=a!=='Ofis' && figUrl(a);
+  $('nobetFoto').classList.toggle('fig', !!f);
+  $('nobetFoto').innerHTML = f ? `<img src="${f}" alt="">` : a!=='Ofis' ? fotoHtml(a,'🛡️') : '🏢';
 }
 // Telefonda ilk ekranda bugünün etkinlikleri yazılı dursun (Umut 18 Eki); nöbet üstteki kartta
 function bugunCiz(){
@@ -341,6 +353,14 @@ function bugunCiz(){
   $('bugunKutu').hidden=false; $('bugunKutu').innerHTML=h;
   $('bugunKutu').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
 }
+// Nöbetçinin dekupe fotoğrafı kutunun sağ altında, yazıların arkasında (Umut 18 Eki); Ofis günlerinde yok
+const NOBET_FIG = {aysegul:1,aysun:1,evsen:1,gamze:1,gizem:1,irem:1,orhan:1,ozlem:1};
+function figUrl(ad){ const u=fotoUrl(ad), id=u && u.split('/').pop().replace('.webp',''); return id && NOBET_FIG[id] ? `assets/ekip/nobet/${id}.webp` : ''; }
+function nobetFig(o){
+  if (!o || o.tur!=='nobet' || o.nobetci==='Ofis') return '';
+  const u=fotoUrl(o.nobetci), id=u && u.split('/').pop().replace('.webp','');
+  return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/nobet/${id}.webp" alt="" loading="lazy">` : '';
+}
 function ayCiz(){
   const [b]=gorunurAralik(), ay=S.ay.getMonth(), olay=S.olaylar;
   const gunde={}; olay.forEach(o=>(gunde[o.tarih]=gunde[o.tarih]||[]).push(o));
@@ -354,8 +374,8 @@ function ayCiz(){
     const cls=['hucre', d.getMonth()!==ay?'dis':'', (d.getDay()===0||d.getDay()===6)?'hs':'', tatil[g]?'tatil':'', g===bugun()?'bugun':'', g===S.secili?'secili':''].join(' ');
     const sinir=3, gor=sirali.slice(0, sirali.length>sinir?sinir-1:sinir);
     h+=`<button class="${cls}" data-g="${g}"><span class="no">${d.getDate()}</span>`+
-       gor.map(o=>`<span class="et${o.tur==='tatil'?' acik':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
-       (sirali.length>gor.length?`<span class="daha">+${sirali.length-gor.length}</span>`:'')+'</button>';
+       gor.map(o=>`<span class="et${o.tur==='tatil'?' acik':o.tur==='nobet'?' nb':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
+       (sirali.length>gor.length?`<span class="daha">+${sirali.length-gor.length}</span>`:'')+nobetFig(sirali[0])+'</button>';
   }
   h+='</div></div>';
   if (S.secili!==bugun()) h+=gunListesi(S.secili, gunde[S.secili]||[]);
@@ -380,7 +400,7 @@ function listeCiz(benim){
   $('icerik').innerHTML=h; baglaOlay();
 }
 function yanitOzet(o){
-  const ben=benAd(); if (o.salt || o.tur==='dogumgunu' || o.tur==='tatil') return '';
+  const ben=benAd(); if (o.salt || o.tur==='dogumgunu' || o.tur==='tatil' || o.tur==='duyuru') return '';
   const y=o.yanitlar||{}, kat=(o.kisiler&&o.kisiler.length?o.kisiler:EKIP);
   const evet=kat.filter(a=>y[a]==='evet').length, hayir=kat.filter(a=>y[a]==='hayir').length;
   let s=''; if (ben && kat.includes(ben)) s+= y[ben]==='evet'?'<span class="rozet evet">Katılıyorum</span>':y[ben]==='hayir'?'<span class="rozet hayir">Katılmıyorum</span>':'<span class="rozet bekle">Yanıt bekliyor</span>';
@@ -393,7 +413,7 @@ function olayKart(o){
   const baslik = o.tur==='nobet' ? (o.nobetci==='Ofis'?'Ofis nöbeti':o.nobetci+' nöbette') : String(o.baslik||'').replace(t.ikon,'').trim();
   const kisi = o.tur==='nobet'||o.tur==='tatil'||o.tur==='dogumgunu' ? '' : (o.kisiler&&o.kisiler.length ? o.kisiler.map(ilkAd).join(', ') : 'Herkes');
   return `<button class="olay" data-id="${esc(o.id)}" data-t="${o.tarih}"><span class="serit" style="background:${renk(o.renk||t.renk)}"></span>
-    <span class="saat">${saat}</span><span class="ic"><span class="bas">${o.tur==='nobet'&&fotoUrl(o.nobetci)?`<img class="yuz" src="${fotoUrl(o.nobetci)}" alt="">`:t.ikon} ${esc(baslik)}</span>
+    <span class="saat">${saat}</span><span class="ic"><span class="bas">${o.tur==='nobet'&&figUrl(o.nobetci)?`<img class="yuz fig" src="${figUrl(o.nobetci)}" alt="">`:o.tur==='nobet'&&fotoUrl(o.nobetci)?`<img class="yuz" src="${fotoUrl(o.nobetci)}" alt="">`:t.ikon} ${esc(baslik)}</span>
     <span class="alt">${kisi?`<span>${esc(kisi)}</span>`:''}${o.meet?'<span>· Görüntülü</span>':''}${yanitOzet(o)}</span></span></button>`;
 }
 function baglaOlay(){ $('icerik').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t)); }
@@ -422,7 +442,7 @@ function detay(id, tarih){
   if (o.hatirlatma&&o.hatirlatma.length) h+=`<div class="det"><span class="i">🔔</span><span>${o.hatirlatma.map(sureMetni).join(', ')} önce hatırlatma</span></div>`;
   if (o.aciklama) h+=`<div class="det"><span class="i">📝</span><span class="aciklama">${esc(o.aciklama).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}</span></div>`;
   if (o.meet) h+=`<a class="meet" href="${esc(o.meet)}" target="_blank" rel="noopener">🎥 Görüntülü toplantıya katıl</a>`;
-  const yanitlanir = !o.salt && o.tur!=='dogumgunu' && o.tur!=='tatil' && ben && (!kat || kat.includes(ben));
+  const yanitlanir = !o.salt && o.tur!=='dogumgunu' && o.tur!=='tatil' && o.tur!=='duyuru' && ben && (!kat || kat.includes(ben));
   if (yanitlanir) h+=`<div style="font-size:13px;font-weight:700;color:var(--dim);margin-top:18px">${esc(ilkAd(ben))}, katılıyor musun?</div>
     <div class="dugmeler" style="margin-top:8px"><button class="btn yesil ${y[ben]==='evet'?'secili':''}" data-y="evet">✓ Katılıyorum</button><button class="btn kirmizi ${y[ben]==='hayir'?'secili':''}" data-y="hayir">✗ Katılmıyorum</button></div>`;
   else if (!ben && !o.salt && o.tur!=='tatil' && o.tur!=='dogumgunu') h+=`<div class="durum">Yanıt vermek için üstten adını seç.</div>`;
