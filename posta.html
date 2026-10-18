@@ -57,6 +57,20 @@
   .m:hover{background:rgba(255,255,255,.04)}
   .m.on{background:var(--kart2)}
   .m .s1{display:flex;gap:8px;align-items:baseline}
+  .m{padding-left:42px}
+  .m .kutu{position:absolute;left:12px;top:14px;width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1}
+  .m .kutu:hover{border-color:var(--coral)}
+  .m.secili{background:rgba(220,28,46,.14)}
+  .m.secili .kutu{background:var(--red);border-color:var(--red)}
+  .m.yeni:before{left:4px;top:22px}
+  .secbar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--cizgi);background:var(--kart2);flex-wrap:wrap}
+  .secbar b{flex:1;font-size:14px}
+  .tumSec{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border-radius:0;border-bottom:1px solid var(--cizgi);padding:9px 12px;font-size:13px;font-weight:600;color:var(--soluk);text-align:left}
+  .tumSec .kutu{width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+  .tumSec.on .kutu{background:var(--red);border-color:var(--red)}
+  .tumSec:hover{color:#fff}
+  .secbar button{padding:8px 12px;font-size:13px}
+  .silBtn{background:var(--red)!important}
   .m .kim{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(255,255,255,.85)}
   .m .tar{font-size:12px;color:var(--soluk);flex:none}
   .m .konu{font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(255,255,255,.85)}
@@ -189,6 +203,12 @@
       <button class="ghost" id="yenileBtn" title="Yenile" onclick="listeYukle(true)">↻</button>
       <button class="geri" onclick="yeniMesaj()" title="Yeni posta">✎</button>
     </div>
+    <div class="secbar" id="secbar" hidden>
+      <b id="secSay"></b>
+      <button class="silBtn" id="secSil" onclick="secilenleriSil()">🗑 Sil</button>
+      <button class="ghost" onclick="secilenleriOkundu()">Okundu</button>
+      <button class="ghost" onclick="SECILENLER.clear();ciz()">Vazgeç</button>
+    </div>
     <div id="mesajlar"><div class="bos">Postalar yükleniyor…</div></div>
   </section>
 
@@ -202,7 +222,7 @@
         <button class="ghost" onclick="yanitla('w')">İlet</button>
         <button class="ghost" id="yildizBtn" onclick="yildiz()" title="Yıldızla">☆</button>
         <button class="ghost" onclick="okunmadi()" title="Okunmadı yap">●</button>
-        <button class="ghost" id="copBtn" onclick="cope()" title="Sil">🗑</button>
+        <button class="silBtn" id="copBtn" onclick="cope()" title="Sil (Delete)">🗑 Sil</button>
       </div>
       <div class="bilgi">
         <h2 id="oKonu"></h2>
@@ -410,14 +430,55 @@ function ciz() {
   const el = $('mesajlar');
   if (!MESAJLAR.length) { el.innerHTML = '<div class="bos">' + ($('ara').value ? 'Sonuç yok' : 'Bu klasör boş') + '</div>'; return; }
   const giden = KLASOR === 'giden' || KLASOR === 'taslak';
-  el.innerHTML = MESAJLAR.map(m => {
+  const hepsi = MESAJLAR.every(m => SECILENLER.has(m.id));
+  el.innerHTML = '<button class="tumSec' + (hepsi ? ' on' : '') + '" onclick="tumunuSec()"><span class="kutu">' + (hepsi ? '✓' : '') + '</span>' + (hepsi ? 'Seçimi kaldır' : 'Tümünü seç') + '</button>' + MESAJLAR.map(m => {
     const kisi = giden ? 'Kime: ' + (m.kime.map(k => k.ad || k.adres).join(', ') || '—') : (m.kimden.ad || m.kimden.adres || '—');
-    return '<button class="m' + (m.okunmamis ? ' yeni' : '') + (m.id === SECILI ? ' on' : '') + '" data-id="' + kac(m.id) + '">' +
+    return '<button class="m' + (m.okunmamis ? ' yeni' : '') + (m.id === SECILI ? ' on' : '') + (SECILENLER.has(m.id) ? ' secili' : '') + '" data-id="' + kac(m.id) + '">' +
+      '<span class="kutu" title="Seç">' + (SECILENLER.has(m.id) ? '✓' : '') + '</span>' +
       '<div class="s1"><span class="kim">' + kac(kisi) + '</span><span class="tar">' + (m.ekli ? '📎 ' : '') + (m.yildiz ? '★ ' : '') + tarihYaz(m.tarih) + '</span></div>' +
       '<div class="konu">' + kac(m.konu || '(konu yok)') + '</div><div class="oz">' + kac(m.ozet) + '</div></button>';
   }).join('') + (MESAJLAR.dahaVar ? '<button class="ghost daha" onclick="listeYukle(false,false,true)">Daha fazla</button>' : '');
-  el.querySelectorAll('.m').forEach(b => b.onclick = () => oku(b.dataset.id));
+  el.querySelectorAll('.m').forEach(b => b.onclick = e => {
+    if (e.target.closest('.kutu') || SECILENLER.size || e.metaKey || e.ctrlKey) return secDegistir(b.dataset.id);
+    oku(b.dataset.id);
+  });
+  // Telefonda: postaya basılı tut → seç
+  el.querySelectorAll('.m').forEach(b => {
+    let z; b.addEventListener('touchstart', () => { z = setTimeout(() => { z = 'oldu'; secDegistir(b.dataset.id); }, 500); }, { passive: true });
+    const bitir = e => { if (z === 'oldu') { e.preventDefault(); } else clearTimeout(z); z = null; };
+    b.addEventListener('touchend', bitir); b.addEventListener('touchmove', () => { clearTimeout(z); z = null; }, { passive: true });
+  });
+  $('secbar').hidden = !SECILENLER.size; $('secSay').textContent = SECILENLER.size + ' posta seçili';
+  const geri = KLASOR === 'cop';
+  $('secSil').textContent = geri ? '↩ Gelen Kutusu\'na al' : (hepsi ? '🗑 Tümünü sil' : '🗑 Sil');
   const sec = el.querySelector('.m.on'); if (sec) sec.scrollIntoView({ block: 'nearest' });
+}
+
+// ── Çoklu seçim ve silme ─────────────────────────────────
+const SECILENLER = new Set();
+function secDegistir(id) { SECILENLER.has(id) ? SECILENLER.delete(id) : SECILENLER.add(id); ciz(); }
+function tumunuSec() { if (MESAJLAR.every(m => SECILENLER.has(m.id))) SECILENLER.clear(); else MESAJLAR.forEach(m => SECILENLER.add(m.id)); ciz(); }
+function listedenCikar(ids) {
+  const s = new Set(ids);
+  MESAJLAR = Object.assign(MESAJLAR.filter(x => !s.has(x.id)), { dahaVar: MESAJLAR.dahaVar });
+  if (ONBELLEK[KLASOR]) { ONBELLEK[KLASOR].mesajlar = ONBELLEK[KLASOR].mesajlar.filter(x => !s.has(x.id)); onbellekYaz(); }
+  delete ONBELLEK.cop;   // çöp listesi bir sonraki açılışta sunucudan gelsin
+  if (ACIK && s.has(ACIK.id)) { SECILI = null; ACIK = null; $('okumaIc').hidden = true; $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Okumak için bir posta seç'; $('ana').classList.remove('oku'); }
+  ids.forEach(i => SECILENLER.delete(i));
+  ciz();
+}
+async function secilenleriSil() {
+  const ids = [...SECILENLER]; if (!ids.length) return;
+  const geri = KLASOR === 'cop';
+  if (geri && !confirm(ids.length + ' posta Gelen Kutusu\'na geri alınsın mı?')) return;
+  listedenCikar(ids);
+  try { await mesajIslem(geri ? 'gelen' : 'cop', ids); bildir(ids.length + (geri ? ' posta Gelen Kutusu\'na taşındı' : ' posta çöpe taşındı')); if (!MESAJLAR.length) listeYukle(false, true); else listeSayiTazele(); }
+  catch (e) { bildir(e.message); listeYukle(true); }
+}
+async function secilenleriOkundu() {
+  const ids = [...SECILENLER]; if (!ids.length) return;
+  MESAJLAR.forEach(m => { if (SECILENLER.has(m.id)) m.okunmamis = false; }); SECILENLER.clear(); ciz();
+  try { await mesajIslem('okundu', ids); listeSayiTazele(); } catch (e) { bildir(e.message); }
 }
 
 // Klavye: ↑/↓ postalar arasında gezer ve açar; Delete çöpe atar
@@ -435,7 +496,9 @@ document.addEventListener('keydown', e => {
     const id = MESAJLAR[y].id;
     SECILI = id; ciz();
     clearTimeout(okuZ); okuZ = setTimeout(() => oku(id), MSJ.has(id) ? 0 : 180);   // hızlı basışta her postayı sunucudan çekme
-  } else if ((e.key === 'Delete' || e.key === 'Backspace') && ACIK) { e.preventDefault(); cope(); }
+  } else if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (SECILENLER.size) { e.preventDefault(); secilenleriSil(); } else if (ACIK) { e.preventDefault(); cope(); }
+  } else if (e.key === 'Escape' && SECILENLER.size) { SECILENLER.clear(); ciz(); }
   else if (e.key === 'Enter' && SECILI && !ACIK) oku(SECILI);
 });
 
@@ -505,9 +568,10 @@ async function okunmadi() {
 async function cope() {
   const id = ACIK.id;
   if (KLASOR === 'cop' && !confirm('Bu posta çöpte. Gelen Kutusu\'na geri alınsın mı?')) return;
-  MESAJLAR = Object.assign(MESAJLAR.filter(x => x.id !== id), { dahaVar: MESAJLAR.dahaVar });
-  SECILI = null; ACIK = null; $('okumaIc').hidden = true; $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Okumak için bir posta seç';
-  $('ana').classList.remove('oku'); ciz();
+  // Silince sıradaki posta açılır (↑/↓ ile gezerken hızlı temizlik)
+  const i = MESAJLAR.findIndex(x => x.id === id), sonraki = MESAJLAR[i + 1] || MESAJLAR[i - 1];
+  listedenCikar([id]);
+  if (sonraki && window.innerWidth > 820) oku(sonraki.id);
   try { await mesajIslem(KLASOR === 'cop' ? 'gelen' : 'cop', id); bildir(KLASOR === 'cop' ? 'Gelen Kutusu\'na taşındı' : 'Çöpe taşındı'); listeSayiTazele(); }
   catch (e) { bildir(e.message); listeYukle(true); }
 }
