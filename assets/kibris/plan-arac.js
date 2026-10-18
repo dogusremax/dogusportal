@@ -40,9 +40,9 @@
       '.kpa-top{font-weight:700}.kpa-top b{font-size:1.15em}' +
       '.kpa-pl{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;padding:12px 16px;border:0;border-radius:999px;background:#DC1C2E;color:#fff;font:inherit;font-weight:700;cursor:pointer}' +
       '.kpa-pl svg{width:18px;height:18px}' +
-      '.kpa-ov{position:fixed;inset:0;z-index:2147483000;background:rgba(5,10,48,.6);display:flex;align-items:stretch;justify-content:center}' +
-      '.kpa-ov iframe{width:100%;max-width:980px;height:100%;border:0;background:#d9d4ca}' +
-      '@media (min-width:1000px){.kpa-ov{padding:18px 0}.kpa-ov iframe{border-radius:14px}}';
+      // tam ekran: Apps Script çerçevesinde ortalanmış/boşluklu iframe'e tıklamalar ulaşmıyordu
+      '.kpa-ov{position:fixed;inset:0;z-index:2147483000;background:#d9d4ca}' +
+      '.kpa-ov iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#d9d4ca}';
     document.head.appendChild(s);
   }
   function satir(k) {

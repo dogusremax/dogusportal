@@ -26,20 +26,20 @@ button,input{font:inherit;color:inherit}
 .wrap{padding:22px 12px 40px}
 .sheet{width:794px;max-width:100%;margin:0 auto;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.18);border-radius:6px;overflow:hidden}
 .hd{display:flex;align-items:center;gap:16px;padding:20px 36px 14px;border-bottom:3px solid var(--navy)}
-.hd .lg{height:40px}
-.hd .br{line-height:1.15}.hd .br b{display:block;font:800 15px/1.1 var(--fb);letter-spacing:.5px;color:var(--navy)}.hd .br span{font-size:11.5px;color:var(--ink2)}
-.hd .rt{margin-left:auto;text-align:right}.hd .rt h1{font:400 34px/1 var(--fd);color:var(--navy)}.hd .rt div{font-size:12px;color:var(--ink2);margin-top:4px}
+.hd .lg{height:42px}.hd .vl{width:2px;align-self:stretch;margin:2px 4px;background:var(--navy);opacity:.85}
+.hd .ti h1{font:400 36px/1 var(--fd);color:var(--navy)}.hd .ti div{font-size:12px;color:var(--ink2);margin-top:5px}
+.hd .dn{margin-left:auto;display:flex;align-items:center;gap:12px;text-align:left}
+.hd .dn img{width:58px;height:58px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid var(--sand2)}
+.hd .dn small{display:block;font:700 9.5px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:4px}
+.hd .dn b{display:block;font-size:15px;color:var(--ink)}.hd .dn span{display:block;font-size:11.5px;color:var(--ink2);line-height:1.35}
 .cv{position:relative;height:150px;background:var(--navy) center/cover}
 .cv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.82),rgba(5,10,48,.05) 70%)}
 .cv .t{position:absolute;left:36px;right:36px;bottom:16px;z-index:1;color:#fff}
 .cv .k{font:700 11.5px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;opacity:.9}
 .cv h2{font:400 42px/1 var(--fd);margin-top:6px}
 .bd{padding:16px 36px 18px}
-.kim{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:12px}.kim b{color:var(--ink)}
+.kim{font-size:13px;color:var(--ink2);margin-bottom:12px}.kim b{color:var(--ink)}
 .kim small{display:block;font:700 10px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
-.kim .dn{display:flex;align-items:center;gap:12px;margin-left:auto}.kim .dn img{width:54px;height:54px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid var(--sand2)}
-.kim .dn b{display:block;font-size:15px}.kim .dn span{font-size:12px}
-.bar form{display:flex;gap:6px}.bar form[hidden]{display:none}#bDan img{margin-left:-6px}
 .top{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
 .box{background:var(--sand);border-radius:14px;padding:11px 16px}
 .box small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
@@ -66,7 +66,7 @@ tr.tt td.a{font-size:23px}
   td small{display:block;margin:2px 0 0}
   .bar input{width:calc(50% - 4px)}.bar .sp{display:none}.bar button{flex:1 1 auto;justify-content:center}
   .wrap{padding:12px 8px 30px}
-  .hd{padding:18px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .rt{width:100%;text-align:left;margin-left:0}.hd .rt h1{font-size:28px}
+  .hd{padding:16px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .ti h1{font-size:28px}.hd .dn{width:100%;margin-left:0;padding-top:10px;border-top:1px solid var(--sand2)}
   .cv{height:150px}.cv .t{left:18px;right:18px}.cv h2{font-size:34px}
   .bd{padding:18px 18px 22px}.top{grid-template-columns:1fr}.box.fy .v{font-size:32px}
   td.a{font-size:18px}.gt b{font-size:26px}.ft{padding:12px 18px}
@@ -132,12 +132,11 @@ tr.tt td.a{font-size:23px}
     var mus=$('iMus').value.trim(),dn=danis();
     var ms=(D.m||[]),msL=ms.filter(function(x){return (x[2]||C)!=='TL';}),msT=ms.filter(function(x){return x[2]==='TL';});
     var msTop=msL.reduce(function(a,x){return a+(+x[1]||0);},0),tlTop=msT.reduce(function(a,x){return a+(+x[1]||0);},0);
-    var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş">'+
-      '<div class="br"><b>RE/MAX DOĞUŞ</b><span>Kuzey Kıbrıs gayrimenkul danışmanlığı</span></div>'+
-      '<div class="rt"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div></div>'+
+    var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş"><span class="vl"></span>'+
+      '<div class="ti"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div>'+
+      (dn?'<div class="dn"><img src="assets/kibris/danisman/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+'</span><span>'+esc(dn.tel)+'</span></div></div>':'')+'</div>'+
       '<div class="cv" style="'+(D.img?"background-image:url('"+esc(D.img)+"')":'')+'"><div class="t"><div class="k">'+esc([D.f,D.b].filter(Boolean).join(' · '))+'</div><h2>'+esc(D.p||'')+'</h2></div></div>'+
-      '<div class="bd">'+(mus||dn?'<div class="kim"><div class="mus">'+(mus?'<small>Hazırlandı</small>Sayın <b>'+esc(mus)+'</b>':'')+'</div>'+
-        (dn?'<div class="dn"><img src="assets/kibris/danisman/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+' · '+esc(dn.tel)+'</span></div></div>':'')+'</div>':'')+
+      '<div class="bd">'+(mus?'<div class="kim"><small>Hazırlandı</small>Sayın <b>'+esc(mus)+'</b></div>':'')+
       '<div class="top"><div class="box"><small>Daire</small><div class="v">'+esc(D.u||'Özel tutar')+(D.ux?'<span>'+esc(D.ux)+'</span>':'')+'</div></div>'+
       '<div class="box fy"><small>Liste fiyatı</small><div class="v">'+para(D.fy)+'</div></div></div>'+
       '<h3>Ödeme takvimi</h3><table>'+(D.r||[]).map(function(x){return '<tr'+(x[3]?' class="on"':'')+'><td>'+esc(x[0])+(x[2]?'<small>'+esc(x[2])+'</small>':'')+'</td><td class="a">'+para(x[1])+'</td></tr>';}).join('')+

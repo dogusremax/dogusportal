@@ -673,6 +673,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .ksp table{font-size:17px}.ksp th{padding:13px 14px 10px}.ksp td{padding:8px 14px}.ksp td small{font-size:14px;margin-top:1px}.ksp td.p{font-size:23px}.ksp .kdu{padding:5px 10px;font-size:13px}
 .ksr{position:sticky;top:0}
 .ksr .kc{margin-top:0;padding:22px 26px;border-radius:22px}.ksr .kc h5{font-size:32px}.ksr .kc h5 small{display:block;margin:8px 0 0}.ksr .kc .kpl{font-size:15px;margin-top:8px}
+.kc .kgy{grid-column:1/-1;font-size:13.5px;line-height:1.4;color:var(--ink2);margin-top:-2px}
 .ksr .kc .kgr{grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.ksr .kc .kgr label:first-child{grid-column:1/-1}.ksr .kc label#kcPf0{display:none}
 .ksr .kc input,.ksr .kc select{height:46px;font-size:17px;padding:0 14px}
 .ksr .kc .kout{grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.ksr .kc .kout div{padding:10px 14px;border-radius:14px}.ksr .kc .kout span{font-size:13.5px}.ksr .kc .kout b{font-size:26px}
@@ -1745,8 +1746,8 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
         '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
         '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label><label>Peşinat (%)<input id="kcPe" type="number" min="0" max="100" value="'+pl.pe+'"></label>'+
-        '<label>Teslimde (%)<input id="kcTl" type="number" min="0" max="100" value="'+(pl.tl||0)+'"></label><label>Teslim sonrası taksit (%)<input id="kcTs" type="number" min="0" max="100" value="'+(pl.ts||0)+'"></label>'+
-        '<label>Teslim sonrası (ay)<input id="kcS" type="number" min="1" value="'+(pl.ay||12)+'"></label>'+
+        '<label>Anahtar tesliminde (%)<input id="kcTl" type="number" min="0" max="100" value="'+(pl.tl||0)+'"></label><label>Teslimden sonra ödenecek (%)<input id="kcTs" type="number" min="0" max="100" value="'+(pl.ts||0)+'"></label>'+
+        '<label>Teslimden sonra kaç ayda<input id="kcS" type="number" min="1" value="'+(pl.ay||12)+'"></label><div class="kgy">Bazı projelerde fiyatın bir kısmı anahtar tesliminden sonra aylık taksitle ödenir. “Teslimden sonra ödenecek” bu kısmın oranı, “kaç ayda” taksit sayısıdır; yoksa 0 yazın. Teslime kadar ödenecek kısım kalan yüzdedir.</div>'+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
         '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3">'+esc(pl.not)+'</div></div>';}
     function ac(i){acik=i;mTip='';KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];
