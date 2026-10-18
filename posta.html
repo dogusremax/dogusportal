@@ -268,6 +268,11 @@ const $ = id => document.getElementById(id);
 const depo = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
 const kac = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 let PIN = '', HESAP = {}, KLASOR = 'gelen', MESAJLAR = [], SECILI = null, ACIK = null, YAZ = null, EKLER = [], SONKONTROL = 0, ILK = true;
+// Hız: klasör listeleri bu cihazda önbellekte (anında görünür, arkada tazelenir); açılan postalar bellekte
+let ONBELLEK = {}; try { ONBELLEK = JSON.parse(depo('posta_onbellek') || '{}') || {}; } catch (e) { ONBELLEK = {}; }
+const MSJ = new Map();
+function onbellekYaz() { try { depo('posta_onbellek', JSON.stringify(ONBELLEK)); } catch (e) {} }
+function msjSakla(m) { MSJ.set(m.id, m); if (MSJ.size > 60) MSJ.delete(MSJ.keys().next().value); }
 
 async function servis(veri, sure) {
   const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
@@ -315,33 +320,68 @@ $('kSifre').addEventListener('keydown', e => { if (e.key === 'Enter') $('kBtn').
 
 function anaAc() {
   $('ana').hidden = false; $('hesap').textContent = HESAP.adres;
-  listeYukle();
+  if (ONBELLEK.gelen) { MESAJLAR = Object.assign(ONBELLEK.gelen.mesajlar.slice(), { dahaVar: ONBELLEK.gelen.dahaVar }); sayilar(ONBELLEK.sayilar); ciz(); }
+  hepsiYukle();
   setInterval(() => { if (!document.hidden) listeYukle(false, true); }, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - SONKONTROL > 20000) listeYukle(false, true); });
 }
 
 // ── Liste ────────────────────────────────────────────────
+async function hepsiYukle() {
+  try {
+    const j = await servis({ islem: 'hepsi', limit: 40 });
+    if (!j.ok) throw new Error(j.error);
+    Object.keys(j.klasorListeleri || {}).forEach(k => { ONBELLEK[k] = j.klasorListeleri[k]; });
+    ONBELLEK.sayilar = j.klasorler; onbellekYaz();
+    sayilar(j.klasorler);
+    if (!$('ara').value.trim() && ONBELLEK[KLASOR]) { listeyiKoy(ONBELLEK[KLASOR], false); }
+    ILK = false; SONKONTROL = Date.now();
+    onYukle();
+  } catch (e) { listeYukle(); }
+}
+function listeyiKoy(v, daha) {
+  const eskiIdler = new Set(MESAJLAR.map(m => m.id));
+  const yeniler = (!ILK && KLASOR === 'gelen' && !daha) ? v.mesajlar.filter(m => !eskiIdler.has(m.id) && m.okunmamis) : [];
+  MESAJLAR = daha ? MESAJLAR.concat(v.mesajlar) : v.mesajlar.slice();
+  MESAJLAR.dahaVar = v.dahaVar; ciz();
+  return yeniler;
+}
+// Gelen kutusunun ilk postaları arkada önceden alınır (okundu işaretlenmez) → tıklayınca anında açılır
+let onYukleniyor = false;
+async function onYukle() {
+  if (onYukleniyor) return; onYukleniyor = true;
+  try {
+    for (const m of (ONBELLEK.gelen ? ONBELLEK.gelen.mesajlar : []).slice(0, 8)) {
+      if (MSJ.has(m.id) || document.hidden) continue;
+      const j = await servis({ islem: 'oku', id: m.id, onizle: true }).catch(() => null);
+      if (j && j.ok) msjSakla(j.mesaj);
+    }
+  } finally { onYukleniyor = false; }
+}
 document.querySelectorAll('.klasor[data-k]').forEach(b => b.onclick = () => {
   document.querySelectorAll('.klasor[data-k]').forEach(x => x.classList.toggle('on', x === b));
   KLASOR = b.dataset.k; $('ara').value = ''; MESAJLAR = []; $('ana').classList.remove('menu', 'oku');
-  $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>'; listeYukle(true);
+  if (ONBELLEK[KLASOR]) { listeyiKoy(ONBELLEK[KLASOR], false); listeYukle(false, true); }
+  else { $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>'; listeYukle(true); }
 });
 let araZ; $('ara').addEventListener('input', () => { clearTimeout(araZ); araZ = setTimeout(() => listeYukle(true), 450); });
 
 async function listeYukle(elle, sessiz, daha) {
   SONKONTROL = Date.now();
+  const kl = KLASOR, ara = $('ara').value.trim();
   if (elle) $('yenileBtn').textContent = '…';
   try {
-    const j = await servis({ islem: 'liste', klasor: KLASOR, ara: $('ara').value.trim(), offset: daha ? MESAJLAR.length : 0, limit: 40 });
+    const j = await servis({ islem: 'liste', klasor: kl, ara, offset: daha ? MESAJLAR.length : 0, limit: 40 });
+    if (kl !== KLASOR || ara !== $('ara').value.trim()) return;   // bu arada klasör değişti
     if (!j.ok) {
       if (/KURULU_DEGIL/.test(j.error)) { $('ana').hidden = true; $('kurulum').hidden = false; return; }
       if (!sessiz) $('mesajlar').innerHTML = '<div class="bos">' + kac(j.error) + '</div>'; return;
     }
-    const eskiIdler = new Set(MESAJLAR.map(m => m.id));
-    const yeniler = (!ILK && KLASOR === 'gelen' && !daha) ? j.mesajlar.filter(m => !eskiIdler.has(m.id) && m.okunmamis) : [];
-    MESAJLAR = daha ? MESAJLAR.concat(j.mesajlar) : j.mesajlar;
-    MESAJLAR.dahaVar = j.dahaVar;
-    sayilar(j.klasorler); ciz();
+    const yeniler = listeyiKoy(j, daha);
+    if (!ara && !daha) { ONBELLEK[kl] = { mesajlar: j.mesajlar, dahaVar: j.dahaVar }; }
+    ONBELLEK.sayilar = j.klasorler; onbellekYaz();
+    sayilar(j.klasorler);
+    if (kl === 'gelen' && yeniler.length) onYukle();
     if (yeniler.length) bildir(yeniler.length === 1 ? 'Yeni posta: ' + (yeniler[0].kimden.ad || yeniler[0].kimden.adres) : yeniler.length + ' yeni posta');
     ILK = false;
   } catch (e) { if (!sessiz) $('mesajlar').innerHTML = '<div class="bos">' + kac(e.message) + '</div>'; }
@@ -377,19 +417,45 @@ function ciz() {
       '<div class="konu">' + kac(m.konu || '(konu yok)') + '</div><div class="oz">' + kac(m.ozet) + '</div></button>';
   }).join('') + (MESAJLAR.dahaVar ? '<button class="ghost daha" onclick="listeYukle(false,false,true)">Daha fazla</button>' : '');
   el.querySelectorAll('.m').forEach(b => b.onclick = () => oku(b.dataset.id));
+  const sec = el.querySelector('.m.on'); if (sec) sec.scrollIntoView({ block: 'nearest' });
 }
+
+// Klavye: ↑/↓ postalar arasında gezer ve açar; Delete çöpe atar
+let okuZ;
+document.addEventListener('keydown', e => {
+  if ($('ana').hidden || !$('yazPen').hidden || !$('ayarPen').hidden) return;
+  const h = e.target; if (h.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(h.tagName)) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    if (!MESAJLAR.length) return;
+    e.preventDefault();
+    const i = MESAJLAR.findIndex(m => m.id === SECILI);
+    const y = i < 0 ? 0 : Math.max(0, Math.min(MESAJLAR.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
+    if (y === i) return;
+    const id = MESAJLAR[y].id;
+    SECILI = id; ciz();
+    clearTimeout(okuZ); okuZ = setTimeout(() => oku(id), MSJ.has(id) ? 0 : 180);   // hızlı basışta her postayı sunucudan çekme
+  } else if ((e.key === 'Delete' || e.key === 'Backspace') && ACIK) { e.preventDefault(); cope(); }
+  else if (e.key === 'Enter' && SECILI && !ACIK) oku(SECILI);
+});
 
 // ── Okuma ────────────────────────────────────────────────
 async function oku(id) {
   SECILI = id; $('ana').classList.add('oku');
-  const m = MESAJLAR.find(x => x.id === id); if (m && m.okunmamis) { m.okunmamis = false; }
+  const m = MESAJLAR.find(x => x.id === id), okunmamisti = !!(m && m.okunmamis); if (m) m.okunmamis = false;
   ciz();
+  const hazir = MSJ.get(id);
+  if (hazir) {
+    ACIK = hazir; okumaCiz();
+    if (okunmamisti) mesajIslem('okundu', id).then(listeSayiTazele).catch(() => {});
+    return;
+  }
   $('okumaBos').hidden = false; $('okumaBos').lastChild.textContent = 'Açılıyor…'; $('okumaIc').hidden = true;
   try {
     const j = await servis({ islem: 'oku', id });
     if (SECILI !== id) return;
     if (!j.ok) { $('okumaBos').lastChild.textContent = j.error; return; }
-    ACIK = j.mesaj; okumaCiz(); listeSayiTazele();
+    ACIK = j.mesaj; msjSakla(j.mesaj); okumaCiz(); listeSayiTazele();
   } catch (e) { $('okumaBos').lastChild.textContent = e.message; }
 }
 function listeSayiTazele() { servis({ islem: 'klasorler' }).then(j => j.ok && sayilar(j.klasorler)).catch(() => {}); }
