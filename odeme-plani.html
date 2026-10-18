@@ -118,7 +118,7 @@ tr.tt td.a{font-size:23px}
   var API='https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec',KIMLIK={aysegul_alpay:'aysegul',ozlem_varol:'ozlem'};
   function ls(k,v){try{if(v===undefined)return localStorage.getItem(k)||'';if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return '';}}
   var KIM=D.dk||ls('kpaKim')||(/makbule/i.test(ls('dogusBrokerAd'))?'makbule':ls('dogusBrokerAd')?'umut':'');
-  function danis(){var d=DAN[KIM];return d?{id:KIM,ad:d[0],tel:d[1],un:d[2]||'Gayrimenkul Danışmanı · RE/MAX Doğuş'}:null;}
+  function danis(){var d=DAN[KIM];return d?{id:KIM,ad:d[0],tel:d[1],un:d[2]||'Gayrimenkul Danışmanı · RE/MAX Doğuş',ml:KIM+'@remaxdogus.com.tr'}:null;}
   function danBtn(){var d=danis();$('bDan').innerHTML=d?'<img src="assets/kibris/danisman/'+d.id+'.webp" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover">'+esc(d.ad):'Danışman girişi';}
   $('bDan').onclick=function(){$('fDan').hidden=false;$('bDan').hidden=true;$('iPin').value='';$('iPin').focus();};
   $('bDanX').onclick=function(){$('fDan').hidden=true;$('bDan').hidden=false;};
@@ -134,7 +134,7 @@ tr.tt td.a{font-size:23px}
     var msTop=msL.reduce(function(a,x){return a+(+x[1]||0);},0),tlTop=msT.reduce(function(a,x){return a+(+x[1]||0);},0);
     var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş"><span class="vl"></span>'+
       '<div class="ti"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div>'+
-      (dn?'<div class="dn"><img src="assets/kibris/danisman/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+'</span><span>'+esc(dn.tel)+'</span></div></div>':'')+'</div>'+
+      (dn?'<div class="dn"><img src="assets/kibris/danisman/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+'</span><span>'+esc(dn.tel)+'</span><span>'+esc(dn.ml)+'</span></div></div>':'')+'</div>'+
       '<div class="cv" style="'+(D.img?"background-image:url('"+esc(D.img)+"')":'')+'"><div class="t"><div class="k">'+esc([D.f,D.b].filter(Boolean).join(' · '))+'</div><h2>'+esc(D.p||'')+'</h2></div></div>'+
       '<div class="bd">'+(mus?'<div class="kim"><small>Hazırlandı</small>Sayın <b>'+esc(mus)+'</b></div>':'')+
       '<div class="top"><div class="box"><small>Daire</small><div class="v">'+esc(D.u||'Özel tutar')+(D.ux?'<span>'+esc(D.ux)+'</span>':'')+'</div></div>'+
@@ -147,7 +147,7 @@ tr.tt td.a{font-size:23px}
       h+='<div class="gt"><div><small>Fiyat + masraflar</small><span>'+(msT.length?'TL kalemler hariç; ':'')+'tahmini toplam maliyet</span></div><b>'+para((+D.fy||0)+msTop)+(msT.length?' + '+para(tlTop,'TL'):'')+'</b></div>';
     }
     h+='<div class="nt">'+(D.n?esc(D.n)+' ':'')+'Bu plan bilgilendirme amaçlıdır; fiyat, müsaitlik ve vergi oranları değişebilir. Kesin tutarlar satış sözleşmesinde belirlenir.</div></div>'+
-      '<div class="ft"><b>RE/MAX Doğuş</b>'+(dn?'<a href="tel:'+dn.tel.replace(/\s/g,'')+'">'+esc(dn.ad)+' · '+esc(dn.tel)+'</a>':'')+'<a href="tel:+902163151515">+90 216 315 15 15</a><a href="mailto:dogusremax@gmail.com">dogusremax@gmail.com</a><a href="https://kibrisburda.com">kibrisburda.com</a></div>';
+      '<div class="ft"><b>RE/MAX Doğuş</b>'+(dn?'<a href="tel:'+dn.tel.replace(/\s/g,'')+'">'+esc(dn.ad)+' · '+esc(dn.tel)+'</a>':'')+'<a href="tel:+902163151515">+90 216 315 15 15</a>'+(dn?'<a href="mailto:'+dn.ml+'">'+esc(dn.ml)+'</a>':'<a href="mailto:dogusremax@gmail.com">dogusremax@gmail.com</a>')+'<a href="https://kibrisburda.com">kibrisburda.com</a></div>';
     $('sheet').innerHTML=h;
   }
   danBtn();ciz();
@@ -159,7 +159,7 @@ tr.tt td.a{font-size:23px}
   function ozet(){var mus=$('iMus').value.trim(),s=(mus?'Sayın '+mus+',\n\n':'')+(D.p||'')+' ödeme planı ('+gun+')\n'+(D.u?D.u+'\n':'')+'Liste fiyatı: '+para(D.fy)+'\n';
     (D.r||[]).forEach(function(x){if(x[3])s+=x[0]+': '+para(x[1])+'\n';});
     var msL=(D.m||[]).filter(function(x){return x[2]!=='TL';});if(msL.length)s+='Masraflar: '+para(msL.reduce(function(a,x){return a+(+x[1]||0);},0))+'\n';
-    var dn=danis();return s+'\nPlanın tamamı (PDF olarak indirilebilir):\n'+link()+'\n\n'+(dn?dn.ad+' · '+dn.tel+'\n':'')+'RE/MAX Doğuş · +90 216 315 15 15';}
+    var dn=danis();return s+'\nPlanın tamamı (PDF olarak indirilebilir):\n'+link()+'\n\n'+(dn?dn.ad+' · '+dn.tel+' · '+dn.ml+'\n':'')+'RE/MAX Doğuş · +90 216 315 15 15';}
   function dur(t){var d=$('dur');d.textContent=t||'';d.classList.toggle('on',!!t);}
   function dosyaAdi(){return ('Odeme-Plani-'+(D.p||'')+'-'+($('iMus').value.trim()||'')).replace(/[^\wğüşöçıİĞÜŞÖÇ-]+/g,'-').replace(/-+$/,'')+'.pdf';}
   // sayfanın ortalı görünümü PDF'i kaydırmasın diye A4 genişliğinde bir kopya üzerinden çizilir
