@@ -329,7 +329,7 @@ async function giris(p) {
   try {
     const j = await servis({ islem: 'durum' }, 60000);
     if (!j.ok) { depo('posta_pin', null); $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
-    depo('posta_pin', p); HESAP = j;
+    depo('posta_pin', p); HESAP = j; hesapSakla();
     $('giris').hidden = true;
     if (!j.kurulu) { $('kurulum').hidden = false; $('kAdres').value = j.adres || 'umut@remaxdogus.com.tr'; $('kAd').value = j.ad || 'Umut Tokkuş'; $('kSifre').focus(); return; }
     anaAc();
@@ -344,7 +344,7 @@ $('kBtn').onclick = async () => {
   try {
     const j = await servis({ islem: 'ayarla', adres: $('kAdres').value.trim(), sifre: $('kSifre').value, ad: $('kAd').value.trim() });
     if (!j.ok) { d.className = 'durum hata'; d.textContent = j.error; return; }
-    HESAP = j; $('kSifre').value = ''; $('kurulum').hidden = true; anaAc(); bildir('Hesap bağlandı');
+    HESAP = j; hesapSakla(); $('kSifre').value = ''; $('kurulum').hidden = true; anaAc(); bildir('Hesap bağlandı');
   } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
   finally { $('kBtn').disabled = false; }
 };
@@ -899,7 +899,7 @@ async function imzaKaydet() {
   try {
     const j = await servis({ islem: 'imza', ad: $('aAd').value.trim(), imza: $('aImza').textContent.trim() || $('aImza').querySelector('img') ? $('aImza').innerHTML : '' });
     if (!j.ok) { d.className = 'durum hata'; d.textContent = j.error; return; }
-    HESAP = j; d.textContent = 'Kaydedildi ✓';
+    HESAP = j; hesapSakla(); d.textContent = 'Kaydedildi ✓';
   } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
 }
 async function sifreGuncelle() {
@@ -909,12 +909,29 @@ async function sifreGuncelle() {
   try {
     const j = await servis({ islem: 'ayarla', sifre: $('aSifre').value });
     if (!j.ok) { d.className = 'durum hata'; d.textContent = j.error; return; }
-    HESAP = j; $('aSifre').value = ''; d.textContent = 'Şifre güncellendi ✓';
+    HESAP = j; hesapSakla(); $('aSifre').value = ''; d.textContent = 'Şifre güncellendi ✓';
   } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
 }
 
-const kayitli = (window.brokerPinAl && brokerPinAl()) || depo('posta_pin');
-if (kayitli) giris(kayitli); else $('pin').focus();
+function hesapSakla() { try { depo('posta_hesap', JSON.stringify({ kurulu: HESAP.kurulu, adres: HESAP.adres, ad: HESAP.ad, imza: HESAP.imza })); } catch (e) {} }
+function cikis(neden) {
+  depo('posta_pin', null); depo('posta_hesap', null);
+  $('ana').hidden = true; $('kurulum').hidden = true; $('giris').hidden = false;
+  $('girisHata').textContent = neden || ''; $('pin').value = ''; $('pin').focus();
+}
+
+// Yenileyince PIN ekranı gelmesin: bu cihazda daha önce girildiyse posta hemen açılır, PIN arkada doğrulanır
+const kayitli = depo('posta_pin') || (window.brokerPinAl && brokerPinAl());
+let hesapKayit = null; try { hesapKayit = JSON.parse(depo('posta_hesap') || 'null'); } catch (e) {}
+if (kayitli && hesapKayit && hesapKayit.kurulu) {
+  PIN = kayitli; HESAP = hesapKayit; $('giris').hidden = true; anaAc();
+  servis({ islem: 'durum' }, 60000).then(j => {
+    if (!j.ok) { if (/PIN/i.test(j.error || '')) cikis(j.error); return; }
+    HESAP = j; hesapSakla();
+    if (!j.kurulu) { $('ana').hidden = true; $('kurulum').hidden = false; }
+  }).catch(() => {});
+} else if (kayitli) giris(kayitli);
+else $('pin').focus();
 </script>
 </body>
 </html>
