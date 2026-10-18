@@ -419,7 +419,7 @@ function kutularCiz() {
   const l = HESAP.hesaplar || [], aktif = AKTIF || KIM;
   $('kutular').hidden = l.length < 2;
   $('kutular').innerHTML = l.map(h => '<button class="' + (h.id === aktif ? 'on' : '') + '" data-id="' + kac(h.id) + '" title="' + kac(h.ad) + '">' +
-    (h.ortak ? '<span class="ik">✉</span>' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? 'RE/MAX-info' : 'Kendi kutum') + '</span></button>').join('');
+    (h.ortak ? '<span class="ik">✉</span>' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? 'RE/MAX-info' : h.ad) + '</span></button>').join('');
   $('kutular').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.id !== aktif) kutuSec(b.dataset.id); });
 }
 async function kutuSec(id) {
