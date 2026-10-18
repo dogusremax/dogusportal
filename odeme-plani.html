@@ -103,8 +103,8 @@ tr.tt td.a{font-size:23px}
   function oku(){var m=/[#&]d=([^&]+)/.exec(location.hash);if(!m)return null;
     try{var b=m[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(escape(atob(b))));}catch(e){return null;}}
   var D=oku(),gomulu=window.parent!==window;
-  if(gomulu)$('bKap').hidden=false;
-  $('bKap').onclick=function(){try{window.parent.postMessage({kpa:'kapat'},'*');}catch(e){}};
+  if(gomulu||window.opener)$('bKap').hidden=false;
+  $('bKap').onclick=function(){if(!gomulu){window.close();return;}try{window.parent.postMessage({kpa:'kapat'},'*');}catch(e){}};
   if(!D){$('sheet').outerHTML='<div class="yok">Plan bilgisi bulunamadı. Kataloğun hesaplayıcısından “Plan hazırla”ya basarak açın.</div>';$('bar').hidden=true;return;}
   var C=D.c||'£';
   function fmt(n){return Math.round(+n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
