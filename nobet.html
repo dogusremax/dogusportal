@@ -540,7 +540,7 @@ async function notifyPlan(){
       await Promise.all(acik.slice(i,i+3).map(async(k,n)=>{
         const gunler=t.items.filter(it=>it.name!==OFFICE && ayniKisi(it.name,k.ad)).map(it=>{ const d=new Date(it.date+"T12:00:00"); return `${d.getDate()} ${GUN[d.getDay()]}`; });
         const metin=gunler.length?`İşte nöbet günlerin.`:`Bu ay nöbet günün yok.`;
-        try{ const r=await bildirim({islem:"gonder",id:`${kok}_${i+n}`,baslik:`${ayAd} ayı nöbet takvimi oluşturuldu`,metin,kimler:[k.ad],link}); sonuc.push({ad:k.ad,ok:(r.sonuclar||[]).some(s=>s.cihaz>0)}); }
+        try{ const r=await bildirim({islem:"gonder",id:`${kok}_${i+n}`,baslik:`${ayAd} ayı nöbet takvimi oluşturuldu.`,metin,kimler:[k.ad],link}); sonuc.push({ad:k.ad,ok:(r.sonuclar||[]).some(s=>s.cihaz>0)}); }
         catch(e){ sonuc.push({ad:k.ad,ok:false,hata:e.message}); }
       }));
     }
