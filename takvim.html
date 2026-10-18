@@ -164,7 +164,7 @@ form textarea{min-height:80px;resize:vertical}
 @media(max-width:599px){.wrap{padding:8px 8px}.nobet{margin:0 4px 8px;padding:6px 10px;border-radius:14px}.nfoto.fig{width:58px;height:54px;margin:-8px 0 -7px -4px}.nobet b{font-size:16px}.nobet span{font-size:11.5px}.nobet .ikonbtn{width:34px;height:34px}
 .bugunkutu{margin:12px 4px 8px}.bugunkutu .yaklasan{display:none}.bugunkutu h3{font-size:13.5px;margin-bottom:6px}.bugunkutu .olay{padding:8px 12px;margin-bottom:6px}
 .arac{margin:0 4px 8px}.izgara{border-radius:14px}.gunler{padding:6px 0}
-.hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:68%;width:auto;max-width:none}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .isaretler{position:absolute;top:3px;right:3px;margin:0;padding:0;z-index:2;flex-direction:column}.hucre .is{width:15px;height:15px;font-size:9px}.hucre .is-dogumgunu{font-size:14px}
+.hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:68%;width:auto;max-width:none}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .isaretler{position:absolute;top:3px;right:3px;margin:0;padding:0;z-index:2;flex-direction:column}.hucre .is{width:15px;height:15px;font-size:9px}.hucre .is-dogumgunu{font-size:17px}
 .arac{gap:4px}.arac .ekle{position:static;width:36px;height:36px;padding:0;justify-content:center;border-radius:11px;box-shadow:none;flex:none}.arac .ekle span{font-size:24px!important}.ekyazi{display:none}.ay b{font-size:17px;padding:0 2px}.ay button{width:26px}.sekme button{padding:7px 9px}}
 /* Bilgisayarda Google Takvim gibi tam ekran: solda nöbetçi ve bugün, sağda ekranı dolduran ay ızgarası (Umut 18 Eki) */
 @media(min-width:1000px){
@@ -316,7 +316,7 @@ async function girisYap(){
     const j=await api({islem:'giris',kim:SECILEN,pin});
     S.oturum=j.oturum; S.kim=j.kim; S.ad=j.ad; S.broker=!!j.broker;
     ls('posta_oturum',S.oturum); ls('posta_kim',S.kim);
-    $('giris').hidden=true; $('ana').hidden=false; benFoto(); await yukle(true); hashAc();
+    $('giris').hidden=true; $('ana').hidden=false; benFoto(); genelGoster(); await yukle(true); hashAc();
   }catch(e){ $('girisHata').textContent=e.message; $('pin').value=''; }
   finally{ $('girBtn').disabled=false; $('girisHata').classList.remove('bekle'); }
 }
@@ -353,6 +353,14 @@ function ihtiyac(){ const [b,e]=gorunurAralik(), g=bugun(), s=gunEkle(g,14); ret
 function genis(){ const [b,e]=ihtiyac(); return [gunEkle(b,-63), gunEkle(e,63)]; }
 function yukGoster(d){ YUK=Math.max(0,YUK+d); $('yukBar').classList.toggle('on', YUK>0); }
 const gorunenImza=()=>{ const [b,e]=ihtiyac(); return JSON.stringify(S.olaylar.filter(o=>o.tarih>=b&&o.tarih<=e))+S.broker; };
+// Nöbet listesi ve resmî tatiller statik dosyadan anında gelir, gerisi Apps Script'ten
+// (3-5 sn) sonra gelir; ilk açılış ve giriş beklemesin (Umut 18 Eki)
+const GENEL=fetch('assets/takvim-genel.json?s='+Math.floor(Date.now()/6e5)).then(r=>r.ok?r.json():null).catch(()=>null);
+async function genelGoster(){
+  const g=await GENEL;
+  if (!g || S.kapsam || S.olaylar.length) return;   // gerçek veri geldiyse ona dokunma
+  S.olaylar=g.olaylar||[]; ciz(); benFoto();         // S.kapsam boş kalır: asıl veri yine çekilir
+}
 function getir(b,e){
   const k=b+'_'+e; if (BEKLEYEN[k]) return BEKLEYEN[k];
   yukGoster(1);
@@ -469,8 +477,8 @@ function ayCiz(){
     const sirali=liste.slice().sort((x,y)=>(x.tur==='nobet'?0:x.tur==='tatil'?1:2)-(y.tur==='nobet'?0:y.tur==='tatil'?1:2));
     const kisa=o=>o.tur==='nobet'?(o.nobetci==='Ofis'?'Ofis':ilkAd(o.nobetci)):o.tur==='dogumgunu'?'🎂 '+ilkAd(String(o.baslik).replace(/^\W+/,'')):String(o.baslik||'').replace((TURLER[o.tur]||{}).ikon||'~','').trim();
     const cls=['hucre', d.getMonth()!==ay?'dis':'', (d.getDay()===0||d.getDay()===6)?'hs':'', tatil[g]?'tatil':'', g===bugun()?'bugun':'', g===S.secili?'secili':''].join(' ');
-    // Bayram B, doğum günü 🎂, toplantı T: kısa işaretler tek satırda (Umut 18 Eki)
-    const ISARET={tatil:'B',dogumgunu:'🎂',toplanti:'T'};
+    // Bayram B, doğum günü 🎁 (pasta beyazda seçilmiyordu), toplantı T (Umut 18 Eki)
+    const ISARET={tatil:'B',dogumgunu:'🎁',toplanti:'T'};
     const isaretli=sirali.filter(o=>ISARET[o.tur]), yazili=sirali.filter(o=>!ISARET[o.tur]);
     const sinir=innerWidth>=1000?4:2, gor=yazili.slice(0, yazili.length>sinir?sinir-1:sinir);
     h+=`<div class="${cls}" role="button" tabindex="0" data-g="${g}"><span class="no">${d.getDate()}</span>`+
@@ -633,7 +641,7 @@ if (HASH){ const d=gunAl(HASH[2]); S.ay=new Date(d.getFullYear(),d.getMonth(),1)
 function hashAc(){ if (HASH && S.olaylar.length) detay(HASH[1], HASH[2]); }
 (async function basla(){
   if (!S.oturum){ girisGoster(); return; }
-  $('ana').hidden=false; depoYukle(); const vardi=!!S.kapsam; if (vardi) hashAc();
+  $('ana').hidden=false; depoYukle(); const vardi=!!S.kapsam; if (vardi) hashAc(); else genelGoster();
   await yukle(true); if (!vardi) hashAc();
 })();
 </script>
