@@ -58,6 +58,7 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .nobet{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--kirmizi);border-radius:16px;padding:12px 14px;margin-bottom:16px}
 .nobet span{font-size:12.5px;color:var(--dim);font-weight:600}
 .nobet b{display:block;font-family:'Archivo',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.01em;margin-top:1px}
+.nobet .nikon{margin-left:auto;display:flex;gap:8px;align-self:center}
 .nfoto{width:52px;height:52px;border-radius:50%;flex:none;background:#f0f3f8;display:grid;place-items:center;font-size:22px;overflow:hidden}
 .bugunkutu{margin:-4px 0 16px}
 .bugunkutu h3{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
@@ -159,6 +160,7 @@ form textarea{min-height:80px;resize:vertical}
 .kutu{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-top:12px}
 .kutu input{width:20px;height:20px}
 .durum{font-size:13px;color:var(--dim);text-align:center;min-height:18px;margin-top:10px}
+@media(max-width:599px){.wrap{padding:10px 6px}.nobet{margin:0 4px 12px}.bugunkutu{margin:-2px 4px 14px}.arac{margin-left:4px;margin-right:4px}.bugunkutu .yaklasan{display:none}.hucre .no{font-size:8.5px;width:15px;height:15px}}
 @media(max-width:420px){header h1{font-size:19px}.sekme button{padding:7px 10px}.ay b{font-size:17px}}
 .yukleniyor{text-align:center;color:var(--dim);padding:30px;font-size:14px}
 </style>
@@ -174,20 +176,23 @@ form textarea{min-height:80px;resize:vertical}
   <div class="hata" id="girisHata"></div>
 </div>
 <div class="wrap" id="ana" hidden>
-  <header>
+  <header hidden>
     <button class="avatar" id="avatar" title="Hesap">
       <img id="benFoto" alt="" hidden><span id="benHarf">?</span>
     </button>
     <div class="kim"><h1>Ofis Takvimi</h1><small id="benYazi"></small></div>
     <div class="ben">
-      <button class="ikonbtn" id="zil" title="Telefon bildirimleri" onclick="window.bildirimPaneli&&bildirimPaneli()">🔔</button>
       <a class="ikonbtn" href="https://dogusportal.com" title="Portal" aria-label="Portal"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></a>
     </div>
   </header>
 
-  <div class="nobet" id="nobetKart" style="display:none">
+  <div class="nobet" id="nobetKart">
     <div class="nfoto" id="nobetFoto">🛡️</div>
     <div style="min-width:0"><span>Bugün nöbette</span><b id="nobetAd">—</b></div>
+    <div class="nikon">
+      <button class="ikonbtn" id="zil" title="Telefon bildirimleri" onclick="window.bildirimPaneli&&bildirimPaneli()">🔔</button>
+      <button class="ikonbtn" id="cikisBtn" title="Çıkış" aria-label="Çıkış"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
+    </div>
   </div>
 
   <div class="bugunkutu" id="bugunKutu" hidden></div>
@@ -282,7 +287,7 @@ async function girisYap(){
 }
 $('girBtn').onclick=girisYap;
 $('pin').addEventListener('keydown',e=>{ if(e.key==='Enter') girisYap(); });
-$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
+$('cikisBtn').onclick=$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
 function cikis(m){
   ['posta_oturum','posta_kim','posta_hesap'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.aralik=''; girisGoster(m);
@@ -335,8 +340,7 @@ function ciz(){
 }
 function nobetCiz(){
   const a=(S.olaylar.find(o=>o.tur==='nobet'&&o.tarih===bugun())||{}).nobetci;
-  $('nobetKart').style.display = a ? 'flex' : 'none';
-  if (!a) return;
+  if (!a){ $('nobetAd').textContent='—'; $('nobetFoto').classList.remove('fig'); $('nobetFoto').innerHTML='🛡️'; return; }
   $('nobetAd').textContent = a==='Ofis' ? 'Ofis' : a;
   const f=a!=='Ofis' && figUrl(a);
   $('nobetFoto').classList.toggle('fig', !!f);
@@ -352,9 +356,10 @@ function bugunCiz(){
   let h=`<h3>Bugün<small>${d.getDate()} ${AYLAR[d.getMonth()]} ${GUNLER[d.getDay()]}</small></h3>`+
     (liste.length ? liste.map(olayKart).join('') : '<div class="bos">Bugün nöbet dışında etkinlik yok.</div>');
   if (yakin.length){
-    h+='<h3 style="margin-top:16px">Yaklaşanlar</h3>'; let onceki='';
+    h+='<div class="yaklasan"><h3 style="margin-top:16px">Yaklaşanlar</h3>'; let onceki='';
     yakin.forEach(o=>{ if(o.tarih!==onceki){ const x=gunAl(o.tarih), f=Math.round((x-d)/864e5);
       h+=`<div class="ygun">${f===1?'Yarın':x.getDate()+' '+AYLAR[x.getMonth()]} · ${GUNLER[x.getDay()]}</div>`; onceki=o.tarih; } h+=olayKart(o); });
+    h+='</div>';
   }
   $('bugunKutu').hidden=false; $('bugunKutu').innerHTML=h;
   $('bugunKutu').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
