@@ -203,7 +203,7 @@ const TURLER = {
   nobet:{ad:'Nöbet',renk:'kirmizi',ikon:'🛡️'}, toplanti:{ad:'Toplantı',renk:'mavi',ikon:'👥'},
   birebir:{ad:'Bire bir',renk:'mor',ikon:'🤝'}, egitim:{ad:'Eğitim',renk:'turuncu',ikon:'🎓'},
   dogumgunu:{ad:'Doğum günü',renk:'pembe',ikon:'🎂'}, etkinlik:{ad:'Etkinlik',renk:'turkuaz',ikon:'📌'},
-  izin:{ad:'İzin',renk:'yesil',ikon:'🌴'}, tatil:{ad:'Resmi tatil',renk:'gri',ikon:'🇹🇷'}
+  izin:{ad:'İzin',renk:'yesil',ikon:'🌴'}, duyuru:{ad:'Duyuru',renk:'sari',ikon:'📢'}, tatil:{ad:'Resmi tatil',renk:'gri',ikon:'🇹🇷'}
 };
 const RENKLER = ['kirmizi','mavi','yesil','mor','turuncu','pembe','sari','turkuaz','gri'];
 const TEKRAR = {'':'Tekrar yok','haftalik':'Her hafta','aylik':'Her ay (aynı gün)','aylik-hafta':'Her ay (ör. ilk pazartesi)','yillik':'Her yıl'};
@@ -380,7 +380,7 @@ function listeCiz(benim){
   $('icerik').innerHTML=h; baglaOlay();
 }
 function yanitOzet(o){
-  const ben=benAd(); if (o.salt || o.tur==='dogumgunu' || o.tur==='tatil') return '';
+  const ben=benAd(); if (o.salt || o.tur==='dogumgunu' || o.tur==='tatil' || o.tur==='duyuru') return '';
   const y=o.yanitlar||{}, kat=(o.kisiler&&o.kisiler.length?o.kisiler:EKIP);
   const evet=kat.filter(a=>y[a]==='evet').length, hayir=kat.filter(a=>y[a]==='hayir').length;
   let s=''; if (ben && kat.includes(ben)) s+= y[ben]==='evet'?'<span class="rozet evet">Katılıyorum</span>':y[ben]==='hayir'?'<span class="rozet hayir">Katılmıyorum</span>':'<span class="rozet bekle">Yanıt bekliyor</span>';
@@ -422,7 +422,7 @@ function detay(id, tarih){
   if (o.hatirlatma&&o.hatirlatma.length) h+=`<div class="det"><span class="i">🔔</span><span>${o.hatirlatma.map(sureMetni).join(', ')} önce hatırlatma</span></div>`;
   if (o.aciklama) h+=`<div class="det"><span class="i">📝</span><span class="aciklama">${esc(o.aciklama).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}</span></div>`;
   if (o.meet) h+=`<a class="meet" href="${esc(o.meet)}" target="_blank" rel="noopener">🎥 Görüntülü toplantıya katıl</a>`;
-  const yanitlanir = !o.salt && o.tur!=='dogumgunu' && o.tur!=='tatil' && ben && (!kat || kat.includes(ben));
+  const yanitlanir = !o.salt && o.tur!=='dogumgunu' && o.tur!=='tatil' && o.tur!=='duyuru' && ben && (!kat || kat.includes(ben));
   if (yanitlanir) h+=`<div style="font-size:13px;font-weight:700;color:var(--dim);margin-top:18px">${esc(ilkAd(ben))}, katılıyor musun?</div>
     <div class="dugmeler" style="margin-top:8px"><button class="btn yesil ${y[ben]==='evet'?'secili':''}" data-y="evet">✓ Katılıyorum</button><button class="btn kirmizi ${y[ben]==='hayir'?'secili':''}" data-y="hayir">✗ Katılmıyorum</button></div>`;
   else if (!ben && !o.salt && o.tur!=='tatil' && o.tur!=='dogumgunu') h+=`<div class="durum">Yanıt vermek için üstten adını seç.</div>`;
