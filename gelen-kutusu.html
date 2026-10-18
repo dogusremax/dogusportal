@@ -274,8 +274,7 @@ function giris(pin, sessiz) {
   durum.pin = pin;
   api({ action: 'giris' }).then(function (r) {
     $('girisBtn').disabled = false;
-    if (!r.ok) { depo('gk_pin', null); $('girisHata').textContent = sessiz ? '' : (r.hata || 'Giriş başarısız'); return; }
-    depo('gk_pin', pin);
+    if (!r.ok) { $('girisHata').textContent = sessiz ? '' : (r.hata || 'Giriş başarısız'); return; }
     durum.otoCevap = r.otoCevap; otoCiz();
     $('giris').classList.add('gizli'); $('uygulama').classList.remove('gizli');
     listeYukle();
@@ -501,10 +500,9 @@ $('geriBtn').onclick = function () {
 
 /* Açılış */
 (function () {
-  var q = new URLSearchParams(location.search).get('k');
-  var kayitli = q || (window.brokerPinAl && brokerPinAl()) || depo('gk_pin');
-  if (kayitli) giris(kayitli, true);
-  else $('pinInput').focus();
+  /* Her girişte PIN sorulur (Umut, 18 Eki): kayıtlı PIN ile otomatik giriş yok */
+  depo('gk_pin', null);
+  $('pinInput').focus();
 })();
 </script>
 </body>

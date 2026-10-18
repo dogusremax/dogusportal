@@ -126,8 +126,7 @@ async function giris(p) {
   const yavas = setTimeout(() => { $('girisHata').textContent = 'Kontrol ediliyor… sunucu bazen 20-30 sn sürebiliyor, bekle.'; }, 5000);
   try {
     const j = await servis({ islem: 'liste' }, 60000);
-    if (!j.ok) { depo('duyuru_pin', null); $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
-    depo('duyuru_pin', p);
+    if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
     KISILER = j.kisiler || []; SABLON = j.sablonDurum || '';
     $('giris').hidden = true; $('ana').hidden = false;
     // Varsayılan: Umut hariç herkes (Umut testle kendine görür)
@@ -315,8 +314,9 @@ $('goBtn').onclick = async () => {
 
 $('girBtn').onclick = () => giris($('pin').value.trim());
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('girBtn').click(); });
-const kayitli = (window.brokerPinAl && brokerPinAl()) || depo('duyuru_pin');
-if (kayitli) giris(kayitli); else $('pin').focus();
+/* Her girişte PIN sorulur (Umut, 18 Eki): kayıtlı PIN ile otomatik giriş yok */
+depo('duyuru_pin', null);
+$('pin').focus();
 </script>
 </body>
 </html>
