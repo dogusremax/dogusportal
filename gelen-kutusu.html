@@ -270,11 +270,11 @@ function gunBaslik(t) {
 
 /* ── Giriş ── */
 function giris(pin, sessiz) {
-  $('girisBtn').disabled = true; $('girisHata').textContent = '';
+  $('girisBtn').disabled = true; $('girisHata').textContent = 'Kontrol ediliyor…';
   durum.pin = pin;
   api({ action: 'giris' }).then(function (r) {
     $('girisBtn').disabled = false;
-    if (!r.ok) { depo('gk_pin', null); if (!sessiz) $('girisHata').textContent = r.hata || 'Giriş başarısız'; return; }
+    if (!r.ok) { depo('gk_pin', null); $('girisHata').textContent = sessiz ? '' : (r.hata || 'Giriş başarısız'); return; }
     depo('gk_pin', pin);
     durum.otoCevap = r.otoCevap; otoCiz();
     $('giris').classList.add('gizli'); $('uygulama').classList.remove('gizli');
