@@ -327,6 +327,10 @@ let HESAP = {}, KLASOR = 'gelen', MESAJLAR = [], SECILI = null, ACIK = null, YAZ
 // Hız: klasör listeleri bu cihazda önbellekte (anında görünür, arkada tazelenir); açılan postalar bellekte
 let ONBELLEK = {}, OTURUM = depo('posta_oturum') || '', KIM = depo('posta_kim') || '';
 let AKTIF = depo('posta_aktif') || '';   // açık posta kutusu: '' = kendi kutun, 'info' = ortak kutu
+// Bildirimden açılış: posta.html?m=<id>&hesap=<kutu> → o kutuya geçip postayı açar
+const URLP = new URLSearchParams(location.search);
+let ACILACAK = URLP.get('m') || '';
+if (URLP.has('m') && OTURUM) { const h = URLP.get('hesap') || ''; AKTIF = h === KIM ? '' : h; depo('posta_aktif', AKTIF || null); }
 function onbellekAnahtar() { return 'posta_onbellek_' + KIM + (AKTIF ? '_' + AKTIF : ''); }
 function onbellekOku() { try { ONBELLEK = JSON.parse(depo(onbellekAnahtar()) || '{}') || {}; } catch (e) { ONBELLEK = {}; } }
 onbellekOku(); depo('posta_onbellek', null);
@@ -438,6 +442,8 @@ async function kutuSec(id) {
 }
 function anaAc() {
   $('ana').hidden = false; kutularCiz(); $('hesap').textContent = HESAP.adres; $('hesap').title = HESAP.adres; hesapSigdir();
+  if (URLP.has('m')) history.replaceState(null, '', 'posta.html');
+  if (ACILACAK) { const id = ACILACAK; ACILACAK = ''; setTimeout(() => oku(id), 0); }
   imzaGecir();
   if (ONBELLEK.gelen) { MESAJLAR = Object.assign(ONBELLEK.gelen.mesajlar.slice(), { dahaVar: ONBELLEK.gelen.dahaVar }); sayilar(ONBELLEK.sayilar); ciz(); }
   hepsiYukle();
