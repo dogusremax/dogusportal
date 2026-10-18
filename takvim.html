@@ -414,7 +414,8 @@ function nobetCiz(){
   const a=(S.olaylar.find(o=>o.tur==='nobet'&&o.tarih===bugun())||{}).nobetci;
   if (!a){ $('nobetAd').textContent='—'; $('nobetFoto').classList.remove('fig'); $('nobetFoto').innerHTML='🛡️'; return; }
   $('nobetAd').textContent = a==='Ofis' ? 'Ofis' : a;
-  const f=figUrl(a);
+  // Üstteki kartta kesilmemiş tam resim; ızgaradakiler aynı kalır (Umut 18 Eki)
+  const f=a==='Ofis'?OFIS_FIG:figUrl(a).replace('nobet/','nobet/tam/').replace('v=5','v=1');
   $('nobetFoto').classList.toggle('fig', !!f);
   $('nobetFoto').innerHTML = f ? `<img src="${f}" alt="">` : a!=='Ofis' ? fotoHtml(a,'🛡️') : '🏢';
 }
