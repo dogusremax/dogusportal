@@ -191,6 +191,9 @@ body{padding-bottom:0}
 .arac .ekle span{font-size:20px!important}
 }
 @media(max-width:420px){header h1{font-size:19px}.sekme button{padding:7px 10px}.ay b{font-size:17px}}
+.yukbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;background:linear-gradient(90deg,transparent,var(--mavi),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:kay 1.1s linear infinite}
+.yukbar.on{opacity:1}
+@keyframes kay{from{background-position:-40% 0}to{background-position:140% 0}}
 .yukleniyor{text-align:center;color:var(--dim);padding:30px;font-size:14px}
 </style>
 </head>
@@ -204,6 +207,7 @@ body{padding-bottom:0}
   <button class="btn" id="girBtn">Giriş</button>
   <div class="hata" id="girisHata"></div>
 </div>
+<div class="yukbar" id="yukBar"></div>
 <div class="wrap" id="ana" hidden>
   <header hidden>
     <button class="avatar" id="avatar" title="Hesap">
@@ -276,7 +280,7 @@ const ilkAd = a => String(a||'').split(' ')[0];
 const anahtar = a => String(a||'').toLocaleLowerCase('tr').split(/\s+/)[0];
 
 let S = { gorunum: ls('ot_gorunum')||'ay', ay: (()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1);})(),
-          secili: bugun(), olaylar: [], aralik:'', broker: false,
+          secili: bugun(), olaylar: [], kapsam: null, broker: false,
           oturum: ls('posta_oturum'), kim: ls('posta_kim'), ad: '' };
 
 /* ---- kim: Doğuş Posta ile aynı oturum (posta_oturum); bir kez girilir ---- */
@@ -318,8 +322,8 @@ $('girBtn').onclick=girisYap;
 $('pin').addEventListener('keydown',e=>{ if(e.key==='Enter') girisYap(); });
 $('cikisBtn').onclick=$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
 function cikis(m){
-  ['posta_oturum','posta_kim','posta_hesap','ot_onbellek'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
-  S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.aralik=''; girisGoster(m);
+  ['posta_oturum','posta_kim','posta_hesap','ot_onbellek','ot_depo'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.kapsam=null; S.olaylar=[]; girisGoster(m);
 }
 
 /* ---- veri ---- */
@@ -336,27 +340,41 @@ function gorunurAralik(){
   const son=new Date(bas); son.setDate(son.getDate()+41);
   return [ymd(bas), ymd(son)];
 }
-const OB='ot_onbellek'; let YUKLE_NO=0;
-function onbellekAl(k){ try{ const m=JSON.parse(ls(OB)||'{}'); return m[k]||null; }catch(e){ return null; } }
-function onbellekYaz(k,j){ try{ const m=JSON.parse(ls(OB)||'{}'); m[k]={t:Date.now(),olaylar:j.olaylar,broker:!!j.broker,ad:j.ad||''};
-  const ks=Object.keys(m).sort((x,y)=>m[y].t-m[x].t); ks.slice(4).forEach(x=>delete m[x]); ls(OB,JSON.stringify(m)); }catch(e){} }
+// Veri deposu: birkaç ayın etkinlikleri tek yerde, S.kapsam=[bas,son] hangi günleri kapsadığını tutar.
+// Sunucu (Apps Script) 3-5 sn sürüyor: depo telefonda saklanır, açılışta ve ay geçişlerinde anında çizilir,
+// gösterilen ayın öncesi/sonrası arkada çekilir (Umut 18 Eki: "çok bekletiyor", "aylar arası akıcı değil")
+const OB='ot_depo'; let YUKLE_NO=0, YUK=0; const BEKLEYEN={};
+function depoYukle(){ try{ const d=JSON.parse(ls(OB)||'null'); if(d && d.kim===(S.kim||'') && d.kapsam){ S.olaylar=d.olaylar||[]; S.kapsam=d.kapsam; S.broker=!!d.broker; if(d.ad) S.ad=d.ad; } }catch(e){} }
+function depoYaz(){ try{ ls(OB, JSON.stringify({kim:S.kim||'',olaylar:S.olaylar,kapsam:S.kapsam,broker:S.broker,ad:S.ad||''})); }catch(e){} }
+const kapsar=(b,e)=>!!S.kapsam && S.kapsam[0]<=b && S.kapsam[1]>=e;
+function ihtiyac(){ const [b,e]=gorunurAralik(), g=bugun(), s=gunEkle(g,14); return [b<g?b:g, e>s?e:s]; }
+function genis(){ const [b,e]=ihtiyac(); return [gunEkle(b,-63), gunEkle(e,63)]; }
+function yukGoster(d){ YUK=Math.max(0,YUK+d); $('yukBar').classList.toggle('on', YUK>0); }
+const gorunenImza=()=>{ const [b,e]=ihtiyac(); return JSON.stringify(S.olaylar.filter(o=>o.tarih>=b&&o.tarih<=e))+S.broker; };
+function getir(b,e){
+  const k=b+'_'+e; if (BEKLEYEN[k]) return BEKLEYEN[k];
+  yukGoster(1);
+  return BEKLEYEN[k]=api({islem:'liste', bas:b, bit:e}).then(j=>{
+    if (S.oturum && !j.ad){ cikis('Oturumun kapanmış, tekrar gir.'); throw new Error('OTURUM'); }
+    const ort=S.kapsam && !(e<S.kapsam[0] || b>S.kapsam[1]);
+    if (ort){ S.olaylar=S.olaylar.filter(o=>o.tarih<b||o.tarih>e).concat(j.olaylar).sort((x,y)=>x.tarih<y.tarih?-1:x.tarih>y.tarih?1:0);
+      S.kapsam=[b<S.kapsam[0]?b:S.kapsam[0], e>S.kapsam[1]?e:S.kapsam[1]]; }
+    else { S.olaylar=j.olaylar; S.kapsam=[b,e]; }
+    S.broker=!!j.broker; if(j.ad) S.ad=j.ad; depoYaz();
+  }).finally(()=>{ delete BEKLEYEN[k]; yukGoster(-1); });
+}
 async function yukle(zorla){
-  const [b,e]=gorunurAralik(); const ar=b+'_'+e;
-  // bugün/yarın nöbetçisi için bugünü de kapsa
-  const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),14)? e : gunEkle(bugun(),14);
-  if (!zorla && S.aralik===bb+'_'+ee) { ciz(); return; }
-  // Sunucu (Apps Script) birkaç saniye sürüyor: son alınan veriyi hemen göster, arkada tazele (Umut 18 Eki "çok bekletiyor")
-  const istek=YUKLE_NO=(YUKLE_NO||0)+1, anah=(S.kim||'')+'|'+bb+'_'+ee, onb=onbellekAl(anah);
-  if (onb){ S.olaylar=onb.olaylar; S.aralik=bb+'_'+ee; S.broker=!!onb.broker; if(onb.ad) S.ad=onb.ad; benFoto(); ciz(); }
+  const no=++YUKLE_NO, [b,e]=ihtiyac(), [gb,ge]=genis();
+  ciz(); benFoto();                       // elde ne varsa hemen (boşsa boş ızgara)
+  if (!zorla && kapsar(gb,ge)) return;    // önceki/sonraki ay da hazır
+  const once=gorunenImza(), vardi=kapsar(b,e);
   try{
-    const j = await api({islem:'liste', bas:bb, bit:ee});
-    if (S.oturum && !j.ad){ cikis('Oturumun kapanmış, tekrar gir.'); return; }
-    onbellekYaz(anah, j);
-    if (istek!==YUKLE_NO) return; // bu arada başka aya geçildi
-    if (onb && JSON.stringify(onb.olaylar)===JSON.stringify(j.olaylar) && !!onb.broker===!!j.broker) return;
-    S.olaylar=j.olaylar; S.aralik=bb+'_'+ee; S.broker=!!j.broker; if(j.ad) S.ad=j.ad; benFoto();
-    ciz();
-  }catch(err){ if (onb) return; $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
+    await getir(gb,ge);
+    if (no===YUKLE_NO && gorunenImza()!==once){ ciz(); benFoto(); }
+  }catch(err){
+    if (err.message==='OTURUM' || vardi || no!==YUKLE_NO) return;
+    $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`;
+  }
 }
 
 /* ---- süzgeç ---- */
@@ -387,7 +405,7 @@ function nobetCiz(){
 }
 // Telefonda ilk ekranda bugünün etkinlikleri yazılı dursun (Umut 18 Eki); nöbet üstteki kartta
 function bugunCiz(){
-  if (!S.aralik){ $('bugunKutu').hidden=true; return; }
+  if (!S.kapsam){ $('bugunKutu').hidden=true; return; }
   const g=bugun(), d=gunAl(g), son=gunEkle(g,14);
   const liste=S.olaylar.filter(o=>o.tarih===g && o.tur!=='nobet');
   // Bugün boşsa da ekran boş kalmasın: önümüzdeki 14 günün etkinlikleri kutu kutu (Umut 18 Eki)
@@ -408,13 +426,15 @@ function bugunCiz(){
 }
 // Nöbetçinin dekupe fotoğrafı kutunun sağ altında, yazıların arkasında (Umut 18 Eki); Ofis günlerinde yok
 const NOBET_FIG = {aysegul:1,aysun:1,evsen:1,gamze:1,gizem:1,irem:1,orhan:1,ozlem:1};
-function figUrl(ad){ const u=fotoUrl(ad), id=u && u.split('/').pop().replace('.webp',''); return id && NOBET_FIG[id] ? `assets/ekip/nobet/${id}.webp?v=2` : ''; }
+// Nöbetçi resimleri baştan indirilsin, ızgarada sonradan belirmesin (Umut 18 Eki)
+Object.keys(NOBET_FIG).forEach(id=>{ const i=new Image(); i.src=`assets/ekip/${innerWidth<600?'nobet/omuz':'nobet'}/${id}.webp?v=5`; });
+function figUrl(ad){ const u=fotoUrl(ad), id=u && u.split('/').pop().replace('.webp',''); return id && NOBET_FIG[id] ? `assets/ekip/nobet/${id}.webp?v=5` : ''; }
 function nobetFig(o){
   if (!o || o.tur!=='nobet' || o.nobetci==='Ofis') return '';
   const u=fotoUrl(o.nobetci), id=u && u.split('/').pop().replace('.webp','');
   // Telefonda diğer omuz kesik görsel: el görünür, kişi kutunun sağ kenarına yaslı (Umut 18 Eki)
   const yol=innerWidth<600?'nobet/omuz':'nobet';
-  return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/${yol}/${id}.webp?v=2" alt="" loading="lazy">` : '';
+  return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/${yol}/${id}.webp?v=5" alt="">` : '';
 }
 // Telefonda ay ızgarası ekranın kalanını kaplar, kutular uzun (Umut 18 Eki, seçenek A)
 function izgaraBoyut(){
@@ -607,8 +627,8 @@ if (HASH){ const d=gunAl(HASH[2]); S.ay=new Date(d.getFullYear(),d.getMonth(),1)
 function hashAc(){ if (HASH && S.olaylar.length) detay(HASH[1], HASH[2]); }
 (async function basla(){
   if (!S.oturum){ girisGoster(); return; }
-  $('ana').hidden=false; benFoto();
-  await yukle(true); hashAc();
+  $('ana').hidden=false; depoYukle(); const vardi=!!S.kapsam; if (vardi) hashAc();
+  await yukle(true); if (!vardi) hashAc();
 })();
 </script>
 <script src="assets/bildirim.js"></script>
