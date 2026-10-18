@@ -163,7 +163,7 @@ form textarea{min-height:80px;resize:vertical}
 @media(max-width:599px){.wrap{padding:8px 8px}.nobet{margin:0 4px 8px;padding:6px 10px;border-radius:14px}.nfoto.fig{width:58px;height:54px;margin:-8px 0 -7px -4px}.nobet b{font-size:16px}.nobet span{font-size:11.5px}.nobet .ikonbtn{width:34px;height:34px}
 .bugunkutu{margin:-2px 4px 8px}.bugunkutu .yaklasan,.bugunkutu .bos,.bugunkutu.bosgun{display:none}.bugunkutu h3{font-size:13.5px;margin-bottom:6px}.bugunkutu .olay{padding:8px 12px;margin-bottom:6px}
 .arac{margin:0 4px 8px}.izgara{border-radius:14px}.gunler{padding:6px 0}
-.hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:66%;max-width:100%}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .is{width:14px;height:14px;font-size:8.5px}.hucre .is-dogumgunu{font-size:11px}
+.hucre{aspect-ratio:auto}.hucre .nfig,.hucre.bugun .nfig{height:68%;width:auto;max-width:none}.hucre .no{font-size:11px;width:20px;height:20px}.hucre .et.nb{font-size:9.5px;margin-top:-2px}.hucre .is{width:14px;height:14px;font-size:8.5px}.hucre .is-dogumgunu{font-size:11px}
 .arac{gap:4px}.arac .ekle{position:static;width:36px;height:36px;padding:0;justify-content:center;border-radius:11px;box-shadow:none;flex:none}.arac .ekle span{font-size:24px!important}.ekyazi{display:none}.ay b{font-size:17px;padding:0 2px}.ay button{width:26px}.sekme button{padding:7px 9px}}
 @media(max-width:420px){header h1{font-size:19px}.sekme button{padding:7px 10px}.ay b{font-size:17px}}
 .yukleniyor{text-align:center;color:var(--dim);padding:30px;font-size:14px}
@@ -384,7 +384,8 @@ function izgaraBoyut(){
   if (!ic || !hc.length) return;
   if (innerWidth>=600){ hc.forEach(x=>x.style.height=''); return; }
   const ust=ic.getBoundingClientRect().top+scrollY, sat=hc.length/7;
-  const y=Math.max(70, Math.floor((innerHeight-ust-12)/sat)-1);
+  // ince uzun olmasın: kutu boyu en fazla genişliğin 1,5 katı (Umut 18 Eki)
+  const y=Math.max(70, Math.min(Math.floor((innerHeight-ust-12)/sat)-1, Math.round(hc[0].offsetWidth*1.5)));
   hc.forEach(x=>x.style.height=y+'px');
 }
 addEventListener('resize', ()=>{ if (S.gorunum==='ay') izgaraBoyut(); });
