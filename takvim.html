@@ -384,8 +384,8 @@ function izgaraBoyut(){
   if (!ic || !hc.length) return;
   if (innerWidth>=600){ hc.forEach(x=>x.style.height=''); return; }
   const ust=ic.getBoundingClientRect().top+scrollY, sat=hc.length/7;
-  // ince uzun olmasın: kutu boyu en fazla genişliğin 1,5 katı (Umut 18 Eki)
-  const y=Math.max(70, Math.min(Math.floor((innerHeight-ust-12)/sat)-1, Math.round(hc[0].offsetWidth*1.5)));
+  // ince uzun olmasın: kutu boyu en fazla genişliğin 1,9 katı (Umut 18 Eki)
+  const y=Math.max(70, Math.min(Math.floor((innerHeight-ust-12)/sat)-1, Math.round(hc[0].offsetWidth*1.9)));
   hc.forEach(x=>x.style.height=y+'px');
 }
 addEventListener('resize', ()=>{ if (S.gorunum==='ay') izgaraBoyut(); });
