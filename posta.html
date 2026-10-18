@@ -160,6 +160,8 @@
     #ana{grid-template-columns:1fr;position:relative}
     .yan{display:none}
     #ana.menu .yan{display:flex;position:absolute;inset:0 30% 0 0;background:var(--kart);z-index:10;box-shadow:10px 0 40px rgba(0,0,0,.5)}
+    #ana.menu::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:9}
+    .hamburger{background:#DC1C2E!important;border-color:#DC1C2E!important;color:#fff}
     .liste .ust .geri,.okuma .ust .geri{display:inline-flex}
     .okuma{display:none}
     #ana.oku .liste{display:none}
@@ -218,7 +220,7 @@
 
   <section class="liste">
     <div class="ust">
-      <button class="ghost geri" onclick="$('ana').classList.add('menu')" title="Klasörler">☰</button>
+      <button class="ghost geri hamburger" onclick="$('ana').classList.add('menu')" title="Klasörler"><svg width="18" height="14" viewBox="0 0 18 14" fill="#fff"><rect width="18" height="2.4" rx="1.2"/><rect y="5.8" width="18" height="2.4" rx="1.2"/><rect y="11.6" width="18" height="2.4" rx="1.2"/></svg></button>
       <input id="ara" type="search" placeholder="Postalarda ara">
       <button class="ghost" id="yenileBtn" title="Yenile" onclick="listeYukle(true)">↻</button>
       <button class="geri" onclick="yeniMesaj()" title="Yeni posta">✎</button>
@@ -839,6 +841,13 @@ function yazAc(baslik, alanlar, govde) {
     if (hedef === $('yEditor')) { const r = document.createRange(); r.setStart($('yEditor').firstChild, 0); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r); secimSakla('yEditor'); }
   }, 50);
 }
+// Mobil menü: dışına dokununca, sola kaydırınca ya da Esc ile kapanır
+$('ana').addEventListener('click', e => { if (e.target === $('ana')) $('ana').classList.remove('menu'); });
+(() => { let x0 = null;
+  $('ana').addEventListener('touchstart', e => { x0 = $('ana').classList.contains('menu') ? e.touches[0].clientX : null; }, { passive: true });
+  $('ana').addEventListener('touchend', e => { if (x0 !== null && x0 - e.changedTouches[0].clientX > 60) $('ana').classList.remove('menu'); x0 = null; }, { passive: true });
+})();
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ana').classList.contains('menu')) $('ana').classList.remove('menu'); });
 function yeniMesaj() { $('ana').classList.remove('menu'); yazAc('Yeni posta', {}); }
 function yazKapat() {
   const dolu = $('yEditor').textContent.replace(HESAP.imza ? $('yEditor').querySelector('[data-imza]')?.textContent || '' : '', '').trim();
