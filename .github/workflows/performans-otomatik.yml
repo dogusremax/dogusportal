@@ -1,6 +1,7 @@
 name: Aylık ve haftalık performans (otomatik paylaşım)
 # Tetik Danışman Takip Apps Script'inden gelir (GitHub'ın kendi zamanlaması saatlerce gecikebiliyor):
-#   hafta → her Pazartesi 10:30 (TR) geçen haftanın sıralaması story olarak
+#   hafta → her Pazartesi 11:00 (TR) geçen haftanın sıralaması story olarak, sadece karne sağlaması temizse
+#           (yoksa Umut'a tek tuşluk onay maili); Danışman Takip HAFTA_PUB_<hafta> kilidi çift yayını önler
 #   ay    → her ayın 1'i 10:30 (TR) geçen ayın şampiyonları gönderi carousel'i olarak
 # İki saat sonra Apps Script denetler; yayın tamamlanmadıysa yeniden tetikler, olmazsa mail atar.
 # Mükerrer yayın olmaz: performans/oto/<donem>/.pub hangi adımların yayınlandığını tutar.
@@ -57,3 +58,15 @@ jobs:
           git add "$PAYLASIM_DIR" 2>/dev/null
           git diff --cached --quiet || { git commit -m "Performans ${{ github.event.inputs.donem }} paylaşım kaydı" && git pull --rebase -q && git push; }
           exit $S
+      - name: Haftalık kaydı kapat ve özet maili
+        # Danışman Takip'teki HAFTA_PUB_<hafta> kaydı "tamam" olur (mükerrer yayın kilidi), Umut'a özet maili gider
+        if: success() && github.event.inputs.donem == 'hafta' && env.DRY_RUN != '1'
+        run: |
+          Q=$(node -p "const p=require('./$PAYLASIM_DIR/.pub'); p.tamam ? p.q : ''" 2>/dev/null || true)
+          [ -n "$Q" ] || { echo "Yayın kaydı yok, kapatılmadı."; exit 0; }
+          for i in 1 2 3; do
+            R=$(curl -sSL --max-time 90 "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=haftaKilit&k=dogus-performans&islem=tamam&hafta=$Q&id=${{ github.run_id }}" || true)
+            echo "$R" | grep -q '"durum":"tamam"' && { echo "$R"; exit 0; }
+            sleep $((10 * i))
+          done
+          echo "::warning::Haftalık kayıt kapatılamadı (13:00 denetimi repo kaydından kapatır): $R"
