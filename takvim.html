@@ -18,6 +18,7 @@
   --c-pembe:#db2777; --c-sari:#ca8a04; --c-turkuaz:#0891b2; --c-gri:#64748b;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;
   padding:env(safe-area-inset-top) 0 calc(90px + env(safe-area-inset-bottom))}
@@ -32,7 +33,24 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .ben select{max-width:150px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;font-weight:600}
 .avatar{position:relative;width:48px;height:48px;border-radius:50%;flex:none;background:linear-gradient(135deg,#003DA5,#4f7fd8);display:grid;place-items:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;box-shadow:0 0 0 3px #fff,0 4px 14px rgba(0,61,165,.25);overflow:hidden;cursor:pointer}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.avatar select{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px}
+.giris{max-width:400px;margin:0 auto;padding:60px 20px 20px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.giris .logo{height:40px;margin:0 auto 4px}
+.giris h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.02em}
+.giris p{color:var(--dim);font-size:13.5px}
+.kimler{position:relative;text-align:left;margin-top:8px}
+.kimSec{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 14px 9px 9px;font-size:16px;font-weight:600;box-shadow:0 2px 10px rgba(19,26,38,.05)}
+.kimSec .ok{margin-left:auto;color:var(--dim)}
+.kimler img{width:40px;height:40px;flex:none;border-radius:50%;object-fit:cover;object-position:center top;background:#eef1f6}
+.kimListe{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:14px;max-height:340px;overflow-y:auto;z-index:20;box-shadow:0 16px 40px rgba(19,26,38,.16);padding:5px}
+.kimListe button{display:flex;align-items:center;gap:12px;width:100%;border-radius:10px;padding:7px 9px;font-size:15px;text-align:left}
+.kimListe button:hover,.kimListe button.on{background:#eef3fc}
+.kimListe small{display:block;font-weight:400;color:var(--dim);font-size:11.5px}
+.giris input{font:700 26px 'Inter',sans-serif;text-align:center;letter-spacing:10px;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff;width:100%}
+.giris input:focus{outline:2px solid var(--mavi);border-color:transparent}
+.giris .btn{background:var(--mavi);color:#fff;padding:15px;font-size:15.5px}
+.giris .btn:disabled{opacity:.6}
+.giris .hata{color:var(--kirmizi);font-size:13px;min-height:18px}
+.giris .hata.bekle{color:var(--dim)}
 .kim{min-width:0}
 .kim small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ikonbtn{color:var(--ink);text-decoration:none;width:38px;height:38px;border-radius:10px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:none}
@@ -120,13 +138,21 @@ form textarea{min-height:80px;resize:vertical}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="giris" id="giris" hidden>
+  <img class="logo" src="assets/dogus-logo-koyu.png" alt="RE/MAX Doğuş">
+  <h2>Ofis Takvimi</h2>
+  <p>Doğuş Posta'daki şifrenle gir. Bir kez girmen yeter.</p>
+  <div class="kimler" id="kimler"></div>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="Şifre" placeholder="••••">
+  <button class="btn" id="girBtn">Giriş</button>
+  <div class="hata" id="girisHata"></div>
+</div>
+<div class="wrap" id="ana" hidden>
   <header>
-    <label class="avatar" title="Kimsin? Değiştirmek için dokun">
+    <button class="avatar" id="avatar" title="Hesap">
       <img id="benFoto" alt="" hidden><span id="benHarf">?</span>
-      <select id="ben" aria-label="Ben"></select>
-    </label>
-    <div class="kim"><h1>Ofis Takvimi</h1><small id="benYazi">Adını seçmek için fotoğrafa dokun</small></div>
+    </button>
+    <div class="kim"><h1>Ofis Takvimi</h1><small id="benYazi"></small></div>
     <div class="ben">
       <button class="ikonbtn" id="zil" title="Telefon bildirimleri" onclick="window.bildirimPaneli&&bildirimPaneli()">🔔</button>
       <a class="ikonbtn" href="https://dogusportal.com" title="Portal" aria-label="Portal"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></a>
@@ -154,7 +180,7 @@ form textarea{min-height:80px;resize:vertical}
 
 <div class="perde" id="perde"><div class="sayfa" id="sayfa"></div></div>
 
-<script src="assets/broker.js"></script>
+<script src="assets/imza.js?v=3"></script>
 <script>
 const API = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 const EKIP = ['Ayşegül Alpay','Aysun Yılmaz','Evşen Özazman','Gamze Yetkin','Gizem Gök','İrem Aleyna Tetik','Makbule Tokkuş','Orhan Özazman','Özlem Varol','Umut Tokkuş'];
@@ -188,31 +214,57 @@ const ilkAd = a => String(a||'').split(' ')[0];
 const anahtar = a => String(a||'').toLocaleLowerCase('tr').split(/\s+/)[0];
 
 let S = { gorunum: ls('ot_gorunum')||'ay', ay: (()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1);})(),
-          secili: bugun(), olaylar: [], aralik:'', broker: false, pin: '' };
+          secili: bugun(), olaylar: [], aralik:'', broker: false,
+          oturum: ls('posta_oturum'), kim: ls('posta_kim'), ad: '' };
 
-/* ---- kim ---- */
-function benAd(){ return ls('ot_ben') || (()=>{ const b=window.brokerAdAl&&brokerAdAl(); if(b) return b;
-  // Doğuş Posta'ya ya da bildirimlere girmiş kişi: bir daha sormadan tanınır
-  let p=''; try { p=(JSON.parse(ls('posta_hesap')||'null')||{}).ad||''; } catch(e){}
-  for (const k of [p, ls('bld_kisi')]) { const e=k&&EKIP.find(x=>anahtar(x)===anahtar(k)); if(e){ ls('ot_ben',e); return e; } }
-  return ''; })(); }
-function benDoldur(){
-  const s=$('ben'), b=benAd();
-  s.innerHTML='<option value="">Ben kimim?</option>'+EKIP.map(e=>`<option ${e===b?'selected':''}>${esc(e)}</option>`).join('');
-  s.onchange=()=>{ ls('ot_ben',s.value); benFoto(); ciz(); };
-  benFoto();
-}
+/* ---- kim: Doğuş Posta ile aynı oturum (posta_oturum); bir kez girilir ---- */
+const kisi = id => (window.IMZA_KISILER||[]).find(x=>x.id===id);
+function benAd(){ return S.ad || (kisi(S.kim)||{}).ad || ''; }
 function benFoto(){
   const b=benAd(), u=fotoUrl(b);
   $('benFoto').hidden=!u; if(u) $('benFoto').src=u;
   $('benHarf').style.display=u?'none':''; $('benHarf').textContent=b?b.charAt(0):'?';
-  $('benYazi').textContent = b ? 'Merhaba '+ilkAd(b)+(S.broker?' · Broker':'') : 'Adını seçmek için fotoğrafa dokun';
+  $('benYazi').textContent = b ? 'Merhaba '+ilkAd(b)+(S.broker?' · Broker':'') : '';
+}
+let SECILEN = S.kim || ls('posta_son_kim') || 'umut';
+function kimlerCiz(acik){
+  const sirali=(window.IMZA_KISILER||[]).slice().sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
+  const k=kisi(SECILEN)||sirali[0]; SECILEN=k.id;
+  const foto=x=>`<img src="assets/imza/${x.id}.png" alt="">`;
+  $('kimler').innerHTML=`<button type="button" class="kimSec">${foto(k)}<span>${esc(k.ad)}</span><span class="ok">▾</span></button>`+
+    (acik?'<div class="kimListe">'+sirali.map(x=>`<button type="button" data-id="${x.id}" class="${x.id===k.id?'on':''}">${foto(x)}<span>${esc(x.ad)}<small>${esc(x.unvan)}</small></span></button>`).join('')+'</div>':'');
+  $('kimler').querySelector('.kimSec').onclick=e=>{ e.stopPropagation(); kimlerCiz(!acik); };
+  $('kimler').querySelectorAll('.kimListe button').forEach(x=>x.onclick=()=>{ SECILEN=x.dataset.id; ls('posta_son_kim',SECILEN); kimlerCiz(); $('pin').focus(); });
+}
+document.addEventListener('click',e=>{ if($('kimler').querySelector('.kimListe') && !$('kimler').contains(e.target)) kimlerCiz(); });
+function girisGoster(m){
+  $('ana').hidden=true; $('ekleBtn').classList.remove('var'); $('giris').hidden=false;
+  kimlerCiz(); $('girisHata').textContent=m||''; $('pin').value=''; $('pin').focus();
+}
+async function girisYap(){
+  const pin=$('pin').value.trim(); if(!pin){ $('pin').focus(); return; }
+  $('girBtn').disabled=true; $('girisHata').textContent='Kontrol ediliyor…'; $('girisHata').classList.add('bekle');
+  try{
+    const j=await api({islem:'giris',kim:SECILEN,pin});
+    S.oturum=j.oturum; S.kim=j.kim; S.ad=j.ad; S.broker=!!j.broker;
+    ls('posta_oturum',S.oturum); ls('posta_kim',S.kim);
+    $('giris').hidden=true; $('ana').hidden=false; benFoto(); await yukle(true); hashAc();
+  }catch(e){ $('girisHata').textContent=e.message; $('pin').value=''; }
+  finally{ $('girBtn').disabled=false; $('girisHata').classList.remove('bekle'); }
+}
+$('girBtn').onclick=girisYap;
+$('pin').addEventListener('keydown',e=>{ if(e.key==='Enter') girisYap(); });
+$('avatar').onclick=()=>{ if(confirm(`${benAd()} olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta'dan da çıkılır.)`)) cikis(); };
+function cikis(m){
+  ['posta_oturum','posta_kim','posta_hesap'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  S.oturum=''; S.kim=''; S.ad=''; S.broker=false; S.aralik=''; girisGoster(m);
 }
 
 /* ---- veri ---- */
 async function api(body){
-  const r = await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'takvim'},body))});
+  const r = await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'takvim',oturum:S.oturum},body))});
   const j = await r.json();
+  if (!j.ok && j.error==='OTURUM_YOK' && body.islem!=='giris') cikis('Oturumun kapanmış, tekrar gir.');
   if (!j.ok) throw new Error(j.error||j.message||'Hata');
   return j;
 }
@@ -228,8 +280,9 @@ async function yukle(zorla){
   const bb = b<=bugun()? b : bugun(), ee = e>=gunEkle(bugun(),1)? e : gunEkle(bugun(),1);
   if (!zorla && S.aralik===bb+'_'+ee) { ciz(); return; }
   try{
-    const j = await api({islem:'liste', bas:bb, bit:ee, pin:S.pin});
-    S.olaylar=j.olaylar; S.aralik=bb+'_'+ee; S.brokerSunucu=j.broker;
+    const j = await api({islem:'liste', bas:bb, bit:ee});
+    if (S.oturum && !j.ad){ cikis('Oturumun kapanmış, tekrar gir.'); return; }
+    S.olaylar=j.olaylar; S.aralik=bb+'_'+ee; S.broker=!!j.broker; if(j.ad) S.ad=j.ad; benFoto();
     ciz();
   }catch(err){ $('icerik').innerHTML=`<div class="bos">Takvim yüklenemedi: ${esc(err.message)}<br><br><button class="btn" onclick="yukle(true)">Tekrar dene</button></div>`; }
 }
@@ -286,7 +339,7 @@ function gunListesi(g, liste){
 }
 function listeCiz(benim){
   const ben=benAd();
-  if (benim && !ben){ $('icerik').innerHTML='<div class="bos">Kendi takvimini görmek için sol üstteki fotoğrafa dokunup adını seç.</div>'; return; }
+  if (benim && !ben){ $('icerik').innerHTML='<div class="bos">Kendi takvimini görmek için giriş yap.</div>'; return; }
   const olay=S.olaylar.filter(o=>o.tarih>=bugun() && (benim ? benimMi(o,ben) && o.tur!=='tatil' : true));
   if (!olay.length){ $('icerik').innerHTML='<div class="bos">Önümüzdeki 90 günde etkinlik yok.</div>'; return; }
   let h='', son='';
@@ -348,7 +401,7 @@ function detay(id, tarih){
   $('sayfa').querySelectorAll('[data-y]').forEach(b=>b.onclick=async()=>{
     const yeni = y[ben]===b.dataset.y ? '' : b.dataset.y;
     $('dDurum').textContent='Kaydediliyor…';
-    try{ await api({islem:'yanit',id:o.id,tarih:o.tarih,ad:ben,yanit:yeni});
+    try{ await api({islem:'yanit',id:o.id,tarih:o.tarih,yanit:yeni});
       S.olaylar.filter(x=>x.id===o.id && (o.tekrar? x.tarih===o.tarih : true)).forEach(x=>{ x.yanitlar=Object.assign({},x.yanitlar); if(yeni) x.yanitlar[ben]=yeni; else delete x.yanitlar[ben]; });
       detay(o.id,o.tarih); ciz(); }catch(e){ $('dDurum').textContent='Hata: '+e.message; }
   });
@@ -359,7 +412,7 @@ function detay(id, tarih){
 async function sil(o, gun){
   if (!confirm(gun?'Yalnız bu günkü tekrar silinsin mi?':'"'+o.baslik+'" silinsin mi?')) return;
   $('dDurum').textContent='Siliniyor…';
-  try{ await api({islem:'sil',pin:S.pin,id:o.id,tarih:gun?o.tarih:''}); kapat(); await yukle(true); }
+  try{ await api({islem:'sil',id:o.id,tarih:gun?o.tarih:''}); kapat(); await yukle(true); }
   catch(e){ $('dDurum').textContent='Hata: '+e.message; }
 }
 
@@ -404,7 +457,7 @@ function form(o){
     if (!ev.tarih){ $('fDurum').textContent='Tarih seç.'; return; }
     if (ev.meet && !/^https:\/\//.test(ev.meet)){ $('fDurum').textContent='Bağlantı https:// ile başlamalı.'; return; }
     $('fKaydet').disabled=true; $('fDurum').textContent='Kaydediliyor…';
-    try{ const j=await api({islem:'kaydet',pin:S.pin,ev}); S.secili=ev.tarih; const d=gunAl(ev.tarih);
+    try{ const j=await api({islem:'kaydet',ev}); S.secili=ev.tarih; const d=gunAl(ev.tarih);
       S.ay=new Date(d.getFullYear(),d.getMonth(),1); kapat(); await yukle(true); detay(j.sonuc.id, ev.tarih); }
     catch(e){ $('fDurum').textContent='Hata: '+e.message; $('fKaydet').disabled=false; }
   };
@@ -417,15 +470,14 @@ $('sonra').onclick=()=>{ S.ay=new Date(S.ay.getFullYear(),S.ay.getMonth()+1,1); 
 $('ayAdi').onclick=()=>{ if(S.gorunum!=='ay') return;  const d=new Date(); S.ay=new Date(d.getFullYear(),d.getMonth(),1); S.secili=bugun(); yukle(); };
 $('ekleBtn').onclick=()=>form(null);
 
+// bildirimden gelindiyse: #id/tarih
+const HASH=location.hash.match(/^#([\w-]+)\/(\d{4}-\d\d-\d\d)$/);
+if (HASH){ const d=gunAl(HASH[2]); S.ay=new Date(d.getFullYear(),d.getMonth(),1); S.secili=HASH[2]; S.gorunum='ay'; }
+function hashAc(){ if (HASH && S.olaylar.length) detay(HASH[1], HASH[2]); }
 (async function basla(){
-  benDoldur();
-  const pin = window.brokerPinAl ? brokerPinAl() : '';
-  if (pin && window.brokerDogrula && await brokerDogrula(pin)) { S.broker=true; S.pin=pin; benFoto(); }
-  // bildirimden gelindiyse: #id/tarih
-  const m=location.hash.match(/^#([\w-]+)\/(\d{4}-\d\d-\d\d)$/);
-  if (m){ const d=gunAl(m[2]); S.ay=new Date(d.getFullYear(),d.getMonth(),1); S.secili=m[2]; S.gorunum='ay'; }
-  await yukle(true);
-  if (m) detay(m[1], m[2]);
+  if (!S.oturum){ girisGoster(); return; }
+  $('ana').hidden=false; benFoto();
+  await yukle(true); hashAc();
 })();
 </script>
 <script src="assets/bildirim.js"></script>
