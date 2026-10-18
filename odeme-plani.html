@@ -6,12 +6,9 @@
 <meta name="robots" content="noindex">
 <title>Ödeme Planı · RE/MAX Doğuş</title>
 <!-- Kıbrıs kataloğundaki (portal + kibris-sunum) hesaplayıcının hazırladığı müşteri ödeme planı. Veri adresin #d= kısmında (base64 JSON), plan-arac.js üretir. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 :root{--navy:#050A30;--red:#DC1C2E;--blue:#1E5BB8;--sand:#F4EFE7;--sand2:#E9E1D4;--ink:#0E1330;--ink2:#4A5070;
-  --fd:"Instrument Serif","PT Serif",Georgia,serif;--fb:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+  --fd:Arial,"Helvetica Neue",Helvetica,"Liberation Sans",sans-serif;--fb:Arial,"Helvetica Neue",Helvetica,"Liberation Sans",sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#d9d4ca;color:var(--ink);font:400 14px/1.45 var(--fb);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 button,input{font:inherit;color:inherit}
@@ -24,10 +21,10 @@ button,input{font:inherit;color:inherit}
 .bar .wa{background:#25D366;color:#fff}.bar .ml{background:var(--red);color:#fff}.bar .kp{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
 .bar .dur{font-size:13px;opacity:.85;width:100%;display:none}.bar .dur.on{display:block}
 .wrap{padding:22px 12px 40px}
-.sheet{width:794px;max-width:100%;margin:0 auto;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.18);border-radius:6px;overflow:hidden}
+.sheet{width:794px;max-width:100%;margin:0 auto;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.18);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}.sheet>.bd{flex:1 0 auto}
 .hd{display:flex;align-items:center;gap:16px;padding:20px 36px 14px;border-bottom:3px solid var(--navy)}
 .hd .lg{height:42px}.hd .vl{width:2px;align-self:stretch;margin:2px 4px;background:var(--navy);opacity:.85}
-.hd .ti h1{font:400 36px/1 var(--fd);color:var(--navy)}.hd .ti div{font-size:12px;color:var(--ink2);margin-top:5px}
+.hd .ti h1{font:700 30px/1 var(--fd);letter-spacing:-.3px;color:var(--navy)}.hd .ti div{font-size:12px;color:var(--ink2);margin-top:5px}
 .hd .dn{display:flex;align-items:center;gap:12px;text-align:left}.hd .mk{display:flex;align-items:center;gap:16px}.hd .dn+.mk{margin-left:auto}
 .hd .dn img{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid var(--sand2)}
 .hd .dn small{display:block;font:700 9.5px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:4px}
@@ -36,7 +33,7 @@ button,input{font:inherit;color:inherit}
 .cv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,10,48,.82),rgba(5,10,48,.05) 70%)}
 .cv .t{position:absolute;left:36px;right:36px;bottom:16px;z-index:1;color:#fff}
 .cv .k{font:700 11.5px/1 var(--fb);letter-spacing:2.5px;text-transform:uppercase;opacity:.9}
-.cv h2{font:400 42px/1 var(--fd);margin-top:6px}
+.cv h2{font:700 34px/1.05 var(--fd);letter-spacing:-.3px;margin-top:6px}
 .bd{padding:16px 36px 18px}
 .kim{font-size:13px;color:var(--ink2);margin-bottom:12px}.kim b{color:var(--ink)}
 .kim small{display:block;font:700 10px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
@@ -44,32 +41,33 @@ button,input{font:inherit;color:inherit}
 .box{background:var(--sand);border-radius:14px;padding:11px 16px}
 .box small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
 .box .v{font-size:15px;font-weight:600}.box .v span{display:block;font-weight:400;font-size:12.5px;color:var(--ink2);margin-top:3px}
-.box.fy{background:var(--navy);color:#fff}.box.fy small{color:rgba(255,255,255,.7)}.box.fy .v{font:400 34px/1 var(--fd)}
+.box.fy{background:var(--navy);color:#fff}.box.fy small{color:rgba(255,255,255,.7)}.box.fy .v{font:700 30px/1 var(--fd)}
 h3{font:700 11.5px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin:16px 0 4px;display:flex;align-items:center;gap:10px}
 h3::after{content:"";flex:1;height:1px;background:var(--sand2)}
 table{width:100%;border-collapse:collapse}
 td{padding:5px 4px;border-bottom:1px solid #efe9de;vertical-align:baseline;line-height:1.25}
-td.a{text-align:right;white-space:nowrap;font:400 19px/1 var(--fd);color:var(--navy)}
+td.a{text-align:right;white-space:nowrap;font:400 16px/1 var(--fd);color:var(--navy)}
 td small{display:inline;font-size:11.5px;color:var(--ink2);margin-left:8px}
 tr.on td.a{color:var(--red)}
 tr.tt td{border-bottom:0;border-top:2px solid var(--navy);font-weight:700;padding-top:8px}
-tr.tt td.a{font-size:23px}
+tr.tt td.a{font-size:19px;font-weight:700}
 .gt{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:var(--sand);border-radius:14px;padding:11px 18px;border-left:5px solid var(--red)}
 .gt small{display:block;font:700 10.5px/1 var(--fb);letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
 .gt span{font-size:12px;color:var(--ink2)}
-.gt b{font:400 32px/1 var(--fd);color:var(--navy);white-space:nowrap}
+.gt b{font:700 26px/1 var(--fd);color:var(--navy);white-space:nowrap}
 .nt{margin-top:12px;font-size:11.5px;line-height:1.5;color:var(--ink2)}
 .ft{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:14px 36px;background:var(--navy);color:#fff;font-size:12px}
 .ft b{font-weight:700;letter-spacing:.4px}.ft a{color:#fff;text-decoration:none}
 .yok{max-width:520px;margin:80px auto;background:#fff;border-radius:16px;padding:28px;text-align:center}
+@media (min-width:701px){.sheet{min-height:1123px}}
 @media (max-width:700px){
   td small{display:block;margin:2px 0 0}
   .bar input{width:calc(50% - 4px)}.bar .sp{display:none}.bar button{flex:1 1 auto;justify-content:center}
   .wrap{padding:0 0 30px}.sheet{border-radius:0}
-  .hd{padding:16px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .ti h1{font-size:28px}.hd .dn{width:100%;padding-bottom:10px;border-bottom:1px solid var(--sand2)}.hd .dn+.mk{margin-left:0}
-  .cv{height:150px}.cv .t{left:18px;right:18px}.cv h2{font-size:34px}
-  .bd{padding:18px 18px 22px}.top{grid-template-columns:1fr}.box.fy .v{font-size:32px}
-  td.a{font-size:18px}.gt b{font-size:26px}.ft{padding:12px 18px}
+  .hd{padding:16px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .ti h1{font-size:26px}.hd .dn{width:100%;padding-bottom:10px;border-bottom:1px solid var(--sand2)}.hd .dn+.mk{margin-left:0}
+  .cv{height:150px}.cv .t{left:18px;right:18px}.cv h2{font-size:28px}
+  .bd{padding:18px 18px 22px}.top{grid-template-columns:1fr}.box.fy .v{font-size:28px}
+  td.a{font-size:15px}.gt b{font-size:22px}.ft{padding:12px 18px}
 }
 @page{size:A4;margin:0}
 @media print{
@@ -77,10 +75,8 @@ tr.tt td.a{font-size:23px}
   .sheet{width:210mm;max-width:none;box-shadow:none;border-radius:0;margin:0}
   .hd{padding:10mm 14mm 4mm}.cv{height:38mm}.cv .t{left:14mm;right:14mm}.bd{padding:5mm 14mm 4mm}.ft{padding:5mm 14mm}
   tr,.gt,.box{break-inside:avoid}
-  /* beyaz kâğıt, az mürekkep: koyu zeminler çerçeveye döner; logo, fotoğraf ve kırmızı vurgular kalır */
-  .box.fy{background:#fff;color:var(--navy);border:2px solid var(--navy)}.box.fy small{color:var(--ink2)}
-  .gt{background:#fff;border:1px solid var(--sand2);border-left:5px solid var(--red)}
-  .ft{background:#fff;color:var(--navy);border-top:2px solid var(--navy)}.ft a{color:var(--navy)}
+  /* baskı PDF önizlemesiyle aynı; alt şerit sayfanın en altında */
+  .sheet{min-height:296mm}
 }
 </style>
 </head>
@@ -169,7 +165,7 @@ tr.tt td.a{font-size:23px}
   function dosyaAdi(){return ('Odeme-Plani-'+(D.p||'')+'-'+($('iMus').value.trim()||'')).replace(/[^\wğüşöçıİĞÜŞÖÇ-]+/g,'-').replace(/-+$/,'')+'.pdf';}
   // sayfanın ortalı görünümü PDF'i kaydırmasın diye A4 genişliğinde bir kopya üzerinden çizilir
   function pdf(){if(!window.html2pdf)throw 'yok';
-    var k=$('sheet').cloneNode(true);k.removeAttribute('id');k.style.cssText='width:794px;max-width:none;margin:0;border-radius:0;box-shadow:none';
+    var k=$('sheet').cloneNode(true);k.removeAttribute('id');k.style.cssText='width:794px;max-width:none;min-height:1120px;margin:0;border-radius:0;box-shadow:none';
     var w=html2pdf().set({margin:0,filename:dosyaAdi(),image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,windowWidth:Math.max(innerWidth,800)},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(k);
     return w;}
   function yazdir(){try{window.focus();window.print();}catch(e){window.open(link(),'_blank');}}
