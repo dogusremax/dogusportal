@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Bildirim Gönder · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1}
+  main{max-width:680px;margin:0 auto;padding:18px 16px 60px;display:flex;flex-direction:column;gap:16px}
+  .kutu{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+  .kutu h2{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  input[type=text],textarea{width:100%;font:500 15px/1.5 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;outline:none}
+  textarea{min-height:110px;resize:vertical}
+  input[type=text]:focus,textarea:focus{border-color:#FB5160}
+  label.et{display:block;font-size:13px;color:rgba(255,255,255,.7);margin:12px 0 6px}
+  label.et:first-of-type{margin-top:0}
+  .say{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;text-align:right}
+  .say.asim{color:#ff8a95}
+  .kisiler{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+  .kisi{display:flex;align-items:center;gap:8px;background:#161c44;border-radius:10px;padding:9px 11px;font-size:14px;cursor:pointer}
+  .kisi input{width:17px;height:17px;accent-color:#DC1C2E}
+  .kisi.yok{opacity:.45}
+  .kisi .s{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);white-space:nowrap}
+  .hizli{display:flex;gap:8px;margin-bottom:10px}
+  button{font:700 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45;cursor:default}
+  button.ghost{background:rgba(255,255,255,.1);font-size:12px;padding:7px 12px}
+  .ipucu{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.5}
+  .alt{display:flex;gap:10px}
+  .alt .go{flex:1;padding:14px}
+  .durum{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5}
+  .durum.hata{color:#ff8a95}
+  /* Kilit ekranı önizlemesi */
+  .kilit{background:linear-gradient(160deg,#2b3a67,#0b1230);border-radius:14px;padding:18px 12px}
+  .bld{background:rgba(245,245,245,.88);color:#111;border-radius:18px;padding:12px 13px;display:flex;gap:10px;font-family:-apple-system,Helvetica,Arial,sans-serif}
+  .bld img{width:36px;height:36px;border-radius:8px;flex:none}
+  .bld .b{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+  .bld .b b{word-break:break-word}
+  .bld .b span{color:#777;font-size:13px}
+  .bld .m{font-size:15px;color:#222;margin-top:2px;white-space:pre-wrap;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
+  #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
+</style>
+<script src="assets/broker.js"></script>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Bildirim Gönder · Telefon</h1></div>
+
+<div id="giris">
+  <p class="durum">Broker PIN'i</p>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button id="girBtn">Giriş</button>
+  <p id="girisHata" class="durum hata"></p>
+</div>
+
+<main id="ana" hidden>
+  <div class="kutu">
+    <h2>Bildirim</h2>
+    <label class="et" for="baslik">Başlık</label>
+    <input id="baslik" type="text" maxlength="60" placeholder="Örn: Yarın 10:00 ofis toplantısı" autocomplete="off">
+    <div id="sayB" class="say">0 / 60</div>
+    <label class="et" for="metin">Metin</label>
+    <textarea id="metin" maxlength="300" placeholder="Örn: Herkesin katılımını rica ederim, gündem: yeni projeler."></textarea>
+    <div id="sayM" class="say">0 / 300</div>
+    <p class="ipucu">Bildirimde kalın/italik yoktur, düz yazı gider. Kilit ekranında metnin ilk 3-4 satırı görünür. Bildirime dokununca portal açılır.</p>
+  </div>
+
+  <div class="kutu">
+    <h2>Kimlere</h2>
+    <div class="hizli"><button class="ghost" id="hepsi">Hepsini seç</button><button class="ghost" id="hicbiri">Temizle</button></div>
+    <div id="kisiler" class="kisiler"></div>
+    <p class="ipucu">Bildirim yalnız portalda <b>Bildirimler</b> kartından bildirimi açmış kişilere gider. "Kapalı" yazanların telefonuna gitmez.</p>
+  </div>
+
+  <div class="kutu">
+    <h2>Telefonda görünüşü</h2>
+    <div class="kilit">
+      <div class="bld"><img src="assets/app-ikon-192.png" alt="">
+        <div style="flex:1;min-width:0"><div class="b"><b id="onB">Başlık</b><span>şimdi</span></div><div class="m" id="onM"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alt"><button id="goBtn" class="go">Gönder</button></div>
+  <p id="durum" class="durum"></p>
+</main>
+
+<script>
+// dogus-whatsapp-service · Bildirim.js (action=bildirimGonder). Hiçbir şey otomatik gitmez; yalnız "Gönder"e basınca.
+const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+let PIN = '', KISILER = [], SONUC = {}, ID = '';
+
+async function servis(veri, sure) {
+  const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
+  try {
+    const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ac.signal,
+      body: JSON.stringify(Object.assign({ action: 'bildirimGonder', pin: PIN }, veri)) });
+    return JSON.parse(await r.text());
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'Sunucu yanıt vermedi, tekrar dene.' : e.message);
+  } finally { clearTimeout(z); }
+}
+
+async function giris(p) {
+  PIN = String(p || '').trim(); $('girisHata').textContent = 'Kontrol ediliyor…'; $('girBtn').disabled = true;
+  try {
+    const j = await servis({ islem: 'liste' }, 60000);
+    if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
+    KISILER = j.kisiler || [];
+    KISILER.forEach(k => { k.sec = k.cihaz > 0; });
+    $('giris').hidden = true; $('ana').hidden = false;
+    if (!j.anahtarVar) durum('Gönderme anahtarı yüklü değil, bildirim gitmez.', true);
+    ciz(); onizle();
+  } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
+  finally { $('girBtn').disabled = false; }
+}
+
+function ciz() {
+  $('kisiler').innerHTML = KISILER.map((k, i) => {
+    const s = SONUC[k.ad];
+    const isaret = s !== undefined
+      ? (s > 0 ? `<span class="s" style="color:#6ee7a0">gitti (${s} cihaz)</span>` : '<span class="s" style="color:#ff8a95">gitmedi</span>')
+      : `<span class="s">${k.cihaz ? k.cihaz + ' cihaz' : 'kapalı'}</span>`;
+    return `<label class="kisi${k.cihaz ? '' : ' yok'}"><input type="checkbox" data-i="${i}" ${k.sec ? 'checked' : ''}>${k.ad}${isaret}</label>`;
+  }).join('');
+  $('kisiler').querySelectorAll('input').forEach(c => c.onchange = () => { KISILER[c.dataset.i].sec = c.checked; });
+}
+
+function onizle() {
+  const b = $('baslik').value, m = $('metin').value;
+  $('onB').textContent = b.trim() || 'Başlık';
+  $('onM').textContent = m.trim();
+  $('sayB').textContent = b.length + ' / 60';
+  $('sayM').textContent = m.length + ' / 300';
+  ID = '';   // metin değişti: yeni gönderim sayılır
+}
+
+function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
+
+$('baslik').oninput = onizle;
+$('metin').oninput = onizle;
+$('hepsi').onclick = () => { KISILER.forEach(k => k.sec = true); ciz(); };
+$('hicbiri').onclick = () => { KISILER.forEach(k => k.sec = false); ciz(); };
+
+$('goBtn').onclick = async () => {
+  const baslik = $('baslik').value.trim(), metin = $('metin').value.trim();
+  const kimler = KISILER.filter(k => k.sec).map(k => k.ad);
+  if (!baslik) { durum('Başlık yaz.', true); return; }
+  if (!kimler.length) { durum('Kimseyi seçmedin.', true); return; }
+  const acik = KISILER.filter(k => k.sec && k.cihaz > 0).length;
+  if (!confirm(`${kimler.length} kişiye bildirim gönderilsin mi?` + (acik < kimler.length ? `\n(${kimler.length - acik} kişide bildirim kapalı, onlara gitmez.)` : ''))) return;
+  if (!ID) ID = 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  $('goBtn').disabled = true; durum('Gönderiliyor…');
+  try {
+    const j = await servis({ islem: 'gonder', id: ID, baslik, metin, kimler });
+    if (!j.ok) { durum(j.error || 'Gönderilemedi.', true); return; }
+    SONUC = {}; let toplam = 0, kisi = 0;
+    (j.sonuclar || []).forEach(s => { SONUC[s.ad] = s.cihaz; toplam += s.cihaz; if (s.cihaz) kisi++; });
+    ciz();
+    durum(kisi ? `Gönderildi: ${kisi} kişi, ${toplam} cihaz.` : 'Seçilenlerin hiçbirinde bildirim açık değil, kimseye gitmedi.', !kisi);
+  } catch (e) { durum('Hata: ' + e.message, true); }
+  finally { $('goBtn').disabled = false; }
+};
+
+$('girBtn').onclick = () => giris($('pin').value);
+$('pin').onkeydown = e => { if (e.key === 'Enter') giris($('pin').value); };
+const kayitli = window.brokerPinAl && brokerPinAl();
+if (kayitli) { $('pin').value = kayitli; giris(kayitli); }
+</script>
+</body>
+</html>
