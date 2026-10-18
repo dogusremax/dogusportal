@@ -284,6 +284,8 @@ const anahtar = a => String(a||'').toLocaleLowerCase('tr').split(/\s+/)[0];
 let S = { gorunum: ls('ot_gorunum')||'ay', ay: (()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1);})(),
           secili: bugun(), olaylar: [], kapsam: null, broker: false,
           oturum: ls('posta_oturum'), kim: ls('posta_kim'), ad: '' };
+// ?ay=YYYY-MM: nöbet maili linki o ayın görünümünü açar
+(()=>{ const q=new URLSearchParams(location.search).get('ay'); if(q && /^\d{4}-\d{2}$/.test(q)){ S.ay=new Date(+q.slice(0,4),+q.slice(5,7)-1,1); S.gorunum='ay'; } })();
 
 /* ---- kim: Doğuş Posta ile aynı oturum (posta_oturum); bir kez girilir ---- */
 const kisi = id => (window.IMZA_KISILER||[]).find(x=>x.id===id);
