@@ -26,6 +26,11 @@
   /* Giriş ve kurulum */
   #giris,#kurulum{max-width:380px;margin:70px auto;display:flex;flex-direction:column;gap:12px;padding:0 16px;text-align:center}
   #giris img,#kurulum img{height:38px;margin:0 auto 6px}
+  #giris{max-width:460px}
+  .kimler{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .kimler button{display:flex;align-items:center;gap:7px;background:#161c44;border:2px solid transparent;border-radius:30px;padding:3px 12px 3px 3px;font-size:12px;font-weight:600}
+  .kimler button img{width:30px;height:30px;border-radius:50%}
+  .kimler button.on{border-color:var(--red);background:#1d2557}
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px}
   #kurulum{text-align:left}
   #kurulum label{font-size:12px;font-weight:700;color:var(--soluk);text-transform:uppercase;letter-spacing:.4px;margin-bottom:-6px}
@@ -162,18 +167,20 @@
     #yazPen,#ayarPen{padding:0}
     .pen{border-radius:0;height:100%;width:100%}
     .alan span{width:48px}
-    .okuma .ust{gap:4px;flex-wrap:nowrap;overflow-x:auto}
+    .okuma .ust{gap:4px;flex-wrap:wrap}
     .okuma .ust button{padding:7px 10px;font-size:12px;white-space:nowrap;flex:none}
   }
 </style>
 <script src="assets/broker.js"></script>
-<script src="assets/imza.js"></script>
+<script src="assets/imza.js?v=2"></script>
 </head>
 <body>
 
 <div id="giris" hidden>
   <img src="assets/dogus-logo.png" alt="">
-  <p class="durum">Doğuş Posta · PIN</p>
+  <p class="durum">Doğuş Posta</p>
+  <div class="kimler" id="kimler"></div>
+  <p class="durum" id="pinEtiket">PIN'in</p>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
   <button id="girBtn">Giriş</button>
   <p id="girisHata" class="durum hata"></p>
@@ -184,11 +191,11 @@
   <h1>Posta hesabını bağla</h1>
   <p class="durum">Bir kez yapılır. Şifre yalnız bizim sunucuda saklanır, bu sayfaya bir daha gelmez.</p>
   <label>E-posta adresi</label>
-  <input id="kAdres" type="email" value="umut@remaxdogus.com.tr" autocomplete="username">
+  <input id="kAdres" type="email" placeholder="ad@remaxdogus.com.tr" autocomplete="username">
   <label>Şifre</label>
   <input id="kSifre" type="password" autocomplete="current-password" placeholder="Webmail şifren">
   <label>Gönderen adı</label>
-  <input id="kAd" type="text" value="Umut Tokkuş">
+  <input id="kAd" type="text">
   <button id="kBtn">Bağlan</button>
   <p id="kDurum" class="durum"></p>
 </div>
@@ -205,6 +212,7 @@
     <div class="alt">
       <button class="klasor" onclick="ayarAc()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>İmza ve ayarlar</button>
       <div class="hesap" id="hesap"></div>
+      <button class="klasor" onclick="if(confirm('Bu cihazda Doğuş Posta\'dan çıkılsın mı?'))cikis('',true)">⎋ Çıkış</button>
     </div>
   </aside>
 
@@ -290,6 +298,7 @@
         <input id="aSifre" type="password" placeholder="Yeni şifre (şifreyi değiştirdiysen)" style="flex:1;min-width:200px" autocomplete="new-password">
         <button class="ghost" onclick="sifreGuncelle()">Şifreyi güncelle</button>
       </div>
+      <button class="ghost" style="margin-top:14px;align-self:flex-start" onclick="if(confirm('Bu cihazda Doğuş Posta\'dan çıkılsın mı? Tekrar girerken PIN sorulur.'))cikis('',true)">⎋ Çıkış yap</button>
     </div>
   </div>
 </div>
@@ -300,19 +309,23 @@ const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6d
 const $ = id => document.getElementById(id);
 const depo = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
 const kac = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-let PIN = '', HESAP = {}, KLASOR = 'gelen', MESAJLAR = [], SECILI = null, ACIK = null, YAZ = null, EKLER = [], SONKONTROL = 0, ILK = true;
+let HESAP = {}, KLASOR = 'gelen', MESAJLAR = [], SECILI = null, ACIK = null, YAZ = null, EKLER = [], SONKONTROL = 0, ILK = true;
 // Hız: klasör listeleri bu cihazda önbellekte (anında görünür, arkada tazelenir); açılan postalar bellekte
-let ONBELLEK = {}; try { ONBELLEK = JSON.parse(depo('posta_onbellek') || '{}') || {}; } catch (e) { ONBELLEK = {}; }
+let ONBELLEK = {}, OTURUM = depo('posta_oturum') || '', KIM = depo('posta_kim') || '';
+function onbellekOku() { try { ONBELLEK = JSON.parse(depo('posta_onbellek_' + KIM) || '{}') || {}; } catch (e) { ONBELLEK = {}; } }
+onbellekOku(); depo('posta_onbellek', null);
 const MSJ = new Map();
-function onbellekYaz() { try { depo('posta_onbellek', JSON.stringify(ONBELLEK)); } catch (e) {} }
+function onbellekYaz() { try { depo('posta_onbellek_' + KIM, JSON.stringify(ONBELLEK)); } catch (e) {} }
 function msjSakla(m) { MSJ.set(m.id, m); if (MSJ.size > 60) MSJ.delete(MSJ.keys().next().value); }
 
 async function servis(veri, sure) {
   const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
   try {
     const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ac.signal,
-      body: JSON.stringify(Object.assign({ action: 'eposta', pin: PIN }, veri)) });
-    return JSON.parse(await r.text());
+      body: JSON.stringify(Object.assign({ action: 'eposta', oturum: OTURUM }, veri)) });
+    const j = JSON.parse(await r.text());
+    if (j && j.error === 'OTURUM_YOK' && veri.islem !== 'giris') { cikis('Oturum süresi doldu, tekrar giriş yap.'); }
+    return j;
   } catch (e) {
     throw new Error(e.name === 'AbortError' ? 'Sunucu yanıt vermedi, tekrar dene.' : e.message);
   } finally { clearTimeout(z); }
@@ -324,17 +337,36 @@ function bildir(m, sure) {
 }
 
 // ── Giriş ────────────────────────────────────────────────
-async function giris(p) {
-  PIN = p; $('girisHata').textContent = 'Kontrol ediliyor…'; $('girBtn').disabled = true;
+// Kim giriyor: fotoğraflı kişi listesi (assets/imza.js), son seçilen hatırlanır
+let SECILEN_KIM = KIM || depo('posta_son_kim') || 'umut';
+function kimlerCiz() {
+  $('kimler').innerHTML = IMZA_KISILER.map(k => '<button class="' + (k.id === SECILEN_KIM ? 'on' : '') + '" data-id="' + k.id + '"><img src="assets/imza/' + k.id + '.png" alt="">' + k.ad.split(' ')[0] + '</button>').join('');
+  $('kimler').querySelectorAll('button').forEach(b => b.onclick = () => { SECILEN_KIM = b.dataset.id; depo('posta_son_kim', SECILEN_KIM); kimlerCiz(); $('pin').focus(); });
+  const k = IMZA_KISILER.find(x => x.id === SECILEN_KIM);
+  $('pinEtiket').textContent = k ? k.ad + ' · ' + (k.unvan === 'Broker' ? 'broker PIN\'in' : 'Danışman Takip PIN\'in') : 'PIN\'in';
+}
+kimlerCiz();
+
+function oturumAc(j) {
+  OTURUM = j.oturum; KIM = j.kim; depo('posta_oturum', OTURUM); depo('posta_kim', KIM); depo('posta_pin', null);
+  HESAP = j; hesapSakla(); onbellekOku();
+  $('giris').hidden = true;
+  if (!j.kurulu) { kurulumAc(); return; }
+  anaAc();
+}
+function kurulumAc() {
+  $('ana').hidden = true; $('kurulum').hidden = false;
+  $('kAdres').value = HESAP.adres || ''; $('kAd').value = HESAP.ad || '';
+  ($('kAdres').value ? $('kSifre') : $('kAdres')).focus();
+}
+async function giris(p, kim) {
+  $('girisHata').textContent = 'Kontrol ediliyor…'; $('girBtn').disabled = true;
   const yavas = setTimeout(() => { $('girisHata').textContent = 'Kontrol ediliyor… sunucu bazen 20-30 sn sürebiliyor.'; }, 5000);
   try {
-    const j = await servis({ islem: 'durum' }, 60000);
-    if (!j.ok) { depo('posta_pin', null); $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
-    depo('posta_pin', p); HESAP = j; hesapSakla();
-    $('giris').hidden = true;
-    if (!j.kurulu) { $('kurulum').hidden = false; $('kAdres').value = j.adres || 'umut@remaxdogus.com.tr'; $('kAd').value = j.ad || 'Umut Tokkuş'; $('kSifre').focus(); return; }
-    anaAc();
-  } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
+    const j = await servis({ islem: 'giris', kim: kim || SECILEN_KIM, pin: p }, 60000);
+    if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; $('pin').value = ''; return false; }
+    $('girisHata').textContent = ''; oturumAc(j); return true;
+  } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; return false; }
   finally { clearTimeout(yavas); $('girBtn').disabled = false; }
 }
 $('girBtn').onclick = () => giris($('pin').value.trim());
@@ -356,8 +388,10 @@ function anaAc() {
   imzaGecir();
   if (ONBELLEK.gelen) { MESAJLAR = Object.assign(ONBELLEK.gelen.mesajlar.slice(), { dahaVar: ONBELLEK.gelen.dahaVar }); sayilar(ONBELLEK.sayilar); ciz(); }
   hepsiYukle();
-  setInterval(() => { if (!document.hidden) listeYukle(false, true); }, 60000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - SONKONTROL > 20000) listeYukle(false, true); });
+  if (!window.YOKLAMA) {   // yeni posta: sayfa açıkken 30 sn'de bir, sekmeye dönünce hemen
+    window.YOKLAMA = setInterval(() => { if (!document.hidden && OTURUM) listeYukle(false, true); }, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && OTURUM && Date.now() - SONKONTROL > 10000) listeYukle(false, true); });
+  }
 }
 
 // ── Liste ────────────────────────────────────────────────
@@ -779,12 +813,12 @@ document.querySelectorAll('.arac[data-ed]').forEach(aracKur);
 }));
 
 // ── Yazma ────────────────────────────────────────────────
-function imzaHtml() { return HESAP.imza ? '<div class="imzaKutu" data-imza="1">' + HESAP.imza + '</div>' : ''; }
+function imzaKutusu() { return HESAP.imza ? '<div class="imzaKutu" data-imza="1">' + HESAP.imza + '</div>' : ''; }
 function imzaGuncelle() {
   const ed = $('yEditor'), var_ = ed.querySelector('[data-imza]');
   if ($('imzaVar').checked && !var_ && HESAP.imza) {
     const q = ed.querySelector('blockquote[data-alinti]');
-    const d = document.createElement('div'); d.innerHTML = imzaHtml();
+    const d = document.createElement('div'); d.innerHTML = imzaKutusu();
     q ? ed.insertBefore(d.firstChild, q.previousSibling || q) : ed.appendChild(d.firstChild);
   } else if (!$('imzaVar').checked && var_) var_.remove();
 }
@@ -797,7 +831,7 @@ function yazAc(baslik, alanlar, govde) {
   $('yKonu').value = alanlar.konu || '';
   $('imzaVar').checked = !!HESAP.imza; $('imzaVar').parentNode.hidden = !HESAP.imza;
   const font = depo('posta_font') || 'Arial';
-  $('yEditor').innerHTML = '<div style="font-family:\'' + font + '\'"><br></div>' + ($('imzaVar').checked ? '<br>' + imzaHtml() : '') + (govde || '');
+  $('yEditor').innerHTML = '<div style="font-family:\'' + font + '\'"><br></div>' + ($('imzaVar').checked ? '<br>' + imzaKutusu() : '') + (govde || '');
   ekCiz(); $('yDurum').textContent = ''; $('yazPen').hidden = false;
   setTimeout(() => {
     const hedef = alanlar.kime ? $('yEditor') : $('yKime');
@@ -858,23 +892,35 @@ function govdeHazirla() {
 }
 
 async function gonder() {
-  const d = $('yDurum'); d.className = 'durum';
+  const d = $('yDurum'); d.className = 'durum'; d.textContent = '';
   if (!$('yKime').value.trim() && !$('yBilgi').value.trim() && !$('yGizli').value.trim()) { d.className = 'durum hata'; d.textContent = 'Alıcı yaz.'; $('yKime').focus(); return; }
   if (!$('yKonu').value.trim() && !confirm('Konu boş. Yine de gönderilsin mi?')) return;
-  $('gonderBtn').disabled = true; d.textContent = EKLER.some(e => !e.eski) ? 'Ekler yükleniyor ve gönderiliyor…' : 'Gönderiliyor…';
-  try {
-    const j = await servis({
-      islem: 'gonder', kime: $('yKime').value, bilgi: $('yBilgi').value, gizli: $('yGizli').value,
-      konu: $('yKonu').value.trim(), html: govdeHazirla(), duz: $('yEditor').innerText,
-      yanitId: YAZ && YAZ.id, yonlendir: YAZ && YAZ.yonlendir,
-      ekler: EKLER.filter(e => !e.eski).map(e => ({ ad: e.ad, tur: e.tur, veri: e.veri })),
-      eskiEkler: EKLER.filter(e => e.eski).map(e => ({ parca: e.parca }))
-    }, 180000);
-    if (!j.ok) { d.className = 'durum hata'; d.textContent = j.error; return; }
-    $('yazPen').hidden = true; bildir('Posta gönderildi ✓');
-    if (KLASOR === 'giden') listeYukle(true);
-  } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
-  finally { $('gonderBtn').disabled = false; }
+  // Pencere hemen kapanır, posta arka planda gider; hata olursa taslak geri açılır
+  const taslak = { baslik: $('yazBaslik').textContent, kime: $('yKime').value, bilgi: $('yBilgi').value, gizli: $('yGizli').value,
+    konu: $('yKonu').value, govde: $('yEditor').innerHTML, yaz: YAZ, ekler: EKLER.slice() };
+  const istek = {
+    islem: 'gonder', kime: taslak.kime, bilgi: taslak.bilgi, gizli: taslak.gizli,
+    konu: taslak.konu.trim(), html: govdeHazirla(), duz: $('yEditor').innerText,
+    yanitId: YAZ && YAZ.id, yonlendir: YAZ && YAZ.yonlendir,
+    ekler: EKLER.filter(e => !e.eski).map(e => ({ ad: e.ad, tur: e.tur, veri: e.veri })),
+    eskiEkler: EKLER.filter(e => e.eski).map(e => ({ parca: e.parca }))
+  };
+  $('yazPen').hidden = true;
+  const t = document.createElement('div'); t.className = 'bildirim'; document.body.appendChild(t);
+  t.textContent = istek.ekler.length ? 'Ekler yükleniyor, gönderiliyor…' : 'Gönderiliyor…';
+  let hata = '';
+  try { const j = await servis(istek, 180000); if (!j.ok) hata = j.error || 'Gönderilemedi'; }
+  catch (e) { hata = e.message; }
+  if (!hata) {
+    t.textContent = 'Gönderildi ✓'; setTimeout(() => t.remove(), 2500);
+    if (KLASOR === 'giden') listeYukle(false, true);
+    return;
+  }
+  t.remove();
+  if (!$('yazPen').hidden && !confirm('Posta gönderilemedi: ' + hata + '\nAçık olan yeni postanın yerine gönderilemeyen taslak geri açılsın mı?')) return;
+  $('yazBaslik').textContent = taslak.baslik; $('yKime').value = taslak.kime; $('yBilgi').value = taslak.bilgi; $('yGizli').value = taslak.gizli;
+  $('yKonu').value = taslak.konu; $('yEditor').innerHTML = taslak.govde; YAZ = taslak.yaz; EKLER = taslak.ekler; ekCiz();
+  $('yazPen').hidden = false; d.className = 'durum hata'; d.textContent = 'Gönderilemedi: ' + hata;
 }
 document.addEventListener('keydown', e => {
   if (!$('yazPen').hidden && (e.metaKey || e.ctrlKey) && e.key === 'Enter') gonder();
@@ -885,19 +931,19 @@ document.addEventListener('keydown', e => {
 function ayarAc() {
   $('ana').classList.remove('menu');
   $('aAd').value = HESAP.ad || ''; $('aImza').innerHTML = HESAP.imza || ''; $('aDurum').textContent = '';
-  $('aHesap').textContent = HESAP.adres + ' · Markum posta sunucusuna bağlı'; $('aSifre').value = '';
+  $('aHesap').textContent = (HESAP.ad || '') + ' · ' + HESAP.adres; $('aSifre').value = '';
   $('ayarPen').hidden = false;
 }
-// Umut'un istediği yeni imza formatına (18 Ekim) bir kez otomatik geçiş: imza yoksa ya da eski hazır imzaysa
+// Herkesin imzası ortak formata (18 Ekim) bir kez otomatik geçer: imza yoksa ya da eski hazır imzaysa
 function imzaGecir() {
   const i = HESAP.imza || '';
   if (i.includes('assets/imza/') || (i && !i.includes('dogus-logo-koyu.png'))) return;
-  servis({ islem: 'imza', ad: HESAP.ad || 'Umut Tokkuş', imza: imzaHtml('umut', HESAP.ad || 'Umut Tokkuş') })
+  servis({ islem: 'imza', ad: HESAP.ad, imza: imzaHtml(HESAP.kim || KIM, HESAP.ad) })
     .then(j => { if (j.ok) { HESAP = j; hesapSakla(); } }).catch(() => {});
 }
 function imzaHazir() {
   // assets/imza.js: Umut'un formatı (yuvarlak fotoğraf, Broker · RE/MAX Doğuş, telefon, site, adres, logo)
-  $('aImza').innerHTML = imzaHtml('umut', $('aAd').value.trim() || 'Umut Tokkuş');
+  $('aImza').innerHTML = imzaHtml(HESAP.kim || KIM, $('aAd').value.trim() || HESAP.ad);
 }
 async function imzaKaydet() {
   const d = $('aDurum'); d.className = 'durum'; d.textContent = 'Kaydediliyor…';
@@ -918,25 +964,33 @@ async function sifreGuncelle() {
   } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
 }
 
-function hesapSakla() { try { depo('posta_hesap', JSON.stringify({ kurulu: HESAP.kurulu, adres: HESAP.adres, ad: HESAP.ad, imza: HESAP.imza })); } catch (e) {} }
-function cikis(neden) {
-  depo('posta_pin', null); depo('posta_hesap', null);
-  $('ana').hidden = true; $('kurulum').hidden = true; $('giris').hidden = false;
-  $('girisHata').textContent = neden || ''; $('pin').value = ''; $('pin').focus();
+function hesapSakla() { try { depo('posta_hesap', JSON.stringify({ kim: HESAP.kim, kurulu: HESAP.kurulu, adres: HESAP.adres, ad: HESAP.ad, imza: HESAP.imza })); } catch (e) {} }
+function cikis(neden, sunucuya) {
+  if (sunucuya && OTURUM) servis({ islem: 'cikis' }).catch(() => {});
+  try { localStorage.removeItem('posta_onbellek_' + KIM); } catch (e) {}
+  depo('posta_oturum', null); depo('posta_kim', null); depo('posta_hesap', null); depo('posta_pin', null);
+  OTURUM = ''; KIM = ''; HESAP = {}; ONBELLEK = {}; MESAJLAR = []; MSJ.clear();
+  $('ana').hidden = true; $('kurulum').hidden = true; $('yazPen').hidden = true; $('ayarPen').hidden = true; $('giris').hidden = false;
+  $('girisHata').textContent = neden || ''; $('pin').value = ''; kimlerCiz(); $('pin').focus();
 }
 
-// Yenileyince PIN ekranı gelmesin: bu cihazda daha önce girildiyse posta hemen açılır, PIN arkada doğrulanır
-const kayitli = depo('posta_pin') || (window.brokerPinAl && brokerPinAl());
+// Yenileyince giriş ekranı gelmesin: bu cihazda oturum varsa posta hemen açılır, oturum arkada doğrulanır
 let hesapKayit = null; try { hesapKayit = JSON.parse(depo('posta_hesap') || 'null'); } catch (e) {}
-if (kayitli && hesapKayit && hesapKayit.kurulu) {
-  PIN = kayitli; HESAP = hesapKayit; $('giris').hidden = true; anaAc();
+if (OTURUM && hesapKayit && hesapKayit.kurulu) {
+  HESAP = hesapKayit; anaAc();
   servis({ islem: 'durum' }, 60000).then(j => {
-    if (!j.ok) { if (/PIN/i.test(j.error || '')) cikis(j.error); return; }
+    if (!j.ok) return;
     HESAP = j; hesapSakla();
-    if (!j.kurulu) { $('ana').hidden = true; $('kurulum').hidden = false; }
+    if (!j.kurulu) kurulumAc();
   }).catch(() => {});
-} else if (kayitli) { $('giris').hidden = false; giris(kayitli); }
-else { $('giris').hidden = false; $('pin').focus(); }
+} else if (OTURUM) {
+  servis({ islem: 'durum' }, 60000).then(j => { if (j.ok) { HESAP = j; hesapSakla(); j.kurulu ? anaAc() : kurulumAc(); } }).catch(() => { $('giris').hidden = false; });
+} else {
+  // İlk sürümden geçiş: bu cihazda Umut'un PIN'i kayıtlıysa sessizce oturuma çevir
+  const eski = depo('posta_pin') || (window.brokerPinAl && brokerPinAl());
+  if (eski) { giris(eski, 'umut').then(ok => { if (!ok) { $('giris').hidden = false; $('girisHata').textContent = ''; $('pin').focus(); } }); }
+  else { $('giris').hidden = false; $('pin').focus(); }
+}
 </script>
 </body>
 </html>
