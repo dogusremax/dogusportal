@@ -427,14 +427,14 @@ function bugunCiz(){
 // Nöbetçinin dekupe fotoğrafı kutunun sağ altında, yazıların arkasında (Umut 18 Eki); Ofis günlerinde yok
 const NOBET_FIG = {aysegul:1,aysun:1,evsen:1,gamze:1,gizem:1,irem:1,orhan:1,ozlem:1};
 // Nöbetçi resimleri baştan indirilsin, ızgarada sonradan belirmesin (Umut 18 Eki)
-Object.keys(NOBET_FIG).forEach(id=>{ const i=new Image(); i.src=`assets/ekip/${innerWidth<600?'nobet/omuz':'nobet'}/${id}.webp?v=4`; });
-function figUrl(ad){ const u=fotoUrl(ad), id=u && u.split('/').pop().replace('.webp',''); return id && NOBET_FIG[id] ? `assets/ekip/nobet/${id}.webp?v=4` : ''; }
+Object.keys(NOBET_FIG).forEach(id=>{ const i=new Image(); i.src=`assets/ekip/${innerWidth<600?'nobet/omuz':'nobet'}/${id}.webp?v=5`; });
+function figUrl(ad){ const u=fotoUrl(ad), id=u && u.split('/').pop().replace('.webp',''); return id && NOBET_FIG[id] ? `assets/ekip/nobet/${id}.webp?v=5` : ''; }
 function nobetFig(o){
   if (!o || o.tur!=='nobet' || o.nobetci==='Ofis') return '';
   const u=fotoUrl(o.nobetci), id=u && u.split('/').pop().replace('.webp','');
   // Telefonda diğer omuz kesik görsel: el görünür, kişi kutunun sağ kenarına yaslı (Umut 18 Eki)
   const yol=innerWidth<600?'nobet/omuz':'nobet';
-  return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/${yol}/${id}.webp?v=4" alt="">` : '';
+  return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/${yol}/${id}.webp?v=5" alt="">` : '';
 }
 // Telefonda ay ızgarası ekranın kalanını kaplar, kutular uzun (Umut 18 Eki, seçenek A)
 function izgaraBoyut(){
