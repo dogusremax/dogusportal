@@ -34,7 +34,7 @@
 
   /* Ana yerleşim */
   #ana{display:grid;grid-template-columns:210px 380px 1fr;height:100vh;height:100dvh}
-  .yan{border-right:1px solid var(--cizgi);display:flex;flex-direction:column;padding:14px 10px;gap:4px;overflow:auto}
+  .yan{border-right:1px solid var(--cizgi);display:flex;flex-direction:column;padding:14px 10px;gap:4px;overflow:auto;min-height:0;-webkit-overflow-scrolling:touch}
   .yan .logo{display:flex;align-items:center;gap:8px;padding:2px 8px 14px}
   .yan .logo img{height:26px}
   .yan .logo b{font-size:14px}
@@ -51,11 +51,12 @@
   .yan .alt{margin-top:auto;display:flex;flex-direction:column;gap:4px;padding-top:12px;border-top:1px solid var(--cizgi)}
   .yan .hesap{font-size:12px;color:var(--soluk);padding:6px 10px;word-break:break-all}
 
-  .liste{border-right:1px solid var(--cizgi);display:flex;flex-direction:column;min-width:0}
+  .liste{border-right:1px solid var(--cizgi);display:flex;flex-direction:column;min-width:0;min-height:0}
   .liste .ust{display:flex;gap:8px;padding:12px;border-bottom:1px solid var(--cizgi);align-items:center}
   .liste .ust input{flex:1;min-width:0}
   .liste .ust .geri{display:none}
-  #mesajlar{flex:1;overflow:auto}
+  #mesajlar{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .m,.klasor,.tumSec,.secbar button,.okuma .ust button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .m{display:block;width:100%;text-align:left;background:transparent;border-radius:0;border-bottom:1px solid var(--cizgi);padding:12px 14px;font-weight:500;color:#fff;position:relative}
   .m:hover{background:rgba(255,255,255,.04)}
   .m.on{background:var(--kart2)}
@@ -84,7 +85,9 @@
   .bos{padding:40px 20px;text-align:center;color:var(--soluk);font-size:14px}
   .daha{margin:12px auto;display:block}
 
-  .okuma{display:flex;flex-direction:column;min-width:0;background:#0d1233}
+  .okuma{display:flex;flex-direction:column;min-width:0;min-height:0;background:#0d1233}
+  #okumaIc{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .okuma .ust{position:sticky;top:0;z-index:2;background:#0d1233}
   .okuma .ust{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--cizgi);flex-wrap:wrap;align-items:center}
   .okuma .ust .geri{display:none}
   .okuma .ust button{padding:8px 12px;font-size:13px}
@@ -95,7 +98,8 @@
   .ekler{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 10px}
   .ek{background:var(--kart2);font-weight:600;font-size:12px;padding:7px 10px;display:flex;gap:6px;align-items:center;max-width:260px}
   .ek span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #govde{flex:1;border:0;background:#fff;width:100%;margin:0;border-radius:0}
+  #govde{display:block;border:0;background:#fff;width:100%;min-height:300px;margin:0;border-radius:0;flex:none}
+  .govdeZemin{background:#fff;flex:1 0 auto}
   .okuma .yer{flex:1;display:flex;align-items:center;justify-content:center;color:var(--soluk);font-size:14px;flex-direction:column;gap:10px}
   .okuma .yer svg{width:54px;height:54px;opacity:.3}
 
@@ -156,6 +160,8 @@
     #yazPen,#ayarPen{padding:0}
     .pen{border-radius:0;height:100%;width:100%}
     .alan span{width:48px}
+    .okuma .ust{gap:4px;flex-wrap:nowrap;overflow-x:auto}
+    .okuma .ust button{padding:7px 10px;font-size:12px;white-space:nowrap;flex:none}
   }
 </style>
 <script src="assets/broker.js"></script>
@@ -233,7 +239,7 @@
         <div class="kisi" id="oKisi"></div>
       </div>
       <div class="ekler" id="oEkler"></div>
-      <iframe id="govde" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin" referrerpolicy="no-referrer"></iframe>
+      <div class="govdeZemin"><iframe id="govde" scrolling="no" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin" referrerpolicy="no-referrer"></iframe></div>
     </div>
   </section>
 </div>
@@ -594,8 +600,27 @@ function okumaCiz() {
   $('oEkler').innerHTML = m.ekler.map((e, i) => '<button class="ek" data-i="' + i + '">📎 <span>' + kac(e.ad) + '</span> <small style="opacity:.6">' + boyut(e.boyut) + '</small></button>').join('');
   $('oEkler').querySelectorAll('.ek').forEach(b => b.onclick = () => ekIndir(m.ekler[b.dataset.i], b));
   const icerik = m.html || '<pre style="white-space:pre-wrap;font:14px/1.5 Arial,sans-serif">' + kac(m.duz) + '</pre>';
+  $('okumaIc').scrollTop = 0;
+  $('govde').style.height = '300px';
   $('govde').srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank"><style>body{margin:0;padding:18px 20px;font:14px/1.5 Arial,Helvetica,sans-serif;color:#111;word-wrap:break-word}img{max-width:100%;height:auto}blockquote{border-left:3px solid #ccc;margin:8px 0;padding-left:12px;color:#555}</style></head><body>' + icerik + '</body></html>';
 }
+// Posta gövdesi iframe'de kendi yüksekliği kadar açılır, okuma alanı tek parça kayar (iPhone'da iç içe kaydırma takılıyordu);
+// telefona sığmayan geniş postalar ekrana sığacak kadar küçültülür
+function govdeBoyutla() {
+  const f = $('govde'); let d;
+  try { d = f.contentDocument; } catch (e) { return; }
+  if (!d || !d.body) return;
+  const g = f.clientWidth, w = d.documentElement.scrollWidth;
+  if (w > g + 4 && !d.body.dataset.olcek) { d.body.dataset.olcek = 1; d.body.style.zoom = (g / w).toFixed(3); }
+  f.style.height = Math.max(300, Math.ceil(d.documentElement.scrollHeight) + 8) + 'px';
+}
+$('govde').addEventListener('load', () => {
+  govdeBoyutla();
+  try { $('govde').contentDocument.querySelectorAll('img').forEach(i => i.addEventListener('load', govdeBoyutla)); } catch (e) {}
+  setTimeout(govdeBoyutla, 600); setTimeout(govdeBoyutla, 2000);
+});
+window.addEventListener('resize', () => { try { delete $('govde').contentDocument.body.dataset.olcek; $('govde').contentDocument.body.style.zoom = ''; } catch (e) {} govdeBoyutla(); });
+
 function boyut(b) { return b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
 
 async function ekIndir(e, b) {
