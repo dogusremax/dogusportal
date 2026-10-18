@@ -17,7 +17,7 @@
   var SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
   // Müşteri Takip'teki adlarla aynı (bildirimler bu adlara gönderilir)
   var KISILER = ['Aysun Yılmaz', 'Ayşegül Alpay', 'Evşen Özazman', 'Gamze Yetkin', 'Gizem Gök',
-    'İrem Tetik', 'Orhan Özazman', 'Özlem Varol', 'Umut Tokkuş'];
+    'İrem Tetik', 'Makbule Tokkuş', 'Orhan Özazman', 'Özlem Varol', 'Umut Tokkuş'];
 
   function ls(k, v) {
     try { if (v === undefined) return localStorage.getItem(k) || ''; if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {}
