@@ -28,7 +28,7 @@ button,input{font:inherit;color:inherit}
 .hd{display:flex;align-items:center;gap:16px;padding:20px 36px 14px;border-bottom:3px solid var(--navy)}
 .hd .lg{height:42px}.hd .vl{width:2px;align-self:stretch;margin:2px 4px;background:var(--navy);opacity:.85}
 .hd .ti h1{font:400 36px/1 var(--fd);color:var(--navy)}.hd .ti div{font-size:12px;color:var(--ink2);margin-top:5px}
-.hd .dn{margin-left:auto;display:flex;align-items:center;gap:12px;text-align:left}
+.hd .dn{display:flex;align-items:center;gap:12px;text-align:left}.hd .mk{display:flex;align-items:center;gap:16px}.hd .dn+.mk{margin-left:auto}
 .hd .dn img{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid var(--sand2)}
 .hd .dn small{display:block;font:700 9.5px/1 var(--fb);letter-spacing:1.6px;text-transform:uppercase;color:var(--ink2);margin-bottom:4px}
 .hd .dn b{display:block;font-size:15px;color:var(--ink)}.hd .dn span{display:block;font-size:11.5px;color:var(--ink2);line-height:1.35}
@@ -65,8 +65,8 @@ tr.tt td.a{font-size:23px}
 @media (max-width:700px){
   td small{display:block;margin:2px 0 0}
   .bar input{width:calc(50% - 4px)}.bar .sp{display:none}.bar button{flex:1 1 auto;justify-content:center}
-  .wrap{padding:12px 8px 30px}
-  .hd{padding:16px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .ti h1{font-size:28px}.hd .dn{width:100%;margin-left:0;padding-top:10px;border-top:1px solid var(--sand2)}
+  .wrap{padding:0 0 30px}.sheet{border-radius:0}
+  .hd{padding:16px 18px 14px;flex-wrap:wrap;gap:10px}.hd .lg{height:30px}.hd .ti h1{font-size:28px}.hd .dn{width:100%;padding-bottom:10px;border-bottom:1px solid var(--sand2)}.hd .dn+.mk{margin-left:0}
   .cv{height:150px}.cv .t{left:18px;right:18px}.cv h2{font-size:34px}
   .bd{padding:18px 18px 22px}.top{grid-template-columns:1fr}.box.fy .v{font-size:32px}
   td.a{font-size:18px}.gt b{font-size:26px}.ft{padding:12px 18px}
@@ -136,9 +136,10 @@ tr.tt td.a{font-size:23px}
     var mus=$('iMus').value.trim(),dn=danis();
     var ms=(D.m||[]),msL=ms.filter(function(x){return (x[2]||C)!=='TL';}),msT=ms.filter(function(x){return x[2]==='TL';});
     var msTop=msL.reduce(function(a,x){return a+(+x[1]||0);},0),tlTop=msT.reduce(function(a,x){return a+(+x[1]||0);},0);
-    var h='<div class="hd"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş"><span class="vl"></span>'+
-      '<div class="ti"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div>'+
-      (dn?'<div class="dn"><img src="assets/kibris/danisman/y/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+'</span><span>'+esc(dn.tel)+'</span><span>'+esc(dn.ml)+'</span></div></div>':'')+'</div>'+
+    var h='<div class="hd">'+
+      (dn?'<div class="dn"><img src="assets/kibris/danisman/y/'+dn.id+'.webp" alt="" onerror="this.remove()"><div><small>Danışmanınız</small><b>'+esc(dn.ad)+'</b><span>'+esc(dn.un)+'</span><span>'+esc(dn.tel)+'</span><span>'+esc(dn.ml)+'</span></div></div>':'')+
+      '<div class="mk"><img class="lg" src="assets/dogus-logo-koyu.webp" alt="Doğuş"><span class="vl"></span>'+
+      '<div class="ti"><h1>Ödeme Planı</h1><div>'+esc(gun)+(D.pl?' · '+esc(D.pl):'')+'</div></div></div></div>'+
       '<div class="cv" style="'+(D.img?"background-image:url('"+esc(D.img)+"')":'')+'"><div class="t"><div class="k">'+esc([D.f,D.b].filter(Boolean).join(' · '))+'</div><h2>'+esc(D.p||'')+'</h2></div></div>'+
       '<div class="bd">'+(mus?'<div class="kim"><small>Hazırlandı</small>Sayın <b>'+esc(mus)+'</b></div>':'')+
       '<div class="top"><div class="box"><small>Daire</small><div class="v">'+esc(D.u||'Özel tutar')+(D.ux?'<span>'+esc(D.ux)+'</span>':'')+'</div></div>'+
