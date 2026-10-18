@@ -208,9 +208,10 @@
     </div>
     <div class="secbar" id="secbar" hidden>
       <b id="secSay"></b>
+      <button class="ghost" id="klasorSec" hidden onclick="TUM_KLASOR=!TUM_KLASOR;ciz()"></button>
       <button class="silBtn" id="secSil" onclick="secilenleriSil()">🗑 Sil</button>
       <button class="ghost" onclick="secilenleriOkundu()">Okundu</button>
-      <button class="ghost" onclick="SECILENLER.clear();ciz()">Vazgeç</button>
+      <button class="ghost" onclick="SECILENLER.clear();TUM_KLASOR=false;ciz()">Vazgeç</button>
     </div>
     <div id="mesajlar"><div class="bos">Postalar yükleniyor…</div></div>
   </section>
@@ -363,21 +364,29 @@ async function hepsiYukle() {
   } catch (e) { listeYukle(); }
 }
 function listeyiKoy(v, daha) {
+  setTimeout(() => onYukle(), 0);
   const eskiIdler = new Set(MESAJLAR.map(m => m.id));
   const yeniler = (!ILK && KLASOR === 'gelen' && !daha) ? v.mesajlar.filter(m => !eskiIdler.has(m.id) && m.okunmamis) : [];
   MESAJLAR = daha ? MESAJLAR.concat(v.mesajlar) : v.mesajlar.slice();
   MESAJLAR.dahaVar = v.dahaVar; ciz();
   return yeniler;
 }
-// Gelen kutusunun ilk postaları arkada önceden alınır (okundu işaretlenmez) → tıklayınca anında açılır
-let onYukleniyor = false;
-async function onYukle() {
+// Listedeki postalar arkada, 10'arlı tek çağrılarla önceden alınır (okundu işaretlenmez) → tıklayınca anında açılır
+let onYukleniyor = false, onKuyruk = [];
+function onYukle(ids) {
+  const liste = ids || MESAJLAR.slice(0, 20).map(m => m.id);
+  liste.forEach(id => { if (!MSJ.has(id) && !onKuyruk.includes(id)) onKuyruk.push(id); });
+  onCalis();
+}
+async function onCalis() {
   if (onYukleniyor) return; onYukleniyor = true;
   try {
-    for (const m of (ONBELLEK.gelen ? ONBELLEK.gelen.mesajlar : []).slice(0, 8)) {
-      if (MSJ.has(m.id) || document.hidden) continue;
-      const j = await servis({ islem: 'oku', id: m.id, onizle: true }).catch(() => null);
-      if (j && j.ok) msjSakla(j.mesaj);
+    while (onKuyruk.length && !document.hidden) {
+      const paket = onKuyruk.splice(0, 10).filter(id => !MSJ.has(id));
+      if (!paket.length) continue;
+      const j = await servis({ islem: 'okuToplu', ids: paket }).catch(() => null);
+      if (!j || !j.ok) break;
+      j.mesajlar.forEach(msjSakla);
     }
   } finally { onYukleniyor = false; }
 }
@@ -404,7 +413,7 @@ async function listeYukle(elle, sessiz, daha) {
     if (!ara && !daha) { ONBELLEK[kl] = { mesajlar: j.mesajlar, dahaVar: j.dahaVar }; }
     ONBELLEK.sayilar = j.klasorler; onbellekYaz();
     sayilar(j.klasorler);
-    if (kl === 'gelen' && yeniler.length) onYukle();
+
     if (yeniler.length) bildir(yeniler.length === 1 ? 'Yeni posta: ' + (yeniler[0].kimden.ad || yeniler[0].kimden.adres) : yeniler.length + ' yeni posta');
     ILK = false;
   } catch (e) { if (!sessiz) $('mesajlar').innerHTML = '<div class="bos">' + kac(e.message) + '</div>'; }
@@ -456,7 +465,13 @@ function ciz() {
     const bitir = e => { if (z === 'oldu') { e.preventDefault(); } else clearTimeout(z); z = null; };
     b.addEventListener('touchend', bitir); b.addEventListener('touchmove', () => { clearTimeout(z); z = null; }, { passive: true });
   });
-  $('secbar').hidden = !SECILENLER.size; $('secSay').textContent = SECILENLER.size + ' posta seçili';
+  if (!hepsi) TUM_KLASOR = false;
+  const toplam = (SAYI && SAYI[KLASOR] && SAYI[KLASOR].toplam) || 0, aramada = !!$('ara').value.trim();
+  const fazlasiVar = hepsi && (MESAJLAR.dahaVar || toplam > MESAJLAR.length);
+  $('secbar').hidden = !SECILENLER.size;
+  $('secSay').textContent = TUM_KLASOR ? (aramada ? 'Aramaya uyan tüm postalar seçili' : 'Klasördeki tüm ' + toplam.toLocaleString('tr-TR') + ' posta seçili') : SECILENLER.size + ' posta seçili';
+  $('klasorSec').hidden = !fazlasiVar;
+  $('klasorSec').textContent = TUM_KLASOR ? 'Sadece bu ' + MESAJLAR.length : (aramada ? 'Aramaya uyan hepsini seç' : 'Klasördeki tüm ' + toplam.toLocaleString('tr-TR') + ' postayı seç');
   const geri = KLASOR === 'cop';
   $('secSil').textContent = geri ? '↩ Gelen Kutusu\'na al' : (hepsi ? '🗑 Tümünü sil' : '🗑 Sil');
   const sec = el.querySelector('.m.on'); if (sec) sec.scrollIntoView({ block: 'nearest' });
@@ -464,6 +479,7 @@ function ciz() {
 
 // ── Çoklu seçim ve silme ─────────────────────────────────
 const SECILENLER = new Set();
+let TUM_KLASOR = false;   // listede görünenler değil, klasördeki BÜTÜN postalar
 function secDegistir(id) { SECILENLER.has(id) ? SECILENLER.delete(id) : SECILENLER.add(id); ciz(); }
 function tumunuSec() { if (MESAJLAR.every(m => SECILENLER.has(m.id))) SECILENLER.clear(); else MESAJLAR.forEach(m => SECILENLER.add(m.id)); ciz(); }
 function sayiOynat(kl, dToplam, dOkunmamis) {
@@ -484,7 +500,28 @@ function listedenCikar(ids) {
   ids.forEach(i => SECILENLER.delete(i));
   ciz();
 }
+async function klasoruTasi() {
+  const geri = KLASOR === 'cop', kl = KLASOR, ara = $('ara').value.trim();
+  const toplam = (SAYI && SAYI[kl] && SAYI[kl].toplam) || 0;
+  if (!confirm((ara ? 'Aramaya uyan bütün postalar' : 'Klasördeki ' + toplam.toLocaleString('tr-TR') + ' postanın hepsi') + (geri ? ' Gelen Kutusu\'na alınsın mı?' : ' Çöp\'e taşınsın mı?'))) return;
+  SECILENLER.clear(); TUM_KLASOR = false; MESAJLAR = []; ciz();
+  $('mesajlar').innerHTML = '<div class="bos" id="topluDurum">Taşınıyor…</div>';
+  let tasinan = 0;
+  try {
+    for (let tur = 0; tur < 40; tur++) {
+      const j = await servis({ islem: 'toplu', klasor: kl, ara }, 120000);
+      if (!j.ok) throw new Error(j.error);
+      tasinan += j.tasinan; sayilar(j.klasorler);
+      const d = $('topluDurum'); if (d) d.textContent = tasinan.toLocaleString('tr-TR') + ' posta taşındı…';
+      if (!j.kalan) break;
+    }
+    bildir(tasinan.toLocaleString('tr-TR') + (geri ? ' posta Gelen Kutusu\'na taşındı' : ' posta Çöp\'e taşındı'), 4000);
+  } catch (e) { bildir(e.message, 5000); }
+  delete ONBELLEK[kl]; delete ONBELLEK.cop; delete ONBELLEK.gelen; onbellekYaz();
+  if (KLASOR === kl) listeYukle(true);
+}
 async function secilenleriSil() {
+  if (TUM_KLASOR) return klasoruTasi();
   const ids = [...SECILENLER]; if (!ids.length) return;
   const geri = KLASOR === 'cop';
   if (geri && !confirm(ids.length + ' posta Gelen Kutusu\'na geri alınsın mı?')) return;
@@ -526,8 +563,11 @@ async function oku(id) {
   const m = MESAJLAR.find(x => x.id === id), okunmamisti = !!(m && m.okunmamis); if (m) m.okunmamis = false; if (okunmamisti) sayiOynat(KLASOR, 0, -1);
   ciz();
   const hazir = MSJ.get(id);
+  const i = MESAJLAR.findIndex(x => x.id === id);
+  onYukle(MESAJLAR.slice(Math.max(0, i - 2), i + 8).map(x => x.id));   // ↑/↓ ile gidilecek komşular
   if (hazir) {
     ACIK = hazir; okumaCiz();
+    if (hazir.gorselEksik) servis({ islem: 'oku', id, onizle: true }).then(j => { if (j.ok) { msjSakla(j.mesaj); if (ACIK && ACIK.id === id) { ACIK = j.mesaj; okumaCiz(); } } }).catch(() => {});
     if (okunmamisti) mesajIslem('okundu', id).then(listeSayiTazele).catch(() => {});
     return;
   }
