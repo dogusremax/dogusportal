@@ -59,6 +59,11 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .nobet span{font-size:12.5px;color:var(--dim);font-weight:600}
 .nobet b{display:block;font-family:'Archivo',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.01em;margin-top:1px}
 .nfoto{width:52px;height:52px;border-radius:50%;flex:none;background:#f0f3f8;display:grid;place-items:center;font-size:22px;overflow:hidden}
+.bugun{margin:-4px 0 16px}
+.bugun h3{font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
+.bugun h3 small{font-family:'Inter';font-size:12px;color:var(--dim);font-weight:500}
+.bugun .olay{box-shadow:0 2px 10px rgba(19,26,38,.04)}
+.bugun .bos{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-size:13.5px}
 .nfoto img{width:100%;height:100%;object-fit:cover;display:block}
 .arac{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sekme{display:flex;background:#e9edf4;border-radius:11px;padding:3px}
@@ -163,6 +168,8 @@ form textarea{min-height:80px;resize:vertical}
     <div class="nfoto" id="nobetFoto">🛡️</div>
     <div style="min-width:0"><span>Bugün nöbette</span><b id="nobetAd">—</b></div>
   </div>
+
+  <div class="bugun" id="bugunKutu" hidden></div>
 
   <div class="arac">
     <div class="ay">
@@ -302,7 +309,7 @@ function ciz(){
   ['once','sonra'].forEach(i=>$(i).style.display = liste?'none':'');
   document.querySelectorAll('#gorunum button').forEach(b=>b.classList.toggle('on', b.dataset.g===S.gorunum));
   $('ekleBtn').classList.toggle('var', S.broker);
-  nobetCiz();
+  nobetCiz(); bugunCiz();
   if (S.gorunum==='ay') ayCiz(); else listeCiz(S.gorunum==='benim');
 }
 function nobetCiz(){
@@ -311,6 +318,15 @@ function nobetCiz(){
   if (!a) return;
   $('nobetAd').textContent = a==='Ofis' ? 'Ofis' : a;
   $('nobetFoto').innerHTML = a!=='Ofis' ? fotoHtml(a,'🛡️') : '🏢';
+}
+// Telefonda ilk ekranda bugünün etkinlikleri yazılı dursun (Umut 18 Eki); nöbet üstteki kartta
+function bugunCiz(){
+  if (!S.aralik){ $('bugunKutu').hidden=true; return; }
+  const g=bugun(), d=gunAl(g), liste=S.olaylar.filter(o=>o.tarih===g && o.tur!=='nobet');
+  $('bugunKutu').hidden=false;
+  $('bugunKutu').innerHTML=`<h3>Bugün<small>${d.getDate()} ${AYLAR[d.getMonth()]} ${GUNLER[d.getDay()]}</small></h3>`+
+    (liste.length ? liste.map(olayKart).join('') : '<div class="bos">Bugün nöbet dışında etkinlik yok.</div>');
+  $('bugunKutu').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
 }
 function ayCiz(){
   const [b]=gorunurAralik(), ay=S.ay.getMonth(), olay=S.olaylar;
@@ -325,7 +341,7 @@ function ayCiz(){
        diger.slice(0,3).map(o=>`<i style="background:${renk(o.renk||TURLER[o.tur].renk)}"></i>`).join('')+'</span></button>';
   }
   h+='</div></div>';
-  h+=gunListesi(S.secili, gunde[S.secili]||[]);
+  if (S.secili!==bugun()) h+=gunListesi(S.secili, gunde[S.secili]||[]);
   $('icerik').innerHTML=h;
   $('icerik').querySelectorAll('.hucre').forEach(c=>c.onclick=()=>{ S.secili=c.dataset.g; const d=gunAl(S.secili);
     if (d.getMonth()!==S.ay.getMonth()){ S.ay=new Date(d.getFullYear(),d.getMonth(),1); yukle(); } else ciz(); });
@@ -357,7 +373,7 @@ function yanitOzet(o){
 function olayKart(o){
   const t=TURLER[o.tur]||TURLER.etkinlik;
   const saat = o.tumGun||!o.bas ? '<span>Tüm<br>gün</span>' : `${o.bas}<small>${o.bit||''}</small>`;
-  const baslik = o.tur==='nobet' ? (o.nobetci==='Ofis'?'Ofis nöbeti':o.nobetci+' nöbette') : o.baslik;
+  const baslik = o.tur==='nobet' ? (o.nobetci==='Ofis'?'Ofis nöbeti':o.nobetci+' nöbette') : String(o.baslik||'').replace(t.ikon,'').trim();
   const kisi = o.tur==='nobet'||o.tur==='tatil'||o.tur==='dogumgunu' ? '' : (o.kisiler&&o.kisiler.length ? o.kisiler.map(ilkAd).join(', ') : 'Herkes');
   return `<button class="olay" data-id="${esc(o.id)}" data-t="${o.tarih}"><span class="serit" style="background:${renk(o.renk||t.renk)}"></span>
     <span class="saat">${saat}</span><span class="ic"><span class="bas">${o.tur==='nobet'&&fotoUrl(o.nobetci)?`<img class="yuz" src="${fotoUrl(o.nobetci)}" alt="">`:t.ikon} ${esc(baslik)}</span>
