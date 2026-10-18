@@ -211,7 +211,10 @@ let S = { gorunum: ls('ot_gorunum')||'ay', ay: (()=>{const d=new Date();return n
 
 /* ---- kim ---- */
 function benAd(){ return ls('ot_ben') || (()=>{ const b=window.brokerAdAl&&brokerAdAl(); if(b) return b;
-  const k=ls('bld_kisi'); return EKIP.find(e=>anahtar(e)===anahtar(k)) || ''; })(); }
+  // Doğuş Posta'ya ya da bildirimlere girmiş kişi: bir daha sormadan tanınır
+  let p=''; try { p=(JSON.parse(ls('posta_hesap')||'null')||{}).ad||''; } catch(e){}
+  for (const k of [p, ls('bld_kisi')]) { const e=k&&EKIP.find(x=>anahtar(x)===anahtar(k)); if(e){ ls('ot_ben',e); return e; } }
+  return ''; })(); }
 function benDoldur(){
   const s=$('ben'), b=benAd();
   s.innerHTML='<option value="">Ben kimim?</option>'+EKIP.map(e=>`<option ${e===b?'selected':''}>${esc(e)}</option>`).join('');
