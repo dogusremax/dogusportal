@@ -45,6 +45,11 @@
   #ana{display:grid;grid-template-columns:210px 380px 1fr;height:100vh;height:100dvh;box-sizing:border-box;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
   .yan{border-right:1px solid var(--cizgi);display:flex;flex-direction:column;padding:14px 10px;gap:4px;overflow:auto;min-height:0;-webkit-overflow-scrolling:touch}
   .yan .logo{display:flex;align-items:center;gap:8px;padding:2px 8px 14px}
+  .kutular{display:flex;flex-direction:column;gap:4px;margin:0 0 12px}
+  .kutular button{display:flex;align-items:center;gap:8px;width:100%;background:#161c44;border:1px solid transparent;border-radius:10px;padding:6px 8px;font-size:12.5px;font-weight:600;color:#cfd3ea;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kutular button.on{border-color:var(--red);color:#fff;background:#1d2557}
+  .kutular img,.kutular .ik{width:24px;height:24px;flex:none;border-radius:50%;object-fit:cover;object-position:center top}
+  .kutular .ik{display:inline-flex;align-items:center;justify-content:center;background:var(--red);font-size:12px}
   .yan .logo img{height:26px}
   .yan .logo b{font-size:14px}
   .yaz{margin:0 0 12px;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px}
@@ -194,7 +199,7 @@
 
 <div id="kurulum" hidden>
   <img src="assets/dogus-logo.png" alt="">
-  <h1>Posta hesabını bağla</h1>
+  <h1 id="kBaslik">Posta hesabını bağla</h1>
   <p class="durum">Bir kez yapılır. Şifre yalnız bizim sunucuda saklanır, bu sayfaya bir daha gelmez.</p>
   <label>E-posta adresi</label>
   <input id="kAdres" type="email" placeholder="ad@remaxdogus.com.tr" autocomplete="username">
@@ -203,12 +208,14 @@
   <label>Gönderen adı</label>
   <input id="kAd" type="text">
   <button id="kBtn">Bağlan</button>
+  <button id="kGeri" class="ghost" hidden onclick="kutuSec('')" style="margin-top:8px">← Kendi posta kutuma dön</button>
   <p id="kDurum" class="durum"></p>
 </div>
 
 <div id="ana" hidden>
   <aside class="yan">
     <div class="logo"><img src="assets/dogus-logo.png" alt=""><b>Posta</b></div>
+    <div class="kutular" id="kutular" hidden></div>
     <button class="yaz" onclick="yeniMesaj()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>Yeni posta</button>
     <button class="klasor on" data-k="gelen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6z"/></svg>Gelen Kutusu<span class="say"></span><span class="top"></span></button>
     <button class="klasor" data-k="giden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Gönderilenler<span class="say"></span><span class="top"></span></button>
@@ -318,18 +325,21 @@ const kac = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&a
 let HESAP = {}, KLASOR = 'gelen', MESAJLAR = [], SECILI = null, ACIK = null, YAZ = null, EKLER = [], SONKONTROL = 0, ILK = true;
 // Hız: klasör listeleri bu cihazda önbellekte (anında görünür, arkada tazelenir); açılan postalar bellekte
 let ONBELLEK = {}, OTURUM = depo('posta_oturum') || '', KIM = depo('posta_kim') || '';
-function onbellekOku() { try { ONBELLEK = JSON.parse(depo('posta_onbellek_' + KIM) || '{}') || {}; } catch (e) { ONBELLEK = {}; } }
+let AKTIF = depo('posta_aktif') || '';   // açık posta kutusu: '' = kendi kutun, 'info' = ortak kutu
+function onbellekAnahtar() { return 'posta_onbellek_' + KIM + (AKTIF ? '_' + AKTIF : ''); }
+function onbellekOku() { try { ONBELLEK = JSON.parse(depo(onbellekAnahtar()) || '{}') || {}; } catch (e) { ONBELLEK = {}; } }
 onbellekOku(); depo('posta_onbellek', null);
 const MSJ = new Map();
-function onbellekYaz() { try { depo('posta_onbellek_' + KIM, JSON.stringify(ONBELLEK)); } catch (e) {} }
+function onbellekYaz() { try { depo(onbellekAnahtar(), JSON.stringify(ONBELLEK)); } catch (e) {} }
 function msjSakla(m) { MSJ.set(m.id, m); if (MSJ.size > 60) MSJ.delete(MSJ.keys().next().value); }
 
 async function servis(veri, sure) {
   const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
   try {
     const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ac.signal,
-      body: JSON.stringify(Object.assign({ action: 'eposta', oturum: OTURUM }, veri)) });
+      body: JSON.stringify(Object.assign({ action: 'eposta', oturum: OTURUM }, AKTIF ? { hesap: AKTIF } : {}, veri)) });
     const j = JSON.parse(await r.text());
+    if (j && j.error === 'YETKI_YOK') { kutuSec(''); return j; }
     if (j && j.error === 'OTURUM_YOK' && veri.islem !== 'giris') { cikis('Oturum süresi doldu, tekrar giriş yap.'); }
     return j;
   } catch (e) {
@@ -370,6 +380,9 @@ function oturumAc(j) {
 function kurulumAc() {
   $('ana').hidden = true; $('kurulum').hidden = false;
   $('kAdres').value = HESAP.adres || ''; $('kAd').value = HESAP.ad || '';
+  // Ortak kutu (info@): adres sabit, kendi kutuna dönüş düğmesi
+  $('kAdres').readOnly = !!HESAP.ortak; $('kBaslik').textContent = HESAP.ortak ? HESAP.adres + ' kutusunu bağla' : 'Posta hesabını bağla';
+  $('kGeri').hidden = !HESAP.ortak;
   ($('kAdres').value ? $('kSifre') : $('kAdres')).focus();
 }
 async function giris(p, kim) {
@@ -401,8 +414,29 @@ function hesapSigdir() {
   const h = $('hesap'); h.style.fontSize = '';
   for (let px = 12; px > 10 && h.scrollWidth > h.clientWidth; px -= 0.5) h.style.fontSize = px - 0.5 + 'px';
 }
+// Posta kutusu seçici: yalnız ortak kutuya yetkisi olanlarda görünür (yetkiyi sunucu denetler)
+function kutularCiz() {
+  const l = HESAP.hesaplar || [], aktif = AKTIF || KIM;
+  $('kutular').hidden = l.length < 2;
+  $('kutular').innerHTML = l.map(h => '<button class="' + (h.id === aktif ? 'on' : '') + '" data-id="' + kac(h.id) + '" title="' + kac(h.ad) + '">' +
+    (h.ortak ? '<span class="ik">✉</span>' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? h.ad.split('@')[0] + '@ · ortak kutu' : 'Kendi kutum') + '</span></button>').join('');
+  $('kutular').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.id !== aktif) kutuSec(b.dataset.id); });
+}
+async function kutuSec(id) {
+  AKTIF = id === KIM ? '' : id; depo('posta_aktif', AKTIF || null);
+  MESAJLAR = []; MSJ.clear(); SECILENLER.clear(); ACIK = null; SECILI = null; onbellekOku();
+  $('okumaIc').hidden = true; $('okumaBos').hidden = false;
+  $('ana').classList.remove('menu', 'oku'); $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>';
+  try {
+    const j = await servis({ islem: 'durum' }, 60000);
+    if (!j.ok) { bildir(j.message || j.error); return; }
+    HESAP = j; hesapSakla(); $('kurulum').hidden = true;
+    if (!j.kurulu) { kurulumAc(); return; }
+    anaAc();
+  } catch (e) { bildir(e.message); }
+}
 function anaAc() {
-  $('ana').hidden = false; $('hesap').textContent = HESAP.adres; $('hesap').title = HESAP.adres; hesapSigdir();
+  $('ana').hidden = false; kutularCiz(); $('hesap').textContent = HESAP.adres; $('hesap').title = HESAP.adres; hesapSigdir();
   imzaGecir();
   if (ONBELLEK.gelen) { MESAJLAR = Object.assign(ONBELLEK.gelen.mesajlar.slice(), { dahaVar: ONBELLEK.gelen.dahaVar }); sayilar(ONBELLEK.sayilar); ciz(); }
   hepsiYukle();
@@ -990,10 +1024,11 @@ async function sifreGuncelle() {
   } catch (e) { d.className = 'durum hata'; d.textContent = e.message; }
 }
 
-function hesapSakla() { try { depo('posta_hesap', JSON.stringify({ kim: HESAP.kim, kurulu: HESAP.kurulu, adres: HESAP.adres, ad: HESAP.ad, imza: HESAP.imza })); } catch (e) {} }
+function hesapSakla() { try { depo('posta_hesap', JSON.stringify({ kim: HESAP.kim, hesap: HESAP.hesap, ortak: HESAP.ortak, hesaplar: HESAP.hesaplar, kurulu: HESAP.kurulu, adres: HESAP.adres, ad: HESAP.ad, imza: HESAP.imza })); } catch (e) {} }
 function cikis(neden, sunucuya) {
   if (sunucuya && OTURUM) servis({ islem: 'cikis' }).catch(() => {});
-  try { localStorage.removeItem('posta_onbellek_' + KIM); } catch (e) {}
+  try { Object.keys(localStorage).filter(k => k.indexOf('posta_onbellek_') === 0).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  AKTIF = ''; depo('posta_aktif', null);
   depo('posta_oturum', null); depo('posta_kim', null); depo('posta_hesap', null); depo('posta_pin', null);
   OTURUM = ''; KIM = ''; HESAP = {}; ONBELLEK = {}; MESAJLAR = []; MSJ.clear();
   $('ana').hidden = true; $('kurulum').hidden = true; $('yazPen').hidden = true; $('ayarPen').hidden = true; $('giris').hidden = false;
