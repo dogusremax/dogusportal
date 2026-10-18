@@ -168,7 +168,18 @@ tr.tt td.a{font-size:19px;font-weight:700}
     var k=$('sheet').cloneNode(true);k.removeAttribute('id');k.style.cssText='width:794px;max-width:none;min-height:1120px;margin:0;border-radius:0;box-shadow:none';
     var w=html2pdf().set({margin:0,filename:dosyaAdi(),image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,windowWidth:Math.max(innerWidth,800)},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(k);
     return w;}
-  function yazdir(){try{window.focus();window.print();}catch(e){window.open(link(),'_blank');}}
+  function cssYaz(){try{window.focus();window.print();}catch(e){window.open(link(),'_blank');}}
+  // Yazdır, indirilen PDF'in aynısını basar: sayfa baskısında tarayıcı (özellikle Safari) kendi kenar boşluğunu ekleyebiliyor
+  var safari=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent),mobil=/iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  function yazdir(){if(!window.html2pdf||mobil){cssYaz();return;}
+    var w=safari?window.open('','_blank'):null;dur('Baskı hazırlanıyor…');
+    try{pdf().outputPdf('blob').then(function(b){dur('');var u=URL.createObjectURL(b);
+      if(safari){if(w)w.location=u;else location.href=u;return;}
+      var f=$('yzF');if(f)f.remove();f=document.createElement('iframe');f.id='yzF';f.title='Baskı';
+      f.style.cssText='position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0';
+      f.onload=function(){setTimeout(function(){try{f.contentWindow.focus();f.contentWindow.print();}catch(e){if(!window.open(u,'_blank'))cssYaz();}},300);};
+      f.src=u;document.body.appendChild(f);},function(){dur('');if(w)w.close();cssYaz();});}
+    catch(e){dur('');if(w)w.close();cssYaz();}}
   // Apps Script portalının korumalı çerçevesinde indirme ve yazdırma engellenebilir; orada plan yeni sekmede açılıp işlem orada yapılır
   var yabanci=false;try{yabanci=gomulu&&window.top.location.host!==location.host;}catch(e){yabanci=gomulu;}
   function sekme(is){window.open(link()+'&'+is+'=1','_blank');}
@@ -176,7 +187,7 @@ tr.tt td.a{font-size:19px;font-weight:700}
   if(/[#&]yaz=1/.test(location.hash))window.addEventListener('load',function(){setTimeout(yazdir,600);});
   $('bYaz').onclick=function(){if(yabanci)sekme('yaz');else yazdir();};
   $('bPdf').onclick=function(){if(yabanci){sekme('pdf');return;}dur('PDF hazırlanıyor…');
-    try{pdf().save().then(function(){dur('');},function(){dur('');yazdir();});}catch(e){dur('');yazdir();}};
+    try{pdf().save().then(function(){dur('');},function(){dur('');cssYaz();});}catch(e){dur('');cssYaz();}};
   // Telefonda dosya paylaşımı varsa PDF'in kendisi gönderilir; yoksa plan bağlantısıyla mesaj açılır
   var direkt=false;
   function paylas(tip){
