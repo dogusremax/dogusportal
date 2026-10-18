@@ -80,7 +80,11 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .hucreler{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .hucre{aspect-ratio:1/1;min-height:0;height:auto;align-self:stretch;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:3px 2px 4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;min-width:0}
 .hucre{position:relative;overflow:hidden}
-.hucre .no,.hucre .et,.hucre .daha{position:relative;z-index:1}
+.hucre .no,.hucre .et,.hucre .isaretler{position:relative;z-index:1;display:flex;gap:2px;margin-top:1px;padding-left:1px}
+.hucre .is{font-style:normal;font-size:9px;font-weight:800;line-height:1;width:15px;height:15px;border-radius:4px;display:grid;place-items:center;color:#fff}
+.hucre .is-tatil{background:#64748b}.hucre .is-toplanti{background:var(--mavi)}.hucre .is-dogumgunu{background:none;font-size:12px}
+@media(min-width:600px){.hucre .is{width:19px;height:19px;font-size:11px}.hucre .is-dogumgunu{font-size:15px}}
+.hucre .daha{position:relative;z-index:1}
 .hucre .nfig{position:absolute;right:0;bottom:0;height:52%;max-width:92%;object-fit:contain;object-position:right bottom;pointer-events:none;z-index:0}
 .hucre.bugun .nfig{height:60%}
 .hucre.dis .nfig{opacity:.45}
@@ -363,6 +367,11 @@ function nobetFig(o){
   const u=fotoUrl(o.nobetci), id=u && u.split('/').pop().replace('.webp','');
   return id && NOBET_FIG[id] ? `<img class="nfig" src="assets/ekip/nobet/${id}.webp" alt="" loading="lazy">` : '';
 }
+function gunAc(g){
+  const liste=S.olaylar.filter(o=>o.tarih===g);
+  ac(gunListesi(g, liste)+`<div class="dugmeler"><button class="btn" onclick="kapat()">Kapat</button></div>`);
+  $('sayfa').querySelectorAll('.olay').forEach(b=>b.onclick=()=>detay(b.dataset.id,b.dataset.t));
+}
 function ayCiz(){
   const [b]=gorunurAralik(), ay=S.ay.getMonth(), olay=S.olaylar;
   const gunde={}; olay.forEach(o=>(gunde[o.tarih]=gunde[o.tarih]||[]).push(o));
@@ -374,16 +383,20 @@ function ayCiz(){
     const sirali=liste.slice().sort((x,y)=>(x.tur==='nobet'?0:x.tur==='tatil'?1:2)-(y.tur==='nobet'?0:y.tur==='tatil'?1:2));
     const kisa=o=>o.tur==='nobet'?(o.nobetci==='Ofis'?'Ofis':ilkAd(o.nobetci)):o.tur==='dogumgunu'?'🎂 '+ilkAd(String(o.baslik).replace(/^\W+/,'')):String(o.baslik||'').replace((TURLER[o.tur]||{}).ikon||'~','').trim();
     const cls=['hucre', d.getMonth()!==ay?'dis':'', (d.getDay()===0||d.getDay()===6)?'hs':'', tatil[g]?'tatil':'', g===bugun()?'bugun':'', g===S.secili?'secili':''].join(' ');
-    const sinir=3, gor=sirali.slice(0, sirali.length>sinir?sinir-1:sinir);
+    // Bayram B, doğum günü 🎂, toplantı T: kısa işaretler tek satırda (Umut 18 Eki)
+    const ISARET={tatil:'B',dogumgunu:'🎂',toplanti:'T'};
+    const isaretli=sirali.filter(o=>ISARET[o.tur]), yazili=sirali.filter(o=>!ISARET[o.tur]);
+    const sinir=2, gor=yazili.slice(0, yazili.length>sinir?sinir-1:sinir);
     h+=`<button class="${cls}" data-g="${g}"><span class="no">${d.getDate()}</span>`+
-       gor.map(o=>`<span class="et${o.tur==='tatil'?' acik':o.tur==='nobet'?' nb':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
-       (sirali.length>gor.length?`<span class="daha">+${sirali.length-gor.length}</span>`:'')+nobetFig(sirali[0])+'</button>';
+       gor.map(o=>`<span class="et${o.tur==='nobet'?' nb':''}" style="background:${renk(o.renk||TURLER[o.tur].renk)}">${esc(kisa(o))}</span>`).join('')+
+       (yazili.length>gor.length?`<span class="daha">+${yazili.length-gor.length}</span>`:'')+
+       (isaretli.length?'<span class="isaretler">'+isaretli.map(o=>`<i class="is is-${o.tur}" title="${esc(o.baslik||'')}">${ISARET[o.tur]}</i>`).join('')+'</span>':'')+
+       nobetFig(sirali[0])+'</button>';
   }
   h+='</div></div>';
-  if (S.secili!==bugun()) h+=gunListesi(S.secili, gunde[S.secili]||[]);
   $('icerik').innerHTML=h;
-  $('icerik').querySelectorAll('.hucre').forEach(c=>c.onclick=()=>{ S.secili=c.dataset.g; const d=gunAl(S.secili);
-    if (d.getMonth()!==S.ay.getMonth()){ S.ay=new Date(d.getFullYear(),d.getMonth(),1); yukle(); } else ciz(); });
+  // Kutuya dokununca o günün ayrıntısı açılır (Umut 18 Eki)
+  $('icerik').querySelectorAll('.hucre').forEach(c=>c.onclick=()=>gunAc(c.dataset.g));
   baglaOlay();
 }
 function gunBaslik(g){ const d=gunAl(g); const fark=Math.round((gunAl(g)-gunAl(bugun()))/864e5);
