@@ -420,7 +420,7 @@ function kutularCiz() {
   const l = HESAP.hesaplar || [], aktif = AKTIF || KIM;
   $('kutular').hidden = l.length < 2;
   $('kutular').innerHTML = l.map(h => '<button class="' + (h.id === aktif ? 'on' : '') + '" data-id="' + kac(h.id) + '" title="' + kac(h.ad) + '">' +
-    (h.ortak ? '<img class="balon" src="assets/remax-balon.png" alt="">' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? 'RE/MAX-info' : h.ad) + '</span></button>').join('');
+    (h.ortak ? '<img src="assets/imza/info.png" alt="">' : '<img src="assets/imza/' + kac(h.id) + '.png" alt="">') + '<span>' + kac(h.ortak ? 'RE/MAX-info' : h.ad) + '</span></button>').join('');
   $('kutular').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.id !== aktif) kutuSec(b.dataset.id); });
 }
 async function kutuSec(id) {
