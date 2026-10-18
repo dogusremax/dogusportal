@@ -113,6 +113,9 @@
     },
     planAc: function (d) {
       stil(); KPA.kapat();
+      // başka sitenin içinde (Apps Script portalı) masaüstünde iç içe çerçeveye tıklamalar yerine ulaşmıyor: planı yeni sekmede aç
+      var yabanci = true; try { yabanci = new URL(KOK, location.href).origin !== location.origin; } catch (e) {}
+      if (yabanci && innerWidth >= 700 && window.open(KPA.link(d), '_blank')) return;
       var o = document.createElement('div'); o.className = 'kpa-ov'; o.id = 'kpaOv';
       o.innerHTML = '<iframe allow="web-share; clipboard-write" title="Ödeme planı"></iframe>';
       // dışına tıklayınca kapanmaz: Apps Script çerçevesinde plan içindeki tıklamalar da arka plana düşüyordu; Kapat düğmesi ve Esc kapatır
