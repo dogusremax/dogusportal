@@ -62,7 +62,11 @@ async function videoYaDaGorsel(u, videoGovde, gorselGovde, hazirBekle) {
     let id = null;
     if (et.length) { try { id = await yap({ user_tags: et }); } catch (e) { console.log('! etiketle olmadı, etiketsiz deneniyor:', e.message); } }
     if (!id) id = await yap({});
-    await post(`${UID}/media_publish`, { creation_id: id });
+    // FINISHED dese de Instagram bazen "Media ID is not available" (2207027) der: kısa aralarla yeniden dene
+    for (let k = 0; ; k++) {
+      try { await post(`${UID}/media_publish`, { creation_id: id }); break; }
+      catch (e) { if (k >= 8 || !/2207027|not ready|not available/i.test(e.message)) throw e; console.log('… medya hazır değil, bekleniyor'); await wait(10000); }
+    }
     pub.story = i + 1; kaydet();
     console.log('✓ story', i + 1, '/', media.story.length);
   }
