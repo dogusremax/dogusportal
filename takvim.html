@@ -69,6 +69,7 @@ header small{display:block;color:var(--dim);font-size:12.5px;font-weight:500;mar
 .nfoto img{width:100%;height:100%;object-fit:cover;display:block}
 .nfoto.fig{width:84px;height:80px;border-radius:0;background:none;overflow:visible;align-self:flex-end;margin:-10px 0 -12px -6px}
 .nfoto.fig img{height:100%;width:100%;object-fit:contain;object-position:center bottom}
+.nfoto.fig.ofis{align-self:center!important;margin-top:0!important;margin-bottom:0!important}.nfoto.fig.ofis img{object-position:center}
 .arac{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sekme{display:flex;background:#e9edf4;border-radius:11px;padding:3px}
 .sekme button{padding:7px 12px;border-radius:9px;font-size:13px;font-weight:600;color:var(--dim)}
@@ -412,11 +413,12 @@ function ciz(){
 }
 function nobetCiz(){
   const a=(S.olaylar.find(o=>o.tur==='nobet'&&o.tarih===bugun())||{}).nobetci;
-  if (!a){ $('nobetAd').textContent='—'; $('nobetFoto').classList.remove('fig'); $('nobetFoto').innerHTML='🛡️'; return; }
+  if (!a){ $('nobetAd').textContent='—'; $('nobetFoto').classList.remove('fig','ofis'); $('nobetFoto').innerHTML='🛡️'; return; }
   $('nobetAd').textContent = a==='Ofis' ? 'Ofis' : a;
   // Üstteki kartta kesilmemiş tam resim; ızgaradakiler aynı kalır (Umut 18 Eki)
   const f=a==='Ofis'?OFIS_FIG:figUrl(a).replace('nobet/','nobet/tam/').replace('v=5','v=1');
   $('nobetFoto').classList.toggle('fig', !!f);
+  $('nobetFoto').classList.toggle('ofis', a==='Ofis');   // Ofis logosu karenin ortasında (Umut 19 Eki)
   $('nobetFoto').innerHTML = f ? `<img src="${f}" alt="">` : a!=='Ofis' ? fotoHtml(a,'🛡️') : '🏢';
 }
 // Telefonda ilk ekranda bugünün etkinlikleri yazılı dursun (Umut 18 Eki); nöbet üstteki kartta
