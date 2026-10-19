@@ -37,9 +37,8 @@
   .onizle{background:#e9f8e0;color:#111;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5;white-space:pre-wrap}
   .arac{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
   .arac button{background:#161c44;font-size:14px;padding:7px 11px;min-width:38px}
-  .emojiler{display:none;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:4px;background:#0b0f2a;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:8px;margin-bottom:8px}
-  .emojiler.acik{display:grid}
-  .emojiler button{background:transparent;font-size:22px;padding:4px;min-width:0}
+  .emojiler{display:none}
+  .emojiler.acik{display:block}
   .ipucu{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px}
   .onizle code{font-family:Menlo,Consolas,monospace;font-size:13px}
   .onizle small{display:block;color:#666;margin-top:8px;font-size:12px}
@@ -51,6 +50,7 @@
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
 </style>
 <script src="assets/broker.js"></script>
+<script src="assets/emoji-secici.js"></script>
 </head>
 <body>
 <div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Ofis Duyurusu · WhatsApp</h1></div>
@@ -258,9 +258,7 @@ function odakla() {
 document.querySelectorAll('.arac button, #emojiler').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
 document.querySelectorAll('.arac [data-f]').forEach(b => b.onclick = () => bicimle(b.dataset.f));
 ed.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain')); });
-const EMOJI = '📢 📣 🗓️ 📅 ⏰ 📍 🏢 🏠 🔑 📝 📌 ✅ ❗ ⚠️ ℹ️ 🎉 🎊 🥳 🎂 🏆 🥇 👏 💪 🙏 👍 👋 😊 😀 🤝 💼 💰 📈 🎯 🚀 ⭐ 🔥 ❤️ 💙 ☕ 🍽️ 🌿 ☀️ 🌙'.split(' ');
-$('emojiler').innerHTML = EMOJI.map(e => `<button type="button">${e}</button>`).join('');
-$('emojiler').querySelectorAll('button').forEach(b => b.onclick = () => { odakla(); document.execCommand('insertText', false, b.textContent); });
+EmojiSecici.kur($('emojiler'), e => { odakla(); document.execCommand('insertText', false, e); });
 $('emojiBtn').onclick = () => $('emojiler').classList.toggle('acik');
 
 function butonlar() {
