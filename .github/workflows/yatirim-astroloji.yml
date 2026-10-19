@@ -2,6 +2,8 @@ name: Haftalık yatırım astrolojisi karuseli
 # Her Pazartesi: haftanın gök olayları + Gemini ile 12 burç yorumu → 8 karelik karusel → @remaxdogus (10:00 TR);
 # ardından gönderiye yönlendiren (linksiz) story otomatik atılır.
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
+# Asıl tetik Danışman Takip'ten gelir (gunlukZamanla → astrolojiTetikle, Pzt 09:00, islem=zamanli);
+# GitHub'ın kendi zamanlaması saatlerce gecikebiliyor (19.10.2026'da hiç çalışmadı), aşağıdaki cron'lar yedek.
 on:
   schedule:
     - cron: "0 6 * * 1"    # Pzt 09:00 TR: üret; paylaşım 10:00'u bekler
@@ -9,10 +11,10 @@ on:
   workflow_dispatch:
     inputs:
       islem:
-        description: 'onizle: yorum + görsel üret, paylaşma · yeniden: yorumları baştan yaz, paylaşma · yayinla: bu haftanınkini paylaş'
+        description: 'onizle: yorum + görsel üret, paylaşma · yeniden: yorumları baştan yaz, paylaşma · yayinla: bu haftanınkini paylaş · zamanli: Pazartesi otomatiği (.canli varsa 10:00''da paylaşır)'
         type: choice
         default: onizle
-        options: [onizle, yeniden, yayinla]
+        options: [onizle, yeniden, yayinla, zamanli]
       hafta:
         description: 'Hafta (Pazartesi, yyyy-mm-dd). Boş = bu hafta'
         required: false
