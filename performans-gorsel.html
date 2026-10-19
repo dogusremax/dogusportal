@@ -87,7 +87,10 @@ const KAT=(d,ad,ayli)=>CEYREK?`${d.q}. ÇEYREĞİN ${ad} 1.Sİ`:(ayli?'AYIN ':''
 const SH=STORY?747:560; // 'puan' | 'birinci'
 
 const photo=id=>`assets/ekip/${id}.png`;
-const cut=(id,h,w)=>`<div style="width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" onerror="this.style.visibility='hidden'"></div>`;
+// html2canvas object-fit desteklemez: 'cover + üstten ortala' boyutunu yüklenince elle hesapla (geniş kesmeler basık çıkmasın)
+const fitCut=img=>{const W=parseFloat(img.parentNode.style.width),H=parseFloat(img.parentNode.style.height),r=img.naturalWidth/img.naturalHeight;if(!r)return;
+  const w=r>W/H?H*r:W,h=r>W/H?H:W/r;img.style.cssText=`position:absolute;top:0;left:${(W-w)/2}px;width:${w}px;height:${h}px;max-width:none;display:block;`;};
+const cut=(id,h,w)=>`<div style="position:relative;overflow:hidden;width:${w||Math.round(h*0.7)}px;height:${h}px;flex:0 0 auto;"><img src="${photo(id)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" onload="fitCut(this)" onerror="this.style.visibility='hidden'"></div>`;
 const circ=(id,s,ring)=>`<div style="width:${s}px;height:${s}px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid ${ring};overflow:hidden;flex:0 0 ${s}px;position:relative;"><img src="${photo(id)}" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);height:130%;width:auto;" onerror="this.style.display='none'"></div>`;
 const logo=()=>`<img src="assets/dogus-logo.png" style="position:absolute;top:30px;right:32px;width:110px;z-index:12;">`;   // logo her slaytta sağ üstte
 const progress=()=>`<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 28px 20px;z-index:10;display:flex;align-items:center;gap:10px;"><div style="flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;"><div style="height:100%;width:__PCT__%;background:#fff;border-radius:2px;"></div></div><span class="sans" style="font-size:11px;color:rgba(255,255,255,.55);font-weight:500;">__N__/__T__</span></div>`;
@@ -370,7 +373,7 @@ async function render(d){
   document.body.removeAttribute('data-ready'); document.getElementById('zipbtn').disabled=true;
   const slides=build(d);
   grid.innerHTML=slides.map((h,i)=>`<div class="card">${h}<small>${i+1}/${slides.length}</small><button class="ghost" onclick="downloadOne(${i})">${CEYREK&&h.includes('data-kupa')?'Video indir':'PNG indir'}</button></div>`).join('');
-  await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+  await Promise.all([...grid.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{const f=im.onload;im.onload=e=>{f&&f.call(im,e);r();};im.onerror=r;})));
   await document.fonts.ready;
   st.textContent=`${CEYREK?d.ayAdi:d.ayAdi+' '+d.yil} · ${d.siralama.length} danışman · 1. ${d.siralama[0].name} (${d.siralama[0].puan} p)`+(d.force?' · elle düzenlendi':'');
   document.getElementById('zipbtn').disabled=false; document.body.setAttribute('data-ready','1');
@@ -487,7 +490,7 @@ async function karnePaylas(dl){
   const k=karneHtml(d);
   const host=document.createElement('div'); host.style.cssText='position:fixed;left:-9999px;top:0;'; host.innerHTML=k.html; document.body.appendChild(host);
   const el=host.firstElementChild;
-  await Promise.all([...el.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+  await Promise.all([...el.querySelectorAll('img')].map(im=>im.complete?1:new Promise(r=>{const f=im.onload;im.onload=e=>{f&&f.call(im,e);r();};im.onerror=r;})));
   await document.fonts.ready;
   const c=await html2canvas(el,{scale:2,width:540,backgroundColor:null,useCORS:true,logging:false});
   host.remove();
