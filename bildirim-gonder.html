@@ -50,6 +50,7 @@
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
 </style>
 <script src="assets/broker.js"></script>
+<script src="assets/emoji-secici.js"></script>
 </head>
 <body>
 <div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Bildirim Gönder · Telefon</h1></div>
@@ -70,6 +71,8 @@
     <label class="et" for="metin">Metin</label>
     <textarea id="metin" maxlength="300" placeholder="Örn: Herkesin katılımını rica ederim, gündem: yeni projeler."></textarea>
     <div id="sayM" class="say">0 / 300</div>
+    <label class="et">Emoji <span style="opacity:.6">(en son dokunduğun kutuya, başlık ya da metin, eklenir)</span></label>
+    <div id="emojiler"></div>
     <label class="et" for="link">Dokununca açılacak sayfa <span style="opacity:.6">(isteğe bağlı)</span></label>
     <input id="link" type="text" inputmode="url" placeholder="https://dogusportal.com/kibris-rehber.html" autocomplete="off">
     <p class="ipucu">Bildirimde kalın/italik yoktur, düz yazı gider. Kilit ekranında metnin ilk 3-4 satırı görünür. Bildirime dokununca yukarıdaki sayfa açılır; boş bırakılırsa portal açılır.</p>
@@ -163,6 +166,16 @@ function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggl
   if (q.get('metin')) $('metin').value = q.get('metin').slice(0, 300);
   if (q.get('link')) $('link').value = q.get('link'); }
 $('link').oninput = () => { ID = ''; };
+// Emoji: imlecin olduğu yere, en son odaklanılan kutuya (varsayılan metin); karakter sınırı aşılmaz
+let sonKutu = 'metin';
+['baslik', 'metin'].forEach(id => $(id).addEventListener('focus', () => { sonKutu = id; }));
+EmojiSecici.kur($('emojiler'), e => {
+  const k = $(sonKutu), bas = k.selectionStart ?? k.value.length, son = k.selectionEnd ?? k.value.length;
+  const yeni = k.value.slice(0, bas) + e + k.value.slice(son);
+  if (yeni.length > k.maxLength) { durum((sonKutu === 'baslik' ? 'Başlık' : 'Metin') + ' sınırı doldu.', true); return; }
+  k.value = yeni; k.focus(); k.setSelectionRange(bas + e.length, bas + e.length);
+  k.dispatchEvent(new Event('input'));
+});
 $('baslik').oninput = onizle;
 $('metin').oninput = onizle;
 $('hepsi').onclick = () => { KISILER.forEach(k => k.sec = true); ciz(); };
