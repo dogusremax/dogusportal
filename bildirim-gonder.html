@@ -46,6 +46,21 @@
   .bld .b b{word-break:break-word}
   .bld .b span{color:#777;font-size:13px}
   .bld .m{font-size:15px;color:#222;margin-top:2px;white-space:pre-wrap;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  /* Gönderilenler raporu */
+  .gon{border-top:1px solid rgba(255,255,255,.08);padding-top:12px;margin-top:12px}
+  .gon:first-of-type{border-top:0;margin-top:0;padding-top:0}
+  .gon .bas{font-size:14px;font-weight:700}
+  .gon .alt2{font-size:12px;color:rgba(255,255,255,.5);margin:2px 0 8px;word-break:break-all}
+  .tablo{width:100%;border-collapse:collapse;font-size:12.5px}
+  .tablo th{font-weight:600;color:rgba(255,255,255,.5);text-align:left;padding:4px 6px 4px 0;white-space:nowrap}
+  .tablo td{padding:6px 6px 6px 0;border-top:1px solid rgba(255,255,255,.06);vertical-align:top}
+  .tablo td.ok{color:#6ee7a0;white-space:nowrap}
+  .tablo td.yok{color:rgba(255,255,255,.3)}
+  .tablo .blm{display:block;white-space:normal;min-width:140px;font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+  .ozet2{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px}
+  .zy{font-size:13px;padding:6px 0;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:10px}
+  .zy span{color:rgba(255,255,255,.5);white-space:nowrap}
+  .kaydir{overflow-x:auto}
   #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
 </style>
@@ -96,6 +111,17 @@
 
   <div class="alt"><button id="goBtn" class="go">Gönder</button></div>
   <p id="durum" class="durum"></p>
+
+  <div class="kutu">
+    <h2 style="display:flex;align-items:center">Gönderilenler: kim baktı?<button class="ghost" id="rapBtn" style="margin-left:auto">Yenile</button></h2>
+    <div id="rapor" class="durum">Yükleniyor…</div>
+    <p class="ipucu"><b>Ulaştı</b>: telefona düştü. <b>Dokundu</b>: bildirime bastı. <b>Açtı</b>: sayfa açıldı; süre sayfa ekrandayken sayılır, alttaki satır baktığı bölümlerdir (portal sayfalarında). <b>Kıbrıs sunumuna girdi</b>: bildirimden sonra sunuma kendi şifresiyle girdi. Takip 19 Ekim akşamından sonra gönderilen bildirimlerde var.</p>
+  </div>
+
+  <div class="kutu">
+    <h2>Son 7 gün: Kıbrıs sunumu ve rehber</h2>
+    <div id="ziyaret" class="durum"></div>
+  </div>
 </main>
 
 <script>
@@ -124,7 +150,7 @@ async function giris(p) {
     KISILER.forEach(k => { k.sec = k.cihaz > 0; });
     $('giris').hidden = true; $('ana').hidden = false;
     if (!j.anahtarVar) durum('Gönderme anahtarı yüklü değil, bildirim gitmez.', true);
-    ciz(); onizle();
+    ciz(); onizle(); rapor();
   } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
   finally { $('girBtn').disabled = false; }
 }
@@ -198,10 +224,41 @@ $('goBtn').onclick = async () => {
     SONUC = {}; let toplam = 0, kisi = 0;
     (j.sonuclar || []).forEach(s => { SONUC[s.ad] = s.cihaz; toplam += s.cihaz; if (s.cihaz) kisi++; });
     ciz();
+    setTimeout(rapor, 4000);
     durum(kisi ? `Gönderildi: ${kisi} kişi, ${toplam} cihaz.` : 'Seçilenlerin hiçbirinde bildirim açık değil, kimseye gitmedi.', !kisi);
   } catch (e) { durum('Hata: ' + e.message, true); }
   finally { $('goBtn').disabled = false; }
 };
+
+// ── Gönderilenler raporu (Bildirim.js izRapor_) ──
+const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const sure = sn => !sn ? '' : sn < 60 ? sn + ' sn' : Math.floor(sn / 60) + ' dk ' + (sn % 60 ? sn % 60 + ' sn' : '');
+const SAYFA_AD = { '/kibris-rehber.html': 'Kıbrıs rehberi', '/kibris-sunum.html': 'Kıbrıs sunumu', '/kibris-360-tur.html': '360° turlar' };
+const hucre = (v, alt) => v ? `<td class="ok">${esc(v.replace(/^\d\d\.\d\d /, ''))}${alt || ''}</td>` : '<td class="yok">–</td>';
+async function rapor() {
+  $('rapBtn').disabled = true;
+  try {
+    const j = await servis({ islem: 'rapor' }, 60000);
+    if (!j.ok) { $('rapor').textContent = j.error || 'Rapor alınamadı.'; return; }
+    const g = j.gonderimler || [];
+    $('rapor').innerHTML = !g.length ? 'Henüz takipli bildirim gönderilmedi.' : g.map(b => {
+      const k = b.kisiler || [], say = f => k.filter(x => x[f]).length;
+      return `<div class="gon"><div class="bas">${esc(b.baslik)}</div>
+        <div class="alt2">${esc(b.tarih)} · ${esc(b.gonderen)}${b.link ? ' · ' + esc(b.link.replace(/^https:\/\//, '')) : ''}</div>
+        <div class="ozet2">${k.filter(x => x.cihaz > 0).length} kişiye gitti · ${say('ulasti')} ulaştı · ${say('dokundu')} dokundu · ${say('acti')} açtı${say('sunum') ? ' · ' + say('sunum') + ' sunuma girdi' : ''}</div>
+        <div class="kaydir"><table class="tablo"><tr><th>Kişi</th><th>Ulaştı</th><th>Dokundu</th><th>Açtı</th></tr>
+        ${k.map(x => `<tr><td>${esc(x.ad)}${x.cihaz ? '' : ' <span style="opacity:.5">(kapalı)</span>'}</td>${hucre(x.ulasti)}${hucre(x.dokundu)}${hucre(x.acti,
+          (x.sn ? ' · ' + sure(x.sn) : '') + (x.bolumler && x.bolumler.length ? `<span class="blm">${x.bolumler.map(esc).join(', ')}</span>` : ''))}</tr>`
+          + (x.sunum ? `<tr><td style="border-top:0"></td><td colspan="3" class="ok" style="border-top:0;padding-top:0">Kıbrıs sunumuna girdi: ${esc(x.sunum)}</td></tr>` : '')).join('')}
+        </table></div></div>`;
+    }).join('');
+    const z = j.ziyaretler || [];
+    $('ziyaret').innerHTML = !z.length ? 'Kayıt yok.' : z.map(v => `<div class="zy"><span>${esc(v.tarih)}</span><div>${esc(v.kim)} · ${
+      v.olay === 'sunum-giris' ? 'sunuma giriş yaptı' : esc(SAYFA_AD[v.sayfa] || v.sayfa) + ' açtı'}${v.bildirimden ? ' <span>(bildirimden)</span>' : ''}</div></div>`).join('');
+  } catch (e) { $('rapor').textContent = 'Rapor alınamadı: ' + e.message; }
+  finally { $('rapBtn').disabled = false; }
+}
+$('rapBtn').onclick = rapor;
 
 $('girBtn').onclick = () => giris($('pin').value);
 $('pin').onkeydown = e => { if (e.key === 'Enter') giris($('pin').value); };
