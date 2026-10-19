@@ -137,9 +137,18 @@ function ciz() {
   $('kisiler').querySelectorAll('input').forEach(c => c.onchange = () => { KISILER[c.dataset.i].sec = c.checked; });
 }
 
+// Sunucu (Bildirim.js pushEmoji_) başlık emojisiz ise konusuna göre emoji ekler; önizleme de aynısını gösterir
+const EMOJI_KURAL = [[/tekrar yazdı/i,'💬'],[/aranacak/i,'📞'],[/müşteri/i,'🔔'],[/nöbet/i,'🗓️'],[/posta/i,'✉️'],[/onaylandı/i,'✅'],[/doğrulama|şablonu:/i,'⚠️'],[/toplantı/i,'👥'],[/doğum günü/i,'🎂'],[/tebrik|kapanış/i,'🎉'],[/ödeme|revy/i,'💳']];
+function emojili(b) {
+  b = b.trim();
+  if (!b || /^[\u00a9\u00ae\u203c-\u3299\ud83c-\udbff]/.test(b)) return b;
+  const k = EMOJI_KURAL.find(r => r[0].test(b));
+  return (k ? k[1] : '🔔') + ' ' + b;
+}
+
 function onizle() {
   const b = $('baslik').value, m = $('metin').value;
-  $('onB').textContent = b.trim() || 'Başlık';
+  $('onB').textContent = emojili(b) || 'Başlık';
   $('onM').textContent = m.trim();
   $('sayB').textContent = b.length + ' / 60';
   $('sayM').textContent = m.length + ' / 300';
