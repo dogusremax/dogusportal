@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Ofis Anketi · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--kart:#111738;--kart2:#161c44;--cizgi:rgba(255,255,255,.1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased}
+  .hero{background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral));padding:22px 20px 26px;position:relative}
+  .hero img{height:34px;position:absolute;top:18px;right:18px}
+  .hero small{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85}
+  .hero h1{font-size:26px;font-weight:800;line-height:1.15;margin:8px 0 8px;max-width:78%}
+  .hero p{font-size:14px;line-height:1.5;opacity:.92;max-width:520px}
+  main{max-width:680px;margin:0 auto;padding:18px 16px 60px;display:flex;flex-direction:column;gap:14px}
+  .ilerleme{position:sticky;top:0;z-index:5;height:4px;background:rgba(255,255,255,.08)}
+  .ilerleme i{display:block;height:100%;width:0;background:var(--coral);transition:width .3s}
+  .kutu{background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:16px}
+  .kutu h2{font-size:12px;font-weight:800;color:var(--coral);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .kutu .soru{font-size:16px;font-weight:700;line-height:1.35;margin-bottom:12px}
+  .kutu .not{font-size:12px;color:rgba(255,255,255,.55);margin:-6px 0 12px;line-height:1.45}
+  .arac{border-top:1px solid var(--cizgi);padding:12px 0}
+  .arac:first-of-type{border-top:0;padding-top:2px}
+  .arac b{display:block;font-size:15px;font-weight:700}
+  .arac span{display:block;font-size:12px;color:rgba(255,255,255,.55);margin:2px 0 9px;line-height:1.4}
+  .satir{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .yildiz{display:flex;gap:2px}
+  .yildiz button{background:none;border:0;font-size:28px;line-height:1;color:rgba(255,255,255,.18);cursor:pointer;padding:2px}
+  .yildiz button.on{color:#FFC83D}
+  .yildiz.kapali{opacity:.25;pointer-events:none}
+  .kullanmadim{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:auto}
+  .kullanmadim input{width:16px;height:16px;accent-color:var(--red)}
+  .secenek{display:flex;flex-wrap:wrap;gap:8px}
+  .secenek label{position:relative}
+  .secenek input{position:absolute;opacity:0;pointer-events:none}
+  .secenek label span{display:block;background:var(--kart2);border:1px solid var(--cizgi);border-radius:999px;padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;margin:0;color:#fff}
+  .secenek input:checked+span{background:var(--red);border-color:var(--red)}
+  .olcek{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .olcek.on10{grid-template-columns:repeat(11,1fr)}
+  .olcek label span{text-align:center;padding:10px 0;border-radius:10px}
+  .olcek-uc{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.5);margin-top:6px}
+  textarea,select{width:100%;font:500 15px/1.5 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;outline:none}
+  textarea{min-height:92px;resize:vertical}
+  textarea:focus,select:focus{border-color:var(--coral)}
+  button.gonder{font:800 16px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:15px 18px;cursor:pointer;background:var(--red);color:#fff;width:100%}
+  button.gonder:disabled{opacity:.5;cursor:default}
+  .durum{font-size:13px;color:rgba(255,255,255,.7);text-align:center;min-height:18px}
+  .durum.hata{color:#ff8a95}
+  .bitti{text-align:center;padding:40px 18px}
+  .bitti .ikon{width:64px;height:64px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px}
+  .bitti h2{font-size:22px;font-weight:800;margin-bottom:8px}
+  .bitti p{color:rgba(255,255,255,.75);font-size:14px;line-height:1.5}
+  @media (min-width:560px){.hero{padding:30px 32px 34px}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="ilerleme"><i id="bar"></i></div>
+<div class="hero">
+  <img src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+  <small>Ofis Anketi · Ekim 2026</small>
+  <h1>Yeni araçlarımız işinize yarıyor mu?</h1>
+  <p>Son aylarda devreye aldığımız siteler, otomasyonlar ve ofis paylaşımları hakkında görüşünüz bizim için çok değerli. Yaklaşık 4 dakika sürer. İsterseniz isimsiz doldurabilirsiniz.</p>
+</div>
+
+<main id="form">
+  <div class="kutu">
+    <h2>1 · Siz</h2>
+    <div class="soru">Adınız (isteğe bağlı)</div>
+    <select id="kisi">
+      <option value="">İsim vermeden doldurmak istiyorum</option>
+    </select>
+  </div>
+
+  <div class="kutu">
+    <h2>2 · Araçlar</h2>
+    <div class="soru">Her biri işinize ne kadar yarıyor?</div>
+    <p class="not">1 yıldız: hiç yaramıyor, 5 yıldız: çok işime yarıyor. Hiç kullanmadıysanız kutucuğu işaretleyin.</p>
+    <div id="araclar"></div>
+  </div>
+
+  <div class="kutu">
+    <h2>3 · Ofis paylaşımları</h2>
+    <div class="soru">Instagram'daki ofis paylaşımlarından en çok hangilerini beğeniyorsunuz?</div>
+    <p class="not">Birden fazla seçebilirsiniz.</p>
+    <div class="secenek" data-ad="begenilen" data-coklu>
+      <label><input type="checkbox" value="nobet"><span>Nöbetçi danışman story</span></label>
+      <label><input type="checkbox" value="performans"><span>Haftalık performans story</span></label>
+      <label><input type="checkbox" value="sampiyon"><span>Ayın şampiyonları</span></label>
+      <label><input type="checkbox" value="sizlerden"><span>Sizlerden Gelenler (Google yorumları)</span></label>
+      <label><input type="checkbox" value="astroloji"><span>Yatırım astrolojisi (Güneş)</span></label>
+      <label><input type="checkbox" value="teslim"><span>Teslim takvimi / etap paylaşımları</span></label>
+      <label><input type="checkbox" value="portfoy"><span>Portföy karuselleri</span></label>
+    </div>
+  </div>
+
+  <div class="kutu">
+    <div class="soru">Ofis paylaşımlarını kendi hesabınızda paylaşıyor musunuz?</div>
+    <div class="secenek" data-ad="paylasim">
+      <label><input type="radio" name="paylasim" value="duzenli"><span>Düzenli paylaşıyorum</span></label>
+      <label><input type="radio" name="paylasim" value="bazen"><span>Bazen</span></label>
+      <label><input type="radio" name="paylasim" value="hayir"><span>Paylaşmıyorum</span></label>
+    </div>
+  </div>
+
+  <div class="kutu">
+    <h2>4 · Otomatik mesajlar</h2>
+    <div class="soru">Size gelen otomatik WhatsApp mesajları ve telefon bildirimleri sizce nasıl?</div>
+    <p class="not">Nöbet hatırlatması, Pazartesi karnesi, Çarşamba mesajı, haftalık burç, yeni müşteri bildirimi gibi.</p>
+    <div class="secenek" data-ad="mesajMiktari">
+      <label><input type="radio" name="mesajMiktari" value="az"><span>Az, daha fazlası olabilir</span></label>
+      <label><input type="radio" name="mesajMiktari" value="kararinda"><span>Tam kararında</span></label>
+      <label><input type="radio" name="mesajMiktari" value="fazla"><span>Fazla geliyor</span></label>
+    </div>
+  </div>
+
+  <div class="kutu">
+    <h2>5 · Genel</h2>
+    <div class="soru">Bu yeni araçlar işinizi kolaylaştırdı mı?</div>
+    <div class="secenek olcek" data-ad="kolaylik">
+      <label><input type="radio" name="kolaylik" value="1"><span>1</span></label>
+      <label><input type="radio" name="kolaylik" value="2"><span>2</span></label>
+      <label><input type="radio" name="kolaylik" value="3"><span>3</span></label>
+      <label><input type="radio" name="kolaylik" value="4"><span>4</span></label>
+      <label><input type="radio" name="kolaylik" value="5"><span>5</span></label>
+    </div>
+    <div class="olcek-uc"><span>Hiç kolaylaştırmadı</span><span>Çok kolaylaştırdı</span></div>
+  </div>
+
+  <div class="kutu">
+    <div class="soru">Hangisi için kısa bir eğitim ya da anlatım istersiniz?</div>
+    <p class="not">Birden fazla seçebilirsiniz.</p>
+    <div class="secenek" id="egitim" data-ad="egitim" data-coklu></div>
+  </div>
+
+  <div class="kutu">
+    <div class="soru">En çok işinize yarayan şey hangisi, neden?</div>
+    <textarea data-ad="enIyi" maxlength="1500" placeholder="Örn: Form gelince WhatsApp'a düşmesi, müşteriyi hemen arayabiliyorum."></textarea>
+  </div>
+
+  <div class="kutu">
+    <div class="soru">Zorlandığınız, anlamadığınız ya da hiç kullanmadığınız bir şey var mı?</div>
+    <textarea data-ad="zorluk" maxlength="1500" placeholder="Ne olduğunu ve nerede takıldığınızı yazabilirsiniz."></textarea>
+  </div>
+
+  <div class="kutu">
+    <div class="soru">Olmasını istediğiniz yeni bir şey ya da öneriniz?</div>
+    <textarea data-ad="oneri" maxlength="1500" placeholder="Aklınıza gelen her fikir işimize yarar."></textarea>
+  </div>
+
+  <button class="gonder" id="gonder">Anketi gönder</button>
+  <p class="durum" id="durum"></p>
+</main>
+
+<main id="bitti" hidden>
+  <div class="bitti">
+    <div class="ikon">✓</div>
+    <h2>Teşekkürler!</h2>
+    <p>Cevaplarınız bize ulaştı. Sonuçlara göre araçları birlikte geliştireceğiz.</p>
+  </div>
+</main>
+
+<script>
+const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const ONIZLEME = !/dogusportal\.com$/.test(location.hostname);
+const KISILER = ['Aysun Yılmaz','Ayşegül Alpay','Evşen Özazman','Gamze Yetkin','Gizem Gök',
+                 'İrem Aleyna Tetik','Makbule Tokkuş','Orhan Özazman','Özlem Varol'];
+const ARACLAR = [
+  ['yenifikirtepe','yenifikirtepeburada.com','Fikirtepe projeleri, teslim takvimi ve müşteri formları'],
+  ['kibris','kibrisburada.com','Kıbrıs projeleri, fiyat listeleri ve sunumlar'],
+  ['portal','Doğuş Portal','dogusportal.com: nöbet takvimi, ajanda, rehber, evraklar'],
+  ['posta','Doğuş Posta','Ofis e-postanız ve imzanız'],
+  ['kartvizit','Dijital kartvizit','Müşteriye gönderdiğiniz kişisel kartınız'],
+  ['formWa','Formdan gelen müşteri WhatsApp\'ı','Siteden form dolduran müşterinin size anında düşmesi'],
+  ['nobetHat','Nöbet hatırlatması','Akşam 20:00 WhatsApp hatırlatması ve nöbet takvimi'],
+  ['karne','Pazartesi karnesi ve Çarşamba mesajı','Haftalık performans özetiniz'],
+  ['bildirim','Telefon bildirimleri','Portal bildirimleri, yeni posta ve nöbet bildirimleri'],
+  ['igPuan','Instagram otomatik puanlama','Story ve gönderilerde ofisi etiketleyince puan yazılması'],
+  ['burc','Haftalık burç mesajı','Pazartesi gelen burç yorumu']
+];
+
+const kisiSel = document.getElementById('kisi');
+KISILER.forEach(k => kisiSel.add(new Option(k, k)));
+
+const aracKutu = document.getElementById('araclar');
+const puan = {}, kullanmadi = {};
+ARACLAR.forEach(([id, ad, acik]) => {
+  const d = document.createElement('div'); d.className = 'arac';
+  d.innerHTML = `<b>${ad}</b><span>${acik}</span><div class="satir"><div class="yildiz">${[1,2,3,4,5].map(n=>`<button type="button" data-n="${n}" aria-label="${n} yıldız">★</button>`).join('')}</div><label class="kullanmadim"><input type="checkbox">Kullanmadım</label></div>`;
+  const yb = d.querySelector('.yildiz'), cb = d.querySelector('input');
+  yb.querySelectorAll('button').forEach(b => b.onclick = () => {
+    puan[id] = +b.dataset.n;
+    yb.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.n <= puan[id]));
+    ilerle();
+  });
+  cb.onchange = () => { kullanmadi[id] = cb.checked; yb.classList.toggle('kapali', cb.checked); ilerle(); };
+  aracKutu.appendChild(d);
+});
+
+const egitim = document.getElementById('egitim');
+ARACLAR.forEach(([id, ad]) => {
+  const l = document.createElement('label');
+  l.innerHTML = `<input type="checkbox" value="${id}"><span>${ad}</span>`;
+  egitim.appendChild(l);
+});
+
+function topla() {
+  const c = { kisi: kisiSel.value, puan: {}, kullanmadi: [] };
+  ARACLAR.forEach(([id]) => { if (kullanmadi[id]) c.kullanmadi.push(id); else if (puan[id]) c.puan[id] = puan[id]; });
+  document.querySelectorAll('.secenek[data-ad]').forEach(g => {
+    const s = [...g.querySelectorAll('input:checked')].map(i => i.value);
+    c[g.dataset.ad] = g.hasAttribute('data-coklu') ? s : (s[0] || '');
+  });
+  document.querySelectorAll('textarea[data-ad]').forEach(t => c[t.dataset.ad] = t.value.trim());
+  return c;
+}
+
+function ilerle() {
+  const c = topla();
+  const toplam = ARACLAR.length + 6;
+  const dolu = Object.keys(c.puan).length + c.kullanmadi.length +
+    [c.begenilen.length, c.paylasim, c.mesajMiktari, c.kolaylik, c.enIyi || c.zorluk || c.oneri, c.egitim.length].filter(Boolean).length;
+  document.getElementById('bar').style.width = Math.min(100, dolu / toplam * 100) + '%';
+}
+document.addEventListener('change', ilerle);
+document.addEventListener('input', ilerle);
+
+try { if (localStorage.getItem('ofisAnket2026_10') === 'ok' && !ONIZLEME) { form.hidden = true; bitti.hidden = false; } } catch (e) {}
+
+document.getElementById('gonder').onclick = async () => {
+  const c = topla(), durum = document.getElementById('durum'), btn = document.getElementById('gonder');
+  const bos = !Object.keys(c.puan).length && !c.kolaylik && !c.enIyi && !c.zorluk && !c.oneri;
+  if (bos) { durum.className = 'durum hata'; durum.textContent = 'Lütfen en az birkaç soruyu cevaplayın.'; return; }
+  if (ONIZLEME) { durum.className = 'durum'; durum.textContent = 'Bu bir önizleme, cevap kaydedilmedi.'; return; }
+  btn.disabled = true; durum.className = 'durum'; durum.textContent = 'Gönderiliyor…';
+  try {
+    const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'anket', islem: 'gonder', anket: 'ofis-2026-10', cevap: c }) });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'Hata');
+    try { localStorage.setItem('ofisAnket2026_10', 'ok'); } catch (e) {}
+    form.hidden = true; bitti.hidden = false; scrollTo(0, 0);
+  } catch (e) {
+    btn.disabled = false; durum.className = 'durum hata';
+    durum.textContent = 'Gönderilemedi, lütfen tekrar deneyin. (' + e.message + ')';
+  }
+};
+</script>
+</body>
+</html>
