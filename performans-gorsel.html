@@ -564,6 +564,17 @@ async function storyYayinla(){
     const r=await resp.json();
     if(r.success){st.textContent='✅ '+r.count+' story sırayla yayınlandı!';}
     else if(r.retry){st.textContent='Görseller yüklendi, site yayını bekleniyor — 2 dk sonra tuşa tekrar bas, kaldığı yerden yayınlar.';}
+    else if(/zaten paylaşıldı/.test(r.error||'')){
+      // Hafta paylaşılmış: silinen tek bir story'yi yeniden atmak için yalnız o slayt (kilit atlanır)
+      const no=parseInt(prompt("Bu haftanın story'leri zaten paylaşıldı.\nSildiğin story'yi yeniden paylaşmak için slayt numarasını yaz (1-"+n+"):")||'',10);
+      if(!(no>=1&&no<=n)){st.textContent="Bu haftanın story'leri zaten paylaşıldı, tekrar paylaşılmadı.";return;}
+      st.textContent=no+'. slayt yeniden yayınlanıyor…';
+      const r2=await(await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
+        body:JSON.stringify({action:'storyYayinla',ay:DATA.ay,images:[images[no-1]],zorla:true,ek:'tek'+Date.now()+'_',ghToken:ghTok()})})).json();
+      if(r2.success)st.textContent='✅ '+no+'. slayt story olarak yayınlandı!';
+      else if(r2.retry)st.textContent='Görsel yüklendi, site yayını bekleniyor — 2 dk sonra tuşa tekrar bas.';
+      else throw new Error(r2.error||'bilinmeyen');
+    }
     else throw new Error(r.error||'bilinmeyen');
   }catch(e){st.textContent='Story hata: '+e.message;}
   finally{btn.disabled=false;}
