@@ -14,6 +14,15 @@
     if (window.brokerPinAl && brokerPinAl()) { try{ sessionStorage.setItem(K, 'ok'); sessionStorage.setItem('kibrisKim', /makbule/i.test(brokerAdAl()) ? 'makbule' : 'umut'); }catch(e){} return true; }
     return false;
   }
+  /* Kim girdi: bildirim raporu için (dogus-whatsapp-service · Bildirim.js action=bildirimIz; bildirim-gonder.html > Gönderilenler) */
+  var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+  function izGiris(){
+    try{
+      var kim = sessionStorage.getItem('kibrisKim'); if(!kim) return;
+      var veri = JSON.stringify({action:'bildirimIz', olay:'sunum-giris', kim:kim, bid:sessionStorage.getItem('izBid')||'', sayfa:location.hostname + location.pathname});
+      if(!(navigator.sendBeacon && navigator.sendBeacon(WA, new Blob([veri], {type:'text/plain'})))) fetch(WA, {method:'POST', mode:'no-cors', keepalive:true, body:veri});
+    }catch(e){}
+  }
   function danismanKim(pin){
     pin = String(pin||'').trim();
     if (!pin) return Promise.resolve(null);
@@ -59,7 +68,7 @@
       e.textContent = 'Kontrol ediliyor…';
       giris(i.value).then(function(x){
         if(!x){ e.textContent = 'Şifre hatalı'; i.select(); return; }
-        d.remove(); onOk();
+        izGiris(); d.remove(); onOk();
       });
     };
   }
