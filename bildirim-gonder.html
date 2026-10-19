@@ -70,7 +70,9 @@
     <label class="et" for="metin">Metin</label>
     <textarea id="metin" maxlength="300" placeholder="Örn: Herkesin katılımını rica ederim, gündem: yeni projeler."></textarea>
     <div id="sayM" class="say">0 / 300</div>
-    <p class="ipucu">Bildirimde kalın/italik yoktur, düz yazı gider. Kilit ekranında metnin ilk 3-4 satırı görünür. Bildirime dokununca portal açılır.</p>
+    <label class="et" for="link">Dokununca açılacak sayfa <span style="opacity:.6">(isteğe bağlı)</span></label>
+    <input id="link" type="text" inputmode="url" placeholder="https://dogusportal.com/kibris-rehber.html" autocomplete="off">
+    <p class="ipucu">Bildirimde kalın/italik yoktur, düz yazı gider. Kilit ekranında metnin ilk 3-4 satırı görünür. Bildirime dokununca yukarıdaki sayfa açılır; boş bırakılırsa portal açılır.</p>
   </div>
 
   <div class="kutu">
@@ -146,6 +148,12 @@ function onizle() {
 
 function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
 
+// Hazır bildirim bağlantısı: bildirim-gonder.html?baslik=..&metin=..&link=.. alanları doldurur (yine de "Gönder"e basmak gerekir)
+{ const q = new URLSearchParams(location.search);
+  if (q.get('baslik')) $('baslik').value = q.get('baslik').slice(0, 60);
+  if (q.get('metin')) $('metin').value = q.get('metin').slice(0, 300);
+  if (q.get('link')) $('link').value = q.get('link'); }
+$('link').oninput = () => { ID = ''; };
 $('baslik').oninput = onizle;
 $('metin').oninput = onizle;
 $('hepsi').onclick = () => { KISILER.forEach(k => k.sec = true); ciz(); };
@@ -161,7 +169,9 @@ $('goBtn').onclick = async () => {
   if (!ID) ID = 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   $('goBtn').disabled = true; durum('Gönderiliyor…');
   try {
-    const j = await servis({ islem: 'gonder', id: ID, baslik, metin, kimler });
+    const link = $('link').value.trim();
+    if (link && !/^https:\/\/\S+$/.test(link)) { durum('Sayfa adresi https:// ile başlamalı.', true); $('goBtn').disabled = false; return; }
+    const j = await servis({ islem: 'gonder', id: ID, baslik, metin, kimler, link });
     if (!j.ok) { durum(j.error || 'Gönderilemedi.', true); return; }
     SONUC = {}; let toplam = 0, kisi = 0;
     (j.sonuclar || []).forEach(s => { SONUC[s.ad] = s.cihaz; toplam += s.cihaz; if (s.cihaz) kisi++; });
