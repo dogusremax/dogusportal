@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Asistan Anahtarı · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  main{max-width:420px;margin:40px auto;padding:0 16px;display:flex;flex-direction:column;gap:12px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  input:focus{border-color:#FB5160}
+  button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+  .durum.hata{color:#ff8a95}
+  .durum.ok{color:#7be3a0}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>WhatsApp Asistanı · Claude anahtarı</h1></div>
+<main>
+  <label for="pin">PIN</label>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <label for="anahtar">Anthropic anahtarı (sk-ant-…)</label>
+  <input id="anahtar" type="password" autocomplete="off" spellcheck="false">
+  <button id="kaydet">Kaydet</button>
+  <p id="durum" class="durum">Anahtar yalnız WhatsApp servisine kaydedilir, burada ya da başka yerde gösterilmez.</p>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+$('kaydet').onclick = async () => {
+  const pin = $('pin').value.trim(), deger = $('anahtar').value.trim();
+  if (!pin || !deger) return durum('PIN ve anahtarı girin.', 'hata');
+  $('kaydet').disabled = true; durum('Anahtar deneniyor ve kaydediliyor…');
+  try {
+    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+      body: JSON.stringify({ action: 'anahtarKaydet', pin, deger }) });
+    const j = await r.json();
+    if (j.ok) { $('anahtar').value = ''; durum('Kaydedildi (…' + j.son4 + '). Claude\'a "girdim" yazabilirsiniz.', 'ok'); }
+    else durum(j.error || 'Kaydedilemedi.', 'hata');
+  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  $('kaydet').disabled = false;
+};
+</script>
+</body>
+</html>
