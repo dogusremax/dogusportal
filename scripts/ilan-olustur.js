@@ -106,6 +106,24 @@ async function kapakYap(url) {
 // sahibinden fotoğraflarını indirir; kapağı hemen temizler, kalanları bekleyen.json'a yazar
 const SHB = /^https:\/\/i\d\.shbdn\.com\//;
 const yerel = (ad) => "https://dogusportal.com/ilan/" + KOD + "/" + ad;
+// kapak: workflow modeli önceden yüklenmiş bekleyen bir python süreci açar (LAMA_BEKLE); yoksa doğrudan çalıştırılır
+const PY = process.env.LAMA_PY || "python3";
+const bekleSh = (k, sn) => execFileSync("bash", ["-c", `for i in $(seq ${sn * 5}); do ${k} && exit 0; sleep 0.2; done; exit 1`]);
+function kapakTemizle(p) {
+  const dz = process.env.LAMA_BEKLE;
+  if (dz) {
+    try {
+      fs.mkdirSync(dz, { recursive: true });
+      const ist = path.join(dz, "istek.json");
+      fs.writeFileSync(ist + ".tmp", JSON.stringify([[p, p]])); fs.renameSync(ist + ".tmp", ist);
+      bekleSh(`[ -f "${dz}/bitti" ] || [ -f "${dz}/hata" ]`, 120);
+      if (fs.existsSync(path.join(dz, "bitti"))) return;
+      console.log("hazır süreç hata verdi:", fs.readFileSync(path.join(dz, "hata"), "utf8"));
+    } catch (e) { console.log("hazır süreç yok:", e.message); }
+  }
+  if (process.env.PIP_HAZIR) bekleSh(`[ -f "${process.env.PIP_HAZIR}" ]`, 120);
+  execFileSync(PY, [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" });
+}
 async function fotoIndir(fotolar) {
   const shb = fotolar.filter((u) => SHB.test(u)).slice(0, 30);
   if (!shb.length) return fotolar;
@@ -126,9 +144,7 @@ async function fotoIndir(fotolar) {
   }
   if (!inen.length) return [];
   const p = path.join(DIZIN, inen[0]);
-  // workflow python paketlerini arka planda kurar; bitmesini bekle
-  if (process.env.PIP_HAZIR) execFileSync("bash", ["-c", 'for i in $(seq 600); do [ -f "$PIP_HAZIR" ] && exit 0; sleep 0.2; done']);
-  try { execFileSync("python3", [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" }); }
+  try { kapakTemizle(p); }
   catch (e) { console.log("foto temizlenemedi:", e.message); inen.forEach((a) => fs.unlinkSync(path.join(DIZIN, a))); return []; }
   if (inen.length > 1) fs.writeFileSync(path.join(DIZIN, "bekleyen.json"), JSON.stringify(inen));
   return [yerel(inen[0])];   // temizlenmemiş fotoğraf hiç gösterilmez

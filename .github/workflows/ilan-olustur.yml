@@ -27,21 +27,25 @@ jobs:
       - uses: actions/cache@v4
         with: { path: node_modules, key: sharp-0.33.5-linux }
       - name: Paketler
-        id: paket
         env:
           GIRDI: ${{ inputs.girdi }}
           VERI: ${{ inputs.veri }}
         run: |
-          # sahibinden fotoğraflarındaki filigran ve logo için (scripts/foto-temizle.py): python paketleri
-          # arka planda kurulur, ilan-olustur.js gerekince bekler
+          # sahibinden fotoğraflarındaki filigran ve logo için (scripts/foto-temizle.py): uv ile python paketleri ve
+          # LaMa modeli arka planda iner, model önceden yüklenip kapağı bekler (ilan-olustur.js LAMA_BEKLE)
+          D="$RUNNER_TEMP/lama"; mkdir -p "$D"
           if printf '%s %s' "$GIRDI" "$VERI" | grep -qiE 'sahibinden|shbdn|(^|[^0-9])[0-9]{9,11}([^0-9]|$)'; then
-            echo "shb=1" >> "$GITHUB_OUTPUT"
-            (pip install -q onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4; touch "$RUNNER_TEMP/pip.ok") > "$RUNNER_TEMP/pip.log" 2>&1 < /dev/null &
-          else touch "$RUNNER_TEMP/pip.ok"; fi
+            ( set -e
+              (curl -LsSf https://astral.sh/uv/0.5.11/install.sh | sh
+               ~/.local/bin/uv venv -q "$RUNNER_TEMP/v"
+               ~/.local/bin/uv pip install -q --python "$RUNNER_TEMP/v/bin/python" onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4) &
+              curl -sSLf -o lama_fp32.onnx https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx &
+              wait
+              touch "$RUNNER_TEMP/pip.ok"
+              "$RUNNER_TEMP/v/bin/python" scripts/foto-temizle.py --bekle "$D" || echo "hazır süreç çalışmadı" > "$D/hata"
+            ) > "$RUNNER_TEMP/lama.log" 2>&1 < /dev/null &
+          else echo "sahibinden değil" > "$D/hata"; touch "$RUNNER_TEMP/pip.ok"; fi
           [ -d node_modules/sharp ] || npm i --no-save --no-audit --no-fund sharp@0.33.5
-      - uses: actions/cache@v4
-        if: steps.paket.outputs.shb == '1'
-        with: { path: lama_fp32.onnx, key: lama-fp32-v1 }
       - name: Sayfayı üret
         env:
           KOD: ${{ inputs.kod }}
@@ -49,6 +53,8 @@ jobs:
           GIRDI: ${{ inputs.girdi }}
           VERI: ${{ inputs.veri }}
           PIP_HAZIR: ${{ runner.temp }}/pip.ok
+          LAMA_BEKLE: ${{ runner.temp }}/lama
+          LAMA_PY: ${{ runner.temp }}/v/bin/python
         run: node scripts/ilan-olustur.js
       - name: Yayınla
         env:
@@ -79,7 +85,8 @@ jobs:
           [ -f "$B" ] || exit 0
           a=""; for f in $(jq -r '.[1:][]' "$B"); do a="$a ilan/$KOD/$f ilan/$KOD/$f"; done
           for i in $(seq 600); do [ -f "$RUNNER_TEMP/pip.ok" ] && break; sleep 0.2; done
-          [ -n "$a" ] && python3 scripts/foto-temizle.py $a
+          cat "$RUNNER_TEMP/lama.log" 2>/dev/null | tail -5 || true
+          [ -n "$a" ] && "$RUNNER_TEMP/v/bin/python" scripts/foto-temizle.py $a
           FOTO_EKLE=1 node scripts/ilan-olustur.js
           git add --sparse -A "ilan/$KOD"
           git commit -qm "İlan önizleme: $KOD fotoğraflar"
