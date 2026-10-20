@@ -29,6 +29,8 @@ jobs:
         with: { path: lama_fp32.onnx, key: lama-fp32-v1 }
       - uses: actions/cache@v4
         with: { path: ~/.cache/pip, key: pip-lama-v1 }
+      - uses: actions/cache@v4
+        with: { path: node_modules, key: sharp-0.33.5-${{ runner.os }} }
       - name: Paketler
         env:
           GIRDI: ${{ inputs.girdi }}
@@ -38,8 +40,7 @@ jobs:
           if printf '%s %s' "$GIRDI" "$VERI" | grep -qiE 'sahibinden|shbdn|(^|[^0-9])[0-9]{9,11}([^0-9]|$)'; then
             (pip install -q onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4; touch "$RUNNER_TEMP/pip.ok") > "$RUNNER_TEMP/pip.log" 2>&1 < /dev/null &
           else touch "$RUNNER_TEMP/pip.ok"; fi
-          node --version
-          npm i --no-save --no-audit --no-fund sharp@0.33.5
+          [ -d node_modules/sharp ] || npm i --no-save --no-audit --no-fund sharp@0.33.5
       - name: Sayfayı üret
         env:
           KOD: ${{ inputs.kod }}
