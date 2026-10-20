@@ -48,6 +48,9 @@ input:focus{outline:none;border-color:var(--navy)}
 .liste a b{display:block;color:var(--navy)}
 .liste .gor{display:block;font-size:12px;color:var(--soft);margin-top:2px}
 .liste .gor.var{color:#1faa53;font-weight:700}
+.liste .sil{flex:none;width:30px;height:30px;border:0;border-radius:8px;background:var(--bg);color:var(--soft);font-size:18px;line-height:1;cursor:pointer}
+.liste a .sag{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tumSil{background:none;border:0;color:var(--red);font:inherit;font-size:13px;font-weight:700;cursor:pointer;justify-self:start;padding:4px 0}
 details summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none}
 details summary::-webkit-details-marker{display:none}
 details summary::after{content:" ›";color:var(--red)}
@@ -125,6 +128,7 @@ ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
     <section class="kart gizli" id="sonKart">
       <h2>Son oluşturduklarım</h2>
       <div class="liste" id="liste"></div>
+      <button class="tumSil" id="tumSil">Tümünü temizle</button>
     </section>
   </div>
 </main>
@@ -290,10 +294,21 @@ function listeCiz() {
     var s = document.createElement("span"); s.textContent = x.fiyat || "";
     var g = document.createElement("small"); g.className = "gor"; g.id = "gor_" + x.kod;
     var sol = document.createElement("div"); sol.appendChild(b); sol.appendChild(g);
-    a.appendChild(sol); a.appendChild(s); $("liste").appendChild(a);
+    var sil = document.createElement("button"); sil.className = "sil"; sil.textContent = "×"; sil.setAttribute("aria-label", "Listeden sil");
+    sil.onclick = function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      if (!confirm("Bu ilan listenden silinsin mi? Müşteriye gönderdiğin link çalışmaya devam eder.")) return;
+      yaz("ilan_liste", oku("ilan_liste", []).filter(function (y) { return y.kod !== x.kod; })); listeCiz();
+    };
+    var sag = document.createElement("div"); sag.className = "sag"; sag.appendChild(s); sag.appendChild(sil);
+    a.appendChild(sol); a.appendChild(sag); $("liste").appendChild(a);
   });
   if (l.length) sayacGetir(l);
 }
+$("tumSil").onclick = function () {
+  if (!confirm("Tüm geçmiş listenden silinsin mi? Müşterilere gönderdiğin linkler çalışmaya devam eder.")) return;
+  yaz("ilan_liste", oku("ilan_liste", []).filter(function (x) { return x.d ? x.d !== KIM : KIM !== "umut"; })); listeCiz();
+};
 /* her ilanın kaç kez açıldığı (müşteri tarafı; danışmanın kendi açtıkları sayılmaz) */
 function sayacGetir(l) {
   sunucu({ action: "ilanSayac", pin: PIN, kodlar: l.map(function (x) { return x.kod; }) }).then(function (r) {
