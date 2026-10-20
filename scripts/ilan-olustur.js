@@ -130,7 +130,7 @@ function sayfa(veri) {
 <body>
 <div id="sayfa"><noscript>${esc(il.baslik)} · ${esc(veri.fiyatYazi)} · ${esc(d.ad)} ${esc(d.tel)}</noscript></div>
 <script>window.ILAN=${JSON.stringify(veri).replace(/</g, "\\u003c")};</script>
-<script src="/ilan/ilan.js?v=1"></script>
+<script src="/ilan/ilan.js?v=2"></script>
 </body>
 </html>
 `;

@@ -42,6 +42,9 @@ input:focus{outline:none;border-color:var(--navy)}
 .liste{display:grid;gap:8px}
 .liste a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;font-size:14px}
 .liste a span{color:var(--soft);white-space:nowrap}
+.liste a b{display:block}
+.liste .gor{display:block;font-size:12px;color:var(--soft);margin-top:2px}
+.liste .gor.var{color:#1faa53;font-weight:700}
 details summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none}
 details summary::-webkit-details-marker{display:none}
 details summary::after{content:" ›";color:var(--red)}
@@ -170,7 +173,7 @@ function olustur(govde) {
   $("hata").textContent = "";
   $("olusturDg").disabled = $("gelenDg").disabled = true;
   goster("sonucKart", false); goster("bekleKart", true);
-  $("bekleYazi").textContent = "İlan okunuyor ve sayfa yayına alınıyor. Genelde 1 dakika sürer, sayfadan ayrılma.";
+  $("bekleYazi").textContent = "İlan okunuyor. Sayfa hazır olunca link burada çıkacak, sayfadan ayrılma.";
   $("cubuk").style.width = "5%";
   govde.action = "ilanOlustur"; govde.pin = PIN;
   sunucu(govde).then(function (r) {
@@ -195,21 +198,27 @@ $("olusturDg").onclick = function () {
 };
 $("gelenDg").onclick = function () { if (GELEN) olustur({ girdi: GELEN.kaynak || "", veri: GELEN }); };
 
-/* workflow sayfayı yayınlayınca ilan/<kod>/veri.json görünür */
+/* workflow bitince veri.json önce GitHub'da (raw) görünür, birkaç saniye sonra dogusportal.com'da yayına girer */
 function bekle(kod) {
-  var bas = Date.now();
+  var bas = Date.now(), okundu = false;
+  var RAW = "https://raw.githubusercontent.com/dogusremax/dogusportal/main/ilan/";
   return new Promise(function (coz, red) {
     (function dene() {
       var gecen = (Date.now() - bas) / 1000;
-      $("cubuk").style.width = Math.min(95, 5 + gecen / 1.1) + "%";
-      if (gecen > 60) $("bekleYazi").textContent = "Neredeyse hazır, sayfa yayına alınıyor…";
+      $("cubuk").style.width = Math.min(95, okundu ? 50 + gecen / 3 : 5 + gecen) + "%";
       if (gecen > 300) return red(new Error("Sayfa beklenenden uzun sürdü. Birkaç dakika sonra Son oluşturduklarım listesinden bak."));
-      fetch("ilan/" + kod + "/veri.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+      var adres = okundu ? "ilan/" + kod + "/veri.json?cb=" + Date.now() : RAW + kod + "/veri.json?cb=" + Date.now();
+      fetch(adres, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
         .then(function (v) {
-          if (!v) return setTimeout(dene, 4000);
+          if (!v) return setTimeout(dene, okundu ? 3000 : 2500);
           if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
+          if (!okundu) {
+            okundu = true;
+            $("bekleYazi").textContent = "İlan okundu: " + (v.baslik || "") + ". Link yayına alınıyor, az kaldı…";
+            return setTimeout(dene, 1000);
+          }
           $("cubuk").style.width = "100%"; coz(v);
-        }).catch(function () { setTimeout(dene, 4000); });
+        }).catch(function () { setTimeout(dene, 3000); });
     })();
   });
 }
@@ -243,8 +252,27 @@ function listeCiz() {
     a.href = "ilan/" + x.kod + "/?cb=" + Date.now(); a.target = "_blank"; a.rel = "noopener";
     var b = document.createElement("b"); b.textContent = x.baslik || x.kod;
     var s = document.createElement("span"); s.textContent = x.fiyat || "";
-    a.appendChild(b); a.appendChild(s); $("liste").appendChild(a);
+    var g = document.createElement("small"); g.className = "gor"; g.id = "gor_" + x.kod;
+    var sol = document.createElement("div"); sol.appendChild(b); sol.appendChild(g);
+    a.appendChild(sol); a.appendChild(s); $("liste").appendChild(a);
   });
+  if (l.length) sayacGetir(l);
+}
+/* her ilanın kaç kez açıldığı (müşteri tarafı; danışmanın kendi açtıkları sayılmaz) */
+function sayacGetir(l) {
+  sunucu({ action: "ilanSayac", pin: PIN, kodlar: l.map(function (x) { return x.kod; }) }).then(function (r) {
+    if (!r || !r.success) return;
+    l.forEach(function (x) {
+      var el = $("gor_" + x.kod), v = r.sayac[x.kod];
+      if (!el) return;
+      if (!v || !v.n) { el.textContent = "Henüz açılmadı"; return; }
+      var son = new Date(v.son), bugun = new Date();
+      var saat = son.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      var gun = son.toDateString() === bugun.toDateString() ? "bugün " + saat : son.toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) + " " + saat;
+      el.textContent = v.n + " kez açıldı" + (v.tekil > 1 ? " (" + v.tekil + " farklı telefon)" : "") + " · son " + gun;
+      el.classList.add("var");
+    });
+  }).catch(function () {});
 }
 
 /* Doğuş İlan yer imi: ilan/topla.js'in kendisi */
