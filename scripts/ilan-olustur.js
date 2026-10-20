@@ -136,7 +136,7 @@ function sayfa(veri) {
   const ogBaslik = [baslikKisa, veri.fiyatYazi].filter(Boolean).join(" · ");
   const ogAciklama = [konum, m2 && (/m²/.test(m2) ? m2 : m2 + " m²"), d.ad + " · RE/MAX Doğuş"].filter(Boolean).join(" · ");
   const url = "https://dogusportal.com/ilan/" + KOD + "/";
-  const resim = veri.kapak ? url + veri.kapak : (il.fotolar[0] || "https://dogusportal.com/assets/og-kare.png");
+  const resim = veri.kapak ? url + veri.kapak + "?v=" + Date.parse(veri.tarih || 0) : (il.fotolar[0] || "https://dogusportal.com/assets/og-kare.png");
   return `<!DOCTYPE html>
 <html lang="tr">
 <head>
