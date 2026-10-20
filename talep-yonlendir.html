@@ -167,15 +167,36 @@ document.addEventListener('click', async e => {
     notSakla();
     if (!confirm(`${k.ad || 'Müşteri'} → ${dan}\nMüşteri bu danışmanın listesine geçsin ve ona bildirim gitsin mi?`)) return;
     DURUM[id] = Object.assign(DURUM[id] || {}, { gidiyor: true, mesaj: 'Gönderiliyor…', hata: false }); ciz();
+    // Başarıda liste beklenmeden güncellenir; hata/zaman aşımında sunucuya sorulur, gittiyse başarı sayılır.
+    const bitti = ne => {
+      gecici(`✓ ${k.ad || 'Müşteri'} → ${dan} yönlendirildi${ne ? ' (' + ne + ')' : ''}.`, false);
+      VERI.bekleyen = (VERI.bekleyen || []).filter(x => x.id !== id);
+      VERI.yonlendirilen = [{ id, tarih: new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Istanbul' }).slice(0, 16), ad: k.ad, tur: k.tur, danisman: dan }].concat(VERI.yonlendirilen || []);
+      ACIK = ''; delete SECIM[id]; delete DURUM[id]; ciz();
+      yenile();
+    };
+    const kontrol = async hata => {
+      DURUM[id] = Object.assign(DURUM[id] || {}, { mesaj: 'Kontrol ediliyor…' }); ciz();
+      try {
+        const l = await servis({ islem: 'liste' }, 45000);
+        if (l.ok && !(l.bekleyen || []).some(x => x.id === id)) {
+          const y = (l.yonlendirilen || []).find(x => x.id === id);
+          VERI = l; if (!y || y.danisman === dan) return bitti(''); 
+          DURUM[id] = { mesaj: 'Bu müşteri ' + y.danisman + ' adına.', hata: true }; ciz(); return;
+        }
+      } catch (e) {}
+      DURUM[id] = { not: DURUM[id] && DURUM[id].not, mesaj: hata + ' Gitmedi, tekrar Gönder\'e bas.', hata: true }; ciz();
+    };
     try {
-      const j = await servis({ islem: 'gonder', id, danisman: dan, not: (DURUM[id].not || '') });
-      if (!j.ok) { DURUM[id] = { mesaj: j.error || 'Gönderilemedi.', hata: true }; ciz(); if (j.danisman) yenile(); return; }
-      const ne = [j.wa ? 'WhatsApp gitti' : (j.mail ? 'WhatsApp gitmedi, e-posta gitti' : 'WhatsApp gitmedi'),
-                  j.push ? 'telefon bildirimi gitti' : 'telefon bildirimi kapalı'].join(', ');
-      gecici(`✓ ${k.ad || 'Müşteri'} → ${dan} yönlendirildi (${ne}).`, !j.wa && !j.mail && !j.push);
-      ACIK = ''; delete SECIM[id]; delete DURUM[id];
-      await yenile();
-    } catch (err) { DURUM[id] = { mesaj: 'Hata: ' + err.message, hata: true }; ciz(); }
+      const j = await servis({ islem: 'gonder', id, danisman: dan, not: (DURUM[id].not || '') }, 45000);
+      if (!j.ok) {
+        if (j.danisman === dan) return bitti('');
+        if (j.danisman) return kontrol(j.error || '');
+        DURUM[id] = { not: DURUM[id].not, mesaj: j.error || 'Gönderilemedi.', hata: true }; ciz(); return;
+      }
+      bitti([j.wa ? 'WhatsApp gitti' : (j.mail ? 'WhatsApp gitmedi, e-posta gitti' : 'WhatsApp gitmedi'),
+             j.push ? 'telefon bildirimi gitti' : 'telefon bildirimi kapalı'].join(', '));
+    } catch (err) { kontrol('Bağlantı koptu.'); }
   }
 });
 document.addEventListener('change', e => {
