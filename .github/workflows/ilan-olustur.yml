@@ -53,16 +53,21 @@ jobs:
       - name: Yayınla
         env:
           KOD: ${{ inputs.kod }}
+          ILAN_API: https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec
         run: |
           git config user.name dogus-bot
           git config user.email bot@remaxdogus.com.tr
           git add --sparse "ilan/$KOD"
           git commit -qm "İlan önizleme: $KOD"
+          ok=0
           for i in 1 2 3 4 5; do
-            git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
+            if git pull -q --rebase origin main && git push -q origin HEAD:main; then ok=1; break; fi
             sleep $((i*3))
           done
-          exit 1
+          [ $ok = 1 ] || exit 1
+          # danışmanın ekranına haber (Danışman Takip ilanHazir): raw GitHub yeni dosyayı geç gösterdiğinden
+          jq -nc --arg kod "$KOD" --slurpfile v "ilan/$KOD/veri.json" '{action:"ilanHazir",kod:$kod,veri:$v[0]}' \
+            | curl -sSL -m 20 -H "Content-Type: text/plain" --data-binary @- "$ILAN_API" || true
       # kalan sahibinden fotoğrafları: sayfa yayındayken temizlenip eklenir
       - name: Kalan fotoğrafları temizle
         env:

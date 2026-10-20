@@ -199,29 +199,30 @@ $("olusturDg").onclick = function () {
 $("gelenDg").onclick = function () { if (GELEN) olustur({ girdi: GELEN.kaynak || "", veri: GELEN }); };
 
 /* workflow bitince veri.json önce GitHub'da (raw) görünür, birkaç saniye sonra dogusportal.com'da yayına girer */
-// hazir: kod önceden yayında bekleyen boş sayfadan geldi, Pages yayını beklenmez
+// hazir: kod önceden yayında bekleyen boş sayfadan geldi, Pages yayını beklenmez.
+// Hazır olduğunu workflow Danışman Takip'e bildirir (ilanDurum); raw GitHub yalnız yedek (geç gösterir).
 function bekle(kod, hazir) {
   var bas = Date.now(), okundu = false;
   var RAW = "https://raw.githubusercontent.com/dogusremax/dogusportal/main/ilan/";
   return new Promise(function (coz, red) {
-    (function dene() {
+    function bitti(v) {
+      if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
+      if (hazir || okundu) { $("cubuk").style.width = "100%"; return coz(v); }
+      okundu = true;
+      $("bekleYazi").textContent = "İlan okundu: " + (v.baslik || "") + ". Link yayına alınıyor, az kaldı…";
+      setTimeout(dene, 1000);
+    }
+    function dene() {
       var gecen = (Date.now() - bas) / 1000;
-      $("cubuk").style.width = Math.min(95, okundu ? 50 + gecen / 3 : 5 + gecen) + "%";
+      $("cubuk").style.width = Math.min(95, okundu ? 50 + gecen / 3 : 5 + gecen * 1.5) + "%";
       if (gecen > 300) return red(new Error("Sayfa beklenenden uzun sürdü. Birkaç dakika sonra Son oluşturduklarım listesinden bak."));
-      var adres = okundu ? "ilan/" + kod + "/veri.json?cb=" + Date.now() : RAW + kod + "/veri.json?cb=" + Date.now();
-      fetch(adres, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (v) {
-          if (!v) return setTimeout(dene, okundu ? 3000 : 2500);
-          if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
-          if (!okundu && hazir) { $("cubuk").style.width = "100%"; return coz(v); }
-          if (!okundu) {
-            okundu = true;
-            $("bekleYazi").textContent = "İlan okundu: " + (v.baslik || "") + ". Link yayına alınıyor, az kaldı…";
-            return setTimeout(dene, 1000);
-          }
-          $("cubuk").style.width = "100%"; coz(v);
-        }).catch(function () { setTimeout(dene, 3000); });
-    })();
+      var is = okundu ? fetch("ilan/" + kod + "/veri.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+        : sunucu({ action: "ilanDurum", kod: kod }).then(function (r) { return r && r.veri; })
+            .then(function (v) { return v || (gecen > 90 ? fetch(RAW + kod + "/veri.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }) : null); });
+      is.then(function (v) { if (v) bitti(v); else setTimeout(dene, okundu ? 3000 : 1500); })
+        .catch(function () { setTimeout(dene, 3000); });
+    }
+    dene();
   });
 }
 
