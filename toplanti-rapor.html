@@ -238,7 +238,7 @@ async function loadData(){
     var promises=[];
     if(toFetch.length) promises.push(Promise.all(toFetch.map(function(m){return fetch(API+"?action=aylik&ay="+m+"&k="+KEY).then(guvenliJson).then(function(d){if(d&&d.siralama){AYLIK_CACHE[m]=d;AYLIK_T[m]=Date.now();}return d;}).catch(function(){return null;});})));
     else promises.push(Promise.resolve([]));
-    if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords",{redirect:"follow"}).then(guvenliJson).catch(function(){return null;}));
+    if(!KAPANIS_CACHE) promises.push(fetch(KAPANIS_API+"?action=getRecords&pin="+encodeURIComponent(brokerPinAl()),{redirect:"follow"}).then(guvenliJson).catch(function(){return null;}));
     else promises.push(Promise.resolve(KAPANIS_CACHE));
     var aylikResult=await promises[0];
     ALL_DATA=months.map(function(m){return AYLIK_CACHE[m];}).filter(Boolean);
