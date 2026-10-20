@@ -49,8 +49,13 @@ function ilnTemizle_(s, gizle) {
     g = String(g || "").trim(); if (g.length < 4) return;
     s = s.split(g).join("").split(g.toLocaleUpperCase("tr-TR")).join("");
   });
-  // iletişim çağrısı satırlarını at (danışmanın kendi butonları var)
-  s = s.split("\n").filter(function (x) { return !/(iletişim|irtibat|arayınız|ara(yın)?\s*:|tel\s*:|gsm|whatsapp|portföy\s*no|ilan\s*no)/i.test(x) || x.length > 160; }).join("\n");
+  // başka emlak markaları ve "XYZ Gayrimenkul" gibi firma adları
+  s = s.replace(/\b(coldwell banker|century\s?21|keller williams|realty world|turyap|era (türkiye|gayrimenkul)|engel\s?&\s?völkers|kw [a-zçğıöşü]+)\b/gi, "\u0000");
+  s = s.replace(/(?:[A-ZÇĞİÖŞÜ0-9][\wÇĞİÖŞÜçğıöşü&.'-]*\s+){1,4}(Gayrimenkul(?:\s+(?:Danışmanlık|Yatırım|Ofisi))?|Emlak\s+(?:Ofisi|Danışmanlık)|Real\s?Estate|Realty|Properties|Yatırım\s+Danışmanlık)(?:\s+(?:Ltd\.?\s*Şti\.?|A\.?\s*Ş\.?))?/g, "\u0000");
+  // iletişim çağrısı ve "ofisimiz / danışmanımız" satırlarını at (danışmanın kendi butonları var)
+  s = s.split("\n").filter(function (x) { return !/(iletişim|irtibat|arayınız|ara(yın)?\s*:|tel\s*:|gsm|whatsapp|portföy\s*no|ilan\s*no)/i.test(x) || x.length > 160; })
+    .filter(function (x) { return !/(ofisimiz|firmamız|şirketimiz|danışmanımız|acentemiz|ekibimiz|güvencesiyle|kurumsal|yetkilendirilmiş|bizlere|bize ulaş|ofisimize|referans no|ilan kodu)/i.test(x); })
+    .filter(function (x) { return x.indexOf("\u0000") < 0 || x.length > 160; }).join("\n").replace(/\u0000/g, "");
   return s.replace(/[ \t]{2,}/g, " ").replace(/\n{3,}/g, "\n\n").trim();
 }
 
@@ -159,7 +164,7 @@ function ilanSahibindenDetay_(h) {
   var img = ilnMeta_(h, "og:image");
   return {
     baslik: t.replace(/ - (Satılık|Kiralık|Devren Satılık|Günlük Kiralık).*$/i, "").trim(),
-    islem: km[1] || "", tip: (km[2] || "").trim(),
+    islem: km[1] || ((t + " " + d).match(/\b(Satılık|Kiralık)\b/i) || [])[1] || "", tip: (km[2] || "").trim(),
     mahalle: mah ? mah + " Mah." : "",
     fotolar: img ? [img.replace(/\/(lthmb|thmb|x5|big)_/, "/")] : []
   };
@@ -202,7 +207,7 @@ function ilnBuyukHarfDuzelt_(s) {
 function ilanSon_(v) {
   var gizle = v.gizle || [];
   var son = {
-    baslik: ilnBuyukHarfDuzelt_(ilnTemizle_(String(v.baslik || "").replace(/\s+-\s+[^-]*İlanları.*$/i, "").replace(/\s+-\s+RE\/MAX Türkiye$/i, ""), gizle).replace(/\s*[!]{2,}/g, "!")).slice(0, 140),
+    baslik: ilnBuyukHarfDuzelt_(ilnTemizle_(String(v.baslik || "").replace(/\s+sahibinden\.com\S*\s*-\s*\d+\s*$/i, "").replace(/\s+-\s+[^-]*İlanları.*$/i, "").replace(/\s+-\s+RE\/MAX Türkiye$/i, ""), gizle).replace(/\s*[!]{2,}/g, "!")).slice(0, 140),
     islem: v.islem || "", tip: v.tip || "",
     fiyat: +v.fiyat || 0, para: v.para || "TRY",
     il: v.il || "", ilce: v.ilce || "", mahalle: v.mahalle || "",
@@ -212,6 +217,11 @@ function ilanSon_(v) {
     fotolar: ilnTekil_((v.fotolar || []).map(function (u) { return String(u).replace(/(shbdn\.com\/photos\/\d+\/\d+\/\d+\/)(?:(?:lthmb|thmb|x5|big)_)?/, "$1big_"); })).filter(function (u) { return /^https:\/\//.test(u); }).slice(0, 40)
   };
   if (!son.islem) { var m = (son.baslik + " " + son.aciklama).match(/\b(satılık|kiralık)\b/i); if (m) son.islem = m[1].charAt(0).toLocaleUpperCase("tr-TR") + m[1].slice(1).toLowerCase(); }
+  // hâlâ yoksa m² fiyatından tahmin: TL ile m² başına 5.000'in altı kira, 20.000'in üstü satış
+  if (!son.islem && son.fiyat && son.para === "TRY") {
+    var m2 = +(String((son.ozellik.filter(function (r) { return /^m²/i.test(r[0]); })[0] || [])[1] || "").replace(/\D/g, ""));
+    if (m2 > 10) { var bm = son.fiyat / m2; if (bm < 5000) son.islem = "Kiralık"; else if (bm > 20000) son.islem = "Satılık"; }
+  }
   return son;
 }
 

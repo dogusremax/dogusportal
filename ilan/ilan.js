@@ -67,6 +67,14 @@
   $("kapat").onclick = function () { $("kutu").classList.remove("acik"); document.body.style.overflow = ""; };
   // kırık fotoğrafları (kaynakta silinmiş) gizle
   document.querySelectorAll(".seritler img").forEach(function (im) { im.onerror = function () { im.remove(); }; });
+  // görüntülenme sayacı: danışmanın kendi açtıkları sayılmaz (ilan-olustur.html listesi aynı tarayıcıda)
+  try {
+    var benim = JSON.parse(localStorage.getItem("ilan_liste") || "[]").some(function (x) { return x.kod === V.kod; });
+    var cihaz = localStorage.getItem("ilan_cihaz") || Math.random().toString(36).slice(2, 12);
+    localStorage.setItem("ilan_cihaz", cihaz);
+    if (!benim && navigator.sendBeacon) navigator.sendBeacon("https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec",
+      JSON.stringify({ action: "ilanGor", kod: V.kod, d: d.id, cihaz: cihaz }));
+  } catch (err) {}
   var ac = $("aciklama");
   if (ac && ac.scrollHeight > 230) { ac.classList.add("kisalt"); $("devam").hidden = false; $("devam").onclick = function () { ac.classList.remove("kisalt"); this.remove(); }; }
 })();
