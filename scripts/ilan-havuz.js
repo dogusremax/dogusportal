@@ -20,9 +20,9 @@ try {
 const bos = (k) => !dolu.has(k) && !fs.existsSync(path.join(KOK, "ilan", k, "veri.json"));
 let yeni = 0;
 for (const [id, d] of Object.entries(kisiler)) {
-  const l = (havuz[id] || []);
-  const kalan = l.filter(bos).length;
-  if (kalan >= ALT) continue;
+  const l = (havuz[id] || []).filter(bos);   // kullanılanlar listeden çıkar
+  havuz[id] = l;
+  if (l.length >= ALT) continue;
   for (let i = 0; i < ADET; i++) {
     const kod = crypto.randomBytes(5).toString("hex").slice(0, 8);
     const dz = path.join(KOK, "ilan", kod);
