@@ -1,0 +1,17 @@
+name: ilan-probe
+on:
+  push:
+    branches: [claude/project-thread-ql8rpw]
+    paths: [".github/workflows/ilan-probe.yml"]
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
+          for u in https://www.sahibinden.com/ "https://www.sahibinden.com/satilik-daire/istanbul-kadikoy" https://www.remax.com.tr/ "https://www.remax.com.tr/portfoy?searchKeyword=fikirtepe" https://www.hepsiemlak.com/ https://www.emlakjet.com/; do
+            echo "=== $u"
+            curl -sSL -A "$UA" -H 'Accept-Language: tr-TR,tr' --max-time 25 -o out.html -w "HTTP %{http_code} %{size_download} %{url_effective}\n" "$u" || true
+            head -c 600 out.html | tr '\n' ' '; echo
+            grep -oE 'href="[^"]*(ilan|portfoy|detay)[^"]*"' out.html | sort -u | head -8
+          done
