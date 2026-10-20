@@ -33,12 +33,9 @@
   .ac{border-top:1px solid rgba(255,255,255,.08);padding:14px 16px 16px}
   .tel{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-bottom:12px}
   .soru{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px}
-  .dlar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  @media (min-width:560px){.dlar{grid-template-columns:repeat(4,minmax(0,1fr))}}
-  .dl{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;background:#161c44;border:2px solid transparent;border-radius:12px;padding:10px 6px;color:#fff;font:600 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none}
-  .dl img{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#22295a}
-  .dl.sec{border-color:#DC1C2E;background:#2a1530}
-  .dl.nb::after{content:"bugün nöbetçi";font-size:10px;color:#ffd166}
+  select.sec{display:block;width:100%;font:600 16px 'Plus Jakarta Sans',sans-serif;background:#0b0f2a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23fff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:13px 40px 13px 12px;outline:none;-webkit-appearance:none;appearance:none}
+  select.sec:focus{border-color:#FB5160}
+  select.sec option{color:#000;background:#fff}
   input[type=text]{width:100%;font:500 15px/1.4 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 12px;outline:none;margin-top:12px}
   input[type=text]:focus{border-color:#FB5160}
   button{font:700 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:#DC1C2E;color:#fff}
@@ -84,8 +81,6 @@
 const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 const $ = id => document.getElementById(id);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const FOTO = { 'Aysun Yılmaz': 'aysun', 'Ayşegül Alpay': 'aysegul_alpay', 'Evşen Özazman': 'evsen', 'Gamze Yetkin': 'gamze',
-  'Gizem Gök': 'gizem', 'İrem Tetik': 'irem', 'Orhan Özazman': 'orhan', 'Özlem Varol': 'ozlem_varol' };
 let PIN = '', VERI = null, ACIK = '', SECIM = {}, DURUM = {};
 
 async function servis(veri, sure) {
@@ -147,8 +142,10 @@ function ciz() {
       ${acik ? `<div class="ac">
         ${k.tel ? `<a class="tel" href="tel:${esc(k.tel.replace(/[^0-9+]/g, ''))}">📞 ${esc(k.tel)}</a>` : ''}
         <div class="soru">Hangi danışmana gitsin?</div>
-        <div class="dlar">${(j.danismanlar || []).map(a => `<button class="dl${SECIM[k.id] === a ? ' sec' : ''}${nobetciMi(a) ? ' nb' : ''}" data-dl="${esc(a)}" data-id="${esc(k.id)}">
-          <img src="assets/ekip/kucuk/${FOTO[a] || 'x'}.webp" alt="" onerror="this.style.visibility='hidden'">${esc(a)}</button>`).join('')}</div>
+        <select class="sec" data-sec="${esc(k.id)}">
+          <option value="">Danışman seç…</option>
+          ${(j.danismanlar || []).map(a => `<option value="${esc(a)}"${SECIM[k.id] === a ? ' selected' : ''}>${esc(a)}${nobetciMi(a) ? ' (bugün nöbetçi)' : ''}</option>`).join('')}
+        </select>
         <input type="text" id="not-${esc(k.id)}" maxlength="300" placeholder="Danışmana not (isteğe bağlı)" autocomplete="off" value="${esc(d.not || '')}">
         <button class="gonder" data-gonder="${esc(k.id)}" ${SECIM[k.id] && !d.gidiyor ? '' : 'disabled'}>${SECIM[k.id] ? 'Gönder → ' + esc(SECIM[k.id]) : 'Danışman seç'}</button>
         <p class="durum${d.hata ? ' hata' : ''}">${esc(d.mesaj || '')}</p>
@@ -161,9 +158,8 @@ function ciz() {
 }
 
 document.addEventListener('click', async e => {
-  const ac = e.target.closest('[data-ac]'), dl = e.target.closest('[data-dl]'), gon = e.target.closest('[data-gonder]');
+  const ac = e.target.closest('[data-ac]'), gon = e.target.closest('[data-gonder]');
   if (ac) { notSakla(); ACIK = ACIK === ac.dataset.ac ? '' : ac.dataset.ac; ciz(); return; }
-  if (dl) { notSakla(); SECIM[dl.dataset.id] = dl.dataset.dl; ciz(); return; }
   if (gon) {
     const id = gon.dataset.gonder, dan = SECIM[id];
     const k = (VERI.bekleyen || []).find(x => x.id === id);
@@ -181,6 +177,13 @@ document.addEventListener('click', async e => {
       await yenile();
     } catch (err) { DURUM[id] = { mesaj: 'Hata: ' + err.message, hata: true }; ciz(); }
   }
+});
+document.addEventListener('change', e => {
+  const sec = e.target.closest('[data-sec]');
+  if (!sec) return;
+  notSakla();
+  if (sec.value) SECIM[sec.dataset.sec] = sec.value; else delete SECIM[sec.dataset.sec];
+  ciz();
 });
 function notSakla() {
   if (!ACIK) return; const i = $('not-' + ACIK);
