@@ -8,10 +8,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          for ua in "WhatsApp/2.23.20.0" "TelegramBot (like TwitterBot)" "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)" "Mozilla/5.0 (compatible; bingbot/2.0)" "okhttp/4.9.0" "Hepsiemlak/5.0 (iPhone; iOS 17.0)"; do
-            for u in "https://www.hepsiemlak.com/kadikoy-satilik" "https://www.hepsiemlak.com/api/realty-detail/12345-678" "https://api.hepsiemlak.com/" "https://m.hepsiemlak.com/" "https://www.hepsiemlak.com/api/realties?city=istanbul&page=1"; do
-              curl -sS -A "$ua" --max-time 15 -o h.html -w "[$ua] %{http_code} %{size_download} $u\n" "$u" || true
-              grep -o '<title>[^<]*' h.html | head -1
-            done
-          done
-          echo "== kmp"; curl -sS --max-time 15 -o h.json -w "%{http_code}\n" "https://www.hepsiemlak.com/api/realties?city=istanbul&page=1" -H "Accept: application/json"; head -c 300 h.json
+          npm i playwright@1.47.2 >/dev/null 2>&1
+          cat > t.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const b = await chromium.launch({ channel: 'chrome', headless: true, args:['--disable-blink-features=AutomationControlled'] });
+          const c = await b.newContext({ locale:'tr-TR', userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', viewport:{width:1366,height:900}});
+          await c.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>undefined})});
+          const p = await c.newPage();
+          for (const u of ['https://www.hepsiemlak.com/kadikoy-satilik','https://www.sahibinden.com/ilan/emlak-konut-satilik-tek-yetkili-bagdattan-minibuse-yakin-ara-katta-genis-3-plus1-daire-1323616594/detay']) {
+            try { const r = await p.goto(u,{waitUntil:'domcontentloaded',timeout:30000}); await p.waitForTimeout(12000);
+              const h = await p.content(); console.log('==',u,r&&r.status(),(await p.title()).slice(0,100),h.length);
+              const l = [...new Set((h.match(/\/[a-z0-9-]+\/\d+-\d+/g)||[]))].slice(0,5); console.log(l.join(' '));
+              console.log((h.match(/shbdn\.com\/photos\/[^"]+/g)||[]).length, 'shb foto');
+            } catch(e){ console.log('ERR',u,e.message) }
+          }
+          await b.close();
+          JS
+          node t.mjs
