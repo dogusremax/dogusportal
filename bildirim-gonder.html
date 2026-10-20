@@ -86,8 +86,8 @@
     <label class="et" for="metin">Metin</label>
     <textarea id="metin" maxlength="300" placeholder="Örn: Herkesin katılımını rica ederim, gündem: yeni projeler."></textarea>
     <div id="sayM" class="say">0 / 300</div>
-    <label class="et">Emoji <span style="opacity:.6">(en son dokunduğun kutuya, başlık ya da metin, eklenir)</span></label>
-    <div id="emojiler"></div>
+    <button type="button" class="ghost" id="emojiBtn" style="font-size:14px">😊 Emoji ekle</button>
+    <div id="emojiler" hidden></div>
     <label class="et" for="link">Dokununca açılacak sayfa <span style="opacity:.6">(isteğe bağlı)</span></label>
     <input id="link" type="text" inputmode="url" placeholder="https://dogusportal.com/kibris-rehber.html" autocomplete="off">
     <p class="ipucu">Bildirimde kalın/italik yoktur, düz yazı gider. Kilit ekranında metnin ilk 3-4 satırı görünür. Bildirime dokununca yukarıdaki sayfa açılır; boş bırakılırsa portal açılır.</p>
@@ -202,6 +202,12 @@ EmojiSecici.kur($('emojiler'), e => {
   k.value = yeni; k.focus(); k.setSelectionRange(bas + e.length, bas + e.length);
   k.dispatchEvent(new Event('input'));
 });
+$('emojiBtn').addEventListener('mousedown', e => e.preventDefault());
+$('emojiBtn').onclick = () => {
+  const ac = $('emojiler').hidden;
+  $('emojiler').hidden = !ac;
+  $('emojiBtn').textContent = ac ? '✕ Emojileri kapat' : '😊 Emoji ekle';
+};
 $('baslik').oninput = onizle;
 $('metin').oninput = onizle;
 $('hepsi').onclick = () => { KISILER.forEach(k => k.sec = true); ciz(); };
