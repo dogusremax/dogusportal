@@ -42,7 +42,7 @@ input:focus{outline:none;border-color:var(--navy)}
 .liste{display:grid;gap:8px}
 .liste a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;font-size:14px}
 .liste a span{color:var(--soft);white-space:nowrap}
-.liste a b{display:block}
+.liste a b{display:block;color:var(--navy)}
 .liste .gor{display:block;font-size:12px;color:var(--soft);margin-top:2px}
 .liste .gor.var{color:#1faa53;font-weight:700}
 details summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none}
@@ -130,6 +130,7 @@ var goster = function (id, var_) { $(id).classList.toggle("gizli", !var_); };
 var oku = function (k, v) { try { return JSON.parse(localStorage.getItem(k) || "null") || v; } catch (e) { return v; } };
 var yaz = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 var PIN = oku("ilan_pin", "");
+var KIM = oku("ilan_kim", "");   // giriş yapan danışman: liste ve sayaçlar yalnız onun
 var GELEN = null;
 
 function sunucu(govde) {
@@ -155,14 +156,17 @@ function pinDene() {
   var p = $("pin").value.trim(); if (!p) return;
   $("pinHata").textContent = "Kontrol ediliyor…";
   sunucu({ action: "ilanOlustur", pin: p, sadeceGiris: true }).then(function (r) {
-    if (r.success) { PIN = p; yaz("ilan_pin", p); $("pinHata").textContent = ""; girisTamam(); }
+    if (r.success) { PIN = p; KIM = r.id; yaz("ilan_pin", p); yaz("ilan_kim", r.id); $("pinHata").textContent = ""; girisTamam(); }
     else { $("pinHata").textContent = r.error || "Hatalı PIN"; $("pin").value = ""; }
   }).catch(function () { $("pinHata").textContent = "Bağlantı hatası, tekrar dene."; });
 }
 $("pinDg").onclick = pinDene;
 $("pin").addEventListener("keydown", function (e) { if (e.key === "Enter") pinDene(); });
-$("cikis").onclick = function () { try { localStorage.removeItem("ilan_pin"); } catch (e) {} location.reload(); };
-if (PIN) girisTamam(); else setTimeout(function () { $("pin").focus(); }, 200);
+$("cikis").onclick = function () { try { localStorage.removeItem("ilan_pin"); localStorage.removeItem("ilan_kim"); } catch (e) {} location.reload(); };
+if (PIN && !KIM) sunucu({ action: "ilanOlustur", pin: PIN, sadeceGiris: true }).then(function (r) {
+  if (r.success) { KIM = r.id; yaz("ilan_kim", r.id); girisTamam(); } else $("cikis").onclick();
+});
+else if (PIN) girisTamam(); else setTimeout(function () { $("pin").focus(); }, 200);
 
 $("yapistir").onclick = function () {
   if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(function (t) { $("girdi").value = t.trim(); }).catch(function () { $("girdi").focus(); });
@@ -184,7 +188,7 @@ function olustur(govde) {
     return bekle(r.kod, r.hazir);
   }).then(function (v) {
     sonucGoster(v);
-    var l = oku("ilan_liste", []); l.unshift({ kod: v.kod, baslik: v.baslik, fiyat: v.fiyatYazi, t: Date.now() }); yaz("ilan_liste", l.slice(0, 15)); listeCiz();
+    var l = oku("ilan_liste", []); l.unshift({ kod: v.kod, d: KIM, baslik: v.baslik, fiyat: v.fiyatYazi, t: Date.now() }); yaz("ilan_liste", l.slice(0, 40)); listeCiz();
     if (govde.veri) goster("gelenKart", false);
   }).catch(function (e) {
     goster("bekleKart", false); $("hata").textContent = e.message;
@@ -251,7 +255,8 @@ function sonucGoster(v) {
 }
 
 function listeCiz() {
-  var l = oku("ilan_liste", []);
+  // aynı telefonu kullanan başka danışmanın ilanları görünmez
+  var l = oku("ilan_liste", []).filter(function (x) { return x.d ? x.d === KIM : KIM === "umut"; });
   goster("sonKart", l.length > 0);
   $("liste").innerHTML = "";
   l.forEach(function (x) {
