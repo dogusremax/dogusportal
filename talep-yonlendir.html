@@ -217,7 +217,7 @@ function takip(x) {
   const WA = { 'okundu': ['oku', '✓✓ okudu'], 'ulaştı': ['ula', '✓✓ ulaştı, okumadı'], 'gönderildi': ['gon', '✓ telefona ulaşmadı'],
     'hata': ['hat', 'gitmedi'], 'numara yok': ['hat', 'numara yok'] };
   const w = WA[x.wa], b = x.bildirim;
-  const bl = !b ? '' : !b.cihaz ? ['gon', 'telefonunda kapalı'] : b.dokundu ? ['oku', 'açtı ' + b.dokundu] : b.ulasti ? ['ula', 'ulaştı ' + b.ulasti + ', açmadı'] : ['gon', 'ulaşmadı'];
+  const bl = !b ? ['gon', 'takip yok (takipten önceki gönderim)'] : !b.cihaz ? ['gon', 'telefonunda kapalı'] : b.dokundu ? ['oku', 'açtı ' + b.dokundu] : b.ulasti ? ['ula', 'ulaştı ' + b.ulasti + ', açmadı'] : ['gon', 'ulaşmadı'];
   return `<div class="tk">${w ? `<span class="${w[0]}">WhatsApp: ${w[1]}</span>` : ''}${bl ? `<span class="${bl[0]}">Bildirim: ${bl[1]}</span>` : ''}</div>`;
 }
 function notSakla() {
