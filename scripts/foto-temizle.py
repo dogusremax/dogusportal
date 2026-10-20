@@ -35,7 +35,7 @@ def filigran_maske(img):
     x0, y0 = max(0, x), max(0, y)
     x1, y1 = min(w, x + tm.shape[1]), min(h, y + tm.shape[0])
     m[y0:y1, x0:x1] = tm[y0 - y:y1 - y, x0 - x:x1 - x]
-    return m, s
+    return cv2.dilate(m, np.ones((9, 9), np.uint8)), s
 
 def maske(img):
     h, w = img.shape[:2]
