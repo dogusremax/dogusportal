@@ -9,25 +9,18 @@ jobs:
     steps:
       - run: |
           UA="WhatsApp/2.23.20.0"
-          for u in https://www.sahibinden.com/ "https://www.sahibinden.com/satilik-daire/istanbul-kadikoy" "https://www.sahibinden.com/satilik-daire?address_town=446"; do
-            echo "=== $u"; curl -sS -A "$UA" --max-time 20 -o l.html -w "HTTP %{http_code} %{size_download}\n" "$u" || true
-            grep -oE '/ilan/[a-z0-9-]+-[0-9]{9,11}/detay' l.html | sort -u | head -5
+          ID=1323616594
+          S="emlak-konut-satilik-tek-yetkili-bagdattan-minibuse-yakin-ara-katta-genis-3-plus1-daire-1323616594"
+          t(){ curl -sS -A "$UA" --max-time 20 -o p.html -w "HTTP %{http_code} %{size_download} %{url_effective}\n" "$1" || true; }
+          echo "== liste"; t "https://www.sahibinden.com/satilik-daire/istanbul-kadikoy"
+          grep -c 'searchResultsPriceValue' p.html; grep -oE 'searchResultsPriceValue[^<]*<[^<]*<[^<]*' p.html | head -3
+          grep -oE 'https://i[0-9]\.shbdn\.com/photos/[^"]+' p.html | head -3
+          echo "== arama id"; t "https://www.sahibinden.com/emlak?query_text=$ID"
+          grep -oE 'searchResultsPriceValue[^<]*<[^<]*<[^<]*' p.html | head -3; grep -c "$ID" p.html
+          for v in "https://www.sahibinden.com/ilan/$S/detay?gallery" "https://www.sahibinden.com/ilan/$ID" "https://www.sahibinden.com/$ID" "https://m.sahibinden.com/ilan/$S/detay" "https://www.sahibinden.com/ilan/$S/fotograflar" "https://www.sahibinden.com/ajax/classifiedDetail/gallery?classifiedId=$ID" "https://www.sahibinden.com/listing/$ID"; do
+            echo "== $v"; t "$v"; grep -oE 'https://i[0-9]\.shbdn\.com/photos/[^"]+' p.html | sort -u | wc -l; grep -o '<title>[^<]*' p.html | head -1
           done
-          L=$(grep -ohE '/ilan/[a-z0-9-]+-[0-9]{9,11}/detay' l.html | head -1)
-          [ -z "$L" ] && L="/ilan/emlak-konut-satilik-fikirtepe-1270000000/detay"
-          echo "=== DETAY $L"
-          for ua in "WhatsApp/2.23.20.0" "WhatsApp/2.24.1.1 i" "facebookexternalhit/1.1"; do
-            curl -sS -A "$ua" --max-time 20 -o d.html -w "[$ua] HTTP %{http_code} %{size_download}\n" "https://www.sahibinden.com$L" || true
-          done
-          curl -sS -A "WhatsApp/2.23.20.0" --max-time 20 -o d.html "https://www.sahibinden.com$L"
-          grep -o '<title>[^<]*' d.html; grep -oE '<meta (property|name)="(og:[^"]*|description)"[^>]*>' d.html | head -10
-          grep -oE 'https://i[0-9]*\.shbdn\.com/photos/[^"\\ ]+' d.html | sort -u | head -30 | tee foto.txt | head -5; wc -l foto.txt
-          python3 - <<'PY'
-          import re,html
-          s=open('d.html',encoding='utf8',errors='ignore').read()
-          for m in re.finditer(r'<li>\s*<strong[^>]*>(.*?)</strong>\s*<span[^>]*>(.*?)</span>',s,re.S): print(re.sub(r'\s+',' ',html.unescape(m.group(1))).strip(),'=',re.sub(r'<[^>]+>|\s+',' ',html.unescape(m.group(2))).strip())
-          j=s.find('classifiedDescription'); print('DESC', re.sub(r'<[^>]+>|\s+',' ',s[j:j+1500])[:700] if j>0 else None)
-          j=s.find('classifiedInfo'); print('INFO', re.sub(r'<[^>]+>|\s+',' ',s[j:j+1200])[:600] if j>0 else None)
-          print('ld', s.count('ld+json'), 'len', len(s))
-          print(s[:1500] if len(s)<20000 else '')
-          PY
+          echo "== foto varyant"; for f in 13236165947wu.jpg x5_13236165947wu.jpg big_13236165947wu.jpg; do curl -s -o /dev/null -w "$f %{http_code} %{size_download} %{content_type}\n" "https://i0.shbdn.com/photos/61/65/94/$f"; done
+          curl -s -o ph.jpg "https://i0.shbdn.com/photos/61/65/94/x5_13236165947wu.jpg"; file ph.jpg; identify ph.jpg 2>/dev/null || true
+          echo "== remax foto hotlink"; curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -H "Referer: https://dogusportal.com/" "https://i.remax.com.tr/photos/13/1497313/L/fe7b36c323ad42d39a003880dbe4fce6.webp"
+          echo "== emlakjet foto hotlink"; curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -H "Referer: https://dogusportal.com/" "https://imaj.emlakjet.com/listing/19224629/2CA3D89EBA8509030A79DFAF4382BC6B19224629.jpg"
