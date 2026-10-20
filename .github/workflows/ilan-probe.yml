@@ -3,24 +3,22 @@ on:
   push:
     branches: [claude/project-thread-ql8rpw]
     paths: [".github/workflows/ilan-probe.yml"]
+permissions:
+  contents: write
 jobs:
   p:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
-          UA="WhatsApp/2.23.20.0"
-          ID=1323616594
-          S="emlak-konut-satilik-tek-yetkili-bagdattan-minibuse-yakin-ara-katta-genis-3-plus1-daire-1323616594"
-          t(){ curl -sS -A "$UA" --max-time 20 -o p.html -w "HTTP %{http_code} %{size_download} %{url_effective}\n" "$1" || true; }
-          echo "== liste"; t "https://www.sahibinden.com/satilik-daire/istanbul-kadikoy"
-          grep -c 'searchResultsPriceValue' p.html; grep -oE 'searchResultsPriceValue[^<]*<[^<]*<[^<]*' p.html | head -3
-          grep -oE 'https://i[0-9]\.shbdn\.com/photos/[^"]+' p.html | head -3
-          echo "== arama id"; t "https://www.sahibinden.com/emlak?query_text=$ID"
-          grep -oE 'searchResultsPriceValue[^<]*<[^<]*<[^<]*' p.html | head -3; grep -c "$ID" p.html
-          for v in "https://www.sahibinden.com/ilan/$S/detay?gallery" "https://www.sahibinden.com/ilan/$ID" "https://www.sahibinden.com/$ID" "https://m.sahibinden.com/ilan/$S/detay" "https://www.sahibinden.com/ilan/$S/fotograflar" "https://www.sahibinden.com/ajax/classifiedDetail/gallery?classifiedId=$ID" "https://www.sahibinden.com/listing/$ID"; do
-            echo "== $v"; t "$v"; grep -oE 'https://i[0-9]\.shbdn\.com/photos/[^"]+' p.html | sort -u | wc -l; grep -o '<title>[^<]*' p.html | head -1
-          done
-          echo "== foto varyant"; for f in 13236165947wu.jpg x5_13236165947wu.jpg big_13236165947wu.jpg; do curl -s -o /dev/null -w "$f %{http_code} %{size_download} %{content_type}\n" "https://i0.shbdn.com/photos/61/65/94/$f"; done
-          curl -s -o ph.jpg "https://i0.shbdn.com/photos/61/65/94/x5_13236165947wu.jpg"; file ph.jpg; identify ph.jpg 2>/dev/null || true
-          echo "== remax foto hotlink"; curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -H "Referer: https://dogusportal.com/" "https://i.remax.com.tr/photos/13/1497313/L/fe7b36c323ad42d39a003880dbe4fce6.webp"
-          echo "== emlakjet foto hotlink"; curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -H "Referer: https://dogusportal.com/" "https://imaj.emlakjet.com/listing/19224629/2CA3D89EBA8509030A79DFAF4382BC6B19224629.jpg"
+          mkdir -p ornek; cd ornek
+          W="WhatsApp/2.23.20.0"; M="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+          curl -sS -A "$W" -o shb-arama.html "https://www.sahibinden.com/emlak?query_text=1323616594"
+          curl -sS -A "$W" -o shb-detay.html "https://www.sahibinden.com/ilan/emlak-konut-satilik-tek-yetkili-bagdattan-minibuse-yakin-ara-katta-genis-3-plus1-daire-1323616594/detay"
+          curl -sS -A "$W" -o shb-kira.html "https://www.sahibinden.com/emlak?query_text=1340059567"
+          curl -sSL -A "$M" -o remax.html "https://remax.com.tr/tr/portfoy/P01342800"
+          curl -sSL -A "$M" -o remax2.html "https://remax.com.tr/tr/portfoy/P06374523"
+          curl -sSL -A "$M" -o ej.html "https://www.emlakjet.com/ilan/akbati-avm-arkasinda-tertemiz-sifir-21-19224629"
+          gzip -9 *.html; ls -la
+          cd ..; git config user.name dogus-bot; git config user.email bot@remaxdogus.com.tr
+          git add ornek; git commit -m "probe ornek"; git push
