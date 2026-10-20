@@ -29,8 +29,8 @@ def filigran_maske(img):
     s = min(1.0, w / 400.0)
     tm = TMASKE * 255
     if s < 1: tm = cv2.resize(tm, (int(tm.shape[1] * s), int(tm.shape[0] * s)), interpolation=cv2.INTER_NEAREST)
-    x = int(round(w / 2 - 3 * s + (TX + TMASKE.shape[1] / 2 - 400) * s - tm.shape[1] / 2))
-    y = int(round(h / 2 + 2 * s + (TY + TMASKE.shape[0] / 2 - 220) * s - tm.shape[0] / 2))
+    x = int(round(w / 2 + (TX + TMASKE.shape[1] / 2 - 400) * s - tm.shape[1] / 2))
+    y = int(round(h / 2 + (TY + TMASKE.shape[0] / 2 - 220) * s - tm.shape[0] / 2))
     m = np.zeros((h, w), np.uint8)
     x0, y0 = max(0, x), max(0, y)
     x1, y1 = min(w, x + tm.shape[1]), min(h, y + tm.shape[0])
