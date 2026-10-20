@@ -13,12 +13,16 @@ permissions:
 jobs:
   olustur:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm i --no-save --no-audit --no-fund sharp@0.33.5
+      # sahibinden fotoğraflarındaki filigran ve logo için (scripts/foto-temizle.py)
+      - uses: actions/cache@v4
+        with: { path: lama_fp32.onnx, key: lama-fp32-v1 }
+      - run: pip install -q onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4
       - name: Sayfayı üret
         env:
           KOD: ${{ inputs.kod }}
@@ -34,6 +38,25 @@ jobs:
           git config user.email bot@remaxdogus.com.tr
           git add "ilan/$KOD"
           git commit -qm "İlan önizleme: $KOD"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
+            sleep $((i*3))
+          done
+          exit 1
+      # kalan sahibinden fotoğrafları: sayfa yayındayken temizlenip eklenir
+      - name: Kalan fotoğrafları temizle
+        env:
+          KOD: ${{ inputs.kod }}
+          LAMA_SUREC: "2"
+          LAMA_IS: "2"
+        run: |
+          B="ilan/$KOD/bekleyen.json"
+          [ -f "$B" ] || exit 0
+          a=""; for f in $(jq -r '.[1:][]' "$B"); do a="$a ilan/$KOD/$f ilan/$KOD/$f"; done
+          [ -n "$a" ] && python3 scripts/foto-temizle.py $a
+          FOTO_EKLE=1 node scripts/ilan-olustur.js
+          git add -A "ilan/$KOD"
+          git commit -qm "İlan önizleme: $KOD fotoğraflar"
           for i in 1 2 3 4 5; do
             git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
             sleep $((i*3))
