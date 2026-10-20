@@ -181,7 +181,7 @@ function olustur(govde) {
       if (/PIN/.test(r.error || "")) { try { localStorage.removeItem("ilan_pin"); } catch (e) {} }
       throw new Error(r.error || "Oluşturulamadı");
     }
-    return bekle(r.kod);
+    return bekle(r.kod, r.hazir);
   }).then(function (v) {
     sonucGoster(v);
     var l = oku("ilan_liste", []); l.unshift({ kod: v.kod, baslik: v.baslik, fiyat: v.fiyatYazi, t: Date.now() }); yaz("ilan_liste", l.slice(0, 15)); listeCiz();
@@ -199,7 +199,8 @@ $("olusturDg").onclick = function () {
 $("gelenDg").onclick = function () { if (GELEN) olustur({ girdi: GELEN.kaynak || "", veri: GELEN }); };
 
 /* workflow bitince veri.json önce GitHub'da (raw) görünür, birkaç saniye sonra dogusportal.com'da yayına girer */
-function bekle(kod) {
+// hazir: kod önceden yayında bekleyen boş sayfadan geldi, Pages yayını beklenmez
+function bekle(kod, hazir) {
   var bas = Date.now(), okundu = false;
   var RAW = "https://raw.githubusercontent.com/dogusremax/dogusportal/main/ilan/";
   return new Promise(function (coz, red) {
@@ -212,6 +213,7 @@ function bekle(kod) {
         .then(function (v) {
           if (!v) return setTimeout(dene, okundu ? 3000 : 2500);
           if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
+          if (!okundu && hazir) { $("cubuk").style.width = "100%"; return coz(v); }
           if (!okundu) {
             okundu = true;
             $("bekleYazi").textContent = "İlan okundu: " + (v.baslik || "") + ". Link yayına alınıyor, az kaldı…";
@@ -226,8 +228,12 @@ function bekle(kod) {
 function sonucGoster(v) {
   var url = "https://dogusportal.com/ilan/" + v.kod + "/";
   goster("bekleKart", false); goster("sonucKart", true);
+  delete $("sKapak").dataset.raw; $("sKapak").style.visibility = "";
   $("sKapak").src = "ilan/" + v.kod + "/kapak.jpg?cb=" + Date.now();
-  $("sKapak").onerror = function () { this.style.visibility = "hidden"; };
+  $("sKapak").onerror = function () {
+    if (this.dataset.raw) { this.style.visibility = "hidden"; return; }
+    this.dataset.raw = 1; this.src = "https://raw.githubusercontent.com/dogusremax/dogusportal/main/ilan/" + v.kod + "/kapak.jpg?cb=" + Date.now();
+  };
   $("sBaslik").textContent = v.baslik;
   $("sAlt").textContent = [v.fiyatYazi, v.konum, v.foto + " fotoğraf"].filter(Boolean).join(" · ");
   goster("sKisa", !!v.kisa);

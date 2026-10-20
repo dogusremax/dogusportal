@@ -109,18 +109,25 @@ const yerel = (ad) => "https://dogusportal.com/ilan/" + KOD + "/" + ad;
 async function fotoIndir(fotolar) {
   const shb = fotolar.filter((u) => SHB.test(u)).slice(0, 30);
   if (!shb.length) return fotolar;
-  const inen = [];
-  for (const u of shb) {
-    const ad = "f" + String(inen.length + 1).padStart(2, "0") + ".jpg";
+  // hepsi aynı anda indirilir, sıra korunur
+  const sonuc = await Promise.all(shb.map(async (u) => {
     try {
       const r = await fetch(u, { headers: { "User-Agent": UA_WA } });
       if (!r.ok) throw new Error("HTTP " + r.status);
-      fs.writeFileSync(path.join(DIZIN, ad), Buffer.from(await r.arrayBuffer()));
-      inen.push(ad);
-    } catch (e) { console.log("foto indirilemedi:", u, e.message); }
+      return Buffer.from(await r.arrayBuffer());
+    } catch (e) { console.log("foto indirilemedi:", u, e.message); return null; }
+  }));
+  const inen = [];
+  for (const b of sonuc) {
+    if (!b) continue;
+    const ad = "f" + String(inen.length + 1).padStart(2, "0") + ".jpg";
+    fs.writeFileSync(path.join(DIZIN, ad), b);
+    inen.push(ad);
   }
   if (!inen.length) return [];
   const p = path.join(DIZIN, inen[0]);
+  // workflow python paketlerini arka planda kurar; bitmesini bekle
+  if (process.env.PIP_HAZIR) execFileSync("bash", ["-c", 'for i in $(seq 600); do [ -f "$PIP_HAZIR" ] && exit 0; sleep 0.2; done']);
   try { execFileSync("python3", [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" }); }
   catch (e) { console.log("foto temizlenemedi:", e.message); inen.forEach((a) => fs.unlinkSync(path.join(DIZIN, a))); return []; }
   if (inen.length > 1) fs.writeFileSync(path.join(DIZIN, "bekleyen.json"), JSON.stringify(inen));
@@ -157,12 +164,12 @@ function sayfa(veri) {
 <link rel="icon" href="/assets/app-ikon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/ilan/ilan.css?v=2">
+<link rel="stylesheet" href="/ilan/ilan.css?v=3">
 </head>
 <body>
 <div id="sayfa"><noscript>${esc(il.baslik)} · ${esc(veri.fiyatYazi)} · ${esc(d.ad)} ${esc(d.tel)}</noscript></div>
 <script>window.ILAN=${JSON.stringify(veri).replace(/</g, "\\u003c")};</script>
-<script src="/ilan/ilan.js?v=2"></script>
+<script src="/ilan/ilan.js?v=3"></script>
 </body>
 </html>
 `;
@@ -176,6 +183,7 @@ if (process.env.FOTO_EKLE) {
   const adlar = JSON.parse(fs.readFileSync(bp, "utf8")).filter((a) => fs.existsSync(path.join(DIZIN, a)));
   veri.ilan.fotolar = adlar.map(yerel);
   fs.writeFileSync(ip, sayfa(veri));
+  fs.writeFileSync(path.join(DIZIN, "ilan.json"), JSON.stringify(veri));
   fs.unlinkSync(bp);
   console.log("fotoğraflar eklendi", adlar.length);
   process.exit(0);
@@ -199,6 +207,7 @@ if (process.env.FOTO_EKLE) {
     };
     if (il.fotolar[0]) veri.kapak = await kapakYap(il.fotolar[0]);
     fs.writeFileSync(path.join(DIZIN, "index.html"), sayfa(veri));
+    fs.writeFileSync(path.join(DIZIN, "ilan.json"), JSON.stringify(veri));   // hazır bekleyen sayfa bunu okur
     yaz({ ok: true, kod: KOD, baslik: il.baslik, fiyatYazi: veri.fiyatYazi, islem: il.islem, tip: il.tip,
       oda: ozDeger(il, "oda"), konum: [il.mahalle, il.ilce].filter(Boolean).join(", "), foto: Math.max(il.fotolar.length, fs.existsSync(path.join(DIZIN, "bekleyen.json")) ? toplamFoto : 0), kisa: veri.kisa });
     console.log("tamam", KOD, il.baslik, il.fotolar.length, "foto");
