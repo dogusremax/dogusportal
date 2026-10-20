@@ -4,7 +4,6 @@
 // Workflow: .github/workflows/ilan-olustur.yml (Danışman Takip Apps Script'i tetikler).
 const fs = require("fs");
 const path = require("path");
-const { execFileSync } = require("child_process");
 const O = require("./ilan-oku.js");
 
 const KOK = path.join(__dirname, "..");
@@ -78,33 +77,21 @@ function ozDeger(il, ...adlar) {
 }
 function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 
-// webp/avif -> jpg, en fazla 1200 px (WhatsApp kartı için). Önce ffmpeg (runner'da var), yoksa ImageMagick,
-// o da yoksa kaynak zaten jpg ise olduğu gibi.
-function cevir(ham, hedef, u) {
-  const yollar = [
-    ["ffmpeg", ["-loglevel", "error", "-y", "-i", ham, "-vf", "scale='min(1200,iw)':-2", "-frames:v", "1", "-q:v", "4", hedef]],
-    ["magick", [ham + "[0]", "-auto-orient", "-resize", "1200x1200>", "-strip", "-quality", "80", "jpg:" + hedef]],
-    ["convert", [ham + "[0]", "-auto-orient", "-resize", "1200x1200>", "-strip", "-quality", "80", "jpg:" + hedef]]
-  ];
-  for (const [p, a] of yollar) { try { execFileSync(p, a); if (fs.statSync(hedef).size > 1000) return; } catch (e) {} }
-  if (/\.jpe?g(\?|$)/i.test(u)) { fs.copyFileSync(ham, hedef); return; }
-  throw new Error("dönüştürülemedi");
-}
-
-function kapakYap(url) {
-  const ham = path.join(DIZIN, "kapak-ham");
-  const hedef = path.join(DIZIN, "kapak.jpg");
+// Kapak: WhatsApp kartı için en fazla 1200 px jpg (sharp, workflow'da kurulur)
+async function kapakYap(url) {
+  const sharp = require("sharp");
   const denenecek = [url];
   if (/i\.remax\.com\.tr\/.*\.webp$/i.test(url)) denenecek.unshift(url.replace(/\.webp$/i, ".jpg"));
   for (const u of denenecek) {
     try {
-      execFileSync("curl", ["-sSfL", "--max-time", "30", "-A", UA_TARAYICI, "-o", ham, u]);
-      cevir(ham, hedef, u);
-      fs.unlinkSync(ham);
+      const r = await fetch(u, { headers: { "User-Agent": UA_TARAYICI } });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const ham = Buffer.from(await r.arrayBuffer());
+      await sharp(ham).rotate().resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
+        .jpeg({ quality: 76, mozjpeg: true }).toFile(path.join(DIZIN, "kapak.jpg"));
       return "kapak.jpg";
     } catch (e) { console.log("kapak alınamadı:", u, e.message.slice(0, 200)); }
   }
-  try { fs.unlinkSync(ham); } catch (e) {}
   return "";
 }
 
@@ -163,7 +150,7 @@ function sayfa(veri) {
       danisman: { id: DANISMAN, ad: d.ad, tel: d.tel, foto: d.foto, unvan: d.unvan || "Gayrimenkul Danışmanı" },
       ilan: il, fiyatYazi: paraYaz(il.fiyat, il.para), kapak: ""
     };
-    if (il.fotolar[0]) veri.kapak = kapakYap(il.fotolar[0]);
+    if (il.fotolar[0]) veri.kapak = await kapakYap(il.fotolar[0]);
     fs.writeFileSync(path.join(DIZIN, "index.html"), sayfa(veri));
     yaz({ ok: true, kod: KOD, baslik: il.baslik, fiyatYazi: veri.fiyatYazi, islem: il.islem, tip: il.tip,
       oda: ozDeger(il, "oda"), konum: [il.mahalle, il.ilce].filter(Boolean).join(", "), foto: il.fotolar.length, kisa: veri.kisa });
