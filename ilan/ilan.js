@@ -1,6 +1,18 @@
-/* İlan önizleme sayfasını window.ILAN verisinden çizer (veri: scripts/ilan-olustur.js). */
+/* İlan önizleme sayfasını window.ILAN verisinden çizer (veri: scripts/ilan-olustur.js).
+ * Hazır bekleyen sayfada (window.ILAN_KOD, havuz) veri yayını beklemeden GitHub'dan (raw) okunur. */
+var ILAN_RAW = "https://raw.githubusercontent.com/dogusremax/dogusportal/main/ilan/";
 (function () {
-  var V = window.ILAN, il = V.ilan, d = V.danisman;
+  if (window.ILAN) return ilanCiz(window.ILAN);
+  var kod = window.ILAN_KOD, bas = Date.now();
+  document.getElementById("sayfa").innerHTML = '<div class="hazirlaniyor"><img src="/assets/dogus-logo.webp" alt="RE/MAX Doğuş"><p>İlan hazırlanıyor…</p></div>';
+  (function dene() {
+    fetch(ILAN_RAW + kod + "/ilan.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (v) { if (v) ilanCiz(v); else if (Date.now() - bas < 300000) setTimeout(dene, 2500); })
+      .catch(function () { if (Date.now() - bas < 300000) setTimeout(dene, 3000); });
+  })();
+})();
+function ilanCiz(V) {
+  var il = V.ilan, d = V.danisman;
   var e = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var oz = function () { for (var i = 0; i < arguments.length; i++) { var a = arguments[i]; for (var j = 0; j < il.ozellik.length; j++) if (il.ozellik[j][0].toLocaleLowerCase("tr-TR").indexOf(a) === 0) return il.ozellik[j][1]; } return ""; };
   var tel = String(d.tel || "").replace(/\D/g, "").replace(/^0/, "90");
@@ -66,7 +78,13 @@
   });
   $("kapat").onclick = function () { $("kutu").classList.remove("acik"); document.body.style.overflow = ""; };
   // kırık fotoğrafları (kaynakta silinmiş) gizle
-  document.querySelectorAll(".seritler img").forEach(function (im) { im.onerror = function () { im.remove(); }; });
+  document.querySelectorAll(".seritler img").forEach(function (im) {
+    im.onerror = function () {
+      // yayına yeni giren fotoğraf henüz sitede yoksa GitHub'dan; o da yoksa gizle
+      var u = im.getAttribute("src");
+      if (u.indexOf("https://dogusportal.com/ilan/") === 0) im.src = ILAN_RAW + u.slice(29); else im.remove();
+    };
+  });
   // görüntülenme sayacı: danışmanın kendi açtıkları sayılmaz (ilan-olustur.html listesi aynı tarayıcıda)
   try {
     var benim = JSON.parse(localStorage.getItem("ilan_liste") || "[]").some(function (x) { return x.kod === V.kod; });
@@ -77,4 +95,4 @@
   } catch (err) {}
   var ac = $("aciklama");
   if (ac && ac.scrollHeight > 230) { ac.classList.add("kisalt"); $("devam").hidden = false; $("devam").onclick = function () { ac.classList.remove("kisalt"); this.remove(); }; }
-})();
+}

@@ -15,20 +15,37 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
+      # site büyük (~800MB): yalnız gereken klasörler indirilir
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: |
+            scripts
+            data
+            ilan/${{ inputs.kod }}
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - run: npm i --no-save --no-audit --no-fund sharp@0.33.5
       # sahibinden fotoğraflarındaki filigran ve logo için (scripts/foto-temizle.py)
       - uses: actions/cache@v4
         with: { path: lama_fp32.onnx, key: lama-fp32-v1 }
-      - run: pip install -q onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4
+      - name: Paketler
+        env:
+          GIRDI: ${{ inputs.girdi }}
+          VERI: ${{ inputs.veri }}
+        run: |
+          # python paketleri yalnız sahibinden için, arka planda (ilan-olustur.js gerekince bekler)
+          if printf '%s %s' "$GIRDI" "$VERI" | grep -qiE 'sahibinden|shbdn|(^|[^0-9])[0-9]{9,11}([^0-9]|$)'; then
+            (pip install -q onnxruntime==1.20.1 opencv-python-headless==4.10.0.84 numpy==1.26.4; touch "$RUNNER_TEMP/pip.ok") > "$RUNNER_TEMP/pip.log" 2>&1 < /dev/null &
+          else touch "$RUNNER_TEMP/pip.ok"; fi
+          npm i --no-save --no-audit --no-fund sharp@0.33.5
       - name: Sayfayı üret
         env:
           KOD: ${{ inputs.kod }}
           DANISMAN: ${{ inputs.danisman }}
           GIRDI: ${{ inputs.girdi }}
           VERI: ${{ inputs.veri }}
+          PIP_HAZIR: ${{ runner.temp }}/pip.ok
         run: node scripts/ilan-olustur.js
       - name: Yayınla
         env:
@@ -36,7 +53,7 @@ jobs:
         run: |
           git config user.name dogus-bot
           git config user.email bot@remaxdogus.com.tr
-          git add "ilan/$KOD"
+          git add --sparse "ilan/$KOD"
           git commit -qm "İlan önizleme: $KOD"
           for i in 1 2 3 4 5; do
             git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
@@ -53,10 +70,25 @@ jobs:
           B="ilan/$KOD/bekleyen.json"
           [ -f "$B" ] || exit 0
           a=""; for f in $(jq -r '.[1:][]' "$B"); do a="$a ilan/$KOD/$f ilan/$KOD/$f"; done
+          for i in $(seq 600); do [ -f "$RUNNER_TEMP/pip.ok" ] && break; sleep 0.2; done
           [ -n "$a" ] && python3 scripts/foto-temizle.py $a
           FOTO_EKLE=1 node scripts/ilan-olustur.js
-          git add -A "ilan/$KOD"
+          git add --sparse -A "ilan/$KOD"
           git commit -qm "İlan önizleme: $KOD fotoğraflar"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
+            sleep $((i*3))
+          done
+          exit 1
+      # hazır bekleyen boş sayfa havuzu azaldıysa yenilerini üret (scripts/ilan-havuz.js)
+      - name: Havuzu doldur
+        if: always()
+        run: |
+          git pull -q --rebase origin main || true
+          node scripts/ilan-havuz.js
+          git diff --quiet data/ilan-havuz.json && [ -z "$(git ls-files -o --exclude-standard ilan)" ] && exit 0
+          git add --sparse -A data/ilan-havuz.json ilan
+          git commit -qm "İlan havuzu: yeni boş sayfalar"
           for i in 1 2 3 4 5; do
             git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
             sleep $((i*3))
