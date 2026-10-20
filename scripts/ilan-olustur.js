@@ -121,7 +121,8 @@ async function fotoIndir(fotolar) {
   }
   if (!inen.length) return [];
   const p = path.join(DIZIN, inen[0]);
-  execFileSync("python3", [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" });
+  try { execFileSync("python3", [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" }); }
+  catch (e) { console.log("foto temizlenemedi:", e.message); inen.forEach((a) => fs.unlinkSync(path.join(DIZIN, a))); return []; }
   if (inen.length > 1) fs.writeFileSync(path.join(DIZIN, "bekleyen.json"), JSON.stringify(inen));
   return [yerel(inen[0])];   // temizlenmemiş fotoğraf hiç gösterilmez
 }
