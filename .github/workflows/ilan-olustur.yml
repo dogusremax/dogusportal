@@ -30,7 +30,7 @@ jobs:
       - uses: actions/cache@v4
         with: { path: ~/.cache/pip, key: pip-lama-v1 }
       - uses: actions/cache@v4
-        with: { path: node_modules, key: sharp-0.33.5-${{ runner.os }} }
+        with: { path: node_modules, key: sharp-0.33.5-linux }
       - name: Paketler
         env:
           GIRDI: ${{ inputs.girdi }}
