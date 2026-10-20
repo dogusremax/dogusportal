@@ -86,7 +86,28 @@ def isle(cift):
     cv2.imwrite(cik, o, [cv2.IMWRITE_JPEG_QUALITY, 85])
     print(os.path.basename(gir), "%.1f sn" % (time.time() - t), flush=True)
 
+def bekle(dz):
+    """Model önceden yüklenir, iş gelince hemen temizler (workflow sahibinden okunurken başlatır).
+    İş: dz/istek.json = [[giris, cikis], ...]; bitince dz/bitti, hata olursa dz/hata yazılır."""
+    os.makedirs(dz, exist_ok=True)
+    try:
+        oturum()
+        open(os.path.join(dz, "hazir"), "w").close()
+        ist = os.path.join(dz, "istek.json")
+        for _ in range(3000):   # en çok ~10 dk bekler
+            if os.path.exists(ist): break
+            time.sleep(0.2)
+        else: return
+        import json
+        for c in json.load(open(ist)): isle(c)
+        open(os.path.join(dz, "bitti"), "w").close()
+    except Exception as e:
+        open(os.path.join(dz, "hata"), "w").write(str(e))
+        raise
+
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["--bekle"]:
+        bekle(sys.argv[2]); sys.exit(0)
     a = sys.argv[1:]
     ciftler = list(zip(a[0::2], a[1::2]))
     is_ = int(os.environ.get("LAMA_SUREC", "1"))
