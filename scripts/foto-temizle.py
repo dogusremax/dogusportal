@@ -2,7 +2,7 @@
 ve sol alttaki ilan veren ofis logosunu siler (LaMa yapay zeka doldurma, ONNX, CPU).
 Kullanım: python3 scripts/foto-temizle.py giris.jpg cikis.jpg [giris2.jpg cikis2.jpg ...]
 Model: LAMA_MODEL (varsayılan lama_fp32.onnx; yoksa indirilir). Filigran kalıbı: scripts/sahibinden-filigran.npz
-(215 sahibinden fotoğrafının ortanca kenar haritasından çıkarıldı)."""
+(215 sahibinden fotoğrafının ortanca kenar haritasından Poisson ile geri çatıldı)."""
 import os, sys, time, urllib.request
 import cv2, numpy as np
 
@@ -20,7 +20,7 @@ def oturum():
     return _oturum
 
 _K = np.load(os.path.join(KOK, "sahibinden-filigran.npz"))
-TGX, TGY, TMASKE = _K["gx"].astype(np.float32), _K["gy"].astype(np.float32), _K["maske"].astype(np.uint8)
+TMASKE = _K["maske"].astype(np.uint8)
 TX, TY = int(_K["xy"][0]), int(_K["xy"][1])          # 800 genişlik, 440 yükseklik orta şeritte konum
 
 def filigran_maske(img):
@@ -35,7 +35,7 @@ def filigran_maske(img):
     x0, y0 = max(0, x), max(0, y)
     x1, y1 = min(w, x + tm.shape[1]), min(h, y + tm.shape[0])
     m[y0:y1, x0:x1] = tm[y0 - y:y1 - y, x0 - x:x1 - x]
-    return cv2.dilate(m, np.ones((3, 3), np.uint8)), s
+    return m, s
 
 def maske(img):
     h, w = img.shape[:2]

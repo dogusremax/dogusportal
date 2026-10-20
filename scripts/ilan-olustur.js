@@ -125,7 +125,7 @@ function sayfa(veri) {
 <link rel="icon" href="/assets/app-ikon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/ilan/ilan.css?v=1">
+<link rel="stylesheet" href="/ilan/ilan.css?v=2">
 </head>
 <body>
 <div id="sayfa"><noscript>${esc(il.baslik)} · ${esc(veri.fiyatYazi)} · ${esc(d.ad)} ${esc(d.tel)}</noscript></div>
