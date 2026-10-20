@@ -13,10 +13,10 @@ tarafı birden çok danışman sahipleniyorsa (co-op) atama yapılmaz, raporda "
 yorumlar görülen listesine yazılmaz; kapanış formu sonradan doldurulursa sonraki çalışmada eşleşir.
 Görülen tüm yorum id'leri data/google-yorum-gorulen.json'a yazılır.
 """
-import json, re, sys, datetime, urllib.request
+import json, re, sys, datetime, urllib.request, urllib.parse
 
 VERI, GORULEN, DANISMAN = 'data/google-yorumlar.json', 'data/google-yorum-gorulen.json', 'data/danismanlar.json'
-KAPANIS_URL = 'https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec?action=getRecords'
+KAPANIS_URL = 'https://script.google.com/macros/s/AKfycby3N2cq5LI99_UgjzlxIjZr7looJz88Rft-BJ9E5ZgP9-ZmUEmoXARoIm717JAmTGuD/exec?action=yorumEslestir'
 
 def norm(s):
     return (s or '').replace('ș', 'ş').replace('Ș', 'Ş').replace('İ', 'i').replace('I', 'ı').lower()
@@ -34,48 +34,20 @@ def sade(s):
     s = norm(s).translate(str.maketrans('çğıöşüâî', 'cgiosuai'))
     return [k for k in re.findall(r'[a-z]+', s) if len(k) > 1]
 
-def kapanislari_al():
-    try:
-        return json.load(urllib.request.urlopen(KAPANIS_URL, timeout=90)).get('records') or []
-    except Exception as e:
-        print('UYARI: kapanış formu okunamadı, isimsiz yorumlar eşleştirilemedi:', e)
-        return []
-
-def kapanistan_danisman(yazar, tarih, kapanislar, desenler):
+def kapanistan_danisman(yazar, tarih, desenler):
     """Yorumu yazanı kapanış formundaki müşteri adlarıyla eşleştirir; (danışman id'leri, neden) döndürür.
-    Tek danışmanlı işlemde müşteri o danışmanındır. Müşteri birden fazla danışmanın kaydındaysa (co-op)
-    yorum, müşterinin tarafını temsil eden, yani kaydında o taraftan hizmet bedeli alan danışmana yazılır;
-    bu da tek danışmana inmiyorsa taraf belirsizdir, atama yapılmaz."""
-    y = sade(yazar)
-    if not y:
+    Eşleştirme kapanış formunun sunucusunda yapılır (müşteri adları dışarı çıkmaz): tek danışmanlı
+    işlemde müşteri o danışmanındır; müşteri birden fazla danışmanın kaydındaysa (co-op) yorum, müşterinin
+    tarafından hizmet bedeli alan danışmana yazılır; bu da tek danışmana inmiyorsa atama yapılmaz."""
+    q = urllib.parse.urlencode({'yazar': yazar or '', 'tarih': tarih.strftime('%Y-%m-%dT%H:%M:%SZ')})
+    try:
+        r = json.load(urllib.request.urlopen(KAPANIS_URL + '&' + q, timeout=90))
+    except Exception as e:
+        print('UYARI: kapanış formu okunamadı, isimsiz yorum eşleştirilemedi:', e)
         return [], 'eşleşmedi'
-    bedel = lambda v: float(re.sub(r'[^0-9.]', '', str(v or '')) or 0)
-    tam, soyad = [], []
-    for k in kapanislar:
-        try:
-            kt = datetime.datetime.strptime(str(k.get('date', ''))[:10], '%Y-%m-%d')
-        except ValueError:
-            continue
-        if not (tarih - datetime.timedelta(days=120) <= kt <= tarih + datetime.timedelta(days=3)):
-            continue
-        hb_sahip, hb_alici = bedel(k.get('hbOwner')), bedel(k.get('hbBuyer'))
-        for ad, hb in ((k.get('ownerName'), hb_sahip), (k.get('buyerName'), hb_alici)):
-            a = sade(ad)
-            if not a:
-                continue
-            if len(y) > 1 and all(t in a for t in y):
-                tam.append((k, hb))
-            elif len(y[-1]) >= 4 and y[-1] == a[-1]:
-                soyad.append((k, hb))
-    eslesen = tam or soyad
-    danismanlar = {norm(k.get('advisor', '')) for k, _ in eslesen}
-    if len(danismanlar) > 1:   # co-op: müşterinin tarafından bedel alan danışman
-        danismanlar = {norm(k.get('advisor', '')) for k, hb in eslesen if hb > 0}
-        if len(danismanlar) != 1:
-            return [], 'taraf belirsiz (co-op: ' + ', '.join(sorted({k.get('advisor', '') for k, _ in eslesen})) + ')'
-    if not danismanlar:
-        return [], 'eşleşmedi'
-    d = danismanlar.pop()
+    if not r.get('danisman'):
+        return [], r.get('neden') or 'eşleşmedi'
+    d = norm(r['danisman'])
     ids = [i for i, p in desenler if p.search(d)]
     return ids, ('' if ids else 'danışman aktif değil')
 
@@ -96,7 +68,6 @@ def main():
     ts = lambda t: t.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     mevcut = {y['id'] for y in veri['yorumlar']}
-    kapanislar = None
     eklenen, bekleyen = [], []
     for y in cekilen.get('yeni', []):
         if y['id'] in gorulen or y['id'] in mevcut:   # elle eklenmiş olabilir
@@ -109,9 +80,7 @@ def main():
         danismanlar = [i for i, p in desenler if p.search(norm(y.get('metin')))]
         eslesme = 'metin'
         if not danismanlar:
-            if kapanislar is None:
-                kapanislar = kapanislari_al()
-            danismanlar, y['_neden'] = kapanistan_danisman(y.get('yazar'), tarih, kapanislar, desenler)
+            danismanlar, y['_neden'] = kapanistan_danisman(y.get('yazar'), tarih, desenler)
             eslesme = 'kapanis'
         if not danismanlar:
             if simdi - tarih < datetime.timedelta(days=30) and y.get('_neden') != 'danışman aktif değil':
