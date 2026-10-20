@@ -105,6 +105,8 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .donut p{margin:0;font-size:13px;color:var(--dim)}
 .donut p b{color:var(--ink)}
 
+.pzt{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:13px 16px;border-radius:16px;background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff;text-decoration:none;font-size:14px;line-height:1.35;font-weight:600;animation:pop .5s both}
+.pzt b{font-weight:800}.pzt span{margin-left:auto;white-space:nowrap;font-weight:800;background:rgba(255,255,255,.18);padding:6px 11px;border-radius:999px;font-size:12.5px}
 .fix{background:linear-gradient(180deg,rgba(220,28,46,.14),rgba(220,28,46,.04));border:1px solid rgba(251,81,96,.45);border-radius:20px;padding:16px;display:grid;gap:12px;animation:pop .5s both .3s}
 .fix h4{margin:0;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800}
 .fix h4 .cnt{min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:var(--red);display:grid;place-items:center;font-size:12px}
@@ -221,6 +223,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
     <img src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
     <span class="week"><i></i><span id="hafta">Karne yükleniyor…</span></span>
   </div>
+  <div id="pztUyari"></div>
 
   <section class="hero">
     <span class="eyebrow">Haftalık karne</span>
@@ -515,7 +518,9 @@ function hata(m){ document.getElementById('hafta').textContent = 'Karne'; docume
 function sakla(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 function oku(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }
 let CIZILDI = null, OLAY = false;
+let SON = null;
 function ciz(res){
+  SON = res;
   DATA = res.siralama; ort = res.ort; HAFTA = res.hafta; ORTM = res.ortMetrik || {}; HEDEF = res.hedef || HEDEF; ETIKET = res.etiket;
   max = Math.max(1, ...DATA.map(d=>d.puan));
   KARNE = {}; res.karneler.forEach(k=>KARNE[k.id]=k);
@@ -566,7 +571,24 @@ async function yukle(){
     } catch (e) {}
   }
 }
-yukle();
+// Ara karne (bu hafta) açıkken Pazartesi giden karnede hâlâ düzeltilecek varsa üstte o karneye giden şerit
+function trPazartesi(geri){
+  const g = new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Istanbul'}));
+  g.setDate(g.getDate() - (g.getDay()+6)%7 - 7*geri);
+  return `${g.getFullYear()}-${String(g.getMonth()+1).padStart(2,'0')}-${String(g.getDate()).padStart(2,'0')}`;
+}
+async function pztUyari(res){
+  const tok = Q.get('t'), onceki = trPazartesi(1);
+  if (!res || res.kim === 'broker' || res.hafta !== trPazartesi(0)) return;
+  try {
+    const r = await getir(`${API}?action=karne&t=${encodeURIComponent(tok)}&hafta=${onceki}&yenile=1`);
+    const k = r && r.ok && r.karneler && r.karneler[0];
+    if (!k || !k.duzeltme) return;
+    const el = document.getElementById('pztUyari');
+    el.innerHTML = `<a class="pzt" href="karne.html?t=${encodeURIComponent(tok)}&hafta=${onceki}&cb=${Date.now()}">Pazartesi karnende <b>${k.duzeltme} düzeltme</b> bekliyor<span>Aç ›</span></a>`;
+  } catch (e) {}
+}
+yukle().then(() => pztUyari(SON));
 </script>
 </body>
 </html>
