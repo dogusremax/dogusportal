@@ -16,7 +16,9 @@ def oturum():
         import onnxruntime as ort
         if not os.path.exists(MODEL):
             urllib.request.urlretrieve("https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx", MODEL)
-        _oturum = ort.InferenceSession(MODEL, providers=["CPUExecutionProvider"])
+        so = ort.SessionOptions()
+        if os.environ.get("LAMA_IS"): so.intra_op_num_threads = int(os.environ["LAMA_IS"])
+        _oturum = ort.InferenceSession(MODEL, so, providers=["CPUExecutionProvider"])
     return _oturum
 
 _K = np.load(os.path.join(KOK, "sahibinden-filigran.npz"))
@@ -41,8 +43,6 @@ def maske(img):
     h, w = img.shape[:2]
     m, skor = filigran_maske(img)
     s = w / 800.0
-    # sol üst: #ilan numarası (sabit yazı boyu)
-    m[6:26, 4:92] = 255
     # sol alt: ilan veren ofisin logo kutusu
     m[int(h - 16 - 92 * s):h - 8, 6:int(18 + 122 * s)] = 255
     return m, skor
@@ -58,7 +58,10 @@ def lama(img, mk):
 
 def temizle(img):
     mk, skor = maske(img)
-    out = img.copy(); h, w = img.shape[:2]
+    h, w = img.shape[:2]
+    # sol üst: #ilan numarası (küçük yazı, klasik doldurma yeter)
+    nm = np.zeros((h, w), np.uint8); nm[6:26, 4:92] = 255
+    out = cv2.inpaint(img, nm, 5, cv2.INPAINT_TELEA)
     k = cv2.dilate(mk, np.ones((31, 31), np.uint8))
     n, lab, st, _ = cv2.connectedComponentsWithStats(k, 8)
     for i in range(1, n):
@@ -75,11 +78,21 @@ def temizle(img):
         out[y0:y0 + ch, x0:x0 + cw] = (sub * a + out[y0:y0 + ch, x0:x0 + cw] * (1 - a)).astype(np.uint8)
     return out, skor
 
+def isle(cift):
+    gir, cik = cift
+    t = time.time(); img = cv2.imread(gir)
+    if img is None: print("okunamadı", gir); return
+    o, _ = temizle(img)
+    cv2.imwrite(cik, o, [cv2.IMWRITE_JPEG_QUALITY, 85])
+    print(os.path.basename(gir), "%.1f sn" % (time.time() - t), flush=True)
+
 if __name__ == "__main__":
     a = sys.argv[1:]
-    for gir, cik in zip(a[0::2], a[1::2]):
-        t = time.time(); img = cv2.imread(gir)
-        if img is None: print("okunamadı", gir); continue
-        o, skor = temizle(img)
-        cv2.imwrite(cik, o, [cv2.IMWRITE_JPEG_QUALITY, 85])
-        print(os.path.basename(gir), "skor %.2f" % skor, "%.1f sn" % (time.time() - t))
+    ciftler = list(zip(a[0::2], a[1::2]))
+    is_ = int(os.environ.get("LAMA_SUREC", "1"))
+    if is_ > 1 and len(ciftler) > 1:
+        oturum() if not os.path.exists(MODEL) else None   # model bir kez insin
+        from multiprocessing import Pool
+        with Pool(is_) as p: p.map(isle, ciftler)
+    else:
+        for c in ciftler: isle(c)

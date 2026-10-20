@@ -2,6 +2,9 @@
 // Girdi (ortam): GIRDI (link ya da ilan no), DANISMAN (id), KOD, VERI (isteğe bağlı: danışmanın
 // telefonundaki "Doğuş İlan" düğmesinin topladığı JSON; varsa siteye gidilmez).
 // Workflow: .github/workflows/ilan-olustur.yml (Danışman Takip Apps Script'i tetikler).
+// sahibinden fotoğrafları indirilir, filigran/ilan no/ofis logosu scripts/foto-temizle.py ile silinir ve
+// ilan/<kod>/fNN.jpg olarak yayınlanır. Kapak hemen temizlenir; kalanlar bekleyen.json'a yazılır, workflow
+// ikinci adımda temizleyip "FOTO_EKLE=1 node scripts/ilan-olustur.js" ile sayfaya ekler.
 const fs = require("fs");
 const path = require("path");
 const O = require("./ilan-oku.js");
@@ -10,6 +13,7 @@ const KOK = path.join(__dirname, "..");
 const UA_TARAYICI = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1";
 const UA_WA = "WhatsApp/2.23.20.0";   // sahibinden bağlantı önizleme botuna kısa sayfa ve arama sonucu veriyor
 
+const { execFileSync } = require("child_process");
 const KOD = String(process.env.KOD || "").trim();
 const DANISMAN = String(process.env.DANISMAN || "").trim();
 const GIRDI = String(process.env.GIRDI || "").trim();
@@ -84,15 +88,42 @@ async function kapakYap(url) {
   if (/i\.remax\.com\.tr\/.*\.webp$/i.test(url)) denenecek.unshift(url.replace(/\.webp$/i, ".jpg"));
   for (const u of denenecek) {
     try {
-      const r = await fetch(u, { headers: { "User-Agent": UA_TARAYICI } });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const ham = Buffer.from(await r.arrayBuffer());
+      let ham;
+      if (/^https:\/\/dogusportal\.com\/ilan\//.test(u)) ham = fs.readFileSync(path.join(KOK, u.replace("https://dogusportal.com/", "")));
+      else {
+        const r = await fetch(u, { headers: { "User-Agent": UA_TARAYICI } });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        ham = Buffer.from(await r.arrayBuffer());
+      }
       await sharp(ham).rotate().resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
         .jpeg({ quality: 76, mozjpeg: true }).toFile(path.join(DIZIN, "kapak.jpg"));
       return "kapak.jpg";
     } catch (e) { console.log("kapak alınamadı:", u, e.message.slice(0, 200)); }
   }
   return "";
+}
+
+// sahibinden fotoğraflarını indirir; kapağı hemen temizler, kalanları bekleyen.json'a yazar
+const SHB = /^https:\/\/i\d\.shbdn\.com\//;
+const yerel = (ad) => "https://dogusportal.com/ilan/" + KOD + "/" + ad;
+async function fotoIndir(fotolar) {
+  const shb = fotolar.filter((u) => SHB.test(u)).slice(0, 30);
+  if (!shb.length) return fotolar;
+  const inen = [];
+  for (const u of shb) {
+    const ad = "f" + String(inen.length + 1).padStart(2, "0") + ".jpg";
+    try {
+      const r = await fetch(u, { headers: { "User-Agent": UA_WA } });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      fs.writeFileSync(path.join(DIZIN, ad), Buffer.from(await r.arrayBuffer()));
+      inen.push(ad);
+    } catch (e) { console.log("foto indirilemedi:", u, e.message); }
+  }
+  if (!inen.length) return [];
+  const p = path.join(DIZIN, inen[0]);
+  execFileSync("python3", [path.join(__dirname, "foto-temizle.py"), p, p], { stdio: "inherit" });
+  if (inen.length > 1) fs.writeFileSync(path.join(DIZIN, "bekleyen.json"), JSON.stringify(inen));
+  return [yerel(inen[0])];   // temizlenmemiş fotoğraf hiç gösterilmez
 }
 
 function sayfa(veri) {
@@ -136,6 +167,19 @@ function sayfa(veri) {
 `;
 }
 
+// ikinci adım: bekleyen fotoğraflar temizlendi, sayfaya ekle
+if (process.env.FOTO_EKLE) {
+  const ip = path.join(DIZIN, "index.html"), bp = path.join(DIZIN, "bekleyen.json");
+  const html = fs.readFileSync(ip, "utf8");
+  const veri = JSON.parse(html.match(/window\.ILAN=(.*?);<\/script>/)[1]);
+  const adlar = JSON.parse(fs.readFileSync(bp, "utf8")).filter((a) => fs.existsSync(path.join(DIZIN, a)));
+  veri.ilan.fotolar = adlar.map(yerel);
+  fs.writeFileSync(ip, sayfa(veri));
+  fs.unlinkSync(bp);
+  console.log("fotoğraflar eklendi", adlar.length);
+  process.exit(0);
+}
+
 (async () => {
   const yaz = (o) => fs.writeFileSync(path.join(DIZIN, "veri.json"), JSON.stringify(o));
   try {
@@ -145,6 +189,8 @@ function sayfa(veri) {
     const ham = await oku();
     const il = O.ilanSon_(ham);
     if (!il.baslik && !il.fotolar.length) throw new Hata("bos", "İlandan bilgi çıkmadı. Link doğru mu?");
+    const toplamFoto = il.fotolar.length;
+    il.fotolar = await fotoIndir(il.fotolar);
     const veri = {
       kod: KOD, tarih: new Date().toISOString(), kisa: !!ham.kisa,
       danisman: { id: DANISMAN, ad: d.ad, tel: d.tel, foto: d.foto, unvan: d.unvan || "Gayrimenkul Danışmanı" },
@@ -153,7 +199,7 @@ function sayfa(veri) {
     if (il.fotolar[0]) veri.kapak = await kapakYap(il.fotolar[0]);
     fs.writeFileSync(path.join(DIZIN, "index.html"), sayfa(veri));
     yaz({ ok: true, kod: KOD, baslik: il.baslik, fiyatYazi: veri.fiyatYazi, islem: il.islem, tip: il.tip,
-      oda: ozDeger(il, "oda"), konum: [il.mahalle, il.ilce].filter(Boolean).join(", "), foto: il.fotolar.length, kisa: veri.kisa });
+      oda: ozDeger(il, "oda"), konum: [il.mahalle, il.ilce].filter(Boolean).join(", "), foto: Math.max(il.fotolar.length, fs.existsSync(path.join(DIZIN, "bekleyen.json")) ? toplamFoto : 0), kisa: veri.kisa });
     console.log("tamam", KOD, il.baslik, il.fotolar.length, "foto");
   } catch (e) {
     console.error(e);
