@@ -226,7 +226,7 @@ function bekle(kod) {
 function sonucGoster(v) {
   var url = "https://dogusportal.com/ilan/" + v.kod + "/";
   goster("bekleKart", false); goster("sonucKart", true);
-  $("sKapak").src = "ilan/" + v.kod + "/kapak.jpg";
+  $("sKapak").src = "ilan/" + v.kod + "/kapak.jpg?cb=" + Date.now();
   $("sKapak").onerror = function () { this.style.visibility = "hidden"; };
   $("sBaslik").textContent = v.baslik;
   $("sAlt").textContent = [v.fiyatYazi, v.konum, v.foto + " fotoğraf"].filter(Boolean).join(" · ");
