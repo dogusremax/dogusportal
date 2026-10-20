@@ -1,0 +1,15 @@
+name: ilan-probe
+on:
+  push:
+    branches: [claude/project-thread-ql8rpw]
+    paths: [probe/**, .github/workflows/ilan-probe.yml]
+permissions: { contents: write }
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe/topla.py
+      - run: |
+          git config user.name dogus-bot; git config user.email bot@remaxdogus.com.tr
+          git add probe/img; git commit -m "probe img [skip ci]" && git push
