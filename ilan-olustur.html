@@ -14,7 +14,8 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Plus Jakarta Sans',-apple-system,sans-serif}
 header{background:var(--navy);color:#fff;padding:14px 16px;padding-top:max(14px,env(safe-area-inset-top));display:flex;align-items:center;gap:12px}
 header img{height:28px}
-header .bas{font-weight:800;font-size:16px;flex:1}
+header .bas{font-weight:800;font-size:16px;flex:1;white-space:nowrap}
+header .rehberDg{background:#fff;color:var(--navy);font-size:13px;font-weight:700;padding:6px 10px;border-radius:8px;text-decoration:none}
 header button{background:rgba(255,255,255,.12);border:0;color:#fff;font:inherit;font-size:13px;padding:6px 10px;border-radius:8px;cursor:pointer}
 main{max-width:560px;margin:0 auto;padding:16px;display:grid;gap:14px}
 .kart{background:#fff;border-radius:16px;padding:18px;display:grid;gap:12px;box-shadow:0 1px 2px rgba(5,10,48,.06)}
@@ -34,7 +35,9 @@ input:focus{outline:none;border-color:var(--navy)}
 .ikili{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .hata{color:var(--red);font-size:14px;font-weight:600}
 .cubuk{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
-.cubuk i{display:block;height:100%;width:0;background:var(--grad);transition:width .6s}
+.cubuk i{display:block;height:100%;width:0;background:var(--grad);transition:width .3s linear}
+.yuzde{font-size:34px;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.yuzde.tamam{color:#1a8f4a}
 .sonuc{display:flex;gap:12px;align-items:center}
 .sonuc img{width:84px;height:64px;border-radius:10px;object-fit:cover;background:var(--bg);flex:0 0 auto}
 .sonuc b{display:block;font-size:15px;color:var(--navy)}
@@ -56,7 +59,7 @@ ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
 </style>
 </head>
 <body>
-<header><img src="assets/dogus-logo.webp" onerror="this.onerror=null;this.src='assets/dogus-logo.png'" alt=""><span class="bas">İlan Önizleme</span><button id="cikis" class="gizli">Çıkış</button></header>
+<header><img src="assets/dogus-logo.webp" onerror="this.onerror=null;this.src='assets/dogus-logo.png'" alt=""><span class="bas">İlan Önizleme</span><a class="rehberDg" href="ilan-rehber.html" onclick="this.href='ilan-rehber.html?cb='+Date.now()">Rehber</a><button id="cikis" class="gizli">Çıkış</button></header>
 <main>
   <section class="kart" id="pinKart">
     <h2>Danışman girişi</h2>
@@ -83,6 +86,8 @@ ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
 
     <section class="kart gizli" id="bekleKart">
       <h2>Hazırlanıyor…</h2>
+      <div class="yuzde" id="yuzde">Yükleniyor %0</div>
+      <p class="kucuk" id="asama">İlan okunuyor</p>
       <p class="kucuk" id="bekleYazi">İlan okunuyor ve sayfa yayına alınıyor. Genelde 1 dakika sürer, sayfadan ayrılma.</p>
       <div class="cubuk"><i id="cubuk"></i></div>
     </section>
@@ -177,8 +182,8 @@ function olustur(govde) {
   $("hata").textContent = "";
   $("olusturDg").disabled = $("gelenDg").disabled = true;
   goster("sonucKart", false); goster("bekleKart", true);
-  $("bekleYazi").textContent = "İlan okunuyor. Sayfa hazır olunca link burada çıkacak, sayfadan ayrılma.";
-  $("cubuk").style.width = "5%";
+  $("bekleYazi").textContent = "Sayfa hazır olunca link burada çıkacak, sayfadan ayrılma.";
+  sayacBasla();
   govde.action = "ilanOlustur"; govde.pin = PIN;
   sunucu(govde).then(function (r) {
     if (!r.success) {
@@ -187,11 +192,13 @@ function olustur(govde) {
     }
     return bekle(r.kod, r.hazir);
   }).then(function (v) {
+    return sayacBitir().then(function () { return v; });
+  }).then(function (v) {
     sonucGoster(v);
     var l = oku("ilan_liste", []); l.unshift({ kod: v.kod, d: KIM, baslik: v.baslik, fiyat: v.fiyatYazi, t: Date.now() }); yaz("ilan_liste", l.slice(0, 40)); listeCiz();
     if (govde.veri) goster("gelenKart", false);
   }).catch(function (e) {
-    goster("bekleKart", false); $("hata").textContent = e.message;
+    sayacDur(); goster("bekleKart", false); $("hata").textContent = e.message;
     $("formKart").scrollIntoView({ behavior: "smooth" });
   }).then(function () { $("olusturDg").disabled = $("gelenDg").disabled = false; });
 }
@@ -202,6 +209,24 @@ $("olusturDg").onclick = function () {
 };
 $("gelenDg").onclick = function () { if (GELEN) olustur({ girdi: GELEN.kaynak || "", veri: GELEN }); };
 
+/* Yüzde sayacı: süreye göre ilerler (çoğu ilan ~25 sn), bitene kadar %95'i geçmez, bitince %100 Tamamlandı. */
+var SAYAC = null;
+function sayacYaz(y) {
+  $("yuzde").textContent = "Yükleniyor %" + y; $("cubuk").style.width = y + "%";
+  $("asama").textContent = y < 20 ? "İlan okunuyor" : y < 55 ? "Fotoğraflar temizleniyor" : y < 85 ? "Sayfa hazırlanıyor" : "Link hazırlanıyor";
+}
+function sayacBasla() {
+  sayacDur(); var bas = Date.now();
+  $("yuzde").classList.remove("tamam"); sayacYaz(0);
+  SAYAC = setInterval(function () { sayacYaz(Math.floor(95 * (1 - Math.exp(-(Date.now() - bas) / 13600)))); }, 200);
+}
+function sayacDur() { if (SAYAC) clearInterval(SAYAC); SAYAC = null; }
+function sayacBitir() {
+  sayacDur(); $("cubuk").style.width = "100%";
+  $("yuzde").textContent = "%100 Tamamlandı"; $("yuzde").classList.add("tamam"); $("asama").textContent = "Link hazır";
+  return new Promise(function (c) { setTimeout(c, 700); });
+}
+
 /* workflow bitince veri.json önce GitHub'da (raw) görünür, birkaç saniye sonra dogusportal.com'da yayına girer */
 // hazir: kod önceden yayında bekleyen boş sayfadan geldi, Pages yayını beklenmez.
 // Hazır olduğunu workflow Danışman Takip'e bildirir (ilanDurum); raw GitHub yalnız yedek (geç gösterir).
@@ -211,14 +236,13 @@ function bekle(kod, hazir) {
   return new Promise(function (coz, red) {
     function bitti(v) {
       if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
-      if (hazir || okundu) { $("cubuk").style.width = "100%"; return coz(v); }
+      if (hazir || okundu) return coz(v);
       okundu = true;
       $("bekleYazi").textContent = "İlan okundu: " + (v.baslik || "") + ". Link yayına alınıyor, az kaldı…";
       setTimeout(dene, 1000);
     }
     function dene() {
       var gecen = (Date.now() - bas) / 1000;
-      $("cubuk").style.width = Math.min(95, okundu ? 50 + gecen / 3 : 5 + gecen * 1.5) + "%";
       if (gecen > 300) return red(new Error("Sayfa beklenenden uzun sürdü. Birkaç dakika sonra Son oluşturduklarım listesinden bak."));
       var is = okundu ? fetch("ilan/" + kod + "/veri.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
         : sunucu({ action: "ilanDurum", kod: kod }).then(function (r) { return r && r.veri; })
