@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Talep Yönlendir · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh;-webkit-text-size-adjust:100%}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1}
+  main{max-width:720px;margin:0 auto;padding:18px 16px 60px;display:flex;flex-direction:column;gap:16px}
+  .nobet{display:flex;align-items:center;gap:10px;background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 16px;font-size:14px}
+  .nobet b{color:#ffd166}
+  .nobet button{margin-left:auto}
+  h2{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin:4px 2px 0}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden}
+  .kart.acik{border-color:#DC1C2E}
+  .ust{display:block;width:100%;text-align:left;background:none;color:#fff;padding:14px 16px;border:0;border-radius:0;font:inherit;cursor:pointer}
+  .ad{display:flex;align-items:baseline;gap:8px;font-size:17px;font-weight:800}
+  .ad .zaman{margin-left:auto;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);white-space:nowrap}
+  .tur{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .et{font-size:12px;font-weight:700;border-radius:999px;padding:3px 9px;background:rgba(255,255,255,.1)}
+  .et.site{background:rgba(79,123,255,.25);color:#b9cbff}
+  .et.wa{background:rgba(37,211,102,.2);color:#8ff0b6}
+  .et.t{background:rgba(220,28,46,.22);color:#ffb3ba}
+  .detay{font-size:13.5px;color:rgba(255,255,255,.78);line-height:1.5;margin-top:8px;word-break:break-word}
+  .ac{border-top:1px solid rgba(255,255,255,.08);padding:14px 16px 16px}
+  .tel{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-bottom:12px}
+  .soru{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px}
+  .dlar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  @media (min-width:560px){.dlar{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .dl{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;background:#161c44;border:2px solid transparent;border-radius:12px;padding:10px 6px;color:#fff;font:600 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .dl img{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#22295a}
+  .dl.sec{border-color:#DC1C2E;background:#2a1530}
+  .dl.nb::after{content:"bugün nöbetçi";font-size:10px;color:#ffd166}
+  input[type=text]{width:100%;font:500 15px/1.4 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 12px;outline:none;margin-top:12px}
+  input[type=text]:focus{border-color:#FB5160}
+  button{font:700 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45;cursor:default}
+  button.ghost{background:rgba(255,255,255,.1);font-size:12px;padding:7px 12px}
+  .gonder{display:block;width:100%;margin-top:12px;padding:14px;font-size:15px}
+  .ipucu{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.5}
+  .durum{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;margin-top:8px}
+  .durum.hata{color:#ff8a95}
+  .durum.ok{color:#6ee7a0}
+  .bos{background:#111738;border:1px dashed rgba(255,255,255,.15);border-radius:14px;padding:22px 16px;text-align:center;color:rgba(255,255,255,.6);font-size:14px}
+  .yon{display:flex;gap:10px;padding:11px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:13.5px}
+  .yon:first-child{border-top:0}
+  .yon .z{color:rgba(255,255,255,.5);white-space:nowrap;font-size:12px;padding-top:1px}
+  .yon b{font-weight:700}
+  .yon .ok{color:#6ee7a0;font-weight:700}
+  #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
+  #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
+</style>
+<script src="assets/broker.js"></script>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Talep Yönlendir</h1></div>
+
+<div id="giris">
+  <p class="durum">Broker PIN'i</p>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button id="girBtn">Giriş</button>
+  <p id="girisHata" class="durum hata"></p>
+</div>
+
+<main id="ana" hidden>
+  <div class="nobet"><span>Bugün nöbet: <b id="nobetAd">…</b></span><button class="ghost" id="yenile">Yenile</button></div>
+  <h2 id="bekBaslik">Bekleyen talepler</h2>
+  <div id="bekleyen" style="display:flex;flex-direction:column;gap:10px"></div>
+  <p class="ipucu">Ofis nöbeti günü site formundan ve 0216 WhatsApp hattından gelen, sizin adınıza açılmış talepler. Talebe dokun, danışmanı seç, Gönder'e bas: müşteri danışmanın Müşteri Takip listesine geçer, danışmana "Ofis sana yeni müşteri atadı" bildirimi ve WhatsApp mesajı gider.</p>
+  <h2>Yönlendirilenler · son 14 gün</h2>
+  <div id="yonlendirilen" class="kart"></div>
+</main>
+
+<script>
+// dogus-whatsapp-service · TalepYonlendir.js (action=talepYonlendir). Hiçbir şey otomatik gitmez; yalnız "Gönder"e basınca.
+const SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const FOTO = { 'Aysun Yılmaz': 'aysun.png', 'Ayşegül Alpay': 'aysegul_alpay.png', 'Evşen Özazman': 'evsen.png', 'Gamze Yetkin': 'gamze.png',
+  'Gizem Gök': 'gizem.png', 'İrem Tetik': 'irem.png', 'Orhan Özazman': 'orhan.png', 'Özlem Varol': 'ozlem_varol.webp' };
+let PIN = '', VERI = null, ACIK = '', SECIM = {}, DURUM = {};
+
+async function servis(veri, sure) {
+  const ac = new AbortController(), z = setTimeout(() => ac.abort(), sure || 90000);
+  try {
+    const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ac.signal,
+      body: JSON.stringify(Object.assign({ action: 'talepYonlendir', pin: PIN }, veri)) });
+    return JSON.parse(await r.text());
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'Sunucu yanıt vermedi, tekrar dene.' : e.message);
+  } finally { clearTimeout(z); }
+}
+
+async function giris(p) {
+  PIN = String(p || '').trim(); $('girisHata').textContent = 'Kontrol ediliyor…'; $('girBtn').disabled = true;
+  try {
+    const j = await servis({ islem: 'liste' }, 60000);
+    if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
+    $('giris').hidden = true; $('ana').hidden = false;
+    VERI = j; ciz();
+  } catch (e) { $('girisHata').textContent = 'Servise ulaşılamadı: ' + e.message; }
+  finally { $('girBtn').disabled = false; }
+}
+
+async function yenile() {
+  $('yenile').disabled = true;
+  try { const j = await servis({ islem: 'liste' }, 60000); if (j.ok) { VERI = j; ciz(); } }
+  catch (e) {} finally { $('yenile').disabled = false; }
+}
+
+function zaman(t) {
+  const bugun = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+  const dun = new Date(Date.now() - 864e5).toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+  const g = String(t).slice(0, 10), s = String(t).slice(11, 16);
+  if (g === bugun) return 'bugün ' + s;
+  if (g === dun) return 'dün ' + s;
+  return g.slice(8, 10) + '.' + g.slice(5, 7) + ' ' + s;
+}
+const ilk = ad => String(ad || '').split(' ')[0];
+const nobetciMi = ad => VERI && VERI.nobet && ilk(VERI.nobet).toLocaleLowerCase('tr') === ilk(ad).toLocaleLowerCase('tr');
+
+function ciz() {
+  const j = VERI;
+  $('nobetAd').textContent = j.nobet || 'Ofis';
+  const b = j.bekleyen || [];
+  $('bekBaslik').textContent = b.length ? `Bekleyen talepler · ${b.length}` : 'Bekleyen talepler';
+  $('bekleyen').innerHTML = !b.length ? '<div class="bos">Yönlendirilecek talep yok 👍</div>' : b.map(k => {
+    const acik = ACIK === k.id, d = DURUM[k.id] || {};
+    const etiket = [`<span class="et ${k.kaynak === 'WhatsApp' ? 'wa' : 'site'}">${esc(k.kaynak)}</span>`,
+      `<span class="et t">${esc(k.tur)}</span>`]
+      .concat([k.bolge, k.oda, k.m2 && k.m2 + ' m²', k.butce].filter(Boolean).map(x => `<span class="et">${esc(x)}</span>`)).join('');
+    const detay = String(k.detay || '').replace(/^Mesaj:\s*/, '');
+    return `<div class="kart${acik ? ' acik' : ''}">
+      <button class="ust" data-ac="${esc(k.id)}">
+        <div class="ad">${esc(k.ad || '(isim yok)')}<span class="zaman">${esc(zaman(k.tarih))}</span></div>
+        <div class="tur">${etiket}</div>
+        ${detay ? `<div class="detay">${esc(detay.length > 220 && !acik ? detay.slice(0, 220) + '…' : detay)}</div>` : ''}
+      </button>
+      ${acik ? `<div class="ac">
+        ${k.tel ? `<a class="tel" href="tel:${esc(k.tel.replace(/[^0-9+]/g, ''))}">📞 ${esc(k.tel)}</a>` : ''}
+        <div class="soru">Hangi danışmana gitsin?</div>
+        <div class="dlar">${(j.danismanlar || []).map(a => `<button class="dl${SECIM[k.id] === a ? ' sec' : ''}${nobetciMi(a) ? ' nb' : ''}" data-dl="${esc(a)}" data-id="${esc(k.id)}">
+          <img src="assets/ekip/${FOTO[a] || 'x.png'}" alt="" onerror="this.style.visibility='hidden'">${esc(a)}</button>`).join('')}</div>
+        <input type="text" id="not-${esc(k.id)}" maxlength="300" placeholder="Danışmana not (isteğe bağlı)" autocomplete="off" value="${esc(d.not || '')}">
+        <button class="gonder" data-gonder="${esc(k.id)}" ${SECIM[k.id] && !d.gidiyor ? '' : 'disabled'}>${SECIM[k.id] ? 'Gönder → ' + esc(SECIM[k.id]) : 'Danışman seç'}</button>
+        <p class="durum${d.hata ? ' hata' : ''}">${esc(d.mesaj || '')}</p>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+  const y = j.yonlendirilen || [];
+  $('yonlendirilen').innerHTML = !y.length ? '<div class="yon" style="color:rgba(255,255,255,.5)">Henüz yönlendirme yok.</div>' : y.map(x =>
+    `<div class="yon"><span class="z">${esc(zaman(x.tarih))}</span><div><b>${esc(x.ad || '(isim yok)')}</b>${x.tur ? ' · ' + esc(x.tur) : ''}<br><span class="ok">→ ${esc(x.danisman)}</span></div></div>`).join('');
+}
+
+document.addEventListener('click', async e => {
+  const ac = e.target.closest('[data-ac]'), dl = e.target.closest('[data-dl]'), gon = e.target.closest('[data-gonder]');
+  if (ac) { notSakla(); ACIK = ACIK === ac.dataset.ac ? '' : ac.dataset.ac; ciz(); return; }
+  if (dl) { notSakla(); SECIM[dl.dataset.id] = dl.dataset.dl; ciz(); return; }
+  if (gon) {
+    const id = gon.dataset.gonder, dan = SECIM[id];
+    const k = (VERI.bekleyen || []).find(x => x.id === id);
+    if (!dan || !k) return;
+    notSakla();
+    if (!confirm(`${k.ad || 'Müşteri'} → ${dan}\nMüşteri bu danışmanın listesine geçsin ve ona bildirim gitsin mi?`)) return;
+    DURUM[id] = Object.assign(DURUM[id] || {}, { gidiyor: true, mesaj: 'Gönderiliyor…', hata: false }); ciz();
+    try {
+      const j = await servis({ islem: 'gonder', id, danisman: dan, not: (DURUM[id].not || '') });
+      if (!j.ok) { DURUM[id] = { mesaj: j.error || 'Gönderilemedi.', hata: true }; ciz(); if (j.danisman) yenile(); return; }
+      const ne = [j.wa ? 'WhatsApp gitti' : (j.mail ? 'WhatsApp gitmedi, e-posta gitti' : 'WhatsApp gitmedi'),
+                  j.push ? 'telefon bildirimi gitti' : 'telefon bildirimi kapalı'].join(', ');
+      gecici(`✓ ${k.ad || 'Müşteri'} → ${dan} yönlendirildi (${ne}).`, !j.wa && !j.mail && !j.push);
+      ACIK = ''; delete SECIM[id]; delete DURUM[id];
+      await yenile();
+    } catch (err) { DURUM[id] = { mesaj: 'Hata: ' + err.message, hata: true }; ciz(); }
+  }
+});
+function notSakla() {
+  if (!ACIK) return; const i = $('not-' + ACIK);
+  if (i) DURUM[ACIK] = Object.assign(DURUM[ACIK] || {}, { not: i.value });
+}
+function gecici(t, hata) {
+  let p = $('bilgi');
+  if (!p) { p = document.createElement('p'); p.id = 'bilgi'; $('bekleyen').before(p); }
+  p.className = 'durum ' + (hata ? 'hata' : 'ok'); p.textContent = t;
+  clearTimeout(gecici.z); gecici.z = setTimeout(() => p.remove(), 12000);
+}
+
+$('yenile').onclick = yenile;
+setInterval(() => { if (!document.hidden && VERI && !ACIK) yenile(); }, 60000);
+$('girBtn').onclick = () => giris($('pin').value);
+$('pin').onkeydown = e => { if (e.key === 'Enter') giris($('pin').value); };
+const kayitli = window.brokerPinAl && brokerPinAl();
+if (kayitli) { $('pin').value = kayitli; giris(kayitli); }
+</script>
+</body>
+</html>
