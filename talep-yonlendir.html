@@ -52,6 +52,12 @@
   .yon .z{color:rgba(255,255,255,.5);white-space:nowrap;font-size:12px;padding-top:1px}
   .yon b{font-weight:700}
   .yon .ok{color:#6ee7a0;font-weight:700}
+  .tk{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .tk span{font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
+  .tk .oku{background:rgba(83,189,235,.2);color:#8fd6ff}
+  .tk .ula{background:rgba(255,255,255,.12);color:#fff}
+  .tk .gon{color:rgba(255,255,255,.55)}
+  .tk .hat{background:rgba(220,28,46,.22);color:#ffb3ba}
   #giris{max-width:320px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
   #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none}
 </style>
@@ -154,7 +160,7 @@ function ciz() {
   }).join('');
   const y = j.yonlendirilen || [];
   $('yonlendirilen').innerHTML = !y.length ? '<div class="yon" style="color:rgba(255,255,255,.5)">Henüz yönlendirme yok.</div>' : y.map(x =>
-    `<div class="yon"><span class="z">${esc(zaman(x.tarih))}</span><div><b>${esc(x.ad || '(isim yok)')}</b>${x.tur ? ' · ' + esc(x.tur) : ''}<br><span class="ok">→ ${esc(x.danisman)}</span></div></div>`).join('');
+    `<div class="yon"><span class="z">${esc(zaman(x.tarih))}</span><div><b>${esc(x.ad || '(isim yok)')}</b>${x.tur ? ' · ' + esc(x.tur) : ''}<br><span class="ok">→ ${esc(x.danisman)}</span>${takip(x)}</div></div>`).join('');
 }
 
 document.addEventListener('click', async e => {
@@ -206,6 +212,14 @@ document.addEventListener('change', e => {
   if (sec.value) SECIM[sec.dataset.sec] = sec.value; else delete SECIM[sec.dataset.sec];
   ciz();
 });
+// WhatsApp: gönderildi ✓ / ulaştı ✓✓ / okundu (mavi ✓✓). Telefon bildirimi: ulaştı / açtı (dokundu) saatleri.
+function takip(x) {
+  const WA = { 'okundu': ['oku', '✓✓ okudu'], 'ulaştı': ['ula', '✓✓ ulaştı, okumadı'], 'gönderildi': ['gon', '✓ telefona ulaşmadı'],
+    'hata': ['hat', 'gitmedi'], 'numara yok': ['hat', 'numara yok'] };
+  const w = WA[x.wa], b = x.bildirim;
+  const bl = !b ? '' : !b.cihaz ? ['gon', 'telefonunda kapalı'] : b.dokundu ? ['oku', 'açtı ' + b.dokundu] : b.ulasti ? ['ula', 'ulaştı ' + b.ulasti + ', açmadı'] : ['gon', 'ulaşmadı'];
+  return `<div class="tk">${w ? `<span class="${w[0]}">WhatsApp: ${w[1]}</span>` : ''}${bl ? `<span class="${bl[0]}">Bildirim: ${bl[1]}</span>` : ''}</div>`;
+}
 function notSakla() {
   if (!ACIK) return; const i = $('not-' + ACIK);
   if (i) DURUM[ACIK] = Object.assign(DURUM[ACIK] || {}, { not: i.value });
