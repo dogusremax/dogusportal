@@ -3,22 +3,15 @@ on:
   push:
     branches: [claude/project-thread-ql8rpw]
     paths: [".github/workflows/ilan-probe.yml"]
-permissions:
-  contents: write
 jobs:
   p:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - run: |
-          mkdir -p ornek; cd ornek
-          W="WhatsApp/2.23.20.0"; M="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-          curl -sS -A "$W" -o shb-arama.html "https://www.sahibinden.com/emlak?query_text=1323616594"
-          curl -sS -A "$W" -o shb-detay.html "https://www.sahibinden.com/ilan/emlak-konut-satilik-tek-yetkili-bagdattan-minibuse-yakin-ara-katta-genis-3-plus1-daire-1323616594/detay"
-          curl -sS -A "$W" -o shb-kira.html "https://www.sahibinden.com/emlak?query_text=1340059567"
-          curl -sSL -A "$M" -o remax.html "https://remax.com.tr/tr/portfoy/P01342800"
-          curl -sSL -A "$M" -o remax2.html "https://remax.com.tr/tr/portfoy/P06374523"
-          curl -sSL -A "$M" -o ej.html "https://www.emlakjet.com/ilan/akbati-avm-arkasinda-tertemiz-sifir-21-19224629"
-          gzip -9 *.html; ls -la
-          cd ..; git config user.name dogus-bot; git config user.email bot@remaxdogus.com.tr
-          git add ornek; git commit -m "probe ornek"; git push
+          for ua in "WhatsApp/2.23.20.0" "TelegramBot (like TwitterBot)" "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)" "Mozilla/5.0 (compatible; bingbot/2.0)" "okhttp/4.9.0" "Hepsiemlak/5.0 (iPhone; iOS 17.0)"; do
+            for u in "https://www.hepsiemlak.com/kadikoy-satilik" "https://www.hepsiemlak.com/api/realty-detail/12345-678" "https://api.hepsiemlak.com/" "https://m.hepsiemlak.com/" "https://www.hepsiemlak.com/api/realties?city=istanbul&page=1"; do
+              curl -sS -A "$ua" --max-time 15 -o h.html -w "[$ua] %{http_code} %{size_download} $u\n" "$u" || true
+              grep -o '<title>[^<]*' h.html | head -1
+            done
+          done
+          echo "== kmp"; curl -sS --max-time 15 -o h.json -w "%{http_code}\n" "https://www.hepsiemlak.com/api/realties?city=istanbul&page=1" -H "Accept: application/json"; head -c 300 h.json
