@@ -256,7 +256,7 @@ async function loadData(){
     if(KAPANIS_CACHE){
       applyKapanis(KAPANIS_CACHE,months);
     }else{
-      promises[1].then(function(d){if(d){KAPANIS_CACHE=d;applyKapanis(d,months);cacheYaz();}});
+      promises[1].then(function(d){if(d&&d.records){KAPANIS_CACHE=d;applyKapanis(d,months);cacheYaz();}});
     }
     var cSel=document.getElementById("consultantSel");
     var prev=cSel.value;
