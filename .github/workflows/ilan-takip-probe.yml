@@ -1,0 +1,15 @@
+name: ilan-takip-probe
+# İlan takibi (emlakjet + remax.com.tr) kart yapısı denemesi. Yalnız okur.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/ilan-takip-probe.js
