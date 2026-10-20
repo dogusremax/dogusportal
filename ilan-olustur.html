@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#050A30">
+<title>İlan Önizleme · RE/MAX Doğuş</title>
+<link rel="icon" href="assets/app-ikon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--navy:#050A30;--red:#DC1C2E;--grad:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);--bg:#f4f5f9;--ink:#0d1330;--soft:#5b6280;--line:#e3e6ef;--wa:#1faa53;--ok:#1d7a46}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Plus Jakarta Sans',-apple-system,sans-serif}
+header{background:var(--navy);color:#fff;padding:14px 16px;padding-top:max(14px,env(safe-area-inset-top));display:flex;align-items:center;gap:12px}
+header img{height:28px}
+header .bas{font-weight:800;font-size:16px;flex:1}
+header button{background:rgba(255,255,255,.12);border:0;color:#fff;font:inherit;font-size:13px;padding:6px 10px;border-radius:8px;cursor:pointer}
+main{max-width:560px;margin:0 auto;padding:16px;display:grid;gap:14px}
+.kart{background:#fff;border-radius:16px;padding:18px;display:grid;gap:12px;box-shadow:0 1px 2px rgba(5,10,48,.06)}
+h2{margin:0;font-size:16px;font-weight:800;color:var(--navy)}
+p{margin:0}
+.kucuk{font-size:13px;color:var(--soft)}
+input{font:16px inherit;font-family:inherit;width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+input:focus{outline:none;border-color:var(--navy)}
+.satir{display:flex;gap:8px}
+.satir input{flex:1;min-width:0}
+.dg{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border-radius:12px;border:0;font:inherit;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none}
+.dg.ana{background:var(--grad);color:#fff}
+.dg.navy{background:var(--navy);color:#fff}
+.dg.wa{background:var(--wa);color:#fff}
+.dg.ac{background:var(--bg);color:var(--navy);border:1.5px solid var(--line)}
+.dg:disabled{opacity:.55;cursor:default}
+.ikili{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hata{color:var(--red);font-size:14px;font-weight:600}
+.cubuk{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.cubuk i{display:block;height:100%;width:0;background:var(--grad);transition:width .6s}
+.sonuc{display:flex;gap:12px;align-items:center}
+.sonuc img{width:84px;height:64px;border-radius:10px;object-fit:cover;background:var(--bg);flex:0 0 auto}
+.sonuc b{display:block;font-size:15px;color:var(--navy)}
+.uyari{background:#fff6e5;color:#7a4b00;border-radius:10px;padding:10px 12px;font-size:13px}
+.liste{display:grid;gap:8px}
+.liste a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;font-size:14px}
+.liste a span{color:var(--soft);white-space:nowrap}
+details summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:" ›";color:var(--red)}
+ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+.gelen{border:2px solid var(--ok)}
+.gelen h2{color:var(--ok)}
+#pinKart{max-width:360px;margin:40px auto}
+.gizli{display:none!important}
+</style>
+</head>
+<body>
+<header><img src="assets/dogus-logo.webp" onerror="this.onerror=null;this.src='assets/dogus-logo.png'" alt=""><span class="bas">İlan Önizleme</span><button id="cikis" class="gizli">Çıkış</button></header>
+<main>
+  <section class="kart" id="pinKart">
+    <h2>Danışman girişi</h2>
+    <p class="kucuk">Danışman Takip PIN'ini yaz.</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="PIN">
+    <button class="dg navy" id="pinDg">Giriş</button>
+    <p class="hata" id="pinHata"></p>
+  </section>
+
+  <div id="icerik" class="gizli" style="display:grid;gap:14px">
+    <section class="kart gelen gizli" id="gelenKart">
+      <h2>Telefondan alınan ilan</h2>
+      <p id="gelenOzet"></p>
+      <button class="dg ana" id="gelenDg">Önizleme oluştur</button>
+    </section>
+
+    <section class="kart" id="formKart">
+      <h2>Yeni ilan önizlemesi</h2>
+      <p class="kucuk">sahibinden, hepsiemlak, remax.com.tr ya da emlakjet ilan linkini veya ilan numarasını yapıştır. Senin adın, fotoğrafın ve telefonunla RE/MAX Doğuş tasarımında bir sayfa oluşur.</p>
+      <div class="satir"><input id="girdi" placeholder="Link ya da ilan no" autocomplete="off"><button class="dg ac" id="yapistir">Yapıştır</button></div>
+      <button class="dg ana" id="olusturDg">Önizleme oluştur</button>
+      <p class="hata" id="hata"></p>
+    </section>
+
+    <section class="kart gizli" id="bekleKart">
+      <h2>Hazırlanıyor…</h2>
+      <p class="kucuk" id="bekleYazi">İlan okunuyor ve sayfa yayına alınıyor. Genelde 1 dakika sürer, sayfadan ayrılma.</p>
+      <div class="cubuk"><i id="cubuk"></i></div>
+    </section>
+
+    <section class="kart gizli" id="sonucKart">
+      <h2>Önizleme hazır</h2>
+      <div class="sonuc"><img id="sKapak" alt=""><div><b id="sBaslik"></b><span class="kucuk" id="sAlt"></span></div></div>
+      <p class="uyari gizli" id="sKisa">sahibinden bu ilan için yalnız kapak fotoğrafını ve temel bilgileri veriyor. Tüm fotoğraflar için aşağıdaki Doğuş İlan düğmesini kullan.</p>
+      <a class="dg wa" id="sWa" target="_blank" rel="noopener">WhatsApp'ta gönder</a>
+      <div class="ikili"><button class="dg ac" id="sKopya">Linki kopyala</button><a class="dg ac" id="sAc" target="_blank" rel="noopener">Sayfayı aç</a></div>
+    </section>
+
+    <section class="kart">
+      <details id="dugmeDetay">
+        <summary>Doğuş İlan düğmesi: sahibinden ve hepsiemlak'tan tüm fotoğraflar</summary>
+        <div style="display:grid;gap:10px;margin-top:12px">
+          <p class="kucuk">sahibinden ve hepsiemlak sunucularımızı engelliyor. Bu düğme ilanı senin telefonunun tarayıcısından okur, böylece tüm fotoğraflar ve bilgiler gelir. Bir kez kurman yeter.</p>
+          <button class="dg navy" id="dugmeKopya">Düğme kodunu kopyala</button>
+          <p class="kucuk"><b>iPhone (Safari)</b></p>
+          <ol>
+            <li>Bu sayfadayken alttaki paylaş simgesine dokun, <b>Yer İşareti Ekle</b>'yi seç, adını <b>Doğuş İlan</b> yap, kaydet.</li>
+            <li>Yer İşaretleri'ni aç, <b>Düzenle</b>'ye dokun, Doğuş İlan'ı seç.</li>
+            <li>Adres kutusunu sil, kopyaladığın kodu yapıştır, kaydet.</li>
+          </ol>
+          <p class="kucuk"><b>Android (Chrome)</b></p>
+          <ol>
+            <li>Bu sayfayı yıldızla yer işaretlerine ekle, sonra yer işaretini düzenle.</li>
+            <li>Adını <b>Doğuş İlan</b> yap, URL kutusuna kopyaladığın kodu yapıştır, kaydet.</li>
+          </ol>
+          <p class="kucuk"><b>Kullanırken:</b> ilanı tarayıcıda aç (uygulamada değil; uygulamadaysan Paylaş, sonra Tarayıcıda aç). Fotoğraflar yüklenince adres çubuğuna <b>Doğuş İlan</b> yaz ve çıkan yer işaretine dokun. Bu sayfa ilanla birlikte açılır.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="kart gizli" id="sonKart">
+      <h2>Son oluşturduklarım</h2>
+      <div class="liste" id="liste"></div>
+    </section>
+  </div>
+</main>
+<script>
+var API = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+var $ = function (id) { return document.getElementById(id); };
+var goster = function (id, var_) { $(id).classList.toggle("gizli", !var_); };
+var oku = function (k, v) { try { return JSON.parse(localStorage.getItem(k) || "null") || v; } catch (e) { return v; } };
+var yaz = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+var PIN = oku("ilan_pin", "");
+var GELEN = null;
+
+function sunucu(govde) {
+  return fetch(API, { method: "POST", redirect: "follow", body: JSON.stringify(govde) }).then(function (r) { return r.json(); });
+}
+
+/* Doğuş İlan düğmesinden gelen veri adresin # kısmında */
+(function () {
+  var m = location.hash.match(/^#v=(.+)$/);
+  if (!m) return;
+  try { GELEN = JSON.parse(decodeURIComponent(m[1])); } catch (e) { GELEN = null; }
+  history.replaceState(null, "", location.pathname);
+  if (!GELEN) return;
+  $("gelenOzet").textContent = (GELEN.baslik || "İlan") + " · " + (GELEN.fotolar || []).length + " fotoğraf";
+  goster("gelenKart", true);
+})();
+
+function girisTamam() {
+  goster("pinKart", false); goster("icerik", true); goster("cikis", true);
+  listeCiz();
+}
+function pinDene() {
+  var p = $("pin").value.trim(); if (!p) return;
+  $("pinHata").textContent = "Kontrol ediliyor…";
+  sunucu({ action: "ilanOlustur", pin: p, sadeceGiris: true }).then(function (r) {
+    if (r.success) { PIN = p; yaz("ilan_pin", p); $("pinHata").textContent = ""; girisTamam(); }
+    else { $("pinHata").textContent = r.error || "Hatalı PIN"; $("pin").value = ""; }
+  }).catch(function () { $("pinHata").textContent = "Bağlantı hatası, tekrar dene."; });
+}
+$("pinDg").onclick = pinDene;
+$("pin").addEventListener("keydown", function (e) { if (e.key === "Enter") pinDene(); });
+$("cikis").onclick = function () { try { localStorage.removeItem("ilan_pin"); } catch (e) {} location.reload(); };
+if (PIN) girisTamam(); else setTimeout(function () { $("pin").focus(); }, 200);
+
+$("yapistir").onclick = function () {
+  if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(function (t) { $("girdi").value = t.trim(); }).catch(function () { $("girdi").focus(); });
+  else $("girdi").focus();
+};
+
+function olustur(govde) {
+  $("hata").textContent = "";
+  $("olusturDg").disabled = $("gelenDg").disabled = true;
+  goster("sonucKart", false); goster("bekleKart", true);
+  $("bekleYazi").textContent = "İlan okunuyor ve sayfa yayına alınıyor. Genelde 1 dakika sürer, sayfadan ayrılma.";
+  $("cubuk").style.width = "5%";
+  govde.action = "ilanOlustur"; govde.pin = PIN;
+  sunucu(govde).then(function (r) {
+    if (!r.success) {
+      if (/PIN/.test(r.error || "")) { try { localStorage.removeItem("ilan_pin"); } catch (e) {} }
+      throw new Error(r.error || "Oluşturulamadı");
+    }
+    return bekle(r.kod);
+  }).then(function (v) {
+    sonucGoster(v);
+    var l = oku("ilan_liste", []); l.unshift({ kod: v.kod, baslik: v.baslik, fiyat: v.fiyatYazi, t: Date.now() }); yaz("ilan_liste", l.slice(0, 15)); listeCiz();
+    if (govde.veri) goster("gelenKart", false);
+  }).catch(function (e) {
+    goster("bekleKart", false); $("hata").textContent = e.message;
+    $("formKart").scrollIntoView({ behavior: "smooth" });
+  }).then(function () { $("olusturDg").disabled = $("gelenDg").disabled = false; });
+}
+$("olusturDg").onclick = function () {
+  var g = $("girdi").value.trim();
+  if (!g) { $("hata").textContent = "Link ya da ilan numarası yaz."; return; }
+  olustur({ girdi: g });
+};
+$("gelenDg").onclick = function () { if (GELEN) olustur({ girdi: GELEN.kaynak || "", veri: GELEN }); };
+
+/* workflow sayfayı yayınlayınca ilan/<kod>/veri.json görünür */
+function bekle(kod) {
+  var bas = Date.now();
+  return new Promise(function (coz, red) {
+    (function dene() {
+      var gecen = (Date.now() - bas) / 1000;
+      $("cubuk").style.width = Math.min(95, 5 + gecen / 1.1) + "%";
+      if (gecen > 60) $("bekleYazi").textContent = "Neredeyse hazır, sayfa yayına alınıyor…";
+      if (gecen > 300) return red(new Error("Sayfa beklenenden uzun sürdü. Birkaç dakika sonra Son oluşturduklarım listesinden bak."));
+      fetch("ilan/" + kod + "/veri.json?cb=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (v) {
+          if (!v) return setTimeout(dene, 4000);
+          if (!v.ok) return red(new Error(v.mesaj || "Oluşturulamadı"));
+          $("cubuk").style.width = "100%"; coz(v);
+        }).catch(function () { setTimeout(dene, 4000); });
+    })();
+  });
+}
+
+function sonucGoster(v) {
+  var url = "https://dogusportal.com/ilan/" + v.kod + "/";
+  goster("bekleKart", false); goster("sonucKart", true);
+  $("sKapak").src = "ilan/" + v.kod + "/kapak.jpg";
+  $("sKapak").onerror = function () { this.style.visibility = "hidden"; };
+  $("sBaslik").textContent = v.baslik;
+  $("sAlt").textContent = [v.fiyatYazi, v.konum, v.foto + " fotoğraf"].filter(Boolean).join(" · ");
+  goster("sKisa", !!v.kisa);
+  var ust = [v.islem, v.oda, v.tip].filter(Boolean).join(" ") || v.baslik;
+  var metin = [ust + (v.konum ? ", " + v.konum : ""), v.fiyatYazi, url].filter(Boolean).join("\n");
+  $("sWa").href = "https://wa.me/?text=" + encodeURIComponent(metin);
+  $("sAc").href = url + "?cb=" + Date.now();
+  $("sKopya").onclick = function () {
+    var b = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { b.textContent = "Kopyalandı"; setTimeout(function () { b.textContent = "Linki kopyala"; }, 1800); })
+      .catch(function () { prompt("Linki kopyala:", url); });
+  };
+  $("sonucKart").scrollIntoView({ behavior: "smooth" });
+}
+
+function listeCiz() {
+  var l = oku("ilan_liste", []);
+  goster("sonKart", l.length > 0);
+  $("liste").innerHTML = "";
+  l.forEach(function (x) {
+    var a = document.createElement("a");
+    a.href = "ilan/" + x.kod + "/?cb=" + Date.now(); a.target = "_blank"; a.rel = "noopener";
+    var b = document.createElement("b"); b.textContent = x.baslik || x.kod;
+    var s = document.createElement("span"); s.textContent = x.fiyat || "";
+    a.appendChild(b); a.appendChild(s); $("liste").appendChild(a);
+  });
+}
+
+/* Doğuş İlan yer imi: ilan/topla.js'in kendisi */
+$("dugmeKopya").onclick = function () {
+  var b = this;
+  fetch("ilan/topla.js?cb=" + Date.now()).then(function (r) { return r.text(); }).then(function (kod) {
+    var yer = "javascript:" + encodeURIComponent(kod.trim());
+    return navigator.clipboard.writeText(yer).then(function () { b.textContent = "Kopyalandı"; setTimeout(function () { b.textContent = "Düğme kodunu kopyala"; }, 2000); })
+      .catch(function () { prompt("Kodu kopyala:", yer); });
+  }).catch(function () { alert("Kod alınamadı, tekrar dene."); });
+};
+</script>
+</body>
+</html>

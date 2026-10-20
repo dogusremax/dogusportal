@@ -1,0 +1,40 @@
+name: ilan-olustur
+# Danışmanın verdiği ilandan dogusportal.com/ilan/<kod>/ önizleme sayfası üretir.
+# Tetikleyen: Danışman Takip Apps Script (action=ilanOlustur, IlanOnizleme.js). Kod: scripts/ilan-olustur.js
+on:
+  workflow_dispatch:
+    inputs:
+      kod: { description: "sayfa kodu", required: true }
+      danisman: { description: "danışman id", required: true }
+      girdi: { description: "ilan linki ya da numarası", default: "" }
+      veri: { description: "Doğuş İlan düğmesinin topladığı JSON (isteğe bağlı)", default: "" }
+permissions:
+  contents: write
+jobs:
+  olustur:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Sayfayı üret
+        env:
+          KOD: ${{ inputs.kod }}
+          DANISMAN: ${{ inputs.danisman }}
+          GIRDI: ${{ inputs.girdi }}
+          VERI: ${{ inputs.veri }}
+        run: node scripts/ilan-olustur.js
+      - name: Yayınla
+        env:
+          KOD: ${{ inputs.kod }}
+        run: |
+          git config user.name dogus-bot
+          git config user.email bot@remaxdogus.com.tr
+          git add "ilan/$KOD"
+          git commit -qm "İlan önizleme: $KOD"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
+            sleep $((i*3))
+          done
+          exit 1
