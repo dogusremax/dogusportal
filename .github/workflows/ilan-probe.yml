@@ -8,10 +8,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          UA='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
-          for u in https://www.sahibinden.com/ "https://www.sahibinden.com/satilik-daire/istanbul-kadikoy" https://www.remax.com.tr/ "https://www.remax.com.tr/portfoy?searchKeyword=fikirtepe" https://www.hepsiemlak.com/ https://www.emlakjet.com/; do
-            echo "=== $u"
-            curl -sSL -A "$UA" -H 'Accept-Language: tr-TR,tr' --max-time 25 -o out.html -w "HTTP %{http_code} %{size_download} %{url_effective}\n" "$u" || true
-            head -c 600 out.html | tr '\n' ' '; echo
-            grep -oE 'href="[^"]*(ilan|portfoy|detay)[^"]*"' out.html | sort -u | head -8
+          for ua in "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)" "WhatsApp/2.23.20.0" "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" "Twitterbot/1.0"; do
+            for u in "https://www.sahibinden.com/ilan/emlak-konut-satilik-test-1234567890/detay" https://www.hepsiemlak.com/; do
+              echo "=== [$ua] $u"; curl -sS -A "$ua" --max-time 20 -o o.html -w "HTTP %{http_code} %{size_download}\n" "$u" || true
+              grep -oE '<meta (property|name)="og:[^>]*>' o.html | head -5; grep -o '<title>[^<]*' o.html | head -1
+            done
           done
+          echo "=== REMAX DETAIL"
+          curl -sSL -A "Mozilla/5.0" --max-time 25 -o r.html "https://remax.com.tr/tr/portfoy/P01342800"
+          wc -c r.html; grep -o '<title>[^<]*' r.html; grep -oE '<meta (property|name)="(og:[^"]*|description)"[^>]*>' r.html | head -8
+          grep -oE 'https://i\.remax\.com\.tr/[^"\\ ]+\.(jpg|jpeg|webp|png)' r.html | sort -u | head -15
+          grep -oE '"(price|title|description|roomCount|grossM2|netM2|floor|listingNumber|portfolioNo)[^,]{0,120}' r.html | head -40
+          python3 - <<'PY'
+          import re
+          s=open('r.html',encoding='utf8').read()
+          i=s.find('self.__next_f')
+          print('next_f at',i, 'ld+json', s.count('application/ld+json'))
+          for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>',s,re.S): print(m.group(1)[:1500])
+          # print snippets around fiyat keywords
+          for k in ['Brüt','Oda Sayısı','Fiyat','TL']:
+            j=s.find(k); print(k, s[max(0,j-200):j+300].replace('\n',' ') if j>0 else None); print('---')
+          PY
+          echo "=== EMLAKJET DETAIL"
+          curl -sSL -A "Mozilla/5.0" --max-time 25 -o e.html "https://www.emlakjet.com/ilan/akbati-avm-arkasinda-tertemiz-sifir-21-19224629"
+          wc -c e.html; grep -o '<title>[^<]*' e.html; grep -oE '<meta (property|name)="(og:[^"]*|description)"[^>]*>' e.html | head -8
+          grep -c 'application/ld+json' e.html; grep -oE 'https://imaj\.emlakjet\.com/[^"\\ ]+' e.html | sort -u | head -5
