@@ -17,6 +17,7 @@
   label{font-size:13px;color:rgba(255,255,255,.7)}
   input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
   input:focus{border-color:#FB5160}
+  select{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;width:100%}
   button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px;cursor:pointer;background:#DC1C2E;color:#fff}
   button:disabled{opacity:.45}
   .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
@@ -25,11 +26,13 @@
 </style>
 </head>
 <body>
-<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>WhatsApp Asistanı · Claude anahtarı</h1></div>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1 id="baslik">WhatsApp Asistanı · Claude anahtarı</h1></div>
 <main>
   <label for="pin">PIN</label>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
-  <label for="anahtar">Anthropic anahtarı (sk-ant-…)</label>
+  <label for="tur">Hangi anahtar?</label>
+  <select id="tur"><option value="anthropic">Claude (Anthropic, sk-ant-…)</option><option value="elevenlabs">Sesli asistan (ElevenLabs, sk_…)</option></select>
+  <label for="anahtar" id="etiket">Anthropic anahtarı (sk-ant-…)</label>
   <input id="anahtar" type="password" autocomplete="off" spellcheck="false">
   <button id="kaydet">Kaydet</button>
   <p id="durum" class="durum">Anahtar yalnız WhatsApp servisine kaydedilir, burada ya da başka yerde gösterilmez.</p>
@@ -38,15 +41,22 @@
 const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 const $ = id => document.getElementById(id);
 function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+function turAyarla() {
+  const el = $('tur').value === 'elevenlabs';
+  $('etiket').textContent = el ? 'ElevenLabs anahtarı (sk_…)' : 'Anthropic anahtarı (sk-ant-…)';
+  $('baslik').textContent = el ? 'Sesli Asistan · ElevenLabs anahtarı' : 'WhatsApp Asistanı · Claude anahtarı';
+}
+if (new URLSearchParams(location.search).get('tur') === 'elevenlabs') $('tur').value = 'elevenlabs';
+$('tur').onchange = turAyarla; turAyarla();
 $('kaydet').onclick = async () => {
   const pin = $('pin').value.trim(), deger = $('anahtar').value.trim();
   if (!pin || !deger) return durum('PIN ve anahtarı girin.', 'hata');
   $('kaydet').disabled = true; durum('Anahtar deneniyor ve kaydediliyor…');
   try {
     const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
-      body: JSON.stringify({ action: 'anahtarKaydet', pin, deger }) });
+      body: JSON.stringify({ action: 'anahtarKaydet', pin, deger, tur: $('tur').value }) });
     const j = await r.json();
-    if (j.ok) { $('anahtar').value = ''; durum('Kaydedildi (…' + j.son4 + '). Claude\'a "girdim" yazabilirsiniz.', 'ok'); }
+    if (j.ok) { $('anahtar').value = ''; durum('Kaydedildi (…' + j.son4 + '). ' + ($('tur').value === 'elevenlabs' ? 'Sesli asistanı denemek için dogusportal.com/sesli-asistan.html' : 'Claude\'a "girdim" yazabilirsiniz.'), 'ok'); }
     else durum(j.error || 'Kaydedilemedi.', 'hata');
   } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
   $('kaydet').disabled = false;
