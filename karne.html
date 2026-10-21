@@ -530,7 +530,6 @@ function kisaCiz(d){
       <div class="box" style="--c:var(--good)"><h4><i></i><span class="no">3</span>Sonuç</h4><p>${sonuc}</p>
         ${k.plan.length ? `<ol>${k.plan.slice(0,3).map(x=>`<li>${x}</li>`).join('')}</ol>` : ''}</div>
     </div>
-    <div class="quote">“${k.yorum}”<small>BROKER YORUMU · U.T / M.T</small></div>
     <button class="detay" type="button" onclick="DETAY=true; goster('${d.id}')">Tüm detayları gör ›</button>`;
   say(document.querySelector('.ring b'), d.puan, 1000);
   document.querySelectorAll('.m b [data-n]').forEach(b=>say(b,+b.dataset.n,700,200));
@@ -598,7 +597,7 @@ function goster(id){
       <div class="box" style="--c:var(--warn)"><h4><i></i>Geliştirmen gerekenler</h4><ul>${(k.gel.length?k.gel:['tüm haftalık hedeflerini tutturdun']).map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="box" style="--c:var(--blue)"><h4><i></i>Bu haftanın planı</h4><ol>${k.plan.map(x=>`<li>${x}</li>`).join('')}</ol></div>
     </div>
-    <div class="quote">“${k.yorum}”<small>BROKER YORUMU · U.T / M.T</small></div>`;
+    ${GIZLI ? '' : `<div class="quote">“${k.yorum}”<small>BROKER YORUMU · U.T / M.T</small></div>`}`;   // hafta ortası broker yorumu yok (Umut, 21.10.2026)
   say(document.querySelector('.ring b'), d.puan, 1000);
   const hz = document.querySelector('.izle h3 b'); if (hz) say(hz, +hz.dataset.n, 900, 150);
   document.querySelectorAll('.m b [data-n]').forEach(b=>say(b,+b.dataset.n,700,200));
