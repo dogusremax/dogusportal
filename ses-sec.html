@@ -36,6 +36,7 @@
   <button id="getir">Örnekleri dinle</button>
   <p id="durum" class="durum">Aynı konuşma birkaç ayarla okunur; ilki astroloji kayıtlarınızla aynı ayardır. Telefonda dinler gibi, hoparlörü kulağınıza tutarak dinleyin. En doğal geleni seçin, asistan o ayarla konuşur.</p>
   <div id="liste" style="display:flex;flex-direction:column;gap:12px"></div>
+  <button id="dene" style="display:none" onclick="location.href='sesli-asistan.html?cb=' + Date.now()">Asistanla konuş</button>
 </main>
 <script>
 const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
@@ -58,7 +59,8 @@ $('getir').onclick = async () => {
     durum('Dinleyin ve en doğal geleni seçin.');
     $('liste').innerHTML = j.ornekler.map((o, i) => '<div class="kart"><h2>' + esc(o.ad) + '</h2>' + (o.not ? '<p class="kucuk">' + esc(o.not) + '</p>' : '') +
       (o.ses ? '<audio controls preload="auto" src="data:audio/mpeg;base64,' + o.ses + '"></audio><button data-i="' + i + '">Bunu seç</button>'
-             : '<p class="kucuk">Bu ayar şu an kullanılamıyor (' + esc(o.hata) + ')</p>') + '</div>').join('');
+             : '<p class="kucuk">' + (/402/.test(o.hata) ? 'Ücretsiz hesapta önizleme dinletilemiyor. Seçip canlı görüşmede deneyebilirsiniz.' : 'Önizleme alınamadı (' + esc(o.hata) + ')') +
+               '</p><button data-i="' + i + '">Bunu seç, canlı dene</button>') + '</div>').join('');
     document.querySelectorAll('#liste button').forEach(b => b.onclick = () => sec(Number(b.dataset.i), b));
   } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
   $('getir').disabled = false;
@@ -68,7 +70,8 @@ async function sec(i, b) {
   durum('Asistana uygulanıyor…');
   try {
     const j = await servis({ action: 'sesliAsistan', islem: 'sec', secim: i, pin: $('pin').value.trim() });
-    if (j.ok) { durum('Seçildi: ' + j.secim + '. Şimdi test edin: dogusportal.com/sesli-asistan.html', 'ok'); b.textContent = 'Seçildi ✓'; }
+    if (j.ok) { durum('Seçildi: ' + j.secim + '. Şimdi konuşup deneyin.', 'ok'); b.textContent = 'Seçildi ✓';
+      $('dene').style.display = 'block'; }
     else durum(j.error || 'Uygulanamadı.', 'hata');
   } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
   document.querySelectorAll('#liste button').forEach(x => x.disabled = false);
