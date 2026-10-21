@@ -69,6 +69,10 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .track i{position:absolute;inset:0 auto 0 0;width:var(--w);border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--coral));transform-origin:left;animation:grow 1s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d)}
 .track u{position:absolute;top:-4px;bottom:-4px;width:2px;background:rgba(255,255,255,.5);left:var(--a);border-radius:2px}
 .li .pt{font-size:20px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.pd .sor{display:grid;place-items:center;height:clamp(120px,22vw,190px);aspect-ratio:3/4;border-radius:18px;background:var(--card2);border:1px dashed var(--line);font-size:clamp(56px,10vw,90px);font-weight:800;color:var(--coral);animation:pop .7s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:var(--d)}
+.pd.p1 .sor{height:clamp(140px,27vw,230px)}
+.av.sor{place-items:center;font-weight:800;font-size:20px;color:var(--coral)}
+.li:has(.sor){cursor:default}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .hint{font-size:12px;color:var(--faint);margin:0}
 
@@ -272,14 +276,21 @@ document.getElementById('stats').innerHTML = [['kapanis','kapanış'],['gosterim
 document.querySelectorAll('.stat b').forEach((b,i)=>say(b,+b.dataset.n,900,i*80));
 }
 
-// Ara karne: kimin kaçıncı olduğu ve puanı görünmez, isimler alfabetik
+// Ara karne: sıralama Pazartesi'ye kadar sürpriz. Podyum ve liste aynı düzende ama foto, isim, sıra ve puan yerine "?"
 function gizliCiz(){
-const list = document.getElementById('list'); list.innerHTML = '';
-DATA.slice().sort((a,b)=>a.ad.localeCompare(b.ad,'tr')).forEach(d=>{
-  const b = document.createElement('button'); b.className='li'; b.id='l-'+d.id; b.setAttribute('role','tab');
-  b.innerHTML = `<span class="n">?</span><span class="av"><img src="${foto(d.id)}" alt=""></span>
-    <span class="mid"><b>${d.ad}</b></span><span class="pt">?</span>`;
-  if (KARNE[d.id]) b.addEventListener('click',()=>sec(d.id)); else { b.disabled = true; b.removeAttribute('role'); }
+const pod = document.getElementById('podium'), list = document.getElementById('list');
+pod.innerHTML = ''; list.innerHTML = '';
+[1,0,2].forEach((ix,k)=>{
+  if (!DATA[ix]) return;
+  const h = ix===0 ? 150 : ix===1 ? 120 : 100, delay = [250,0,450][k];
+  const b = document.createElement('div'); b.className='pd p'+(ix+1);
+  b.innerHTML = `<div class="ph"><span class="sor" style="--d:${delay+300}ms">?</span></div>
+    <div class="blk" style="--h:${h}px;--d:${delay}ms"><img class="kupa k${ix}" src="assets/${['kupa.png','kupa-gumus.webp','kupa-bronz.webp'][ix]}" alt=""><span class="rk">${ix+1}.</span><span class="pt">?</span></div>`;
+  pod.appendChild(b);
+});
+DATA.slice(3).forEach((_,i)=>{
+  const b = document.createElement('div'); b.className='li';
+  b.innerHTML = `<span class="n">${i+4}</span><span class="av sor">?</span><span class="mid"><b>?</b></span><span class="pt">?</span>`;
   list.appendChild(b);
 });
 }
@@ -549,7 +560,7 @@ function ciz(res){
   if (ilk && (res.kim !== 'broker' || KARNE[h0])) { if (matchMedia('(max-width: 900px)').matches) setTimeout(kaydir, 1700); }
   if (OLAY) return; OLAY = true;
   if (res.kim === 'broker') addEventListener('hashchange',()=>{ const x=location.hash.slice(1); if (KARNE[x]) goster(x); });
-  else document.querySelector('.hint').textContent = GIZLI ? 'Sıralama hafta bitince Pazartesi karnende açıklanır. Aşağıda kendi ara karnen var.' : 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
+  else document.querySelector('.hint').textContent = GIZLI ? 'Sıralama sürpriz: Pazartesi karnende açıklanacak. Aşağıda kendi ara karnen var.' : 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
 }
 // Sunucu bazen geç uyanır: 12 sn'de cevap yoksa bekleyeni bırakmadan ikinci istek atılır, hangisi önce gelirse o çizilir
 function getir(url){
