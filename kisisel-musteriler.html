@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Müşterilerim · Umut Tokkuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:#0b0f2a;z-index:5}
+  .top img{height:28px}
+  .top h1{font-size:16px;font-weight:700}
+  .top .say{margin-left:auto;font-size:12px;color:rgba(255,255,255,.6)}
+  main{max-width:640px;margin:0 auto;padding:16px 16px 60px;display:flex;flex-direction:column;gap:12px}
+  label{font-size:12px;color:rgba(255,255,255,.6)}
+  input,select,textarea{font:600 15px 'Plus Jakarta Sans',sans-serif;padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:#111738;color:#fff;outline:none;width:100%}
+  textarea{min-height:70px;resize:vertical;font-weight:500}
+  input:focus,select:focus,textarea:focus{border-color:#FB5160}
+  button,.btn{font:700 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:12px 14px;cursor:pointer;background:#DC1C2E;color:#fff;text-decoration:none;text-align:center;display:inline-block}
+  button.ikincil,.btn.ikincil{background:#1c2350;border:1px solid rgba(255,255,255,.15)}
+  button:disabled{opacity:.45}
+  .satir{display:flex;gap:8px}
+  .satir>*{flex:1}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+  .durum.hata{color:#ff8a95}
+  .cipler{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+  .cip{flex:none;font-size:13px;font-weight:700;padding:7px 12px;border-radius:20px;background:#111738;border:1px solid rgba(255,255,255,.15);cursor:pointer;white-space:nowrap}
+  .cip.secili{background:#DC1C2E;border-color:#DC1C2E}
+  .liste{display:flex;flex-direction:column;gap:8px}
+  .m{background:#111738;border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+  .m .ust{display:flex;align-items:center;gap:8px}
+  .m b{font-size:16px}
+  .m .alt{font-size:13px;color:rgba(255,255,255,.65);line-height:1.4}
+  .rozet{font-size:11px;font-weight:800;padding:3px 8px;border-radius:8px;background:#1c2350;color:rgba(255,255,255,.85);white-space:nowrap}
+  .rozet.sicak{background:#5a0f19;color:#ffb3bb}
+  .rozet.gec{background:#3a2a00;color:#ffcf5c}
+  .sag{margin-left:auto}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .kart h2{font-size:20px;font-weight:800}
+  .ust-bar{display:flex;align-items:center;gap:8px}
+  .geri{background:none;padding:6px 0;color:rgba(255,255,255,.75);font-weight:600}
+  .izgara{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .izgara .tam{grid-column:1/-1}
+  .not{border-top:1px solid rgba(255,255,255,.08);padding-top:10px;font-size:14px;line-height:1.5}
+  .not .t{font-size:12px;color:rgba(255,255,255,.55)}
+  details summary{cursor:pointer;font-size:13px;color:rgba(255,255,255,.65);margin-top:4px}
+  pre{white-space:pre-wrap;font:13px/1.55 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.85);margin-top:6px}
+  .gizli{display:none!important}
+  .bos{text-align:center;color:rgba(255,255,255,.55);font-size:14px;padding:30px 0}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Müşterilerim</h1><span class="say" id="say"></span></div>
+<main>
+  <!-- Giriş -->
+  <section id="giris" class="kart">
+    <label for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+    <button id="girBtn">Aç</button>
+    <p class="durum" id="girDurum">Ofisten bağımsız, yalnız sizin kişisel müşteri listeniz.</p>
+  </section>
+
+  <!-- Liste -->
+  <section id="listeEkran" class="gizli" style="display:flex;flex-direction:column;gap:12px">
+    <div class="satir">
+      <button id="yeniBtn" class="ikincil">+ Yeni müşteri</button>
+      <label class="btn" for="sesDosya">Arama kaydı yükle</label>
+      <input id="sesDosya" type="file" accept="audio/*,.m4a,.mp3,.wav,.ogg" hidden>
+    </div>
+    <p class="durum" id="durum"></p>
+    <input id="ara" type="search" placeholder="Ara: isim, telefon, ilan, site…" autocomplete="off">
+    <div class="cipler" id="cipler"></div>
+    <div class="liste" id="liste"></div>
+  </section>
+
+  <!-- Detay -->
+  <section id="detayEkran" class="gizli" style="display:flex;flex-direction:column;gap:12px">
+    <div class="ust-bar"><button class="geri" id="geriBtn">‹ Liste</button></div>
+    <div class="kart">
+      <h2 id="dAd">Yeni müşteri</h2>
+      <div class="satir" id="iletisim"></div>
+      <div class="izgara">
+        <div class="tam"><label>Ad soyad</label><input data-k="ad"></div>
+        <div><label>Telefon</label><input data-k="tel" type="tel" inputmode="tel"></div>
+        <div><label>Tip</label><select data-k="tip"><option></option><option>Alıcı adayı</option><option>Kiracı adayı</option><option>Mülk sahibi</option><option>Diğer</option></select></div>
+        <div class="tam"><label>İlan / daire</label><input data-k="ilan"></div>
+        <div><label>İlanı nerede gördü</label><input data-k="ilan_kaynagi" list="kaynaklar"></div>
+        <div><label>Bölge / site</label><input data-k="bolge"></div>
+        <div class="tam"><label>Talep</label><input data-k="talep"></div>
+        <div><label>Oda</label><input data-k="oda"></div>
+        <div><label>m²</label><input data-k="m2" inputmode="numeric"></div>
+        <div><label>Bütçe</label><input data-k="butce"></div>
+        <div><label>Sıcaklık</label><select data-k="sicaklik"><option></option><option>sıcak</option><option>ılık</option><option>soğuk</option></select></div>
+        <div><label>Durum</label><select data-k="durum"><option>Yeni</option><option>Görüşülüyor</option><option>Randevu</option><option>Teklif</option><option>Kapandı</option><option>Olumsuz</option></select></div>
+        <div><label>Takip tarihi</label><input data-k="takip_tarihi" type="date"></div>
+        <div class="tam"><label>Sonraki adım</label><input data-k="sonraki_adim"></div>
+        <div class="tam"><label>Özet</label><textarea data-k="ozet"></textarea></div>
+      </div>
+      <button id="kaydetBtn">Kaydet</button>
+      <p class="durum" id="dDurum"></p>
+    </div>
+    <div class="kart" id="notKart">
+      <label>Not ekle</label>
+      <textarea id="yeniNot" placeholder="Görüşme notu…"></textarea>
+      <button id="notBtn" class="ikincil">Notu ekle</button>
+      <div id="notlar"></div>
+    </div>
+  </section>
+  <datalist id="kaynaklar"><option>sahibinden</option><option>emlakjet</option><option>hepsiemlak</option><option>remax.com.tr</option><option>Instagram</option><option>Tabela</option><option>Tavsiye</option></datalist>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let PIN = '', MUSTERILER = [], FILTRE = 'hepsi', ACIK = null;
+const BUGUN = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);   // İstanbul
+
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+    body: JSON.stringify(Object.assign({ action: 'kisisel', pin: PIN }, govde)) });
+  return r.json();
+}
+function yaz(id, t, hata) { $(id).textContent = t || ''; $(id).className = 'durum' + (hata ? ' hata' : ''); }
+function goster(ekran) { ['giris', 'listeEkran', 'detayEkran'].forEach(e => $(e).classList.toggle('gizli', e !== ekran)); window.scrollTo(0, 0); }
+const telGoster = t => { const d = String(t || '').replace(/\D/g, '').slice(-10); return d.length === 10 ? '0' + d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6,8) + ' ' + d.slice(8) : (t || ''); };
+
+/* ── Giriş ── */
+$('girBtn').onclick = async () => {
+  PIN = $('pin').value.trim(); if (!PIN) return;
+  $('girBtn').disabled = true; yaz('girDurum', 'Açılıyor…');
+  try {
+    const j = await servis({ islem: 'liste' });
+    if (!j.ok) { yaz('girDurum', j.error || 'Açılamadı.', true); PIN = ''; }
+    else {
+      MUSTERILER = j.musteriler; goster('listeEkran'); ciz();
+      const m = new URLSearchParams(location.search).get('m');
+      if (m) ac(m);
+    }
+  } catch (e) { yaz('girDurum', 'Bağlantı hatası, tekrar deneyin.', true); }
+  $('girBtn').disabled = false;
+};
+$('pin').onkeydown = e => { if (e.key === 'Enter') $('girBtn').click(); };
+async function yenile() { const j = await servis({ islem: 'liste' }); if (j.ok) { MUSTERILER = j.musteriler; ciz(); } }
+
+/* ── Liste ── */
+const FILTRELER = [
+  ['hepsi', 'Hepsi', m => m.durum !== 'Olumsuz' && m.durum !== 'Kapandı'],
+  ['bugun', 'Takip zamanı', m => m.takip_tarihi && m.takip_tarihi <= BUGUN && m.durum !== 'Olumsuz' && m.durum !== 'Kapandı'],
+  ['sicak', 'Sıcak', m => m.sicaklik === 'sıcak' && m.durum !== 'Olumsuz' && m.durum !== 'Kapandı'],
+  ['Yeni', 'Yeni', m => m.durum === 'Yeni'], ['Randevu', 'Randevu', m => m.durum === 'Randevu'],
+  ['Teklif', 'Teklif', m => m.durum === 'Teklif'], ['Kapandı', 'Kapandı', m => m.durum === 'Kapandı'],
+  ['Olumsuz', 'Olumsuz', m => m.durum === 'Olumsuz'], ['tumu', 'Tümü', () => true]
+];
+function ciz() {
+  $('say').textContent = MUSTERILER.length + ' müşteri';
+  $('cipler').innerHTML = FILTRELER.map(([k, ad, f]) => {
+    const n = MUSTERILER.filter(f).length;
+    return `<span class="cip ${k === FILTRE ? 'secili' : ''}" data-f="${k}">${ad} ${n}</span>`;
+  }).join('');
+  const f = FILTRELER.find(x => x[0] === FILTRE)[2];
+  const q = $('ara').value.trim().toLocaleLowerCase('tr'), qd = q.replace(/\D/g, '');
+  const l = MUSTERILER.filter(f).filter(m => !q ||
+    [m.ad, m.ilan, m.talep, m.bolge, m.ozet, m.ilan_kaynagi].join(' ').toLocaleLowerCase('tr').includes(q) ||
+    (qd.length >= 3 && String(m.tel).includes(qd.replace(/^0/, ''))));
+  $('liste').innerHTML = l.length ? l.map(m => {
+    const gec = m.takip_tarihi && m.takip_tarihi <= BUGUN && m.durum !== 'Olumsuz' && m.durum !== 'Kapandı';
+    return `<div class="m" data-id="${esc(m.id)}">
+      <div class="ust"><b>${esc(m.ad || '(isimsiz)')}</b>
+        ${m.sicaklik === 'sıcak' ? '<span class="rozet sicak">sıcak</span>' : ''}
+        <span class="rozet sag">${esc(m.durum || 'Yeni')}</span></div>
+      <div class="alt">${esc([telGoster(m.tel), m.ilan || m.talep].filter(Boolean).join(' · '))}</div>
+      ${m.sonraki_adim || m.takip_tarihi ? `<div class="alt">${gec ? '<span class="rozet gec">' + esc(m.takip_tarihi) + '</span> ' : (m.takip_tarihi ? esc(m.takip_tarihi) + ' · ' : '')}${esc(m.sonraki_adim)}</div>` : ''}
+    </div>`;
+  }).join('') : '<div class="bos">Kayıt yok.</div>';
+}
+$('cipler').onclick = e => { const c = e.target.closest('.cip'); if (c) { FILTRE = c.dataset.f; ciz(); } };
+$('ara').oninput = ciz;
+$('liste').onclick = e => { const m = e.target.closest('.m'); if (m) ac(m.dataset.id); };
+
+/* ── Detay ── */
+const alanlar = () => [...document.querySelectorAll('[data-k]')];
+function formDoldur(m) {
+  alanlar().forEach(el => { el.value = (m && m[el.dataset.k]) || (el.dataset.k === 'durum' ? 'Yeni' : ''); });
+  $('dAd').textContent = (m && m.ad) || (m ? '(isimsiz)' : 'Yeni müşteri');
+  const tel = m && String(m.tel).replace(/\D/g, '');
+  $('iletisim').innerHTML = tel && tel.length >= 10
+    ? `<a class="btn" href="tel:+${tel.length === 10 ? '90' + tel : tel}">Ara</a><a class="btn ikincil" href="https://wa.me/${tel.length === 10 ? '90' + tel : tel}" target="_blank">WhatsApp</a>` : '';
+}
+async function ac(id) {
+  ACIK = id; const m = MUSTERILER.find(x => x.id === id);
+  formDoldur(m); $('notlar').innerHTML = ''; $('notKart').classList.remove('gizli'); yaz('dDurum', '');
+  goster('detayEkran');
+  try {
+    const j = await servis({ islem: 'detay', id });
+    if (!j.ok || ACIK !== id) return;
+    formDoldur(j.musteri);
+    $('notlar').innerHTML = j.notlar.map(n => `<div class="not"><div class="t">${esc(n.tarih)} · ${esc(n.tur)}</div>${esc(n.not)}
+      ${n.dokum ? `<details><summary>Görüşme dökümü</summary><pre>${esc(n.dokum)}</pre></details>` : ''}</div>`).join('');
+  } catch (e) {}
+}
+$('yeniBtn').onclick = () => { ACIK = null; formDoldur(null); $('notKart').classList.add('gizli'); yaz('dDurum', ''); goster('detayEkran'); };
+$('geriBtn').onclick = () => { goster('listeEkran'); ciz(); };
+$('kaydetBtn').onclick = async () => {
+  const musteri = {}; alanlar().forEach(el => musteri[el.dataset.k] = el.value.trim());
+  if (ACIK) musteri.id = ACIK;
+  $('kaydetBtn').disabled = true; yaz('dDurum', 'Kaydediliyor…');
+  try {
+    const j = await servis({ islem: 'kaydet', musteri });
+    if (!j.ok) yaz('dDurum', j.error || 'Kaydedilemedi.', true);
+    else { yaz('dDurum', j.yeni ? 'Yeni müşteri kaydedildi.' : 'Kaydedildi.'); await yenile(); if (!ACIK) ac(j.id); }
+  } catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
+  $('kaydetBtn').disabled = false;
+};
+$('notBtn').onclick = async () => {
+  const not = $('yeniNot').value.trim(); if (!not || !ACIK) return;
+  $('notBtn').disabled = true;
+  try {
+    const j = await servis({ islem: 'not', id: ACIK, not });
+    if (j.ok) { $('yeniNot').value = ''; await yenile(); ac(ACIK); } else yaz('dDurum', j.error, true);
+  } catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
+  $('notBtn').disabled = false;
+};
+
+/* ── Arama kaydı yükle ── */
+const oku = f => new Promise((ok, hata) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = hata; r.readAsDataURL(f); });
+$('sesDosya').onchange = async () => {
+  const f = $('sesDosya').files[0]; $('sesDosya').value = '';
+  if (!f) return;
+  if (f.size > 18 * 1048576) return yaz('durum', 'Dosya 18 MB\'tan büyük.', true);
+  yaz('durum', 'Kayıt dinleniyor, bilgiler çıkarılıyor… (20-60 sn)');
+  try {
+    const j = await servis({ islem: 'arama', ses: await oku(f), mime: f.type, dosya: f.name, kaynak: 'sayfa' });
+    if (!j.ok) return yaz('durum', j.error || 'Çözülemedi.', true);
+    yaz('durum', j.kisa);
+    await yenile();
+    if (j.id) ac(j.id);
+  } catch (e) { yaz('durum', 'Bağlantı hatası, tekrar deneyin.', true); }
+};
+</script>
+</body>
+</html>
