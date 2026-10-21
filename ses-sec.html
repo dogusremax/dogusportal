@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Asistan Sesi Seç · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  main{max-width:520px;margin:28px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:12px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+  .durum.hata{color:#ff8a95}
+  .durum.ok{color:#7be3a0}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .kart h2{font-size:16px;font-weight:800}
+  audio{width:100%}
+  .kart button{background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)}
+  .kucuk{font-size:12px;color:rgba(255,255,255,.55)}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Asistanın sesini seç</h1></div>
+<main>
+  <label for="pin">PIN</label>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button id="getir">Örnekleri dinle</button>
+  <p id="durum" class="durum">Aynı cümle 4 farklı ayarla okunur. En doğal geleni seçin, asistan o ayarla konuşur.</p>
+  <div id="liste" style="display:flex;flex-direction:column;gap:12px"></div>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+try { const p = sessionStorage.getItem('sesliPin'); if (p) $('pin').value = p; } catch (e) {}
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) });
+  return r.json();
+}
+$('getir').onclick = async () => {
+  const pin = $('pin').value.trim();
+  if (!pin) return durum('PIN girin.', 'hata');
+  $('getir').disabled = true; durum('Örnekler hazırlanıyor… (15-20 sn)');
+  try {
+    const j = await servis({ action: 'sesliAsistan', islem: 'ornek', pin });
+    if (!j.ok) { durum(j.error || 'Hazırlanamadı.', 'hata'); $('getir').disabled = false; return; }
+    try { sessionStorage.setItem('sesliPin', pin); } catch (e) {}
+    durum('Dinleyin ve en doğal geleni seçin.');
+    $('liste').innerHTML = j.ornekler.map((o, i) => '<div class="kart"><h2>' + esc(o.ad) + '</h2>' +
+      (o.ses ? '<audio controls preload="auto" src="data:audio/mpeg;base64,' + o.ses + '"></audio><button data-i="' + i + '">Bunu seç</button>'
+             : '<p class="kucuk">Bu ayar şu an kullanılamıyor (' + esc(o.hata) + ')</p>') + '</div>').join('');
+    document.querySelectorAll('#liste button').forEach(b => b.onclick = () => sec(Number(b.dataset.i), b));
+  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  $('getir').disabled = false;
+};
+async function sec(i, b) {
+  document.querySelectorAll('#liste button').forEach(x => x.disabled = true);
+  durum('Asistana uygulanıyor…');
+  try {
+    const j = await servis({ action: 'sesliAsistan', islem: 'sec', secim: i, pin: $('pin').value.trim() });
+    if (j.ok) { durum('Seçildi: ' + j.secim + '. Şimdi test edin: dogusportal.com/sesli-asistan.html', 'ok'); b.textContent = 'Seçildi ✓'; }
+    else durum(j.error || 'Uygulanamadı.', 'hata');
+  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  document.querySelectorAll('#liste button').forEach(x => x.disabled = false);
+}
+</script>
+</body>
+</html>
