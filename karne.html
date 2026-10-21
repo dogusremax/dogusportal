@@ -126,6 +126,19 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--coral));-web
 .fix.temiz .cnt{background:var(--good)}
 .fix.bos{background:var(--card);border-color:var(--line)}.fix.bos .cnt{background:rgba(255,255,255,.12)}
 .pill.f{background:transparent;box-shadow:0 0 0 1.5px var(--coral) inset;color:#ffd2d6}
+.ara{display:grid;gap:12px}
+.ara .box p{margin:0;font-size:14px;line-height:1.55;color:var(--dim)}
+.ara .box p b{color:var(--ink)}
+.ara .box h4 .no{color:var(--faint);font-weight:700}
+.ara .hd{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px 18px;margin:2px 0 14px}
+.ara .ol{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:14px;background:rgba(11,15,42,.55);border:1px solid var(--line);font-size:13.5px;line-height:1.4;margin-top:8px}
+.ara .ol i{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800;background:var(--c)}
+.ara .ol a{margin-left:auto;white-space:nowrap;color:#fff;font-weight:800;text-decoration:none;background:rgba(255,255,255,.12);padding:5px 10px;border-radius:999px;font-size:12px}
+.ara details summary{cursor:pointer;list-style:none;color:var(--coral);font-size:12.5px;font-weight:700;margin-top:8px}
+.ara details summary::-webkit-details-marker{display:none}
+.ara details .fix{margin-top:8px}
+.ara .box ol{margin-top:10px}
+.detay{justify-self:center;background:var(--card);border:1px solid var(--line);color:var(--dim);font:700 13px var(--font);padding:10px 18px;border-radius:999px;cursor:pointer}
 .ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;min-width:0}
 .box h4{margin:0 0 10px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -251,7 +264,8 @@ const Q = new URLSearchParams(location.search);
 // WhatsApp tuşu linki "t=<anahtar>&hafta=YYYY-MM-DD" olarak kodlanmış (&→%26) gelebilir: ayır
 (() => { const t = Q.get('t') || '', m = t.match(/^([^&]+)&hafta=(\d{4}-\d{2}-\d{2})$/); if (m) { Q.set('t', m[1]); Q.set('hafta', m[2]); } })();
 const foto = id => `assets/ekip/karne/${id}.webp`;
-let GIZLI = false;   // ara karne (biten olmayan hafta, danışman): sıralama Pazartesi'ye kadar sürpriz, '?' gösterilir
+let GIZLI = false, DETAY = false, PZT = null;   // DETAY: ara karnede 'Tüm detaylar' açıldı mı; PZT: geçen Pazartesi karnesinin düzeltme durumu
+   // ara karne (biten olmayan hafta, danışman): sıralama Pazartesi'ye kadar sürpriz, '?' gösterilir
 let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', HAFTA = '', ORTM = {}, ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
 const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'}, gosterim:{ad:'Gösterim',c:'#3D7BFF',i:'saha'} };
 const ilk = ad => ad.split(' ').slice(0,-1).join(' ');
@@ -468,6 +482,59 @@ function temizKutu(d){
 }
 // Ek bölümlerden biri hata verirse karnenin geri kalanı yine çizilir (sayfa "hazırlanıyor"da kalmaz)
 function guvenli(fn, d){ try { return fn(d); } catch(e){ console.error(fn.name, e); return ''; } }
+// Hafta ortası (Çarşamba) kısa ara karne: giriş, gelişme (hedefler + Pazartesi eksikleri), sonuç (motivasyon).
+// Sıralama gizli kalır. "Tüm detaylar" ile Pazartesi'deki gibi uzun karne açılır.
+function pztSatir(){
+  if (!PZT) return `<div class="ol" style="--c:rgba(255,255,255,.14)"><i>…</i><span>Pazartesi karnen kontrol ediliyor</span></div>`;
+  if (PZT.hata) return '';
+  if (PZT.duzeltme > 0) return `<div class="ol" style="--c:var(--red)"><i>${PZT.duzeltme}</i><span>Pazartesi karnende <b>${PZT.duzeltme} düzeltme</b> hâlâ bekliyor. Hafta bitmeden tamamla.</span><a href="${PZT.link}">Aç ›</a></div>`;
+  return `<div class="ol" style="--c:var(--good)"><i>✓</i><span>Pazartesi karnende bekleyen düzeltme yok.</span></div>`;
+}
+function kisaCiz(d){
+  const a = ilk(d.ad), adet = duzeltmeSay(d), hata = d.hatalar || [], k = karne(d);
+  const g = new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Istanbul'})), kalanGun = 7 - (g.getDay()+6)%7;
+  const H = [['aktif gün', d.aktifGun, HEDEF.aktifGun, 'Aktif gün'], ['etki çevresi araması', d.etki, HEDEF.etki, 'Etki çevresi araması'], ['FZBO araması', d.fzbo, HEDEF.fzbo, 'FZBO araması'],
+             ['sunum', d.sunum, HEDEF.sunum, 'Sunum'], ['gösterim', d.gosterim, HEDEF.gosterim, 'Gösterim'], ['içerik', d.icerik, HEDEF.icerik, 'İçerik']];
+  const eksik = H.filter(x => x[1] < x[2]).map(x => `${x[2]-x[1]} ${x[0]}`);
+  const eksikMetin = eksik.length>1 ? eksik.slice(0,-1).join(', ')+' ve '+eksik[eksik.length-1] : (eksik[0]||'');
+  const fark = ort - d.puan;
+  const giris = d.puan
+    ? `Haftanın yarısı geride kaldı ${a}. <b>${d.aktifGun} aktif günde ${d.puan} puan</b> topladın, ofis ortalaması şu an <b>${ort}</b>. ${fark>0 ? `Ortalamaya ${fark} puan uzaktasın.` : 'Ortalamanın üzerindesin, ritmi koru.'}`
+    : `Haftanın yarısı geride kaldı ${a}. Bu hafta henüz aktivite girişin görünmüyor, ofis ortalaması şu an <b>${ort}</b>. Bugün başlamak için en iyi gün.`;
+  const sonuc = eksik.length
+    ? `Kalan ${kalanGun} günde <b>${eksikMetin}</b> daha yaparsan haftanın bütün hedefleri dolar. Sıralama Pazartesi açıklanacak ve tablo bu günlerde değişir. Sürprizi sen yap!`
+    : `Haftanın bütün hedeflerini şimdiden tutturdun, tebrikler! Kalan ${kalanGun} günde farkı gösterim, sunum ve yeni portföyle aç. Sıralama Pazartesi açıklanacak.`;
+  const TURAC = { musteri:'müşteri kayıtlarında', gosterim:'gösterim formlarında', form:'yer gösterme formlarında', kapanis:'kapanış belgelerinde' };
+  const yer = Object.keys(TURAC).filter(t=>hata.some(x=>x.tur===t)).map(t=>TURAC[t]);
+  const buHafta = adet
+    ? `<div class="ol" style="--c:var(--warn)"><i>${adet}</i><span>Bu hafta ${yer.join(', ')} <b>${adet} düzeltme</b> var.</span></div>
+       <details><summary>Listeyi göster ›</summary><div class="fix"><ul>${hata.map(x=>{ const T = TUR[x.tur];
+         const govde = x.tur==='musteri' ? `<span class="sub">${x.metin.split('; ').map(s=>`<span>${s}</span>`).join('')}</span>` : x.metin;
+         return `<li><span class="k" style="--c:${T.c}">${ICON[T.i]}</span><span><small>${T.ad}</small>${govde}</span></li>`; }).join('')}</ul></div></details>`
+    : `<div class="ol" style="--c:var(--good)"><i>✓</i><span>Bu hafta düzeltilecek kayıt yok.</span></div>`;
+  document.getElementById('karne').innerHTML = `
+    <div class="kh">
+      <img class="foto" src="${foto(d.id)}" alt="">
+      <div class="who"><span class="eyebrow">Ara karne · ${ETIKET}</span><h2>${d.ad}</h2>
+        <div class="pills"><span class="pill r">Sıra ? / ${DATA.length}</span><span class="pill">Ofis ortalaması ${ort}</span><span class="pill">${d.aktifGun} aktif gün</span></div></div>
+      <div class="ring"><svg viewBox="0 0 112 112">${halka(Math.min(1, d.puan/Math.max(1, 2*ort)),48,8,'url(#gr)')}<defs><linearGradient id="gr"><stop offset="0" stop-color="#3D7BFF"/><stop offset="1" stop-color="#FB5160"/></linearGradient></defs></svg>
+        <div class="v"><b data-n="${d.puan}">${d.puan}</b><span>puan</span></div></div>
+    </div>
+    <div class="ara">
+      <div class="box" style="--c:var(--blue)"><h4><i></i><span class="no">1</span>Giriş</h4><p>${giris}</p></div>
+      <div class="box" style="--c:var(--warn)"><h4><i></i><span class="no">2</span>Gelişme: hedeflerde neredesin</h4>
+        <div class="hd">${H.map(x=>metrik(x[3], x[1], x[2])).join('')}</div>
+        <div id="pztDurum">${pztSatir()}</div>
+        ${buHafta}
+      </div>
+      <div class="box" style="--c:var(--good)"><h4><i></i><span class="no">3</span>Sonuç</h4><p>${sonuc}</p>
+        ${k.plan.length ? `<ol>${k.plan.slice(0,3).map(x=>`<li>${x}</li>`).join('')}</ol>` : ''}</div>
+    </div>
+    <div class="quote">“${k.yorum}”<small>BROKER YORUMU · U.T / M.T</small></div>
+    <button class="detay" type="button" onclick="DETAY=true; goster('${d.id}')">Tüm detayları gör ›</button>`;
+  say(document.querySelector('.ring b'), d.puan, 1000);
+  document.querySelectorAll('.m b [data-n]').forEach(b=>say(b,+b.dataset.n,700,200));
+}
 function goster(id){
   const d = KARNE[id]; if (!d) return;
   document.querySelectorAll('.pd,.li').forEach(r=>r.setAttribute('aria-selected', r.id.slice(2)===d.id));
@@ -477,6 +544,7 @@ function goster(id){
   const acik = Object.keys(TURAC).filter(t=>hata.some(x=>x.tur===t)).map(t=>TURAC[t]);
   const acikMetin = acik.length>1 ? acik.slice(0,-1).join(', ')+' ve '+acik[acik.length-1] : (acik[0]||'');
   const evrak = Object.entries(d.evrakTur).map(([t,n])=>`${n} ${t.toLocaleLowerCase('tr')}`).join(', ');
+  if (GIZLI && !DETAY) return kisaCiz(d);
   document.getElementById('karne').innerHTML = `
     <div class="kh">
       <img class="foto" src="${foto(d.id)}" alt="">
@@ -605,13 +673,17 @@ function trPazartesi(geri){
 async function pztUyari(res){
   const tok = Q.get('t'), onceki = trPazartesi(1);
   if (!res || res.kim === 'broker' || res.hafta !== trPazartesi(0)) return;
+  const yaz = () => { const el = document.getElementById('pztDurum'); if (el) el.innerHTML = pztSatir(); };
   try {
     const r = await getir(`${API}?action=karne&t=${encodeURIComponent(tok)}&hafta=${onceki}&yenile=1`);
     const k = r && r.ok && r.karneler && r.karneler[0];
-    if (!k || !k.duzeltme) return;
+    if (!k) { PZT = { hata: true }; return yaz(); }
+    const link = `karne.html?t=${encodeURIComponent(tok)}&hafta=${onceki}&cb=${Date.now()}`;
+    PZT = { duzeltme: k.duzeltme || 0, link }; yaz();
+    if (!k.duzeltme) return;
     const el = document.getElementById('pztUyari');
-    el.innerHTML = `<a class="pzt" href="karne.html?t=${encodeURIComponent(tok)}&hafta=${onceki}&cb=${Date.now()}">Pazartesi karnende <b>${k.duzeltme} düzeltme</b> bekliyor<span>Aç ›</span></a>`;
-  } catch (e) {}
+    el.innerHTML = `<a class="pzt" href="${link}">Pazartesi karnende <b>${k.duzeltme} düzeltme</b> bekliyor<span>Aç ›</span></a>`;
+  } catch (e) { PZT = { hata: true }; yaz(); }
 }
 yukle().then(() => pztUyari(SON));
 </script>
