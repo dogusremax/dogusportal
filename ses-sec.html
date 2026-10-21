@@ -34,7 +34,7 @@
   <label for="pin">PIN</label>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
   <button id="getir">Örnekleri dinle</button>
-  <p id="durum" class="durum">Aynı cümle 4 farklı ayarla okunur. En doğal geleni seçin, asistan o ayarla konuşur.</p>
+  <p id="durum" class="durum">Aynı konuşma birkaç ayarla okunur; ilki astroloji kayıtlarınızla aynı ayardır. Telefonda dinler gibi, hoparlörü kulağınıza tutarak dinleyin. En doğal geleni seçin, asistan o ayarla konuşur.</p>
   <div id="liste" style="display:flex;flex-direction:column;gap:12px"></div>
 </main>
 <script>
@@ -56,7 +56,7 @@ $('getir').onclick = async () => {
     if (!j.ok) { durum(j.error || 'Hazırlanamadı.', 'hata'); $('getir').disabled = false; return; }
     try { sessionStorage.setItem('sesliPin', pin); } catch (e) {}
     durum('Dinleyin ve en doğal geleni seçin.');
-    $('liste').innerHTML = j.ornekler.map((o, i) => '<div class="kart"><h2>' + esc(o.ad) + '</h2>' +
+    $('liste').innerHTML = j.ornekler.map((o, i) => '<div class="kart"><h2>' + esc(o.ad) + '</h2>' + (o.not ? '<p class="kucuk">' + esc(o.not) + '</p>' : '') +
       (o.ses ? '<audio controls preload="auto" src="data:audio/mpeg;base64,' + o.ses + '"></audio><button data-i="' + i + '">Bunu seç</button>'
              : '<p class="kucuk">Bu ayar şu an kullanılamıyor (' + esc(o.hata) + ')</p>') + '</div>').join('');
     document.querySelectorAll('#liste button').forEach(b => b.onclick = () => sec(Number(b.dataset.i), b));
