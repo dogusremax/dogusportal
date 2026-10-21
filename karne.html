@@ -247,6 +247,7 @@ const Q = new URLSearchParams(location.search);
 // WhatsApp tuşu linki "t=<anahtar>&hafta=YYYY-MM-DD" olarak kodlanmış (&→%26) gelebilir: ayır
 (() => { const t = Q.get('t') || '', m = t.match(/^([^&]+)&hafta=(\d{4}-\d{2}-\d{2})$/); if (m) { Q.set('t', m[1]); Q.set('hafta', m[2]); } })();
 const foto = id => `assets/ekip/karne/${id}.webp`;
+let GIZLI = false;   // ara karne (biten olmayan hafta, danışman): sıralama Pazartesi'ye kadar sürpriz, '?' gösterilir
 let DATA = [], KARNE = {}, HATA = {}, ETIKET = '', HAFTA = '', ORTM = {}, ort = 0, max = 1, HEDEF = {aktifGun:4,fzbo:3,etki:5,gosterim:2,sunum:1,icerik:3};
 const TUR = { musteri:{ad:'Müşteri takibi',c:'#16a34a',i:'musteri'}, form:{ad:'Yer gösterme formu',c:'#3D7BFF',i:'saha'}, kapanis:{ad:'Kapanış evrakı',c:'#DC1C2E',i:'islem'}, gosterim:{ad:'Gösterim',c:'#3D7BFF',i:'saha'} };
 const ilk = ad => ad.split(' ').slice(0,-1).join(' ');
@@ -271,12 +272,24 @@ document.getElementById('stats').innerHTML = [['kapanis','kapanış'],['gosterim
 document.querySelectorAll('.stat b').forEach((b,i)=>say(b,+b.dataset.n,900,i*80));
 }
 
+// Ara karne: kimin kaçıncı olduğu ve puanı görünmez, isimler alfabetik
+function gizliCiz(){
+const list = document.getElementById('list'); list.innerHTML = '';
+DATA.slice().sort((a,b)=>a.ad.localeCompare(b.ad,'tr')).forEach(d=>{
+  const b = document.createElement('button'); b.className='li'; b.id='l-'+d.id; b.setAttribute('role','tab');
+  b.innerHTML = `<span class="n">?</span><span class="av"><img src="${foto(d.id)}" alt=""></span>
+    <span class="mid"><b>${d.ad}</b></span><span class="pt">?</span>`;
+  if (KARNE[d.id]) b.addEventListener('click',()=>sec(d.id)); else { b.disabled = true; b.removeAttribute('role'); }
+  list.appendChild(b);
+});
+}
 function sec(id){ if (!KARNE[id]) return; goster(id); try{history.replaceState(null,'','#'+id);}catch(e){}
   if (matchMedia('(max-width: 900px)').matches) kaydir(); }
 
 function siraCiz(){
 // podyum: 2 · 1 · 3
 const pod = document.getElementById('podium'); pod.innerHTML = '';
+if (GIZLI) return gizliCiz();
 [1,0,2].forEach((ix,k)=>{
   const d = DATA[ix]; if (!d) return;
   const h = ix===0 ? 150 : ix===1 ? 120 : 100, delay = [250,0,450][k];
@@ -331,7 +344,7 @@ function karne(d){
   if (d.musYeniNotsuz) plan.push(`Bu hafta eklediğin notsuz ${d.musYeniNotsuz} müşteriyi ara, sonucu Müşteri Takip'e not olarak gir`);
   if (d.kiraYenile) plan.push(`60 gün içinde yenilenecek ${d.kiraYenile} kira kontratı için mal sahibi ve kiracıyı ara`);
   const a = ilk(d.ad); let yorum;
-  if (d.sira===1) yorum=`Haftanın lideri sensin ${a}! Ekibe örnek oluyorsun.`;
+  if (d.sira===1 && !GIZLI) yorum=`Haftanın lideri sensin ${a}! Ekibe örnek oluyorsun.`;
   else if (d.kapanis) yorum=`Kapanış yapmak her şeyin özeti, tebrikler ${a}! Şimdi yeni portföy ve aramalarla gelecek kapanışların zeminini hazırlayalım.`;
   else if (d.puan>=ort && (d.fzbo+d.etki+d.sunum+d.gosterim+(d.yetki||0)+(d.kapora||0))>0) yorum=`Sahada emek veriyorsun ${a}, bu çok değerli. Bu emeği sonuca çevirmek için gösterim ve teklif aşamasına ağırlık verelim.`;
   else if (d.puan>=ort) yorum=`Ofis ortalamasının üstündesin ${a}, ama bu hafta sahada arama, sunum ya da gösterim yok. Puanı sahadan da toplayalım.`;
@@ -390,7 +403,7 @@ function izleCiz(d){
 function olcCiz(d){
   if (!d.detay) return '';
   const O = ORTM || {}, P = d.onceki || {};
-  const satir = [['Puan', d.puan, ort, P.puan],['Sıra', d.sira, null, P.sira, true],['Aktif gün', d.aktifGun, O.aktifGun, P.aktifGun],
+  const satir = [['Puan', d.puan, ort, P.puan],['Sıra', GIZLI ? '?' : d.sira, null, GIZLI ? null : P.sira, true],['Aktif gün', d.aktifGun, O.aktifGun, P.aktifGun],
     ['FZBO araması', d.fzbo, O.fzbo, P.fzbo],['Etki çevresi araması', d.etki, O.etki, P.etki],['Sunum', d.sunum, O.sunum, P.sunum],
     ['Gösterim', d.gosterim, O.gosterim, P.gosterim],['İçerik', d.icerik, O.icerik, P.icerik],['Story / post', d.story, O.story, P.story],
     ['Kendi bulduğun müşteri', d.musYeni-(d.musOfis||0), O.musYeni!=null ? O.musYeni-(O.musOfis||0) : null, null],['Ofisin yönlendirdiği müşteri', d.musOfis||0, O.musOfis, null, false, true],['Takip notu', d.musNot, O.musNot, null],['Kapanış', d.kapanis, O.kapanis, P.kapanis]];
@@ -398,7 +411,7 @@ function olcCiz(d){
     const cls = o==null || notr ? '' : (v>o ? 'u' : v<o ? 'a' : '');
     let dl = '<span class="dl ayni">–</span>';
     if (p!=null){ const f = ters ? p-v : v-p; dl = f>0 ? `<span class="dl art">▲${virg(Math.abs(f))}</span>` : f<0 ? `<span class="dl eks">▼${virg(Math.abs(f))}</span>` : '<span class="dl ayni">=</span>'; }
-    return `<tr><td>${l}</td><td class="sen ${cls}">${virg(v||0)}</td><td>${o==null?'–':virg(o)}</td><td>${p==null?'–':virg(p)}${dl}</td></tr>`; }).join('');
+    return `<tr><td>${l}</td><td class="sen ${cls}">${v==='?' ? '?' : virg(v||0)}</td><td>${o==null?'–':virg(o)}</td><td>${p==null?'–':virg(p)}${dl}</td></tr>`; }).join('');
   const {gun, b, bos} = gunDagilim(olaylar(d).ham), mx = Math.max(1, ...gun);
   const bars = gun.map((n,i)=>{ const gel = i>b || (i===b && !n); return `<div class="g ${gel?'gel':!n?'bos':''}"><b>${gel?'':n}</b><i class="c" style="--h:${Math.max(6,n/mx*100)}%;--d:${i*70}ms"></i><span>${GUNK[i]}</span></div>`; }).join('');
   return `<div class="olc">
@@ -457,8 +470,8 @@ function goster(id){
     <div class="kh">
       <img class="foto" src="${foto(d.id)}" alt="">
       <div class="who"><span class="eyebrow">Karne · ${ETIKET}</span><h2>${d.ad}</h2>
-        <div class="pills"><span class="pill r">${d.sira}. sıra / ${DATA.length}</span><span class="pill">Ofis ortalaması ${ort}</span><span class="pill">${d.aktifGun} aktif gün</span>${adet?`<span class="pill f">${adet} düzeltme</span>`:''}</div></div>
-      <div class="ring"><svg viewBox="0 0 112 112">${halka(d.puan/max,48,8,'url(#gr)')}<defs><linearGradient id="gr"><stop offset="0" stop-color="#3D7BFF"/><stop offset="1" stop-color="#FB5160"/></linearGradient></defs></svg>
+        <div class="pills"><span class="pill r">${GIZLI ? 'Sıra ?' : d.sira+'. sıra'} / ${DATA.length}</span><span class="pill">Ofis ortalaması ${ort}</span><span class="pill">${d.aktifGun} aktif gün</span>${adet?`<span class="pill f">${adet} düzeltme</span>`:''}</div></div>
+      <div class="ring"><svg viewBox="0 0 112 112">${halka(GIZLI ? Math.min(1, d.puan/Math.max(1, 2*ort)) : d.puan/max,48,8,'url(#gr)')}<defs><linearGradient id="gr"><stop offset="0" stop-color="#3D7BFF"/><stop offset="1" stop-color="#FB5160"/></linearGradient></defs></svg>
         <div class="v"><b data-n="${d.puan}">${d.puan}</b><span>puan</span></div></div>
     </div>
     ${guvenli(izleCiz, d)}
@@ -521,6 +534,7 @@ let CIZILDI = null, OLAY = false;
 let SON = null;
 function ciz(res){
   SON = res;
+  GIZLI = res.kim !== 'broker' && res.hafta === trPazartesi(0);
   DATA = res.siralama; ort = res.ort; HAFTA = res.hafta; ORTM = res.ortMetrik || {}; HEDEF = res.hedef || HEDEF; ETIKET = res.etiket;
   max = Math.max(1, ...DATA.map(d=>d.puan));
   KARNE = {}; res.karneler.forEach(k=>KARNE[k.id]=k);
@@ -535,7 +549,7 @@ function ciz(res){
   if (ilk && (res.kim !== 'broker' || KARNE[h0])) { if (matchMedia('(max-width: 900px)').matches) setTimeout(kaydir, 1700); }
   if (OLAY) return; OLAY = true;
   if (res.kim === 'broker') addEventListener('hashchange',()=>{ const x=location.hash.slice(1); if (KARNE[x]) goster(x); });
-  else document.querySelector('.hint').textContent = 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
+  else document.querySelector('.hint').textContent = GIZLI ? 'Sıralama hafta bitince Pazartesi karnende açıklanır. Aşağıda kendi ara karnen var.' : 'Çubuktaki beyaz çizgi ofis ortalaması. Aşağıda kendi karnen var.';
 }
 // Sunucu bazen geç uyanır: 12 sn'de cevap yoksa bekleyeni bırakmadan ikinci istek atılır, hangisi önce gelirse o çizilir
 function getir(url){
