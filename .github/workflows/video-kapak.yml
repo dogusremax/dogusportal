@@ -13,7 +13,7 @@ jobs:
       - run: npm i --no-save sharp@0.33.5 && (command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg))
       - name: Güncel IG token'ı al
         run: |
-          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
           if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
           echo "::add-mask::$T"
           echo "IG_TOKEN=$T" >> $GITHUB_ENV
