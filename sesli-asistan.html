@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Sesli Asistan · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  .rozet{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:#3a2a00;color:#ffcf5c}
+  main{max-width:520px;margin:28px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:14px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  input:focus{border-color:#FB5160}
+  .tus{width:170px;height:170px;border-radius:50%;border:0;margin:14px auto 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+       background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff;font:800 20px 'Plus Jakarta Sans',sans-serif;cursor:pointer;
+       box-shadow:0 10px 40px rgba(220,28,46,.35);transition:transform .15s}
+  .tus small{font-size:12px;font-weight:600;opacity:.85}
+  .tus:disabled{opacity:.5}
+  .tus.acik{background:#111738;border:3px solid #FB5160}
+  .tus.konusuyor{animation:nabiz 1.1s ease-in-out infinite}
+  @keyframes nabiz{50%{transform:scale(1.06)}}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8);text-align:center}
+  .durum.hata{color:#ff8a95}
+  .dokum{display:flex;flex-direction:column;gap:8px}
+  .b{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+  .b.ofis{background:#111738;align-self:flex-start}
+  .b.arayan{background:#DC1C2E;align-self:flex-end}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .kart h2{font-size:18px;font-weight:800}
+  td{padding:4px 0;font-size:14px;vertical-align:top}
+  td:first-child{color:rgba(255,255,255,.55);width:110px;font-size:13px}
+  .not{font-size:12px;color:rgba(255,255,255,.5);text-align:center}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Sesli asistan denemesi</h1><span class="rozet">TEST</span></div>
+<main>
+  <div id="pinKutu">
+    <label for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  </div>
+  <button class="tus" id="tus"><span id="tusYazi">Konuş</span><small id="tusAlt">ofisi arıyormuş gibi</small></button>
+  <p id="durum" class="durum">Müşteri gibi konuşun. Bitince "Bitir"e basın; özet WhatsApp'ınıza gelir. Müşteri Takip'e yazılmaz.</p>
+  <div class="dokum" id="dokum"></div>
+  <div id="sonuc"></div>
+  <p class="not">Mikrofon izni istenirse "İzin ver" deyin. Kulaklıksız denemede telefonun hoparlörü kısık olsun.</p>
+</main>
+<script type="module">
+import { Conversation } from 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.27.0/+esm';
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) });
+  return r.json();
+}
+try { const p = sessionStorage.getItem('sesliPin'); if (p) $('pin').value = p; } catch (e) {}
+
+let konusma = null, kimlik = '', bitiyor = false;
+function tus(yazi, alt, sinif) { $('tusYazi').textContent = yazi; $('tusAlt').textContent = alt; $('tus').className = 'tus ' + (sinif || ''); }
+function balon(rol, metin) {
+  const d = document.createElement('div'); d.className = 'b ' + (rol === 'agent' ? 'ofis' : 'arayan'); d.textContent = metin;
+  $('dokum').appendChild(d); d.scrollIntoView({ block: 'end', behavior: 'smooth' });
+}
+
+async function basla() {
+  const pin = $('pin').value.trim();
+  if (!pin) return durum('PIN girin.', 'hata');
+  $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = '';
+  durum('Asistan hazırlanıyor… (ilk seferde 20-30 sn sürebilir)');
+  try {
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+    const j = await servis({ action: 'sesliAsistan', islem: 'baslat', pin });
+    if (!j.ok) { durum(j.error || 'Başlatılamadı.', 'hata'); if (j.anahtarYok) location.href = 'anahtar.html?tur=elevenlabs&cb=' + Date.now(); $('tus').disabled = false; return; }
+    try { sessionStorage.setItem('sesliPin', pin); } catch (e) {}
+    $('pinKutu').style.display = 'none';
+    konusma = await Conversation.startSession({
+      signedUrl: j.signedUrl, connectionType: 'websocket',
+      onConnect: ({ conversationId }) => { kimlik = conversationId; },
+      onMessage: m => { if (m.message) balon(m.role || (m.source === 'ai' ? 'agent' : 'user'), m.message); },
+      onModeChange: ({ mode }) => {
+        if (bitiyor) return;
+        if (mode === 'speaking') { tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…'); }
+        else { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); }
+      },
+      onDisconnect: () => { if (!bitiyor) bitti(); },
+      onError: m => durum('Hata: ' + m, 'hata')
+    });
+    if (!kimlik && konusma.getId) kimlik = konusma.getId();
+    tus('Bitir', 'sizi dinliyor', 'acik');
+  } catch (e) {
+    durum(/Permission|NotAllowed/i.test(String(e)) ? 'Mikrofon izni verilmedi.' : 'Bağlantı hatası: ' + e.message, 'hata');
+  }
+  $('tus').disabled = false;
+}
+
+async function bitti() {
+  if (bitiyor) return; bitiyor = true;
+  try { if (konusma) await konusma.endSession(); } catch (e) {}
+  konusma = null;
+  tus('…', 'özet hazırlanıyor'); $('tus').disabled = true;
+  durum('Görüşme bitti. Özet çıkarılıyor, WhatsApp\'ınıza gönderiliyor…');
+  try {
+    if (!kimlik) throw new Error('görüşme kimliği yok');
+    const j = await servis({ action: 'sesliAsistan', islem: 'bitti', pin: $('pin').value.trim(), konusma: kimlik });
+    if (!j.ok) durum(j.error || 'Özet çıkarılamadı.', 'hata');
+    else if (j.bos) durum('Konuşma algılanmadı. Tekrar deneyin.', 'hata');
+    else {
+      const v = j.alanlar || {};
+      durum(j.bildirim ? 'Tamam: ' + j.bildirim + '.' : 'Tamam.');
+      $('sonuc').innerHTML = '<div class="kart"><h2>' + esc(j.kisa) + '</h2><table>' +
+        [['Ad', v.ad], ['Tip', v.tip], ['Talep', v.talep], ['Site/etap', v.bolge], ['Bütçe', v.butce], ['Oda', v.oda],
+         ['Telefon', j.tel], ['Sıcaklık', v.sicaklik], ['Danışman', j.danisman + ' (' + j.danismanNeden + ')'], ['Özet', v.ozet], ['Sonraki adım', v.sonraki_adim]]
+          .filter(r => r[1]).map(r => '<tr><td>' + r[0] + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div>';
+    }
+  } catch (e) { durum('Özet alınamadı: ' + e.message, 'hata'); }
+  bitiyor = false; kimlik = '';
+  tus('Konuş', 'yeniden dene'); $('tus').disabled = false;
+}
+
+$('tus').onclick = () => konusma ? bitti() : basla();
+</script>
+</body>
+</html>
