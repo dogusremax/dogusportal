@@ -2291,7 +2291,7 @@ const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => (o && o[k] != null) ? o
 
 /* ================= DİL SEÇİMİ ================= */
 const params = new URLSearchParams(location.search);
-function pickLang(){
+function pickLang(){ if (/bot|crawl|spider|slurp|inspectiontool|lighthouse/i.test(navigator.userAgent||"") && !LANGS.includes((params.get("lang")||"").toLowerCase())) return "tr";
   const q = (params.get("lang")||"").toLowerCase();
   if (LANGS.includes(q)) return q;
   try { const s = localStorage.getItem("kibris_lang"); if (LANGS.includes(s)) return s; } catch(e){}
