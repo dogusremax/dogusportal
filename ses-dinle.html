@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Asistan Sesi · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  main{max-width:520px;margin:24px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:12px}
+  p{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .kart h2{font-size:16px;font-weight:800}
+  .kucuk{font-size:12px;color:rgba(255,255,255,.55)}
+  audio{width:100%}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px;cursor:pointer;background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff}
+  button:disabled{opacity:.45}
+  .durum{font-size:14px}
+  .durum.hata{color:#ff8a95}
+  .durum.ok{color:#7be3a0}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Asistanın sesi</h1></div>
+<main>
+  <p>Bunlar asistanın canlı görüşmede gerçekten çıkardığı ses, Elvan. Üstteki oynatıcı tarayıcıdaki hâli, alttaki telefon hattından duyulacak hâli. Beğendiğinizin altındaki "Bunu seç"e basın.</p>
+  <div id="liste"></div>
+  <label for="pin">PIN (seçmek için)</label>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <p id="durum" class="durum"></p>
+  <button id="dene" style="display:none">Asistanla konuş</button>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const cb = Date.now();
+const SESLER = [
+  { id: 'v2',      ad: '1 · ElevenLabs sitesindeki ayar', not: 'Sitedeki Elvan ile aynı model ve ayar. Şu an asistan bununla konuşuyor.', dosya: 'v2' },
+  { id: 'v2sicak', ad: '2 · Daha sıcak, biraz yavaş',      not: 'Aynı model, daha yumuşak ve sakin.', dosya: 'v2-sicak' },
+  { id: 'v3',      ad: '3 · Hızlı sohbet modeli',           not: 'Cevaba daha çabuk başlar, ton biraz daha düz.', dosya: 'v3' }
+];
+$('liste').innerHTML = SESLER.map(s => '<div class="kart" style="margin-bottom:12px"><h2>' + s.ad + '</h2><p class="kucuk">' + s.not + '</p>' +
+  '<audio controls preload="metadata" src="assets/ses-ornek/' + s.dosya + '.mp3?cb=' + cb + '"></audio>' +
+  '<p class="kucuk">Telefonda:</p><audio controls preload="metadata" src="assets/ses-ornek/' + s.dosya + '-telefon.mp3?cb=' + cb + '"></audio>' +
+  '<button data-id="' + s.id + '">Bunu seç</button></div>').join('') +
+  '<div class="kart"><h2>Önceki ses (karşılaştırma için)</h2><p class="kucuk">Daha önce denediğiniz düşük kaliteli hâli.</p>' +
+  '<audio controls preload="metadata" src="assets/ses-ornek/onceki.mp3?cb=' + cb + '"></audio></div>';
+try { const p = sessionStorage.getItem('sesliPin'); if (p) $('pin').value = p; } catch (e) {}
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+document.querySelectorAll('#liste button').forEach(b => b.onclick = async () => {
+  const pin = $('pin').value.trim();
+  if (!pin) { durum('Seçmek için aşağıya PIN girin.', 'hata'); $('pin').focus(); return; }
+  document.querySelectorAll('#liste button').forEach(x => x.disabled = true);
+  durum('Asistana uygulanıyor…');
+  try {
+    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'sesliAsistan', islem: 'hazir', secim: b.dataset.id, pin }) });
+    const j = await r.json();
+    if (j.ok) { try { sessionStorage.setItem('sesliPin', pin); } catch (e) {} b.textContent = 'Seçildi ✓'; durum('Seçildi. Şimdi konuşup deneyin.', 'ok'); $('dene').style.display = 'block'; }
+    else durum(j.error || 'Uygulanamadı.', 'hata');
+  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  document.querySelectorAll('#liste button').forEach(x => x.disabled = false);
+});
+$('dene').onclick = () => location.href = 'sesli-asistan.html?cb=' + Date.now();
+</script>
+</body>
+</html>
