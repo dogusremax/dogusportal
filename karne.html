@@ -642,6 +642,14 @@ function getir(url){
   });
 }
 window.addEventListener('error', e => { const d = document.getElementById('durum'); if (d) d.textContent = 'Karne açılamadı (' + (e.message||'hata') + '). Sayfayı yenile.'; });
+// Sunucu cevap vermezse Umut'a haber (WhatsApp servisi hataBildir: telefon bildirimi + mail, 2 saatte bir; 21.10.2026)
+function sunucuHatasi(m){
+  try {
+    if (navigator.onLine === false) return;
+    const p = new URLSearchParams({ action:'hataBildir', uygulama:'Karne', mesaj:m, kaynak:'uygulama' });
+    fetch('https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec', { method:'POST', body:p, mode:'no-cors', keepalive:true }).catch(()=>{});
+  } catch (e) {}
+}
 async function yukle(){
   const tok = Q.get('t');
   if (!tok) return hata('Bu sayfa kişiye özel linkle açılır. Karneni WhatsApp mesajındaki <b>Karnemi aç</b> tuşundan aç.');
@@ -651,7 +659,7 @@ async function yukle(){
   let res;
   try {
     res = await getir(`${API}?action=karne&t=${encodeURIComponent(tok)}${h}`);
-  } catch (e) { if (CIZILDI) return; return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
+  } catch (e) { if (CIZILDI) return; sunucuHatasi('Karne yüklenemedi (' + (e && e.message || 'bağlantı') + ')'); return hata('Karne şu an yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.'); }
   if (!res || !res.ok) { if (CIZILDI) return; return hata((res && res.hata) || 'Karne bulunamadı.'); }
   sakla(ak, res);
   if (!(CIZILDI && CIZILDI === (res.uretim || '-'))) ciz(res);
