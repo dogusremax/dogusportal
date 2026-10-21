@@ -53,12 +53,13 @@ $('kaydet').onclick = async () => {
   if (!pin || !deger) return durum('PIN ve anahtarı girin.', 'hata');
   $('kaydet').disabled = true; durum('Anahtar deneniyor ve kaydediliyor…');
   try {
-    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+    const zaman = new AbortController(); setTimeout(() => zaman.abort(), 45000);
+    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: zaman.signal,
       body: JSON.stringify({ action: 'anahtarKaydet', pin, deger, tur: $('tur').value }) });
     const j = await r.json();
     if (j.ok) { $('anahtar').value = ''; durum('Kaydedildi (…' + j.son4 + '). ' + ($('tur').value === 'elevenlabs' ? 'Sesli asistanı denemek için dogusportal.com/sesli-asistan.html' : 'Claude\'a "girdim" yazabilirsiniz.'), 'ok'); }
     else durum(j.error || 'Kaydedilemedi.', 'hata');
-  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  } catch (e) { durum(e.name === 'AbortError' ? 'Sunucu 45 sn içinde cevap vermedi, tekrar deneyin.' : 'Bağlantı hatası, tekrar deneyin.', 'hata'); }
   $('kaydet').disabled = false;
 };
 </script>
