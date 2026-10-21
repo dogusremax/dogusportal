@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Arama Kaydı · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  .rozet{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:#3a2a00;color:#ffcf5c}
+  main{max-width:560px;margin:28px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:12px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  input:focus{border-color:#FB5160}
+  .dosya{border:1.5px dashed rgba(255,255,255,.25);border-radius:14px;padding:22px;text-align:center;cursor:pointer;color:rgba(255,255,255,.75);font-size:14px}
+  .dosya.dolu{border-color:#FB5160;color:#fff}
+  button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px;cursor:pointer;background:#DC1C2E;color:#fff}
+  button:disabled{opacity:.45}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+  .durum.hata{color:#ff8a95}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .kart h2{font-size:20px;font-weight:800}
+  .alt{font-size:13px;color:rgba(255,255,255,.6)}
+  table{border-collapse:collapse;width:100%}
+  td{padding:5px 0;font-size:14px;vertical-align:top}
+  td:first-child{color:rgba(255,255,255,.55);width:120px;font-size:13px}
+  .hedef{background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);border-radius:12px;padding:12px;font-weight:700}
+  details summary{cursor:pointer;font-size:13px;color:rgba(255,255,255,.7)}
+  pre{white-space:pre-wrap;font:13px/1.55 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.85);margin-top:8px}
+  .gecmis div{font-size:13px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Arama kaydından müşteri</h1><span class="rozet" id="mod">TEST</span></div>
+<main>
+  <label for="pin">PIN</label>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <label class="dosya" id="dosyaKutu" for="dosya">Santral kaydını seçin (mp3, wav…)</label>
+  <input id="dosya" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.gsm" hidden>
+  <label for="arayan">Arayan numara (santralde görünen, boş bırakılabilir)</label>
+  <input id="arayan" type="tel" inputmode="tel" autocomplete="off">
+  <button id="coz">Dinle ve forma işle</button>
+  <p id="durum" class="durum">Test modu: Müşteri Takip'e yazılmaz, danışmana gidecek bildirim yalnız size gelir.</p>
+  <div id="sonuc"></div>
+  <div class="gecmis" id="gecmis"></div>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) });
+  return r.json();
+}
+$('dosya').onchange = () => {
+  const f = $('dosya').files[0];
+  $('dosyaKutu').textContent = f ? f.name + ' · ' + (f.size / 1048576).toFixed(1) + ' MB' : 'Santral kaydını seçin (mp3, wav…)';
+  $('dosyaKutu').classList.toggle('dolu', !!f);
+};
+const oku = f => new Promise((ok, hata) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = hata; r.readAsDataURL(f); });
+
+function kart(j) {
+  const a = j.alanlar || {};
+  const satir = (e, d) => d ? `<tr><td>${e}</td><td>${esc(d)}</td></tr>` : '';
+  if (!a.musteri_mi) return `<div class="kart"><h2>Müşteri araması değil</h2><div class="alt">${esc(a.ozet)}</div></div>`;
+  return `<div class="kart">
+    <h2>${esc(a.ad || '(isim söylenmedi)')}</h2>
+    <div class="alt">${esc(a.tip)} · ${esc(a.sicaklik)}${j.mevcut ? ' · kayıtlı müşteri (' + esc(j.mevcut.id) + ')' : ' · yeni müşteri'}</div>
+    <div class="hedef">→ ${esc(j.danisman)} <span style="font-weight:500;opacity:.85">(${esc(j.danismanNeden)})</span></div>
+    <table>${satir('Telefon', j.tel)}${satir('Talep', a.talep)}${satir('Bölge', a.bolge)}${satir('Emlak tipi', a.emlak_tipi)}
+      ${satir('Oda', a.oda)}${satir('m²', a.m2)}${satir('Bütçe', a.butce)}${satir('Özet', a.ozet)}${satir('Sonraki adım', a.sonraki_adim)}
+      ${satir('Bildirim', j.bildirim)}${satir('Kayıt', j.yazildi || (j.mod === 'test' ? 'test modu, yazılmadı' : ''))}</table>
+    <details><summary>Görüşme dökümü</summary><pre>${esc(j.yazi)}</pre></details>
+    <div class="alt">${esc(j.model.yazi)} + ${esc(j.model.cikarim)} · ${((j.sure.yazi + j.sure.cikarim) / 1000).toFixed(1)} sn</div>
+  </div>`;
+}
+
+$('coz').onclick = async () => {
+  const pin = $('pin').value.trim(), f = $('dosya').files[0];
+  if (!pin || !f) return durum('PIN ve kayıt dosyası gerekli.', 'hata');
+  if (f.size > 18 * 1048576) return durum('Dosya 18 MB\'tan büyük.', 'hata');
+  $('coz').disabled = true; $('sonuc').innerHTML = '';
+  durum('Kayıt dinleniyor ve yazıya dökülüyor… (20-60 sn)');
+  try {
+    const ses = await oku(f);
+    const j = await servis({ action: 'aramaKaydi', pin, ses, mime: f.type, dosya: f.name, arayan: $('arayan').value.trim() });
+    if (j.ok) { durum(''); $('mod').textContent = j.mod === 'test' ? 'TEST' : 'AÇIK'; $('sonuc').innerHTML = kart(j); gecmis(pin); }
+    else durum(j.error || 'Çözülemedi.', 'hata');
+  } catch (e) { durum('Bağlantı hatası, tekrar deneyin.', 'hata'); }
+  $('coz').disabled = false;
+};
+
+async function gecmis(pin) {
+  try {
+    const j = await servis({ action: 'aramaKaydi', pin, islem: 'son' });
+    if (!j.ok || !j.satirlar.length) return;
+    $('gecmis').innerHTML = '<label>Son aramalar</label>' + j.satirlar.map(s =>
+      `<div><b>${esc(s.tarih)}</b> · ${esc(s.ad || '(isimsiz)')} · ${esc(s.talep)} → ${esc(s.danisman)}</div>`).join('');
+  } catch (e) {}
+}
+</script>
+</body>
+</html>
