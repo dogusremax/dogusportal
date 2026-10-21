@@ -31,9 +31,21 @@
   <label for="pin">PIN</label>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
   <label for="tur">Hangi anahtar?</label>
-  <select id="tur"><option value="anthropic">Claude (Anthropic, sk-ant-…)</option><option value="elevenlabs">Sesli asistan (ElevenLabs, sk_…)</option></select>
+  <select id="tur"><option value="anthropic">Claude (Anthropic, sk-ant-…)</option><option value="elevenlabs">Sesli asistan (ElevenLabs, sk_…)</option><option value="santral">Kırmızı Santral API</option></select>
+  <div id="tekAlan" style="display:contents">
   <label for="anahtar" id="etiket">Anthropic anahtarı (sk-ant-…)</label>
   <input id="anahtar" type="password" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="santralAlan" style="display:none;flex-direction:column;gap:12px">
+  <label for="sAdres">API adresi</label>
+  <input id="sAdres" type="text" autocomplete="off" spellcheck="false" placeholder="capi.ncvav.com">
+  <label for="sKul">Kullanıcı adı</label>
+  <input id="sKul" type="text" autocomplete="off" spellcheck="false">
+  <label for="sSif">Şifre</label>
+  <input id="sSif" type="password" autocomplete="off">
+  <label for="sTok">ya da Token (santral token verdiyse; kullanıcı/şifre boş kalabilir)</label>
+  <input id="sTok" type="password" autocomplete="off" spellcheck="false">
+  </div>
   <button id="kaydet">Kaydet</button>
   <p id="durum" class="durum">Anahtar yalnız WhatsApp servisine kaydedilir, burada ya da başka yerde gösterilmez.</p>
 </main>
@@ -42,22 +54,30 @@ const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_
 const $ = id => document.getElementById(id);
 function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
 function turAyarla() {
-  const el = $('tur').value === 'elevenlabs';
+  const el = $('tur').value === 'elevenlabs', sn = $('tur').value === 'santral';
+  $('tekAlan').style.display = sn ? 'none' : 'contents';
+  $('santralAlan').style.display = sn ? 'flex' : 'none';
+  if (sn) { $('baslik').textContent = 'Kırmızı Santral · API bilgileri'; return; }
   $('etiket').textContent = el ? 'ElevenLabs anahtarı (sk_…)' : 'Anthropic anahtarı (sk-ant-…)';
   $('baslik').textContent = el ? 'Sesli Asistan · ElevenLabs anahtarı' : 'WhatsApp Asistanı · Claude anahtarı';
 }
-if (new URLSearchParams(location.search).get('tur') === 'elevenlabs') $('tur').value = 'elevenlabs';
+const istenenTur = new URLSearchParams(location.search).get('tur');
+if (istenenTur === 'elevenlabs' || istenenTur === 'santral') $('tur').value = istenenTur;
 $('tur').onchange = turAyarla; turAyarla();
 $('kaydet').onclick = async () => {
-  const pin = $('pin').value.trim(), deger = $('anahtar').value.trim();
+  const pin = $('pin').value.trim(), sn = $('tur').value === 'santral';
+  const deger = sn ? 'santral' : $('anahtar').value.trim();
   if (!pin || !deger) return durum('PIN ve anahtarı girin.', 'hata');
+  const ek = sn ? { adres: $('sAdres').value.trim(), kullanici: $('sKul').value.trim(), sifre: $('sSif').value, token: $('sTok').value.trim() } : {};
+  if (sn && (!ek.adres || (!ek.token && (!ek.kullanici || !ek.sifre)))) return durum('API adresi ile kullanıcı adı + şifre (ya da token) girin.', 'hata');
   $('kaydet').disabled = true; durum('Anahtar deneniyor ve kaydediliyor…');
   try {
     const zaman = new AbortController(); setTimeout(() => zaman.abort(), 45000);
     const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: zaman.signal,
-      body: JSON.stringify({ action: 'anahtarKaydet', pin, deger, tur: $('tur').value }) });
+      body: JSON.stringify(Object.assign({ action: 'anahtarKaydet', pin, deger, tur: $('tur').value }, ek)) });
     const j = await r.json();
-    if (j.ok) { $('anahtar').value = ''; durum('Kaydedildi (…' + j.son4 + '). ' + ($('tur').value === 'elevenlabs' ? 'Sesli asistanı denemek için dogusportal.com/sesli-asistan.html' : 'Claude\'a "girdim" yazabilirsiniz.'), 'ok'); }
+    if (j.ok) { $('anahtar').value = ''; ['sSif', 'sTok'].forEach(i => $(i).value = '');
+      durum('Kaydedildi (…' + j.son4 + '). ' + (sn ? 'Santral bağlantısı doğrulandı. Claude\'a "girdim" yazabilirsiniz.' : $('tur').value === 'elevenlabs' ? 'Sesli asistanı denemek için dogusportal.com/sesli-asistan.html' : 'Claude\'a "girdim" yazabilirsiniz.'), 'ok'); }
     else durum(j.error || 'Kaydedilemedi.', 'hata');
   } catch (e) { durum(e.name === 'AbortError' ? 'Sunucu 45 sn içinde cevap vermedi, tekrar deneyin.' : 'Bağlantı hatası, tekrar deneyin.', 'hata'); }
   $('kaydet').disabled = false;
