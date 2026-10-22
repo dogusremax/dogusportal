@@ -1,0 +1,39 @@
+name: Instagram Reels paylaş
+on:
+  workflow_dispatch:
+    inputs:
+      klasor:
+        description: "paylasim/ altındaki klasör (video.mp4, kapak.jpg, aciklama.txt)"
+        required: true
+permissions:
+  contents: write
+concurrency: { group: reels-paylas, cancel-in-progress: false }
+jobs:
+  reels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Güncel IG token'ı al
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=dogus-performans")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Reels'i paylaş
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          KLASOR: ${{ inputs.klasor }}
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/ig-reels.js "$KLASOR" 2>&1 | tee reels-log.txt
+      - if: always()
+        env:
+          KLASOR: ${{ inputs.klasor }}
+        run: |
+          git config user.name dogus-bot; git config user.email bot@dogusremax.com
+          git add reels-log.txt paylasim 2>/dev/null
+          git diff --cached --quiet || git commit -m "Reels paylaşımı: $KLASOR"
+          git push || true
