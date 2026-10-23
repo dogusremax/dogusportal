@@ -68,6 +68,9 @@ button{font-family:inherit;cursor:pointer}
 .satir .ort{flex:1;min-width:0}
 .satir .bas{font-weight:700;font-size:14.5px}
 .satir .alt{font-size:12px;color:var(--soluk);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sil{flex:0 0 auto;border:none;background:transparent;color:var(--soluk);font-size:17px;line-height:1;
+  padding:8px;margin:-8px -6px -8px 0;border-radius:10px}
+.sil:hover{background:rgba(220,28,46,.1);color:var(--kirmizi)}
 .rozet{font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;white-space:nowrap}
 .r-bek{background:rgba(220,28,46,.1);color:var(--kirmizi)}
 .r-ok{background:rgba(10,125,90,.12);color:var(--yesil)}
@@ -207,13 +210,30 @@ function listeCiz(d, eski){
       return '<div class="satir" data-no="'+x.no+'"><div class="ort">' +
              '<div class="bas">'+(x.adres||'Adres girilmemiş')+'</div>' +
              '<div class="alt">'+x.no+' · '+(x.danisman||'')+' · '+(x.kiraci||'')+'</div></div>' +
-             '<span class="rozet '+sinif+'">'+s+'</span></div>';
+             '<span class="rozet '+sinif+'">'+s+'</span>' +
+             (d.broker ? '<button class="sil" data-sil="'+x.no+'" title="Dosyayı sil" aria-label="Dosyayı sil">🗑</button>' : '') +
+             '</div>';
     }).join('') : '<div class="bos">Henüz dosya yok. Yukarıdan yeni dosya açabilirsin.</div>';
     if (eski) h += '<p class="mini" id="tazeleniyor" style="text-align:center">Güncelleniyor…</p>';
     $('icerik').innerHTML = h;
     $('yeni').onclick = yeniEkrani;
     Array.prototype.forEach.call(document.querySelectorAll('.satir[data-no]'), function(el){
       el.onclick = function(){ dosyaEkrani(el.dataset.no); };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sil]'), function(b){
+      b.onclick = function(e){
+        e.stopPropagation();
+        var no = b.dataset.sil, x = d.liste.filter(function(y){ return y.no === no; })[0] || {};
+        if (!confirm(no + ' · ' + (x.adres || '') + '\n\nBu kira dosyası silinsin mi? Gelen formlar ve bilgiler tablodan silinir, belgeler Drive çöp kutusuna gider. Bu işlem geri alınamaz.')) return;
+        b.disabled = true; b.textContent = '…';
+        apiPost('dosyaSil', { pin: pin, no: no }).then(function(c){
+          if (!c.ok) { toast(c.hata || 'Silinemedi'); b.disabled = false; b.textContent = '🗑'; return; }
+          d.liste = d.liste.filter(function(y){ return y.no !== no; });
+          try { localStorage.setItem(LISTE_ANAHTAR(), JSON.stringify(d)); } catch(e){}
+          listeCiz(d, false);
+          toast(no + ' silindi');
+        }).catch(function(e){ toast(e.message); b.disabled = false; b.textContent = '🗑'; });
+      };
     });
 }
 
