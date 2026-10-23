@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAFD">
+<meta name="robots" content="noindex">
+<title>Video Düzenle · RE/MAX Doğuş</title>
+<script src="assets/broker.js"></script>
+<script>brokerKapi();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAFD; --ink:#16171D; --ink-2:#41434F; --mute:#83869A;
+    --line:#E6E6EE; --card:#FFFFFF;
+    --red:#DC1C2E; --navy:#050A30; --indigo:#3355FF; --indigo-bg:#E8EDFF;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+  button,select,input,textarea{font:inherit;color:inherit}
+  button{background:none;border:0;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  header{padding:calc(22px + env(safe-area-inset-top)) 0 6px}
+  .geri{display:inline-block;color:var(--mute);font-size:13.5px;font-weight:600;text-decoration:none;margin:0 0 10px}
+  .baslik{font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 72,'wdth' 96,'wght' 800;font-size:42px;line-height:.9;letter-spacing:-.035em;color:var(--red)}
+  .altbaslik{margin-top:10px;color:var(--mute);font-size:14px;font-weight:500}
+
+  .duzen{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:22px;margin-top:18px;align-items:start}
+  @media (max-width:820px){.duzen{grid-template-columns:1fr}}
+
+  .sahne-kutu{position:sticky;top:10px}
+  @media (max-width:820px){.sahne-kutu{position:static}}
+  .sahne{position:relative;width:100%;aspect-ratio:9/16;background:#0d0f1a;border-radius:18px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+  .sahne video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+  .bos{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#c9cbe0;text-align:center;padding:24px}
+  .bos .btn{background:#fff;color:var(--ink)}
+  .katman{position:absolute;inset:0;pointer-events:none}
+  .yazi{position:absolute;transform:translate(-50%,-50%);max-width:90%;width:max-content;text-align:center;font-weight:800;line-height:1.15;white-space:pre-wrap;word-break:break-word;pointer-events:auto;cursor:grab;padding:.08em .22em;border-radius:.22em}
+  .yazi.secili{outline:2px dashed #fff;outline-offset:4px}
+  .yazi .tutamak{display:none;position:absolute;right:-14px;bottom:-14px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--indigo);cursor:nwse-resize;touch-action:none}
+  .yazi.secili .tutamak{display:block}
+
+  .oynat{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .oynat input[type=range]{flex:1}
+  .zaman{font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-2);min-width:92px;text-align:right}
+  .yuv{width:40px;height:40px;border-radius:12px;background:#ECEEF6;display:flex;align-items:center;justify-content:center;flex:none}
+  .yuv svg{width:18px;height:18px}
+
+  .kart{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+  .kart h3{margin:0 0 12px;font-size:15px}
+  .satir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .satir label{font-size:12.5px;color:var(--mute);font-weight:600;min-width:74px}
+  textarea{width:100%;min-height:64px;border:1px solid var(--line);border-radius:12px;padding:10px;resize:vertical;font-weight:600}
+  input[type=number]{width:84px;border:1px solid var(--line);border-radius:10px;padding:7px 8px}
+  select{border:1px solid var(--line);border-radius:10px;padding:7px 8px;background:#fff}
+  input[type=color]{width:40px;height:34px;border:1px solid var(--line);border-radius:10px;padding:2px;background:#fff}
+  .btn{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:9px 14px;font-weight:700;font-size:14px;background:#ECEEF6}
+  .btn.ana{background:var(--red);color:#fff}
+  .btn.mavi{background:var(--indigo);color:#fff}
+  .btn.kucuk{padding:6px 10px;font-size:12.5px;border-radius:10px}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  .liste{display:flex;flex-direction:column;gap:6px}
+  .oge{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#fff}
+  .oge.secili{border-color:var(--indigo);background:var(--indigo-bg)}
+  .oge .zm{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:86px}
+  .oge .mt{flex:1;font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .not{font-size:12.5px;color:var(--mute)}
+  .hazirlar{display:flex;gap:6px;flex-wrap:wrap}
+  .cerceve{height:6px;background:#ECEEF6;border-radius:3px;overflow:hidden;margin-top:10px;display:none}
+  .cerceve div{height:100%;width:0;background:var(--red)}
+  .gizli{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="geri" href="https://dogusportal.com/">← Portal</a>
+    <div class="baslik">Video Düzenle</div>
+    <div class="altbaslik">Videoyu seç, yazı ekle, yazıya dokunup metnini, yerini ve boyutunu değiştir, sonra indir.</div>
+  </header>
+
+  <div class="duzen">
+    <div class="sahne-kutu">
+      <div class="sahne" id="sahne">
+        <video id="video" playsinline preload="auto"></video>
+        <div class="katman" id="katman"></div>
+        <div class="bos" id="bos">
+          <div>Henüz video yok</div>
+          <button class="btn" onclick="dosya.click()">Video seç</button>
+        </div>
+      </div>
+      <div class="oynat">
+        <button class="yuv" id="oynatBtn" title="Oynat / durdur"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <input type="range" id="cubuk" min="0" max="0" step="0.01" value="0">
+        <div class="zaman" id="zaman">0:00.0 / 0:00</div>
+      </div>
+      <div class="satir" style="margin-top:10px">
+        <button class="btn" onclick="dosya.click()">Video değiştir</button>
+        <button class="btn mavi" id="ekleBtn" onclick="yaziEkle()">+ Yazı ekle</button>
+        <input type="file" id="dosya" accept="video/*" class="gizli">
+      </div>
+    </div>
+
+    <div>
+      <div class="kart" id="duzenKart">
+        <h3>Seçili yazı</h3>
+        <div id="secimYok" class="not">Bir yazıya dokunun ya da “+ Yazı ekle” ile yeni yazı ekleyin.</div>
+        <div id="secimVar" class="gizli">
+          <textarea id="fMetin" placeholder="Yazı"></textarea>
+          <div class="satir" style="margin-top:10px">
+            <label>Boyut</label>
+            <input type="range" id="fBoyut" min="2" max="20" step="0.1" style="flex:1">
+            <span id="fBoyutDeger" class="not" style="min-width:34px"></span>
+          </div>
+          <div class="satir">
+            <label>Renk</label>
+            <input type="color" id="fRenk">
+            <label style="min-width:auto">Zemin</label>
+            <select id="fZemin">
+              <option value="yok">Yok (gölgeli)</option>
+              <option value="kutu">Renkli kutu</option>
+              <option value="cerceve">Kenarlık</option>
+            </select>
+            <input type="color" id="fZeminRenk">
+          </div>
+          <div class="satir">
+            <label>Hazır stil</label>
+            <div class="hazirlar">
+              <button class="btn kucuk" onclick="hazir('beyaz')">Beyaz</button>
+              <button class="btn kucuk" onclick="hazir('kirmizi')">Kırmızı kutu</button>
+              <button class="btn kucuk" onclick="hazir('lacivert')">Lacivert kutu</button>
+              <button class="btn kucuk" onclick="hazir('sari')">Sarı vurgu</button>
+            </div>
+          </div>
+          <div class="satir">
+            <label>Başlangıç</label>
+            <input type="number" id="fBas" step="0.1" min="0">
+            <button class="btn kucuk" onclick="simdiAta('bas')">Şu an</button>
+            <label style="min-width:auto">Bitiş</label>
+            <input type="number" id="fBit" step="0.1" min="0">
+            <button class="btn kucuk" onclick="simdiAta('bit')">Şu an</button>
+          </div>
+          <div class="satir">
+            <label>Giriş</label>
+            <select id="fEfekt">
+              <option value="yok">Efektsiz</option>
+              <option value="belir">Belirerek</option>
+              <option value="buyu">Büyüyerek</option>
+              <option value="kay">Aşağıdan kayarak</option>
+            </select>
+            <button class="btn kucuk" onclick="ortala()">Ortala</button>
+            <button class="btn kucuk" onclick="kopyala()">Kopyala</button>
+            <button class="btn kucuk" style="color:var(--red)" onclick="sil()">Sil</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kart">
+        <h3>Yazılar <span class="not" id="adet"></span></h3>
+        <div class="liste" id="liste"></div>
+        <div class="not" id="listeBos">Henüz yazı yok.</div>
+      </div>
+
+      <div class="kart">
+        <h3>İndir</h3>
+        <div class="not" style="margin-bottom:10px">Video baştan sona bir kez oynatılarak yazılarla birlikte kaydedilir; süre videonun kendi süresi kadardır. Bu sırada sekmeden çıkmayın.</div>
+        <button class="btn ana" id="indirBtn" onclick="disaAktar()" disabled>Videoyu indir</button>
+        <div class="cerceve" id="ilerleme"><div></div></div>
+        <div class="not" id="indirDurum" style="margin-top:8px"></div>
+        <a id="indirLink" class="btn gizli" style="margin-top:8px">Dosyayı kaydet</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var video = document.getElementById('video'), sahne = document.getElementById('sahne'), katman = document.getElementById('katman');
+var dosya = document.getElementById('dosya'), cubuk = document.getElementById('cubuk');
+var yazilar = [], secili = null, sayac = 1, aktariliyor = false;
+var KAYIT = 'videoDuzenleYazilar';
+
+function f(id){ return document.getElementById(id); }
+function sure(){ return isFinite(video.duration) ? video.duration : 0; }
+function zmn(t){ t = Math.max(0, t||0); var m = Math.floor(t/60), s = t - m*60; return m + ':' + (s < 10 ? '0' : '') + s.toFixed(1); }
+
+/* --- Video --- */
+dosya.addEventListener('change', function(){
+  var d = dosya.files[0]; if (!d) return;
+  video.src = URL.createObjectURL(d);
+  video.load();
+});
+video.addEventListener('loadedmetadata', function(){
+  f('bos').classList.add('gizli');
+  sahne.style.aspectRatio = video.videoWidth + '/' + video.videoHeight;
+  cubuk.max = sure();
+  f('indirBtn').disabled = false;
+  yazilar.forEach(function(y){ if (y.bit > sure()) y.bit = sure(); });
+  ciz(); listele(); zamanYaz();
+});
+video.addEventListener('timeupdate', function(){ if (!surukleniyor) cubuk.value = video.currentTime; zamanYaz(); });
+video.addEventListener('play', oynatIkon); video.addEventListener('pause', oynatIkon);
+f('oynatBtn').onclick = function(){ if (!video.src || aktariliyor) return; video.paused ? video.play() : video.pause(); };
+var surukleniyor = false;
+cubuk.addEventListener('input', function(){ surukleniyor = true; video.currentTime = +cubuk.value; ciz(); });
+cubuk.addEventListener('change', function(){ surukleniyor = false; });
+function oynatIkon(){ f('oynatBtn').innerHTML = video.paused ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>'; }
+function zamanYaz(){ f('zaman').textContent = zmn(video.currentTime) + ' / ' + zmn(sure()).replace(/\.\d$/, ''); }
+(function dongu(){ if (!video.paused) ciz(); requestAnimationFrame(dongu); })();
+
+/* --- Yazı modeli: x,y merkez (0-1), boyut = genişliğin %'si --- */
+function yaziEkle(){
+  var t = video.currentTime || 0;
+  var y = { id: sayac++, metin: 'Yeni yazı', x: .5, y: .5, boyut: 7, renk: '#FFFFFF', zemin: 'yok', zeminRenk: '#DC1C2E',
+            bas: +t.toFixed(1), bit: +Math.min(sure() || t + 3, t + 3).toFixed(1), efekt: 'buyu' };
+  yazilar.push(y); sec(y.id); kaydet(); listele();
+  setTimeout(function(){ f('fMetin').focus(); f('fMetin').select(); }, 30);
+}
+function bul(id){ for (var i = 0; i < yazilar.length; i++) if (yazilar[i].id === id) return yazilar[i]; return null; }
+
+/* Efekt ilerlemesi: 0..1 arası giriş (0.35 sn), çıkış 0.2 sn */
+function anim(y, t){
+  if (t < y.bas || t > y.bit) return null;
+  var g = Math.min(1, (t - y.bas) / .35), c = Math.min(1, (y.bit - t) / .2);
+  var e = 1 - Math.pow(1 - g, 3);
+  var op = 1, sc = 1, dy = 0;
+  if (y.efekt === 'belir') op = e;
+  if (y.efekt === 'buyu') { op = e; sc = .6 + .4 * (1 + 2.2 * Math.pow(e - 1, 3) + 1.2 * Math.pow(e - 1, 2)); }
+  if (y.efekt === 'kay') { op = e; dy = (1 - e) * .04; }
+  if (y.efekt !== 'yok') op *= c;
+  return { op: op, sc: sc, dy: dy };
+}
+
+function stil(el, y, W){
+  el.style.fontSize = (y.boyut / 100 * W) + 'px';
+  el.style.color = y.renk;
+  el.style.background = y.zemin === 'kutu' ? y.zeminRenk : 'transparent';
+  el.style.textShadow = y.zemin === 'yok' ? '0 .04em .18em rgba(0,0,0,.65)' : 'none';
+  el.style.webkitTextStroke = y.zemin === 'cerceve' ? (Math.max(1, y.boyut / 100 * W * .07)) + 'px ' + y.zeminRenk : '0';
+  el.style.paintOrder = 'stroke fill';
+}
+
+function ciz(){
+  var W = sahne.clientWidth, H = sahne.clientHeight, t = video.currentTime || 0;
+  var var_ = {};
+  yazilar.forEach(function(y){
+    var el = katman.querySelector('[data-id="' + y.id + '"]');
+    if (!el){
+      el = document.createElement('div'); el.className = 'yazi'; el.dataset.id = y.id;
+      el.innerHTML = '<span class="m"></span><span class="tutamak"></span>';
+      katman.appendChild(el); baglaSurukle(el);
+    }
+    var_[y.id] = 1;
+    el.querySelector('.m').textContent = y.metin;
+    stil(el, y, W);
+    var a = anim(y, t);
+    var gorunur = !!a || (secili === y.id && video.paused);
+    el.style.display = gorunur ? '' : 'none';
+    var op = a ? a.op : .55, sc = a ? a.sc : 1, dy = a ? a.dy : 0;
+    if (secili === y.id && video.paused) { op = a ? 1 : .55; sc = 1; dy = 0; }
+    el.style.opacity = op;
+    el.style.left = (y.x * 100) + '%';
+    el.style.top = ((y.y + dy) * 100) + '%';
+    el.style.transform = 'translate(-50%,-50%) scale(' + sc + ')';
+    el.classList.toggle('secili', secili === y.id);
+  });
+  Array.prototype.forEach.call(katman.querySelectorAll('.yazi'), function(el){ if (!var_[+el.dataset.id]) el.remove(); });
+}
+
+/* --- Sürükleme ve boyutlandırma (fare + dokunmatik) --- */
+function baglaSurukle(el){
+  el.addEventListener('pointerdown', function(e){
+    if (aktariliyor) return;
+    var y = bul(+el.dataset.id); if (!y) return;
+    e.preventDefault(); e.stopPropagation();
+    if (!video.paused) video.pause();
+    sec(y.id);
+    var r = sahne.getBoundingClientRect(), bx = e.clientX, by = e.clientY, x0 = y.x, y0 = y.y, b0 = y.boyut;
+    var boyutla = e.target.classList.contains('tutamak');
+    var cx = r.left + x0 * r.width, cy = r.top + y0 * r.height, d0 = Math.hypot(bx - cx, by - cy) || 1;
+    el.setPointerCapture(e.pointerId);
+    function hareket(ev){
+      if (boyutla){
+        var d = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+        y.boyut = Math.max(2, Math.min(20, b0 * d / d0));
+      } else {
+        y.x = Math.max(0, Math.min(1, x0 + (ev.clientX - bx) / r.width));
+        y.y = Math.max(0, Math.min(1, y0 + (ev.clientY - by) / r.height));
+        if (Math.abs(y.x - .5) < .015) y.x = .5;
+      }
+      ciz(); formDoldur();
+    }
+    function birak(){ el.removeEventListener('pointermove', hareket); el.removeEventListener('pointerup', birak); el.removeEventListener('pointercancel', birak); kaydet(); }
+    el.addEventListener('pointermove', hareket); el.addEventListener('pointerup', birak); el.addEventListener('pointercancel', birak);
+  });
+}
+sahne.addEventListener('pointerdown', function(e){ if (e.target === sahne || e.target === video || e.target === katman) { sec(null); } });
+
+/* --- Seçim ve form --- */
+function sec(id){ secili = id; formDoldur(); ciz(); listele(); }
+function formDoldur(){
+  var y = bul(secili);
+  f('secimYok').classList.toggle('gizli', !!y); f('secimVar').classList.toggle('gizli', !y);
+  if (!y) return;
+  if (document.activeElement !== f('fMetin')) f('fMetin').value = y.metin;
+  f('fBoyut').value = y.boyut; f('fBoyutDeger').textContent = y.boyut.toFixed(1);
+  f('fRenk').value = y.renk; f('fZemin').value = y.zemin; f('fZeminRenk').value = y.zeminRenk;
+  if (document.activeElement !== f('fBas')) f('fBas').value = y.bas;
+  if (document.activeElement !== f('fBit')) f('fBit').value = y.bit;
+  f('fEfekt').value = y.efekt;
+}
+function alan(id, ad, cevir){
+  f(id).addEventListener('input', function(){
+    var y = bul(secili); if (!y) return;
+    y[ad] = cevir ? cevir(f(id).value) : f(id).value;
+    if (ad === 'boyut') f('fBoyutDeger').textContent = y.boyut.toFixed(1);
+    ciz(); listele(); kaydet();
+  });
+}
+alan('fMetin', 'metin'); alan('fBoyut', 'boyut', parseFloat); alan('fRenk', 'renk'); alan('fZemin', 'zemin');
+alan('fZeminRenk', 'zeminRenk'); alan('fEfekt', 'efekt');
+alan('fBas', 'bas', function(v){ return Math.max(0, parseFloat(v) || 0); });
+alan('fBit', 'bit', function(v){ return Math.max(0, parseFloat(v) || 0); });
+function simdiAta(k){ var y = bul(secili); if (!y) return; y[k] = +video.currentTime.toFixed(1); if (y.bit < y.bas) { if (k === 'bas') y.bit = +(y.bas + 2).toFixed(1); else y.bas = y.bit; } formDoldur(); ciz(); listele(); kaydet(); }
+function hazir(ad){
+  var y = bul(secili); if (!y) return;
+  var h = { beyaz: ['#FFFFFF', 'yok', '#000000'], kirmizi: ['#FFFFFF', 'kutu', '#DC1C2E'], lacivert: ['#FFFFFF', 'kutu', '#050A30'], sari: ['#FFE14D', 'cerceve', '#000000'] }[ad];
+  y.renk = h[0]; y.zemin = h[1]; y.zeminRenk = h[2]; formDoldur(); ciz(); kaydet();
+}
+function ortala(){ var y = bul(secili); if (!y) return; y.x = .5; ciz(); kaydet(); }
+function kopyala(){ var y = bul(secili); if (!y) return; var k = JSON.parse(JSON.stringify(y)); k.id = sayac++; k.bas = +Math.min(y.bit, sure() || y.bit).toFixed(1); k.bit = +(k.bas + (y.bit - y.bas)).toFixed(1); if (sure()) k.bit = Math.min(k.bit, +sure().toFixed(1)); yazilar.push(k); sec(k.id); kaydet(); }
+function sil(){ yazilar = yazilar.filter(function(y){ return y.id !== secili; }); sec(null); kaydet(); }
+
+function listele(){
+  var l = f('liste'); l.innerHTML = '';
+  var s = yazilar.slice().sort(function(a, b){ return a.bas - b.bas; });
+  s.forEach(function(y){
+    var d = document.createElement('div'); d.className = 'oge' + (y.id === secili ? ' secili' : '');
+    d.innerHTML = '<span class="zm"></span><span class="mt"></span>';
+    d.querySelector('.zm').textContent = zmn(y.bas) + ' – ' + zmn(y.bit);
+    d.querySelector('.mt').textContent = y.metin.replace(/\n/g, ' ') || '(boş)';
+    d.onclick = function(){ if (video.src) { video.pause(); video.currentTime = Math.min(sure(), y.bas + .4); } sec(y.id); };
+    l.appendChild(d);
+  });
+  f('listeBos').classList.toggle('gizli', yazilar.length > 0);
+  f('adet').textContent = yazilar.length ? '(' + yazilar.length + ')' : '';
+}
+
+function kaydet(){ try { localStorage.setItem(KAYIT, JSON.stringify(yazilar)); } catch(e){} }
+try { var k = JSON.parse(localStorage.getItem(KAYIT) || '[]'); if (Array.isArray(k)) { yazilar = k; yazilar.forEach(function(y){ sayac = Math.max(sayac, y.id + 1); }); } } catch(e){}
+window.addEventListener('resize', ciz);
+document.addEventListener('keydown', function(e){
+  if ((e.key === 'Delete' || e.key === 'Backspace') && secili && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); sil(); }
+});
+listele(); formDoldur(); ciz();
+
+/* --- Dışa aktarma: tuval + MediaRecorder --- */
+var sesBaglam = null, sesHedef = null;
+function satirlar(ctx, metin, maxW){
+  var sonuc = [];
+  metin.split('\n').forEach(function(p){
+    var kel = p.split(' '), s = '';
+    kel.forEach(function(k){ var d = s ? s + ' ' + k : k; if (ctx.measureText(d).width > maxW && s) { sonuc.push(s); s = k; } else s = d; });
+    sonuc.push(s);
+  });
+  return sonuc;
+}
+function tuvaleCiz(ctx, W, H, t){
+  ctx.drawImage(video, 0, 0, W, H);
+  yazilar.forEach(function(y){
+    var a = anim(y, t); if (!a || a.op <= 0) return;
+    var fs = y.boyut / 100 * W, lh = fs * 1.15, padX = fs * .22, padY = fs * .08;
+    ctx.save();
+    ctx.font = '800 ' + fs + 'px "Plus Jakarta Sans", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var sat = satirlar(ctx, y.metin, W * .9 - padX * 2);
+    var gen = Math.max.apply(null, sat.map(function(s){ return ctx.measureText(s).width; }));
+    var yuk = sat.length * lh;
+    var cx = y.x * W, cy = (y.y + a.dy) * H;
+    ctx.globalAlpha = a.op;
+    ctx.translate(cx, cy); ctx.scale(a.sc, a.sc);
+    if (y.zemin === 'kutu') {
+      ctx.fillStyle = y.zeminRenk;
+      var bw = gen + padX * 2, bh = yuk + padY * 2, r = fs * .22;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(-bw / 2, -bh / 2, bw, bh, r); else ctx.rect(-bw / 2, -bh / 2, bw, bh);
+      ctx.fill();
+    }
+    sat.forEach(function(s, i){
+      var sy = -yuk / 2 + lh * (i + .5);
+      if (y.zemin === 'yok') { ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = fs * .18; ctx.shadowOffsetY = fs * .04; }
+      if (y.zemin === 'cerceve') { ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(1, fs * .07) * 2; ctx.strokeStyle = y.zeminRenk; ctx.strokeText(s, 0, sy); }
+      ctx.fillStyle = y.renk; ctx.fillText(s, 0, sy);
+      ctx.shadowColor = 'transparent';
+    });
+    ctx.restore();
+  });
+}
+function bicim(){
+  var adaylar = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  for (var i = 0; i < adaylar.length; i++) if (window.MediaRecorder && MediaRecorder.isTypeSupported(adaylar[i])) return adaylar[i];
+  return '';
+}
+function disaAktar(){
+  if (!video.src || aktariliyor) return;
+  if (!window.MediaRecorder) { f('indirDurum').textContent = 'Bu tarayıcı video kaydını desteklemiyor. Safari ya da Chrome ile açın.'; return; }
+  var tur = bicim();
+  aktariliyor = true; sec(null);
+  f('indirBtn').disabled = true; f('indirLink').classList.add('gizli');
+  f('ilerleme').style.display = 'block'; f('indirDurum').textContent = 'Hazırlanıyor…';
+  var W = video.videoWidth, H = video.videoHeight;
+  var tuval = document.createElement('canvas'); tuval.width = W; tuval.height = H;
+  var ctx = tuval.getContext('2d');
+  document.fonts.load('800 40px "Plus Jakarta Sans"').catch(function(){}).then(function(){
+    var akis = tuval.captureStream(30);
+    try {
+      if (!sesBaglam) {
+        sesBaglam = new (window.AudioContext || window.webkitAudioContext)();
+        var kaynak = sesBaglam.createMediaElementSource(video);
+        sesHedef = sesBaglam.createMediaStreamDestination();
+        kaynak.connect(sesHedef); kaynak.connect(sesBaglam.destination);
+      }
+      sesBaglam.resume();
+      sesHedef.stream.getAudioTracks().forEach(function(tr){ akis.addTrack(tr); });
+    } catch(e) {}
+    var parca = [], kayit = new MediaRecorder(akis, tur ? { mimeType: tur, videoBitsPerSecond: 8000000 } : undefined);
+    kayit.ondataavailable = function(e){ if (e.data && e.data.size) parca.push(e.data); };
+    kayit.onstop = function(){
+      var mt = kayit.mimeType || tur || 'video/webm';
+      var blob = new Blob(parca, { type: mt });
+      var uz = /mp4/.test(mt) ? 'mp4' : 'webm';
+      var ad = 'dogus-video-' + new Date().toISOString().slice(0, 10) + '.' + uz;
+      var link = f('indirLink'); link.href = URL.createObjectURL(blob); link.download = ad; link.textContent = 'Dosyayı kaydet (' + (blob.size / 1048576).toFixed(1) + ' MB)';
+      link.classList.remove('gizli');
+      link.onclick = function(ev){
+        try {
+          var file = new File([blob], ad, { type: mt });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); }
+        } catch(e) {}
+      };
+      f('indirDurum').textContent = 'Hazır.' + (uz === 'webm' ? ' Bu tarayıcı .webm kaydetti; Instagram için Safari ile mp4 almanız daha iyi olur.' : '');
+      aktariliyor = false; f('indirBtn').disabled = false; f('ilerleme').style.display = 'none';
+    };
+    video.pause(); video.currentTime = 0;
+    video.addEventListener('seeked', function basla(){
+      video.removeEventListener('seeked', basla);
+      tuvaleCiz(ctx, W, H, 0);
+      kayit.start(500);
+      f('indirDurum').textContent = 'Kaydediliyor… videonun sonuna kadar bekleyin.';
+      video.play();
+      (function kare(){
+        if (!aktariliyor || kayit.state !== 'recording') return;
+        tuvaleCiz(ctx, W, H, video.currentTime);
+        f('ilerleme').firstElementChild.style.width = (video.currentTime / sure() * 100) + '%';
+        if (video.ended || video.currentTime >= sure() - .03) { setTimeout(function(){ kayit.stop(); }, 150); return; }
+        requestAnimationFrame(kare);
+      })();
+    });
+  });
+}
+</script>
+</body>
+</html>
