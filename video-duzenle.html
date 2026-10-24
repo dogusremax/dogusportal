@@ -755,8 +755,8 @@ function glHazirla(){
   } catch(e) { console.log('webgl', e); return false; }
 }
 function renklendir(enMax){
-  var vk = kaynakVideo();
-  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return vk;
+  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return kaynakVideo();
+  var vk = glKaynak();
   var o = Math.min(1, enMax / video.videoWidth), w = Math.round(video.videoWidth * o), h = Math.round(video.videoHeight * o);
   if (glTuval.width !== w || glTuval.height !== h) { glTuval.width = w; glTuval.height = h; }
   gl.viewport(0, 0, w, h);
@@ -784,7 +784,18 @@ function kaynakVideo(){
   c.drawImage(yonHam, 0, 0); c.restore();
   return yonDuz;
 }
-function yonDegistir(){ yon = yon === 0 ? 90 : yon === 90 ? 270 : 0; yonSonT = -1; seg.onceki = null; cizdir(); segIste(); }
+/* WebGL'e video doğrudan verilmez: Chrome dik videoda dönüş bilgisini WebGL'de uygulamıyor.
+   Kare önce 2D tuvale çizilir (orada yön doğru), WebGL bu kopyayı kullanır. */
+var glKopya = document.createElement('canvas'), glKopyaT = -1;
+function glKaynak(){
+  var k = kaynakVideo(); if (k !== video) return k;
+  var W = video.videoWidth, H = video.videoHeight;
+  if (glKopya.width !== W || glKopya.height !== H) { glKopya.width = W; glKopya.height = H; glKopyaT = -1; }
+  if (video.currentTime === glKopyaT && video.paused) return glKopya;
+  glKopyaT = video.currentTime; glKopya.getContext('2d').drawImage(video, 0, 0, W, H);
+  return glKopya;
+}
+function yonDegistir(){ yon = yon === 0 ? 90 : yon === 90 ? 270 : 0; yonSonT = -1; glKopyaT = -1; seg.onceki = null; cizdir(); segIste(); }
 function dosyaDonusu(d){
   /* mp4/mov içindeki video izinin dönüş matrisini okur */
   return d.arrayBuffer().then(function(buf){
@@ -801,13 +812,33 @@ function dosyaDonusu(d){
     return 0;
   }).catch(function(){ return 0; });
 }
-var safari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+/* Tarayıcı dönüş bilgisini uyguluyor mu? Yönü bilinen minik bir test videosuyla kendisi ölçer:
+   ham kare solda kırmızı, sağda mavi; doğru döndürülürse kırmızı üste gelir. */
+var PROBE = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAM0bW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAyAAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAl50cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAyAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA//8AAAAAAAAAAAAAAAAAAAAAAABAAAAAAEAAAAAgAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAMgAAAAAAABAAAAAAHWbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAAIABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABgW1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAUFzdGJsAAAAuXN0c2QAAAAAAAAAAQAAAKlhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAEAAIABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAAL2F2Y0MBQsAK/+EAF2dCwArZBFsBEAAAAwAQAAADAKDxImSAAQAFaMuDyyAAAAAQcGFzcAAAAAEAAAABAAAAFGJ0cnQAAAAAAAAbYgAAG2IAAAAYc3R0cwAAAAAAAAABAAAABAAACAAAAAAUc3RzcwAAAAAAAAABAAAAAQAAABxzdHNjAAAAAAAAAAEAAAABAAAABAAAAAEAAAAkc3RzegAAAAAAAAAAAAAABAAAAp8AAAAKAAAACgAAAAoAAAAUc3RjbwAAAAAAAAABAAADZAAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNjAuMTYuMTAwAAAACGZyZWUAAALFbWRhdAAAAnAGBf//bNxF6b3m2Ui3lizYINkj7u94MjY0IC0gY29yZSAxNjQgcjMxMDggMzFlMTlmOSAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMjMgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0wIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDE6MHgxMTEgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTAgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MCB3ZWlnaHRwPTAga2V5aW50PTI1MCBrZXlpbnRfbWluPTUgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjAwAIAAAAAnZYiEBHxGKAAKSccAASOY4AAtrScRigACe/HAAGTaOAAL/MnXXT14AAAABkGaOAj4mAAAAAZBmlQCHiYAAAAGQZpgP8TA';
+var donusUygulaniyor = new Promise(function(ok){
+  var v = document.createElement('video'), bitti = false;
+  function son(x){ if (!bitti) { bitti = true; ok(x); } }
+  v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto';
+  v.addEventListener('loadeddata', function(){
+    try {
+      var W = v.videoWidth, H = v.videoHeight, c = document.createElement('canvas'); c.width = W; c.height = H;
+      var x = c.getContext('2d'); x.drawImage(v, 0, 0, W, H);
+      if (W > H) { son('ham-boyut'); return; }
+      var ust = x.getImageData(W >> 1, H >> 3, 1, 1).data, sol = x.getImageData(W >> 3, H >> 1, 1, 1).data, sag = x.getImageData(W - 1 - (W >> 3), H >> 1, 1, 1).data;
+      var kirmizi = function(p){ return p[0] > 150 && p[2] < 110; }, mavi = function(p){ return p[2] > 150 && p[0] < 110; };
+      if (kirmizi(ust)) son(true); else if (kirmizi(sol) && mavi(sag)) son(false); else son(true);
+    } catch(e) { son(true); }
+  });
+  v.addEventListener('error', function(){ son(true); });
+  setTimeout(function(){ son(true); }, 4000);
+  v.src = PROBE;
+});
 
 /* ---------- Video ---------- */
 dosya.addEventListener('change', function(){
   var d = dosya.files[0]; if (!d) return;
   videoDosyasi = d; kesimler = []; kesimArayuz(); yon = 0; yonSonT = -1;
-  dosyaDonusu(d).then(function(r){ if (safari && (r === 90 || r === 270)) { yon = r; yonSonT = -1; seg.onceki = null; cizdir(); } });
+  Promise.all([dosyaDonusu(d), donusUygulaniyor]).then(function(x){ var r = x[0]; if (x[1] === false && (r === 90 || r === 270)) { yon = r; yonSonT = -1; seg.onceki = null; cizdir(); } });
   video.src = URL.createObjectURL(d);
   video.load();
 });
@@ -818,7 +849,7 @@ video.addEventListener('loadedmetadata', function(){
   f('indirBtn').disabled = false; f('nefesBtn').disabled = false; f('cevirBtn').disabled = false;
   boyutla(); listele(); kesimArayuz(); zamanYaz(); cizdir();
 });
-video.addEventListener('loadeddata', cizdir);
+video.addEventListener('loadeddata', function(){ glKopyaT = -1; yonSonT = -1; cizdir(); });
 video.addEventListener('seeked', function(){ segIste(); cizdir(); });
 video.addEventListener('timeupdate', function(){ if (!surukleniyor) cubuk.value = video.currentTime; zamanYaz(); });
 video.addEventListener('play', oynatIkon); video.addEventListener('pause', oynatIkon);
@@ -834,7 +865,7 @@ function oynatIkon(){ f('oynatBtn').innerHTML = video.paused ? '<svg viewBox="0 
 function zamanYaz(){ f('zaman').textContent = zmn(video.currentTime) + ' / ' + zmn(sure()).replace(/\.\d$/, ''); }
 
 function boyutla(){
-  var r = sahne.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  var r = sahne.getBoundingClientRect(), dpr = Math.min(3, window.devicePixelRatio || 1);
   var w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
   if (tuval.width !== w || tuval.height !== h) { tuval.width = w; tuval.height = h; }
   cizdir();
@@ -1141,7 +1172,7 @@ function maskeIyilestir(W, H){
   if (t.width !== w || t.height !== h) { t.width = w; t.height = h; }
   g.viewport(0, 0, w, h); g.clearColor(0, 0, 0, 0); g.clear(g.COLOR_BUFFER_BIT);
   try {
-    g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, ince.tex[0]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, kaynakVideo());
+    g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, ince.tex[0]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, glKaynak());
     g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, ince.tex[1]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, seg.maske);
   } catch(e) { return seg.maske; }
   g.uniform2f(ince.mt, 1 / seg.mw, 1 / seg.mh);
@@ -1972,12 +2003,12 @@ function efektliCiz(ctx, o, W, H, t, a, kaynak){
   });
 }
 function sahneyiCiz(ctx, W, H, t, disa){
-  ctx.save(); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  ctx.save(); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
   if (!video.videoWidth) { ctx.restore(); return; }
   var duzenleme = !disa;
   if (duzenleme) kutular = {};
-  var kaynak = renklendir(disa ? 1080 : Math.max(540, W));
+  var kaynak = renklendir(disa ? 2160 : Math.max(720, W));
   var kisiVar = kisiGerekli(t) && seg.durum === 'hazir' && seg.sonT >= 0;
   var z = zoomDurumu(t), gc = gecisDurumu(t);
   /* geçiş dönüşümü */
