@@ -129,7 +129,7 @@ async function ana() {
   /* kişi maskesi düzenleme yüklenmeden önce bağlanır: tarayıcıdaki kişi ayırma hiç çalışmaz */
   if (maske) await sayfa.evaluate(() => hariciMaskeKur('/maske.mp4'));
   await sayfa.evaluate(async (pr) => {
-    projeYukle(pr); kesimler = Array.isArray(pr.kesimler) ? pr.kesimler : [];
+    projeYukle(pr); kesimler = Array.isArray(pr.kesimler) ? pr.kesimler : []; bolmeler = Array.isArray(pr.bolmeler) ? pr.bolmeler : [];
     /* resimler yüklensin */
     const srcler = [];
     (function topla(x) { if (!x || typeof x !== 'object') return; for (const k in x) { const v = x[k]; if (typeof v === 'string' && /^data:image\//.test(v)) srcler.push(v); else if (typeof v === 'object') topla(v); } })(pr);
