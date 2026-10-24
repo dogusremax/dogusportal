@@ -616,6 +616,8 @@
           <div class="cerceve" id="bulutIlerleme"><div></div></div>
           <div class="not" id="bulutDurum" style="margin-top:8px"></div>
           <a id="bulutLink" class="btn gizli" style="margin-top:8px">Dosyayı kaydet</a>
+          <button class="btn" id="bulutSonBtn" onclick="bulutSonlar()" style="margin-top:8px">Son bulut videolarım</button>
+          <div id="bulutSonListe"></div>
         </div>
       </div>
   </aside>
@@ -3049,7 +3051,7 @@ function sonucGoster(blob, mt){
   link.onclick = function(ev){
     try {
       var file = new File([blob], ad, { type: mt });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); }
+      if (window.matchMedia('(pointer: coarse)').matches && navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); }
     } catch(e) {}
   };
   f('indirDurum').textContent = 'Hazır.' + (uz === 'webm' ? ' Bu tarayıcı .webm kaydetti; Instagram için iPhone Safari ile mp4 almanız daha iyi olur.' : '');
@@ -3249,6 +3251,23 @@ function bulutTakip(is){
   }
   sor();
 }
+async function bulutSonlar(){
+  var pin = bulutPin(); if (!pin) return;
+  var kutu = f('bulutSonListe'); kutu.textContent = 'Yükleniyor…';
+  try {
+    var j = await bulutCagir({ action: 'vrSonlar', pin: pin });
+    if (!j.success) throw new Error(j.error);
+    kutu.textContent = '';
+    if (!j.liste.length) { kutu.textContent = 'Son 2 günde hazır bulut videosu yok.'; return; }
+    j.liste.forEach(function(x){
+      var d = new Date(x.t), b = document.createElement('button');
+      b.className = 'btn'; b.style.marginTop = '6px';
+      b.textContent = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }) + ' ' + d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + (x.boyut ? ' · ' + (x.boyut / 1048576).toFixed(1) + ' MB' : '') + ' · İndir';
+      b.onclick = function(){ if (bulutIs) return; kutu.textContent = ''; f('bulutLink').classList.add('gizli'); bulutTakip(x.is); };
+      kutu.appendChild(b);
+    });
+  } catch(e) { kutu.textContent = e.message === 'PIN' ? 'Broker PIN kabul edilmedi.' : 'Liste alınamadı: ' + e.message; }
+}
 function bulutBitir(){ bulutIs = null; f('bulutBtn').disabled = !videoDosyasi; try { localStorage.removeItem('vdBulutIs'); } catch(e) {} }
 async function bulutIndir(is, pin, d){
   var n = d.sonucParca || 1, parcalar = [];
@@ -3267,7 +3286,7 @@ async function bulutIndir(is, pin, d){
   var link = f('bulutLink'); link.href = URL.createObjectURL(blob); link.download = ad;
   link.textContent = 'Dosyayı kaydet (' + (blob.size / 1048576).toFixed(1) + ' MB)'; link.classList.remove('gizli');
   link.onclick = function(ev){
-    try { var file = new File([blob], ad, { type: 'video/mp4' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); } } catch(e) {}
+    try { var file = new File([blob], ad, { type: 'video/mp4' }); if (window.matchMedia('(pointer: coarse)').matches && navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); } } catch(e) {}
   };
   bulutYaz('Hazır. Yüksek kaliteli video aşağıda.', null);
   bulutBitir();
