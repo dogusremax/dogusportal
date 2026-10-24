@@ -298,6 +298,7 @@
               <label>Hareket</label>
               <select id="kMod"><option value="don">Etrafında dön</option><option value="acil">Ellerden yanlara açıl</option></select>
             </div>
+            <label class="anahtar"><input type="checkbox" id="kTakip"><span>Kişiyi ortala ve takip et<small>Kartlar kişiyi bulup gövdesinin etrafında döner, kişi hareket edince onu izler. Daireyi sürüklerseniz kapanır.</small></span></label>
             <div class="kaydirici"><label>Yarıçap</label><input type="range" id="kYaricap" min="15" max="70" step="0.5"><span id="kYaricapD"></span></div>
             <div class="kaydirici"><label>Kart boyu</label><input type="range" id="kKart" min="8" max="40" step="0.5"><span id="kKartD"></span></div>
             <div class="kaydirici"><label>Tur süresi</label><input type="range" id="kHiz" min="1.5" max="8" step="0.1"><span id="kHizD"></span></div>
@@ -774,7 +775,7 @@ function glHazirla(){
   } catch(e) { console.log('webgl', e); return false; }
 }
 function renklendir(enMax){
-  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return kaynakVideo();
+  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return glKaynak();
   var vk = glKaynak();
   var o = Math.min(1, enMax / video.videoWidth), w = Math.round(video.videoWidth * o), h = Math.round(video.videoHeight * o);
   if (glTuval.width !== w || glTuval.height !== h) { glTuval.width = w; glTuval.height = h; }
@@ -803,8 +804,9 @@ function kaynakVideo(){
   c.drawImage(yonHam, 0, 0); c.restore();
   return yonDuz;
 }
-/* WebGL'e video doğrudan verilmez: Chrome dik videoda dönüş bilgisini WebGL'de uygulamıyor.
-   Kare önce 2D tuvale çizilir (orada yön doğru), WebGL bu kopyayı kullanır. */
+/* Video hiçbir yere doğrudan verilmez: Chrome dik videoda dönüş bilgisini WebGL'de ve
+   kırpmalı çizimde (drawImage 9 parametre) uygulamıyor. Kare önce bütün olarak 2D tuvale çizilir
+   (orada yön doğru), her şey bu kopyayı kullanır. */
 var glKopya = document.createElement('canvas'), glKopyaT = -1;
 function glKaynak(){
   var k = kaynakVideo(); if (k !== video) return k;
@@ -884,19 +886,20 @@ function oynatIkon(){ f('oynatBtn').innerHTML = video.paused ? '<svg viewBox="0 
 function zamanYaz(){ f('zaman').textContent = zmn(video.currentTime) + ' / ' + zmn(sure()).replace(/\.\d$/, ''); }
 
 function boyutla(){
-  var r = sahne.getBoundingClientRect(), dpr = Math.min(3, window.devicePixelRatio || 1);
+  var r = sahne.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
   var w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
   if (tuval.width !== w || tuval.height !== h) { tuval.width = w; tuval.height = h; }
   cizdir();
 }
 window.addEventListener('resize', boyutla);
 
+var segSayac = 0;
 (function dongu(){
   if (!aktariliyor && video.src) {
     if (!video.paused) {
       var k = kesimIcinde(video.currentTime);
       if (k) { if (k.b >= sure() - .05) { video.pause(); video.currentTime = Math.max(0, k.a - .05); } else video.currentTime = k.b; }
-      if (kisiGerekli(video.currentTime)) segCalistir();
+      if (kisiGerekli(video.currentTime) && (++segSayac % 2 === 0 || seg.sonT < 0)) segCalistir();
       sfxTetikle(video.currentTime);
       kirli = true;
     }
@@ -1105,7 +1108,8 @@ function segCalistir(){
   if (seg.durum !== 'hazir') { segHazirla(); return; }
   var vw = video.videoWidth, vh = video.videoHeight;
   if (!vw || video.readyState < 2) return;
-  var T = seg.T, kisa = Math.min(vw, vh), uzun = Math.max(vw, vh), dikey = vh >= vw;
+  /* oynatırken önizleme için hafif mod (256), durunca ve indirirken tam kalite (512) */
+  var T = (!video.paused && !aktariliyor) ? 256 : seg.T, kisa = Math.min(vw, vh), uzun = Math.max(vw, vh), dikey = vh >= vw;
   var n = uzun / kisa > 1.05 ? Math.ceil(uzun / kisa) : 1;
   var olc = T / kisa, mw = Math.round(vw * olc), mh = Math.round(vh * olc), N = mw * mh;
   if (seg.mw !== mw || seg.mh !== mh) { seg.mw = mw; seg.mh = mh; seg.top = new Float32Array(N); seg.agirlik = new Float32Array(N); seg.onceki = null; seg.maske.width = mw; seg.maske.height = mh; }
@@ -1115,7 +1119,7 @@ function segCalistir(){
   for (var k = 0; k < n; k++) {
     var ofs = n === 1 ? 0 : k * (uzun - kisa) / (n - 1);
     var sx = dikey ? 0 : ofs, sy = dikey ? ofs : 0;
-    gctx.drawImage(kaynakVideo(), sx, sy, kisa, kisa, 0, 0, T, T);
+    gctx.drawImage(glKaynak(), sx, sy, kisa, kisa, 0, 0, T, T);
     var mofs = Math.round(ofs * olc);
     try {
       seg.model.segment(seg.girdi, function(sonuc){
@@ -1140,13 +1144,25 @@ function segCalistir(){
   var t = video.currentTime, ema = seg.onceki && Math.abs(t - seg.sonT) < .15;
   if (!seg.onceki) seg.onceki = new Float32Array(N);
   var mc = seg.maske.getContext('2d'), id = mc.createImageData(mw, mh), d = id.data, on = seg.onceki;
+  var satir = new Float32Array(mh), xTop = 0, pTop = 0;
   for (var i = 0, j = 0; i < N; i++, j += 4) {
     var p = seg.agirlik[i] > 0 ? seg.top[i] / seg.agirlik[i] : 0;
     if (ema) p = p * .6 + on[i] * .4;
     on[i] = p;
     var v = p * 255; d[j] = d[j + 1] = d[j + 2] = v; d[j + 3] = 255;
+    if (p > .5) { var yy2 = (i / mw) | 0; satir[yy2]++; }
   }
   mc.putImageData(id, 0, 0);
+  /* kişinin yeri: en üst ve en alt satır, gövde hizasında yatay merkez */
+  var ust = -1, alt = -1;
+  for (var y3 = 0; y3 < mh; y3++) if (satir[y3] > mw * .02) { if (ust < 0) ust = y3; alt = y3; }
+  if (ust >= 0) {
+    var gy = Math.round(ust + (alt - ust) * .38), y0 = Math.max(ust, gy - Math.round(mh * .06)), y1 = Math.min(alt, gy + Math.round(mh * .06));
+    for (var y4 = y0; y4 <= y1; y4++) for (var x4 = 0; x4 < mw; x4++) { var q = on[y4 * mw + x4]; if (q > .5) { xTop += x4 * q; pTop += q; } }
+    var yeni = { x: pTop ? xTop / pTop / mw : .5, y: gy / mh, ust: ust / mh, alt: alt / mh };
+    var m0 = seg.merkez;
+    seg.merkez = (m0 && ema) ? { x: m0.x * .7 + yeni.x * .3, y: m0.y * .7 + yeni.y * .3, ust: yeni.ust, alt: yeni.alt } : yeni;
+  }
   seg.sonT = t;
 }
 /* Kenar iyileştirme (WebGL) */
@@ -1188,6 +1204,10 @@ function maskeIyilestir(W, H){
   if (!inceHazirla()) return seg.maske;
   var g = ince.gl, t = ince.tuval;
   var o = Math.min(1, 1080 / Math.max(1, Math.min(W, H))); var w = Math.round(W * o), h = Math.round(H * o);
+  /* maske değişmediyse (oynatırken her iki karede bir güncellenir) önceki sonucu kullan */
+  var anahtar = seg.sonT + '|' + w + 'x' + h;
+  if (!video.paused && !aktariliyor && ince.son === anahtar) return t;
+  ince.son = anahtar;
   if (t.width !== w || t.height !== h) { t.width = w; t.height = h; }
   g.viewport(0, 0, w, h); g.clearColor(0, 0, 0, 0); g.clear(g.COLOR_BUFFER_BIT);
   try {
@@ -1739,7 +1759,8 @@ function kartCiz(ctx, im, cx, cy, w, h, rot, sx, alpha, karart){
   ctx.translate(cx, cy); ctx.rotate(rot); ctx.scale(sx, 1);
   var r = w * .12, b = Math.max(2, w * .028);
   function yol(pad){ ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(-w / 2 - pad, -h / 2 - pad, w + pad * 2, h + pad * 2, r + pad); else ctx.rect(-w / 2 - pad, -h / 2 - pad, w + pad * 2, h + pad * 2); }
-  ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = w * .12; ctx.shadowOffsetY = w * .05;
+  var hafif = !video.paused && !aktariliyor;
+  ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = w * (hafif ? .05 : .12); ctx.shadowOffsetY = w * .05;
   yol(b); ctx.fillStyle = '#FFFFFF'; ctx.fill();
   ctx.shadowColor = 'transparent';
   ctx.save(); yol(0); ctx.clip();
@@ -1758,7 +1779,8 @@ function karuselCiz(ctx, o, W, H, t, yari, duzenleme){
   var n = Math.max(imler.length, o.mod === 'don' ? 6 : imler.length);
   var g = kis((tt - o.bas) / .45, 0, 1), c = kis((o.bit - tt) / .35, 0, 1);
   var giris_ = easeBack(g), cikis = easeOut(c);
-  var cx = o.x * W, cy = o.y * H, R = o.yaricap / 100 * W, kw = o.kart / 100 * W, kh = kw * 1.8;
+  var mk = o.takip !== false && seg.merkez && seg.durum === 'hazir' ? seg.merkez : null;
+  var cx = (mk ? mk.x : o.x) * W, cy = (mk ? mk.y : o.y) * H, R = o.yaricap / 100 * W, kw = o.kart / 100 * W, kh = kw * 1.8;
   var kartlar = [];
   for (var i = 0; i < n; i++) {
     var im = imler[i % imler.length];
@@ -1781,7 +1803,7 @@ function karuselCiz(ctx, o, W, H, t, yari, duzenleme){
     if (yari === 'on' && arkada) return;
     kartCiz(ctx, k.im, k.x, k.y, k.w, k.h, k.rot, k.sx, k.al, k.kar);
   });
-  return { x: o.x, y: o.y, w: (R * 2 + kw) / W, h: (kh + R * .4) / H, karusel: true };
+  return { x: cx / W, y: cy / H, w: (R * 2 + kw) / W, h: (kh + R * .4) / H, karusel: true };
 }
 
 /* ---------- Telefon / ekran şablonları ---------- */
@@ -2095,6 +2117,7 @@ function baglaSurukle(el){
     e.preventDefault(); e.stopPropagation();
     if (!video.paused) video.pause();
     sec(o.id);
+    if (o.tur === 'karusel' && o.takip !== false && kutular[o.id] && !e.target.classList.contains('tutamak')) { o.x = kutular[o.id].x; o.y = kutular[o.id].y; o.takip = false; formDoldur(); }
     var r = sahne.getBoundingClientRect(), bx = e.clientX, by = e.clientY, x0 = o.x, y0 = o.y;
     var b0 = o.tur === 'resim' || o.tur === 'cihaz' ? o.gen : o.tur === 'karusel' ? o.yaricap : o.boyut;
     var boyutla = e.target.classList.contains('tutamak');
@@ -2147,6 +2170,7 @@ function formDoldur(){
     f('rAci').value = o.aci; f('rAciDeger').textContent = o.aci + '°';
     f('rKose').value = o.kose; f('rCerceve').value = o.cerceve; f('rEfekt').value = o.efekt; f('rHareket').value = o.hareket;
   } else if (o.tur === 'karusel') {
+    f('kTakip').checked = o.takip !== false;
     f('kMod').value = o.mod; f('kYaricap').value = o.yaricap; f('kKart').value = o.kart; f('kHiz').value = o.hiz;
     f('kYaricapD').textContent = Math.round(o.yaricap); f('kKartD').textContent = Math.round(o.kart); f('kHizD').textContent = o.hiz.toFixed(1) + 's';
     var kr = f('kResimler'); kr.innerHTML = '';
@@ -2192,6 +2216,7 @@ alan('rEfekt', 'efekt', null, 'change'); alan('rHareket', 'hareket', null, 'chan
 alan('fCikis', 'cikis', null, 'change'); alan('fDoku', 'doku', null, 'change');
 alan('cIc', 'ic', null, 'change'); alan('cEfekt', 'efekt', null, 'change'); alan('cGen', 'gen', parseFloat); alan('cAci', 'aci', parseFloat); alan('cYazi', 'yazi');
 alan('xSes', 'ses', null, 'change'); alan('xHacim', 'hacim', parseFloat);
+f('kTakip').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.takip = f('kTakip').checked; segIste(); cizdir(); kaydet(); });
 f('cSuzul').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.suzul = f('cSuzul').checked; cizdir(); kaydet(); });
 alan('zTip', 'tip', null, 'change'); alan('zOlcek', 'olcek', parseFloat);
 alan('kMod', 'mod', null, 'change'); alan('kYaricap', 'yaricap', parseFloat); alan('kKart', 'kart', parseFloat); alan('kHiz', 'hiz', parseFloat);
