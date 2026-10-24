@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050A30">
+<meta name="robots" content="noindex">
+<title>Ödeme Bilgileri — RE/MAX Doğuş</title>
+<!-- WhatsApp önizlemesi: küçük kare görsel → büyük afiş yerine yanda küçük resim -->
+<meta property="og:title" content="Ödeme Bilgileri — RE/MAX Doğuş">
+<meta property="og:description" content="IBAN, alıcı adı ve havale açıklaması tek dokunuşla kopyalanır.">
+<meta property="og:image" content="https://dogusportal.com/assets/og-kare.png">
+<meta property="og:image:width" content="256">
+<meta property="og:image:height" content="256">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/dogus-logo.png">
+<style>
+:root{
+  --lacivert:#050A30; --lacivert2:#0E1A5C; --kirmizi:#DC1C2E; --yesil:#0A7D5A; --sari:#FFF4D6; --sari2:#8A5A00;
+  --zemin:#EEF1F7; --kart:#FFFFFF; --yazi:#141B34; --soluk:#6A7389; --cizgi:#E2E6EF; --dolgu:#F5F7FB;
+  --golge:0 1px 2px rgba(5,10,48,.04),0 8px 24px rgba(5,10,48,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --zemin:#0A0F1F; --kart:#131A30; --yazi:#E9EEF8; --soluk:#95A0B7; --cizgi:#232C48; --dolgu:#1A2240;
+         --sari:#3A2C08; --sari2:#FFD27A; --golge:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;
+  padding:0 16px calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:560px;margin:0 auto}
+.ust{position:relative;overflow:hidden;color:#fff;margin:0 -16px 18px;
+  padding:calc(18px + env(safe-area-inset-top)) 20px 24px;border-radius:0 0 26px 26px;
+  background:radial-gradient(120% 140% at 100% 0%,#1B2A7A 0%,var(--lacivert2) 35%,var(--lacivert) 100%);
+  box-shadow:0 10px 30px rgba(5,10,48,.25)}
+.ust::after{content:"";position:absolute;right:-40px;bottom:-60px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,28,46,.35),transparent 70%);pointer-events:none}
+.ust .logo{height:40px;width:auto;display:block;margin-bottom:16px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
+.ust .marka{font-size:11px;letter-spacing:.18em;opacity:.7;font-weight:700;text-transform:uppercase}
+.ust h1{font-size:25px;font-weight:700;margin:4px 0 6px;letter-spacing:-.02em}
+.ust p{margin:0;font-size:13.5px;opacity:.85;line-height:1.5;position:relative;z-index:1}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--golge)}
+.grup{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;margin:20px 2px 10px}
+.grup::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--kirmizi)}
+.alan{display:block;margin-bottom:14px}
+.alan:last-child{margin-bottom:0}
+.alan .ad{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.alan .ad i{color:var(--kirmizi);font-style:normal}
+.alan .ipucu{display:block;font-size:12px;color:var(--soluk);margin-bottom:7px;line-height:1.45}
+input,select,textarea{width:100%;font-family:inherit;font-size:16px;color:var(--yazi);background:var(--dolgu);
+  border:1.5px solid transparent;border-radius:13px;padding:13px 14px;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0 0 4px rgba(220,28,46,.10)}
+input.hata{border-color:var(--kirmizi)}
+.satir{display:flex;gap:8px}
+.satir>*{flex:1}
+.satir select{flex:0 0 92px}
+.cipler{display:flex;flex-wrap:wrap;gap:8px}
+.cipler label{margin:0;cursor:pointer}
+.cipler input{display:none}
+.cipler span{display:block;background:var(--dolgu);border:1.5px solid transparent;border-radius:999px;padding:9px 14px;font-size:14px;font-weight:700}
+.cipler input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.08);color:var(--kirmizi)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:15px;
+  font:700 16px Arial,Helvetica,sans-serif;cursor:pointer;text-decoration:none;color:#fff;background:var(--kirmizi)}
+.btn.wa{background:#1FAF55}
+.btn.ikincil{background:var(--dolgu);color:var(--yazi)}
+.btn+.btn{margin-top:10px}
+.onizle{background:var(--dolgu);border-radius:14px;padding:14px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.not{font-size:12.5px;color:var(--soluk);line-height:1.5;margin:8px 2px 0}
+
+/* Müşteri görünümü */
+.tutar{text-align:center;padding:20px 18px}
+.tutar .k{font-size:13px;color:var(--soluk);font-weight:700}
+.tutar .t{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.tutar .tur{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--kirmizi);background:rgba(220,28,46,.08);border-radius:999px;padding:5px 12px}
+.bilgi{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--cizgi)}
+.bilgi:first-child{border-top:0;padding-top:2px}
+.bilgi:last-child{padding-bottom:2px}
+.bilgi .icerik{flex:1;min-width:0}
+.bilgi .k{font-size:12px;color:var(--soluk);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.bilgi .d{font-size:16px;font-weight:700;margin-top:4px;line-height:1.35;word-break:break-word}
+.bilgi .d.iban{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:15.5px;letter-spacing:.02em}
+.kopya{flex:0 0 auto;border:0;border-radius:12px;padding:11px 14px;font:700 14px Arial,Helvetica,sans-serif;cursor:pointer;
+  background:var(--lacivert2);color:#fff;min-width:92px}
+.kopya.ok{background:var(--yesil)}
+.aciklama{background:var(--sari);border:2px solid #F2B705;border-radius:20px;padding:16px;margin-bottom:14px}
+.aciklama .uyari{display:flex;gap:10px;align-items:flex-start;color:var(--sari2);font-weight:700;font-size:14.5px;line-height:1.45;margin-bottom:12px}
+.aciklama .uyari b{font-size:20px;line-height:1}
+.aciklama .metin{background:var(--kart);border-radius:14px;padding:14px;font-size:17px;font-weight:700;line-height:1.4;word-break:break-word;margin-bottom:10px}
+.aciklama .kopya{width:100%;padding:14px;font-size:15px;background:#F2B705;color:#2B1D00}
+.aciklama .kopya.ok{background:var(--yesil);color:#fff}
+.adimlar{margin:0;padding:0 0 0 20px;font-size:14px;line-height:1.6;color:var(--yazi)}
+.adimlar li{margin-bottom:4px}
+.alt{text-align:center;font-size:12px;color:var(--soluk);margin-top:18px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
+  background:#141B34;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:700;transition:all .2s;pointer-events:none;z-index:50}
+.toast.acik{opacity:1;transform:translateX(-50%) translateY(0)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ust">
+    <img class="logo" src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" width="150" height="40">
+    <div class="marka">RE/MAX Doğuş</div>
+    <h1 id="baslik">Ödeme Bilgileri</h1>
+    <p id="altbaslik">Müşteriye gönderilecek ödeme linkini hazırla. Müşteri IBAN'ı, alıcı adını ve açıklamayı tek dokunuşla kopyalar.</p>
+  </div>
+
+  <!-- ===== DANIŞMAN: link hazırlama ===== -->
+  <div id="hazirla" hidden>
+    <div class="grup">Müşteri ve işlem</div>
+    <div class="kart">
+      <label class="alan"><span class="ad">Müşteri adı soyadı <i>*</i></span>
+        <input id="fMusteri" autocomplete="off" placeholder="Örn. Ahmet Yılmaz"></label>
+      <div class="alan"><span class="ad">Ödeme türü <i>*</i></span>
+        <div class="cipler" id="fTur">
+          <label><input type="radio" name="tur" value="Kapora" checked><span>Kapora</span></label>
+          <label><input type="radio" name="tur" value="Hizmet Bedeli"><span>Hizmet bedeli</span></label>
+          <label><input type="radio" name="tur" value="Kira"><span>Kira</span></label>
+          <label><input type="radio" name="tur" value="Depozito"><span>Depozito</span></label>
+          <label><input type="radio" name="tur" value="Satış Bedeli"><span>Satış bedeli</span></label>
+          <label><input type="radio" name="tur" value="diger"><span>Diğer</span></label>
+        </div>
+        <input id="fTurDiger" placeholder="Ödeme türünü yazın" style="margin-top:10px" hidden>
+      </div>
+      <label class="alan"><span class="ad">Mülk / ilan</span>
+        <span class="ipucu">Adres, site adı veya ilan no. Açıklamaya kısaca eklenir.</span>
+        <input id="fMulk" autocomplete="off" placeholder="Örn. Kordon Sitesi B4 Daire 7"></label>
+      <div class="alan"><span class="ad">Tutar</span>
+        <div class="satir">
+          <input id="fTutar" inputmode="decimal" autocomplete="off" placeholder="Örn. 50.000">
+          <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option><option>GBP</option></select>
+        </div>
+      </div>
+      <label class="alan"><span class="ad">Müşterinin telefonu</span>
+        <span class="ipucu">Yazarsan WhatsApp doğrudan müşterinin sohbetini açar.</span>
+        <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
+    </div>
+
+    <div class="grup">Havale açıklaması</div>
+    <div class="kart">
+      <label class="alan"><span class="ad">Müşterinin yazacağı açıklama</span>
+        <span class="ipucu">Kendiliğinden oluşur, istersen değiştir. Bazı bankalar uzun açıklamayı kestiği için kısa tut.</span>
+        <input id="fAciklama" autocomplete="off"></label>
+      <div class="not" id="uzunluk"></div>
+    </div>
+
+    <div class="grup">Danışman</div>
+    <div class="kart">
+      <label class="alan"><span class="ad">Adın soyadın</span>
+        <input id="fDan" autocomplete="name" placeholder="Müşteri sayfasında görünür"></label>
+      <label class="alan"><span class="ad">Telefonun</span>
+        <span class="ipucu">Müşteri ödeme yapınca dekontu bu numaraya tek dokunuşla gönderir. Bu cihazda hatırlanır.</span>
+        <input id="fDanTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></label>
+    </div>
+
+    <div class="grup">Gönder</div>
+    <div class="kart">
+      <div class="onizle" id="mesaj"></div>
+      <div style="height:14px"></div>
+      <a class="btn wa" id="waGonder" href="#" target="_blank" rel="noopener">WhatsApp ile gönder</a>
+      <button class="btn ikincil" id="mesajKopya" type="button">Mesajı kopyala</button>
+      <button class="btn ikincil" id="linkKopya" type="button">Sadece linki kopyala</button>
+      <a class="btn ikincil" id="onizleLink" href="#" target="_blank" rel="noopener">Müşterinin göreceği sayfayı aç</a>
+    </div>
+  </div>
+
+  <!-- ===== MÜŞTERİ: ödeme sayfası ===== -->
+  <div id="musteri" hidden>
+    <div class="kart tutar" id="mTutarKart">
+      <div class="k">Ödenecek tutar</div>
+      <div class="t" id="mTutar"></div>
+      <div class="tur" id="mTur"></div>
+    </div>
+
+    <div class="kart">
+      <div class="bilgi">
+        <div class="icerik"><div class="k">Alıcı adı</div><div class="d" id="mUnvan"></div></div>
+        <button class="kopya" data-kopya="unvan" type="button">Kopyala</button>
+      </div>
+      <div class="bilgi">
+        <div class="icerik"><div class="k">IBAN</div><div class="d iban" id="mIban"></div></div>
+        <button class="kopya" data-kopya="iban" type="button">Kopyala</button>
+      </div>
+      <div class="bilgi" id="mTutarSatir">
+        <div class="icerik"><div class="k">Tutar</div><div class="d" id="mTutar2"></div></div>
+        <button class="kopya" data-kopya="tutar" type="button">Kopyala</button>
+      </div>
+    </div>
+
+    <div class="aciklama">
+      <div class="uyari"><b>⚠️</b><span>Havale / EFT yaparken <u>açıklama</u> kısmına aşağıdaki metni mutlaka yazın. Ödemeniz bu açıklamayla eşleştirilir.</span></div>
+      <div class="metin" id="mAciklama"></div>
+      <button class="kopya" data-kopya="aciklama" type="button">Açıklamayı kopyala</button>
+    </div>
+
+    <div class="kart">
+      <ol class="adimlar">
+        <li>Banka uygulamanızda <b>Para Transferi → IBAN'a</b> seçin.</li>
+        <li>IBAN ve alıcı adını yukarıdan kopyalayıp yapıştırın.</li>
+        <li><b>Açıklama</b> kısmına sarı kutudaki metni yapıştırın.</li>
+        <li>Ödemeden sonra dekontu danışmanınıza gönderin.</li>
+      </ol>
+      <div id="dekontAlan" hidden>
+        <div style="height:14px"></div>
+        <a class="btn wa" id="dekontWa" href="#" target="_blank" rel="noopener">Ödemeyi yaptım, danışmana yaz</a>
+      </div>
+    </div>
+
+    <div class="alt" id="mDanisman"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var IBAN = 'TR540015700000000127965620';
+var UNVAN = 'UMT GROUP Gayrimenkul Yatırım ve Danışmanlık İnş.San.Tic.Ltd.Şti.';
+var SAYFA = 'https://dogusportal.com/odeme.html';
+
+function $(id){ return document.getElementById(id); }
+function ibanBosluklu(s){ return s.replace(/(.{4})/g,'$1 ').trim(); }
+function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k)||''; localStorage.setItem(k,v); }catch(e){ return ''; } }
+function tel90(t){
+  var d=(t||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.indexOf('00')===0) d=d.slice(2);
+  if(d.charAt(0)==='0') d='90'+d.slice(1);
+  else if(d.length===10) d='90'+d;
+  return d;
+}
+function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('acik'); clearTimeout(toast.z); toast.z=setTimeout(function(){ t.classList.remove('acik'); },1600); }
+function kopyala(metin, btn, eskiYazi){
+  function bitti(){
+    if(btn){ btn.classList.add('ok'); btn.textContent='Kopyalandı ✓';
+      setTimeout(function(){ btn.classList.remove('ok'); btn.textContent=eskiYazi; },1800); }
+    toast('Kopyalandı');
+  }
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(metin).then(bitti,function(){ yedek(); });
+  } else yedek();
+  function yedek(){
+    var ta=document.createElement('textarea'); ta.value=metin; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0,metin.length);
+    try{ document.execCommand('copy'); bitti(); }catch(e){ prompt('Kopyalayın:',metin); }
+    document.body.removeChild(ta);
+  }
+}
+
+var q = new URLSearchParams(location.search);
+
+if(q.get('a')){
+  // ----- Müşteri görünümü -----
+  var musteri=q.get('m')||'', tur=q.get('t')||'', tutar=q.get('u')||'', para=q.get('p')||'TL';
+  var aciklama=q.get('a'), dan=q.get('d')||'', danTel=q.get('dt')||'';
+  document.title='Ödeme Bilgileri'+(musteri?' — '+musteri:'')+' — RE/MAX Doğuş';
+  $('baslik').textContent=musteri?('Sayın '+musteri):'Ödeme Bilgileri';
+  $('altbaslik').textContent='Aşağıdaki bilgilerle havale / EFT yapabilirsiniz. Her bilgiyi kopyala düğmesiyle alın.';
+  $('mUnvan').textContent=UNVAN;
+  $('mIban').textContent=ibanBosluklu(IBAN);
+  $('mAciklama').textContent=aciklama;
+  var tutarYazi=tutar?(tutar+' '+para):'';
+  if(tutarYazi){ $('mTutar').textContent=tutarYazi; $('mTutar2').textContent=tutarYazi; }
+  else { $('mTutar').textContent=tur||'Ödeme'; $('mTutarKart').querySelector('.k').textContent='Ödeme'; $('mTutarSatir').hidden=true; }
+  if(tutarYazi && tur) $('mTur').textContent=tur; else $('mTur').hidden=true;
+  if(dan) $('mDanisman').innerHTML='Danışmanınız: <b></b><br>RE/MAX Doğuş';
+  if(dan) $('mDanisman').querySelector('b').textContent=dan;
+  if(danTel){
+    $('dekontAlan').hidden=false;
+    var dm='Merhaba'+(dan?' '+dan.split(' ')[0]:'')+', '+(tur?tur.toLocaleLowerCase('tr')+' ':'')+'ödememi yaptım. Dekontu gönderiyorum.\nAçıklama: '+aciklama;
+    $('dekontWa').href='https://wa.me/'+tel90(danTel)+'?text='+encodeURIComponent(dm);
+  }
+  var degerler={ unvan:UNVAN, iban:IBAN, tutar:tutar.replace(/\./g,''), aciklama:aciklama };
+  document.querySelectorAll('[data-kopya]').forEach(function(b){
+    var yazi=b.textContent;
+    b.addEventListener('click',function(){ kopyala(degerler[b.dataset.kopya],b,yazi); });
+  });
+  $('musteri').hidden=false;
+} else {
+  // ----- Danışman görünümü -----
+  $('hazirla').hidden=false;
+  $('fDan').value=ls('odm_dan')||ls('ke_danisman');
+  $('fDanTel').value=ls('odm_tel');
+  var elleDegisti=false;
+
+  function secilenTur(){
+    var v=document.querySelector('input[name=tur]:checked').value;
+    return v==='diger'?$('fTurDiger').value.trim():v;
+  }
+  function tutarBicim(){
+    var d=$('fTutar').value.replace(/[^\d,]/g,'');
+    var p=d.split(','), tam=p[0].replace(/^0+(?=\d)/,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    return p.length>1?tam+','+p[1].slice(0,2):tam;
+  }
+  function otomatikAciklama(){
+    return [$('fMusteri').value.trim(), $('fMulk').value.trim(), secilenTur()].filter(Boolean).join(' - ');
+  }
+  function link(){
+    var p=new URLSearchParams();
+    var m=$('fMusteri').value.trim(); if(m) p.set('m',m);
+    var t=secilenTur(); if(t) p.set('t',t);
+    var u=tutarBicim(); if(u){ p.set('u',u); p.set('p',$('fPara').value); }
+    p.set('a',$('fAciklama').value.trim()||otomatikAciklama()||'Ödeme');
+    var d=$('fDan').value.trim(); if(d) p.set('d',d);
+    var dt=tel90($('fDanTel').value); if(dt) p.set('dt',dt);
+    return SAYFA+'?'+p.toString().replace(/\+/g,'%20');
+  }
+  function mesaj(){
+    var m=$('fMusteri').value.trim(), t=secilenTur(), u=tutarBicim(), ac=$('fAciklama').value.trim()||otomatikAciklama();
+    var s='Merhaba'+(m?' '+m:'')+',\n\n';
+    s+=(t?t+' ödemesi':'Ödeme')+' için banka bilgilerimiz aşağıdadır'+(u?' (Tutar: '+u+' '+$('fPara').value+')':'')+'.\n\n';
+    s+='Alıcı: '+UNVAN+'\nIBAN: '+ibanBosluklu(IBAN)+'\n\n';
+    s+='⚠️ Havale/EFT açıklamasına lütfen şunu yazın:\n*'+ac+'*\n\n';
+    s+='Tek dokunuşla kopyalamak için:\n'+link();
+    return s;
+  }
+  function guncelle(){
+    if(!elleDegisti) $('fAciklama').value=otomatikAciklama();
+    var n=$('fAciklama').value.length;
+    $('uzunluk').textContent=n?(n+' karakter'+(n>60?' — biraz uzun, bazı bankalar kesebilir':'')):'';
+    $('mesaj').textContent=mesaj();
+    var tel=tel90($('fMTel').value);
+    $('waGonder').href='https://wa.me/'+tel+'?text='+encodeURIComponent(mesaj());
+    $('onizleLink').href=link();
+    ls('odm_dan',$('fDan').value.trim()); ls('odm_tel',$('fDanTel').value.trim());
+  }
+  document.querySelectorAll('input[name=tur]').forEach(function(r){
+    r.addEventListener('change',function(){ $('fTurDiger').hidden=r.value!=='diger'||!r.checked; if(r.value==='diger'&&r.checked) $('fTurDiger').focus(); guncelle(); });
+  });
+  ['fMusteri','fMulk','fTutar','fPara','fMTel','fDan','fDanTel','fTurDiger'].forEach(function(id){
+    $(id).addEventListener('input',guncelle); $(id).addEventListener('change',guncelle);
+  });
+  $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); guncelle(); });
+  $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; guncelle(); });
+  $('waGonder').addEventListener('click',function(e){
+    if(!$('fMusteri').value.trim()){ e.preventDefault(); $('fMusteri').classList.add('hata'); $('fMusteri').focus(); toast('Müşteri adını yazın'); }
+  });
+  $('fMusteri').addEventListener('input',function(){ $('fMusteri').classList.remove('hata'); });
+  $('mesajKopya').addEventListener('click',function(){ kopyala(mesaj(),this,'Mesajı kopyala'); });
+  $('linkKopya').addEventListener('click',function(){ kopyala(link(),this,'Sadece linki kopyala'); });
+  guncelle();
+}
+</script>
+</body>
+</html>
