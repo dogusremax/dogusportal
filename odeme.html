@@ -155,22 +155,23 @@ input.hata{border-color:var(--kirmizi)}
       <div class="not" id="uzunluk"></div>
     </div>
 
-    <button class="btn" id="hazirlaBtn" type="button">Ödeme linkini hazırla</button>
+    <button class="btn wa" id="hazirlaBtn" type="button">Müşteriye gönder</button>
+    <div class="not" style="text-align:center">Mesaj müşteriye RE/MAX Doğuş WhatsApp hattından, "Ödeme bilgilerini gör" düğmesiyle gider.</div>
     <div class="not" id="hazirlaHata"></div>
 
     <div id="sonuc" hidden>
-      <div class="grup">Gönder</div>
+      <div class="grup" id="sonucBaslik">Gönderildi</div>
       <div class="kart">
-        <div class="alan"><span class="ad">Müşterinin linki</span>
-          <div class="onizle" id="kisaLink"></div></div>
+        <div class="onizle" id="ofisDurum"></div>
+        <div style="height:12px"></div>
         <div class="alan"><span class="ad">Havale açıklaması</span>
           <div class="onizle" id="sonAciklama"></div></div>
-        <button class="btn wa" id="ofisGonder" type="button">Ofis hattından gönder (düğmeli)</button>
-        <div class="not" id="ofisDurum"></div>
-        <div style="height:10px"></div>
-        <a class="btn ikincil" id="waGonder" href="#" target="_blank" rel="noopener">Kendi WhatsApp'ımdan gönder</a>
-        <button class="btn ikincil" id="linkKopya" type="button">Linki kopyala</button>
-        <a class="btn ikincil" id="onizleLink" href="#" target="_blank" rel="noopener">Müşterinin göreceği sayfayı aç</a>
+        <div id="yedek" hidden>
+          <a class="btn wa" id="waGonder" href="#" target="_blank" rel="noopener">Şimdilik kendi WhatsApp'ımdan gönder</a>
+          <div style="height:10px"></div>
+        </div>
+        <button class="btn ikincil" id="yeniBtn" type="button">Yeni ödeme iste</button>
+        <div class="not" style="text-align:center"><a id="onizleLink" href="#" target="_blank" rel="noopener">Müşterinin göreceği sayfa</a> · <a href="#" id="linkKopya">Linki kopyala</a></div>
       </div>
     </div>
   </div>
@@ -374,39 +375,38 @@ if(q.get('sablon')){
     if(!$('fDan').value) return eksik('fDan','Kendini seç');
     if(!$('fMusteri').value.trim()) return eksik('fMusteri','Müşteri adını yazın');
     if(tel90($('fMTel').value).length!==12) return eksik('fMTel','Müşterinin telefonunu yazın');
-    b.disabled=true; b.textContent='Hazırlanıyor…'; $('hazirlaHata').textContent='';
-    var u=tutarBicim();
-    api({islem:'olustur', m:$('fMusteri').value.trim(), mtel:$('fMTel').value, t:secilenTur(), u:u, p:u?$('fPara').value:'',
+    b.disabled=true; b.textContent='Gönderiliyor…'; $('hazirlaHata').textContent='';
+    var u=tutarBicim(), m=$('fMusteri').value.trim(), t=secilenTur();
+    api({islem:'olustur', m:m, mtel:$('fMTel').value, t:t, u:u, p:u?$('fPara').value:'',
          mulk:$('fMulk').value.trim(), a:$('fAciklama').value.trim()||otomatikAciklama(), d:$('fDan').value, dt:$('fDanTel').value})
     .then(function(j){
       if(!j.ok) throw new Error(j.error||'Kaydedilemedi.');
       kayit=j;
-      var link=SAYFA+'?k='+j.kod, m=$('fMusteri').value.trim(), t=secilenTur();
-      $('kisaLink').textContent=link;
+      var link=SAYFA+'?k='+j.kod;
       $('sonAciklama').textContent=j.aciklama;
       $('onizleLink').href=link;
       var mesaj='Merhaba '+m+', '+(t?t.toLocaleLowerCase('tr')+' ':'')+'ödemesi için banka bilgileri ve havale açıklaması bu linkte, tek dokunuşla kopyalayabilirsiniz:\n'+link;
       $('waGonder').href='https://wa.me/'+tel90($('fMTel').value)+'?text='+encodeURIComponent(mesaj);
-      $('ofisDurum').textContent=''; $('ofisGonder').disabled=false; $('ofisGonder').textContent='Ofis hattından gönder (düğmeli)';
-      $('sonuc').hidden=false; b.hidden=true;
-      $('sonuc').scrollIntoView({behavior:'smooth',block:'start'});
+      return api({islem:'gonder',kod:j.kod}).then(function(g){
+        $('sonuc').hidden=false; b.hidden=true;
+        if(g.ok){
+          $('sonucBaslik').textContent='Gönderildi ✓'; $('yedek').hidden=true;
+          $('ofisDurum').textContent=m+' adlı müşteriye RE/MAX Doğuş hattından ödeme bilgisi gitti.';
+        } else {
+          $('sonucBaslik').textContent='Ofis hattından gönderilemedi'; $('yedek').hidden=false;
+          $('ofisDurum').textContent=(g.error||'Gönderilemedi.')+' Kayıt hazır; şimdilik linki kendi WhatsApp\'ından gönderebilirsin.';
+        }
+        $('sonuc').scrollIntoView({behavior:'smooth',block:'start'});
+      });
     })
     .catch(function(e){ $('hazirlaHata').textContent=(e&&e.message)||'Bağlantı hatası, tekrar deneyin.'; })
-    .then(function(){ b.disabled=false; b.textContent='Ödeme linkini hazırla'; });
+    .then(function(){ b.disabled=false; b.textContent='Müşteriye gönder'; });
   });
-
-  $('ofisGonder').addEventListener('click',function(){
-    var b=this; if(!kayit) return;
-    b.disabled=true; b.textContent='Gönderiliyor…';
-    api({islem:'gonder',kod:kayit.kod}).then(function(j){
-      if(!j.ok) throw new Error(j.error||'Gönderilemedi.');
-      b.textContent='Gönderildi ✓'; $('ofisDurum').textContent='Müşteriye ofis hattından "Ödeme bilgilerini gör" düğmeli mesaj gitti.';
-    }).catch(function(e){
-      b.disabled=false; b.textContent='Ofis hattından gönder (düğmeli)';
-      $('ofisDurum').textContent=((e&&e.message)||'Gönderilemedi.')+' Şimdilik "Kendi WhatsApp\'ımdan gönder" ile yollayabilirsin.';
-    });
+  $('yeniBtn').addEventListener('click',function(){
+    ['fMusteri','fMulk','fTutar','fMTel','fTurDiger'].forEach(function(id){ $(id).value=''; });
+    elleDegisti=false; $('fAciklama').value=''; sifirla(); window.scrollTo({top:0,behavior:'smooth'});
   });
-  $('linkKopya').addEventListener('click',function(){ if(kayit) kopyala(SAYFA+'?k='+kayit.kod,this,'Linki kopyala'); });
+  $('linkKopya').addEventListener('click',function(e){ e.preventDefault(); if(kayit) kopyala(SAYFA+'?k='+kayit.kod,null); });
   sifirla();
 }
 </script>
