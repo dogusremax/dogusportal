@@ -1533,7 +1533,7 @@ function canliIsci(){
     maskeYaz(r.p, r.mw, r.mh, t); mbAnahtar = ''; kirli = true;
   });
 }
-function segIste(){ if (video.src && kisiGerekli(video.currentTime || 0)) { if (isci.durum !== 'hata' && !aktariliyor) { isciKur(); canliIsci(); } else if (seg.durum === 'hazir') segCalistir(); else segHazirla(); } }
+function segIste(){ if (video.src && kisiGerekli(video.currentTime || 0)) { if (!aktariliyor) isciKur(); if (seg.durum === 'hazir' || isci.durum === 'hazir') segCalistir(); else segHazirla(); } }
 function segHesapla(kaynakT, vw, vh, T){
   var kisa = Math.min(vw, vh), uzun = Math.max(vw, vh), dikey = vh >= vw;
   var n = uzun / kisa > 1.05 ? Math.ceil(uzun / kisa) : 1;
@@ -1640,12 +1640,18 @@ function hariciMaskeCiz(){
 }
 function segCalistir(){
   if (harici) { hariciMaskeCiz(); return; }
-  if (!aktariliyor && !window.renderModu) { if (isci.durum === 'yok') isciKur(); if (isci.durum !== 'hata') { canliIsci(); return; } }
+  if (!aktariliyor && !window.renderModu) {
+    if (isci.durum === 'yok') isciKur();
+    if (isci.durum === 'hazir') { canliIsci(); return; }
+    /* iş parçacığı henüz hazır değilse beklemeden ana modelle bu kare hemen hesaplanır */
+    if (isci.durum === 'yukleniyor') { if (seg.durum !== 'hazir') { segHazirla(); return; } if (!video.paused && seg.sonT >= 0) return; }
+  }
   if (aktariliyor && analizdenMaske(video.currentTime)) return;
   if (seg.durum !== 'hazir') { segHazirla(); return; }
   var vw = vG(), vh = vY();
   if (!vw || video.readyState < 2) return;
-  if (analiz.durum === 'yok') analizBaslat();
+  /* ön analiz ana iş parçacığında yalnız iş parçacığı kullanılamıyorsa yapılır */
+  if (analiz.durum === 'yok' && (isci.durum === 'hata' || aktariliyor || window.renderModu)) analizBaslat();
   if (analizdenMaske(video.currentTime)) return;
   /* ön analiz bitene kadar canlı hesap: oynatırken hafif (256), durunca ve indirirken tam (512) */
   var T = (!video.paused && !aktariliyor) ? 256 : seg.T;
