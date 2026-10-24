@@ -10,7 +10,7 @@
 <script>brokerKapi();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Inter+Tight:wght@500;700;800;900&family=Oswald:wght@600;700&family=Pacifico&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Inter+Tight:wght@500;700;800;900&family=Oswald:wght@600;700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@1,600;1,700&family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0B0C10; --ink:#F1F2F6; --ink-2:#C5C8D4; --mute:#8A8EA0;
@@ -189,10 +189,12 @@
               <input type="range" id="fBoyut" min="2" max="40" step="0.1" style="flex:1">
               <span id="fBoyutDeger" class="not" style="min-width:34px"></span>
             </div>
-            <div class="satir" id="ozelRenk">
-              <label>Renk</label>
+            <div class="satir">
+              <label class="anahtar" style="margin:0"><input type="checkbox" id="fRenkDegis"> Rengi değiştir</label>
               <input type="color" id="fRenk">
-              <label class="kisa">Zemin</label>
+            </div>
+            <div class="satir" id="ozelRenk">
+              <label>Zemin rengi</label>
               <select id="fZemin">
                 <option value="yok">Yok (gölgeli)</option>
                 <option value="kutu">Renkli kutu</option>
@@ -578,6 +580,7 @@ function sekmeAc(id){ var b = document.querySelector('.sekme[data-p="' + id + '"
 var REELS = 'Inter Tight', ALTIN = 'Oswald';
 var STIL_GRUP = [
   ['Reels videosundaki stiller', ['r_kucuk', 'r_beyaz', 'r_siyah', 'r_mor', 'r_lavanta', 'r_gri', 'r_mercan', 'r_turuncu', 'r_altin', 'r_video']],
+  ['İri kapak yazıları', ['k_dev', 'k_devgolge', 'k_sariital', 'k_beyazital', 'k_devsari', 'k_devsiyah']],
   ['Popüler şablonlar (CapCut tarzı)', ['c_tiktok', 'c_sarikontur', 'c_kontur', 'c_neon', 'c_neonpembe', 'c_3d', 'c_sertgolge', 'c_glitch', 'c_sticker', 'c_degrade', 'c_vurgu', 'c_beyazkutu', 'c_anton', 'c_bebas', 'c_marker', 'c_elyazi']],
   ['Ofis', ['o_kirmizi', 'o_lacivert', 'o_sari', 'ozel']]
 ];
@@ -592,6 +595,13 @@ var STILLER = {
   r_turuncu: { ad: 'Turuncu', ornek: 'story', font: REELS, w: 800, ls: -.045, boyut: 22, grad: ['v', '#FFB067', '#F2602B'], doku: 'grenli' },
   r_altin:   { ad: 'Altın', ornek: '$10 MILLION', font: ALTIN, w: 700, ls: 0, boyut: 15, buyuk: true, grad: ['v', '#F3E3B0', '#C9A45C', '#8A6A30', '#B89048', '#E8CF8E'], golge: 'koyu', onizZemin: '#59626d' },
   r_video:   { ad: 'Video dolgulu', ornek: 'God', font: REELS, w: 800, ls: -.045, boyut: 22, video: true },
+
+  k_dev:       { ad: 'Dev beyaz', ornek: 'text', font: 'Archivo Black', w: 400, ls: -.03, boyut: 26, dolgu: '#FFFFFF', golge: 'yumusak' },
+  k_devgolge:  { ad: 'Dev beyaz gölgeli', ornek: 'pinch', font: 'Archivo Black', w: 400, ls: -.03, boyut: 26, dolgu: '#FFFFFF', sertGolge: 'rgba(0,0,0,.45)', golgeK: .035 },
+  k_sariital:  { ad: 'Sarı italik serif', ornek: '30 second:', font: 'Playfair Display', ital: true, w: 700, ls: 0, boyut: 11, dolgu: '#F5C518', golge: 'koyu' },
+  k_beyazital: { ad: 'Beyaz italik serif', ornek: 'tutorial', font: 'Playfair Display', ital: true, w: 700, ls: 0, boyut: 11, dolgu: '#FFFFFF', golge: 'koyu' },
+  k_devsari:   { ad: 'Dev sarı', ornek: 'FIRSAT', font: 'Archivo Black', w: 400, ls: -.03, boyut: 24, buyuk: true, dolgu: '#FFE14D', golge: 'yumusak' },
+  k_devsiyah:  { ad: 'Dev siyah', ornek: 'satıldı', font: 'Archivo Black', w: 400, ls: -.03, boyut: 24, dolgu: '#14161C', golge: 'yumusak', onizZemin: '#DDE2E8' },
 
   c_tiktok:    { ad: 'Siyah şerit', ornek: 'Merhaba', font: REELS, w: 800, ls: -.01, boyut: 7, dolgu: '#FFFFFF', kutu: 'rgba(0,0,0,.72)' },
   c_sarikontur:{ ad: 'Sarı kontur', ornek: 'FIRSAT', font: REELS, w: 900, ls: 0, boyut: 10, buyuk: true, dolgu: '#FFE14D', kenar: '#000000', kenarK: .2, sertGolge: '#000000' },
@@ -616,13 +626,22 @@ var STILLER = {
   ozel:      { ad: 'Özel renk', ornek: 'Aa', font: 'Plus Jakarta Sans', w: 800, ls: 0, boyut: 7 }
 };
 function stilAl(y){
-  if (y.stil !== 'ozel' && STILLER[y.stil]) return STILLER[y.stil];
+  if (y.stil !== 'ozel' && STILLER[y.stil]) {
+    var t = STILLER[y.stil];
+    if (y.renkDegis) { t = Object.assign({}, t, { dolgu: y.renk, grad: null, video: false, neon: t.neon ? y.renk : null, kutu: t.kutu ? y.renk : null }); if (t.kutu) t.dolgu = kontrastRenk(y.renk); }
+    return t;
+  }
   var o = { font: 'Plus Jakarta Sans', w: 800, ls: 0, dolgu: y.renk };
   if (y.zemin === 'kutu') o.kutu = y.zeminRenk; else if (y.zemin === 'cerceve') o.kenar = y.zeminRenk; else o.golge = true;
   return o;
 }
+function kontrastRenk(hex){
+  var h = (hex || '#fff').replace('#', ''); if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+  return (r * .299 + g * .587 + b * .114) > 150 ? '#111111' : '#FFFFFF';
+}
 function stilCss(s){
-  var c = 'font-family:"' + s.font + '";font-weight:' + s.w + ';letter-spacing:' + s.ls + 'em;';
+  var c = 'font-family:"' + s.font + '";font-weight:' + s.w + ';letter-spacing:' + s.ls + 'em;' + (s.ital ? 'font-style:italic;' : '');
   if (s.grad) c += 'background:linear-gradient(' + (s.grad[0] === 'h' ? '90deg' : '180deg') + ',' + s.grad.slice(1).join(',') + ');-webkit-background-clip:text;background-clip:text;color:transparent;';
   else if (s.video) c += 'background:linear-gradient(180deg,#dff1ff,#7fb0d0 55%,#3d6f8f);-webkit-background-clip:text;background-clip:text;color:transparent;';
   else c += 'color:' + (s.dolgu || '#fff') + ';';
@@ -1488,7 +1507,7 @@ function yaziCiz(ctx, y, W, H, t, a, golgesiz){
   var fs = y.boyut / 100 * W, ls = (s.ls || 0) * fs;
   var lh = fs * (s.kutu ? 1.18 : (s.font === ALTIN || s.font === 'Pacifico' ? 1.15 : (s.font === REELS ? .92 : 1.02)));
   ctx.save();
-  ctx.font = s.w + ' ' + fs + 'px "' + s.font + '", "Helvetica Neue", Arial, sans-serif';
+  ctx.font = (s.ital ? 'italic ' : '') + s.w + ' ' + fs + 'px "' + s.font + '", "Helvetica Neue", Arial, sans-serif';
   ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
   var sat = satirlar(ctx, metin, W * .92, ls);
   var genler = sat.map(function(l){ return genislik(ctx, l, ls); });
@@ -1540,6 +1559,7 @@ function yaziCiz(ctx, y, W, H, t, a, golgesiz){
       var yerel = -w / 2;
       if (golgesiz) {}
       else if (s.golge === 'koyu') { ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = fs * .12; ctx.shadowOffsetY = fs * .05; }
+      else if (s.golge === 'yumusak') { ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = fs * .28; ctx.shadowOffsetY = fs * .06; }
       else if (s.golge) { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = fs * .14; ctx.shadowOffsetY = fs * .03; }
       if (s.ekstrud) {
         var adim = Math.max(2, Math.round(s.derinlik * fs / Math.max(1, fs / 60)));
@@ -2116,6 +2136,7 @@ function formDoldur(){
     if (document.activeElement !== f('fMetin')) f('fMetin').value = o.metin;
     f('fBoyut').value = o.boyut; f('fBoyutDeger').textContent = o.boyut.toFixed(1);
     f('fRenk').value = o.renk; f('fZemin').value = o.zemin; f('fZeminRenk').value = o.zeminRenk;
+    f('fRenkDegis').checked = !!o.renkDegis; f('fRenkDegis').parentNode.classList.toggle('gizli', o.stil === 'ozel');
     f('ozelRenk').classList.toggle('gizli', o.stil !== 'ozel');
     f('fEfekt').value = o.efekt;
     f('fCikis').value = o.cikis || (o.efekt === 'yok' || o.efekt === 'daktilo' ? 'yok' : 'belir');
@@ -2177,6 +2198,8 @@ alan('kMod', 'mod', null, 'change'); alan('kYaricap', 'yaricap', parseFloat); al
 ['kYaricap', 'kKart', 'kHiz'].forEach(function(id){ f(id).addEventListener('input', formDoldur); });
 alan('fBas', 'bas', function(v){ return Math.max(0, parseFloat(v) || 0); });
 alan('fBit', 'bit', function(v){ return Math.max(0, parseFloat(v) || 0); });
+f('fRenkDegis').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.renkDegis = f('fRenkDegis').checked; cizdir(); kaydet(); });
+f('fRenk').addEventListener('input', function(){ var o = bul(secili); if (o && o.stil !== 'ozel') { o.renkDegis = true; f('fRenkDegis').checked = true; cizdir(); kaydet(); } });
 f('fArka').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.arka = f('fArka').checked; kaydet(); segIste(); cizdir(); listele(); });
 function simdiAta(k){ var o = bul(secili); if (!o) return; o[k] = +video.currentTime.toFixed(1); if (o.bit < o.bas) { if (k === 'bas') o.bit = +(o.bas + 2).toFixed(1); else o.bas = o.bit; } formDoldur(); cizdir(); listele(); kaydet(); }
 function ortala(){ var o = bul(secili); if (!o) return; o.x = .5; cizdir(); kaydet(); }
@@ -2411,7 +2434,7 @@ document.addEventListener('keydown', function(e){
 });
 listele(); formDoldur(); arkaSec(arka.tur); ayarlariGoster(); kesimArayuz(); kelimeArayuz(); boyutla();
 if (document.fonts) document.fonts.ready.then(cizdir);
-['800 40px "Inter Tight"', '700 40px "Oswald"', '800 40px "Plus Jakarta Sans"', '40px "Anton"', '40px "Bebas Neue"', '40px "Pacifico"', '40px "Permanent Marker"', '900 40px "Inter Tight"'].forEach(function(x){ if (document.fonts) document.fonts.load(x).then(cizdir).catch(function(){}); });
+['800 40px "Inter Tight"', '700 40px "Oswald"', '800 40px "Plus Jakarta Sans"', '40px "Anton"', '40px "Bebas Neue"', '40px "Pacifico"', '40px "Permanent Marker"', 'italic 700 40px "Playfair Display"', '40px "Archivo Black"', '900 40px "Inter Tight"'].forEach(function(x){ if (document.fonts) document.fonts.load(x).then(cizdir).catch(function(){}); });
 
 /* ---------- Dışa aktarma ---------- */
 function bicim(){
