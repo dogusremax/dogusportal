@@ -176,7 +176,13 @@ async function ana() {
     await durum('Sonuç gönderiliyor', 95 + 5 * (i + 1) / n);
   }
   await istek({ action: 'vrIsYaz', durum: 'hazir', mesaj: 'Hazır', yuzde: 100, sonucParca: n, boyut: veri.length, sure });
-  if (DENEME) fs.copyFileSync(son, path.join(process.env.RUNNER_TEMP || '/tmp', 'deneme-sonuc.mp4'));
+  if (DENEME) {
+    fs.copyFileSync(son, path.join(process.env.RUNNER_TEMP || '/tmp', 'deneme-sonuc.mp4'));
+    /* kontrol için küçük kare dizisi günlüğe (base64) */
+    const kd = path.join(IS_DIR, 'kareler.jpg');
+    ff(['-i', son, '-vf', 'fps=1,scale=200:-2,tile=6x1', '-frames:v', '1', '-q:v', '4', kd]);
+    console.log('KARELER ' + fs.readFileSync(kd).toString('base64'));
+  }
   console.log('TAMAM', n, 'parça', (veri.length / 1048576).toFixed(1), 'MB');
 }
 
