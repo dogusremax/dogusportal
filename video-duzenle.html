@@ -150,6 +150,7 @@
       </div>
       <div class="satir" style="margin-top:10px">
         <button class="btn" onclick="dosya.click()">Video değiştir</button>
+        <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻ Döndür</button>
         <button class="btn mavi" onclick="yaziEkle()">+ Yazı</button>
         <button class="btn mavi" onclick="resimDosya.click()">+ Resim</button>
         <button class="btn mavi" onclick="karuselDosya.click()">+ Dönen kartlar</button>
@@ -754,22 +755,59 @@ function glHazirla(){
   } catch(e) { console.log('webgl', e); return false; }
 }
 function renklendir(enMax){
-  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return video;
+  var vk = kaynakVideo();
+  if (!ayarVarMi() || !video.videoWidth || !glHazirla()) return vk;
   var o = Math.min(1, enMax / video.videoWidth), w = Math.round(video.videoWidth * o), h = Math.round(video.videoHeight * o);
   if (glTuval.width !== w || glTuval.height !== h) { glTuval.width = w; glTuval.height = h; }
   gl.viewport(0, 0, w, h);
   gl.bindTexture(gl.TEXTURE_2D, glTex);
-  try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video); } catch(e) { return video; }
+  try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vk); } catch(e) { return vk; }
   gl.uniform1i(glU.t, 0); gl.uniform2f(glU.px, 1 / video.videoWidth, 1 / video.videoHeight); gl.uniform1f(glU.zaman, (video.currentTime * 30) % 97);
   AYARLAR.forEach(function(x){ gl.uniform1f(glU[x[0]], ayar[x[0]] || 0); });
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   return glTuval;
 }
 
+/* ---------- Video yönü ----------
+   Telefonla dik çekilen videolarda görüntü yan kaydedilir, dosyaya "90° döndür" bilgisi yazılır.
+   Bazı tarayıcılar (Safari) videoyu çizerken bu bilgiyi uygulamaz; bu durumda kareyi biz döndürürüz. */
+var yon = 0, yonHam = document.createElement('canvas'), yonDuz = document.createElement('canvas'), yonSonT = -1;
+function kaynakVideo(){
+  if (!yon || !video.videoWidth) return video;
+  var W = video.videoWidth, H = video.videoHeight;
+  if (yonDuz.width !== W || yonDuz.height !== H) { yonDuz.width = W; yonDuz.height = H; yonHam.width = H; yonHam.height = W; yonSonT = -1; }
+  if (video.currentTime === yonSonT && video.paused) return yonDuz;
+  yonSonT = video.currentTime;
+  yonHam.getContext('2d').drawImage(video, 0, 0, H, W);
+  var c = yonDuz.getContext('2d'); c.save();
+  if (yon === 90) { c.translate(W, 0); c.rotate(Math.PI / 2); } else { c.translate(0, H); c.rotate(-Math.PI / 2); }
+  c.drawImage(yonHam, 0, 0); c.restore();
+  return yonDuz;
+}
+function yonDegistir(){ yon = yon === 0 ? 90 : yon === 90 ? 270 : 0; yonSonT = -1; seg.onceki = null; cizdir(); segIste(); }
+function dosyaDonusu(d){
+  /* mp4/mov içindeki video izinin dönüş matrisini okur */
+  return d.arrayBuffer().then(function(buf){
+    var v = new DataView(buf), u = new Uint8Array(buf);
+    for (var i = 4; i < u.length - 92; i++) {
+      if (u[i] !== 116 || u[i + 1] !== 107 || u[i + 2] !== 104 || u[i + 3] !== 100) continue;
+      var ver = u[i + 4], m = i + 8 + (ver === 1 ? 32 : 20) + 16;
+      if (m + 44 > u.length) break;
+      var a = v.getInt32(m), b = v.getInt32(m + 4), gen = v.getUint32(m + 36);
+      if (!gen) continue;
+      var aci = Math.round(Math.atan2(b, a) * 180 / Math.PI);
+      return (aci + 360) % 360;
+    }
+    return 0;
+  }).catch(function(){ return 0; });
+}
+var safari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+
 /* ---------- Video ---------- */
 dosya.addEventListener('change', function(){
   var d = dosya.files[0]; if (!d) return;
-  videoDosyasi = d; kesimler = []; kesimArayuz();
+  videoDosyasi = d; kesimler = []; kesimArayuz(); yon = 0; yonSonT = -1;
+  dosyaDonusu(d).then(function(r){ if (safari && (r === 90 || r === 270)) { yon = r; yonSonT = -1; seg.onceki = null; cizdir(); } });
   video.src = URL.createObjectURL(d);
   video.load();
 });
@@ -1027,7 +1065,7 @@ function segCalistir(){
   for (var k = 0; k < n; k++) {
     var ofs = n === 1 ? 0 : k * (uzun - kisa) / (n - 1);
     var sx = dikey ? 0 : ofs, sy = dikey ? ofs : 0;
-    gctx.drawImage(video, sx, sy, kisa, kisa, 0, 0, T, T);
+    gctx.drawImage(kaynakVideo(), sx, sy, kisa, kisa, 0, 0, T, T);
     var mofs = Math.round(ofs * olc);
     try {
       seg.model.segment(seg.girdi, function(sonuc){
@@ -1103,7 +1141,7 @@ function maskeIyilestir(W, H){
   if (t.width !== w || t.height !== h) { t.width = w; t.height = h; }
   g.viewport(0, 0, w, h); g.clearColor(0, 0, 0, 0); g.clear(g.COLOR_BUFFER_BIT);
   try {
-    g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, ince.tex[0]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, video);
+    g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, ince.tex[0]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, kaynakVideo());
     g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, ince.tex[1]); g.texImage2D(g.TEXTURE_2D, 0, g.RGB, g.RGB, g.UNSIGNED_BYTE, seg.maske);
   } catch(e) { return seg.maske; }
   g.uniform2f(ince.mt, 1 / seg.mw, 1 / seg.mh);
@@ -2352,14 +2390,154 @@ function bicim(){
 }
 function disaAktar(){
   if (!video.src || aktariliyor) return;
-  if (!window.MediaRecorder) { f('indirDurum').textContent = 'Bu tarayıcı video kaydını desteklemiyor. Safari ya da Chrome ile açın.'; return; }
+  if (!window.MediaRecorder && !proDestek()) { f('indirDurum').textContent = 'Bu tarayıcı video kaydını desteklemiyor. Safari ya da Chrome ile açın.'; return; }
   var b = sesHazirla();
   var bekle = [];
   if (arka.tur !== 'yok' || ogeler.some(function(o){ return o.arka || o.tur === 'karusel'; })) { segHazirla(); bekle.push(function(){ return seg.durum === 'hazir' || seg.durum === 'hata'; }); }
   if (ses.gurultu && b) { rnnHazirla(); bekle.push(function(){ return b.rnnDurum === 'hazir' || b.rnnDurum === 'hata'; }); }
-  if (bekle.every(function(x){ return x(); })) { disaAktar2(); return; }
+  function basla(){
+    if (!proDestek()) { disaAktar2(); return; }
+    disaAktarPro().catch(function(e){
+      console.log('pro', e);
+      aktariliyor = false;
+      f('indirDurum').textContent = 'Kare kare mod bu cihazda çalışmadı, normal kayda geçiliyor…';
+      setTimeout(disaAktar2, 400);
+    });
+  }
+  if (bekle.every(function(x){ return x(); })) { basla(); return; }
   f('indirDurum').textContent = 'Araçlar yükleniyor, hazır olunca kayıt başlayacak…';
-  var iv = setInterval(function(){ if (bekle.every(function(x){ return x(); })) { clearInterval(iv); disaAktar2(); } }, 300);
+  var iv = setInterval(function(){ if (bekle.every(function(x){ return x(); })) { clearInterval(iv); basla(); } }, 300);
+}
+function sonucGoster(blob, mt){
+  var uz = /mp4/.test(mt) ? 'mp4' : 'webm';
+  var ad = 'dogus-video-' + new Date().toISOString().slice(0, 10) + '.' + uz;
+  var link = f('indirLink'); link.href = URL.createObjectURL(blob); link.download = ad; link.textContent = 'Dosyayı kaydet (' + (blob.size / 1048576).toFixed(1) + ' MB)';
+  link.classList.remove('gizli');
+  link.onclick = function(ev){
+    try {
+      var file = new File([blob], ad, { type: mt });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); }
+    } catch(e) {}
+  };
+  f('indirDurum').textContent = 'Hazır.' + (uz === 'webm' ? ' Bu tarayıcı .webm kaydetti; Instagram için iPhone Safari ile mp4 almanız daha iyi olur.' : '');
+  aktariliyor = false; f('indirBtn').disabled = false; f('ilerleme').style.display = 'none'; cizdir();
+}
+/* ---------- Profesyonel indirme: kare kare (WebCodecs + mp4) ---------- */
+function proDestek(){ return !!(window.VideoEncoder && window.VideoFrame && window.AudioEncoder && window.AudioData && window.OfflineAudioContext && videoDosyasi); }
+function bekleMs(ms){ return new Promise(function(ok){ setTimeout(ok, ms); }); }
+function kalanParcalar(){
+  var l = birlesik(), p = [], bas = 0, D = sure();
+  l.forEach(function(k){ if (k.a > bas + .01) p.push({ a: bas, b: Math.min(k.a, D) }); bas = Math.max(bas, k.b); });
+  if (D > bas + .01) p.push({ a: bas, b: D });
+  return p;
+}
+function ciktiZamani(t, parcalar){
+  var acc = 0;
+  for (var i = 0; i < parcalar.length; i++) { var q = parcalar[i]; if (t >= q.a && t < q.b) return acc + t - q.a; acc += q.b - q.a; }
+  return null;
+}
+async function sesiIsle(parcalar, toplam){
+  var sr = 48000, N = Math.max(1, Math.ceil(toplam * sr));
+  var b = sesHazirla();
+  var buf = await videoDosyasi.arrayBuffer();
+  var kaynak = await new Promise(function(ok, no){ var p = b.ctx.decodeAudioData(buf, ok, no); if (p && p.then) p.then(ok, no); });
+  var oc = new OfflineAudioContext(2, N, sr);
+  var ksr = kaynak.sampleRate, kn = kaynak.numberOfChannels;
+  var birles = oc.createBuffer(kn, Math.ceil(toplam * ksr) + parcalar.length * 2 + 2, ksr);
+  for (var c = 0; c < kn; c++) {
+    var src = kaynak.getChannelData(c), dst = birles.getChannelData(c), pos = 0;
+    parcalar.forEach(function(q){
+      var a = Math.round(q.a * ksr), e = Math.min(src.length, Math.round(q.b * ksr)), L = e - a;
+      if (L <= 0) return;
+      L = Math.min(L, dst.length - pos); dst.set(src.subarray(a, a + L), pos);
+      var fd = Math.min(Math.round(ksr * .006), L >> 1);
+      for (var k = 0; k < fd; k++) { var g = k / fd; dst[pos + k] *= g; dst[pos + L - 1 - k] *= g; }
+      pos += L;
+    });
+  }
+  var s0 = oc.createBufferSource(); s0.buffer = birles;
+  var z = zincirKur(oc), rnn = null;
+  if (ses.gurultu) {
+    try { var ns = await rnnModul(); await oc.audioWorklet.addModule(NS_YOL + 'rnnoise-worklet.js'); rnn = new ns.RnnoiseWorkletNode(oc, { wasmBinary: rnnWasm, maxChannels: 2 }); }
+    catch(e) { console.log('rnn offline', e); }
+  }
+  var zincir = [s0].concat(zincirSec(z, rnn));
+  for (var i = 0; i < zincir.length - 1; i++) zincir[i].connect(zincir[i + 1]);
+  z.seviye.gain.value = ses.seviye; z.seviye.connect(oc.destination);
+  s0.start(0);
+  var efektler = ogeler.filter(function(o){ return o.tur === 'sfx'; });
+  for (var j = 0; j < efektler.length; j++) {
+    var o = efektler[j], ot = ciktiZamani(o.bas, parcalar); if (ot == null) continue;
+    try { var eb = await sfxYukle(o.ses), x = oc.createBufferSource(), gn = oc.createGain(); x.buffer = eb; gn.gain.value = o.hacim; x.connect(gn); gn.connect(oc.destination); x.start(ot); } catch(e) { console.log('sfx', e); }
+  }
+  return await oc.startRendering();
+}
+async function disaAktarPro(){
+  aktariliyor = true; sec(null); video.pause();
+  f('indirBtn').disabled = true; f('indirLink').classList.add('gizli');
+  var cubukEl = f('ilerleme').firstElementChild; cubukEl.style.width = '0%';
+  f('ilerleme').style.display = 'block'; f('indirDurum').textContent = 'Hazırlanıyor…';
+  var mux = await import('./' + NS_YOL + 'mp4-muxer.mjs');
+  var hedefKisa = +f('kalite').value;
+  var oran = Math.min(1, hedefKisa / Math.min(video.videoWidth, video.videoHeight));
+  var W = Math.round(video.videoWidth * oran / 2) * 2, H = Math.round(video.videoHeight * oran / 2) * 2;
+  var vcfg = null, adaylar = ['avc1.640034', 'avc1.640033', 'avc1.640028', 'avc1.4d0034', 'avc1.4d0028', 'avc1.42003e', 'avc1.42002a'];
+  for (var i = 0; i < adaylar.length && !vcfg; i++) {
+    var c = { codec: adaylar[i], width: W, height: H, bitrate: hedefKisa >= 1080 ? 16000000 : 8000000, framerate: 30, avc: { format: 'avc' } };
+    try { var dt = await VideoEncoder.isConfigSupported(c); if (dt.supported) vcfg = c; } catch(e){}
+  }
+  if (!vcfg) throw new Error('h264 yok');
+  var acfg = { codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 192000 };
+  var ad_ = await AudioEncoder.isConfigSupported(acfg); if (!ad_.supported) throw new Error('aac yok');
+
+  var parcalar = kalanParcalar(), toplam = parcalar.reduce(function(s_, q){ return s_ + q.b - q.a; }, 0);
+  f('indirDurum').textContent = 'Ses işleniyor…';
+  var sesSonuc = await sesiIsle(parcalar, toplam);
+
+  var muxer = new mux.Muxer({ target: new mux.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H, frameRate: 30 },
+                              audio: { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 }, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
+  var hata = null;
+  var venc = new VideoEncoder({ output: function(ch, meta){ muxer.addVideoChunk(ch, meta); }, error: function(e){ hata = e; } });
+  venc.configure(vcfg);
+  var aenc = new AudioEncoder({ output: function(ch, meta){ muxer.addAudioChunk(ch, meta); }, error: function(e){ hata = e; } });
+  aenc.configure(acfg);
+  var L = sesSonuc.getChannelData(0), R = sesSonuc.numberOfChannels > 1 ? sesSonuc.getChannelData(1) : L, NS = L.length;
+  for (var si = 0; si < NS; si += 4096) {
+    var n = Math.min(4096, NS - si), d = new Float32Array(n * 2);
+    d.set(L.subarray(si, si + n), 0); d.set(R.subarray(si, si + n), n);
+    var adat = new AudioData({ format: 'f32-planar', sampleRate: 48000, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(si * 1e6 / 48000), data: d });
+    aenc.encode(adat); adat.close();
+    if (aenc.encodeQueueSize > 24) await bekleMs(2);
+  }
+  await aenc.flush();
+  if (hata) throw hata;
+
+  var kt = document.createElement('canvas'); kt.width = W; kt.height = H;
+  var ctx = kt.getContext('2d');
+  var kareler = [];
+  parcalar.forEach(function(q){ var n2 = Math.max(1, Math.round((q.b - q.a) * 30)); for (var k = 0; k < n2; k++) kareler.push(Math.min(q.b - .001, q.a + k / 30)); });
+  var t0 = performance.now(), kare = Math.round(1e6 / 30);
+  for (var fi = 0; fi < kareler.length; fi++) {
+    if (hata) throw hata;
+    var t = kareler[fi];
+    await medyaAra(video, t);
+    await icVideoAra(t);
+    if (kisiGerekli(t)) segCalistir();
+    sahneyiCiz(ctx, W, H, t, true);
+    var fr = new VideoFrame(kt, { timestamp: fi * kare, duration: kare });
+    venc.encode(fr, { keyFrame: fi % 60 === 0 }); fr.close();
+    while (venc.encodeQueueSize > 6) await bekleMs(4);
+    if (fi % 5 === 0) {
+      var orn = (fi + 1) / kareler.length, gecen = (performance.now() - t0) / 1000, kalan = gecen / orn - gecen;
+      cubukEl.style.width = (orn * 100).toFixed(1) + '%';
+      f('indirDurum').textContent = 'Kare kare işleniyor: %' + Math.round(orn * 100) + (fi > 20 ? ' · kalan yaklaşık ' + (kalan > 90 ? Math.round(kalan / 60) + ' dk' : Math.round(kalan) + ' sn') : '');
+    }
+  }
+  await venc.flush();
+  if (hata) throw hata;
+  muxer.finalize();
+  video.currentTime = 0;
+  sonucGoster(new Blob([muxer.target.buffer], { type: 'video/mp4' }), 'video/mp4');
 }
 function disaAktar2(){
   var tur = bicim();
@@ -2377,23 +2555,12 @@ function disaAktar2(){
   kayit.ondataavailable = function(e){ if (e.data && e.data.size) parca.push(e.data); };
   kayit.onstop = function(){
     var mt = kayit.mimeType || tur || 'video/webm';
-    var blob = new Blob(parca, { type: mt });
-    var uz = /mp4/.test(mt) ? 'mp4' : 'webm';
-    var ad = 'dogus-video-' + new Date().toISOString().slice(0, 10) + '.' + uz;
-    var link = f('indirLink'); link.href = URL.createObjectURL(blob); link.download = ad; link.textContent = 'Dosyayı kaydet (' + (blob.size / 1048576).toFixed(1) + ' MB)';
-    link.classList.remove('gizli');
-    link.onclick = function(ev){
-      try {
-        var file = new File([blob], ad, { type: mt });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) { ev.preventDefault(); navigator.share({ files: [file] }).catch(function(){}); }
-      } catch(e) {}
-    };
-    f('indirDurum').textContent = 'Hazır.' + (uz === 'webm' ? ' Bu tarayıcı .webm kaydetti; Instagram için iPhone Safari ile mp4 almanız daha iyi olur.' : '');
-    aktariliyor = false; f('indirBtn').disabled = false; f('ilerleme').style.display = 'none'; cizdir();
+    sonucGoster(new Blob(parca, { type: mt }), mt);
   };
   function kareCiz(){
     var t = video.currentTime;
     if (kisiGerekli(t)) segCalistir();
+    sfxTetikle(t); icVideoEsitle(t, !video.paused);
     sahneyiCiz(ctx, W, H, t, true);
   }
   function bitir(){ if (kayit.state !== 'inactive') setTimeout(function(){ kayit.stop(); }, 150); video.pause(); }
