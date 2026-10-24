@@ -133,6 +133,13 @@
   .btn.mavi{background:var(--indigo);color:#fff}
   .btn.kucuk{padding:6px 10px;font-size:12.5px;border-radius:10px}
   .btn.aktif{background:#fff;color:#000}
+  #bildirim{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:99;background:#fff;color:#000;font-weight:700;font-size:14px;padding:11px 16px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);display:flex;gap:14px;align-items:center;transition:.2s;max-width:calc(100vw - 32px)}
+  #bildirim.acik{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  #bildirim button{border:0;background:var(--red);color:#fff;font:inherit;padding:6px 10px;border-radius:8px;cursor:pointer}
+  .katmanSec{display:flex;gap:6px;background:var(--alan);padding:4px;border-radius:12px}
+  .katmanSec button{flex:1;border:0;border-radius:9px;padding:11px 8px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;background:none;color:var(--mute)}
+  .katmanSec button.aktif{background:#fff;color:#000}
+  .katmanSec #katArka.aktif{background:var(--red);color:#fff}
   .btn:disabled{opacity:.45;cursor:default}
   .anahtar{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px;cursor:pointer;margin-bottom:12px}
   .anahtar input{width:20px;height:20px;flex:none;margin-top:1px}
@@ -172,6 +179,7 @@
     <a class="geri" href="https://dogusportal.com/" title="Portala dön">←</a>
     <div class="baslik">Video Düzenle</div>
     <div class="bosluk"></div>
+    <button class="btn" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut videolarım</button>
     <button class="btn" onclick="dosya.click()">Video değiştir</button>
     <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻ Döndür</button>
     <button class="btn ana" onclick="sekmeAc('pIndir');disaAktar()">İndir</button>
@@ -242,6 +250,7 @@
     </div>
   </footer>
 
+  <div id="bildirim" role="status"></div>
   <aside class="panelalan">
       <!-- YAZI & RESİM -->
       <div class="panel aktif" id="pOge">
@@ -249,6 +258,14 @@
           <h3 id="secimBaslik">Seçili öğe</h3>
           <div id="secimYok" class="not">Bir yazıya ya da resme dokunun, veya “+ Yazı”, “+ Resim”, “+ Yakınlaştırma” ile ekleyin.</div>
 
+          <div id="arkaSatir" class="gizli" style="margin-bottom:12px">
+            <div class="katmanSec">
+              <button type="button" id="katOn" onclick="katmanAyarla(false)">Önde</button>
+              <button type="button" id="katArka" onclick="katmanAyarla(true)">Kişinin arkasına gönder</button>
+            </div>
+            <div class="not" id="katNot" style="margin-top:6px"></div>
+            <input type="checkbox" id="fArka" hidden>
+          </div>
           <div id="yaziForm" class="gizli">
             <textarea id="fMetin" placeholder="Yazı"></textarea>
             <div id="stiller"></div>
@@ -440,10 +457,6 @@
               <label class="kisa">Bitiş</label>
               <input type="number" id="fBit" step="0.1" min="0">
               <button class="btn kucuk" onclick="simdiAta('bit')">Şu an</button>
-            </div>
-            <div class="satir" id="arkaSatir">
-              <label>Katman</label>
-              <label class="anahtar" style="margin:0"><input type="checkbox" id="fArka"> Kişinin arkasında</label>
             </div>
             <div class="satir">
               <button class="btn kucuk" onclick="ortala()">Ortala</button>
@@ -1004,13 +1017,14 @@ var segSayac = 0;
 
 /* ---------- Öğeler ---------- */
 function bul(id){ for (var i = 0; i < ogeler.length; i++) if (ogeler[i].id === id) return ogeler[i]; return null; }
-function yeniZaman(s){ var t = video.currentTime || 0; s = s || 3; return { bas: +t.toFixed(1), bit: +Math.min(sure() || t + s, t + s).toFixed(1) }; }
+function yeniZaman(s){ var t = video.currentTime || 0, D = sure() || 0; s = s || 3; if (D && t > D - 1) t = Math.max(0, D - s); var bit = D && t + s >= D - .05 ? Math.ceil(D * 10) / 10 : +(t + s).toFixed(1); return { bas: +t.toFixed(1), bit: bit }; }
 function yaziEkle(){
-  var z = yeniZaman();
+  var z = yeniZaman(Math.max(3, (sure() || 0) - (video.currentTime || 0)));
   var y = { id: sayac++, tur: 'yazi', metin: 'Yeni yazı', x: .5, y: .3, boyut: STILLER.r_beyaz.boyut, stil: 'r_beyaz', renk: '#FFFFFF', zemin: 'yok', zeminRenk: '#DC1C2E',
             bas: z.bas, bit: z.bit, efekt: 'bulanik', cikis: 'bulanik', doku: 'yok', arka: false };
   ogeler.push(y); sekmeAc('pOge'); sec(y.id); kaydet(); listele();
-  setTimeout(function(){ f('fMetin').focus(); f('fMetin').select(); }, 30);
+  bildir('Yazı eklendi · ' + zmn(y.bas) + '–' + zmn(y.bit) + ' arası görünür');
+  f('fMetin').focus(); f('fMetin').select();
 }
 function zoomEkle(){
   var z = yeniZaman(2.5);
@@ -2398,7 +2412,8 @@ function ogeCiz(ctx, o, W, H, t, duzenleme, kaynak, yari){
   if (o.tur === 'karusel') { var kk = karuselCiz(ctx, o, W, H, t, yari || 'hepsi', duzenleme); if (duzenleme && kk) kutular[o.id] = kk; return; }
   var a = giris(o, t), hayalet = false;
   if (!a) { if (duzenleme && o.id === secili && video.paused) { a = { op: .5, sc: 1, dx: 0, dy: 0 }; hayalet = true; } else return; }
-  if (duzenleme && o.id === secili && video.paused && !hayalet) a = { op: 1, sc: 1, dx: 0, dy: 0 };
+  /* durdurulmuşken düzenleme ekranında, süresi içindeki tüm öğeler giriş efektine takılmadan tam görünür */
+  if (duzenleme && video.paused && !hayalet && (o.id === secili || (t >= o.bas && t <= o.bit))) a = { op: 1, sc: 1, dx: 0, dy: 0 };
   var tt = (duzenleme && o.id === secili && video.paused) ? o.bit : t;
   var k = efektliCiz(ctx, o, W, H, tt, a, kaynak);
   if (duzenleme && k) kutular[o.id] = k;
@@ -2742,7 +2757,7 @@ function formDoldur(){
   }
   if (document.activeElement !== f('fBas')) f('fBas').value = o.bas;
   if (document.activeElement !== f('fBit')) f('fBit').value = o.bit;
-  f('fArka').checked = !!o.arka;
+  f('fArka').checked = !!o.arka; katmanGoster();
 }
 function alan(id, ad, cevir, olay){
   f(id).addEventListener(olay || 'input', function(){
@@ -2778,10 +2793,30 @@ alan('fBit', 'bit', function(v){ return Math.max(0, parseFloat(v) || 0); });
 f('fRenkDegis').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.renkDegis = f('fRenkDegis').checked; cizdir(); kaydet(); });
 f('fRenk').addEventListener('input', function(){ var o = bul(secili); if (o && o.stil !== 'ozel') { o.renkDegis = true; f('fRenkDegis').checked = true; cizdir(); kaydet(); } });
 f('fArka').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.arka = f('fArka').checked; kaydet(); segIste(); cizdir(); listele(); });
+function katmanGoster(){
+  var o = bul(secili), a = !!(o && o.arka);
+  f('katOn').classList.toggle('aktif', !a); f('katArka').classList.toggle('aktif', a);
+  f('katArka').textContent = a ? '✓ Kişinin arkasında' : 'Kişinin arkasına gönder';
+  f('katNot').textContent = a ? 'Kişi bu ' + (o && o.tur === 'yazi' ? 'yazının' : 'öğenin') + ' önüne geçer. Geri almak için "Önde"ye basın.' : (o && o.tur === 'yazi' ? 'Yazı şu an kişinin önünde. Kafanın arkasından geçsin isterseniz yandaki düğmeye basın.' : 'Şu an kişinin önünde.');
+}
+function katmanAyarla(a){ var o = bul(secili); if (!o) return; f('fArka').checked = a; o.arka = a; kaydet(); segIste(); cizdir(); listele(); katmanGoster(); bildir(a ? 'Kişinin arkasına gönderildi' : 'Öne alındı'); }
 function simdiAta(k){ var o = bul(secili); if (!o) return; o[k] = +video.currentTime.toFixed(1); if (o.bit < o.bas) { if (k === 'bas') o.bit = +(o.bas + 2).toFixed(1); else o.bas = o.bit; } formDoldur(); cizdir(); listele(); kaydet(); }
 function ortala(){ var o = bul(secili); if (!o) return; o.x = .5; cizdir(); kaydet(); }
 function kopyala(){ var o = bul(secili); if (!o) return; var k = JSON.parse(JSON.stringify(o)); k.id = sayac++; if (o.vid && icVideolar[o.id]) icVideoKur(k, icVideolar[o.id].src); var s = o.bit - o.bas; k.bas = +Math.min(o.bit, sure() || o.bit).toFixed(1); k.bit = +(k.bas + s).toFixed(1); if (sure()) k.bit = Math.min(k.bit, +sure().toFixed(1)); ogeler.push(k); sec(k.id); kaydet(); }
-function sil(){ ogeler = ogeler.filter(function(o){ return o.id !== secili; }); sec(null); kaydet(); }
+var sonSilinen = null;
+function bildir(m, geriAl){
+  var b = f('bildirim'); clearTimeout(bildir.z);
+  b.innerHTML = ''; var sp = document.createElement('span'); sp.textContent = m; b.appendChild(sp);
+  if (geriAl) { var g = document.createElement('button'); g.textContent = 'Geri al'; g.onclick = function(){ geriAl(); b.classList.remove('acik'); }; b.appendChild(g); }
+  b.classList.add('acik'); bildir.z = setTimeout(function(){ b.classList.remove('acik'); }, geriAl ? 6000 : 2600);
+}
+function ogeAdi(o){ return { resim: 'Resim', yazi: 'Yazı', zoom: 'Yakınlaştırma', karusel: 'Dönen kartlar', cihaz: 'Telefon', sfx: 'Ses efekti' }[o && o.tur] || 'Öğe'; }
+function sil(){
+  var i = ogeler.findIndex(function(o){ return o.id === secili; }); if (i < 0) return;
+  var o = ogeler[i]; sonSilinen = { o: o, i: i };
+  ogeler.splice(i, 1); sec(null); kaydet(); listele();
+  bildir(ogeAdi(o) + ' silindi', function(){ if (!sonSilinen) return; ogeler.splice(Math.min(sonSilinen.i, ogeler.length), 0, sonSilinen.o); var id = sonSilinen.o.id; sonSilinen = null; sec(id); kaydet(); listele(); bildir('Geri getirildi'); });
+}
 function sirala(yon){ var i = ogeler.findIndex(function(o){ return o.id === secili; }); var j = i + yon; if (i < 0 || j < 0 || j >= ogeler.length) return; var t = ogeler[i]; ogeler[i] = ogeler[j]; ogeler[j] = t; cizdir(); kaydet(); }
 
 function listele(){
@@ -3007,8 +3042,16 @@ try {
 f('sGurultu').checked = ses.gurultu; f('sPro').checked = ses.pro; f('sSeviye').value = ses.seviye; f('sSeviyeDeger').textContent = Math.round(ses.seviye * 100) + '%';
 f('gecisGenel').value = gecis.tur; f('gecisSure').value = String(gecis.sure);
 document.addEventListener('keydown', function(e){
-  if ((e.key === 'Delete' || e.key === 'Backspace') && secili && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); sil(); }
-  else if ((e.key === 'Delete' || e.key === 'Backspace') && seritSecili >= 0 && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); parcaSil(); }
+  var yaziyor = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+  var so = secili && bul(secili);
+  if (!yaziyor && so && so.tur === 'yazi' && (e.key === 'Backspace' || (e.key.length === 1 && e.key !== ' ' && !e.metaKey && !e.ctrlKey))) {
+    /* yazı seçiliyken klavyeyle yazmak yazıyı düzenler, silmez */
+    var ta = f('fMetin'); e.preventDefault(); ta.focus();
+    ta.value = e.key === 'Backspace' ? ta.value.slice(0, -1) : ta.value + e.key; ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.dispatchEvent(new Event('input', { bubbles: true })); return;
+  }
+  if (e.key === 'Delete' && secili && !yaziyor) { e.preventDefault(); sil(); }
+  else if ((e.key === 'Delete' || e.key === 'Backspace') && seritSecili >= 0 && !yaziyor) { e.preventDefault(); parcaSil(); }
   if ((e.key === 'b' || e.key === 'B') && !e.metaKey && !e.ctrlKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); bol(); }
   if (e.key === ' ' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName)) { e.preventDefault(); f('oynatBtn').click(); }
 });
