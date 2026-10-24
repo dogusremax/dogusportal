@@ -299,7 +299,7 @@
   <div class="sc">
     <div id="dBroker" hidden style="margin-bottom:6px"><h4>Sunum</h4><div class="dl"><a href="kibris-sunum.html">Kıbrıs sunumuna geç</a></div></div>
     <h4>Turlar</h4>
-    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=sapphire" data-tur="sapphire">Grand Sapphire</a><a href="?tur=dovec" data-tur="dovec">Döveç</a></div>
+    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=sapphire" data-tur="sapphire">Grand Sapphire</a><a href="?tur=casadelmare" data-tur="casadelmare">Casa del Mare</a><a href="?tur=dovec" data-tur="dovec">Döveç</a></div>
     <h4>Projeler</h4>
     <input class="srch" id="srch" type="search" placeholder="Proje ara" autocomplete="off">
     <div class="dg" id="dg"></div>
@@ -350,7 +350,8 @@
     esentepe:{ad:'Cyprus Constructions',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'},
     dovec:{ad:'Döveç',js:'assets/kibris360/data-dovec.js?v=4',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
     // tek projelik turlar: listede projeler yerine projenin bölümleri (havadan, havuzlar, daire tipleri) yer alır
-    sapphire:{ad:'Grand Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1}};
+    sapphire:{ad:'Grand Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1},
+    casadelmare:{ad:'Casa del Mare',js:'assets/kibris360/data-casadelmare.js?v=1',src:'https://360.northernland.com/casadelmare/media',ext:'jpg',tek:1}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
   document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
   // tur verisini sayfayı yenilemeden yükle (her tur kendi window.K360 dizisini yazar)

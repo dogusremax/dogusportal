@@ -1751,9 +1751,17 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
         '<label>Teslimden sonra kaç ayda<input id="kcS" type="number" min="1" value="'+(pl.ay||12)+'"></label><div class="kgy">Bazı projelerde fiyatın bir kısmı anahtar tesliminden sonra aylık taksitle ödenir. “Teslimden sonra ödenecek” bu kısmın oranı, “kaç ayda” taksit sayısıdır; yoksa 0 yazın. Teslime kadar ödenecek kısım kalan yüzdedir.</div>'+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
         '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3">'+esc(pl.not)+'</div></div>';}
+    // katalogdaki 360° turlar firmanın sitesine değil bizim turumuza (kibris-360-tur.html) açılır: proje -> [tur, sahne]
+    var T3={'Ocean Life Residence':['kibris','9A07FDC5'],'Olea Residence':['kibris','DF7BF9AA'],'Sea Breeze':['kibris','DF082862'],'The Blue Residence':['kibris','9A0692A6'],
+      'Four Seasons Life III':['kibris','B48ADAA3'],'La Palazzo':['kibris','B48AA813'],'Solmaris':['kibris','B48AD59E'],'Sky Diora':['kibris','B48AD650'],'Terra Life':['kibris','9A09515A'],
+      'Bellagio':['kibris','B0880149'],'Royal Sun Elite Residence':['kibris','9A074050'],'Riverside Life Residence':['kibris','9A0730AA'],'Royal Life Residence':['kibris','ABA2F363'],
+      'Park Residence':['kibris','9A0752ED'],'Angel Towers':['kibris','84215388'],'Miracle Villa & Residence':['kibris','9A08FF89'],'Sea Pearl Residence':['kibris','DF4FB02D'],
+      'Sea Life Plus':['kibris','DC20FF55'],'Sea View Apartments':['kibris','023C5AA8'],'Royal Point':['kibris','B48A96C1'],
+      'Grand Sapphire Blu':['sapphire','8B84939C'],'Casa del Mare':['casadelmare','43B2E534'],'D-Point':['dovec','FC933437']};
     function ac(i){acik=i;mTip='';KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];
-      var ac='<div class="kac">'+(m[2]?'<button type="button" class="kred" data-tur="'+m[2]+'" data-p="'+m[3]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
-        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.tur360&&!m[2]?'<a href="'+esc(p.tur360)+'" target="_blank" rel="noopener">360° tur ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">'+(/drive\.google/.test(p.klasor)?'Drive klasörü':'Proje sayfası')+' ↗</a>':'')+'</div>';
+      var tu=m[2]?[m[2],m[3]||(T3[p.proje]||[])[1]||'']:T3[p.proje]||null;
+      var ac='<div class="kac">'+(tu?'<button type="button" class="kred" data-tur="'+tu[0]+'" data-p="'+tu[1]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="2"/></svg>360° gez</button>':'')+
+        (p.brosur?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(p.klasor?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">'+(/drive\.google/.test(p.klasor)?'Drive klasörü':'Proje sayfası')+' ↗</a>':'')+'</div>';
       var h='<div class="ktp"><div class="kgl" style="'+kapak(p,1)+'"><button type="button" class="kx" id="ktmX">✕</button><div class="ktt"><div class="kk">'+esc(p.firma)+(bol(p)?' · '+esc(bol(p)):'')+'</div><h3>'+esc(p.proje)+'</h3></div></div><div class="kbx" id="ktB">';
       if(brosur(p)){
         var ds=p.aciklama&&!/detaylar, görseller/i.test(p.aciklama)?p.aciklama:'';
