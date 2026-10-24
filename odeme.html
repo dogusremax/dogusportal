@@ -93,6 +93,8 @@ input.hata{border-color:var(--kirmizi)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
   background:#141B34;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:700;transition:all .2s;pointer-events:none;z-index:50}
 .toast.acik{opacity:1;transform:translateX(-50%) translateY(0)}
+.yukleniyor{text-align:center;color:var(--soluk);font-weight:700}
+.btn[disabled]{opacity:.6;cursor:default}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -107,6 +109,15 @@ input.hata{border-color:var(--kirmizi)}
 
   <!-- ===== DANIŞMAN: link hazırlama ===== -->
   <div id="hazirla" hidden>
+    <div class="grup">Danışman</div>
+    <div class="kart">
+      <label class="alan"><span class="ad">Danışman <i>*</i></span>
+        <select id="fDan"><option value="">Yükleniyor…</option></select></label>
+      <label class="alan"><span class="ad">Telefonun</span>
+        <span class="ipucu">Seçince kendiliğinden gelir. Müşteri ödeme yapınca dekontu bu numaraya tek dokunuşla gönderir.</span>
+        <input id="fDanTel" type="tel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
+    </div>
+
     <div class="grup">Müşteri ve işlem</div>
     <div class="kart">
       <label class="alan"><span class="ad">Müşteri adı soyadı <i>*</i></span>
@@ -131,40 +142,41 @@ input.hata{border-color:var(--kirmizi)}
           <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option><option>GBP</option></select>
         </div>
       </div>
-      <label class="alan"><span class="ad">Müşterinin telefonu</span>
-        <span class="ipucu">Yazarsan WhatsApp doğrudan müşterinin sohbetini açar.</span>
+      <label class="alan"><span class="ad">Müşterinin telefonu <i>*</i></span>
+        <span class="ipucu">Ödeme bilgisi bu numaraya WhatsApp'tan düğmeli mesajla gider.</span>
         <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
     </div>
 
     <div class="grup">Havale açıklaması</div>
     <div class="kart">
       <label class="alan"><span class="ad">Müşterinin yazacağı açıklama</span>
-        <span class="ipucu">Kendiliğinden oluşur, istersen değiştir. Bazı bankalar uzun açıklamayı kestiği için kısa tut.</span>
+        <span class="ipucu">Kendiliğinden oluşur, istersen değiştir. Sonuna ödemeyi tanımamız için kısa bir kod eklenir (ör. K7F3Q).</span>
         <input id="fAciklama" autocomplete="off"></label>
       <div class="not" id="uzunluk"></div>
     </div>
 
-    <div class="grup">Danışman</div>
-    <div class="kart">
-      <label class="alan"><span class="ad">Adın soyadın</span>
-        <input id="fDan" autocomplete="name" placeholder="Müşteri sayfasında görünür"></label>
-      <label class="alan"><span class="ad">Telefonun</span>
-        <span class="ipucu">Müşteri ödeme yapınca dekontu bu numaraya tek dokunuşla gönderir. Bu cihazda hatırlanır.</span>
-        <input id="fDanTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></label>
-    </div>
+    <button class="btn" id="hazirlaBtn" type="button">Ödeme linkini hazırla</button>
+    <div class="not" id="hazirlaHata"></div>
 
-    <div class="grup">Gönder</div>
-    <div class="kart">
-      <div class="onizle" id="mesaj"></div>
-      <div style="height:14px"></div>
-      <a class="btn wa" id="waGonder" href="#" target="_blank" rel="noopener">WhatsApp ile gönder</a>
-      <button class="btn ikincil" id="mesajKopya" type="button">Mesajı kopyala</button>
-      <button class="btn ikincil" id="linkKopya" type="button">Sadece linki kopyala</button>
-      <a class="btn ikincil" id="onizleLink" href="#" target="_blank" rel="noopener">Müşterinin göreceği sayfayı aç</a>
+    <div id="sonuc" hidden>
+      <div class="grup">Gönder</div>
+      <div class="kart">
+        <div class="alan"><span class="ad">Müşterinin linki</span>
+          <div class="onizle" id="kisaLink"></div></div>
+        <div class="alan"><span class="ad">Havale açıklaması</span>
+          <div class="onizle" id="sonAciklama"></div></div>
+        <button class="btn wa" id="ofisGonder" type="button">Ofis hattından gönder (düğmeli)</button>
+        <div class="not" id="ofisDurum"></div>
+        <div style="height:10px"></div>
+        <a class="btn ikincil" id="waGonder" href="#" target="_blank" rel="noopener">Kendi WhatsApp'ımdan gönder</a>
+        <button class="btn ikincil" id="linkKopya" type="button">Linki kopyala</button>
+        <a class="btn ikincil" id="onizleLink" href="#" target="_blank" rel="noopener">Müşterinin göreceği sayfayı aç</a>
+      </div>
     </div>
   </div>
 
   <!-- ===== MÜŞTERİ: ödeme sayfası ===== -->
+  <div class="kart yukleniyor" id="yukleniyor" hidden>Ödeme bilgileri yükleniyor…</div>
   <div id="musteri" hidden>
     <div class="kart tutar" id="mTutarKart">
       <div class="k">Ödenecek tutar</div>
@@ -215,6 +227,8 @@ input.hata{border-color:var(--kirmizi)}
 var IBAN = 'TR540015700000000127965620';
 var UNVAN = 'UMT GROUP Gayrimenkul Yatırım ve Danışmanlık İnş.San.Tic.Ltd.Şti.';
 var SAYFA = 'https://dogusportal.com/odeme.html';
+// dogus-whatsapp-service (apps-script) → Kapora.js
+var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
 
 function $(id){ return document.getElementById(id); }
 function ibanBosluklu(s){ return s.replace(/(.{4})/g,'$1 ').trim(); }
@@ -227,7 +241,12 @@ function tel90(t){
   else if(d.length===10) d='90'+d;
   return d;
 }
-function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('acik'); clearTimeout(toast.z); toast.z=setTimeout(function(){ t.classList.remove('acik'); },1600); }
+function telYaz(t){ var d=tel90(t); return d.length===12?('0'+d.slice(2,5)+' '+d.slice(5,8)+' '+d.slice(8,10)+' '+d.slice(10)):t; }
+function api(govde){
+  return fetch(WA,{method:'POST',redirect:'follow',body:JSON.stringify(Object.assign({action:'kapora'},govde))})
+    .then(function(r){ return r.json(); });
+}
+function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('acik'); clearTimeout(toast.z); toast.z=setTimeout(function(){ t.classList.remove('acik'); },1800); }
 function kopyala(metin, btn, eskiYazi){
   function bitti(){
     if(btn){ btn.classList.add('ok'); btn.textContent='Kopyalandı ✓';
@@ -246,12 +265,9 @@ function kopyala(metin, btn, eskiYazi){
   }
 }
 
-var q = new URLSearchParams(location.search);
-
-if(q.get('a')){
-  // ----- Müşteri görünümü -----
-  var musteri=q.get('m')||'', tur=q.get('t')||'', tutar=q.get('u')||'', para=q.get('p')||'TL';
-  var aciklama=q.get('a'), dan=q.get('d')||'', danTel=q.get('dt')||'';
+// ----- Müşteri görünümü -----
+function musteriGoster(v){
+  var musteri=v.m||'', tur=v.t||'', tutar=v.u||'', para=v.p||'TL', aciklama=v.a||'', dan=v.d||'', danTel=v.dt||'';
   document.title='Ödeme Bilgileri'+(musteri?' — '+musteri:'')+' — RE/MAX Doğuş';
   $('baslik').textContent=musteri?('Sayın '+musteri):'Ödeme Bilgileri';
   $('altbaslik').textContent='Aşağıdaki bilgilerle havale / EFT yapabilirsiniz. Her bilgiyi kopyala düğmesiyle alın.';
@@ -262,8 +278,7 @@ if(q.get('a')){
   if(tutarYazi){ $('mTutar').textContent=tutarYazi; $('mTutar2').textContent=tutarYazi; }
   else { $('mTutar').textContent=tur||'Ödeme'; $('mTutarKart').querySelector('.k').textContent='Ödeme'; $('mTutarSatir').hidden=true; }
   if(tutarYazi && tur) $('mTur').textContent=tur; else $('mTur').hidden=true;
-  if(dan) $('mDanisman').innerHTML='Danışmanınız: <b></b><br>RE/MAX Doğuş';
-  if(dan) $('mDanisman').querySelector('b').textContent=dan;
+  if(dan){ $('mDanisman').innerHTML='Danışmanınız: <b></b><br>RE/MAX Doğuş'; $('mDanisman').querySelector('b').textContent=dan; }
   if(danTel){
     $('dekontAlan').hidden=false;
     var dm='Merhaba'+(dan?' '+dan.split(' ')[0]:'')+', '+(tur?tur.toLocaleLowerCase('tr')+' ':'')+'ödememi yaptım. Dekontu gönderiyorum.\nAçıklama: '+aciklama;
@@ -274,13 +289,54 @@ if(q.get('a')){
     var yazi=b.textContent;
     b.addEventListener('click',function(){ kopyala(degerler[b.dataset.kopya],b,yazi); });
   });
+  $('yukleniyor').hidden=true;
   $('musteri').hidden=false;
+}
+
+var q = new URLSearchParams(location.search);
+
+if(q.get('sablon')){
+  // Yönetici: ofis hattı şablonunu Meta onayına gönder / durumuna bak
+  $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı "Ödeme bilgilerini gör" şablonu';
+  $('yukleniyor').hidden=false;
+  var pin=prompt('Broker PIN:');
+  api(pin?{islem:'sablon',pin:pin}:{islem:'durum'}).then(function(j){
+    $('yukleniyor').textContent=j.ok?('Şablon durumu: '+j.durum):(j.error||'Hata');
+  }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
+} else if(q.get('k')){
+  $('baslik').textContent='Ödeme Bilgileri';
+  $('altbaslik').textContent='RE/MAX Doğuş';
+  $('yukleniyor').hidden=false;
+  api({islem:'getir',kod:q.get('k')}).then(function(j){
+    if(!j.ok) throw new Error(j.error||'');
+    musteriGoster(j.veri);
+  }).catch(function(e){
+    $('yukleniyor').textContent=(e&&e.message)||'Ödeme bilgileri açılamadı. Lütfen danışmanınızla iletişime geçin.';
+  });
+} else if(q.get('a')){
+  // Eski uzun linkler
+  musteriGoster({m:q.get('m'),t:q.get('t'),u:q.get('u'),p:q.get('p'),a:q.get('a'),d:q.get('d'),dt:q.get('dt')});
 } else {
   // ----- Danışman görünümü -----
   $('hazirla').hidden=false;
-  $('fDan').value=ls('odm_dan')||ls('ke_danisman');
+  var kayit=null, elleDegisti=false;
+
+  api({islem:'danismanlar'}).then(function(j){
+    var sel=$('fDan'), son=ls('odm_dan');
+    sel.innerHTML='<option value="">Kendini seç</option>';
+    (j.danismanlar||[]).forEach(function(d){
+      var o=document.createElement('option'); o.value=d.ad; o.textContent=d.ad; o.dataset.tel=d.tel; sel.appendChild(o);
+    });
+    if(son) sel.value=son;
+    if(sel.value && !$('fDanTel').value) $('fDanTel').value=telYaz(sel.selectedOptions[0].dataset.tel||'');
+  }).catch(function(){ $('fDan').innerHTML='<option value="">Liste yüklenemedi, sayfayı yenile</option>'; });
   $('fDanTel').value=ls('odm_tel');
-  var elleDegisti=false;
+  $('fDan').addEventListener('change',function(){
+    var o=$('fDan').selectedOptions[0];
+    $('fDanTel').value=o&&o.dataset.tel?telYaz(o.dataset.tel):'';
+    ls('odm_dan',$('fDan').value); ls('odm_tel',$('fDanTel').value);
+    sifirla();
+  });
 
   function secilenTur(){
     var v=document.querySelector('input[name=tur]:checked').value;
@@ -294,50 +350,64 @@ if(q.get('a')){
   function otomatikAciklama(){
     return [$('fMusteri').value.trim(), $('fMulk').value.trim(), secilenTur()].filter(Boolean).join(' - ');
   }
-  function link(){
-    var p=new URLSearchParams();
-    var m=$('fMusteri').value.trim(); if(m) p.set('m',m);
-    var t=secilenTur(); if(t) p.set('t',t);
-    var u=tutarBicim(); if(u){ p.set('u',u); p.set('p',$('fPara').value); }
-    p.set('a',$('fAciklama').value.trim()||otomatikAciklama()||'Ödeme');
-    var d=$('fDan').value.trim(); if(d) p.set('d',d);
-    var dt=tel90($('fDanTel').value); if(dt) p.set('dt',dt);
-    return SAYFA+'?'+p.toString().replace(/\+/g,'%20');
-  }
-  function mesaj(){
-    var m=$('fMusteri').value.trim(), t=secilenTur(), u=tutarBicim(), ac=$('fAciklama').value.trim()||otomatikAciklama();
-    var s='Merhaba'+(m?' '+m:'')+',\n\n';
-    s+=(t?t+' ödemesi':'Ödeme')+' için banka bilgilerimiz aşağıdadır'+(u?' (Tutar: '+u+' '+$('fPara').value+')':'')+'.\n\n';
-    s+='Alıcı: '+UNVAN+'\nIBAN: '+ibanBosluklu(IBAN)+'\n\n';
-    s+='⚠️ Havale/EFT açıklamasına lütfen şunu yazın:\n*'+ac+'*\n\n';
-    s+='Tek dokunuşla kopyalamak için:\n'+link();
-    return s;
-  }
-  function guncelle(){
+  function sifirla(){
     if(!elleDegisti) $('fAciklama').value=otomatikAciklama();
     var n=$('fAciklama').value.length;
-    $('uzunluk').textContent=n?(n+' karakter'+(n>60?' — biraz uzun, bazı bankalar kesebilir':'')):'';
-    $('mesaj').textContent=mesaj();
-    var tel=tel90($('fMTel').value);
-    $('waGonder').href='https://wa.me/'+tel+'?text='+encodeURIComponent(mesaj());
-    $('onizleLink').href=link();
-    ls('odm_dan',$('fDan').value.trim()); ls('odm_tel',$('fDanTel').value.trim());
+    $('uzunluk').textContent=n?(n+6)+' karakter (kodla birlikte)'+(n>60?' — biraz uzun, bazı bankalar kesebilir':''):'';
+    if(kayit){ kayit=null; $('sonuc').hidden=true; $('hazirlaBtn').hidden=false; }
   }
+  function eksik(id,mesaj){ $(id).classList.add('hata'); $(id).focus(); toast(mesaj); return true; }
+
   document.querySelectorAll('input[name=tur]').forEach(function(r){
-    r.addEventListener('change',function(){ $('fTurDiger').hidden=r.value!=='diger'||!r.checked; if(r.value==='diger'&&r.checked) $('fTurDiger').focus(); guncelle(); });
+    r.addEventListener('change',function(){ $('fTurDiger').hidden=r.value!=='diger'||!r.checked; if(r.value==='diger'&&r.checked) $('fTurDiger').focus(); sifirla(); });
   });
-  ['fMusteri','fMulk','fTutar','fPara','fMTel','fDan','fDanTel','fTurDiger'].forEach(function(id){
-    $(id).addEventListener('input',guncelle); $(id).addEventListener('change',guncelle);
+  ['fMusteri','fMulk','fTutar','fPara','fMTel','fDanTel','fTurDiger'].forEach(function(id){
+    $(id).addEventListener('input',function(){ $(id).classList.remove('hata'); sifirla(); });
+    $(id).addEventListener('change',sifirla);
   });
-  $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); guncelle(); });
-  $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; guncelle(); });
-  $('waGonder').addEventListener('click',function(e){
-    if(!$('fMusteri').value.trim()){ e.preventDefault(); $('fMusteri').classList.add('hata'); $('fMusteri').focus(); toast('Müşteri adını yazın'); }
+  $('fDanTel').addEventListener('change',function(){ ls('odm_tel',$('fDanTel').value); });
+  $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); });
+  $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; sifirla(); });
+
+  $('hazirlaBtn').addEventListener('click',function(){
+    var b=this;
+    if(!$('fDan').value) return eksik('fDan','Kendini seç');
+    if(!$('fMusteri').value.trim()) return eksik('fMusteri','Müşteri adını yazın');
+    if(tel90($('fMTel').value).length!==12) return eksik('fMTel','Müşterinin telefonunu yazın');
+    b.disabled=true; b.textContent='Hazırlanıyor…'; $('hazirlaHata').textContent='';
+    var u=tutarBicim();
+    api({islem:'olustur', m:$('fMusteri').value.trim(), mtel:$('fMTel').value, t:secilenTur(), u:u, p:u?$('fPara').value:'',
+         mulk:$('fMulk').value.trim(), a:$('fAciklama').value.trim()||otomatikAciklama(), d:$('fDan').value, dt:$('fDanTel').value})
+    .then(function(j){
+      if(!j.ok) throw new Error(j.error||'Kaydedilemedi.');
+      kayit=j;
+      var link=SAYFA+'?k='+j.kod, m=$('fMusteri').value.trim(), t=secilenTur();
+      $('kisaLink').textContent=link;
+      $('sonAciklama').textContent=j.aciklama;
+      $('onizleLink').href=link;
+      var mesaj='Merhaba '+m+', '+(t?t.toLocaleLowerCase('tr')+' ':'')+'ödemesi için banka bilgileri ve havale açıklaması bu linkte, tek dokunuşla kopyalayabilirsiniz:\n'+link;
+      $('waGonder').href='https://wa.me/'+tel90($('fMTel').value)+'?text='+encodeURIComponent(mesaj);
+      $('ofisDurum').textContent=''; $('ofisGonder').disabled=false; $('ofisGonder').textContent='Ofis hattından gönder (düğmeli)';
+      $('sonuc').hidden=false; b.hidden=true;
+      $('sonuc').scrollIntoView({behavior:'smooth',block:'start'});
+    })
+    .catch(function(e){ $('hazirlaHata').textContent=(e&&e.message)||'Bağlantı hatası, tekrar deneyin.'; })
+    .then(function(){ b.disabled=false; b.textContent='Ödeme linkini hazırla'; });
   });
-  $('fMusteri').addEventListener('input',function(){ $('fMusteri').classList.remove('hata'); });
-  $('mesajKopya').addEventListener('click',function(){ kopyala(mesaj(),this,'Mesajı kopyala'); });
-  $('linkKopya').addEventListener('click',function(){ kopyala(link(),this,'Sadece linki kopyala'); });
-  guncelle();
+
+  $('ofisGonder').addEventListener('click',function(){
+    var b=this; if(!kayit) return;
+    b.disabled=true; b.textContent='Gönderiliyor…';
+    api({islem:'gonder',kod:kayit.kod}).then(function(j){
+      if(!j.ok) throw new Error(j.error||'Gönderilemedi.');
+      b.textContent='Gönderildi ✓'; $('ofisDurum').textContent='Müşteriye ofis hattından "Ödeme bilgilerini gör" düğmeli mesaj gitti.';
+    }).catch(function(e){
+      b.disabled=false; b.textContent='Ofis hattından gönder (düğmeli)';
+      $('ofisDurum').textContent=((e&&e.message)||'Gönderilemedi.')+' Şimdilik "Kendi WhatsApp\'ımdan gönder" ile yollayabilirsin.';
+    });
+  });
+  $('linkKopya').addEventListener('click',function(){ if(kayit) kopyala(SAYFA+'?k='+kayit.kod,this,'Linki kopyala'); });
+  sifirla();
 }
 </script>
 </body>
