@@ -879,7 +879,7 @@ var donusUygulaniyor = new Promise(function(ok){
 /* ---------- Video ---------- */
 dosya.addEventListener('change', function(){
   var d = dosya.files[0]; if (!d) return;
-  videoDosyasi = d; otoYon = 0; kesimler = []; kesimArayuz(); yon = 0; yonSonT = -1; seg.merkez = null; seg.sonT = -1; seg.onceki = null; analizSifirla();
+  videoDosyasi = d; otoYon = 0; if (!bulutIs) f('bulutBtn').disabled = false; kesimler = []; kesimArayuz(); yon = 0; yonSonT = -1; seg.merkez = null; seg.sonT = -1; seg.onceki = null; analizSifirla();
   Promise.all([dosyaDonusu(d), donusUygulaniyor]).then(function(x){ var r = x[0]; if (x[1] === false && (r === 90 || r === 270)) { yon = r; otoYon = r; yonUygula(); } });
   video.src = URL.createObjectURL(d);
   video.load();

@@ -56,6 +56,14 @@ function probe(f) {
 }
 
 async function ana() {
+  if (DENEME) {
+    /* canlı uçların kontrolü: anahtar doğru mu, Danışman Takip yeni sürümde mi */
+    try {
+      const g = await (await fetch(`${DT}?action=vrIndir&k=${encodeURIComponent(K)}&is=${IS}&no=0`)).text();
+      const p = await (await fetch(DT, { method: 'POST', body: JSON.stringify({ action: 'vrIsYaz', k: K, is: IS, durum: 'deneme', mesaj: 'uç kontrolü' }) })).text();
+      console.log('[deneme] vrIndir:', g.slice(0, 40), '| vrIsYaz:', p.slice(0, 120));
+    } catch (e) { console.log('[deneme] uç kontrolü hatası', e.message); }
+  }
   await durum('Sunucu hazır, video alınıyor', 1, true);
   const proje = JSON.parse((await indir('proje')).toString());
   const parcalar = [];
