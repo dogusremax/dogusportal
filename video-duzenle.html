@@ -152,6 +152,14 @@
   .katmanSec button.aktif{background:#fff;color:#000}
   .katmanSec #katArka.aktif{background:var(--red);color:#fff}
   .btn:disabled{opacity:.45;cursor:default}
+  /* basıldığını hissettiren geri bildirim: her düğme basınca küçülür, parlar */
+  button,.btn{transition:transform .12s ease,filter .12s ease,background-color .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:transparent}
+  button:not(:disabled):active,.btn:not(:disabled):active,button.basildi,.btn.basildi{transform:scale(.93);filter:brightness(1.35)}
+  button.basildi,.btn.basildi{box-shadow:0 0 0 3px rgba(255,255,255,.55)}
+  @media (hover:hover){ .btn:not(:disabled):hover{filter:brightness(1.15)} }
+  .btn.calisiyor{pointer-events:none;opacity:.85}
+  .btn.calisiyor::after{content:"";width:14px;height:14px;margin-left:6px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:don .7s linear infinite}
+  @keyframes don{to{transform:rotate(360deg)}}
   .anahtar{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px;cursor:pointer;margin-bottom:12px}
   .anahtar input{width:20px;height:20px;flex:none;margin-top:1px}
   .anahtar small{display:block;font-weight:500;color:var(--mute);font-size:12.5px}
@@ -3045,6 +3053,19 @@ alan('fBit', 'bit', function(v){ return Math.max(0, parseFloat(v) || 0); });
 f('fRenkDegis').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.renkDegis = f('fRenkDegis').checked; cizdir(); kaydet(); });
 f('fRenk').addEventListener('input', function(){ var o = bul(secili); if (o && o.stil !== 'ozel') { o.renkDegis = true; f('fRenkDegis').checked = true; cizdir(); kaydet(); } });
 f('fArka').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.arka = f('fArka').checked; kaydet(); segIste(); cizdir(); listele(); });
+/* her düğmeye basınca kısa bir ışık: dokunmatikte de görünür */
+document.addEventListener('touchstart', function(){}, { passive: true });
+document.addEventListener('pointerdown', function(e){
+  var b = e.target.closest && e.target.closest('button, .btn'); if (!b || b.disabled) return;
+  b.classList.remove('basildi'); void b.offsetWidth; b.classList.add('basildi');
+  clearTimeout(b._bz); b._bz = setTimeout(function(){ b.classList.remove('basildi'); }, 260);
+}, true);
+/* uzun işlerde düğmede dönen işaret */
+setInterval(function(){
+  var ind = document.querySelector('.ustbar .btn.ana');
+  [f('indirBtn'), ind].forEach(function(b){ if (b) b.classList.toggle('calisiyor', !!aktariliyor); });
+  var bb = f('bulutBtn'); if (bb) bb.classList.toggle('calisiyor', !!bulutIs);
+}, 250);
 function katmanGoster(){
   var o = bul(secili), a = !!(o && o.arka), hb = f('hizliArka');
   hb.classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx');
@@ -3555,7 +3576,7 @@ function bulutTakip(is, izle){
 }
 async function bulutSonlar(){
   var pin = bulutPin(); if (!pin) return;
-  var kutu = f('bulutSonListe'); kutu.textContent = 'Yükleniyor…';
+  var kutu = f('bulutSonListe'); kutu.textContent = 'Yükleniyor…'; f('bulutSonBtn').classList.add('calisiyor');
   try {
     var j = await bulutCagir({ action: 'vrSonlar', pin: pin });
     if (!j.success) throw new Error(j.error);
@@ -3572,6 +3593,7 @@ async function bulutSonlar(){
       satir.appendChild(ad); satir.appendChild(izle); satir.appendChild(indir); kutu.appendChild(satir);
     });
   } catch(e) { kutu.textContent = e.message === 'PIN' ? 'Broker PIN kabul edilmedi.' : 'Liste alınamadı: ' + e.message; }
+  finally { f('bulutSonBtn').classList.remove('calisiyor'); }
 }
 function onizleAc(blob, link){
   var p = f('onizle'), v = f('onizleVideo');
