@@ -29,6 +29,9 @@
   .geri{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--alan);color:var(--ink-2);font-weight:700;text-decoration:none;flex:none}
   .baslik{font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 72,'wdth' 96,'wght' 800;font-size:20px;line-height:1;letter-spacing:-.03em;background:linear-gradient(100deg,#fff 0%,#ffb3ba 60%,#FF5A6A 100%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
   .ustbar .bosluk{flex:1}
+  .ustbar .btn{white-space:nowrap}
+  @media (max-width:420px){ .ustbar .baslik{display:none} }
+  @media (max-width:600px){ .ustbar{gap:6px;padding-left:10px;padding-right:10px} .ustbar .uzun{display:none} .ustbar .baslik{font-size:15px;white-space:nowrap} .ustbar .btn{padding:8px 10px} .ustbar .btn.ana{padding:9px 14px} }
   .ustbar .btn{padding:8px 12px;font-size:13.5px}
   .ustbar .btn.ana{padding:9px 18px;box-shadow:0 8px 24px rgba(255,59,78,.35)}
   .ray{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
@@ -104,7 +107,7 @@
   .eklem span{transform:rotate(-45deg);line-height:1}
   .eklem.dolu{background:var(--indigo);color:#fff}
   .eklem.secili{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 2px 10px rgba(0,0,0,.5)}
-  .oynatici{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;border-radius:2px;pointer-events:none;z-index:4;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+  .oynatici{will-change:transform;position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;border-radius:2px;pointer-events:none;z-index:4;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
   .oynatici::before{content:"";position:absolute;top:-4px;left:-5px;width:12px;height:12px;border-radius:3px;background:#fff}
   .serit-ipucu{font-size:12px;color:var(--mute);margin-top:6px}
   .gecis-secici{position:absolute;left:14px;right:14px;bottom:calc(100% + 8px);background:#191A22;border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:40}
@@ -140,6 +143,7 @@
   #onizle.gizli{display:none}
   .onizleKutu{display:flex;flex-direction:column;gap:10px;align-items:center;max-height:100%}
   #onizleVideo{max-height:calc(100vh - 110px);max-width:min(92vw,520px);border-radius:14px;background:#000}
+  #onizleDurum{color:#fff;font-weight:700;font-size:18px;padding:60px 30px;text-align:center}
   .onizleAlt{display:flex;gap:8px}
   .bulutSatir{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
   .bulutSatir span{flex:1;font-weight:700;font-size:13px;min-width:140px}
@@ -186,9 +190,9 @@
     <a class="geri" href="https://dogusportal.com/" title="Portala dön">←</a>
     <div class="baslik">Video Düzenle</div>
     <div class="bosluk"></div>
-    <button class="btn" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut videolarım</button>
-    <button class="btn" onclick="dosya.click()">Video değiştir</button>
-    <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻ Döndür</button>
+    <button class="btn" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut<span class="uzun"> videolarım</span></button>
+    <button class="btn" onclick="dosya.click()">Video<span class="uzun"> değiştir</span></button>
+    <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻<span class="uzun"> Döndür</span></button>
     <button class="btn ana" onclick="sekmeAc('pIndir');disaAktar()">İndir</button>
   </header>
 
@@ -210,6 +214,7 @@
       <button class="btn" onclick="karuselDosya.click()"><b>+</b> Dönen kartlar</button>
       <button class="btn" onclick="zoomEkle()"><b>+</b> Yakınlaştırma</button>
       <button class="btn" onclick="sekmeAc('pSes')"><b>+</b> Ses efekti</button>
+      <button class="btn gizli" id="hizliArka" onclick="var o = bul(secili); if (o) katmanAyarla(!o.arka);">Kişinin arkasına al</button>
     </div>
     <div class="sahne-sar">
       <div class="sahne" id="sahne">
@@ -260,6 +265,7 @@
   <div id="bildirim" role="status"></div>
   <div id="onizle" class="gizli" onclick="if (event.target === this) onizleKapat()">
     <div class="onizleKutu">
+      <div id="onizleDurum" class="gizli"></div>
       <video id="onizleVideo" controls playsinline></video>
       <div class="onizleAlt"><button class="btn ana" id="onizleIndir">İndir</button><button class="btn" onclick="onizleKapat()">Kapat</button></div>
     </div>
@@ -1233,9 +1239,16 @@ async function analizBaslat(){
   var isciIle = isci.durum === 'hazir';
   if (analiz.durum !== 'yok' || (seg.durum !== 'hazir' && !isciIle) || !video.src || !video.videoWidth || !sure()) return;
   var kim = ++analiz.kimlik; analiz.durum = 'calisiyor';
-  var D = sure(), vw = vG(), vh = vY(), T = 384, kisa = Math.min(vw, vh);
+  /* saç teli kalitesi için RVM tercih edilir (yükleniyorsa biraz beklenir) */
+  var rvmIle = isciIle && await rvmBekle();
+  if (kim !== analiz.kimlik) return;
+  var D = sure(), vw = vG(), vh = vY(), kisa = Math.min(vw, vh);
+  /* bellek sınırı (~300 MB) içinde en yüksek çözünürlük ve en az 15 kare/sn */
+  var T = !rvmIle ? 384 : (Math.round(vw * 540 / kisa) * Math.round(vh * 540 / kisa) * 15 * D <= 300e6 ? 540 : 384);
   var mw = Math.round(vw * T / kisa), mh = Math.round(vh * T / kisa), bayt = mw * mh;
-  analiz.fps = Math.max(6, Math.min(15, Math.floor(240e6 / (bayt * D))));
+  analiz.fps = Math.max(6, Math.min(rvmIle ? 30 : 15, Math.floor(300e6 / (bayt * D))));
+  analiz.rvm = rvmIle;
+  var dr = Math.min(1, 270 / T);
   analiz.n = Math.floor(D * analiz.fps) + 1; analiz.mw = mw; analiz.mh = mh; analiz.kareler = new Array(analiz.n); analiz.merkezler = new Array(analiz.n);
   var av = document.createElement('video'); av.muted = true; av.playsInline = true; av.setAttribute('playsinline', ''); av.preload = 'auto'; av.src = video.src;
   try {
@@ -1258,12 +1271,21 @@ async function analizBaslat(){
     var p;
     if (isciIle) {
       /* kare iş parçacığında işlenirken bir sonraki kareye geçilir (ana ekran beklemez) */
-      sira = isciSeg(kucukKare(av, mw, mh, !!yon), mw, mh, T);
-      if (i + 1 < analiz.n) await medyaAra(av, Math.min(D - .03, (i + 1) / analiz.fps));
-      var rr = await sira;
-      if (kim !== analiz.kimlik) return;
-      if (!rr || !rr.p || rr.p.length !== bayt) { analiz.durum = 'hata'; rozet(''); return; }
-      p = rr.p;
+      if (rvmIle) {
+        if (i === 0) rvm.w.postMessage({ tur: 'sifirla' });
+        sira = rvmKare(kucukKare(av, mw, mh, !!yon), mw, mh, dr);
+        if (i + 1 < analiz.n) await medyaAra(av, Math.min(D - .03, (i + 1) / analiz.fps));
+        p = await sira;
+        if (kim !== analiz.kimlik) return;
+        if (!p || p.length !== bayt) { analiz.durum = 'yok'; rvm.durum = 'hata'; rozet(''); return; }
+      } else {
+        sira = isciSeg(kucukKare(av, mw, mh, !!yon), mw, mh, T);
+        if (i + 1 < analiz.n) await medyaAra(av, Math.min(D - .03, (i + 1) / analiz.fps));
+        var rr = await sira;
+        if (kim !== analiz.kimlik) return;
+        if (!rr || !rr.p || rr.p.length !== bayt) { analiz.durum = 'hata'; rozet(''); return; }
+        p = rr.p;
+      }
     } else {
       await medyaAra(av, Math.min(D - .03, i / analiz.fps));
       if (kim !== analiz.kimlik) return;
@@ -1283,8 +1305,10 @@ async function analizBaslat(){
   /* zamansal yumuşatma (1-2-1) ve kişi merkezleri */
   var K = analiz.kareler, Y = new Array(analiz.n), pf = new Float32Array(bayt);
   for (var k = 0; k < analiz.n; k++) {
-    var o = K[Math.max(0, k - 1)], m = K[k], s_ = K[Math.min(analiz.n - 1, k + 1)], y = new Uint8Array(bayt);
-    for (var q = 0; q < bayt; q++) { var v = (o[q] + 2 * m[q] + s_[q]) >> 2; y[q] = v; pf[q] = v / 255; }
+    var o = K[Math.max(0, k - 1)], m = K[k], s_ = K[Math.min(analiz.n - 1, k + 1)], y = rvmIle ? m : new Uint8Array(bayt);
+    /* RVM zaten zamansal olarak kararlı: yumuşatma kenarda hale bırakır, yalnız eski modelde yapılır */
+    if (rvmIle) { for (var q = 0; q < bayt; q++) pf[q] = m[q] / 255; }
+    else for (var q = 0; q < bayt; q++) { var v = (o[q] + 2 * m[q] + s_[q]) >> 2; y[q] = v; pf[q] = v / 255; }
     Y[k] = y; analiz.merkezler[k] = merkezBul(pf, mw, mh);
     if (k % 10 === 9) await bekleMs(0);
     if (kim !== analiz.kimlik) return;
@@ -1377,9 +1401,76 @@ var ISCI_KOD = [
   '  return { p: p, mw: mw, mh: mh };',
   '}'
 ].join('\n');
+
+/* ---------- Saç teli seviyesinde kişi ayırma (Robust Video Matting) ----------
+   Buluttaki modelin aynısı tarayıcıda, ayrı iş parçacığında çalışır (WebGPU varsa onunla, yoksa WASM).
+   Ön analizde kullanılır; kareler sırayla verilir, model önceki kareleri hatırlayarak kenarı titretmez. */
+var ORT_PAKET = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist';
+var RVM_MODEL = new URL('assets/rvm/rvm_mobilenetv3_fp32.onnx', location.href).href;
+var RVM_KOD = [
+  'var s = null, rec = null, cv = null, cx = null, ep = "";',
+  'onmessage = async function(e){',
+  '  var d = e.data;',
+  '  if (d.tur === "kur") {',
+  '    try {',
+  '      importScripts(d.ort + "/ort.all.min.js");',
+  '      ort.env.wasm.wasmPaths = d.ort + "/";',
+  '      ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 2) : 1;',
+  '      var model = await (await fetch(d.model)).arrayBuffer();',
+  '      var eps = (self.navigator && navigator.gpu) ? [["webgpu"], ["wasm"]] : [["wasm"]];',
+  '      for (var i = 0; i < eps.length && !s; i++) { try { s = await ort.InferenceSession.create(model, { executionProviders: eps[i], graphOptimizationLevel: "all" }); ep = eps[i][0]; } catch(x) { s = null; } }',
+  '      if (!s) throw new Error("oturum açılamadı");',
+  '      postMessage({ tur: "hazir", ep: ep });',
+  '    } catch(x) { postMessage({ tur: "hata", m: String(x && x.message || x) }); }',
+  '    return;',
+  '  }',
+  '  if (d.tur === "sifirla") { rec = null; return; }',
+  '  if (d.tur === "kare") {',
+  '    try {',
+  '      var w = d.w, h = d.h, N = w * h;',
+  '      if (!cv || cv.width !== w || cv.height !== h) { cv = new OffscreenCanvas(w, h); cx = cv.getContext("2d", { willReadFrequently: true }); }',
+  '      cx.drawImage(d.bmp, 0, 0, w, h); try { d.bmp.close(); } catch(x) {}',
+  '      var px = cx.getImageData(0, 0, w, h).data, x = new Float32Array(3 * N);',
+  '      for (var i = 0, j = 0; i < N; i++, j += 4) { x[i] = px[j] / 255; x[N + i] = px[j + 1] / 255; x[2 * N + i] = px[j + 2] / 255; }',
+  '      if (!rec) { var z = new ort.Tensor("float32", new Float32Array(1), [1, 1, 1, 1]); rec = [z, z, z, z]; }',
+  '      var o = await s.run({ src: new ort.Tensor("float32", x, [1, 3, h, w]), r1i: rec[0], r2i: rec[1], r3i: rec[2], r4i: rec[3], downsample_ratio: new ort.Tensor("float32", new Float32Array([d.dr]), [1]) });',
+  '      rec = [o.r1o, o.r2o, o.r3o, o.r4o];',
+  '      var a = o.pha.data, p = new Uint8Array(N);',
+  '      for (var k = 0; k < N; k++) { var v = a[k]; p[k] = v <= 0 ? 0 : v >= 1 ? 255 : v * 255 + .5; }',
+  '      lekeTemizle(p, w, h, 127);',
+  '      postMessage({ tur: "kare", id: d.id, p: p }, [p.buffer]);',
+  '    } catch(x) { postMessage({ tur: "kare", id: d.id, p: null, m: String(x && x.message || x) }); }',
+  '  }',
+  '};'
+].join('\n');
+var rvm = { w: null, durum: 'yok', no: 0, bek: {}, ep: '' };
+function rvmKur(){
+  if (rvm.durum !== 'yok') return;
+  if (!window.Worker || !window.OffscreenCanvas || !window.createImageBitmap || window.renderModu) { rvm.durum = 'hata'; return; }
+  try { rvm.w = new Worker(URL.createObjectURL(new Blob([RVM_KOD + '\n' + lekeTemizle.toString()], { type: 'text/javascript' }))); }
+  catch(e) { rvm.durum = 'hata'; return; }
+  rvm.durum = 'yukleniyor';
+  function coktu(m){ console.log('rvm', m); rvm.durum = 'hata'; Object.keys(rvm.bek).forEach(function(k){ var cb = rvm.bek[k]; delete rvm.bek[k]; cb(null); }); }
+  rvm.w.onmessage = function(e){
+    var d = e.data;
+    if (d.tur === 'hazir') { rvm.durum = 'hazir'; rvm.ep = d.ep; }
+    else if (d.tur === 'hata') coktu(d.m);
+    else if (d.tur === 'kare') { if (!d.p && d.m) console.log('rvm kare', d.m); var cb = rvm.bek[d.id]; delete rvm.bek[d.id]; if (cb) cb(d.p); }
+  };
+  rvm.w.onerror = function(e){ coktu(e.message || 'worker'); };
+  rvm.w.postMessage({ tur: 'kur', ort: ORT_PAKET, model: RVM_MODEL });
+  setTimeout(function(){ if (rvm.durum === 'yukleniyor') coktu('zaman aşımı'); }, 90000);
+}
+function rvmBekle(){ return new Promise(function(ok){ (function b(){ if (rvm.durum === 'hazir') ok(true); else if (rvm.durum === 'hata') ok(false); else setTimeout(b, 150); })(); }); }
+function rvmKare(kaynak, w, h, dr){
+  return createImageBitmap(kaynak).then(function(bmp){
+    return new Promise(function(ok){ var id = ++rvm.no; rvm.bek[id] = ok; rvm.w.postMessage({ tur: 'kare', id: id, bmp: bmp, w: w, h: h, dr: dr }, [bmp]); });
+  }).catch(function(){ return null; });
+}
 var isci = { w: null, durum: 'yok', no: 0, bek: {}, canliMesgul: false, kucuk: document.createElement('canvas') };
 function segHazir(){ return seg.durum === 'hazir' || isci.durum === 'hazir'; }
 function isciKur(){
+  rvmKur();
   if (isci.durum !== 'yok') return;
   if (!window.Worker || !window.OffscreenCanvas || !window.createImageBitmap || window.renderModu) { isci.durum = 'hata'; return; }
   try { isci.w = new Worker(URL.createObjectURL(new Blob([ISCI_KOD + '\n' + lekeTemizle.toString()], { type: 'text/javascript' }))); }
@@ -2748,7 +2839,23 @@ function seritCiz(){
   f('bolmeSilBtn').disabled = !sec || sec.a <= .02;
   oynaticiYaz();
 }
-function oynaticiYaz(){ var D = sure(), o = f('oynatici'); if (o && D) o.style.left = (Math.min(1, (video.currentTime || 0) / D) * 100) + '%'; }
+/* oynatma çizgisi: tarayıcının kaba güncellenen currentTime'ı yerine ekran karesine göre ara değer, GPU ile kaydırılır */
+var oyn = { ct: -1, pt: 0 };
+function akiciZaman(){
+  var ct = video.currentTime || 0, now = performance.now();
+  if (video.paused || video.seeking) { oyn.ct = ct; oyn.pt = now; return ct; }
+  var tah = oyn.ct + (now - oyn.pt) / 1000 * (video.playbackRate || 1);
+  /* tahmin gerçek zamana yumuşakça yaklaşır, çizgi geri sıçramaz; büyük farkta (sarma/kesim) gerçeğe geçilir */
+  var fark = ct - tah, yeni = Math.abs(fark) > .3 ? ct : tah + fark * .15;
+  if (Math.abs(fark) <= .3 && yeni < oyn.ct) yeni = oyn.ct;
+  oyn.ct = yeni; oyn.pt = now;
+  return Math.min(sure() || yeni, yeni);
+}
+function oynaticiYaz(){
+  var D = sure(), o = f('oynatici'), el = f('serit'); if (!o || !D || !el) return;
+  var x = Math.min(1, akiciZaman() / D) * el.clientWidth;
+  o.style.left = '0'; o.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
+}
 (function(){
   var el = f('serit'), basX = 0, tasindi = false, aktif = false;
   function zamanAl(ev){ var r = el.getBoundingClientRect(); return Math.max(0, Math.min(sure() - .01, (ev.clientX - r.left) / r.width * sure())); }
@@ -2771,6 +2878,7 @@ function oynaticiYaz(){ var D = sure(), o = f('oynatici'); if (o && D) o.style.l
 })();
 /* geçiş seçici */
 var gecisSeciliT = null;
+document.addEventListener('pointerdown', function(e){ var g = f('gecisSecici'); if (g && !g.classList.contains('gizli') && !g.contains(e.target) && !(e.target.closest && e.target.closest('.eklem'))) gecisKapat(); }, true);
 function gecisAc(t){
   gecisSeciliT = t;
   var e = eklemler().filter(function(x){ return Math.abs(x.t - t) < .03; })[0]; if (!e) return;
@@ -2852,6 +2960,7 @@ sahne.addEventListener('pointerdown', function(e){ if (e.target === sahne || e.t
 function sec(id){ secili = id; formDoldur(); cizdir(); listele(); segIste(); }
 function formDoldur(){
   var o = bul(secili);
+  katmanGoster();
   f('secimYok').classList.toggle('gizli', !!o);
   f('yaziForm').classList.toggle('gizli', !o || o.tur !== 'yazi');
   f('resimForm').classList.toggle('gizli', !o || o.tur !== 'resim');
@@ -2937,12 +3046,14 @@ f('fRenkDegis').addEventListener('change', function(){ var o = bul(secili); if (
 f('fRenk').addEventListener('input', function(){ var o = bul(secili); if (o && o.stil !== 'ozel') { o.renkDegis = true; f('fRenkDegis').checked = true; cizdir(); kaydet(); } });
 f('fArka').addEventListener('change', function(){ var o = bul(secili); if (!o) return; o.arka = f('fArka').checked; kaydet(); segIste(); cizdir(); listele(); });
 function katmanGoster(){
-  var o = bul(secili), a = !!(o && o.arka);
+  var o = bul(secili), a = !!(o && o.arka), hb = f('hizliArka');
+  hb.classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx');
+  hb.classList.toggle('ana', a); hb.textContent = a ? '✓ Kişinin arkasında (öne al)' : 'Kişinin arkasına al';
   f('katOn').classList.toggle('aktif', !a); f('katArka').classList.toggle('aktif', a);
   f('katArka').textContent = a ? '✓ Kişinin arkasında' : 'Kişinin arkasına gönder';
   f('katNot').textContent = a ? 'Kişi bu ' + (o && o.tur === 'yazi' ? 'yazının' : 'öğenin') + ' önüne geçer. Geri almak için "Önde"ye basın.' : (o && o.tur === 'yazi' ? 'Yazı şu an kişinin önünde. Kafanın arkasından geçsin isterseniz yandaki düğmeye basın.' : 'Şu an kişinin önünde.');
 }
-function katmanAyarla(a){ var o = bul(secili); if (!o) return; f('fArka').checked = a; o.arka = a; kaydet(); segIste(); cizdir(); listele(); katmanGoster(); bildir(a ? 'Kişinin arkasına gönderildi' : 'Öne alındı'); }
+function katmanAyarla(a){ var o = bul(secili); if (!o) return; f('fArka').checked = a; o.arka = a; kaydet(); segIste(); cizdir(); listele(); katmanGoster(); bildir(a ? (analiz.durum === 'hazir' || analiz.durum === 'harici' ? 'Kişinin arkasına gönderildi' : 'Kişinin arkasına gönderildi · kişi birkaç saniyede ayrılıyor') : 'Öne alındı'); }
 function simdiAta(k){ var o = bul(secili); if (!o) return; o[k] = +video.currentTime.toFixed(1); if (o.bit < o.bas) { if (k === 'bas') o.bit = +(o.bas + 2).toFixed(1); else o.bas = o.bit; } formDoldur(); cizdir(); listele(); kaydet(); }
 function ortala(){ var o = bul(secili); if (!o) return; o.x = .5; cizdir(); kaydet(); }
 function kopyala(){ var o = bul(secili); if (!o) return; var k = JSON.parse(JSON.stringify(o)); k.id = sayac++; if (o.vid && icVideolar[o.id]) icVideoKur(k, icVideolar[o.id].src); var s = o.bit - o.bas; k.bas = +Math.min(o.bit, sure() || o.bit).toFixed(1); k.bit = +(k.bas + s).toFixed(1); if (sure()) k.bit = Math.min(k.bit, +sure().toFixed(1)); ogeler.push(k); sec(k.id); kaydet(); }
@@ -3455,7 +3566,7 @@ async function bulutSonlar(){
       satir.className = 'bulutSatir';
       var ad = document.createElement('span'); ad.textContent = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }) + ' ' + d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + (x.boyut ? ' · ' + (x.boyut / 1048576).toFixed(1) + ' MB' : '');
       var izle = document.createElement('button'); izle.className = 'btn ana kucuk'; izle.textContent = '▶ İzle';
-      izle.onclick = function(){ if (bulutIs) return; f('bulutLink').classList.add('gizli'); bildir('Video açılıyor…'); bulutTakip(x.is, true); };
+      izle.onclick = function(){ if (bulutIs) return; onizleBekle(); bulutTakip(x.is, true); };
       var indir = document.createElement('button'); indir.className = 'btn kucuk'; indir.textContent = 'İndir';
       indir.onclick = function(){ if (bulutIs) return; f('bulutLink').classList.add('gizli'); bulutTakip(x.is, false); var bk = setInterval(function(){ if (!bulutIs) { clearInterval(bk); if (bulutBloblar[x.is]) f('bulutLink').click(); } }, 300); };
       satir.appendChild(ad); satir.appendChild(izle); satir.appendChild(indir); kutu.appendChild(satir);
@@ -3467,24 +3578,36 @@ function onizleAc(blob, link){
   if (v.dataset.url) URL.revokeObjectURL(v.dataset.url);
   v.dataset.url = URL.createObjectURL(blob); v.src = v.dataset.url;
   f('onizleIndir').onclick = function(){ link.click(); };
+  v.classList.remove('gizli'); onizleDurum(''); f('onizleIndir').classList.remove('gizli');
   p.classList.remove('gizli'); v.play().catch(function(){});
 }
+function onizleBekle(){
+  var v = f('onizleVideo'); v.pause(); v.removeAttribute('src'); v.load(); v.classList.add('gizli');
+  onizleDurum('Video açılıyor…'); f('onizleIndir').classList.add('gizli'); f('onizle').classList.remove('gizli');
+}
+function onizleDurum(m){ var d = f('onizleDurum'); d.textContent = m || ''; d.classList.toggle('gizli', !m); }
 function onizleKapat(){ var v = f('onizleVideo'); v.pause(); f('onizle').classList.add('gizli'); }
 function bulutBitir(){ bulutIs = null; f('bulutBtn').disabled = !videoDosyasi; try { localStorage.removeItem('vdBulutIs'); } catch(e) {} }
 async function bulutIndir(is, pin, d){
   if (bulutBloblar[is]) { bulutSonuc(is, bulutBloblar[is]); return; }
-  var n = d.sonucParca || 1, parcalar = [];
+  var izle = bulutIzle === is;
+  try { var ck = await caches.open('vd-bulut'), eski = await ck.match('/bulut/' + is); if (eski) { bulutBloblar[is] = await eski.blob(); bulutSonuc(is, bulutBloblar[is]); return; } } catch(e) {}
+  var n = d.sonucParca || 1, parcalar = new Array(n), biten = 0;
+  function ilerle(){ var y = Math.round(biten / n * 100); if (izle) onizleDurum('Video açılıyor… %' + y); bulutYaz((izle ? 'Video açılıyor… %' : 'Video hazırlanıyor… %') + y, y); }
+  ilerle();
   try {
-    for (var i = 0; i < n; i++) {
-      bulutYaz('Hazır, indiriliyor… %' + Math.round(i / n * 100), i / n * 100);
-      var j = await bulutCagir({ action: 'vrSonuc', pin: pin, is: is, no: i });
-      if (!j.success) throw new Error(j.error);
-      var ham = atob(j.veri), u = new Uint8Array(ham.length);
-      for (var k = 0; k < ham.length; k++) u[k] = ham.charCodeAt(k);
-      parcalar.push(u);
-    }
-  } catch(e) { bulutYaz('İndirilemedi: ' + e.message + '. Sayfayı yenileyip tekrar deneyin.', null); bulutIs = null; return; }
+    /* parçalar aynı anda alınır: daha hızlı açılır */
+    await Promise.all(Array.from({ length: n }, function(_, i){
+      return bulutCagir({ action: 'vrSonuc', pin: pin, is: is, no: i }).then(function(j){
+        if (!j.success) throw new Error(j.error);
+        var ham = atob(j.veri), u = new Uint8Array(ham.length);
+        for (var k = 0; k < ham.length; k++) u[k] = ham.charCodeAt(k);
+        parcalar[i] = u; biten++; ilerle();
+      });
+    }));
+  } catch(e) { bulutYaz('Açılamadı: ' + e.message + '. Tekrar deneyin.', null); if (izle) onizleDurum('Açılamadı, tekrar deneyin.'); bulutIs = null; return; }
   var blob = new Blob(parcalar, { type: 'video/mp4' }); bulutBloblar[is] = blob;
+  try { (await caches.open('vd-bulut')).put('/bulut/' + is, new Response(blob, { headers: { 'content-type': 'video/mp4' } })); } catch(e) {}
   bulutSonuc(is, blob);
 }
 function bulutSonuc(is, blob){
