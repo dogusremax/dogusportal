@@ -108,7 +108,8 @@ async function ana() {
     } else { s.writeHead(200, { 'Content-Type': tur, 'Content-Length': boy, 'Accept-Ranges': 'bytes' }); fs.createReadStream(f).pipe(s); }
   }).listen(8799);
 
-  const tarayici = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+  /* gerçek Chrome: h264 çözme ve kodlama ondadır (Playwright'ın kendi Chromium'unda yok) */
+  const tarayici = await chromium.launch({ channel: process.env.CHROME_KANAL === 'yok' ? undefined : 'chrome', args: ['--autoplay-policy=no-user-gesture-required'] });
   const sayfa = await tarayici.newPage({ viewport: { width: 1280, height: 900 } });
   sayfa.on('pageerror', e => console.log('SAYFA HATASI', e.message));
   sayfa.on('console', m => { if (/hata|error|pro /i.test(m.text())) console.log('SAYFA', m.text().slice(0, 300)); });
