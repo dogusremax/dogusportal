@@ -1,0 +1,37 @@
+name: Video Düzenle — bulutta yüksek kalite
+# video-duzenle.html'deki "Bulutta yüksek kalite çıkar" düğmesi Danışman Takip üzerinden tetikler.
+on:
+  workflow_dispatch:
+    inputs:
+      is:
+        description: "İş kimliği"
+        required: true
+concurrency: { group: video-render, cancel-in-progress: false }
+permissions: { contents: read }
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Araçlar
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q onnxruntime==1.20.1 numpy
+          npm i --no-save playwright@1.48.2
+          npx playwright install --with-deps chromium
+          curl -sL -o "$RUNNER_TEMP/rvm.onnx" https://github.com/PeterL1n/RobustVideoMatting/releases/download/v1.0.0/rvm_mobilenetv3_fp32.onnx
+      - name: İşle
+        env:
+          IS: ${{ inputs.is }}
+          PORTAL_ANAHTAR: ${{ secrets.PORTAL_ANAHTAR }}
+        run: node scripts/video-render/render.js
+      - name: Deneme sonucu
+        if: always() && startsWith(inputs.is, 'deneme')
+        uses: actions/upload-artifact@v4
+        with:
+          name: deneme-sonuc
+          path: ${{ runner.temp }}/deneme-sonuc.mp4
+          if-no-files-found: ignore
