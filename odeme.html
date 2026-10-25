@@ -311,7 +311,19 @@ function musteriGoster(v){
 
 var q = new URLSearchParams(location.search);
 
-if(q.get('sablon')){
+if(q.get('durum')){
+  // Ödeme yakalama durumu: tetik kurulu mu, son kontrol ne zaman, ne buldu
+  $('baslik').textContent='Ödeme kontrolü'; $('altbaslik').textContent='Paraşüt → Kapora eşleştirme';
+  $('yukleniyor').hidden=false;
+  api({islem:'odemeDurum'}).then(function(j){
+    var s=j.sonKontrol||{};
+    $('yukleniyor').style.whiteSpace='pre-wrap';
+    $('yukleniyor').textContent=j.ok?('Tetik: '+j.tetik+'  ·  kapanis-matbu: '+(j.mtKurulu?'kurulu':'YOK')+
+      '\nSon kontrol: '+(s.zaman||'hiç çalışmadı')+(s.zaman?('  ·  '+(s.ok?'ok':'HATA'))+'':'')+
+      (s.hata?'\nHata: '+s.hata:'')+(s.hesap?'\nHesap: '+s.hesap:'')+(s.bakilan!=null?'\nBakılan hareket: '+s.bakilan:'')+
+      (s.acikTalep===0?'\nAçık talep yok':'')+(s.yeni&&s.yeni.length?'\nYeni: '+s.yeni.join(', '):'')):(j.error||'Hata');
+  }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
+} else if(q.get('sablon')){
   // Yönetici: ofis hattı şablonunu Meta onayına gönder / durumuna bak
   $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı "Ödeme bilgilerini gör" şablonu';
   $('yukleniyor').hidden=false;
