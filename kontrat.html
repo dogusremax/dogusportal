@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050A30">
+<meta name="robots" content="noindex">
+<title>Kontrat Randevusu — RE/MAX Doğuş</title>
+<meta property="og:title" content="Kontrat Randevusu — RE/MAX Doğuş">
+<meta property="og:description" content="Kontratın yerini ve saatini gir, ofisteki kontrat masasını ayır.">
+<meta property="og:image" content="https://dogusportal.com/assets/og-kare.png">
+<link rel="icon" href="assets/dogus-logo.png">
+<style>
+:root{
+  --lacivert:#050A30; --lacivert2:#0E1A5C; --kirmizi:#DC1C2E; --yesil:#0A7D5A;
+  --zemin:#EEF1F7; --kart:#FFFFFF; --yazi:#141B34; --soluk:#6A7389; --cizgi:#E2E6EF; --dolgu:#F5F7FB;
+  --golge:0 1px 2px rgba(5,10,48,.04),0 8px 24px rgba(5,10,48,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --zemin:#0A0F1F; --kart:#131A30; --yazi:#E9EEF8; --soluk:#95A0B7; --cizgi:#232C48; --dolgu:#1A2240;
+         --golge:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;
+  padding:0 16px calc(110px + env(safe-area-inset-bottom))}
+.wrap{max-width:560px;margin:0 auto}
+.ust{position:relative;overflow:hidden;color:#fff;margin:0 -16px 18px;
+  padding:calc(18px + env(safe-area-inset-top)) 20px 24px;border-radius:0 0 26px 26px;
+  background:radial-gradient(120% 140% at 100% 0%,#1B2A7A 0%,var(--lacivert2) 35%,var(--lacivert) 100%);
+  box-shadow:0 10px 30px rgba(5,10,48,.25)}
+.ust::after{content:"";position:absolute;right:-40px;bottom:-60px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,28,46,.35),transparent 70%);pointer-events:none}
+.ust .logo{height:40px;width:auto;display:block;margin-bottom:16px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
+.ust .marka{font-size:11px;letter-spacing:.18em;opacity:.7;font-weight:700;text-transform:uppercase}
+.ust h1{font-size:25px;font-weight:700;margin:4px 0 6px;letter-spacing:-.02em}
+.ust p{margin:0;font-size:13.5px;opacity:.85;line-height:1.5;position:relative;z-index:1}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--golge)}
+.grup{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;margin:0 0 14px}
+.grup b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--kirmizi);color:#fff;font-size:13px}
+.bilgi{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--cizgi);font-size:15px}
+.bilgi:first-of-type{border-top:0;padding-top:0}
+.bilgi .k{color:var(--soluk);font-size:13px;font-weight:700;flex:none}
+.bilgi .d{font-weight:700;text-align:right}
+.bilgi .d.tutar{color:var(--yesil)}
+.rozet{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;background:rgba(10,125,90,.12);color:var(--yesil)}
+.rozet.bekle{background:rgba(220,28,46,.08);color:var(--kirmizi)}
+.cipler{display:flex;flex-wrap:wrap;gap:8px}
+.cipler label{cursor:pointer}
+.cipler input{position:absolute;opacity:0;pointer-events:none}
+.cipler span{display:block;background:var(--dolgu);border:1.5px solid transparent;border-radius:999px;padding:10px 15px;font-size:14px;font-weight:700}
+.cipler input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.08);color:var(--kirmizi)}
+.yerSec{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.yerSec label{cursor:pointer}
+.yerSec input{position:absolute;opacity:0;pointer-events:none}
+.yerSec span{display:block;height:100%;background:var(--dolgu);border:1.5px solid transparent;border-radius:16px;padding:14px;font-size:14px;line-height:1.35}
+.yerSec span strong{display:block;font-size:15px;margin-bottom:3px}
+.yerSec span em{font-style:normal;color:var(--soluk);font-size:12.5px}
+.yerSec input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.06)}
+input[type=text],textarea{width:100%;font-family:inherit;font-size:16px;color:var(--yazi);background:var(--dolgu);
+  border:1.5px solid transparent;border-radius:14px;padding:13px 14px;outline:none;margin-top:12px}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart)}
+.gunler{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none}
+.gunler::-webkit-scrollbar{display:none}
+.gun{flex:none;width:58px;border-radius:14px;background:var(--dolgu);border:1.5px solid transparent;padding:9px 0;text-align:center;cursor:pointer;font-family:inherit;color:var(--yazi)}
+.gun small{display:block;font-size:11px;color:var(--soluk);font-weight:700;text-transform:uppercase}
+.gun b{display:block;font-size:20px;margin:2px 0}
+.gun i{display:block;font-style:normal;font-size:11px;color:var(--soluk)}
+.gun.on{border-color:var(--kirmizi);background:rgba(220,28,46,.08)}
+.gun.on small,.gun.on i{color:var(--kirmizi)}
+.gun.pazar{opacity:.45}
+.saatler{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.saat{font-family:inherit;font-size:14px;font-weight:700;padding:11px 0;border-radius:12px;border:1.5px solid transparent;background:var(--dolgu);color:var(--yazi);cursor:pointer}
+.saat.dolu{background:repeating-linear-gradient(135deg,var(--dolgu) 0 6px,transparent 6px 12px);color:var(--soluk);text-decoration:line-through;cursor:not-allowed}
+.saat.on{background:var(--kirmizi);color:#fff}
+.saat.ara{border-color:var(--kirmizi);color:var(--kirmizi)}
+.alt{font-size:12.5px;color:var(--soluk);margin:10px 2px 0;line-height:1.5}
+.lejant{display:flex;gap:14px;font-size:12px;color:var(--soluk);margin-top:10px}
+.lejant i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px;background:var(--dolgu)}
+.lejant i.d{background:repeating-linear-gradient(135deg,var(--cizgi) 0 3px,transparent 3px 6px)}
+.lejant i.s{background:var(--kirmizi)}
+.ozet{background:var(--dolgu);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;margin-top:14px}
+.gonderBar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--zemin) 70%,transparent)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:560px;margin:0 auto;border:0;border-radius:16px;padding:16px;
+  font:700 16px Arial,Helvetica,sans-serif;cursor:pointer;color:#fff;background:var(--kirmizi);box-shadow:0 8px 20px rgba(220,28,46,.3)}
+.btn:disabled{opacity:.45;box-shadow:none}
+.hata{color:var(--kirmizi);font-size:13.5px;font-weight:700;text-align:center;margin:8px 0 0;min-height:1em}
+.tamam{text-align:center;padding:26px 18px}
+.tamam .ik{width:64px;height:64px;border-radius:50%;background:rgba(10,125,90,.12);color:var(--yesil);display:grid;place-items:center;font-size:32px;margin:0 auto 12px}
+.tamam h2{margin:0 0 8px;font-size:21px}
+.tamam p{margin:0;color:var(--soluk);line-height:1.55;font-size:14.5px}
+.kiraKutu{margin-top:22px;padding-top:18px;border-top:1px solid var(--cizgi);text-align:left}
+.kiraBaslik{font-size:13px;font-weight:700;color:var(--soluk);margin-bottom:10px}
+.btn.ikincil{background:var(--dolgu);color:var(--yazi);box-shadow:none;text-decoration:none;font-size:15px;margin-bottom:8px}
+.yukleniyor{text-align:center;color:var(--soluk);font-weight:700;padding:30px}
+.onizlemeBant{background:#FFF4D6;color:#8A5A00;font-size:12.5px;font-weight:700;text-align:center;border-radius:12px;padding:8px;margin-bottom:12px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ust">
+    <img class="logo" src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" width="150" height="40">
+    <div class="marka">RE/MAX Doğuş</div>
+    <h1>Kontrat randevusu</h1>
+    <p>Kapora alındı, hayırlı olsun! Kontratın nerede ve ne zaman yapılacağını gir; ofiste yapılacaksa kontrat masası senin adına ayrılsın.</p>
+  </div>
+
+  <div class="onizlemeBant" id="onizlemeBant" hidden>ÖNİZLEME · örnek verilerle, kayıt yapılmaz</div>
+  <div class="yukleniyor" id="yukleniyor">Yükleniyor…</div>
+
+  <div id="form" hidden>
+    <div class="kart">
+      <div class="grup"><b>1</b>Kapora bilgileri <span class="rozet" id="odemeRozet"></span></div>
+      <div class="bilgi"><span class="k">İşlem</span><span class="d" id="bIslem"></span></div>
+      <div class="bilgi"><span class="k">Danışman</span><span class="d" id="bDanisman"></span></div>
+      <div class="bilgi"><span class="k">Müşteri</span><span class="d" id="bMusteri"></span></div>
+      <div class="bilgi"><span class="k">Adres</span><span class="d" id="bMulk"></span></div>
+      <div class="bilgi"><span class="k">Alınan kapora</span><span class="d tutar" id="bTutar"></span></div>
+    </div>
+
+    <div class="kart">
+      <div class="grup"><b>2</b>Kontrat nerede yapılacak?</div>
+      <div class="yerSec">
+        <label><input type="radio" name="yer" value="ofis" checked><span><strong>🏢 Ofiste</strong><em>Kontrat masası rezerve edilir</em></span></label>
+        <label><input type="radio" name="yer" value="diger"><span><strong>📍 Başka yerde</strong><em>Mülkte, müşteride vb.</em></span></label>
+      </div>
+      <input type="text" id="adres" placeholder="Kontratın yapılacağı adres" hidden autocomplete="off">
+    </div>
+
+    <div class="kart">
+      <div class="grup"><b>3</b><span id="zamanBaslik">Kontrat için masayı rezerve et</span></div>
+      <div class="gunler" id="gunler"></div>
+      <div class="cipler" id="sureler" style="margin:6px 0 12px">
+        <label><input type="radio" name="sure" value="30"><span>30 dk</span></label>
+        <label><input type="radio" name="sure" value="60" checked><span>1 saat</span></label>
+        <label><input type="radio" name="sure" value="90"><span>1,5 saat</span></label>
+        <label><input type="radio" name="sure" value="120"><span>2 saat</span></label>
+      </div>
+      <div class="saatler" id="saatler"></div>
+      <div class="lejant" id="lejant"><span><i></i>Boş</span><span><i class="d"></i>Dolu</span><span><i class="s"></i>Seçtiğin</span></div>
+      <div class="alt" id="doluBilgi"></div>
+      <textarea id="not" placeholder="Not (isteğe bağlı): tapu, evrak, kimler gelecek…"></textarea>
+      <div class="ozet" id="ozet" hidden></div>
+    </div>
+  </div>
+
+  <div class="kart tamam" id="tamam" hidden>
+    <div class="ik">✓</div>
+    <h2 id="tamamBaslik">Masa ayrıldı</h2>
+    <p id="tamamMetin"></p>
+    <div class="kiraKutu" id="kiraKutu" hidden>
+      <div class="kiraBaslik">Kira kontratına hazırlık:</div>
+      <a class="btn ikincil" href="kira-dosya.html">🗂️ Kira Masası: kiracı, mülk sahibi, kefil evrakları</a>
+      <a class="btn ikincil" href="kira-kontrat-listesi.html">📋 Kira kontrat hazırlık listesi</a>
+    </div>
+  </div>
+</div>
+
+<div class="gonderBar" id="gonderBar" hidden>
+  <button class="btn" id="kaydet" disabled>Masayı rezerve et</button>
+  <div class="hata" id="hata"></div>
+</div>
+
+<script>
+var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+var MASA_BAS = 9, MASA_BIT = 20;          // kontrat masası 09:00–20:00, yarım saatlik dilimler
+var GUN_SAYISI = 21;
+var q = new URLSearchParams(location.search);
+var ONIZLE = q.get('onizle') === '1';
+var KOD = String(q.get('k') || (ONIZLE ? 'K7F3Q' : '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
+var $ = function (id) { return document.getElementById(id); };
+var S = { veri: null, tarih: '', bas: '', dolu: [] };
+var GUNLER = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+var AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+var GUN_UZUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+
+function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function tarihYazi(s) { var d = new Date(s + 'T12:00:00'); return d.getDate() + ' ' + AYLAR[d.getMonth()] + ' ' + GUN_UZUN[d.getDay()]; }
+function dk(h) { return Number(h.slice(0, 2)) * 60 + Number(h.slice(3)); }
+function hh(m) { return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + m % 60).slice(-2); }
+function yer() { return document.querySelector('input[name=yer]:checked').value; }
+function sure() { return Number(document.querySelector('input[name=sure]:checked').value); }
+
+/* ── Önizleme (örnek veri) ── */
+var ORNEK_DOLU = {};
+(function () {
+  var d = new Date(); d.setDate(d.getDate() + 1);
+  ORNEK_DOLU[ymd(d)] = [{ bas: '11:00', bit: '12:00', kim: 'Gizem Gök' }, { bas: '15:30', bit: '16:30', kim: 'Evşen Özazman' }];
+  d.setDate(d.getDate() + 1);
+  ORNEK_DOLU[ymd(d)] = [{ bas: '10:00', bit: '11:30', kim: 'Özlem Varol' }];
+})();
+function onizleApi(g) {
+  return new Promise(function (res) { setTimeout(function () {
+    if (g.islem === 'kontratGetir') return res({ ok: true, veri: { kod: KOD, danisman: 'Umut Tokkuş', musteri: 'Çetin Yılmaz',
+      mulk: 'Akasya Acıbadem Göl Etabı Kule 125', tutar: '50.000 TL', odendi: true, islem: q.get('islem') || 'satilik', randevu: null } });
+    if (g.islem === 'kontratMasa') return res({ ok: true, dolu: ORNEK_DOLU[g.tarih] || [] });
+    if (g.islem === 'kontratKaydet') return res({ ok: true });
+  }, 250); });
+}
+function api(g) {
+  if (ONIZLE) return onizleApi(g);
+  return fetch(WA, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ action: 'kapora', kod: KOD }, g)) })
+    .then(function (r) { return r.json(); });
+}
+
+/* ── Çizim ── */
+function gunlerCiz() {
+  var h = '', d = new Date();
+  for (var i = 0; i < GUN_SAYISI; i++) {
+    var s = ymd(d);
+    h += '<button type="button" class="gun' + (s === S.tarih ? ' on' : '') + (d.getDay() === 0 ? ' pazar' : '') + '" data-t="' + s + '">' +
+      '<small>' + (i === 0 ? 'Bugün' : i === 1 ? 'Yarın' : GUNLER[d.getDay()]) + '</small><b>' + d.getDate() + '</b><i>' + AYLAR[d.getMonth()].slice(0, 3) + '</i></button>';
+    d.setDate(d.getDate() + 1);
+  }
+  $('gunler').innerHTML = h;
+}
+function cakisiyor(b, e) {
+  return S.dolu.some(function (x) { return b < dk(x.bit) && dk(x.bas) < e; });
+}
+function saatlerCiz() {
+  var ofis = yer() === 'ofis', h = '', simdi = new Date(), bugun = S.tarih === ymd(simdi);
+  var sec = S.bas ? dk(S.bas) : -1, secBit = sec + sure();
+  for (var m = MASA_BAS * 60; m + 30 <= MASA_BIT * 60; m += 30) {
+    var gecti = bugun && m <= simdi.getHours() * 60 + simdi.getMinutes();
+    var dolu = ofis && (cakisiyor(m, m + 30) || m + sure() > MASA_BIT * 60);
+    var sinif = 'saat' + ((dolu || gecti) ? ' dolu' : '') + (m === sec ? ' on' : (m > sec && m < secBit ? ' ara' : ''));
+    h += '<button type="button" class="' + sinif + '" data-s="' + hh(m) + '"' + ((dolu || gecti) ? ' disabled' : '') + '>' + hh(m) + '</button>';
+  }
+  $('saatler').innerHTML = h;
+  $('lejant').hidden = !ofis;
+  $('doluBilgi').textContent = ofis && S.dolu.length
+    ? 'Masa bu gün dolu: ' + S.dolu.map(function (x) { return x.bas + '–' + x.bit + ' ' + x.kim; }).join(', ') : '';
+  ozetCiz();
+}
+function ozetCiz() {
+  var ofis = yer() === 'ofis', tamam = S.tarih && S.bas && (ofis || $('adres').value.trim().length > 3);
+  if (S.bas && (!ofis || !cakisiyor(dk(S.bas), dk(S.bas) + sure()))) {
+    $('ozet').hidden = false;
+    $('ozet').innerHTML = '<b>' + tarihYazi(S.tarih) + ', ' + S.bas + '–' + hh(dk(S.bas) + sure()) + '</b><br>' +
+      (ofis ? '🏢 Ofis · Kontrat masası' : '📍 ' + ($('adres').value.trim() || 'adres yazılmadı'));
+  } else { $('ozet').hidden = true; tamam = false; }
+  $('kaydet').disabled = !tamam;
+  $('kaydet').textContent = ofis ? 'Masayı rezerve et' : 'Randevuyu kaydet';
+  $('zamanBaslik').textContent = ofis ? 'Kontrat için masayı rezerve et' : 'Kontrat ne zaman?';
+}
+function masaYukle() {
+  S.dolu = [];
+  if (yer() !== 'ofis') return saatlerCiz();
+  $('saatler').style.opacity = .5;
+  api({ islem: 'kontratMasa', tarih: S.tarih }).then(function (j) {
+    S.dolu = (j && j.dolu) || [];
+    if (S.bas && cakisiyor(dk(S.bas), dk(S.bas) + sure())) S.bas = '';
+    $('saatler').style.opacity = 1; saatlerCiz();
+  }).catch(function () { $('saatler').style.opacity = 1; saatlerCiz(); });
+}
+
+/* ── Olaylar ── */
+$('gunler').addEventListener('click', function (e) {
+  var b = e.target.closest('.gun'); if (!b) return;
+  S.tarih = b.dataset.t; S.bas = ''; gunlerCiz(); masaYukle();
+});
+$('saatler').addEventListener('click', function (e) {
+  var b = e.target.closest('.saat'); if (!b || b.disabled) return;
+  var m = dk(b.dataset.s);
+  if (yer() === 'ofis' && cakisiyor(m, m + sure())) { $('hata').textContent = 'Bu süre dolu bir randevuya denk geliyor, daha kısa süre ya da başka saat seç.'; return; }
+  $('hata').textContent = ''; S.bas = b.dataset.s; saatlerCiz();
+});
+document.querySelectorAll('input[name=yer]').forEach(function (r) { r.addEventListener('change', function () {
+  $('adres').hidden = yer() === 'ofis'; if (!$('adres').hidden) $('adres').focus(); masaYukle(); }); });
+document.querySelectorAll('input[name=sure]').forEach(function (r) { r.addEventListener('change', function () {
+  if (S.bas && yer() === 'ofis' && cakisiyor(dk(S.bas), dk(S.bas) + sure())) S.bas = ''; saatlerCiz(); }); });
+$('adres').addEventListener('input', ozetCiz);
+
+$('kaydet').addEventListener('click', function () {
+  var b = this, ofis = yer() === 'ofis';
+  b.disabled = true; b.textContent = 'Kaydediliyor…'; $('hata').textContent = '';
+  api({ islem: 'kontratKaydet', yer: ofis ? 'ofis' : 'diger', adres: $('adres').value.trim(), tarih: S.tarih,
+        bas: S.bas, bit: hh(dk(S.bas) + sure()), not: $('not').value.trim() }).then(function (j) {
+    if (!j.ok) { $('hata').textContent = j.error || 'Kaydedilemedi.'; if (j.dolu) { S.dolu = j.dolu; S.bas = ''; saatlerCiz(); } else ozetCiz(); return; }
+    $('form').hidden = true; $('gonderBar').hidden = true; $('tamam').hidden = false;
+    $('kiraKutu').hidden = !(S.veri && S.veri.islem === 'kiralik');
+    var zaman = tarihYazi(S.tarih) + ', ' + S.bas + '–' + hh(dk(S.bas) + sure());
+    $('tamamBaslik').textContent = ofis ? 'Kontrat masası ayrıldı' : 'Kontrat randevusu kaydedildi';
+    $('tamamMetin').innerHTML = '<b>' + zaman + '</b><br>' + (ofis ? 'Ofis · Kontrat masası' : $('adres').value.trim()) +
+      '<br><br>Ofis takviminde görünüyor. 1 gün ve 1 saat önce sana hatırlatma gelecek; broker da bilgilendirildi.';
+    window.scrollTo(0, 0);
+  }).catch(function () { $('hata').textContent = 'Bağlantı hatası, tekrar deneyin.'; ozetCiz(); });
+});
+
+/* ── Başlat ── */
+if (ONIZLE) $('onizlemeBant').hidden = false;
+if (!/^K[A-Z0-9]{4}$/.test(KOD)) { $('yukleniyor').textContent = 'Bağlantı geçersiz. WhatsApp mesajındaki düğmeyle açın.'; }
+else api({ islem: 'kontratGetir' }).then(function (j) {
+  if (!j.ok) { $('yukleniyor').textContent = j.error || 'Kayıt bulunamadı.'; return; }
+  var v = S.veri = j.veri;
+  $('bIslem').textContent = v.islem === 'kiralik' ? 'Kiralık' : 'Satılık';
+  $('bDanisman').textContent = v.danisman; $('bMusteri').textContent = v.musteri;
+  $('bMulk').textContent = v.mulk || '-'; $('bTutar').textContent = v.tutar;
+  $('odemeRozet').textContent = v.odendi ? 'Hesaba geçti ✓' : 'Ödeme bekleniyor';
+  $('odemeRozet').className = 'rozet' + (v.odendi ? '' : ' bekle');
+  var d = new Date(); if (d.getHours() >= MASA_BIT - 1) d.setDate(d.getDate() + 1);
+  S.tarih = ymd(d);
+  if (v.randevu) {   // daha önce kaydedildiyse düzenlemeye açılır
+    S.tarih = v.randevu.tarih; S.bas = v.randevu.bas;
+    if (v.randevu.yer === 'diger') { document.querySelector('input[name=yer][value=diger]').checked = true; $('adres').hidden = false; $('adres').value = v.randevu.adres || ''; }
+    $('not').value = v.randevu.not || '';
+  }
+  $('yukleniyor').hidden = true; $('form').hidden = false; $('gonderBar').hidden = false;
+  gunlerCiz(); masaYukle();
+}).catch(function () { $('yukleniyor').textContent = 'Bağlantı hatası, sayfayı yenileyin.'; });
+</script>
+</body>
+</html>

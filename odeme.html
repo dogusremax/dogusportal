@@ -64,6 +64,14 @@ a{color:inherit}
 
 /* Alanlar */
 .alan{display:block;margin-bottom:16px}
+.islemSec{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.islemSec label{cursor:pointer}
+.islemSec input{position:absolute;opacity:0;pointer-events:none}
+.islemSec span{display:block;background:var(--dolgu);border:1.5px solid transparent;border-radius:16px;padding:16px 14px;font-size:14px;line-height:1.35}
+.islemSec span strong{display:block;font-size:17px;margin-bottom:3px}
+.islemSec span em{font-style:normal;color:var(--soluk);font-size:12.5px}
+.islemSec input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.06)}
+.islemSec.hata span{border-color:var(--kirmizi)}
 .alan:last-child{margin-bottom:0}
 .alan .ad{display:block;font-size:13px;font-weight:650;margin-bottom:7px;color:var(--yazi)}
 .alan .ad i{color:var(--kirmizi);font-style:normal}
@@ -168,7 +176,14 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
 
   <!-- ===== DANIŞMAN: link hazırlama ===== -->
   <div id="hazirla" hidden>
-    <div class="bolum"><div class="bb"><div class="no">1</div><div><h2>Danışman</h2><small>Kendini seç, telefonun gelsin</small></div></div><div class="gv">
+    <div class="bolum"><div class="bb"><div class="no">1</div><div><h2>İşlem türü</h2><small>Satılık mı, kiralık mı?</small></div></div><div class="gv">
+      <div class="islemSec" id="fIslem">
+        <label><input type="radio" name="islem" value="satilik"><span><strong>🏠 Satılık</strong><em>Satılık işlem kapora bedeli</em></span></label>
+        <label><input type="radio" name="islem" value="kiralik"><span><strong>🔑 Kiralık</strong><em>Kiralık işlem kapora bedeli</em></span></label>
+      </div>
+    </div></div>
+
+    <div class="bolum"><div class="bb"><div class="no">2</div><div><h2>Danışman</h2><small>Kendini seç, telefonun gelsin</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Danışman <i>*</i></span>
         <select id="fDan"><option value="">Yükleniyor…</option></select></label>
       <label class="alan"><span class="ad">Telefonun</span>
@@ -176,7 +191,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
         <input id="fDanTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
     </div></div>
 
-    <div class="bolum"><div class="bb"><div class="no">2</div><div><h2>Müşteri ve ödeme</h2><small>Kime, ne kadar, ne için</small></div></div><div class="gv">
+    <div class="bolum"><div class="bb"><div class="no">3</div><div><h2>Müşteri ve ödeme</h2><small>Kime, ne kadar, ne için</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Müşteri adı soyadı <i>*</i></span>
         <input id="fMusteri" autocomplete="off" placeholder="Örn. Ahmet Yılmaz"></label>
       <div class="alan"><span class="ad">Ödeme türü <i>*</i></span>
@@ -196,7 +211,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
       <div class="alan"><span class="ad">Tutar</span>
         <div class="satir">
           <input id="fTutar" inputmode="decimal" autocomplete="off" placeholder="Örn. 50.000">
-          <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option><option>GBP</option></select>
+          <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option></select>
         </div>
       </div>
       <label class="alan"><span class="ad">Müşterinin telefonu <i>*</i></span>
@@ -204,7 +219,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
         <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
     </div></div>
 
-    <div class="bolum"><div class="bb"><div class="no">3</div><div><h2>Havale açıklaması</h2><small>Müşteri bunu aynen yazacak</small></div></div><div class="gv">
+    <div class="bolum"><div class="bb"><div class="no">4</div><div><h2>Havale açıklaması</h2><small>Müşteri bunu aynen yazacak</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Müşterinin yazacağı açıklama</span>
         <span class="ipucu">Kendiliğinden oluşur, istersen değiştir. Sonuna ödemeyi tanımamız için kısa bir kod eklenir (ör. K7F3Q).</span>
         <input id="fAciklama" autocomplete="off"></label>
@@ -395,11 +410,13 @@ if(q.get('durum')){
   }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
 } else if(q.get('sablon')){
   // Yönetici: ofis hattı şablonunu Meta onayına gönder / durumuna bak
-  $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı "Ödeme bilgilerini gör" şablonu';
+  $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı WhatsApp şablonları';
   $('yukleniyor').hidden=false;
   var pin=prompt('Broker PIN:');
   api(pin?{islem:'sablon',pin:pin}:{islem:'durum'}).then(function(j){
-    $('yukleniyor').textContent=j.ok?('Şablon durumu: '+j.durum):(j.error||'Hata');
+    // her şablonun durumu ayrı satırda; Meta'nın hata metni de görünsün
+    $('yukleniyor').style.whiteSpace='pre-line';
+    $('yukleniyor').textContent=j.durum?('Şablon durumu:\n'+String(j.durum).split(' · ').join('\n')):(j.error||'Hata');
   }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
 } else if(q.get('k')){
   $('baslik').textContent='Ödeme Bilgileri';
@@ -429,6 +446,7 @@ if(q.get('durum')){
     if(sel.value && !$('fDanTel').value) $('fDanTel').value=telYaz(sel.selectedOptions[0].dataset.tel||'');
   }).catch(function(){ $('fDan').innerHTML='<option value="">Liste yüklenemedi, sayfayı yenile</option>'; });
   $('fDanTel').value=telMaske(ls('odm_tel'));
+  document.querySelectorAll('input[name=islem]').forEach(function(r){ r.addEventListener('change',function(){ $('fIslem').classList.remove('hata'); $('hazirlaHata').textContent=''; }); });
   $('fDan').addEventListener('change',function(){
     var o=$('fDan').selectedOptions[0];
     $('fDanTel').value=o&&o.dataset.tel?telYaz(o.dataset.tel):'';
@@ -481,18 +499,25 @@ if(q.get('durum')){
       if(y!==el.value){ el.value=y; try{ el.setSelectionRange(a,b); }catch(e){} }
     });
   });
-  $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); });
+  // yazarken binlik noktası: 50000 → 50.000 (Umut 25.10)
+  $('fTutar').addEventListener('input',function(){
+    var el=$('fTutar'), sagdan=el.value.length-el.selectionStart, v=tutarBicim();
+    if(el.value!==v){ el.value=v; var k=Math.max(0,v.length-sagdan); try{ el.setSelectionRange(k,k); }catch(e){} }
+  });
   $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; sifirla(); });
 
   $('hazirlaBtn').addEventListener('click',function(){
     var b=this;
     if(!$('fDan').value) return eksik('fDan','Kendini seç');
+    var islemSecili=document.querySelector('input[name=islem]:checked');
+    if(!islemSecili){ $('fIslem').classList.add('hata'); $('fIslem').scrollIntoView({behavior:'smooth',block:'center'});
+      $('hazirlaHata').textContent='Satılık mı kiralık mı, seçin'; return; }
     if(!$('fMusteri').value.trim()) return eksik('fMusteri','Müşteri adını yazın');
     if(tel90($('fMTel').value).length!==12) return eksik('fMTel','Müşterinin telefonunu yazın');
     b.disabled=true; b.textContent='Gönderiliyor…'; $('hazirlaHata').textContent='';
     var u=tutarBicim(), m=$('fMusteri').value.trim(), t=secilenTur();
     api({islem:'olustur', m:m, mtel:$('fMTel').value, t:t, u:u, p:u?$('fPara').value:'',
-         mulk:$('fMulk').value.trim(), a:$('fAciklama').value.trim()||otomatikAciklama(), d:$('fDan').value, dt:$('fDanTel').value})
+         mulk:$('fMulk').value.trim(), a:$('fAciklama').value.trim()||otomatikAciklama(), d:$('fDan').value, dt:$('fDanTel').value, i:islemSecili.value})
     .then(function(j){
       if(!j.ok) throw new Error(j.error||'Kaydedilemedi.');
       kayit=j;
