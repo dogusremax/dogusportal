@@ -278,6 +278,41 @@ footer a{text-decoration:none;color:#fff}
   .wa-fab{right:14px;bottom:88px;width:54px;height:54px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.sekme a small{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);font-weight:500}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.chip{font:inherit;font-weight:700;font-size:.86rem;color:#fff;padding:9px 15px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);cursor:pointer}
+.chip small{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);font-weight:500;margin-left:3px}
+.chip.on{background:var(--red);border-color:var(--red)}.chip.on small{color:rgba(255,255,255,.8)}
+.kpg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}
+.pl{font:inherit;color:inherit;text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;padding:0;transition:border-color .2s,transform .2s}
+.pl:hover{border-color:var(--gold);transform:translateY(-2px)}
+.pl .im{aspect-ratio:3/2;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pl .im.k{background:#0d0d0f}
+.pl .im img{width:100%;height:100%;object-fit:contain;display:block}
+.pl .tx{padding:12px 14px 14px;display:grid;gap:3px}
+.pl .od{font-weight:800;font-size:1.12rem;letter-spacing:-.02em}
+.pl .od span{color:var(--gold);font-weight:700}
+.pl .bl{font-size:.8rem;color:var(--muted);line-height:1.35}
+.pl .rz{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.pl .rz i{font-style:normal;font-family:var(--f-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(233,194,122,.45);color:var(--gold);padding:3px 7px;border-radius:999px}
+.pl .rz i.o{border-color:rgba(79,196,138,.5);color:#8fe0b6}
+.pl .rz i.d{border-color:rgba(255,255,255,.3);color:#fff}
+.kpkay{font-size:.78rem;color:var(--muted);margin-top:14px}
+@media(max-width:1100px){.kpg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:960px){.kpg{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.pl{border-radius:14px}.pl .tx{padding:9px 10px 11px}.pl .od{font-size:.98rem}.pl .bl{font-size:.72rem}.chip{padding:8px 12px;font-size:.8rem}}
+.plb{position:fixed;inset:0;z-index:2147483000;background:#03061c;display:none;flex-direction:column}
+.plb.open{display:flex}
+.plb .ust2{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.plb .cap{flex:1;min-width:0;font-weight:800;font-size:1.05rem;letter-spacing:-.02em}
+.plb .cap small{display:block;font-weight:500;font-size:.8rem;color:var(--muted);letter-spacing:0}
+.plb .ic{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;font-size:1.3rem;display:grid;place-items:center;cursor:pointer;text-decoration:none}
+.plb .sah{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:14px;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom}
+.plb .sah img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;background:#fff}
+.plb .sah.zoom{display:block}.plb .sah.zoom img{max-width:none;max-height:none;width:200%}
+.plb .alt2{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.plb .alt2 .cnt{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:70px;text-align:center}
+.plb .alt2 .btn{padding:11px 16px;font-size:.86rem}
 </style>
 
 <script src="cerez.js" data-ga="G-ZNHG94R2JK"></script>
@@ -353,9 +388,9 @@ footer a{text-decoration:none;color:#fff}
 <main>
   <div class="ust">
     <span class="eyebrow">Akasya Acıbadem</span>
-    <h1>3D kat <em class="s">planları.</em></h1>
-    <p class="sub">Göl, Koru ve Kent etaplarındaki daire tiplerinin 3D kat planları burada yer alacak. Etabı seçin.</p>
-    <div class="sekme"><a href="#gol"><i style="background:var(--gol)"></i>Göl Etabı</a><a href="#koru"><i style="background:var(--koru)"></i>Koru Etabı</a><a href="#kent"><i style="background:var(--kent)"></i>Kent Etabı</a></div>
+    <h1>Kat <em class="s">planları.</em></h1>
+    <p class="sub">Göl, Koru ve Kent etaplarındaki 138 daire tipinin kat planı. Etabı ve oda sayısını seçin, plana dokunup büyütün. 3D 360° görünümler sırayla ekleniyor.</p>
+    <div class="sekme"><a href="#gol"><i style="background:var(--gol)"></i>Göl Etabı <small>36</small></a><a href="#koru"><i style="background:var(--koru)"></i>Koru Etabı <small>43</small></a><a href="#kent"><i style="background:var(--kent)"></i>Kent Etabı <small>72</small></a></div>
   </div>
 
   <section class="kpet" id="gol">
@@ -363,12 +398,8 @@ footer a{text-decoration:none;color:#fff}
       <div class="kpfoto"><img src="img/gol.jpg" alt="Akasya Göl etabı" loading="lazy"></div>
       <div><span class="eyebrow">Etap 01</span><h2>Göl Etabı <em class="s">kat planları.</em></h2><p class="sub">Gölet çevresindeki teraslı alçak bloklar ve 36 katlı kule.</p></div>
     </div>
-    <div class="kp3d">
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">1+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">2+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">3+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">4+1 ve üzeri</b><small>3D kat planı hazırlanıyor</small></div>
-    </div>
+    <div class="chips" id="c-gol"></div>
+    <div class="kpg" id="g-gol"></div>
     <div class="dg"><a class="btn dolu" href="https://wa.me/902163151515?text=Merhaba%2C%20akasyaburada.com%27dan%20yaz%C4%B1yorum.%20Akasya%20G%C3%B6l%20etab%C4%B1%20kat%20planlar%C4%B1n%C4%B1%20almak%20istiyorum." target="_blank" rel="noopener">Planı WhatsApp'tan iste</a><a class="btn bos" href="almak-istiyorum.html?etap=G%C3%B6l">Göl'de daire arıyorum</a></div>
   </section>
 
@@ -377,13 +408,9 @@ footer a{text-decoration:none;color:#fff}
       <div class="kpfoto"><img src="img/koru.jpg" alt="Akasya Koru etabı" loading="lazy"></div>
       <div><span class="eyebrow">Etap 02</span><h2>Koru Etabı <em class="s">kat planları.</em></h2><p class="sub">Koru alanının içindeki bloklar ve 41 katlı kule.</p></div>
     </div>
-    <div class="kp3d">
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">1+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">2+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">3+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">4+1 ve üzeri</b><small>3D kat planı hazırlanıyor</small></div>
-    </div>
-    <div class="dg"><a class="btn dolu" href="https://wa.me/902163151515?text=Merhaba%2C%20akasyaburada.com%27dan%20yaz%C4%B1yorum.%20Akasya%20Koru%20etab%C4%B1%20kat%20planlar%C4%B1n%C4%B1%20almak%20istiyorum." target="_blank" rel="noopener">Planı WhatsApp'tan iste</a><a class="btn bos" href="almak-istiyorum.html?etap=Koru">Koru'de daire arıyorum</a></div>
+    <div class="chips" id="c-koru"></div>
+    <div class="kpg" id="g-koru"></div>
+    <div class="dg"><a class="btn dolu" href="https://wa.me/902163151515?text=Merhaba%2C%20akasyaburada.com%27dan%20yaz%C4%B1yorum.%20Akasya%20Koru%20etab%C4%B1%20kat%20planlar%C4%B1n%C4%B1%20almak%20istiyorum." target="_blank" rel="noopener">Planı WhatsApp'tan iste</a><a class="btn bos" href="almak-istiyorum.html?etap=Koru">Koru'da daire arıyorum</a></div>
   </section>
 
   <section class="kpet" id="kent">
@@ -391,13 +418,9 @@ footer a{text-decoration:none;color:#fff}
       <div class="kpfoto"><img src="img/kent.jpg" alt="Akasya Kent etabı" loading="lazy"></div>
       <div><span class="eyebrow">Etap 03</span><h2>Kent Etabı <em class="s">kat planları.</em></h2><p class="sub">Akasya AVM'nin üzerindeki Residence Tower ve Terrace blokları.</p></div>
     </div>
-    <div class="kp3d">
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">1+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">2+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">3+1</b><small>3D kat planı hazırlanıyor</small></div>
-      <div class="bosk"><span class="rozet">3D · Yakında</span><b style="color:#fff;font-size:1.05rem">4+1 ve üzeri</b><small>3D kat planı hazırlanıyor</small></div>
-    </div>
-    <div class="dg"><a class="btn dolu" href="https://wa.me/902163151515?text=Merhaba%2C%20akasyaburada.com%27dan%20yaz%C4%B1yorum.%20Akasya%20Kent%20etab%C4%B1%20kat%20planlar%C4%B1n%C4%B1%20almak%20istiyorum." target="_blank" rel="noopener">Planı WhatsApp'tan iste</a><a class="btn bos" href="almak-istiyorum.html?etap=Kent">Kent'de daire arıyorum</a></div>
+    <div class="chips" id="c-kent"></div>
+    <div class="kpg" id="g-kent"></div>
+    <div class="dg"><a class="btn dolu" href="https://wa.me/902163151515?text=Merhaba%2C%20akasyaburada.com%27dan%20yaz%C4%B1yorum.%20Akasya%20Kent%20etab%C4%B1%20kat%20planlar%C4%B1n%C4%B1%20almak%20istiyorum." target="_blank" rel="noopener">Planı WhatsApp'tan iste</a><a class="btn bos" href="almak-istiyorum.html?etap=Kent">Kent'te daire arıyorum</a></div>
   </section>
 </main>
 <footer>
@@ -422,6 +445,59 @@ footer a{text-decoration:none;color:#fff}
   kay(); addEventListener('scroll', kay, {passive:true});
   t.addEventListener('click', function(){ t.classList.toggle('open'); n.classList.toggle('open'); });
   n.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ t.classList.remove('open'); n.classList.remove('open'); }); });
+})();
+</script>
+<div class="plb" id="plb" role="dialog" aria-modal="true" aria-label="Kat planı">
+  <div class="ust2"><div class="cap" id="pcap"></div><button class="ic" id="pzoom" type="button" aria-label="Yakınlaştır">&#x2295;</button><a class="ic" id="popen" href="#" target="_blank" rel="noopener" aria-label="Yeni sekmede aç">&#x2197;</a><button class="ic" id="pkap" type="button" aria-label="Kapat">&times;</button></div>
+  <div class="sah" id="psah"><img id="pimg" alt=""></div>
+  <div class="alt2"><button class="ic" id="pgeri" type="button" aria-label="Önceki">&#x2039;</button><span class="cnt" id="pcnt"></span><button class="ic" id="pileri" type="button" aria-label="Sonraki">&#x203A;</button><a class="btn dolu" id="pwa" target="_blank" rel="noopener">Bu daireyi sor</a></div>
+</div>
+<script>
+(function(){
+  // [etap, no, oda, m², blok/kat, dubleks katı, koyu zemin, genişlik, yükseklik]
+  var P=[["gol",1,"1+1","70–84","A03 Kule · 31 ve 32. katlar","",1,878,570],["gol",2,"1+1","91–115","A03 Kule · 33 ve 43. katlar","",1,832,571],["gol",3,"1,5+1","86","A03 Kule · 1–11. ve 13–30. katlar","",1,768,588],["gol",4,"2,5+1","119","A03 Kule · 1–30. katlar","",1,865,508],["gol",5,"3+1","133–158","A01 Blok · 1–7. katlar","",1,947,486],["gol",6,"3+1","124–147","A01 Blok · bahçe ve giriş katı","",1,846,541],["gol",7,"3+1","133–146","A01 Blok · 1, 2, 3, 5, 6, 7 ve 8. katlar","",1,946,543],["gol",8,"3+1","136–153","A01 Blok · 1, 2, 3, 4, 6, 7 ve 8. katlar","",1,922,528],["gol",9,"3+1","120–147","A02 Blok · bahçe ve giriş katı","",1,825,544],["gol",10,"3+1","123–147","A02 Blok · 1–8. katlar","",1,911,522],["gol",11,"3+1","131–160","A02 Blok · 1–8. katlar","",1,904,463],["gol",12,"3+1","132–154","A02 Blok · 1, 2, 4, 5, 6 ve 7. katlar","",1,911,505],["gol",13,"3,5+1","155–173","A03 Kule · 1–11. ve 13–34. katlar","",1,918,559],["gol",14,"3,5+1","310","A03 Kule · 35. kat","",1,937,369],["gol",15,"3,5+1","283","A03 Kule · 36. kat","",1,937,493],["gol",16,"4+2","382","A05 Blok · 2 ve 3. katlar","Alt kat",1,959,572],["gol",17,"4+2","382","A05 Blok · 2 ve 3. katlar","Üst kat",1,959,537],["gol",18,"4+2","302–321","A01 Blok · 8 ve 9. katlar","Alt kat",1,916,491],["gol",19,"4+2","302–321","A01 Blok · 8 ve 9. katlar","Üst kat",1,939,490],["gol",20,"4+2","321","A02 Blok · 5–9. katlar","Alt kat",1,978,544],["gol",21,"4+2","321","A02 Blok · 5–9. katlar","Üst kat",1,960,522],["gol",22,"4+2","306","A01 Blok · 5–10. katlar","Alt kat",1,942,520],["gol",23,"4+2","306","A01 Blok · 5–10. katlar","Üst kat",1,938,520],["ortak",1,"1+1","71","Koru B01 Blok · 1–7. katlar","",1,960,575],["ortak",2,"2+1","107–116","Koru B01 Blok · 1–7. katlar","",1,992,473],["ortak",3,"2+1","131–155","Koru B01 Blok · 8 ve 9. katlar","Alt kat",1,904,559],["ortak",4,"2+1","131–155","Koru B01 Blok · 8 ve 9. katlar","Üst kat",1,952,546],["ortak",5,"3+1","145–179","Koru B01-B02 Blok · bahçe ve giriş katı","",1,850,558],["ortak",6,"3,5+1","144–194","Koru B01 Blok · bahçe ve giriş katı","",1,982,480],["ortak",7,"3,5+1","156–170","Koru B01 Blok · 1–7. katlar","",1,965,549],["ortak",8,"3,5+1","188–221","Koru B01 Blok · 8 ve 9. katlar","Alt kat",1,955,383],["ortak",9,"3,5+1","188–221","Koru B01 Blok · 8 ve 9. katlar","Üst kat",1,989,422],["ortak",10,"4,5+1","306–327","Göl A01 Blok · 7 ve 8. katlar","Alt kat",1,960,602],["ortak",11,"4,5+1","306–327","Göl A01 Blok · 7 ve 8. katlar","Üst kat",1,882,609],["ortak",12,"4,5+2","260–286","Koru B01 Blok · 8 ve 9. katlar","Alt kat",1,929,509],["ortak",13,"4,5+2","260–286","Koru B01 Blok · 8 ve 9. katlar","Üst kat",1,930,486],["koru",1,"2+1","183","B03 Kule · 22 ve 23. katlar","Alt kat",1,936,559],["koru",2,"2+1","183","B03 Kule · 22 ve 23. katlar","Üst kat",1,1001,448],["koru",3,"2,5+1","242","B03 Kule · 39. kat","",1,973,365],["koru",4,"3,5+1","312","B03 Kule · 38. kat","",1,946,421],["koru",5,"3,5+1","292","B03 Kule · 37 ve 38. katlar","Alt kat",1,819,570],["koru",6,"3,5+1","292","B03 Kule · 37 ve 38. katlar","Üst kat",1,938,571],["koru",7,"4,5+1","313","B03 Kule · 36 ve 37. katlar","Alt kat",1,864,568],["koru",8,"4,5+1","313","B03 Kule · 36 ve 37. katlar","Üst kat",1,860,573],["koru",9,"2,5+1","121","B03 Kule · giriş, 1, 3, 4, 7, 10 ve 14. katlar","",1,979,553],["koru",10,"2,5+1","120","B03 Kule · 2, 5, 6, 8, 9, 11–13, 16–21. katlar","",0,994,576],["koru",11,"2,5+1","127","B03 Kule · bahçe, giriş ve 1–23. katlar","",1,1000,541],["koru",12,"2,5+1","251","B03 Kule · 38 ve 39. katlar","Alt kat",1,650,565],["koru",13,"2,5+1","251","B03 Kule · 38 ve 39. katlar","Üst kat",1,817,525],["koru",14,"3+1","144–164","B01 Blok · 1, 2, 3, 5, 6, 7 ve 8. katlar","",1,876,608],["koru",15,"3+1","147–168","B01 Blok · 1, 2, 3, 5, 6, 7 ve 8. katlar","",1,933,604],["koru",16,"3+1","138","B01 Blok · 1, 2, 5, 6, 7 ve 8. katlar","",1,649,576],["koru",17,"3+1","138–155","B01 Blok · 1, 2, 3, 5, 6 ve 7. katlar","",1,889,583],["koru",18,"3+1","160–204","B03 Blok · bahçe ve giriş katı","",1,833,600],["koru",19,"3+1","145–162","B03 Blok · 1–14. katlar","",1,911,592],["koru",20,"3+1","151–208","B03 Blok · 1–14. katlar","",1,962,553],["koru",21,"3+1","179–195","B03 Kule · 1–35. katlar","",1,827,547],["koru",22,"3+1","150","B03 Kule · 2–23. katlar","",1,901,604],["koru",23,"3,5+1","214–255","B03 Blok · bahçe ve giriş katı","",1,873,589],["koru",24,"3,5+1","230–238","B03 Blok · 3, 4, 10 ve 11. katlar","Alt kat",1,628,560],["koru",25,"3,5+1","230–238","B03 Blok · 3, 4, 10 ve 11. katlar","Üst kat",1,694,576],["koru",26,"4,5+1","240–257","B03 Kule · 1–14. ve 16–35. katlar","",1,795,593],["koru",27,"4,5+1","316","B01 Blok · 9 ve 10. katlar","Alt kat",1,870,591],["koru",28,"4,5+1","316","B01 Blok · 9 ve 10. katlar","Üst kat",1,874,588],["koru",29,"4,5+1","275","B01 Blok · 9 ve 10. katlar","Alt kat",1,585,582],["koru",30,"4,5+1","275","B01 Blok · 9 ve 10. katlar","Üst kat",1,606,563],["kent",1,"1+1","65","Residence Tower · Home Office","",0,475,587],["kent",2,"1+1","71","Residence Tower · Home Office","",0,439,563],["kent",3,"1+1","73","Residence Tower · Home Office","",0,483,533],["kent",4,"1+1","79","Residence Tower · Home Office","",0,467,606],["kent",5,"1+1","81","Residence Tower · Home Office","",0,412,558],["kent",6,"1+1","84","Residence Tower · Home Office","",0,527,550],["kent",7,"1+1","85","Residence Tower · Home Office","",0,437,593],["kent",8,"2+1","98","Residence Tower · Home Office","",0,755,583],["kent",9,"2+1","108","Residence Tower · Home Office","",0,681,527],["kent",10,"2+1","111","Residence Tower · Home Office","",0,758,576],["kent",11,"2+1","124","Residence Tower · Penthouse","",0,701,550],["kent",12,"3+1","196","Residence Tower · Penthouse","",0,743,510],["kent",13,"3,5+1","180","Residence Tower · Penthouse","",0,844,524],["kent",14,"3,5+1","182","Residence Tower · Penthouse","",0,659,553],["kent",15,"3,5+1","194","Residence Tower · Penthouse","",0,490,368],["kent",16,"3,5+1","277","Residence Tower · Penthouse","",0,555,334],["kent",17,"3,5+1","278","Residence Tower · Penthouse","",0,761,458],["kent",18,"4,5+1","243","Residence Tower · Penthouse","",0,402,593],["kent",19,"4,5+1","257","Residence Tower · Penthouse","",0,822,583],["kent",20,"4,5+1","285","Residence Tower · Penthouse","",0,806,475],["kent",21,"4,5+1","286","Residence Tower · Penthouse","",0,865,512],["kent",22,"4,5+2","440","Residence Tower · Penthouse","Alt kat",0,971,563],["kent",23,"4,5+2","440","Residence Tower · Penthouse","Üst kat",0,931,546],["kent",24,"4,5+2","442","Residence Tower · Penthouse","Alt kat",0,854,513],["kent",25,"4,5+2","442","Residence Tower · Penthouse","Üst kat",0,553,336],["kent",26,"2+1","112","Terrace Evler","",0,628,449],["kent",27,"2+1","113","Terrace Evler","",0,848,511],["kent",28,"2+1","115","Terrace Evler · 1. tip","",0,829,549],["kent",29,"2+1","115","Terrace Evler · 2. tip","",0,784,537],["kent",30,"2+1","118","Terrace Evler","",0,811,555],["kent",31,"2+1","162","Terrace Evler","",0,776,502],["kent",32,"2+1","163","Terrace Evler","",0,783,478],["kent",33,"2+1","184","Terrace Evler","",0,927,476],["kent",34,"2+1","189","Terrace Evler","",0,1047,484],["kent",35,"3+1","161","Terrace Evler","",0,814,461],["kent",36,"3+1","168","Terrace Evler","",0,900,482],["kent",37,"3+1","182","Terrace Evler","",0,809,470],["kent",38,"3+1","185","Terrace Evler","",0,818,489],["kent",39,"3+1","187","Terrace Evler","",0,880,482],["kent",40,"3+1","189","Terrace Evler","",0,980,540],["kent",41,"3+1","194","Terrace Evler","",0,916,439],["kent",42,"3+1","198","Terrace Evler","",0,850,461],["kent",43,"3+1","203","Terrace Evler","",0,992,510],["kent",44,"3+1","204","Terrace Evler","",0,864,454],["kent",45,"3+1","208","Terrace Evler","",0,944,483],["kent",46,"3+1","210","Terrace Evler","",0,884,449],["kent",47,"3+1","262","Terrace Evler","",0,534,658],["kent",48,"3,5+1","153","Terrace Evler","",0,860,363],["kent",49,"3,5+1","161","Terrace Evler","",0,851,481],["kent",50,"3,5+1","168","Terrace Evler · 1. tip","",0,867,491],["kent",51,"3,5+1","168","Terrace Evler · 2. tip","",0,831,436],["kent",52,"3,5+1","274","Terrace Evler","",0,931,410],["kent",53,"2,5+1","274","Terrace Evler · Dubleks","Alt kat",0,855,405],["kent",54,"2,5+1","274","Terrace Evler · Dubleks","Üst kat",0,835,536],["kent",55,"2,5+1","276","Terrace Evler · Dubleks","Alt kat",0,792,471],["kent",56,"2,5+1","276","Terrace Evler · Dubleks","Üst kat",0,1062,438],["kent",57,"3,5+1","225","Terrace Evler · Dubleks","Alt kat",0,735,525],["kent",58,"3,5+1","225","Terrace Evler · Dubleks","Üst kat",0,779,552],["kent",59,"3,5+1","231","Terrace Evler · Dubleks","Alt kat",0,854,543],["kent",60,"3,5+1","231","Terrace Evler · Dubleks","Üst kat",0,859,536],["kent",61,"3,5+1","237","Terrace Evler · Dubleks · 1. tip","Alt kat",0,755,535],["kent",62,"3,5+1","237","Terrace Evler · Dubleks · 2. tip","Alt kat",0,758,546],["kent",63,"3,5+1","237","Terrace Evler · Dubleks · 1. tip","Üst kat",0,835,559],["kent",64,"3,5+1","237","Terrace Evler · Dubleks · 2. tip","Üst kat",0,774,564],["kent",65,"4,5+1","310","Terrace Evler · Dubleks","Alt kat",0,650,364],["kent",66,"4,5+1","310","Terrace Evler · Dubleks","Üst kat",0,711,398],["kent",67,"4,5+1","325","Terrace Evler · Dubleks","Alt kat",0,871,386],["kent",68,"4,5+1","325","Terrace Evler · Dubleks","Üst kat",0,914,467],["kent",69,"5,5+1","372","Terrace Evler · Dubleks","Alt kat",0,796,446],["kent",70,"5,5+1","372","Terrace Evler · Dubleks","Üst kat",0,749,446],["kent",71,"5,5+1","375","Terrace Evler · Dubleks","Alt kat",0,837,502],["kent",72,"5,5+1","375","Terrace Evler · Dubleks","Üst kat",0,833,495]];
+  var EN={gol:'Göl',koru:'Koru',kent:'Kent'};
+  function onum(o){var a=o.split('+');return parseFloat(a[0].replace(',','.'))*10+parseFloat(a[1]);}
+  function grup(o){return parseFloat(o.replace(',','.'))>=4?'4+1 ve üzeri':o;}
+  function liste(e){return P.filter(function(r){return r[0]===e||(r[0]==='ortak'&&e!=='kent');}).sort(function(a,b){return onum(a[2])-onum(b[2])||parseFloat(a[3])-parseFloat(b[3])||(a[0]<b[0]?-1:a[0]>b[0]?1:0)||a[1]-b[1];});}
+  function dosya(r,k){return 'kat-planlari/'+r[0]+'/'+(k?'k/':'')+(r[1]<10?'0':'')+r[1]+'.jpg';}
+  function baslik(r){return r[2]+(r[5]?' Dubleks':'')+' · '+r[3]+' m²';}
+  function wa(r,e){return 'https://wa.me/902163151515?text='+encodeURIComponent('Merhaba, akasyaburada.com\'dan yazıyorum. Akasya '+EN[e]+' '+baslik(r).replace(' · ',' ')+' ('+r[4]+') daire hakkında bilgi almak istiyorum.');}
+  var sec={gol:'',koru:'',kent:''},gor={},$=function(i){return document.getElementById(i);};
+  function track(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(x){}}
+  function ciz(e){
+    var L=liste(e),gr=[];L.forEach(function(r){var g=grup(r[2]);if(gr.indexOf(g)<0)gr.push(g);});
+    var c='<button type="button" class="chip'+(sec[e]?'':' on')+'" data-g="">Tümü<small>'+L.length+'</small></button>';
+    gr.forEach(function(g){c+='<button type="button" class="chip'+(sec[e]===g?' on':'')+'" data-g="'+g+'">'+g+'<small>'+L.filter(function(r){return grup(r[2])===g;}).length+'</small></button>';});
+    $('c-'+e).innerHTML=c;
+    gor[e]=L.filter(function(r){return !sec[e]||grup(r[2])===sec[e];});
+    $('g-'+e).innerHTML=gor[e].map(function(r,i){
+      return '<button type="button" class="pl" data-i="'+i+'"><span class="im'+(r[6]?' k':'')+'"><img loading="lazy" src="'+dosya(r,1)+'" alt="Akasya '+EN[e]+' '+baslik(r)+' kat planı" width="720" height="480"></span><span class="tx"><span class="od">'+r[2]+(r[5]?' Dubleks':'')+' <span>'+r[3]+' m²</span></span><span class="bl">'+r[4]+'</span>'+
+        ((r[5]||r[0]==='ortak')?'<span class="rz">'+(r[5]?'<i class="d">'+r[5]+'</i>':'')+(r[0]==='ortak'?'<i class="o">Koru &amp; Göl</i>':'')+'</span>':'')+'</span></button>';}).join('');
+  }
+  ['gol','koru','kent'].forEach(function(e){
+    ciz(e);
+    $('c-'+e).addEventListener('click',function(v){var c=v.target.closest('.chip');if(!c)return;sec[e]=c.getAttribute('data-g');ciz(e);track('kat_plani_oda',{etap:e,oda:sec[e]||'tumu'});});
+    $('g-'+e).addEventListener('click',function(v){var p=v.target.closest('.pl');if(!p)return;ac(e,+p.getAttribute('data-i'));});
+  });
+  var lb=$('plb'),sah=$('psah'),ce='gol',ci=0;
+  function ac(e,i){
+    ce=e;var L=gor[e];ci=(i+L.length)%L.length;var r=L[ci];
+    sah.classList.remove('zoom');sah.scrollTop=0;
+    $('pimg').src=dosya(r);$('pimg').alt='Akasya '+EN[e]+' '+baslik(r)+' kat planı';$('popen').href=dosya(r);
+    $('pcap').innerHTML=baslik(r)+(r[5]?' · '+r[5]:'')+'<small>Akasya '+EN[e]+' · '+r[4]+(r[0]==='ortak'?' · Koru ve Göl\'de ortak tip':'')+'</small>';
+    $('pcnt').textContent=(ci+1)+' / '+L.length;$('pwa').href=wa(r,e);
+    if(!lb.classList.contains('open')){lb.classList.add('open');document.body.style.overflow='hidden';}
+    track('kat_plani_ac',{etap:e,oda:r[2],m2:r[3]});
+  }
+  function kapa(){lb.classList.remove('open');document.body.style.overflow='';}
+  $('pkap').onclick=kapa;$('pgeri').onclick=function(){ac(ce,ci-1);};$('pileri').onclick=function(){ac(ce,ci+1);};
+  $('pzoom').onclick=function(){sah.classList.toggle('zoom');};
+  sah.addEventListener('click',function(v){if(v.target===sah)kapa();});
+  document.addEventListener('keydown',function(v){if(!lb.classList.contains('open'))return;if(v.key==='Escape')kapa();else if(v.key==='ArrowLeft')ac(ce,ci-1);else if(v.key==='ArrowRight')ac(ce,ci+1);});
+  var sx=null,sy=0;
+  sah.addEventListener('touchstart',function(v){if(v.touches.length!==1||sah.classList.contains('zoom')){sx=null;return;}sx=v.touches[0].clientX;sy=v.touches[0].clientY;},{passive:true});
+  sah.addEventListener('touchend',function(v){if(sx===null)return;var dx=v.changedTouches[0].clientX-sx,dy=v.changedTouches[0].clientY-sy;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))ac(ce,ci+(dx<0?1:-1));sx=null;},{passive:true});
 })();
 </script>
 <script src="telif.js" defer></script>
