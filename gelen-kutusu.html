@@ -441,7 +441,7 @@ function mesajCiz(ms) {
     if (g !== sonGun) { html += '<div class="gun"><span>' + gunBaslik(m.t) + '</span></div>'; sonGun = g; }
     var giden = m.yon === 'giden';
     var sinif = 'balon ' + (giden ? 'giden' : 'gelen') + (m.kaynak === 'oto-cevap' ? ' oto' : '') + (m.durum === 'başarısız' ? ' hatali' : '');
-    var etiket = giden && m.kaynak && m.kaynak !== 'panel' ? '<div class="kaynak">' + (m.kaynak === 'oto-cevap' ? 'Otomatik cevap' : m.kaynak === 'form' ? 'Site formu' : kacis(m.kaynak)) + '</div>' : '';
+    var etiket = giden && m.kaynak && m.kaynak !== 'panel' ? '<div class="kaynak">' + (m.kaynak === 'oto-cevap' ? 'Otomatik cevap' : m.kaynak === 'form' ? 'Site formu' : m.kaynak === 'asistan' ? 'Asistan' : kacis(m.kaynak)) + '</div>' : '';
     var medya = m.medya && String(m.medya).indexOf('http') === 0 ? '<div><a href="' + kacis(m.medya) + '" target="_blank" rel="noopener">Dosyayı aç ↗</a></div>' : '';
     html += '<div class="' + sinif + '">' + etiket + linkle(m.metin) + medya +
       (m.hata ? '<div class="hata-not">' + kacis(m.hata) + '</div>' : '') +
