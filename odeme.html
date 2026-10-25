@@ -325,11 +325,13 @@ if(q.get('durum')){
   }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
 } else if(q.get('sablon')){
   // Yönetici: ofis hattı şablonunu Meta onayına gönder / durumuna bak
-  $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı "Ödeme bilgilerini gör" şablonu';
+  $('baslik').textContent='Kapora şablonu'; $('altbaslik').textContent='Ofis hattı WhatsApp şablonları';
   $('yukleniyor').hidden=false;
   var pin=prompt('Broker PIN:');
   api(pin?{islem:'sablon',pin:pin}:{islem:'durum'}).then(function(j){
-    $('yukleniyor').textContent=j.ok?('Şablon durumu: '+j.durum):(j.error||'Hata');
+    // her şablonun durumu ayrı satırda; Meta'nın hata metni de görünsün
+    $('yukleniyor').style.whiteSpace='pre-line';
+    $('yukleniyor').textContent=j.durum?('Şablon durumu:\n'+String(j.durum).split(' · ').join('\n')):(j.error||'Hata');
   }).catch(function(){ $('yukleniyor').textContent='Bağlantı hatası.'; });
 } else if(q.get('k')){
   $('baslik').textContent='Ödeme Bilgileri';
