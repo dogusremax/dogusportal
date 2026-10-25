@@ -245,6 +245,7 @@ function linkle(s) {
 function telGoster(wa) {
   wa = String(wa || '');
   if (/^90\d{10}$/.test(wa)) return '0' + wa.slice(2, 5) + ' ' + wa.slice(5, 8) + ' ' + wa.slice(8, 10) + ' ' + wa.slice(10);
+  if (/^[A-Z]{2}\./.test(wa)) return 'Numara gizli (WhatsApp kullanıcı adı)';   // Meta numara vermiyor
   return '+' + wa;
 }
 function basHarf(ad, wa) {
@@ -394,6 +395,7 @@ function baslikCiz(isim, wa) {
   $('sAd').textContent = isim || telGoster(wa);
   $('sTel').textContent = isim ? telGoster(wa) : '';
   $('araBtn').href = 'tel:+' + wa;
+  $('araBtn').style.display = /^[A-Z]{2}\./.test(String(wa || '')) ? 'none' : '';
 }
 
 function konusmaYukle(sessiz) {
