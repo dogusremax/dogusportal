@@ -16,28 +16,54 @@
 <link rel="icon" href="assets/dogus-logo.png">
 <style>
 :root{
-  --lacivert:#050A30; --lacivert2:#0E1A5C; --kirmizi:#DC1C2E; --yesil:#0A7D5A; --sari:#FFF4D6; --sari2:#8A5A00;
-  --zemin:#EEF1F7; --kart:#FFFFFF; --yazi:#141B34; --soluk:#6A7389; --cizgi:#E2E6EF; --dolgu:#F5F7FB;
-  --golge:0 1px 2px rgba(5,10,48,.04),0 8px 24px rgba(5,10,48,.07);
+  --lacivert:#050A30; --lacivert2:#0E1A5C; --mavi:#1B2A7A; --kirmizi:#DC1C2E; --yesil:#0A7D5A; --wa:#1FAF55;
+  --sari:#FFF6DC; --sari2:#7A4E00; --sariK:#F2B705;
+  --zemin:#F2F4F9; --kart:#FFFFFF; --yazi:#101631; --soluk:#69728A; --cizgi:#E4E8F0; --dolgu:#F4F6FA;
+  --golge:0 1px 2px rgba(5,10,48,.04),0 10px 28px rgba(5,10,48,.07);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{ --zemin:#0A0F1F; --kart:#131A30; --yazi:#E9EEF8; --soluk:#95A0B7; --cizgi:#232C48; --dolgu:#1A2240;
-         --sari:#3A2C08; --sari2:#FFD27A; --golge:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); }
+  :root{ --zemin:#080C1A; --kart:#121831; --yazi:#ECF0F9; --soluk:#97A1B8; --cizgi:#222B47; --dolgu:#1A2142;
+         --sari:#2E2408; --sari2:#FFD27A; --golge:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35); }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;
-  padding:0 16px calc(40px + env(safe-area-inset-bottom))}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:var(--font);-webkit-font-smoothing:antialiased;
+  padding:0 16px calc(32px + env(safe-area-inset-bottom))}
 .wrap{max-width:560px;margin:0 auto}
-.ust{position:relative;overflow:hidden;color:#fff;margin:0 -16px 18px;
-  padding:calc(18px + env(safe-area-inset-top)) 20px 24px;border-radius:0 0 26px 26px;
-  background:radial-gradient(120% 140% at 100% 0%,#1B2A7A 0%,var(--lacivert2) 35%,var(--lacivert) 100%);
-  box-shadow:0 10px 30px rgba(5,10,48,.25)}
-.ust::after{content:"";position:absolute;right:-40px;bottom:-60px;width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(220,28,46,.35),transparent 70%);pointer-events:none}
-.ust .logo{height:40px;width:auto;display:block;margin-bottom:16px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
-.ust .marka{font-size:11px;letter-spacing:.18em;opacity:.7;font-weight:700;text-transform:uppercase}
-.ust h1{font-size:25px;font-weight:700;margin:4px 0 6px;letter-spacing:-.02em}
-.ust p{margin:0;font-size:13.5px;opacity:.85;line-height:1.5;position:relative;z-index:1}
+a{color:inherit}
+
+/* Üst bant */
+.ust{position:relative;overflow:hidden;color:#fff;margin:0 -16px 0;
+  padding:calc(16px + env(safe-area-inset-top)) 22px 64px;
+  background:radial-gradient(130% 120% at 100% 0%,#22339A 0%,var(--lacivert2) 40%,var(--lacivert) 100%)}
+.ust::before{content:"";position:absolute;inset:auto -60px -120px auto;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,28,46,.45),transparent 68%);pointer-events:none}
+.ust::after{content:"";position:absolute;left:-80px;top:-90px;width:220px;height:220px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.08);pointer-events:none}
+.ust .bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;position:relative;z-index:1}
+.ust .logo{height:34px;width:auto;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
+.ust .rozet{font-size:11px;font-weight:700;letter-spacing:.06em;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  padding:6px 10px;border-radius:999px;backdrop-filter:blur(6px)}
+.ust .marka{display:none}
+.ust h1{font-size:27px;font-weight:800;margin:0 0 8px;letter-spacing:-.025em;position:relative;z-index:1}
+.ust p{margin:0;font-size:14px;opacity:.82;line-height:1.5;position:relative;z-index:1;max-width:420px}
+.ust .ozellik{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;position:relative;z-index:1}
+.ust .ozellik span{font-size:12px;font-weight:600;background:rgba(255,255,255,.1);padding:6px 10px;border-radius:999px}
+.icerikAlan{position:relative;margin-top:-44px;z-index:2}
+
+/* Kartlar ve bölüm başlıkları */
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:var(--golge)}
+.bolum{background:var(--kart);border:1px solid var(--cizgi);border-radius:22px;margin-bottom:14px;box-shadow:var(--golge);overflow:hidden}
+.bolum .bb{display:flex;align-items:center;gap:12px;padding:16px 18px 4px}
+.bolum .no{flex:0 0 30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:14px;
+  color:#fff;background:linear-gradient(135deg,var(--kirmizi),#A3101F);box-shadow:0 4px 10px rgba(220,28,46,.25)}
+.bolum .bb h2{margin:0;font-size:16px;font-weight:750;letter-spacing:-.01em}
+.bolum .bb small{display:block;font-size:12px;color:var(--soluk);font-weight:500;margin-top:1px}
+.bolum .gv{padding:14px 18px 18px}
+.grup{display:none}
+
+/* Alanlar */
+.alan{display:block;margin-bottom:16px}
 .islemSec{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .islemSec label{cursor:pointer}
 .islemSec input{position:absolute;opacity:0;pointer-events:none}
@@ -46,60 +72,89 @@ body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Arial,Helvet
 .islemSec span em{font-style:normal;color:var(--soluk);font-size:12.5px}
 .islemSec input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.06)}
 .islemSec.hata span{border-color:var(--kirmizi)}
-.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--golge)}
-.grup{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;margin:20px 2px 10px}
-.grup::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--kirmizi)}
-.alan{display:block;margin-bottom:14px}
 .alan:last-child{margin-bottom:0}
-.alan .ad{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.alan .ad{display:block;font-size:13px;font-weight:650;margin-bottom:7px;color:var(--yazi)}
 .alan .ad i{color:var(--kirmizi);font-style:normal}
-.alan .ipucu{display:block;font-size:12px;color:var(--soluk);margin-bottom:7px;line-height:1.45}
+.alan .ipucu{display:block;font-size:12px;color:var(--soluk);margin:-3px 0 8px;line-height:1.45}
 input,select,textarea{width:100%;font-family:inherit;font-size:16px;color:var(--yazi);background:var(--dolgu);
-  border:1.5px solid transparent;border-radius:13px;padding:13px 14px;outline:none;-webkit-appearance:none;appearance:none}
+  border:1.5px solid var(--cizgi);border-radius:14px;padding:13px 14px;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s,background .15s}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2369728A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input::placeholder{color:#A3AABB}
 input:focus,select:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0 0 4px rgba(220,28,46,.10)}
-input.hata{border-color:var(--kirmizi)}
+input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05)}
 .satir{display:flex;gap:8px}
 .satir>*{flex:1}
-.satir select{flex:0 0 92px}
+.satir select{flex:0 0 96px;font-weight:700}
+#fTutar{font-size:22px;font-weight:800;letter-spacing:-.01em;padding:12px 14px}
 .cipler{display:flex;flex-wrap:wrap;gap:8px}
 .cipler label{margin:0;cursor:pointer}
 .cipler input{display:none}
-.cipler span{display:block;background:var(--dolgu);border:1.5px solid transparent;border-radius:999px;padding:9px 14px;font-size:14px;font-weight:700}
-.cipler input:checked+span{border-color:var(--kirmizi);background:rgba(220,28,46,.08);color:var(--kirmizi)}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:15px;
-  font:700 16px Arial,Helvetica,sans-serif;cursor:pointer;text-decoration:none;color:#fff;background:var(--kirmizi)}
-.btn.wa{background:#1FAF55}
-.btn.ikincil{background:var(--dolgu);color:var(--yazi)}
+.cipler span{display:block;background:var(--dolgu);border:1.5px solid var(--cizgi);border-radius:999px;padding:9px 14px;font-size:14px;font-weight:650;transition:all .15s}
+.cipler input:checked+span{border-color:var(--kirmizi);background:var(--kirmizi);color:#fff;box-shadow:0 4px 12px rgba(220,28,46,.25)}
+
+/* Düğmeler */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:16px;padding:16px;
+  font:700 16px var(--font);cursor:pointer;text-decoration:none;color:#fff;background:var(--kirmizi);transition:transform .1s,filter .15s}
+.btn:active{transform:scale(.98)}
+.btn.wa{background:linear-gradient(180deg,#25C463,#1A9E4B);box-shadow:0 8px 20px rgba(31,175,85,.3)}
+.btn.ikincil{background:var(--dolgu);color:var(--yazi);border:1.5px solid var(--cizgi);box-shadow:none}
 .btn+.btn{margin-top:10px}
+.btn svg{width:20px;height:20px;flex:0 0 auto}
+.gonderBar{position:sticky;bottom:0;margin:6px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(242,244,249,0),var(--zemin) 30%);z-index:5}
+@media (prefers-color-scheme:dark){ .gonderBar{background:linear-gradient(180deg,rgba(8,12,26,0),var(--zemin) 30%)} }
 .onizle{background:var(--dolgu);border-radius:14px;padding:14px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
 .not{font-size:12.5px;color:var(--soluk);line-height:1.5;margin:8px 2px 0}
 
+/* WhatsApp önizleme */
+.wa-on{background:#E9E2D8;border-radius:16px;padding:14px 12px;background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1px);background-size:14px 14px}
+@media (prefers-color-scheme:dark){ .wa-on{background-color:#0B141A;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px)} }
+.wa-on .kim{font-size:11px;font-weight:700;color:var(--soluk);margin:0 0 6px 4px}
+.wa-balon{background:#fff;color:#111B21;border-radius:4px 14px 14px 14px;padding:10px 12px 8px;font-size:14px;line-height:1.45;max-width:92%;
+  box-shadow:0 1px 1px rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){ .wa-balon{background:#202C33;color:#E9EDEF} }
+.wa-balon .alt2{font-size:11.5px;color:#667781;margin-top:6px}
+.wa-balon .dugme{margin:8px -12px -8px;border-top:1px solid rgba(0,0,0,.08);padding:10px;text-align:center;color:#027EB5;font-weight:600;font-size:14px}
+
 /* Müşteri görünümü */
-.tutar{text-align:center;padding:20px 18px}
-.tutar .k{font-size:13px;color:var(--soluk);font-weight:700}
-.tutar .t{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
-.tutar .tur{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--kirmizi);background:rgba(220,28,46,.08);border-radius:999px;padding:5px 12px}
+.tutar{text-align:center;padding:22px 18px;color:#fff;border:0;
+  background:linear-gradient(135deg,#16245F 0%,var(--lacivert) 100%);position:relative;overflow:hidden}
+.tutar::after{content:"";position:absolute;right:-50px;top:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(220,28,46,.35),transparent 70%)}
+.tutar .k{font-size:12px;opacity:.7;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.tutar .t{font-size:38px;font-weight:800;letter-spacing:-.03em;margin-top:6px;position:relative;z-index:1}
+.tutar .tur{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 12px;position:relative;z-index:1}
 .bilgi{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--cizgi)}
 .bilgi:first-child{border-top:0;padding-top:2px}
 .bilgi:last-child{padding-bottom:2px}
 .bilgi .icerik{flex:1;min-width:0}
-.bilgi .k{font-size:12px;color:var(--soluk);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.bilgi .d{font-size:16px;font-weight:700;margin-top:4px;line-height:1.35;word-break:break-word}
-.bilgi .d.iban{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:15.5px;letter-spacing:.02em}
-.kopya{flex:0 0 auto;border:0;border-radius:12px;padding:11px 14px;font:700 14px Arial,Helvetica,sans-serif;cursor:pointer;
-  background:var(--lacivert2);color:#fff;min-width:92px}
-.kopya.ok{background:var(--yesil)}
-.aciklama{background:var(--sari);border:2px solid #F2B705;border-radius:20px;padding:16px;margin-bottom:14px}
-.aciklama .uyari{display:flex;gap:10px;align-items:flex-start;color:var(--sari2);font-weight:700;font-size:14.5px;line-height:1.45;margin-bottom:12px}
-.aciklama .uyari b{font-size:20px;line-height:1}
-.aciklama .metin{background:var(--kart);border-radius:14px;padding:14px;font-size:17px;font-weight:700;line-height:1.4;word-break:break-word;margin-bottom:10px}
-.aciklama .kopya{width:100%;padding:14px;font-size:15px;background:#F2B705;color:#2B1D00}
-.aciklama .kopya.ok{background:var(--yesil);color:#fff}
-.adimlar{margin:0;padding:0 0 0 20px;font-size:14px;line-height:1.6;color:var(--yazi)}
-.adimlar li{margin-bottom:4px}
-.alt{text-align:center;font-size:12px;color:var(--soluk);margin-top:18px;line-height:1.5}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
-  background:#141B34;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:700;transition:all .2s;pointer-events:none;z-index:50}
+.bilgi .k{font-size:11.5px;color:var(--soluk);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.bilgi .d{font-size:15.5px;font-weight:700;margin-top:4px;line-height:1.35;word-break:break-word}
+.bilgi .d.iban{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.01em}
+.kopya{flex:0 0 auto;border:1.5px solid var(--cizgi);border-radius:12px;padding:10px 13px;font:700 13.5px var(--font);cursor:pointer;
+  background:var(--dolgu);color:var(--yazi);min-width:92px;transition:all .15s}
+.kopya:active{transform:scale(.97)}
+.kopya.ok{background:var(--yesil);border-color:var(--yesil);color:#fff}
+.kartBaslik{display:flex;align-items:center;gap:10px;margin:-2px 0 12px;font-size:13px;font-weight:700;color:var(--soluk)}
+.kartBaslik .ik{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(14,26,92,.08);color:var(--lacivert2)}
+@media (prefers-color-scheme:dark){ .kartBaslik .ik{background:rgba(255,255,255,.08);color:#C9D2F5} }
+.aciklama{background:var(--sari);border:1.5px solid var(--sariK);border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 10px 26px rgba(242,183,5,.18)}
+.aciklama .uyari{display:flex;gap:10px;align-items:flex-start;color:var(--sari2);font-weight:700;font-size:14px;line-height:1.45;margin-bottom:12px}
+.aciklama .uyari b{font-size:19px;line-height:1}
+.aciklama .metin{background:var(--kart);border:1.5px dashed var(--sariK);border-radius:14px;padding:14px;font-size:17px;font-weight:800;line-height:1.4;word-break:break-word;margin-bottom:10px}
+.aciklama .kopya{width:100%;padding:14px;font-size:15px;background:var(--sariK);border-color:var(--sariK);color:#2B1D00}
+.aciklama .kopya.ok{background:var(--yesil);border-color:var(--yesil);color:#fff}
+.adimlar{list-style:none;margin:0;padding:0;counter-reset:a}
+.adimlar li{counter-increment:a;position:relative;padding:0 0 14px 40px;font-size:14px;line-height:1.5}
+.adimlar li::before{content:counter(a);position:absolute;left:0;top:-2px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  font-size:12.5px;font-weight:800;background:var(--dolgu);border:1.5px solid var(--cizgi)}
+.adimlar li:not(:last-child)::after{content:"";position:absolute;left:12.5px;top:26px;bottom:2px;width:1.5px;background:var(--cizgi)}
+.adimlar li:last-child{padding-bottom:0}
+.guven{display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--soluk);line-height:1.45;background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:12px 14px;margin-bottom:14px}
+.guven svg{flex:0 0 20px;color:var(--yesil)}
+.alt{text-align:center;font-size:12.5px;color:var(--soluk);margin-top:18px;line-height:1.55}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
+  background:#101631;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:700;transition:all .2s;pointer-events:none;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .toast.acik{opacity:1;transform:translateX(-50%) translateY(0)}
 .yukleniyor{text-align:center;color:var(--soluk);font-weight:700}
 .btn[disabled]{opacity:.6;cursor:default}
@@ -109,33 +164,34 @@ input.hata{border-color:var(--kirmizi)}
 <body>
 <div class="wrap">
   <div class="ust">
-    <img class="logo" src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" width="150" height="40">
-    <div class="marka">RE/MAX Doğuş</div>
+    <div class="bas">
+      <img class="logo" src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" width="128" height="34">
+      <span class="rozet" id="rozet">KAPORA İSTE</span>
+    </div>
     <h1 id="baslik">Kapora İste</h1>
-    <p id="altbaslik">Müşteriye gönderilecek ödeme linkini hazırla. Müşteri IBAN'ı, alıcı adını ve açıklamayı tek dokunuşla kopyalar.</p>
+    <p id="altbaslik">Bilgileri gir, ödeme linki müşteriye RE/MAX Doğuş WhatsApp hattından gitsin.</p>
+    <div class="ozellik" id="ozellik"><span>⚡ Tek dokunuşla kopyala</span><span>🔔 Ödeme gelince bildirim</span></div>
   </div>
+  <div class="icerikAlan">
 
   <!-- ===== DANIŞMAN: link hazırlama ===== -->
   <div id="hazirla" hidden>
-    <div class="grup">İşlem türü</div>
-    <div class="kart">
+    <div class="bolum"><div class="bb"><div class="no">1</div><div><h2>İşlem türü</h2><small>Satılık mı, kiralık mı?</small></div></div><div class="gv">
       <div class="islemSec" id="fIslem">
         <label><input type="radio" name="islem" value="satilik"><span><strong>🏠 Satılık</strong><em>Satılık işlem kapora bedeli</em></span></label>
         <label><input type="radio" name="islem" value="kiralik"><span><strong>🔑 Kiralık</strong><em>Kiralık işlem kapora bedeli</em></span></label>
       </div>
-    </div>
+    </div></div>
 
-    <div class="grup">Danışman</div>
-    <div class="kart">
+    <div class="bolum"><div class="bb"><div class="no">2</div><div><h2>Danışman</h2><small>Kendini seç, telefonun gelsin</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Danışman <i>*</i></span>
         <select id="fDan"><option value="">Yükleniyor…</option></select></label>
       <label class="alan"><span class="ad">Telefonun</span>
         <span class="ipucu">Seçince kendiliğinden gelir. Müşteri ödeme yapınca dekontu bu numaraya tek dokunuşla gönderir.</span>
         <input id="fDanTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
-    </div>
+    </div></div>
 
-    <div class="grup">Müşteri ve işlem</div>
-    <div class="kart">
+    <div class="bolum"><div class="bb"><div class="no">3</div><div><h2>Müşteri ve ödeme</h2><small>Kime, ne kadar, ne için</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Müşteri adı soyadı <i>*</i></span>
         <input id="fMusteri" autocomplete="off" placeholder="Örn. Ahmet Yılmaz"></label>
       <div class="alan"><span class="ad">Ödeme türü <i>*</i></span>
@@ -155,29 +211,36 @@ input.hata{border-color:var(--kirmizi)}
       <div class="alan"><span class="ad">Tutar</span>
         <div class="satir">
           <input id="fTutar" inputmode="decimal" autocomplete="off" placeholder="Örn. 50.000">
-          <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option><option>GBP</option></select>
+          <select id="fPara"><option>TL</option><option>USD</option><option>EUR</option></select>
         </div>
       </div>
       <label class="alan"><span class="ad">Müşterinin telefonu <i>*</i></span>
         <span class="ipucu">Ödeme bilgisi bu numaraya WhatsApp'tan düğmeli mesajla gider.</span>
         <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
-    </div>
+    </div></div>
 
-    <div class="grup">Havale açıklaması</div>
-    <div class="kart">
+    <div class="bolum"><div class="bb"><div class="no">4</div><div><h2>Havale açıklaması</h2><small>Müşteri bunu aynen yazacak</small></div></div><div class="gv">
       <label class="alan"><span class="ad">Müşterinin yazacağı açıklama</span>
         <span class="ipucu">Kendiliğinden oluşur, istersen değiştir. Sonuna ödemeyi tanımamız için kısa bir kod eklenir (ör. K7F3Q).</span>
         <input id="fAciklama" autocomplete="off"></label>
       <div class="not" id="uzunluk"></div>
+      <div style="height:14px"></div>
+      <div class="wa-on">
+        <div class="kim">Müşterinin göreceği mesaj</div>
+        <div class="wa-balon"><span id="waOnizle">Sayın …, ödemeniz için banka bilgileri hazır.</span>
+          <div class="alt2">RE/MAX Doğuş</div>
+          <div class="dugme">↗ Ödeme bilgilerini gör</div></div>
+      </div>
+    </div></div>
+
+    <div class="not" id="hazirlaHata"></div>
+    <div class="gonderBar" id="gonderBar">
+      <button class="btn wa" id="hazirlaBtn" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-3.9-4.6-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.2z"/></svg>Müşteriye gönder</button>
     </div>
 
-    <button class="btn wa" id="hazirlaBtn" type="button">Müşteriye gönder</button>
-    <div class="not" style="text-align:center">Mesaj müşteriye RE/MAX Doğuş WhatsApp hattından, "Ödeme bilgilerini gör" düğmesiyle gider.</div>
-    <div class="not" id="hazirlaHata"></div>
-
     <div id="sonuc" hidden>
-      <div class="grup" id="sonucBaslik">Gönderildi</div>
       <div class="kart">
+        <div class="kartBaslik"><span class="ik">✓</span><span id="sonucBaslik">Gönderildi</span></div>
         <div class="onizle" id="ofisDurum"></div>
         <div style="height:12px"></div>
         <div class="alan"><span class="ad">Havale açıklaması</span>
@@ -202,6 +265,7 @@ input.hata{border-color:var(--kirmizi)}
     </div>
 
     <div class="kart">
+      <div class="kartBaslik"><span class="ik">🏦</span>Banka bilgileri</div>
       <div class="bilgi">
         <div class="icerik"><div class="k">Alıcı adı</div><div class="d" id="mUnvan"></div></div>
         <button class="kopya" data-kopya="unvan" type="button">Kopyala</button>
@@ -223,6 +287,7 @@ input.hata{border-color:var(--kirmizi)}
     </div>
 
     <div class="kart">
+      <div class="kartBaslik"><span class="ik">📱</span>Nasıl ödenir?</div>
       <ol class="adimlar">
         <li>Banka uygulamanızda <b>Para Transferi → IBAN'a</b> seçin.</li>
         <li>IBAN ve alıcı adını yukarıdan kopyalayıp yapıştırın.</li>
@@ -235,7 +300,10 @@ input.hata{border-color:var(--kirmizi)}
       </div>
     </div>
 
+    <div class="guven"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Ödemeniz açıklamadaki kodla otomatik eşleştirilir. Hesaba geçtiğinde danışmanınız bilgilendirilir.</span></div>
     <div class="alt" id="mDanisman"></div>
+  </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -302,7 +370,7 @@ function musteriGoster(v){
   var musteri=v.m||'', tur=v.t||'', tutar=v.u||'', para=v.p||'TL', aciklama=v.a||'', dan=v.d||'', danTel=v.dt||'';
   document.title='Ödeme Bilgileri'+(musteri?' — '+musteri:'')+' — RE/MAX Doğuş';
   $('baslik').textContent=musteri?('Sayın '+musteri):'Ödeme Bilgileri';
-  $('altbaslik').textContent='Aşağıdaki bilgilerle havale / EFT yapabilirsiniz. Her bilgiyi kopyala düğmesiyle alın.';
+  $('altbaslik').textContent='Aşağıdaki bilgilerle havale / EFT yapabilirsiniz. Her bilgiyi tek dokunuşla kopyalayın.';
   $('mUnvan').textContent=UNVAN;
   $('mIban').textContent=ibanBosluklu(IBAN);
   $('mAciklama').textContent=aciklama;
@@ -326,6 +394,7 @@ function musteriGoster(v){
 }
 
 var q = new URLSearchParams(location.search);
+if(q.get('k')||q.get('a')||q.get('durum')||q.get('sablon')){ $('ozellik').hidden=true; $('rozet').textContent=q.get('k')||q.get('a')?'ÖDEME BİLGİLERİ':'YÖNETİM'; }
 
 if(q.get('durum')){
   // Ödeme yakalama durumu: tetik kurulu mu, son kontrol ne zaman, ne buldu
@@ -401,6 +470,10 @@ if(q.get('durum')){
     if(!elleDegisti) $('fAciklama').value=otomatikAciklama();
     var n=$('fAciklama').value.length;
     $('uzunluk').textContent=n?(n+6)+' karakter (kodla birlikte)'+(n>60?' — biraz uzun, bazı bankalar kesebilir':''):'';
+    var tur=secilenTur(), tt=$('fTutar').value.trim();
+    $('waOnizle').textContent='Sayın '+($('fMusteri').value.trim()||'…')+', '+[tt?tt+' '+$('fPara').value:'',String(tur||'ödeme').toLocaleLowerCase('tr')].filter(Boolean).join(' ')+
+      ' ödemeniz için banka bilgileri hazır. Aşağıdaki düğmeye dokunarak IBAN\'ı, alıcı adını ve havale açıklamasını tek dokunuşla kopyalayabilirsiniz.'+
+      ($('fDan').value?'\n\nDanışmanınız: '+$('fDan').value:'');
     if(kayit){ kayit=null; $('sonuc').hidden=true; $('hazirlaBtn').hidden=false; }
   }
   function eksik(id,mesaj){ $(id).classList.add('hata'); $(id).focus(); toast(mesaj); return true; }
@@ -426,7 +499,11 @@ if(q.get('durum')){
       if(y!==el.value){ el.value=y; try{ el.setSelectionRange(a,b); }catch(e){} }
     });
   });
-  $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); });
+  // yazarken binlik noktası: 50000 → 50.000 (Umut 25.10)
+  $('fTutar').addEventListener('input',function(){
+    var el=$('fTutar'), sagdan=el.value.length-el.selectionStart, v=tutarBicim();
+    if(el.value!==v){ el.value=v; var k=Math.max(0,v.length-sagdan); try{ el.setSelectionRange(k,k); }catch(e){} }
+  });
   $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; sifirla(); });
 
   $('hazirlaBtn').addEventListener('click',function(){
