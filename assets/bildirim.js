@@ -148,13 +148,13 @@
   }
   kartGuncelle();
 
-  // Bildirimlerim kartı: yalnız bildirimi açık telefonda görünür, okunmamış sayısı rozette
+  // Bildirimlerim kartı: herkese görünür; okunmamış sayısı rozette
   // (ana ekran simgesindeki rozet de güncellenir)
   function bildirimlerimSay() {
     var kart = document.getElementById('bldlerimKart');
     if (!kart) return;
-    if (!ls('bld_token')) { kart.style.display = 'none'; return; }
     kart.style.display = '';
+    if (!ls('bld_token')) return;   // kart görünür, sayfa bu cihazda bildirimin kapalı olduğunu söyler
     post('bildirimlerim', { token: ls('bld_token'), islem: 'liste' }).then(function (j) {
       if (!j.ok) return;
       var n = j.okunmamis || 0, r = document.getElementById('bldlerimSayi'), d = document.getElementById('bldlerimDesc');
