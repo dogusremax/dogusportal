@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/assets/app-ikon-180.png">
+<title>Bildirimlerim — RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#f6f7f9; --line:#e3e7ee; --red:#DC1C2E; --blue:#003DA5; --text:#131a26; --dim:#68738a; }
+* { box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:env(safe-area-inset-bottom); }
+main { max-width:600px; margin:0 auto; padding:0 16px 48px; }
+header { display:flex; align-items:center; gap:12px; padding:calc(18px + env(safe-area-inset-top)) 0 14px; }
+.geri { width:40px; height:40px; border-radius:12px; border:1px solid var(--line); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--text); text-decoration:none; font-size:20px; flex:none; }
+h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-spacing:-.01em; flex:1; }
+.sayac { background:var(--red); color:#fff; font:700 12px/1 'Inter',sans-serif; padding:5px 9px; border-radius:20px; display:none; }
+.ust { display:flex; align-items:center; justify-content:space-between; margin:4px 0 10px; font-size:13px; color:var(--dim); min-height:28px; }
+.hepsi { background:none; border:0; color:var(--blue); font:600 13px 'Inter',sans-serif; cursor:pointer; padding:6px 0; display:none; }
+.gun { font:700 11.5px 'Inter',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin:18px 4px 8px; }
+.kart { display:flex; gap:12px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px 14px 14px 12px; margin-bottom:8px; text-decoration:none; color:inherit; position:relative; cursor:pointer; }
+.kart:active { transform:scale(.985); }
+.kart .nokta { width:9px; height:9px; border-radius:50%; background:var(--red); flex:none; margin-top:6px; }
+.kart.okundu .nokta { background:transparent; }
+.kart .govde { flex:1; min-width:0; }
+.kart .bas { font-weight:600; font-size:14.5px; line-height:1.35; }
+.kart.okundu .bas { font-weight:500; color:#3a4456; }
+.kart .metin { font-size:13px; color:var(--dim); line-height:1.45; margin-top:3px; white-space:pre-line; overflow:hidden; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; }
+.kart .saat { font-size:11.5px; color:#9aa3b5; flex:none; margin-top:2px; }
+.kart:not(.okundu) { border-color:#f3c7cc; box-shadow:0 2px 10px -4px rgba(220,28,46,.18); }
+.bos { text-align:center; padding:56px 16px; color:var(--dim); font-size:14.5px; line-height:1.6; }
+.bos b { color:var(--text); }
+.bos a { color:var(--blue); font-weight:600; }
+.yukleniyor { text-align:center; padding:48px 0; color:var(--dim); font-size:14px; }
+.not { font-size:12px; color:#9aa3b5; text-align:center; margin-top:22px; line-height:1.5; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a class="geri" href="/" id="geri" aria-label="Portala dön">&#8249;</a>
+    <h1>Bildirimlerim</h1>
+    <span class="sayac" id="sayac"></span>
+  </header>
+  <div class="ust"><span id="kim"></span><button class="hepsi" id="hepsi">Tümünü okundu say</button></div>
+  <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
+  <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
+</main>
+<script>
+(function () {
+  var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+  var token = ''; try { token = localStorage.getItem('bld_token') || ''; } catch (e) {}
+  var ornek = /[?&]ornek=1/.test(location.search);   // önizleme: örnek verilerle
+  document.getElementById('geri').href = '/?cb=' + Date.now();
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function post(ek) {
+    var p = new URLSearchParams(); p.append('action', 'bildirimlerim'); p.append('token', token);
+    Object.keys(ek || {}).forEach(function (k) { p.append(k, ek[k]); });
+    return fetch(WA, { method: 'POST', body: p, redirect: 'follow' }).then(function (r) { return r.json(); });
+  }
+  function rozet(n) {
+    try { if (navigator.setAppBadge) (n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(function () {}); } catch (e) {}
+    $('sayac').textContent = n + ' okunmamış'; $('sayac').style.display = n > 0 ? 'inline-block' : 'none';
+    $('hepsi').style.display = n > 0 ? 'inline-block' : 'none';
+  }
+  var AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  function gunAdi(d) {
+    var b = new Date(); b.setHours(0, 0, 0, 0);
+    var g = new Date(d); g.setHours(0, 0, 0, 0);
+    var fark = Math.round((b - g) / 864e5);
+    if (fark === 0) return 'Bugün';
+    if (fark === 1) return 'Dün';
+    return g.getDate() + ' ' + AY[g.getMonth()] + ' ' + ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][g.getDay()];
+  }
+  function saat(d) { d = new Date(d); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+
+  var veri = null;
+  function ciz() {
+    var l = veri.liste;
+    $('kim').textContent = veri.kisi || '';
+    rozet(veri.okunmamis);
+    if (!l.length) { $('liste').innerHTML = '<div class="bos">Son 30 günde sana bildirim gelmemiş.</div>'; return; }
+    var h = '', son = '';
+    l.forEach(function (x, i) {
+      var g = gunAdi(x.t);
+      if (g !== son) { h += '<div class="gun">' + g + '</div>'; son = g; }
+      h += '<div class="kart' + (x.okundu ? ' okundu' : '') + '" data-i="' + i + '"><span class="nokta"></span><div class="govde">' +
+        '<div class="bas">' + esc(x.baslik) + '</div>' + (x.metin ? '<div class="metin">' + esc(x.metin) + '</div>' : '') +
+        '</div><span class="saat">' + saat(x.t) + '</span></div>';
+    });
+    $('liste').innerHTML = h;
+    $('not').style.display = '';
+  }
+  $('liste').onclick = function (e) {
+    var k = e.target.closest('.kart'); if (!k) return;
+    var x = veri.liste[+k.dataset.i];
+    if (!x.okundu) {
+      x.okundu = true; veri.okunmamis = Math.max(0, veri.okunmamis - 1); ciz();
+      if (!ornek) post({ islem: 'okundu', hid: x.hid }).catch(function () {});
+    }
+    if (x.link) location.href = x.link;
+  };
+  $('hepsi').onclick = function () {
+    veri.liste.forEach(function (x) { x.okundu = true; }); veri.okunmamis = 0; ciz();
+    if (!ornek) post({ islem: 'hepsi' }).catch(function () {});
+  };
+
+  if (ornek) {
+    var s = Date.now(), sa = 36e5;
+    veri = { kisi: 'Gizem Gök', okunmamis: 3, liste: [
+      { t: s - 0.4 * sa, baslik: '📅 Kasım ayı nöbet takvimi oluşturuldu.', metin: 'İşte nöbet günlerin. 👇', okundu: false },
+      { t: s - 2 * sa, baslik: '✉️ Yeni posta', metin: 'Ahmet Yılmaz: Daire görüşmesi', okundu: false },
+      { t: s - 5 * sa, baslik: '🏠 Sahibinden yeni ilan: Fikirtepe 3+1', metin: 'Mülk sahibi ilanı, 12.500.000 TL', okundu: false },
+      { t: s - 27 * sa, baslik: '📣 Kapora İste yayında', metin: 'Gizem, yeni Kapora İste özelliğini 1 dakikada anlatan videoyu izle.', okundu: true },
+      { t: s - 75 * sa, baslik: '💰 REVY ödemesi alındı', metin: 'Ekim ayı ödemen alındı, teşekkürler.', okundu: true }
+    ] };
+    ciz(); return;
+  }
+  if (!token) {
+    $('liste').innerHTML = '<div class="bos">Bu telefonda bildirimler kapalı.<br>Portalda <b>Bildirimler</b> kartından adını seçip aç; sonra gelen her bildirim burada birikir.<br><br><a href="/?cb=' + Date.now() + '">Portala dön</a></div>';
+    return;
+  }
+  post({ islem: 'liste' }).then(function (j) {
+    if (!j.ok) {
+      $('liste').innerHTML = '<div class="bos">' + (j.error === 'ABONE_YOK'
+        ? 'Bu telefonun bildirim kaydı bulunamadı. Portalda <b>Bildirimler</b> kartından tekrar aç.'
+        : 'Bildirimler alınamadı. Biraz sonra tekrar dene.') + '</div>';
+      return;
+    }
+    veri = j; ciz();
+  }).catch(function () { $('liste').innerHTML = '<div class="bos">Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.</div>'; });
+})();
+</script>
+</body>
+</html>

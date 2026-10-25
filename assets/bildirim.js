@@ -147,4 +147,22 @@
     aboneOl(ls('bld_kisi')).catch(function (e) { console.warn('Bildirim tazelenemedi:', e); });
   }
   kartGuncelle();
+
+  // Bildirimlerim kartı: yalnız bildirimi açık telefonda görünür, okunmamış sayısı rozette
+  // (ana ekran simgesindeki rozet de güncellenir)
+  function bildirimlerimSay() {
+    var kart = document.getElementById('bldlerimKart');
+    if (!kart) return;
+    if (!ls('bld_token')) { kart.style.display = 'none'; return; }
+    kart.style.display = '';
+    post('bildirimlerim', { token: ls('bld_token'), islem: 'liste' }).then(function (j) {
+      if (!j.ok) return;
+      var n = j.okunmamis || 0, r = document.getElementById('bldlerimSayi'), d = document.getElementById('bldlerimDesc');
+      r.textContent = n > 9 ? '9+' : String(n); r.style.display = n > 0 ? '' : 'none';
+      d.textContent = n > 0 ? n + ' okunmamış bildirimin var' : 'Kaçırdığın bildirimler burada, son 30 gün';
+      try { if (navigator.setAppBadge) (n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(function () {}); } catch (e) {}
+    }).catch(function () {});
+  }
+  bildirimlerimSay();
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') bildirimlerimSay(); });
 })();
