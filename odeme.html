@@ -115,7 +115,7 @@ input.hata{border-color:var(--kirmizi)}
         <select id="fDan"><option value="">Yükleniyor…</option></select></label>
       <label class="alan"><span class="ad">Telefonun</span>
         <span class="ipucu">Seçince kendiliğinden gelir. Müşteri ödeme yapınca dekontu bu numaraya tek dokunuşla gönderir.</span>
-        <input id="fDanTel" type="tel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
+        <input id="fDanTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
     </div>
 
     <div class="grup">Müşteri ve işlem</div>
@@ -144,7 +144,7 @@ input.hata{border-color:var(--kirmizi)}
       </div>
       <label class="alan"><span class="ad">Müşterinin telefonu <i>*</i></span>
         <span class="ipucu">Ödeme bilgisi bu numaraya WhatsApp'tan düğmeli mesajla gider.</span>
-        <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
+        <input id="fMTel" type="tel" inputmode="tel" autocomplete="off" placeholder="0 (5xx) xxx xx xx"></label>
     </div>
 
     <div class="grup">Havale açıklaması</div>
@@ -242,7 +242,22 @@ function tel90(t){
   else if(d.length===10) d='90'+d;
   return d;
 }
-function telYaz(t){ var d=tel90(t); return d.length===12?('0'+d.slice(2,5)+' '+d.slice(5,8)+' '+d.slice(8,10)+' '+d.slice(10)):t; }
+function telYaz(t){ var d=tel90(t); return d.length===12?telMaske(d.slice(2)):t; }
+/* 0 (5xx) xxx xx xx: yazarken biçimlenir */
+function telMaske(v){
+  var d=String(v||'').replace(/\D/g,'');
+  if(d.charAt(0)==='0') d=d.slice(1);
+  if(d.indexOf('90')===0) d=d.slice(2);   // +90 ile yazılan ya da yapıştırılan (cep numaraları 9 ile başlamaz)
+  d=d.slice(0,10);
+  if(!d) return '';
+  var s='0 ('+d.slice(0,3);
+  if(d.length>3) s+=') '+d.slice(3,6);
+  if(d.length>6) s+=' '+d.slice(6,8);
+  if(d.length>8) s+=' '+d.slice(8,10);
+  return s;
+}
+/* Her kelimenin ilk harfi büyük (Türkçe: i → İ) */
+function basHarf(v){ return String(v||'').replace(/(^|[\s\-\/(.])(\S)/g,function(m,a,b){ return a+b.toLocaleUpperCase('tr'); }); }
 function api(govde){
   return fetch(WA,{method:'POST',redirect:'follow',body:JSON.stringify(Object.assign({action:'kapora'},govde))})
     .then(function(r){ return r.json(); });
@@ -331,7 +346,7 @@ if(q.get('sablon')){
     if(son) sel.value=son;
     if(sel.value && !$('fDanTel').value) $('fDanTel').value=telYaz(sel.selectedOptions[0].dataset.tel||'');
   }).catch(function(){ $('fDan').innerHTML='<option value="">Liste yüklenemedi, sayfayı yenile</option>'; });
-  $('fDanTel').value=ls('odm_tel');
+  $('fDanTel').value=telMaske(ls('odm_tel'));
   $('fDan').addEventListener('change',function(){
     var o=$('fDan').selectedOptions[0];
     $('fDanTel').value=o&&o.dataset.tel?telYaz(o.dataset.tel):'';
@@ -367,6 +382,19 @@ if(q.get('sablon')){
     $(id).addEventListener('change',sifirla);
   });
   $('fDanTel').addEventListener('change',function(){ ls('odm_tel',$('fDanTel').value); });
+  ['fMTel','fDanTel'].forEach(function(id){
+    $(id).addEventListener('input',function(e){
+      if(e.inputType==='deleteContentBackward' && !/\d$/.test($(id).value)) return;   // silerken parantez/boşlukta takılmasın
+      $(id).value=telMaske($(id).value);
+    });
+    $(id).addEventListener('blur',function(){ $(id).value=telMaske($(id).value); });
+  });
+  ['fMusteri','fMulk'].forEach(function(id){
+    $(id).addEventListener('input',function(){
+      var el=$(id), a=el.selectionStart, b=el.selectionEnd, y=basHarf(el.value);
+      if(y!==el.value){ el.value=y; try{ el.setSelectionRange(a,b); }catch(e){} }
+    });
+  });
   $('fTutar').addEventListener('blur',function(){ $('fTutar').value=tutarBicim(); });
   $('fAciklama').addEventListener('input',function(){ elleDegisti=$('fAciklama').value.trim()!==''; sifirla(); });
 
