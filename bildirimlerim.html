@@ -123,7 +123,7 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
     ciz(); return;
   }
   if (!token) {
-    $('liste').innerHTML = '<div class="bos">Bu telefonda bildirimler kapalı.<br>Portalda <b>Bildirimler</b> kartından adını seçip aç; sonra gelen her bildirim burada birikir.<br><br><a href="/?cb=' + Date.now() + '">Portala dön</a></div>';
+    $('liste').innerHTML = '<div class="bos">Bu cihazda bildirimler kapalı, o yüzden liste burada görünmüyor.<br>Bildirimleri açtığın telefondan portala girip <b>Bildirimlerim</b>\'e bak. Bu cihazda da görmek istersen portaldaki <b>Bildirimler</b> kartından adını seçip aç.<br><br><a href="/?cb=' + Date.now() + '">Portala dön</a></div>';
     return;
   }
   post({ islem: 'liste' }).then(function (j) {
