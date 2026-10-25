@@ -113,6 +113,7 @@ input:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart)}
   <div id="form" hidden>
     <div class="kart">
       <div class="grup"><b>1</b>Kapora bilgileri <span class="rozet" id="odemeRozet"></span></div>
+      <div class="bilgi"><span class="k">İşlem</span><span class="d" id="bIslem"></span></div>
       <div class="bilgi"><span class="k">Danışman</span><span class="d" id="bDanisman"></span></div>
       <div class="bilgi"><span class="k">Müşteri</span><span class="d" id="bMusteri"></span></div>
       <div class="bilgi"><span class="k">Adres</span><span class="d" id="bMulk"></span></div>
@@ -149,8 +150,8 @@ input:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart)}
     <div class="ik">✓</div>
     <h2 id="tamamBaslik">Masa ayrıldı</h2>
     <p id="tamamMetin"></p>
-    <div class="kiraKutu">
-      <div class="kiraBaslik">Kiralık mı? Kontrata hazırlık için:</div>
+    <div class="kiraKutu" id="kiraKutu" hidden>
+      <div class="kiraBaslik">Kira kontratına hazırlık:</div>
       <a class="btn ikincil" href="kira-dosya.html">🗂️ Kira Masası: kiracı, mülk sahibi, kefil evrakları</a>
       <a class="btn ikincil" href="kira-kontrat-listesi.html">📋 Kira kontrat hazırlık listesi</a>
     </div>
@@ -193,7 +194,7 @@ var ORNEK_DOLU = {};
 function onizleApi(g) {
   return new Promise(function (res) { setTimeout(function () {
     if (g.islem === 'kontratGetir') return res({ ok: true, veri: { kod: KOD, danisman: 'Umut Tokkuş', musteri: 'Çetin Yılmaz',
-      mulk: 'Akasya Acıbadem Göl Etabı Kule 125', tutar: '50.000 TL', odendi: true, randevu: null } });
+      mulk: 'Akasya Acıbadem Göl Etabı Kule 125', tutar: '50.000 TL', odendi: true, islem: q.get('islem') || 'satilik', randevu: null } });
     if (g.islem === 'kontratMasa') return res({ ok: true, dolu: ORNEK_DOLU[g.tarih] || [] });
     if (g.islem === 'kontratKaydet') return res({ ok: true });
   }, 250); });
@@ -279,6 +280,7 @@ $('kaydet').addEventListener('click', function () {
         bas: S.bas, bit: hh(dk(S.bas) + sure()), not: $('not').value.trim() }).then(function (j) {
     if (!j.ok) { $('hata').textContent = j.error || 'Kaydedilemedi.'; if (j.dolu) { S.dolu = j.dolu; S.bas = ''; saatlerCiz(); } else ozetCiz(); return; }
     $('form').hidden = true; $('gonderBar').hidden = true; $('tamam').hidden = false;
+    $('kiraKutu').hidden = !(S.veri && S.veri.islem === 'kiralik');
     var zaman = tarihYazi(S.tarih) + ', ' + S.bas + '–' + hh(dk(S.bas) + sure());
     $('tamamBaslik').textContent = ofis ? 'Kontrat masası ayrıldı' : 'Kontrat randevusu kaydedildi';
     $('tamamMetin').innerHTML = '<b>' + zaman + '</b><br>' + (ofis ? 'Ofis · Kontrat masası' : $('adres').value.trim()) +
@@ -293,6 +295,7 @@ if (!/^K[A-Z0-9]{4}$/.test(KOD)) { $('yukleniyor').textContent = 'Bağlantı ge�
 else api({ islem: 'kontratGetir' }).then(function (j) {
   if (!j.ok) { $('yukleniyor').textContent = j.error || 'Kayıt bulunamadı.'; return; }
   var v = S.veri = j.veri;
+  $('bIslem').textContent = v.islem === 'kiralik' ? 'Kiralık' : 'Satılık';
   $('bDanisman').textContent = v.danisman; $('bMusteri').textContent = v.musteri;
   $('bMulk').textContent = v.mulk || '-'; $('bTutar').textContent = v.tutar;
   $('odemeRozet').textContent = v.odendi ? 'Hesaba geçti ✓' : 'Ödeme bekleniyor';
