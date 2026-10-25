@@ -46,7 +46,7 @@ export function create(host, base) {
     var fov = cam.fov * Math.PI / 180, fh = 2 * Math.atan(Math.tan(fov / 2) * Math.min(1, cam.aspect));
     var d = r / Math.sin(fh / 2) * 1.02;
     ctl.target.set(c.x, 0.4, c.z);
-    var el = 0.95, az = -0.85;   // açılışta fotoğraflardaki gibi eğik kuş bakışı
+    var el = 1.0, az = -0.3;   // açılışta plan görseliyle aynı yönden, hafif eğik kuş bakışı
     cam.position.set(c.x + d * Math.cos(el) * Math.sin(az), d * Math.sin(el), c.z + d * Math.cos(el) * Math.cos(az));
     ctl.minDistance = d * 0.35; ctl.maxDistance = d * 1.8; ctl.update();
     st.home = { p: cam.position.clone(), t: ctl.target.clone() };

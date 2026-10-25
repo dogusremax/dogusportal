@@ -504,7 +504,7 @@ footer a{text-decoration:none;color:#fff}
     $('pseg').style.display=h3?'flex':'none';
     [].forEach.call($('pseg').children,function(b){b.classList.toggle('on',b.getAttribute('data-m')===mod);});
     sah.style.display=mod==='plan'?'':'none';$('p3d').style.display=mod==='3d'?'block':'none';$('pzoom').style.display=$('popen').style.display=mod==='plan'?'':'none';
-    if(mod==='3d'){(V3p||(V3p=import('./3d/model3d.js?v=1').then(function(m){V3=m.create($('p3d'),B3);return V3;}))).then(function(v){if(mod==='3d'&&lb.classList.contains('open'))v.show(id3(r));});track('kat_plani_3d',{plan:id3(r)});}
+    if(mod==='3d'){(V3p||(V3p=import('./3d/model3d.js?v=2').then(function(m){V3=m.create($('p3d'),B3);return V3;}))).then(function(v){if(mod==='3d'&&lb.classList.contains('open'))v.show(id3(r));});track('kat_plani_3d',{plan:id3(r)});}
     else if(V3)V3.hide();
     if(!lb.classList.contains('open')){lb.classList.add('open');document.body.style.overflow='hidden';}
     track('kat_plani_ac',{etap:e,oda:r[2],m2:r[3]});
