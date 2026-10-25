@@ -91,8 +91,8 @@ export function create(host, base) {
     st.pid = pid; st.moved = false; st.rest = false; st.occ = false; st.still = 0; q('.hint').style.opacity = 1;
     if (st.root) { scene.remove(st.root); st.root.traverse(function (o) { if (o.isMesh) { o.geometry.dispose(); if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); st.root = null; }
     L.innerHTML = ''; st.labels = []; q('.ld').style.display = 'flex'; q('.ldb').style.width = '0%';
-    var dir = base + pid + '/';
-    fetch(dir + 'model.json').then(function (r) { return r.json(); }).then(function (j) {
+    var dir = base + pid + '/', ver = '?v=' + ((window.AK3D_V || {})[pid] || '1');
+    fetch(dir + 'model.json' + ver).then(function (r) { return r.json(); }).then(function (j) {
       if (st.pid !== pid) return;
       st.labels = j.rooms.map(function (r) {
         var d = document.createElement('div'); d.className = 'lb3'; d.innerHTML = r[1] + '<i>' + fmt(r[2]) + '</i>'; L.appendChild(d);
@@ -100,7 +100,7 @@ export function create(host, base) {
       });
       st.dirty = true;
     }).catch(function () {});
-    loader.load(dir + 'model.glb', function (g) {
+    loader.load(dir + 'model.glb' + ver, function (g) {
       if (st.pid !== pid) return;
       var aniso = R.capabilities.getMaxAnisotropy();
       g.scene.traverse(function (o) {
