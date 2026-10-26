@@ -18,6 +18,7 @@ jobs:
           if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
           echo "::add-mask::$T"
           echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - run: which ffprobe || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
       - run: node scripts/gbp-sure.js
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}

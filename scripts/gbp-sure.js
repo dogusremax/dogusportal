@@ -7,7 +7,10 @@ const fs = require('fs'), { execSync } = require('child_process');
   for (const a of aday) {
     const j = await (await fetch(`https://graph.facebook.com/v21.0/${a.id}?fields=media_url&access_token=${T}`)).json();
     let sure = null;
-    try { sure = +execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${j.media_url}"`, { timeout: 60000 }).toString().trim(); } catch {}
+    try {
+      fs.writeFileSync('/tmp/v.mp4', Buffer.from(await (await fetch(j.media_url)).arrayBuffer()));
+      sure = +execSync('ffprobe -v error -show_entries format=duration -of csv=p=0 /tmp/v.mp4', { timeout: 60000 }).toString().trim();
+    } catch (e) { console.error(a.id, j.error?.message || '', String(e.message).slice(0, 200)); }
     out.push({ id: a.id, sure: sure && Math.round(sure * 10) / 10, link: a.link, baslik: (a.aciklama || '').split('\n')[0].slice(0, 80) });
   }
   fs.writeFileSync('gbp-gonderi/sureler.json', JSON.stringify(out, null, 1));
