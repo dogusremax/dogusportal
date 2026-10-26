@@ -17,7 +17,7 @@
     'D-Point': [{ ad: 'D-Point planı', pe: 35, tl: 0, ts: 20, ay: 25, sa: 12, teslim: '2028-12', not: 'D-Point · teslim Aralık 2028. %35 peşinat; %45 teslime kadar 25 eşit taksit (son taksit Kasım 2028); %20 teslimden sonra 12 eşit taksit (son taksit Kasım 2029). ' + DV }],
     'La Casalia': [{ ad: 'La Casalia planı', pe: 35, tl: 0, ts: 20, ay: 13, sa: 12, teslim: '2027-12', not: 'La Casalia · teslim Aralık 2027. %35 peşinat; %45 teslime kadar 13 taksit (son taksit Kasım 2027); %20 teslimden sonra 12 eşit taksit (son taksit Kasım 2028). ' + DV }],
     'Querencia Long Beach': [
-      { ad: 'A ve B Blok', blok: ['A', 'B'], pe: 35, tl: 0, ts: 10, ay: 4, sa: 12, teslim: '2027-03', not: 'Querencia A ve B Blok · teslim Mart 2027. %35 peşinat; %55 teslime kadar 4 taksit (son taksit Şubat 2027); %10 teslimden sonra 12 taksit (son taksit Mayıs 2028). ' + DV },
+      { ad: 'A ve B Blok', blok: ['A', 'B'], pe: 35, tl: 0, ts: 20, ay: 4, sa: 12, teslim: '2027-03', not: 'Querencia A ve B Blok · teslim Mart 2027. %35 peşinat; %45 teslime kadar 4 taksit (son taksit Şubat 2027); %20 teslimden sonra 12 taksit (son taksit Mayıs 2028). ' + DV },
       { ad: 'C ve D Blok', blok: ['C', 'D'], pe: 35, tl: 0, ts: 20, ay: 13, sa: 12, teslim: '2027-12', not: 'Querencia C ve D Blok · teslim Aralık 2027. %35 peşinat; %45 teslime kadar 13 taksit (son taksit Kasım 2027); %20 teslimden sonra 12 taksit (son taksit Kasım 2028). ' + DV }],
     'Courtyard Platinum': [
       { ad: '1. Etap', pe: 35, tl: 0, ts: 20, ay: 1, sa: 12, not: 'Courtyard Platinum 1. Etap. %35 peşinat; %45 teslime kadar 1 taksit (Kasım 2026); %20 teslimden sonra 12 taksit (son taksit Kasım 2027). ' + DV },
