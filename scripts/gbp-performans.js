@@ -20,7 +20,7 @@ const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DES
   }
   console.log('Konum:', konum.name, konum.title);
 
-  const bit = new Date(), bas = new Date(Date.now() - 400 * 864e5);
+  const bit = new Date(), bas = new Date(Date.now() - 540 * 864e5);
   const q = new URLSearchParams();
   METRIKLER.forEach(m => q.append('dailyMetrics', m));
   [['startDate', bas], ['endDate', bit]].forEach(([p, d]) => {
@@ -51,6 +51,8 @@ const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DES
   const sonuc = { konum: konum.title, sonDoluGun: son, donemler: {}, aylik: {} };
   for (const [ad, [a, b]] of Object.entries(donemler)) { sonuc.donemler[ad] = { aralik: a + ' → ' + b, ...ozet(topla(a, b)) }; }
   for (const d of tarihler) { const ay = d.slice(0, 7); sonuc.aylik[ay] = sonuc.aylik[ay] || {}; for (const [m, x] of Object.entries(gunluk[d])) sonuc.aylik[ay][m] = (sonuc.aylik[ay][m] || 0) + x; }
+  // Verinin ortasından başlayan ilk ay yarım kalır, karşılaştırmayı bozmasın
+  if (tarihler[0] && !tarihler[0].endsWith('-01')) delete sonuc.aylik[tarihler[0].slice(0, 7)];
   for (const ay of Object.keys(sonuc.aylik)) sonuc.aylik[ay] = ozet(sonuc.aylik[ay]);
 
   // Arama kelimeleri (aylık, son 3 ay)
