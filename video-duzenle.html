@@ -1270,12 +1270,12 @@ function segHazirla(){
    oynatma akıcı olur, maske kareden kareye titremez (komşu karelerle zamansal yumuşatma). */
 /* iPhone Safari sekmeyi bellek dolunca uyarmadan yeniden yüklüyor: orada arka plan analizine daha az yer ayrılır */
 var IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-var ANALIZ_BELLEK = IOS ? 100e6 : 300e6;
+var ANALIZ_BELLEK = IOS ? 100e6 : 300e6, analizDurdur = false;
 var analiz = { durum: 'yok', fps: 15, n: 0, kareler: [], merkezler: [], mw: 0, mh: 0, kimlik: 0, imgData: null };
 function analizSifirla(){ analiz.kimlik++; analiz.durum = 'yok'; analiz.kareler = []; analiz.merkezler = []; analiz.n = 0; }
 async function analizBaslat(){
   var isciIle = isci.durum === 'hazir';
-  if (analiz.durum !== 'yok' || (seg.durum !== 'hazir' && !isciIle) || !video.src || !video.videoWidth || !sure()) return;
+  if (analizDurdur || analiz.durum !== 'yok' || (seg.durum !== 'hazir' && !isciIle) || !video.src || !video.videoWidth || !sure()) return;
   var kim = ++analiz.kimlik; analiz.durum = 'calisiyor';
   /* saç teli kalitesi için RVM tercih edilir (yükleniyorsa biraz beklenir) */
   var rvmIle = isciIle && await rvmBekle();
@@ -3295,6 +3295,9 @@ function konusmayiCevir(){
   if (!videoDosyasi) return;
   var btn = f('cevirBtn'); btn.disabled = true;
   var durumY = function(m){ f('cevirDurum').textContent = m; };
+  /* iPhone'da model belleğe sığsın diye arka plan kişi analizi bu sırada durdurulur (bitince kendiliğinden yeniden başlar) */
+  if (IOS) { analizDurdur = true; analizSifirla(); }
+  var model = null;
   var bar = f('cevirIlerleme'); bar.style.display = 'block'; bar.firstElementChild.style.width = '3%';
   durumY('Ses hazırlanıyor…');
   var ses16;
@@ -3302,7 +3305,8 @@ function konusmayiCevir(){
     ses16 = a; durumY('Yapay zeka modeli yükleniyor (ilk seferde biraz sürer)…');
     return import(TF_PAKET);
   }).then(function(tf){
-    var webgpu = !!navigator.gpu, adaylar = WH_MODELLER[f('whModel').value], dosyalar = {};
+    /* iPhone Safari'de WebGPU'daki fp32 kodlayıcı ve büyük model sekmeyi bellekten çökertiyor: orada hızlı model, q8, WebGPU'suz */
+    var webgpu = !!navigator.gpu && !IOS, adaylar = WH_MODELLER[IOS ? 'base' : f('whModel').value], dosyalar = {};
     function ilerleme(x){
       if (x.status === 'progress' && x.file) { dosyalar[x.file] = x.progress || 0; var v = Object.keys(dosyalar).map(function(k){ return dosyalar[k]; }); bar.firstElementChild.style.width = Math.max(3, v.reduce(function(a, b){ return a + b; }, 0) / v.length * .8) + '%'; }
     }
@@ -3316,6 +3320,7 @@ function konusmayiCevir(){
     }
     return dene(0);
   }).then(function(asr){
+    model = asr;
     durumY('Konuşma dinleniyor…'); bar.firstElementChild.style.width = '85%';
     return asr(ses16, { language: 'turkish', task: 'transcribe', return_timestamps: 'word', chunk_length_s: 30, stride_length_s: 5 });
   }).then(function(cikti){
@@ -3334,7 +3339,11 @@ function konusmayiCevir(){
   }).catch(function(e){
     console.log('whisper', e);
     durumY('Yapay zeka çalıştırılamadı (' + (e && e.message || e) + '). Aşağıdaki “dokunarak zamanla” yolunu kullanabilirsiniz.');
-  }).then(function(){ btn.disabled = false; setTimeout(function(){ bar.style.display = 'none'; }, 800); });
+  }).then(function(){
+    try { if (model && model.dispose) Promise.resolve(model.dispose()).catch(function(){}); } catch(e){}
+    ses16 = model = null; analizDurdur = false;
+    btn.disabled = false; setTimeout(function(){ bar.style.display = 'none'; }, 800);
+  });
 }
 /* Elle: metni yapıştır, oynatırken her kelimede dokun */
 var dokunDurumu = null;
