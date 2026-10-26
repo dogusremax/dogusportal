@@ -1,0 +1,21 @@
+name: Google işletme teşhis
+on:
+  push:
+    branches: [main]
+    paths: [scripts/gbp-teshis.js]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/gbp-teshis.js
+        env:
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+      - run: |
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add data/gbp-teshis.json
+          git diff --cached --quiet || (git commit -m "Google işletme teşhis" && git pull --rebase && git push)
