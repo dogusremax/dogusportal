@@ -1742,7 +1742,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     function katY(k){if(k==null||k==='')return '-';var t=String(k).trim(),m;if(k===0||/^(0|g|gf|ground|zemin)\.?$/i.test(t))return 'zemin';if(/^first$/i.test(t))return '1. kat';if(/^second$/i.test(t))return '2. kat';
       if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
     function kcH(p,l){SON_L=l;var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
-      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small id="kcPh">'+esc(pl.ad)+' · tahmini</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat'+(pl.tk?' · %'+pl.tk+' teslime kadar':'')+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
+      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small id="kcPh">'+esc(pl.ad)+(pl.resmi?' · firma planı':' · tahmini')+'</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat'+(pl.tk?' · %'+pl.tk+' teslime kadar':'')+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
         (KPL.liste(p).length>1?'<label class="kps">Ödeme planı<select id="kcPs">'+KPL.liste(p).map(function(x,k){return '<option value="'+k+'"'+(k===PLI?' selected':'')+'>'+esc(x.ad+' · %'+x.pe+' peşinat'+(x.tl?' · %'+x.tl+' teslimde':'')+(x.ts?' · %'+x.ts+' teslim sonrası':''))+'</option>';}).join('')+'</select></label>':'')+
         '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
         '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+pl.ay+'"></label><label>Peşinat (%)<input id="kcPe" type="number" min="0" max="100" value="'+pl.pe+'"></label>'+
@@ -1775,7 +1775,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
           return '<tr data-f="'+u.fiyat+'" data-k="'+k+'"><td><b>'+esc(u.tip)+'</b>'+(alt?'<small>'+esc(alt)+'</small>':'')+'</td><td>Blok '+esc(u.blok||'-')+' · '+katY(u.kat)+' · No '+esc(u.no==null?'-':u.no)+'</td>'+
             '<td>'+sayi(u.ic)+(u.m2?' <small style="display:inline">/ '+sayi(u.m2)+'</small>':'')+'</td><td class="p">'+para(u.fiyat)+'</td><td><span class="kdu'+c+'">'+esc(d)+'</span></td></tr>';}).join('')+'</tbody></table></div></div><div class="ksr">'+
         kcH(p,l)+'</div></div>'+(ac||$k('ktB').querySelector('.kac').outerHTML);
-      $k('ktB').innerHTML=h;hesap();}
+      $k('ktB').innerHTML=h;hesap();blokPl();}
     window.ktKapat=function(){$k('ktm').classList.remove('on');$k('fyo').classList.remove('det');$k('ktm').innerHTML='';acik=-1;};
     $k('ktG').addEventListener('click',function(e){var b=e.target.closest('.ktk');if(b)ac(+b.dataset.i);});
     $k('ktm').addEventListener('click',function(e){
@@ -1783,11 +1783,14 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       var t=e.target.closest('[data-tur]');if(t){e.stopPropagation();openTur(t.dataset.tur,t.dataset.p);return;}
       var f=e.target.closest('.ktyp button');if(f){mTip=f.getAttribute('data-t');tablo();return;}
       if(e.target.closest('[data-kpa-plan]')){hesap();if(!SON||!(SON.fy>0)){alert('Önce daire seçin ya da tutar yazın.');return;}SON.m=KPA.secili();KPA.planAc(SON);return;}
-      var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){var o=s.querySelector('option[data-k="'+r.dataset.k+'"]');if(o)o.selected=true;else s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
+      var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){var o=s.querySelector('option[data-k="'+r.dataset.k+'"]');if(o)o.selected=true;else s.value=r.dataset.f;hesap();blokPl();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
     $k('ktm').addEventListener('input',function(e){if(/^kc/.test(e.target.id))hesap();});
-    $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();
+    $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU'){hesap();blokPl();}
       // plan seçilince oranlar, taksit ayları ve not kendiliğinden dolar
-      if(e.target.id==='kcPs'){PLI=+e.target.value;var pl=plan(P[acik]);$k('kcA').value=pl.ay;$k('kcPe').value=pl.pe;$k('kcTl').value=pl.tl;$k('kcTs').value=pl.ts;$k('kcS').value=pl.sa||12;$k('kcNt').textContent=pl.not;$k('kcPh').textContent=pl.ad+' · tahmini';hesap();}});
+      if(e.target.id==='kcPs')planUy(+e.target.value);});
+    function planUy(k){PLI=k;var pl=plan(P[acik]);if($k('kcPs'))$k('kcPs').value=k;$k('kcA').value=pl.ay;$k('kcPe').value=pl.pe;$k('kcTl').value=pl.tl;$k('kcTs').value=pl.ts;$k('kcS').value=pl.sa||12;$k('kcNt').textContent=pl.not;$k('kcPh').textContent=pl.ad+(pl.resmi?' · firma planı':' · tahmini');hesap();}
+    // bloğa bağlı planı olan projede (ör. Querencia A-B / C-D) daire seçilince o bloğun planı kendiliğinden gelir
+    function blokPl(){var s=$k('kcU'),o=s&&s.selectedOptions&&s.selectedOptions[0];if(!o||o.dataset.k==null)return;var u=SON_L[+o.dataset.k],k=u?KPL.blokSira(P[acik],u.blok):-1;if(k>=0&&k!==PLI)planUy(k);}
     $k('ktQ').addEventListener('input',function(){ciz();oneri(true);});$k('ktQ').addEventListener('focus',function(){oneri(true);});
     $k('ktO').addEventListener('mousedown',function(e){var b=e.target.closest('button[data-ad]');if(!b)return;e.preventDefault();$k('ktQ').value=b.dataset.ad;oneri(false);ciz();$k('ktQ').blur();});
     $k('ktQx').onclick=function(){$k('ktQ').value='';ciz();oneri(false);};
