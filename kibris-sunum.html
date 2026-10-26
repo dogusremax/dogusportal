@@ -5,6 +5,7 @@
 <script src="assets/broker-kibris.js" data-gate></script>
 <script src="assets/iz.js"></script>
 <script src="assets/kibris/plan-arac.js"></script>
+<script src="assets/kibris/odeme-planlari.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
@@ -685,6 +686,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
 .kc .kgr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;margin-top:22px}
 .kc label{display:flex;flex-direction:column;gap:8px;font:700 13px/1 var(--fb);letter-spacing:2px;text-transform:uppercase;color:var(--ink2)}
 .kc label[hidden]{display:none}
+.kc .kps{margin-top:18px}.kc .kps select{border-color:var(--red)}
 .kc input,.kc select{height:58px;padding:0 18px;border-radius:14px;border:1.5px solid var(--sand2);background:var(--sand);color:var(--ink);font:500 20px/1 var(--fb);outline:none;letter-spacing:0;text-transform:none}
 .kc select option{color:var(--ink)}
 .kc .kout{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
@@ -1669,7 +1671,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       'n':'Kuzey cephe','s':'Güney cephe','e':'Doğu cephe','w':'Batı cephe','nw':'Kuzeybatı cephe','ne':'Kuzeydoğu cephe','sw':'Güneybatı cephe','se':'Güneydoğu cephe'};
     var OZ_K={open:'açık',north:'kuzey',south:'güney',east:'doğu',west:'batı',sea:'deniz',view:'manzara',garden:'bahçe',pool:'havuz',mountain:'dağ',ph:'penthouse',luxus:'lüks',luxury:'lüks',
       front:'ön',back:'arka',side:'yan',corner:'köşe',floor:'kat',ground:'zemin',duplex:'dubleks',left:'sol',right:'sağ',outdoor:'dış',indoor:'iç',street:'cadde',and:'ve','açık':'açık'};
-    var SON=null,SON_L=[];var $k=function(id){return document.getElementById(id);},D=null,P=[],TS={},ZS={},acik=-1,mTip='',yuk=false;
+    var SON=null,SON_L=[];var $k=function(id){return document.getElementById(id);},D=null,P=[],TS={},ZS={},acik=-1,PLI=0,mTip='',yuk=false;
     function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
     function low(t){return String(t||'').toLocaleLowerCase('tr');}
     function para(n){return '£'+Math.round(n).toLocaleString('tr-TR');}
@@ -1717,41 +1719,38 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
     function oneri(goster){var o=$k('ktO');if(!goster){o.hidden=true;return;}var s=q(),ff=$k('ktF').value,l=P.filter(function(p){return !ff||p.firma===ff;});
       var tam=l.some(function(p){return low(p.proje)===s;});l=l.filter(function(p){return !s||tam||low(p.proje).indexOf(s)>=0;}).sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
       o.innerHTML=l.length?l.map(function(p){return '<button type="button" data-ad="'+esc(p.proje)+'"><span>'+esc(p.proje)+'</span><small>'+esc(fad(p))+'</small></button>';}).join(''):'<button type="button" disabled><small>Eşleşen proje yok</small></button>';o.hidden=false;}
-    // ödeme planı (katalogdaki gibi): Döveç %35 peşinat + teslime kadar %45 + teslimden sonra %20 (12 ay); diğerleri %35 + %65
-    function plan(p){
-      if(/noyan/i.test(p.firma))return {ad:'Noyanlar planı',pe:35,tk:50,tl:15,ts:0,ay:0,kalan:48,not:'Noyanlar standart planı (firmanın sitesi): %35 peşinat, %50 48 aya kadar taksit, teslimde %15. Aylık taksit £2.500\'den başlar; projeye göre değişebilir, kesin planı satış temsilcisiyle teyit edin.'};
-      if(/northern/i.test(p.firma))return {ad:'Northernland planı',pe:35,tk:65,ts:0,ay:0,not:'Northernland resmi ödeme planı paylaşmadığı için genel tahmin: %35 peşinat + teslime kadar %65 eşit taksit. Kesin plan için satış temsilcisi ya da sözleşme esas alınır.'};
-      return cc(p)?{ad:'Genel plan',pe:35,tk:65,ts:0,ay:0,not:'Tahmini hesap (%35 peşinat + %65 teslime kadar). Resmi ödeme planı için firmanın sözleşmesini esas alın.'}
-      :{ad:'Döveç planı',pe:35,tk:45,ts:20,ay:12,not:'Döveç planı: %35 peşinat, anahtar teslimine kadar %45 (teslime kalan aylara bölünür), teslimden sonra %20 (12 ay, faizsiz). Toplam liste fiyatıdır.'+(/courtyard platinum/i.test(p.proje)?' Courtyard Platinum: bloklara göre teslim Ara 2025 / Ara 2026 / May 2027; peşinat ve vadeye göre indirim olabilir.':'')+' Hesap tahminidir; kesin tutarı satış temsilcisiyle teyit edin.'};}
+    // ödeme planı: projeye özel planlar assets/kibris/odeme-planlari.js'te (yoksa firmanın planı); PLI seçili planın sırası
+    function plan(p){var l=KPL.liste(p);return l[Math.min(PLI,l.length-1)];}
     function hesap(){var sel=$k('kcU');if(!sel)return;var p=P[acik],pl=plan(p),f=sel.value==='m'?(+$k('kcP').value||0):+sel.value;$k('kcPf').hidden=sel.value!=='m';
       // oranlar elle değiştirilebilir; teslime kadar kısmı kalan yüzde (toplam hep %100)
       var yz=function(id,v){var e=$k(id);return e&&e.value!==''?Math.max(0,Math.min(100,+e.value||0)):v;};
       pl=Object.assign({},pl,{pe:yz('kcPe',pl.pe),tl:yz('kcTl',pl.tl||0),ts:yz('kcTs',pl.ts||0)});pl.tk=Math.round((100-pl.pe-pl.tl-pl.ts)*100)/100;
       var ay=Math.max(1,+$k('kcA').value||1),sa=pl.ts?Math.max(1,+$k('kcS').value||1):0;
-      $k('kcPl').textContent='Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra ('+sa+' ay)':'')+'.'+(pl.tk<0?' Oranların toplamı %100\'ü aşıyor.':'');
+      $k('kcPl').textContent='Plan: %'+pl.pe+' peşinat'+(pl.tk?' · %'+pl.tk+' teslime kadar':'')+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra ('+sa+' ay)':'')+'.'+(pl.tk<0?' Oranların toplamı %100\'ü aşıyor.':'');
       if(!$k('kcM').getAttribute('data-kpa')||$k('kcM').innerHTML==='')KPA.masrafKur($k('kcM'),'£',p.proje);KPA.fiyat(f);
       if(!(f>0)){SON=null;$k('kcO').innerHTML='<div><span>Tutar girin ya da daire seçin.</span></div>';return;}
-      var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1],['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]];
+      var o=[['Peşinat (%'+pl.pe+')',para(f*pl.pe/100),1]].concat(pl.tk>0?[['Teslime kadar (%'+pl.tk+' · '+ay+' ay)',para(f*pl.tk/100)],['Aylık taksit, teslime kadar',para(f*pl.tk/100/ay),1]]:[]);
       if(pl.tl)o.push(['Teslimde (%'+pl.tl+')',para(f*pl.tl/100),1]);
       if(pl.ts)o.push(['Teslimden sonra (%'+pl.ts+' · '+sa+' ay)',para(f*pl.ts/100)],['Aylık taksit, teslimden sonra',para(f*pl.ts/100/sa),1]);
       var o2=sel.selectedOptions&&sel.selectedOptions[0],u=sel.value!=='m'&&o2&&o2.dataset.k!=null?SON_L[+o2.dataset.k]:null;
       SON={p:p.proje,f:p.firma,b:bol(p),img:'https://dogusportal.com/'+(/url\('([^']+)'\)/.exec(kapak(p,1))||[0,''])[1].replace(/^https:\/\/dogusportal\.com\//,''),pl:pl.ad,fy:f,c:'£',n:pl.not,
         u:u?u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' · No '+u.no:''):'',ux:u?[katY(u.kat).replace(/&amp;/g,'&'),u.ic?u.ic+' m² net'+(u.m2?' / '+u.m2+' m² brüt':''):'',ozTr(u.manzara),u.not].filter(Boolean).join(' · '):'',
-        r:[['Peşinat (%'+pl.pe+')',f*pl.pe/100,'sözleşmede',1],['Teslime kadar taksitler (%'+pl.tk+')',f*pl.tk/100,ay+' ay × '+para(f*pl.tk/100/ay)+' aylık',1]]
+        r:[['Peşinat (%'+pl.pe+')',f*pl.pe/100,'sözleşmede',1]].concat(pl.tk>0?[['Teslime kadar taksitler (%'+pl.tk+')',f*pl.tk/100,ay+' ay × '+para(f*pl.tk/100/ay)+' aylık',1]]:[])
           .concat(pl.tl?[['Teslimde (%'+pl.tl+')',f*pl.tl/100,'anahtar tesliminde',1]]:[]).concat(pl.ts?[['Teslimden sonra (%'+pl.ts+')',f*pl.ts/100,sa+' ay × '+para(f*pl.ts/100/sa)+' aylık, faizsiz',1]]:[])};
       o.unshift(['Liste fiyatı',para(f)]);
       $k('kcO').innerHTML=o.map(function(x){return '<div'+(x[2]?' class="kbig"':'')+'><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');}
     function katY(k){if(k==null||k==='')return '-';var t=String(k).trim(),m;if(k===0||/^(0|g|gf|ground|zemin)\.?$/i.test(t))return 'zemin';if(/^first$/i.test(t))return '1. kat';if(/^second$/i.test(t))return '2. kat';
       if(/^-?\d+$/.test(t))return esc(t)+'. kat';if(m=/^(\d+)\s*[,&]\s*(\d+)$/.exec(t))return m[1]+'-'+m[2]+'. kat';if(m=/^(\d+)\.?\s*&\s*(\d+)\.?\s*floor$/i.exec(t))return m[1]+'. ve '+m[2]+'. kat';return esc(ozTr(t));}
     function kcH(p,l){SON_L=l;var pl=plan(p),bos=!l.length,tut='<label id="kcPf"'+(bos?'':' hidden')+'>Tutar (£)<input id="kcP" type="number" min="0" placeholder="Örn. 250000"'+(bos&&minF(p)?' value="'+minF(p)+'"':'')+'></label>';
-      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small>'+pl.ad+' · tahmini</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat · %'+pl.tk+' teslime kadar'+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
+      return '<div class="kc"><h5>Ödeme planı ve masraf hesaplayıcı<small id="kcPh">'+esc(pl.ad)+' · tahmini</small></h5><div class="kpl" id="kcPl">Plan: %'+pl.pe+' peşinat'+(pl.tk?' · %'+pl.tk+' teslime kadar':'')+(pl.tl?' · %'+pl.tl+' teslimde':'')+(pl.ts?' · %'+pl.ts+' teslimden sonra':'')+'.'+(bos?' Tutarı yazın.':' Tablodan bir satıra basınca o daire seçilir.')+'</div>'+
+        (KPL.liste(p).length>1?'<label class="kps">Ödeme planı<select id="kcPs">'+KPL.liste(p).map(function(x,k){return '<option value="'+k+'"'+(k===PLI?' selected':'')+'>'+esc(x.ad+' · %'+x.pe+' peşinat'+(x.tl?' · %'+x.tl+' teslimde':'')+(x.ts?' · %'+x.ts+' teslim sonrası':''))+'</option>';}).join('')+'</select></label>':'')+
         '<div class="kgr">'+(bos?tut:'')+'<label'+(bos?' hidden':'')+'>Daire<select id="kcU">'+l.map(function(u,k){return '<option value="'+u.fiyat+'" data-k="'+k+'">'+esc(u.tip+' · Blok '+(u.blok||'-')+(u.no!=null?' No '+u.no:'')+' · '+para(u.fiyat))+'</option>';}).join('')+'<option value="m"'+(bos?' selected':'')+'>Özel tutar gir…</option></select></label>'+
-        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+(pl.kalan||24)+'"></label><label>Peşinat (%)<input id="kcPe" type="number" min="0" max="100" value="'+pl.pe+'"></label>'+
+        '<label>Teslime kalan (ay)<input id="kcA" type="number" min="1" value="'+pl.ay+'"></label><label>Peşinat (%)<input id="kcPe" type="number" min="0" max="100" value="'+pl.pe+'"></label>'+
         '<label>Anahtar tesliminde (%)<input id="kcTl" type="number" min="0" max="100" value="'+(pl.tl||0)+'"></label><label>Teslimden sonra ödenecek (%)<input id="kcTs" type="number" min="0" max="100" value="'+(pl.ts||0)+'"></label>'+
-        '<label>Teslimden sonra kaç ayda<input id="kcS" type="number" min="1" value="'+(pl.ay||12)+'"></label><div class="kgy">Bazı projelerde fiyatın bir kısmı anahtar tesliminden sonra aylık taksitle ödenir. “Teslimden sonra ödenecek” bu kısmın oranı, “kaç ayda” taksit sayısıdır; yoksa 0 yazın. Teslime kadar ödenecek kısım kalan yüzdedir.</div>'+
+        '<label>Teslimden sonra kaç ayda<input id="kcS" type="number" min="1" value="'+(pl.sa||12)+'"></label><div class="kgy">Bazı projelerde fiyatın bir kısmı anahtar tesliminden sonra aylık taksitle ödenir. “Teslimden sonra ödenecek” bu kısmın oranı, “kaç ayda” taksit sayısıdır; yoksa 0 yazın. Teslime kadar ödenecek kısım kalan yüzdedir.</div>'+
         (bos?'':tut)+'</div><div class="kout" id="kcO"></div>'+
-        '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3">'+esc(pl.not)+'</div></div>';}
-    function ac(i){acik=i;mTip='';KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];
+        '<div class="kms"><h6>Resmi masraflar ve ek giderler · yabancı alıcı, ilk taşınmaz</h6><div class="kpa" id="kcM"></div></div>'+KPA.dugme()+'<div class="nt3" id="kcNt">'+esc(pl.not)+'</div></div>';}
+    function ac(i){acik=i;mTip='';PLI=0;KPA._a=null;var p=P[i],m=M[p.proje]||['','','',''];
       // katalog müşteriye açık değil: 360° düğmesi yok; firmaların sitesine giden bağlantı da yok (yalnız kendi Drive'ımız)
       var biz=function(u){return /^https:\/\/(drive|docs)\.google\.com\//.test(u||'');};
       var ac='<div class="kac">'+(biz(p.brosur)?'<a href="'+esc(p.brosur)+'" target="_blank" rel="noopener">Katalog PDF ↗</a>':'')+(biz(p.klasor)?'<a href="'+esc(p.klasor)+'" target="_blank" rel="noopener">Drive klasörü ↗</a>':'')+'</div>';
@@ -1786,7 +1785,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       if(e.target.closest('[data-kpa-plan]')){hesap();if(!SON||!(SON.fy>0)){alert('Önce daire seçin ya da tutar yazın.');return;}SON.m=KPA.secili();KPA.planAc(SON);return;}
       var r=e.target.closest('tbody tr');if(r){var s=$k('kcU');if(s){var o=s.querySelector('option[data-k="'+r.dataset.k+'"]');if(o)o.selected=true;else s.value=r.dataset.f;hesap();[].forEach.call(r.parentNode.children,function(x){x.classList.toggle('ksel',x===r);});}}});
     $k('ktm').addEventListener('input',function(e){if(/^kc/.test(e.target.id))hesap();});
-    $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();});
+    $k('ktm').addEventListener('change',function(e){if(e.target.id==='kcU')hesap();
+      // plan seçilince oranlar, taksit ayları ve not kendiliğinden dolar
+      if(e.target.id==='kcPs'){PLI=+e.target.value;var pl=plan(P[acik]);$k('kcA').value=pl.ay;$k('kcPe').value=pl.pe;$k('kcTl').value=pl.tl;$k('kcTs').value=pl.ts;$k('kcS').value=pl.sa||12;$k('kcNt').textContent=pl.not;$k('kcPh').textContent=pl.ad+' · tahmini';hesap();}});
     $k('ktQ').addEventListener('input',function(){ciz();oneri(true);});$k('ktQ').addEventListener('focus',function(){oneri(true);});
     $k('ktO').addEventListener('mousedown',function(e){var b=e.target.closest('button[data-ad]');if(!b)return;e.preventDefault();$k('ktQ').value=b.dataset.ad;oneri(false);ciz();$k('ktQ').blur();});
     $k('ktQx').onclick=function(){$k('ktQ').value='';ciz();oneri(false);};
