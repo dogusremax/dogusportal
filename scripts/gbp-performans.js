@@ -1,4 +1,6 @@
 // Google İşletme Profili performansı (Haritalar/Arama görüntülenme, arama, yol tarifi, web tıklaması, arama kelimeleri).
+// Zamanlama (26.10.2026): Danışman Takip ZAMANLI_ISLER_ 09:30 → gbpRaporTetikle (Pazartesi haftalık, ayın 5i aylık);
+// metni apps-script gbp-rapor.yml bu dosyanın çıktısından kurar ve Umut'a mail + telefon bildirimi atar.
 // Kimlik google-yorum.js ile aynı: GOOGLE_PLACES_KEY. Çıktı: data/gbp-performans.json + log.
 const fs = require('fs');
 const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DESKTOP_MAPS', 'BUSINESS_IMPRESSIONS_MOBILE_SEARCH',
@@ -43,6 +45,7 @@ const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DES
     arama: (o.BUSINESS_IMPRESSIONS_MOBILE_SEARCH || 0) + (o.BUSINESS_IMPRESSIONS_DESKTOP_SEARCH || 0),
     telefon: o.CALL_CLICKS || 0, yolTarifi: o.BUSINESS_DIRECTION_REQUESTS || 0, webTik: o.WEBSITE_CLICKS || 0, mesaj: o.BUSINESS_CONVERSATIONS || 0 });
   const donemler = {
+    son7: [gun(son, -6), son], onceki7: [gun(son, -13), gun(son, -7)],
     son28: [gun(son, -27), son], onceki28: [gun(son, -55), gun(son, -28)], gecenYilAyni28: [gun(son, -27 - 364), gun(son, -364)],
   };
   const sonuc = { konum: konum.title, sonDoluGun: son, donemler: {}, aylik: {} };
@@ -57,6 +60,12 @@ const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DES
       'monthlyRange.endMonth.year': bit.getUTCFullYear(), 'monthlyRange.endMonth.month': bit.getUTCMonth() + 1, pageSize: 100 });
     const kw = await al(`https://businessprofileperformance.googleapis.com/v1/${konum.name}/searchkeywords/impressions/monthly?${kq}`);
     sonuc.kelimeler = (kw.searchKeywordsCounts || []).map(x => ({ kelime: x.searchKeyword, deger: x.insightsValue?.value ? +x.insightsValue.value : '<' + x.insightsValue?.threshold }));
+    // Geçen ayın kelimeleri (aylık rapor için)
+    const ga = new Date(Date.UTC(bit.getUTCFullYear(), bit.getUTCMonth() - 1, 1));
+    const gq = new URLSearchParams({ 'monthlyRange.startMonth.year': ga.getUTCFullYear(), 'monthlyRange.startMonth.month': ga.getUTCMonth() + 1,
+      'monthlyRange.endMonth.year': ga.getUTCFullYear(), 'monthlyRange.endMonth.month': ga.getUTCMonth() + 1, pageSize: 20 });
+    const gk = await al(`https://businessprofileperformance.googleapis.com/v1/${konum.name}/searchkeywords/impressions/monthly?${gq}`);
+    sonuc.kelimelerGecenAy = (gk.searchKeywordsCounts || []).map(x => ({ kelime: x.searchKeyword, deger: x.insightsValue?.value ? +x.insightsValue.value : '<' + x.insightsValue?.threshold }));
   } catch (e) { sonuc.kelimeHata = String(e.message).slice(0, 400); }
 
   console.log(JSON.stringify(sonuc, null, 1));
