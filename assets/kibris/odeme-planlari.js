@@ -22,6 +22,9 @@
     'Courtyard Platinum': [
       { ad: '1. Etap', pe: 35, tl: 0, ts: 20, ay: 1, sa: 12, not: 'Courtyard Platinum 1. Etap. %35 peşinat; %45 teslime kadar 1 taksit (Kasım 2026); %20 teslimden sonra 12 taksit (son taksit Kasım 2027). ' + DV },
       { ad: '2. Etap', pe: 35, tl: 0, ts: 20, ay: 13, sa: 12, not: 'Courtyard Platinum 2. Etap. %35 peşinat; %45 teslime kadar 13 taksit (son taksit Kasım 2027); %20 teslimden sonra 12 taksit (son taksit Kasım 2028). ' + DV }],
+    'Grand Sapphire Blu': [
+      { ad: '1-2-3-6-7-8-9-10-11. Bloklar', blok: ['1', '2', '3', '6', '7', '8', '9', '10', '11'], pe: 35, tl: 0, ts: 0, teslim: '2028-06', not: 'Grand Sapphire Blu 1, 2, 3, 6, 7, 8, 9, 10 ve 11. Bloklar · teslim Haziran 2028. %35 peşinat; %65 teslime kadar eşit taksit. Kesin tutarı satış temsilcisiyle teyit edin.' },
+      { ad: '4-5-12-13. Bloklar', blok: ['4', '5', '12', '13'], pe: 35, tl: 0, ts: 0, teslim: '2029-06', not: 'Grand Sapphire Blu 4, 5, 12 ve 13. Bloklar · teslim Haziran 2029. %35 peşinat; %65 teslime kadar eşit taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Natulux': [{ ad: 'Natulux planı', pe: 35, tl: 0, ts: 30, sa: 12, teslim: '2027-05', not: 'Natulux · teslim Mayıs 2027. %35 peşinat, teslime kadar %35 taksit, teslimden sonra %30 (12 ay). ' + DV }]
   };
   // bloğa bağlı plan varsa o dairenin planının sırası, yoksa -1
