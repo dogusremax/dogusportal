@@ -308,6 +308,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="assets/puan-jeton.js"></script>
 <script>
 var IBAN = 'TR540015700000000127965620';
 var UNVAN = 'UMT GROUP Gayrimenkul Yatırım ve Danışmanlık İnş.San.Tic.Ltd.Şti.';
@@ -536,6 +537,7 @@ if(q.get('durum')){
           $('ofisDurum').textContent=(g.error||'Gönderilemedi.')+' Kayıt hazır; şimdilik linki kendi WhatsApp\'ından gönderebilirsin.';
         }
         $('sonuc').scrollIntoView({behavior:'smooth',block:'start'});
+        if(j.puan && window.puanJeton) puanJeton(j.puan, b);   // Danışman Takip puanı yazıldıysa (sınır/tekrar değilse)
       });
     })
     .catch(function(e){ $('hazirlaHata').textContent=(e&&e.message)||'Bağlantı hatası, tekrar deneyin.'; })
