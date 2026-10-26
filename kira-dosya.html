@@ -91,6 +91,7 @@ button{font-family:inherit;cursor:pointer}
   border-radius:10px;padding:8px 12px}
 </style>
 <script src="assets/broker.js"></script>
+<script src="assets/puan-jeton.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -403,6 +404,7 @@ function yeniEkrani(){
     apiPost('dosyaAc', v).then(function(c){
       if(!c.ok){ toast(c.hata||'Dosya açılamadı'); $('ac').disabled=false; $('ac').textContent='Dosyayı aç ve linkleri üret'; return; }
       try{ sessionStorage.setItem('kd_tel_'+c.dosyaNo, JSON.stringify({tel:tel, ad:ad})); }catch(e){}
+      if(c.puan && window.puanJeton) puanJeton(c.puan, $('ac'));   // Danışman Takip puanı yazıldıysa (sınır/tekrar değilse)
       (c.roller || Object.keys(c.linkler || {})).forEach(function(rol){
         var kok = String(rol).replace(/\d+$/,''), x = [];
         Array.prototype.forEach.call(document.querySelectorAll('[data-ysec="'+kok+'"]'), function(o){ if(!o.checked) x = x.concat(o.value.split(',')); });
