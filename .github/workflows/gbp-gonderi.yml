@@ -1,0 +1,35 @@
+name: Google işletme gönderisi
+# Umut, 26.10.2026: "GÜNCEL PROJELER" kapaklı Fikirtepe reels'lerinden Google gönderisi (scripts/gbp-gonderi.py).
+# zamanli: Danışman Takip ZAMANLI_ISLER_ 11:00 gbpGonderiTetikle (Salı/Cuma) başlatır; gbp-gonderi/.canli yoksa paylaşmaz.
+on:
+  workflow_dispatch:
+    inputs:
+      islem:
+        description: "onizleme / paylas / zamanli"
+        required: false
+        default: "onizleme"
+permissions:
+  contents: write
+jobs:
+  gonderi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pillow
+      - name: Görsel ve metin
+        run: python3 scripts/gbp-gonderi.py onizleme
+      - name: Görseli kaydet
+        run: |
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add gbp-gonderi
+          git diff --cached --quiet || (git commit -m "Google gönderisi: görsel" && git pull --rebase && git push)
+          echo "GORSEL_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Paylaş
+        if: ${{ inputs.islem == 'paylas' || (inputs.islem == 'zamanli' && hashFiles('gbp-gonderi/.canli') != '') }}
+        env:
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+        run: |
+          python3 scripts/gbp-gonderi.py paylas
+          git add gbp-gonderi
+          git diff --cached --quiet || (git commit -m "Google gönderisi paylaşıldı" && git pull --rebase && git push)
