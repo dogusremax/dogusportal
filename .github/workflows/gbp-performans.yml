@@ -1,0 +1,24 @@
+name: Google işletme performansı
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [scripts/gbp-performans.js, .github/workflows/gbp-performans.yml]
+permissions:
+  contents: write
+jobs:
+  performans:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node scripts/gbp-performans.js
+        env:
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add data/gbp-performans.json
+          git diff --cached --quiet || (git commit -m "Google işletme performansı" && git pull --rebase && git push)
