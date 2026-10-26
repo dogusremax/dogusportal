@@ -22,7 +22,7 @@ const METRIKLER = ['BUSINESS_IMPRESSIONS_MOBILE_MAPS', 'BUSINESS_IMPRESSIONS_DES
   const q = new URLSearchParams();
   METRIKLER.forEach(m => q.append('dailyMetrics', m));
   [['startDate', bas], ['endDate', bit]].forEach(([p, d]) => {
-    q.append(p + '.year', d.getUTCFullYear()); q.append(p + '.month', d.getUTCMonth() + 1); q.append(p + '.day', d.getUTCDate());
+    q.append('dailyRange.' + p + '.year', d.getUTCFullYear()); q.append('dailyRange.' + p + '.month', d.getUTCMonth() + 1); q.append('dailyRange.' + p + '.day', d.getUTCDate());
   });
   const r = await al(`https://businessprofileperformance.googleapis.com/v1/${konum.name}:fetchMultiDailyMetricsTimeSeries?${q}`);
   const gunluk = {}; // tarih -> metrik -> değer
