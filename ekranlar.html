@@ -106,6 +106,7 @@
   .tvik svg{width:24px;height:24px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
   .ad{flex:1;min-width:0}
   .ad b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 20,'wdth' 92,'wght' 700;font-size:18px;letter-spacing:-.015em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kalem{font-size:15px;color:var(--mute);padding:0 4px;vertical-align:1px}
   .ad span{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute);font-weight:500;margin-top:2px}
   .nokta{width:7px;height:7px;border-radius:50%;background:#C3C6D3}
   .tv.acik .nokta{background:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
@@ -374,7 +375,7 @@ function tvKarti(t) {
   <div class="tv ${t.acik ? "acik" : ""} ${yok ? "yok" : ""}" id="tv-${t.id}">
     <div class="ust">
       <span class="tvik">${IKON_TV}</span>
-      <span class="ad"><b>${esc(t.ad)}</b><span><i class="nokta"></i>${esc(durum)}</span></span>
+      <span class="ad"><b>${esc(t.ad)} <button class="kalem" aria-label="Adını değiştir" onclick="adDegistir('${t.id}')">✎</button></b><span><i class="nokta"></i>${esc(durum)}</span></span>
       <button class="guc" aria-label="${t.acik ? "Kapat" : "Aç"}" onclick="komut('${t.id}','${t.acik ? "kapat" : "ac"}',null,this)">${IKON_GUC}</button>
     </div>
     <div class="kontrol">
@@ -439,6 +440,14 @@ function ses(tv, yon) {
 async function ayar(tv, a) {
   try { await api({ islem: "ayar", tv, ayar: a }); toast("Kaydedildi"); const t = veri.tvler.find(x => x.id === tv); if ("youtube" in a) t.youtube = a.youtube; if ("ses" in a) t.acilisSes = a.ses === "" ? null : Number(a.ses); }
   catch (e) { toast(hataMetni(e.message), 4200); yukle(); }
+}
+
+async function adDegistir(tv) {
+  const t = veri.tvler.find(x => x.id === tv);
+  const yeni = prompt("Bu TV'nin adı (ör. Bekleme, Toplantı, Nöbet Odası)\nBoş bırakırsan Samsung'daki adı kullanılır: " + t.stAd, t.takma || "");
+  if (yeni === null) return;
+  try { await api({ islem: "ayar", tv, ayar: { takma: yeni } }); toast("Ad kaydedildi"); yukle(); }
+  catch (e) { toast(hataMetni(e.message), 4200); }
 }
 
 async function mod(m) {
