@@ -1,0 +1,27 @@
+name: Google gönderi adayları (IG reels)
+on:
+  push:
+    branches: [main]
+    paths: [scripts/gbp-gonderi-aday.js]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  aday:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: IG token
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - run: node scripts/gbp-gonderi-aday.js
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      - run: |
+          git config user.name "dogus-bot"; git config user.email "bot@dogusremax.com"
+          git add gbp-gonderi
+          git diff --cached --quiet || (git commit -m "Google gönderi adayları" && git pull --rebase && git push)
