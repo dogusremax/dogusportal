@@ -989,11 +989,38 @@ var donusUygulaniyor = new Promise(function(ok){
 /* ---------- Video ---------- */
 dosya.addEventListener('change', function(){
   var d = dosya.files[0]; if (!d) return;
+  videoSakla(d); videoAc(d);
+});
+function videoAc(d){
   videoDosyasi = d; otoYon = 0; bolmeler = []; seritSecili = -1; oncekiler = {}; seritAnahtar = ''; seritKucuk.width = 0; if (!bulutIs) f('bulutBtn').disabled = false; kesimler = []; kesimArayuz(); yon = 0; yonSonT = -1; seg.merkez = null; seg.sonT = -1; seg.onceki = null; analizSifirla();
   Promise.all([dosyaDonusu(d), donusUygulaniyor]).then(function(x){ var r = x[0]; if (x[1] === false && (r === 90 || r === 270)) { yon = r; otoYon = r; yonUygula(); } });
   video.src = URL.createObjectURL(d);
   video.load();
-});
+}
+/* sayfa çökse ya da yenilense de video ve kesimler kaybolmasın: dosya IndexedDB'de tutulur */
+function videoDepo(){
+  return new Promise(function(ok, no){
+    if (!window.indexedDB) return no(new Error('idb yok'));
+    var r = indexedDB.open('videoDuzenle', 1);
+    r.onupgradeneeded = function(){ r.result.createObjectStore('video'); };
+    r.onsuccess = function(){ ok(r.result); }; r.onerror = function(){ no(r.error); };
+  });
+}
+function videoSakla(d){
+  videoDepo().then(function(db){ var t = db.transaction('video', 'readwrite'); t.objectStore('video').put({ dosya: d, ad: d.name, tur: d.type }, 'son'); t.oncomplete = function(){ db.close(); }; }).catch(function(e){ console.log('video saklanamadı', e); });
+}
+function videoGeriYukle(k0){
+  videoDepo().then(function(db){
+    var r = db.transaction('video').objectStore('video').get('son');
+    r.onsuccess = function(){
+      db.close(); var x = r.result;
+      if (!x || !x.dosya || videoDosyasi) return;
+      var d = x.dosya instanceof File ? x.dosya : new File([x.dosya], x.ad || 'video.mov', { type: x.tur || x.dosya.type });
+      videoAc(d);
+      if (k0 && Array.isArray(k0.kesimler)) { kesimler = k0.kesimler; bolmeler = Array.isArray(k0.bolmeler) ? k0.bolmeler : []; kesimArayuz(); }
+    };
+  }).catch(function(e){ console.log('video geri yüklenemedi', e); });
+}
 video.addEventListener('loadedmetadata', function(){
   f('bos').classList.add('gizli');
   sahne.style.aspectRatio = vG() + '/' + vY();
@@ -1241,6 +1268,9 @@ function segHazirla(){
    Profesyonel editörlerdeki gibi: kişi gereken videoda kareler bir kez arka planda ayrı bir kopyadan
    analiz edilir, maskeler belleğe alınır. Oynatma ve indirme bu hazır maskeleri kullanır:
    oynatma akıcı olur, maske kareden kareye titremez (komşu karelerle zamansal yumuşatma). */
+/* iPhone Safari sekmeyi bellek dolunca uyarmadan yeniden yüklüyor: orada arka plan analizine daha az yer ayrılır */
+var IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+var ANALIZ_BELLEK = IOS ? 100e6 : 300e6;
 var analiz = { durum: 'yok', fps: 15, n: 0, kareler: [], merkezler: [], mw: 0, mh: 0, kimlik: 0, imgData: null };
 function analizSifirla(){ analiz.kimlik++; analiz.durum = 'yok'; analiz.kareler = []; analiz.merkezler = []; analiz.n = 0; }
 async function analizBaslat(){
@@ -1251,10 +1281,10 @@ async function analizBaslat(){
   var rvmIle = isciIle && await rvmBekle();
   if (kim !== analiz.kimlik) return;
   var D = sure(), vw = vG(), vh = vY(), kisa = Math.min(vw, vh);
-  /* bellek sınırı (~300 MB) içinde en yüksek çözünürlük ve en az 15 kare/sn */
-  var T = !rvmIle ? 384 : (Math.round(vw * 540 / kisa) * Math.round(vh * 540 / kisa) * 15 * D <= 300e6 ? 540 : 384);
+  /* bellek sınırı (~300 MB, iPhone'da ~100 MB) içinde en yüksek çözünürlük ve en az 15 kare/sn */
+  var T = !rvmIle ? 384 : (Math.round(vw * 540 / kisa) * Math.round(vh * 540 / kisa) * 15 * D <= ANALIZ_BELLEK ? 540 : 384);
   var mw = Math.round(vw * T / kisa), mh = Math.round(vh * T / kisa), bayt = mw * mh;
-  analiz.fps = Math.max(6, Math.min(rvmIle ? 30 : 15, Math.floor(300e6 / (bayt * D))));
+  analiz.fps = Math.max(6, Math.min(rvmIle ? 30 : 15, Math.floor(ANALIZ_BELLEK / (bayt * D))));
   analiz.rvm = rvmIle;
   var dr = Math.min(1, 270 / T);
   analiz.n = Math.floor(D * analiz.fps) + 1; analiz.mw = mw; analiz.mh = mh; analiz.kareler = new Array(analiz.n); analiz.merkezler = new Array(analiz.n);
@@ -1981,6 +2011,7 @@ function videoSesi(ac){
     return sesCoz(ac, r.adts).then(function(sesV){ return sesBasKirp(ac, sesV, r.atla); });
   }).catch(function(e){
     console.log('aac ayıklama', e);
+    if (IOS && videoDosyasi.size > 150e6) throw new Error('Bu videonun sesi ayrılamadı; dosya iPhone\'da tümüyle açılamayacak kadar büyük');
     return videoDosyasi.arrayBuffer().then(function(buf){ return sesCoz(ac, buf); });
   });
 }
@@ -2082,7 +2113,7 @@ function aacAyikla(dosya){
         return sonraki();
       });
     }
-    return sonraki().then(function(){ return { adts: cikti.buffer.slice(0, yaz), atla: atla }; });
+    return sonraki().then(function(){ return { adts: yaz === cikti.length ? cikti.buffer : cikti.buffer.slice(0, yaz), atla: atla }; });
   });
 }
 
@@ -3430,6 +3461,7 @@ try {
   var k0 = JSON.parse(localStorage.getItem(KAYIT) || 'null');
   if (k0) projeYukle(k0);
 } catch(e){}
+videoGeriYukle(typeof k0 === 'undefined' ? null : k0);
 f('sGurultu').checked = ses.gurultu; f('sPro').checked = ses.pro; f('sSeviye').value = ses.seviye; f('sSeviyeDeger').textContent = Math.round(ses.seviye * 100) + '%';
 f('gecisGenel').value = gecis.tur; f('gecisSure').value = String(gecis.sure);
 document.addEventListener('keydown', function(e){
