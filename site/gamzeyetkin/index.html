@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="canonical" href="https://dogusportal.com/site/gamzeyetkin/">
+<title>Gamze Yetkin · RE/MAX Doğuş Gayrimenkul Danışmanı</title>
+<meta name="description" content="Gamze Yetkin, RE/MAX Doğuş gayrimenkul danışmanı. Fikirtepe ve Kadıköy’de satılık ve kiralık konut.">
+<meta name="theme-color" content="#050A30">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--ink:#0d1330;--dim:#5d6585;--line:#e6e8f0;--bg:#f6f7fb;--grad:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+a{color:inherit;text-decoration:none}
+.w{max-width:1080px;margin:0 auto;padding:0 20px}
+.hide{display:none!important}
+
+header{position:sticky;top:0;z-index:20;background:rgba(5,10,48,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+header .w{display:flex;align-items:center;gap:18px;height:64px}
+header .ad{color:#fff;font-weight:800;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+header nav{display:flex;gap:18px;margin-inline-start:auto}
+header nav a{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+header nav a:hover{color:#fff}
+header .marka{display:flex;align-items:center;gap:14px}
+header .logo{height:30px;width:auto;display:block}
+header .cizgi{width:2px;height:28px;background:rgba(255,255,255,.4);border-radius:1px;display:block}
+@media(max-width:760px){header nav{display:none}.langsel{margin-inline-start:auto}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:999px;font-weight:700;font-size:15px;border:0;cursor:pointer;font-family:inherit}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(220,28,46,.35)}
+.btn-red:hover{background:var(--redd)}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn svg{width:18px;height:18px}
+
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;right:-180px;top:-160px;width:560px;height:560px;border-radius:50%;background:var(--grad);opacity:.9}
+.hero .w{position:relative;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:72px}
+.kicker{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);margin-bottom:14px}
+.hero h1{font-size:clamp(36px,6vw,58px);line-height:1.05;font-weight:800;letter-spacing:-.03em}
+.hero .unvan{font-size:17px;font-weight:600;color:rgba(255,255,255,.8);margin-top:10px}
+.hero .ozet{font-size:17px;color:rgba(255,255,255,.72);margin:20px 0 28px;max-width:520px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.portre{justify-self:center;align-self:end;position:relative;width:min(380px,80vw);margin-bottom:-24px}
+.portre img{position:relative;z-index:1;width:84%;height:auto;display:block;margin:0 auto}
+.portre .bant{position:relative;z-index:2;margin-top:-2px;background:var(--grad);border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.portre .bant b{color:#fff;font-size:15px;font-weight:800;letter-spacing:.06em}
+.portre .bant span{color:rgba(255,255,255,.85);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:760px){.hero .w{grid-template-columns:1fr;padding-top:36px;padding-bottom:48px;gap:32px}.portre{order:-1;width:min(280px,76vw);margin-bottom:0}.portre .bant{justify-content:center}.portre .bant span{display:none}.hero{text-align:center}.hero .ozet{margin-left:auto;margin-right:auto}.hero .cta{justify-content:center}}
+
+.sayilar{margin-top:-34px;position:relative;z-index:2}
+.sayilar .k{background:#fff;border-radius:22px;box-shadow:0 16px 40px rgba(5,10,48,.08);display:grid;grid-template-columns:repeat(3,1fr)}
+.sayilar .s{padding:22px 18px;text-align:center}
+.sayilar .s+.s{border-left:1px solid var(--line)}
+.sayilar b{display:block;font-size:36px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.sayilar b em{font-style:normal;color:var(--red)}
+.sayilar .s>span{font-size:13px;color:var(--dim);font-weight:600}
+@media(max-width:560px){.sayilar b{font-size:24px}.sayilar .s>span{font-size:11px}.sayilar .s{padding:16px 8px}}
+
+section{padding:72px 0 0}
+.bas{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.02em;color:var(--navy);margin-bottom:22px}
+.hakkimda p{font-size:17px;color:#2b3254;max-width:760px;margin-bottom:14px}
+
+.hiz{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hiz .c{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px}
+.hiz ul{list-style:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:9px}
+.hiz li{position:relative;padding-inline-start:24px;font-size:14px;color:#2b3254;line-height:1.45}
+.hiz li:before{content:"";position:absolute;inset-inline-start:0;top:3px;width:15px;height:15px;border-radius:50%;background:#fdecee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.3l2.6 2.5L12 5.4' fill='none' stroke='%23DC1C2E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat}
+.hiz .n{width:40px;height:40px;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;display:grid;place-items:center;margin-bottom:14px}
+.hiz h3{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.hiz p{font-size:14px;color:var(--dim)}
+@media(max-width:900px){.hiz{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hiz{grid-template-columns:1fr}}
+
+.yor{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.yor .c{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.yor .yildiz{color:#F5A623;letter-spacing:2px;font-size:15px}
+.yor p{font-size:14.5px;color:#2b3254;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
+.yor .kim{display:flex;align-items:center;gap:10px;margin-top:auto;font-size:13px;font-weight:700;color:var(--navy)}
+.yor .kim img,.yor .kim .bas-h{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:13px}
+.yor .kim small{display:block;font-weight:500;color:var(--dim)}
+.tum{margin-top:18px;display:inline-flex;font-weight:700;color:var(--red);font-size:14px}
+@media(max-width:900px){.yor{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.yor{grid-template-columns:1fr}}
+
+.ilan{background:var(--navy);color:#fff;border-radius:28px;padding:38px;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;position:relative;overflow:hidden}
+.ilan:after{content:"";position:absolute;right:-90px;bottom:-120px;width:300px;height:300px;border-radius:50%;background:var(--grad);opacity:.85}
+.ilan h2{color:#fff;margin-bottom:8px}
+.ilan p{color:rgba(255,255,255,.72)}
+.ilan .cta{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.ilan .btn{justify-content:center}
+@media(max-width:700px){.ilan{grid-template-columns:1fr;padding:28px}}
+
+.form{display:grid;grid-template-columns:1fr 1.2fr;gap:30px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px}
+.form .bilgi a{display:flex;align-items:center;gap:12px;min-width:0;padding:12px 0;border-bottom:1px solid var(--line);font-weight:600;color:var(--navy)}
+.form .bilgi a>span:first-child{width:38px;height:38px;border-radius:12px;background:#fdecee;color:var(--red);display:grid;place-items:center;flex:none}
+.form .bilgi svg{width:18px;height:18px}
+form{display:grid;gap:12px}
+form .iki{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;font:15px 'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+textarea{height:96px;resize:vertical}
+form .btn{justify-content:center}
+@media(max-width:760px){.form{grid-template-columns:1fr;padding:24px}form .iki{grid-template-columns:1fr}}
+
+footer{margin-top:80px;background:var(--navy);color:rgba(255,255,255,.6);font-size:13px}
+footer .w{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:26px 20px;flex-wrap:wrap}
+footer img{height:26px}
+footer .telif{flex-basis:100%;border-top:1px solid rgba(255,255,255,.12);padding-top:14px;font-size:12px;color:rgba(255,255,255,.5)}
+
+.wa-sabit{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:30}
+.wa-sabit svg{width:30px;height:30px;fill:#fff}
+.yok{padding:120px 20px;text-align:center;color:var(--dim)}
+.flag{display:inline-block;flex:0 0 auto;width:24px;height:16px;border-radius:3px;background-size:cover;background-position:center;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.flag-tr{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23E30A17%22/%3E%3Ccircle cx=%22425%22 cy=%22400%22 r=%22200%22 fill=%22%23fff%22/%3E%3Ccircle cx=%22475%22 cy=%22400%22 r=%22160%22 fill=%22%23E30A17%22/%3E%3Cpolygon fill=%22%23fff%22 points=%22475.0,400.0 544.1,377.5 544.1,304.9 586.8,363.7 655.9,341.2 613.2,400.0 655.9,458.8 586.8,436.3 544.1,495.1 544.1,422.5%22/%3E%3C/svg%3E")}
+.flag-en{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 30%22%3E%3CclipPath id=%22s%22%3E%3Cpath d=%22M0,0v30h60V0z%22/%3E%3C/clipPath%3E%3CclipPath id=%22t%22%3E%3Cpath d=%22M30,15h30v15zv15H0zH0V0zV0h30z%22/%3E%3C/clipPath%3E%3Cg clip-path=%22url%28%23s%29%22%3E%3Cpath d=%22M0,0v30h60V0z%22 fill=%22%23012169%22/%3E%3Cpath d=%22M0,0L60,30M60,0L0,30%22 stroke=%22%23fff%22 stroke-width=%226%22/%3E%3Cpath d=%22M0,0L60,30M60,0L0,30%22 clip-path=%22url%28%23t%29%22 stroke=%22%23C8102E%22 stroke-width=%224%22/%3E%3Cpath d=%22M30,0v30M0,15h60%22 stroke=%22%23fff%22 stroke-width=%2210%22/%3E%3Cpath d=%22M30,0v30M0,15h60%22 stroke=%22%23C8102E%22 stroke-width=%226%22/%3E%3C/g%3E%3C/svg%3E")}
+.flag-ru{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 9 6%22%3E%3Crect width=%229%22 height=%226%22 fill=%22%23fff%22/%3E%3Crect y=%222%22 width=%229%22 height=%224%22 fill=%22%230039A6%22/%3E%3Crect y=%224%22 width=%229%22 height=%222%22 fill=%22%23D52B1E%22/%3E%3C/svg%3E")}
+.flag-fa{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 7 4%22%3E%3Crect width=%227%22 height=%224%22 fill=%22%23DA0000%22/%3E%3Crect width=%227%22 height=%222.67%22 fill=%22%23fff%22/%3E%3Crect width=%227%22 height=%221.33%22 fill=%22%23239F40%22/%3E%3C/svg%3E")}
+.flag-de{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 5 3%22%3E%3Crect width=%225%22 height=%223%22 fill=%22%23FFCE00%22/%3E%3Crect width=%225%22 height=%222%22 fill=%22%23DD0000%22/%3E%3Crect width=%225%22 height=%221%22 fill=%22%23000%22/%3E%3C/svg%3E")}
+.flag-pl{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 5%22%3E%3Crect width=%228%22 height=%225%22 fill=%22%23DC143C%22/%3E%3Crect width=%228%22 height=%222.5%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
+.langsel{position:relative;margin-inline-start:4px}
+.langbtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px 6px 8px;font:700 12px 'Plus Jakarta Sans',sans-serif;letter-spacing:.06em;cursor:pointer}
+.langbtn::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.8;margin-inline-start:2px}
+.langbtn .flag{width:22px;height:15px}
+.langmenu{position:absolute;inset-inline-end:0;top:calc(100% + 8px);list-style:none;margin:0;padding:6px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 40px -16px rgba(0,0,0,.45);min-width:180px;z-index:30}
+.langmenu button{width:100%;display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--ink);padding:10px 12px;border-radius:9px;font:600 15px 'Plus Jakarta Sans','Vazirmatn',sans-serif;text-align:start;cursor:pointer}
+.langmenu button:hover,.langmenu button[aria-selected="true"]{background:#fdecee}
+.niyet{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin-bottom:14px}
+.nb{display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 16px;border-radius:18px;border:0;background:#fff;color:var(--navy);font:800 17px 'Plus Jakarta Sans','Vazirmatn',sans-serif;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.25);transition:transform .15s}
+.nb svg{width:24px;height:24px;color:var(--red);flex:none}
+.nb:hover{transform:translateY(-2px)}
+.nb:last-child{background:var(--grad);color:#fff}
+.nb:last-child svg{color:#fff}
+@media(max-width:760px){.niyet{margin-left:auto;margin-right:auto}.nb{font-size:15px;padding:16px 10px}}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,10,48,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mk{position:relative;background:#fff;border-radius:24px;padding:28px 24px 24px;width:min(440px,100%);max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.mk h3{font-size:24px;font-weight:800;color:var(--navy);margin:2px 0 16px;letter-spacing:-.01em}
+.mk form{display:grid;gap:10px}
+.mk .btn{justify-content:center;margin-top:4px}
+.mk .btn[disabled]{opacity:.6;cursor:wait}
+.mx{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border-radius:50%;border:0;background:var(--bg);font-size:22px;line-height:1;color:var(--navy);cursor:pointer}
+.kvkk{font-size:11.5px;color:var(--dim);line-height:1.45}
+.mok{text-align:center;padding:10px 0 4px}
+.mok .tik{width:64px;height:64px;border-radius:50%;background:var(--grad);color:#fff;font-size:32px;display:grid;place-items:center;margin:0 auto 14px}
+.mok p{font-size:16px;color:#2b3254;font-weight:600}
+.mhata{color:var(--red);font-size:13px;font-weight:600}
+.orj{font-size:13px;color:var(--dim);margin:-12px 0 18px}
+.orj:empty{display:none}
+.hiz .c:last-child:nth-child(3n+1){grid-column:1/-1}
+.hiz .c:last-child:nth-child(3n+1) ul{grid-template-columns:1fr 1fr;column-gap:28px}
+@media(max-width:600px){.hiz .c:last-child:nth-child(3n+1) ul{grid-template-columns:1fr}}
+.yfb{margin-top:28px}
+.yfb button{width:100%;display:flex;align-items:center;gap:18px;padding:20px 22px;border:0;border-radius:24px;background:var(--navy);color:#fff;cursor:pointer;text-align:start;font-family:inherit;position:relative;overflow:hidden;box-shadow:0 16px 40px rgba(5,10,48,.18);transition:transform .15s}
+.yfb button:hover{transform:translateY(-2px)}
+.yfb button:after{content:"";position:absolute;inset-inline-end:-70px;top:-90px;width:220px;height:220px;border-radius:50%;background:var(--grad);opacity:.9}
+.yfb .ik{width:54px;height:54px;border-radius:16px;background:var(--grad);display:grid;place-items:center;flex:none;position:relative;z-index:1}
+.yfb .ik svg{width:28px;height:28px}
+.yfb .yz{flex:1;min-width:0;position:relative;z-index:1}
+.yfb b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.yfb small{display:block;font-size:13.5px;color:rgba(255,255,255,.7);margin-top:2px}
+.yfb .ok{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--red);display:grid;place-items:center;flex:none;position:relative;z-index:1;font-size:20px;font-weight:800}
+[dir=rtl] .yfb .ok{transform:scaleX(-1)}
+@media(max-width:560px){.yfb button{padding:16px;gap:12px}.yfb .ik{width:44px;height:44px}.yfb b{font-size:16px}.yfb small{font-size:12px}.yfb .ok{width:36px;height:36px}}
+.mk.genis{width:min(620px,100%);padding:0;overflow:auto}
+.yfu{background:var(--navy);color:#fff;padding:26px 24px 22px;position:relative;overflow:hidden;border-radius:24px 24px 0 0}
+.yfu:after{content:"";position:absolute;inset-inline-end:-90px;top:-110px;width:200px;height:200px;border-radius:50%;background:var(--grad);opacity:.85}
+.yfu .bas{color:var(--coral);position:relative;z-index:1}
+.yfu h3{color:#fff;margin:2px 0 6px;position:relative;z-index:1;font-size:26px}
+.yfu p{color:rgba(255,255,255,.75);font-size:14px;position:relative;z-index:1;max-width:440px}
+.yfu .mx{z-index:2}
+.yfg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 24px 6px}
+.yfg .t{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 12px;text-align:center}
+.yfg .t b{display:block;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02em;line-height:1.15}
+.yfg .t b em{font-style:normal;color:var(--red)}
+.yfg .t span{display:block;font-size:12.5px;color:var(--dim);font-weight:600;margin-top:2px}
+.yfg .t.gel{grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:start}
+.yfg .t.gel b{font-size:18px}
+.yfg .t.gel .ik{width:44px;height:44px;border-radius:12px;background:var(--grad);color:#fff;display:grid;place-items:center;flex:none}
+.yfg .t.gel .ik svg{width:22px;height:22px}
+.yfa{display:flex;gap:10px;flex-wrap:wrap;padding:14px 24px 24px}
+.yfa .btn{flex:1;justify-content:center;min-width:200px}
+.yfa .btn-ghost{background:var(--bg);color:var(--navy);border:1px solid var(--line)}
+.yfk{font-size:11px;color:var(--dim);padding:0 24px 20px;margin-top:-8px}
+@media(max-width:560px){.yfg{grid-template-columns:1fr 1fr;padding:16px 16px 4px}.yfa{padding:12px 16px 20px}.yfk{padding:0 16px 18px}.yfu{padding:22px 18px 18px}.yfg .t b{font-size:22px}}
+.vk{position:relative}
+.vid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:6px 2px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.vid::-webkit-scrollbar{display:none}
+.vid .v{flex:0 0 168px;scroll-snap-align:start;font-family:inherit;position:relative;aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:var(--navy);border:0;padding:0;cursor:pointer;display:block;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;box-shadow:0 6px 18px rgba(5,10,48,.15);animation:vGir .6s both}
+.vid .v:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 14px 30px rgba(5,10,48,.28)}
+.vid .v.yatay{flex-basis:300px;aspect-ratio:16/9;align-self:center}
+@keyframes vGir{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+.vid .v img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9}
+.vid .v:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(5,10,48,.85))}
+.vid .v .oy{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:var(--red);display:grid;place-items:center;z-index:1;box-shadow:0 8px 22px rgba(220,28,46,.5);transition:transform .3s}
+.vid .v:hover .oy{transform:translate(-50%,-50%) scale(1.15)}
+.vid .v .oy:before{content:"";border-left:14px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.vid .v .vb{position:absolute;left:10px;right:10px;bottom:10px;z-index:1;color:#fff;font-weight:700;font-size:12px;text-align:start;line-height:1.3}
+.vid .v.igf{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+.vid .v.igf .igl{position:absolute;top:10px;inset-inline-start:10px;z-index:1;width:24px;height:24px}
+.vid .v.igf .igl svg{width:24px;height:24px}
+.va{position:absolute;top:50%;transform:translateY(-60%);z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--navy);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 20px rgba(5,10,48,.25);transition:opacity .3s,transform .3s}
+.va:hover{transform:translateY(-60%) scale(1.1)}
+.va.p{inset-inline-start:-18px}.va.n{inset-inline-end:-18px}
+.va[disabled]{opacity:0;pointer-events:none}
+[dir=rtl] .va{transform:translateY(-60%) scaleX(-1)}
+.vnok{display:flex;justify-content:center;gap:6px;margin-top:4px}
+.vnok i{width:6px;height:6px;border-radius:3px;background:var(--line);transition:width .3s,background .3s}
+.vnok i.on{width:22px;background:var(--red)}
+.vm{position:fixed;inset:0;z-index:300;background:rgba(5,10,48,.92);display:grid;place-items:center;padding:16px;animation:vmA .3s}
+.vm[hidden]{display:none}
+@keyframes vmA{from{opacity:0}to{opacity:1}}
+.vm .vmk{border-radius:18px;overflow:hidden;background:#000;position:relative}
+.vm .vmk.ig{background:#000 50% 50%/cover no-repeat}
+.vm .vmk.ig iframe{position:absolute;left:0;top:-54px;height:calc(100% + 300px);background:#000}
+.vm .vmk:before{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;animation:vmD .8s linear infinite}
+.vm .vmk.ig:before{border-color:rgba(5,10,48,.15);border-top-color:var(--red)}
+@keyframes vmD{to{transform:rotate(360deg)}}
+.vm iframe{position:relative;width:100%;height:100%;border:0;display:block;opacity:0;transition:opacity .25s}
+.vm iframe.hazir{opacity:1}
+.vm .vmk.vd:before{display:none}
+.vm video{position:relative;width:100%;height:100%;display:block;object-fit:contain;background:#000}
+@media(max-width:700px){.va{display:none}.vid{gap:10px;margin:0 -16px;padding-inline:16px;scroll-padding-inline:16px}.vid .v{flex-basis:132px}.vid .v.yatay{flex-basis:240px}}
+.ofs{background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden}
+.ofs .ic{display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:44px;align-items:center;padding:40px}
+.ofs .foto{position:relative;aspect-ratio:1;width:100%;border-radius:50%;background:var(--navy) 50% 45%/cover no-repeat;box-shadow:0 0 0 8px #fff,0 0 0 10px var(--red),0 24px 50px rgba(5,10,48,.25)}
+.ofs .yazi small{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.ofs .yazi h3{font-size:clamp(24px,3.2vw,34px);font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--navy);margin-bottom:14px}
+.ofs .yazi h3 i{font-style:normal;color:var(--red)}
+.ofs .yazi p{font-size:15.5px;color:#2b3254;margin-bottom:12px}
+.ofs ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:14px}
+.ofs li{position:relative;padding-inline-start:24px;font-size:14px;color:#2b3254;font-weight:600}
+.ofs li:before{content:"";position:absolute;inset-inline-start:0;top:3px;width:15px;height:15px;border-radius:50%;background:#fdecee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.3l2.6 2.5L12 5.4' fill='none' stroke='%23DC1C2E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat}
+.ofs .adres{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;background:var(--bg);font-size:14px;color:var(--navy);font-weight:600}
+.ofs .adres span:first-child{width:38px;height:38px;border-radius:12px;background:#fdecee;color:var(--red);display:grid;place-items:center;flex:none}
+.ofs .adres svg{width:18px;height:18px}
+.ofs .alt{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin-top:18px}
+.ofs .harita{height:300px;border-top:1px solid var(--line)}
+.ofs .harita iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:800px){.ofs .ic{grid-template-columns:1fr;padding:28px 22px 24px;gap:28px;justify-items:center}.ofs .foto{width:min(240px,70vw)}.ofs .yazi{width:100%}.ofs .alt,.ofs ul{grid-template-columns:1fr}.ofs .yol{justify-self:start}.ofs .harita{height:240px}}
+.yfe{margin:0 24px 6px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.yfe table{width:100%;border-collapse:collapse;font-size:13px}
+.yfe th{background:var(--navy);color:#fff;font-weight:700;padding:8px 10px;text-align:start}
+.yfe td{padding:7px 10px;border-top:1px solid var(--line);color:#2b3254}
+.yfe td:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+.yfe tr:nth-child(even) td{background:var(--bg)}
+@media(max-width:560px){.yfe{margin:0 16px 4px}.yfe table{font-size:12px}.yfe th,.yfe td{padding:6px 7px}}
+.yft{display:flex;gap:8px;padding:4px 24px 12px;flex-wrap:wrap}
+.yft button{flex:1;min-width:0;padding:11px 8px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--navy);font:700 13.5px 'Plus Jakarta Sans','Vazirmatn',sans-serif;cursor:pointer}
+.yft button[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.yfp{margin:0 24px 8px}
+.yfp .et{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.yfp .et button{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--navy);font:700 13px 'Plus Jakarta Sans','Vazirmatn',sans-serif;cursor:pointer;white-space:nowrap}
+.yfp .et button.on{background:var(--red);border-color:var(--red);color:#fff}
+.kpg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.kpg button{border:1px solid var(--line);border-radius:12px;background:#fff;padding:0;overflow:hidden;cursor:pointer;text-align:start;font-family:inherit}
+.kpg img{width:100%;aspect-ratio:640/416;object-fit:cover;display:block;background:var(--bg)}
+.kpg span{display:block;padding:6px 8px;font-size:12px;color:var(--dim);font-weight:600;line-height:1.3}
+.kpg b{color:var(--navy);font-size:13px}
+.tsl{display:grid;gap:8px}
+.tsl .r{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;font-size:13px}
+.tsl .r b{min-width:38px;color:var(--navy);font-size:14px}
+.tsl .r .t{flex:1;color:#2b3254}
+.tsl .d{padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.tsl .d.ok{background:#e6f6ec;color:#17803d}.tsl .d.su{background:#fff3dc;color:#a35b00}.tsl .d.sir{background:#eef0f7;color:var(--dim)}
+.tsl h4{font-size:14px;color:var(--navy);margin:10px 0 2px}
+.tsl .not{font-size:12px;color:var(--dim)}
+.lb{position:fixed;inset:0;z-index:60;background:rgba(5,10,48,.92);display:grid;place-items:center;padding:16px}
+.lb[hidden]{display:none}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);border-radius:12px;background:#fff}
+.lb .ly{color:#fff;font-weight:700;font-size:14px;text-align:center;margin-top:10px}
+.lb .lx,.vm .lx{position:absolute;top:14px;inset-inline-end:14px;width:42px;height:42px;border-radius:50%;border:0;background:#fff;font-size:24px;cursor:pointer;color:var(--navy)}
+.lb .ln,.vm .ln{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.9);font-size:26px;cursor:pointer;color:var(--navy)}
+.lb .ln.p,.vm .ln.p{left:10px}.lb .ln.n,.vm .ln.n{right:10px}.vm .ln[hidden]{display:none}
+@media(max-width:560px){.yft{padding:2px 16px 10px}.yft button{font-size:12px;padding:10px 4px}.yfp{margin:0 16px 6px}.kpg{grid-template-columns:1fr 1fr}}
+[dir=rtl] body{font-family:'Vazirmatn','Plus Jakarta Sans',sans-serif}
+[dir=rtl] .hero h1,[dir=rtl] .ad,[dir=rtl] .bant b,[dir=rtl] #hAd{font-family:'Plus Jakarta Sans',sans-serif}
+[dir=rtl] .kicker,[dir=rtl] .bas,[dir=rtl] .portre .bant span{letter-spacing:0}
+[dir=rtl] .hero:before{right:auto;left:-180px}
+[dir=rtl] .ilan:after{right:auto;left:-90px}
+[dir=rtl] .wa-sabit{right:auto;left:18px}
+[dir=rtl] .sayilar .s+.s{border-left:0;border-right:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <a class="marka" href="#tepe"><img class="logo" src="https://dogusportal.com/assets/dogus-logo.webp" width="83" height="30" onerror="this.onerror=null;this.src='https://dogusportal.com/assets/dogus-logo.png'" alt="RE/MAX Doğuş"><i class="cizgi"></i><span class="ad" id="hAd">RE/MAX Doğuş</span></a>
+  <nav><a href="#hakkimda" data-i="n1"></a><a href="#hizmetler" data-i="n2"></a><a href="#yorumlar" data-i="n3"></a><a href="#videolar" data-i="n5" id="navVid" class="hide"></a><a href="#ofis" data-i="n6"></a><a href="#iletisim" data-i="n4"></a></nav>
+  <div class="langsel"><button type="button" class="langbtn" id="langbtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Dil / Language"><i class="flag" id="langflag"></i><span id="langcode">TR</span></button><ul class="langmenu" id="langmenu" role="listbox" hidden></ul></div>
+</div></header>
+
+<main id="sayfa" class="hide">
+<div class="hero" id="tepe"><div class="w">
+  <div>
+    <span class="kicker" data-i="bolge"></span>
+    <h1 id="ad"></h1>
+    <div class="unvan" id="unvan"></div>
+    <p class="ozet" id="ozet"></p>
+    <div class="niyet">
+      <button type="button" class="nb" data-niyet="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span data-i="al"></span></button>
+      <button type="button" class="nb" data-niyet="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="8" cy="8" r="1.6"/></svg><span data-i="sat"></span></button>
+    </div>
+    <div class="cta">
+      <a class="btn btn-red" id="waHero" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg><span data-i="wa"></span></a>
+      <a class="btn btn-ghost" id="telHero"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-i="ara"></span></a>
+    </div>
+  </div>
+  <div class="portre"><img id="portre" alt=""><div class="bant"><b>RE/MAX DOĞUŞ</b><span data-i="bolge"></span></div></div>
+</div></div>
+
+<div class="w sayilar"><div class="k" id="sayac">
+</div></div>
+
+<div class="w yfb"><button type="button" id="yfAc"><span class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l5-3v15"/><path d="M10 21V4l9 4v13"/><path d="M13 10h3M13 14h3M13 18h3"/></svg></span><span class="yz"><b data-i="yf"></b><small data-i="yfAlt"></small></span><span class="ok">→</span></button></div>
+<div class="w yfb" style="margin-top:14px"><button type="button" id="ttAc" onclick="location.href='teslim-takvimi.html'"><span class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v3l2 1"/></svg></span><span class="yz"><b>Etap teslim takvimi</b><small>Etabınızı seçin; canlı teslim durumunu ve dairenizin teslim gününü görün</small></span><span class="ok">→</span></button></div>
+
+<section id="hakkimda" class="hakkimda"><div class="w">
+  <div class="bas" data-i="k1"></div>
+  <h2 data-i="h1"></h2>
+  <div id="hakkimdaMetin"></div>
+</div></section>
+
+<section id="hizmetler"><div class="w">
+  <div class="bas" data-i="k2"></div>
+  <h2 data-i="h2"></h2>
+  <div class="hiz" id="hiz"></div>
+</div></section>
+
+<section id="yorumlar"><div class="w">
+  <div class="bas" data-i="k3"></div>
+  <h2 data-i="h3"></h2>
+  <p class="orj" data-i="orj"></p>
+  <div class="yor" id="yor"></div>
+  <a class="tum" id="tumYorum" target="_blank" rel="noopener" data-i="tum"></a>
+</div></section>
+
+<section id="videolar" class="hide"><div class="w">
+  <div class="bas" data-i="n5"></div>
+  <h2 data-i="h6"></h2>
+  <div class="vk"><button type="button" class="va p" id="vaP" aria-label="‹">‹</button><div class="vid" id="vid"></div><button type="button" class="va n" id="vaN" aria-label="›">›</button></div>
+  <div class="vnok" id="vNok"></div>
+</div></section>
+
+<section id="ilanlar"><div class="w"><div class="ilan">
+  <div><h2 data-i="h4"></h2><p data-i="p4"></p></div>
+  <div class="cta">
+    <a class="btn btn-red" id="remaxLink" target="_blank" rel="noopener" data-i="remax"></a>
+    <a class="btn btn-ghost" id="igLink" target="_blank" rel="noopener"></a>
+  </div>
+</div></div></section>
+
+<section id="ofis"><div class="w">
+  <div class="bas" data-i="k7"></div>
+  <h2 data-i="h7"></h2>
+  <div class="ofs">
+    <div class="ic">
+      <div class="foto" id="ofisFoto" role="img" aria-label="RE/MAX Doğuş"></div>
+      <div class="yazi">
+        <small data-i="bolge"></small><h3>RE/MAX <i>Doğuş</i></h3>
+        <p data-i="o1"></p><p data-i="o2"></p>
+        <ul id="ofisMadde"></ul>
+        <div class="alt">
+          <div class="adres"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span dir="ltr" style="text-align:start">Dumlupınar Mah. Özen Sk. Nuhoğlu Yenitepe Sitesi 2. Etap A Blok D:2, 34720 Kadıköy / İstanbul</span></div>
+          <a class="btn btn-red yol" href="https://www.google.com/maps/dir/?api=1&amp;destination=40.9946482,29.0559619" target="_blank" rel="noopener" data-i="yol"></a>
+        </div>
+      </div>
+    </div>
+    <div class="harita"><iframe loading="lazy" title="RE/MAX Doğuş" src="https://www.google.com/maps?q=40.9946482,29.0559619&amp;z=16&amp;output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  </div>
+</div></section>
+
+<section id="iletisim"><div class="w">
+  <div class="bas" data-i="n4"></div>
+  <h2 data-i="h5"></h2>
+  <div class="form">
+    <div class="bilgi">
+      <a id="telBilgi"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span><b id="telYazi" dir="ltr"></b></a>
+      <a href="tel:+902163151515"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></span><span><bdi data-i="ofis"></bdi> · <bdi dir="ltr">0216 315 15 15</bdi></span></a>
+      <a id="haritaLink" target="_blank" rel="noopener"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span data-i="konum"></span></a>
+    </div>
+    <form id="form">
+      <div class="iki"><input id="fAd" data-ph="fad" required><input id="fTel" type="tel" data-ph="ftel" required></div>
+      <select id="fKonu"></select>
+      <textarea id="fMesaj" data-ph="fmsj"></textarea>
+      <button class="btn btn-red" type="submit" data-i="gonder"></button>
+    </form>
+  </div>
+</div></section>
+</main>
+
+<div class="yok hide" id="yok" data-i="yok"></div>
+
+<div class="modal" id="modal" hidden><div class="mk" role="dialog" aria-modal="true" aria-labelledby="mBaslik">
+  <button type="button" class="mx" id="mKapat" aria-label="×">×</button>
+  <div class="bas" id="mUst"></div>
+  <h3 id="mBaslik"></h3>
+  <form id="mForm">
+    <input id="mAd" data-ph="fad" required autocomplete="name">
+    <input id="mTel" type="tel" data-ph="ftel" required autocomplete="tel" dir="ltr">
+    <textarea id="mNot" data-ph="fmsj"></textarea>
+    <input id="mBot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+    <p class="kvkk" data-i="kvkk"></p>
+    <button class="btn btn-red" type="submit" id="mGonder" data-i="gonder2"></button>
+  </form>
+  <div class="mok" id="mOk" hidden><div class="tik">✓</div><p id="mOkYazi"></p></div>
+</div></div>
+
+<div class="modal" id="yfModal" hidden><div class="mk genis" role="dialog" aria-modal="true" aria-labelledby="yfH">
+  <div class="yfu"><button type="button" class="mx" id="yfKapat" aria-label="×">×</button><div class="bas" data-i="yfBas"></div><h3 id="yfH" data-i="yfH"></h3><p data-i="yfAlt"></p></div>
+  <div class="yfg" id="yfg"></div>
+  <div class="yfa"><a class="btn btn-red" id="yfWa" target="_blank" rel="noopener"><span data-i="yfSor"></span></a></div>
+  <div class="yft" id="yft"><button type="button" data-t="yfe" data-i="yfEtap" aria-pressed="false"></button><button type="button" data-t="yfk" data-i="tKat" aria-pressed="false"></button><button type="button" data-t="yfs" data-i="tTes" aria-pressed="false"></button></div>
+  <div class="yfe" id="yfe" hidden></div>
+  <div class="yfp" id="yfk" hidden><div class="et" id="kpEt"></div><div class="kpg" id="kpg"></div></div>
+  <div class="yfp" id="yfs" hidden><div class="tsl" id="tsl"></div></div>
+  <p class="yfk" data-i="yfKaynak"></p>
+</div></div>
+
+<div class="vm" id="vm" hidden><button type="button" class="lx" id="vmX" aria-label="×">×</button><button type="button" class="ln p" id="vmP" aria-label="‹">‹</button><div class="vmk" id="vmK"></div><button type="button" class="ln n" id="vmN" aria-label="›">›</button></div>
+<div class="lb" id="lb" hidden><button type="button" class="lx" id="lbX" aria-label="×">×</button><button type="button" class="ln p" id="lbP" aria-label="‹">‹</button><div><img id="lbI" alt=""><div class="ly" id="lbY"></div></div><button type="button" class="ln n" id="lbN" aria-label="›">›</button></div>
+
+<footer><div class="w"><span>© <span id="yil"></span> <span id="fAdi"></span> · RE/MAX Doğuş · <span data-i="bagimsiz"></span></span><img src="https://dogusportal.com/assets/dogus-logo.webp" width="83" height="30" onerror="this.onerror=null;this.src='https://dogusportal.com/assets/dogus-logo.png'" alt="RE/MAX Doğuş"><p class="telif"><bdi>© <span id="yil2"></span> UMT Group Gayrimenkul Yatırım Danışmanlık İnş. San. Tic. Ltd. Şti.</bdi> <span data-i="telif"></span></p></div></footer>
+<a class="wa-sabit hide" id="waSabit" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+
+<script>
+var DIL={
+tr:{telif:"Tüm hakları saklıdır. İzinsiz kullanılamaz ve çoğaltılamaz.",vHep:"Tüm videoları göster",yfEtap:"Etaplar",tKat:"Kat planları",tTes:"Teslim tarihleri",kpTum:"Tümü",kpBlok:"Blok",kpTip:"Tip",tsOk:"Teslim edildi",tsSu:"Teslim sürüyor",tsSir:"Sırada",tsBitti:"Teslimler tamamlandı",tsBaslik:"Blok blok teslim programı",tsNot:"Tarihler Emlak Konut teslim programına göredir, değişebilir.",kpNot:"Planlar Emlak Konut proje sayfasındaki orijinal görsellerdir.",n6:"Ofisimiz",k7:"Ofisimiz",h7:"RE/MAX Doğuş'u tanıyın",o1:"RE/MAX Doğuş, Yeni Fikirtepe'nin içinde, Nuhoğlu Yenitepe Sitesi'nde hizmet veren bölgenin gayrimenkul ofisidir. Ekibimiz Fikirtepe'yi etap etap, blok blok tanır.",o2:"Satılık ve kiralık daire, ücretsiz değerleme, Emlak Konut devir işlemleri ve satış sonrası desteği tek çatı altında sunuyoruz.",om:["Satış ve kiralama danışmanlığı", "Ücretsiz değerleme", "Emlak Konut devir desteği", "Satış sonrası hizmetler"],yol:"Yol tarifi al",gy:"Google yorumu",eE:"Etap",eK:"Konut",eT:"Ticari",eD:"Daire tipleri",eOfis:"Ofis etabı",fYesil:"km yeşil koridor",n5:"Videolarım",h6:"Videolarımı izleyin",yf:"Yeni Fikirtepe'yi benimle tanıyın",yfAlt:"İstanbul'un en büyük kentsel dönüşüm projelerinden biri, rakamlarla.",yfBas:"Yeni Fikirtepe",yfH:"Rakamlarla Yeni Fikirtepe",yfSor:"WhatsApp'tan bana sorun",yfKaynak:"Kaynak: Emlak Konut GYO etap verileri, RE/MAX Doğuş etap tablosu, Para Dergi (Ocak 2023).",yfMsg:"Yeni Fikirtepe hakkında bilgi almak istiyorum.",fAlan:"dönüm proje alanı",fAlanV:"550",fGel:"Geliştirici",fGelAlt:"T.C. Çevre, Şehircilik ve İklim Değişikliği Bakanlığı ile",fEtap:"etap",fKonut:"konut",fTicari:"ticari ünite",fOfis:"ofis",c1:"yıllık tecrübe",c2:"mutlu müşteri",c3:"başarılı işlem",gonder2:"Gönder",mUst:"Talep formu",kvkk:"Gönder'e basarak bilgilerimin bu talep için RE/MAX Doğuş tarafından işlenmesini kabul ediyorum.",ok:"Talebiniz {ad} adlı danışmanımıza iletildi. En kısa sürede size dönüş yapılacak.",hata:"Gönderilemedi. Lütfen tekrar deneyin ya da WhatsApp'tan yazın.",al:'Almak istiyorum',sat:'Satmak istiyorum',ad:'Türkçe',n1:'Hakkımda',n2:'Hizmetler',n3:'Yorumlar',n4:'İletişim',bolge:'Fikirtepe · Kadıköy',unvan:'Profesyonel Gayrimenkul Danışmanı',wa:"WhatsApp'tan yazın",ara:'Hemen arayın',s1:'Google ofis puanı',s2:'yorumda adı geçiyor',s3:'ofis yorumu',k1:'Kısaca ben',h1:'Tanışalım',k2:'Ne yapıyorum?',h2:'Hizmetler',k3:'Sizlerden gelenler',h3:'Müşterilerim ne diyor?',orj:'',tum:'Tüm Google yorumlarını gör →',h4:'Güncel ilanlarım',p4:"Satılık ve kiralık portföyümü RE/MAX profilimde, günlük paylaşımlarımı Instagram'da bulabilirsiniz.",remax:'RE/MAX profilimdeki ilanlar',h5:'Evinizin değerini birlikte konuşalım',ofis:'Ofis',konum:'Fikirtepe / Kadıköy, İstanbul',fad:'Adınız Soyadınız',ftel:'Telefonunuz',fmsj:'Kısaca anlatın (bölge, oda sayısı, bütçe...)',gonder:'WhatsApp ile gönder',yok:'Danışman bulunamadı.',bagimsiz:'Her ofis bağımsız olarak sahiplenilir ve işletilir.',konular:['Evimi satmak istiyorum','Evimi kiraya vermek istiyorum','Ev almak istiyorum','Ev kiralamak istiyorum','Değerleme istiyorum','Yatırım danışmanlığı','Yurtdışı (Dubai, Kıbrıs, Yunanistan)'],selam:'Merhaba {h}, web sayfanızdan ulaşıyorum.',fAd:'Ad Soyad',fTel:'Telefon',fKonu:'Konu',fNot:'Not',yer:'tr-TR'},
+en:{telif:"All rights reserved. No use or reproduction without permission.",vHep:"Show all videos",yfEtap:"Phases",tKat:"Floor plans",tTes:"Handover dates",kpTum:"All",kpBlok:"Block",kpTip:"Type",tsOk:"Handed over",tsSu:"In progress",tsSir:"Upcoming",tsBitti:"Handovers completed",tsBaslik:"Block-by-block handover schedule",tsNot:"Dates follow the Emlak Konut handover schedule and may change.",kpNot:"Plans are the original images from the Emlak Konut project page.",n6:"Our office",k7:"Our office",h7:"Meet RE/MAX Doğuş",o1:"RE/MAX Doğuş is the local real estate office right inside Yeni Fikirtepe, at Nuhoğlu Yenitepe. Our team knows Fikirtepe phase by phase, block by block.",o2:"Homes for sale and rent, free valuation, Emlak Konut transfer procedures and after-sales support, all under one roof.",om:["Sales and rental advice", "Free valuation", "Emlak Konut transfer support", "After-sales services"],yol:"Get directions",gy:"Google reviews",eE:"Phase",eK:"Homes",eT:"Commercial",eD:"Unit types",eOfis:"Office phase",fYesil:"km green corridor",n5:"My videos",h6:"Watch my videos",yf:"Discover Yeni Fikirtepe with me",yfAlt:"One of Istanbul's largest urban renewal projects, in numbers.",yfBas:"Yeni Fikirtepe",yfH:"Yeni Fikirtepe in numbers",yfSor:"Ask me on WhatsApp",yfKaynak:"Sources: Emlak Konut GYO phase data, RE/MAX Doğuş phase table, Para Dergi (Jan 2023).",yfMsg:"I'd like information about Yeni Fikirtepe.",fAlan:"hectares of project area",fAlanV:"55",fGel:"Developer",fGelAlt:"with the Turkish Ministry of Environment, Urbanisation and Climate Change",fEtap:"phases",fKonut:"homes",fTicari:"commercial units",fOfis:"offices",c1:"years of experience",c2:"happy clients",c3:"transactions",gonder2:"Send",mUst:"Request form",kvkk:"By pressing Send, I agree that RE/MAX Doğuş may process my details for this request.",ok:"Your request has been sent to {ad}. You will be contacted shortly.",hata:"Could not be sent. Please try again or message on WhatsApp.",al:'I want to buy',sat:'I want to sell',ad:'English',n1:'About',n2:'Services',n3:'Reviews',n4:'Contact',bolge:'Fikirtepe · Kadıköy',unvan:'Professional Real Estate Consultant',wa:'Message on WhatsApp',ara:'Call now',s1:'Google office rating',s2:'reviews mention by name',s3:'office reviews',k1:'About me',h1:"Let's meet",k2:'What I do',h2:'Services',k3:'Client reviews',h3:'What my clients say',orj:'Reviews are shown in their original language (Turkish), as posted on Google.',tum:'See all Google reviews →',h4:'Current listings',p4:'You can find my properties for sale and rent on my RE/MAX profile and my daily updates on Instagram.',remax:'Listings on my RE/MAX profile',h5:"Let's talk about your property",ofis:'Office',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Full name',ftel:'Phone',fmsj:'Tell me briefly (area, rooms, budget...)',gonder:'Send via WhatsApp',yok:'Consultant not found.',bagimsiz:'Each office is independently owned and operated.',konular:['I want to sell my home','I want to rent out my home','I want to buy a home','I want to rent a home','I need a valuation','Investment advice','Abroad (Dubai, Cyprus, Greece)'],selam:'Hello {h}, I am contacting you from your website.',fAd:'Name',fTel:'Phone',fKonu:'Topic',fNot:'Note',yer:'en-GB'},
+ru:{telif:"Все права защищены. Использование и копирование без разрешения запрещены.",vHep:"Показать все видео",yfEtap:"Этапы",tKat:"Планировки",tTes:"Сроки сдачи",kpTum:"Все",kpBlok:"Корпус",kpTip:"Тип",tsOk:"Сдан",tsSu:"Идёт сдача",tsSir:"Ожидается",tsBitti:"Сдача завершена",tsBaslik:"График сдачи по корпусам",tsNot:"Даты по графику Emlak Konut, возможны изменения.",kpNot:"Планировки — оригинальные изображения со страницы проекта Emlak Konut.",n6:"Наш офис",k7:"Наш офис",h7:"Знакомьтесь: RE/MAX Doğuş",o1:"RE/MAX Doğuş — агентство недвижимости прямо в Йени Фикиртепе, в комплексе Nuhoğlu Yenitepe. Наша команда знает Фикиртепе по каждому этапу и корпусу.",o2:"Продажа и аренда квартир, бесплатная оценка, переоформление по Emlak Konut и поддержка после сделки — всё в одном месте.",om:["Консультации по продаже и аренде", "Бесплатная оценка", "Помощь с переоформлением Emlak Konut", "Сервис после сделки"],yol:"Проложить маршрут",gy:"отзывов в Google",eE:"Этап",eK:"Квартиры",eT:"Коммерция",eD:"Планировки",eOfis:"Офисный этап",fYesil:"км зелёного коридора",n5:"Мои видео",h6:"Смотрите мои видео",yf:"Откройте Йени Фикиртепе вместе со мной",yfAlt:"Один из крупнейших проектов реновации Стамбула, в цифрах.",yfBas:"Йени Фикиртепе",yfH:"Йени Фикиртепе в цифрах",yfSor:"Спросите меня в WhatsApp",yfKaynak:"Источники: данные Emlak Konut GYO по этапам, таблица этапов RE/MAX Doğuş, Para Dergi (янв. 2023).",yfMsg:"Хочу узнать о Йени Фикиртепе.",fAlan:"га площадь проекта",fAlanV:"55",fGel:"Застройщик",fGelAlt:"совместно с Министерством окружающей среды, урбанизации и изменения климата Турции",fEtap:"этапов",fKonut:"квартир",fTicari:"коммерческих помещений",fOfis:"офисов",c1:"лет опыта",c2:"довольных клиентов",c3:"сделок",gonder2:"Отправить",mUst:"Заявка",kvkk:"Нажимая «Отправить», я соглашаюсь на обработку моих данных RE/MAX Doğuş для этой заявки.",ok:"Ваша заявка передана консультанту: {ad}. С вами скоро свяжутся.",hata:"Не удалось отправить. Попробуйте ещё раз или напишите в WhatsApp.",al:'Хочу купить',sat:'Хочу продать',ad:'Русский',n1:'Обо мне',n2:'Услуги',n3:'Отзывы',n4:'Контакты',bolge:'Фикиртепе · Кадыкёй',unvan:'Профессиональный консультант по недвижимости',wa:'Написать в WhatsApp',ara:'Позвонить',s1:'рейтинг офиса в Google',s2:'отзывов с упоминанием',s3:'отзывов об офисе',k1:'Коротко обо мне',h1:'Давайте знакомиться',k2:'Чем я занимаюсь',h2:'Услуги',k3:'Отзывы клиентов',h3:'Что говорят мои клиенты',orj:'Отзывы показаны на языке оригинала (турецком), как на Google.',tum:'Все отзывы в Google →',h4:'Актуальные объекты',p4:'Мои объекты на продажу и в аренду — в профиле RE/MAX, ежедневные новости — в Instagram.',remax:'Объекты в моём профиле RE/MAX',h5:'Обсудим вашу недвижимость',ofis:'Офис',konum:'Фикиртепе / Кадыкёй, Стамбул',fad:'Имя и фамилия',ftel:'Телефон',fmsj:'Коротко опишите (район, комнаты, бюджет...)',gonder:'Отправить в WhatsApp',yok:'Консультант не найден.',bagimsiz:'Каждый офис находится в независимой собственности и управлении.',konular:['Хочу продать жильё','Хочу сдать жильё','Хочу купить жильё','Хочу снять жильё','Нужна оценка','Инвестиционная консультация','За рубежом (Дубай, Кипр, Греция)'],selam:'Здравствуйте, {h}! Пишу вам с вашего сайта.',fAd:'Имя',fTel:'Телефон',fKonu:'Тема',fNot:'Комментарий',yer:'ru-RU'},
+fa:{telif:"تمامی حقوق محفوظ است. هرگونه استفاده یا تکثیر بدون اجازه ممنوع است.",vHep:"نمایش همه ویدیوها",yfEtap:"فازها",tKat:"نقشه‌ها",tTes:"تاریخ تحویل",kpTum:"همه",kpBlok:"بلوک",kpTip:"تیپ",tsOk:"تحویل شد",tsSu:"در حال تحویل",tsSir:"در نوبت",tsBitti:"تحویل کامل شده",tsBaslik:"برنامه تحویل بلوک به بلوک",tsNot:"تاریخ‌ها طبق برنامه تحویل Emlak Konut است و ممکن است تغییر کند.",kpNot:"نقشه‌ها تصاویر اصلی صفحه پروژه Emlak Konut هستند.",n6:"دفتر ما",k7:"دفتر ما",h7:"با RE/MAX Doğuş آشنا شوید",o1:"RE/MAX Doğuş دفتر املاک محلی در قلب ینی فیکیرتپه، در مجتمع Nuhoğlu Yenitepe است. تیم ما فیکیرتپه را فاز به فاز و بلوک به بلوک می‌شناسد.",o2:"خرید و فروش و اجاره آپارتمان، ارزیابی رایگان، انتقال واحدهای Emlak Konut و پشتیبانی پس از فروش، همه در یک جا.",om:["مشاوره فروش و اجاره", "ارزیابی رایگان", "پشتیبانی انتقال Emlak Konut", "خدمات پس از فروش"],yol:"مسیریابی",gy:"نظر در گوگل",eE:"فاز",eK:"مسکونی",eT:"تجاری",eD:"نوع واحد",eOfis:"فاز اداری",fYesil:"کیلومتر کریدور سبز",n5:"ویدیوهای من",h6:"ویدیوهای من را ببینید",yf:"ینی فیکیرتپه را با من بشناسید",yfAlt:"یکی از بزرگ‌ترین پروژه‌های نوسازی شهری استانبول، در یک نگاه.",yfBas:"ینی فیکیرتپه",yfH:"ینی فیکیرتپه در اعداد",yfSor:"در واتساپ از من بپرسید",yfKaynak:"منابع: داده‌های فازهای Emlak Konut GYO، جدول فازهای RE/MAX Doğuş، مجله Para (ژانویه ۲۰۲۳).",yfMsg:"می‌خواهم درباره ینی فیکیرتپه اطلاعات بگیرم.",fAlan:"هکتار مساحت پروژه",fAlanV:"55",fGel:"سازنده",fGelAlt:"با همکاری وزارت محیط زیست، شهرسازی و تغییرات اقلیمی ترکیه",fEtap:"فاز",fKonut:"واحد مسکونی",fTicari:"واحد تجاری",fOfis:"دفتر",c1:"سال تجربه",c2:"مشتری راضی",c3:"معامله موفق",gonder2:"ارسال",mUst:"فرم درخواست",kvkk:"با زدن «ارسال»، با پردازش اطلاعاتم توسط RE/MAX Doğuş برای این درخواست موافقت می‌کنم.",ok:"درخواست شما برای {ad} ارسال شد. به‌زودی با شما تماس گرفته می‌شود.",hata:"ارسال نشد. لطفاً دوباره تلاش کنید یا در واتساپ پیام دهید.",al:'می‌خواهم بخرم',sat:'می‌خواهم بفروشم',ad:'فارسی',dir:'rtl',n1:'درباره من',n2:'خدمات',n3:'نظرات',n4:'تماس',bolge:'فیکیرتپه · کادیکوی',unvan:'مشاور حرفه‌ای املاک',wa:'پیام در واتساپ',ara:'تماس فوری',s1:'امتیاز گوگل دفتر',s2:'نظر با ذکر نام',s3:'نظر درباره دفتر',k1:'به‌طور خلاصه',h1:'آشنا شویم',k2:'چه کاری انجام می‌دهم؟',h2:'خدمات',k3:'نظرات مشتریان',h3:'مشتریانم چه می‌گویند؟',orj:'نظرات به زبان اصلی (ترکی) و همان‌طور که در گوگل ثبت شده‌اند نمایش داده می‌شوند.',tum:'همه نظرات گوگل ←',h4:'آگهی‌های فعلی',p4:'املاک فروشی و اجاره‌ای من در پروفایل RE/MAX و به‌روزرسانی‌های روزانه‌ام در اینستاگرام است.',remax:'آگهی‌ها در پروفایل RE/MAX من',h5:'درباره ملک شما گفت‌وگو کنیم',ofis:'دفتر',konum:'فیکیرتپه / کادیکوی، استانبول',fad:'نام و نام خانوادگی',ftel:'شماره تلفن',fmsj:'به‌طور خلاصه بنویسید (محله، تعداد اتاق، بودجه...)',gonder:'ارسال با واتساپ',yok:'مشاور یافت نشد.',bagimsiz:'هر دفتر به‌طور مستقل مالکیت و اداره می‌شود.',konular:['می‌خواهم خانه‌ام را بفروشم','می‌خواهم خانه‌ام را اجاره دهم','می‌خواهم خانه بخرم','می‌خواهم خانه اجاره کنم','ارزش‌گذاری می‌خواهم','مشاوره سرمایه‌گذاری','خارج از کشور (دبی، قبرس، یونان)'],selam:'سلام {h}، از طریق وب‌سایت شما پیام می‌دهم.',fAd:'نام',fTel:'تلفن',fKonu:'موضوع',fNot:'توضیح',yer:'fa-IR'},
+de:{telif:"Alle Rechte vorbehalten. Nutzung und Vervielfältigung nur mit Genehmigung.",vHep:"Alle Videos anzeigen",yfEtap:"Abschnitte",tKat:"Grundrisse",tTes:"Übergabetermine",kpTum:"Alle",kpBlok:"Block",kpTip:"Typ",tsOk:"Übergeben",tsSu:"Übergabe läuft",tsSir:"Geplant",tsBitti:"Übergaben abgeschlossen",tsBaslik:"Übergabeplan nach Blöcken",tsNot:"Termine nach dem Übergabeplan von Emlak Konut, Änderungen möglich.",kpNot:"Die Grundrisse sind Originalbilder der Emlak-Konut-Projektseite.",n6:"Unser Büro",k7:"Unser Büro",h7:"RE/MAX Doğuş kennenlernen",o1:"RE/MAX Doğuş ist das Immobilienbüro direkt in Yeni Fikirtepe, in der Anlage Nuhoğlu Yenitepe. Unser Team kennt Fikirtepe Bauabschnitt für Bauabschnitt, Block für Block.",o2:"Kauf und Miete, kostenlose Bewertung, Emlak-Konut-Übertragungen und Betreuung nach dem Kauf, alles aus einer Hand.",om:["Beratung zu Kauf und Miete", "Kostenlose Bewertung", "Unterstützung bei Emlak-Konut-Übertragungen", "Service nach dem Kauf"],yol:"Route planen",gy:"Google-Bewertungen",eE:"Abschnitt",eK:"Wohnungen",eT:"Gewerbe",eD:"Wohnungstypen",eOfis:"Büroabschnitt",fYesil:"km grüner Korridor",n5:"Meine Videos",h6:"Meine Videos ansehen",yf:"Entdecken Sie Yeni Fikirtepe mit mir",yfAlt:"Eines der größten Stadterneuerungsprojekte Istanbuls, in Zahlen.",yfBas:"Yeni Fikirtepe",yfH:"Yeni Fikirtepe in Zahlen",yfSor:"Fragen Sie mich per WhatsApp",yfKaynak:"Quellen: Bauabschnittsdaten von Emlak Konut GYO, Abschnittstabelle von RE/MAX Doğuş, Para Dergi (Jan. 2023).",yfMsg:"Ich möchte mehr über Yeni Fikirtepe erfahren.",fAlan:"Hektar Projektfläche",fAlanV:"55",fGel:"Bauträger",fGelAlt:"mit dem türkischen Ministerium für Umwelt, Urbanisierung und Klimawandel",fEtap:"Bauabschnitte",fKonut:"Wohnungen",fTicari:"Gewerbeeinheiten",fOfis:"Büros",c1:"Jahre Erfahrung",c2:"zufriedene Kunden",c3:"Transaktionen",gonder2:"Senden",mUst:"Anfrage",kvkk:"Mit „Senden“ stimme ich zu, dass RE/MAX Doğuş meine Angaben für diese Anfrage verarbeitet.",ok:"Ihre Anfrage wurde an {ad} gesendet. Sie werden in Kürze kontaktiert.",hata:"Senden fehlgeschlagen. Bitte erneut versuchen oder per WhatsApp schreiben.",al:'Ich möchte kaufen',sat:'Ich möchte verkaufen',ad:'Deutsch',n1:'Über mich',n2:'Leistungen',n3:'Bewertungen',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Professioneller Immobilienberater',wa:'Per WhatsApp schreiben',ara:'Jetzt anrufen',s1:'Google-Bewertung des Büros',s2:'Bewertungen mit Namen',s3:'Bewertungen des Büros',k1:'Kurz zu mir',h1:'Lernen wir uns kennen',k2:'Was ich tue',h2:'Leistungen',k3:'Kundenstimmen',h3:'Was meine Kunden sagen',orj:'Die Bewertungen werden in der Originalsprache (Türkisch) gezeigt, wie auf Google.',tum:'Alle Google-Bewertungen →',h4:'Aktuelle Angebote',p4:'Meine Kauf- und Mietangebote finden Sie in meinem RE/MAX-Profil, tägliche Neuigkeiten auf Instagram.',remax:'Angebote in meinem RE/MAX-Profil',h5:'Sprechen wir über Ihre Immobilie',ofis:'Büro',konum:'Fikirtepe / Kadıköy, Istanbul',fad:'Vor- und Nachname',ftel:'Telefon',fmsj:'Kurz beschreiben (Gegend, Zimmer, Budget...)',gonder:'Per WhatsApp senden',yok:'Berater nicht gefunden.',bagimsiz:'Jedes Büro ist unabhängig und selbstständig geführt.',konular:['Ich möchte verkaufen','Ich möchte vermieten','Ich möchte kaufen','Ich möchte mieten','Ich möchte eine Bewertung','Investitionsberatung','Ausland (Dubai, Zypern, Griechenland)'],selam:'Hallo {h}, ich melde mich über Ihre Webseite.',fAd:'Name',fTel:'Telefon',fKonu:'Thema',fNot:'Notiz',yer:'de-DE'},
+pl:{telif:"Wszelkie prawa zastrzeżone. Wykorzystywanie i powielanie bez zgody zabronione.",vHep:"Pokaż wszystkie filmy",yfEtap:"Etapy",tKat:"Rzuty",tTes:"Terminy odbioru",kpTum:"Wszystkie",kpBlok:"Blok",kpTip:"Typ",tsOk:"Przekazany",tsSu:"W trakcie",tsSir:"W kolejce",tsBitti:"Odbiory zakończone",tsBaslik:"Harmonogram odbiorów według bloków",tsNot:"Terminy według harmonogramu Emlak Konut, mogą się zmienić.",kpNot:"Rzuty to oryginalne grafiki ze strony projektu Emlak Konut.",n6:"Nasze biuro",k7:"Nasze biuro",h7:"Poznaj RE/MAX Doğuş",o1:"RE/MAX Doğuş to lokalne biuro nieruchomości w samym Yeni Fikirtepe, w osiedlu Nuhoğlu Yenitepe. Nasz zespół zna Fikirtepe etap po etapie, blok po bloku.",o2:"Sprzedaż i wynajem mieszkań, bezpłatna wycena, przepisanie lokali Emlak Konut i wsparcie po transakcji — wszystko w jednym miejscu.",om:["Doradztwo przy sprzedaży i wynajmie", "Bezpłatna wycena", "Pomoc przy przepisaniu Emlak Konut", "Obsługa po transakcji"],yol:"Wyznacz trasę",gy:"opinii w Google",eE:"Etap",eK:"Mieszkania",eT:"Usługi",eD:"Typy mieszkań",eOfis:"Etap biurowy",fYesil:"km zielonego korytarza",n5:"Moje filmy",h6:"Obejrzyj moje filmy",yf:"Poznaj Yeni Fikirtepe ze mną",yfAlt:"Jeden z największych projektów rewitalizacji Stambułu, w liczbach.",yfBas:"Yeni Fikirtepe",yfH:"Yeni Fikirtepe w liczbach",yfSor:"Zapytaj mnie na WhatsApp",yfKaynak:"Źródła: dane etapów Emlak Konut GYO, tabela etapów RE/MAX Doğuş, Para Dergi (sty 2023).",yfMsg:"Chcę dowiedzieć się więcej o Yeni Fikirtepe.",fAlan:"ha powierzchni projektu",fAlanV:"55",fGel:"Deweloper",fGelAlt:"wraz z tureckim Ministerstwem Środowiska, Urbanizacji i Zmian Klimatu",fEtap:"etapów",fKonut:"mieszkań",fTicari:"lokali usługowych",fOfis:"biur",c1:"lat doświadczenia",c2:"zadowolonych klientów",c3:"transakcji",gonder2:"Wyślij",mUst:"Formularz",kvkk:"Klikając „Wyślij”, zgadzam się na przetwarzanie moich danych przez RE/MAX Doğuş w celu obsługi tego zgłoszenia.",ok:"Twoje zgłoszenie zostało wysłane do: {ad}. Wkrótce się z Tobą skontaktujemy.",hata:"Nie udało się wysłać. Spróbuj ponownie lub napisz na WhatsApp.",al:'Chcę kupić',sat:'Chcę sprzedać',ad:'Polski',n1:'O mnie',n2:'Usługi',n3:'Opinie',n4:'Kontakt',bolge:'Fikirtepe · Kadıköy',unvan:'Profesjonalny doradca ds. nieruchomości',wa:'Napisz na WhatsApp',ara:'Zadzwoń',s1:'ocena biura w Google',s2:'opinii z imieniem',s3:'opinii o biurze',k1:'Krótko o mnie',h1:'Poznajmy się',k2:'Czym się zajmuję',h2:'Usługi',k3:'Opinie klientów',h3:'Co mówią moi klienci',orj:'Opinie są pokazane w języku oryginału (tureckim), tak jak w Google.',tum:'Wszystkie opinie w Google →',h4:'Aktualne oferty',p4:'Moje oferty sprzedaży i najmu znajdziesz w profilu RE/MAX, a codzienne nowości na Instagramie.',remax:'Oferty w moim profilu RE/MAX',h5:'Porozmawiajmy o Twojej nieruchomości',ofis:'Biuro',konum:'Fikirtepe / Kadıköy, Stambuł',fad:'Imię i nazwisko',ftel:'Telefon',fmsj:'Opisz krótko (okolica, pokoje, budżet...)',gonder:'Wyślij przez WhatsApp',yok:'Nie znaleziono doradcy.',bagimsiz:'Każde biuro jest niezależnie prowadzone i zarządzane.',konular:['Chcę sprzedać mieszkanie','Chcę wynająć swoje mieszkanie','Chcę kupić mieszkanie','Chcę wynająć mieszkanie','Potrzebuję wyceny','Doradztwo inwestycyjne','Za granicą (Dubaj, Cypr, Grecja)'],selam:'Dzień dobry, {h}, piszę przez stronę internetową.',fAd:'Imię',fTel:'Telefon',fKonu:'Temat',fNot:'Uwagi',yer:'pl-PL'}
+};
+var ETAP=[[2,457,21,'1+1 – 4+1'],[3,1814,19,'1+1 – 4+1'],[4,194,9,'2+1 – 5+1'],[5,588,10,'1+1 – 3+1'],[6,677,19,'1+1 – 4+1'],[7,136,5,'2+1 – 5+1'],[8,686,23,'1+1 – 4+1'],[9,548,19,'1+1 – 5+1'],[10,282,7,'2+1 – 3+1'],[11,1296,22,'1+1 – 4+1'],[12,855,20,'2+1 – 4+1'],[13,1160,17,'1+1 – 3+1'],[14,252,2,'1+1 – 3+1'],[15,262,2,'1+1 – 4+1'],[16,760,12,'1+1 – 3+1'],[17,1097,30,'1+1 – 4+1'],[18,0,503,''],[19,250,9,'2+1 – 5+1']];
+var KP=[{n:2,p:[[1,'2+1','B','E'],[2,'3+1','B','E'],[3,'3+1','C','C2'],[4,'4+1','C','A2-2']]},{n:3,p:[[1,'1+1','A3','2A'],[8,'1+1','H1 - H2','B'],[2,'2+1','E1 - E2','1A'],[3,'2+1','G1 - G2 - G3','B'],[4,'2+1','G1 - G2 - G3','C'],[5,'3+1','A3','7A'],[6,'3+1','A3','7B'],[7,'3+1','H1 - H2','E'],[9,'3+1','G1 - G2','G'],[10,'4+1','F1','4A']]},{n:4,p:[[1,'2+1','B','A'],[2,'3+1','A - C','A'],[3,'3+1','A - C','B'],[4,'4+1','A - C','A']]},{n:5,p:[[1,'1+1','C','A'],[2,'1+1','C','B'],[3,'1+1','C','C'],[4,'2+1','C','A'],[5,'2+1','B','E'],[6,'2+1','C','F'],[7,'2+1','B','G'],[8,'2+1','A','I'],[9,'2+1','A','J'],[10,'2+1','A','K'],[11,'3+1','C','A'],[12,'3+1','C','B'],[13,'3+1','C','C'],[14,'3+1','C','F'],[15,'3+1','C','G'],[16,'3+1','A','I'],[17,'3+1','A','J'],[18,'3+1','A','K']]},{n:11,p:[[1,'1+1','E2 - D - E1 - F1','Y1'],[2,'2+1','E2 - D - E1 - F1','Y1'],[3,'2+1','E2 - D - E1 - F1','Y2'],[4,'3+1','C1','C1'],[5,'3+1','D - E2 - E1 - F1','Y1'],[6,'3+1','E2 - E1 - F1','Y2'],[7,'4+1','C1','C1']]},{n:12,p:[[1,'2+1','I','A'],[2,'3+1','A - F','A'],[3,'3+1','A1','B1 A'],[4,'4+1','I - D','A']]},{n:19,p:[[1,'3+1','B','1A'],[2,'3+1','B','2B'],[3,'4+1','B','1A'],[4,'5+1','B','1A']]}];
+var TESLIM_OK=[4,5,6,7,10,14,15,16,19];
+var SIRA=['tr','en','ru','fa','de','pl'];
+(async function(){
+  var q=new URLSearchParams(location.search);
+  var id=(q.get('id')||'gamze').toLowerCase();
+  var cb='?cb='+Date.now();
+  var e=function(s){return document.getElementById(s)};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var j=async function(u){try{var r=await fetch(u+cb);return r.ok?await r.json():null}catch(x){return null}};
+  var dil=q.get('lang');
+  if(!DIL[dil]){try{dil=localStorage.getItem('danismanDil')}catch(x){}}
+  if(!DIL[dil])dil=((navigator.language||'tr').slice(0,2).toLowerCase());
+  if(!DIL[dil])dil='tr';
+
+  var pOn=new Image(); pOn.fetchPriority='high'; pOn.src='https://dogusportal.com/assets/ekip/'+id+'.webp';
+  var gP=j('https://dogusportal.com/data/google-yorumlar.json');
+  var res=await Promise.all([j('https://dogusportal.com/data/danismanlar.json'),j('https://dogusportal.com/data/danisman-site.json')]);
+  var site=res[1]||{}, d=(res[0]||[]).find(function(x){return x.id===id}), s=site[id], g={yorumlar:[]};
+  var L=function(v){if(v==null)return v;if(typeof v==='string'||Array.isArray(v))return v;return v[dil]!=null?v[dil]:v.tr};
+  var T=function(k){var t=DIL[dil][k];return t!=null?t:DIL.tr[k]};
+
+  var menu=e('langmenu');
+  menu.innerHTML=SIRA.map(function(k){return '<li><button type="button" role="option" data-lang="'+k+'"><i class="flag flag-'+k+'"></i>'+DIL[k].ad+'</button></li>'}).join('');
+  e('langbtn').addEventListener('click',function(ev){ev.stopPropagation();var a=menu.hidden;menu.hidden=!a;this.setAttribute('aria-expanded',a)});
+  document.addEventListener('click',function(){menu.hidden=true;e('langbtn').setAttribute('aria-expanded','false')});
+  menu.addEventListener('click',function(ev){var b=ev.target.closest('[data-lang]');if(!b)return;dil=b.dataset.lang;try{localStorage.setItem('danismanDil',dil)}catch(x){}var u=new URL(location.href);u.searchParams.set('lang',dil);history.replaceState(null,'',u);ciz()});
+
+  if(!d||!s){ciz0();e('yok').classList.remove('hide');return}
+  var ofis='902163151515', tel=s.telefon||ofis;
+  var tTel=tel.replace(/^90/,'0').replace(/(\d{4})(\d{3})(\d{2})(\d{2})/,'$1 $2 $3 $4');
+  var wa=function(m){return 'https://wa.me/'+tel+'?text='+encodeURIComponent(m)};
+  var selam=function(){return T('selam').replace('{h}',L(s.hitap)||d.ad)};
+  var benim=[], benimHesap=function(){benim=(g.yorumlar||[]).filter(function(y){return (y.danismanlar||[]).indexOf(id)>=0&&y.puan>=4&&y.metin});benim.sort(function(a,b){return (b.tarih||'').localeCompare(a.tarih||'')})};
+  var kisa=function(n){n=String(n||'').trim().split(/\s+/);return n.length>1?n[0]+' '+n[n.length-1][0].toLocaleUpperCase('tr')+'.':n[0]};
+
+  e('hAd').textContent=d.ad; e('ad').textContent=d.ad; e('fAdi').textContent=d.ad;
+  e('portre').fetchPriority='high'; e('portre').onerror=function(){this.onerror=null;this.src='https://dogusportal.com/assets/ekip/'+id+'.png'}; e('portre').src=s.portre||('https://dogusportal.com/assets/ekip/'+id+'.webp'); e('portre').alt=d.ad;
+  e('waSabit').classList.remove('hide');
+  e('telHero').href=e('telBilgi').href='tel:+'+tel; e('telYazi').textContent=tTel;
+  if(d.remax)e('remaxLink').href=d.remax;else e('remaxLink').classList.add('hide');
+  if(d.instagram){e('igLink').href='https://www.instagram.com/'+d.instagram+'/';e('igLink').textContent='@'+d.instagram}else e('igLink').classList.add('hide');
+  e('yorumlar').classList.add('hide');
+  e('yil').textContent=e('yil2').textContent=new Date().getFullYear();
+  e('form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var m=selam()+'\n'+T('fAd')+': '+e('fAd').value+'\n'+T('fTel')+': '+e('fTel').value+'\n'+T('fKonu')+': '+e('fKonu').value+(e('fMesaj').value?'\n'+T('fNot')+': '+e('fMesaj').value:'')+(dil!=='tr'?'\n('+DIL[dil].ad+')':'');
+    window.open(wa(m),'_blank');
+  });
+
+  function ciz0(){
+    var h=document.documentElement;h.lang=dil;h.dir=DIL[dil].dir||'ltr';
+    document.querySelectorAll('[data-i]').forEach(function(x){x.textContent=T(x.dataset.i)});
+    document.querySelectorAll('[data-ph]').forEach(function(x){x.placeholder=T(x.dataset.ph)});
+    e('langflag').className='flag flag-'+dil; e('langcode').textContent=dil.toUpperCase();
+    menu.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.lang===dil)});
+    menu.hidden=true;
+  }
+  function ciz(){
+    ciz0();
+    document.title=d.ad+' · '+T('unvan')+' · RE/MAX Doğuş';
+    e('unvan').textContent=L(s.unvan)||T('unvan');
+    e('ozet').textContent=L(s.ozet)||'';
+    e('waHero').href=e('waSabit').href=wa(selam());
+    e('hakkimdaMetin').innerHTML=(L(s.hakkimda)||[]).map(function(p){return '<p>'+esc(p)+'</p>'}).join('');
+    e('hiz').innerHTML=(L(s.hizmetler)||L(site._hizmetler)||[]).map(function(h,i){return '<div class="c"><div class="n">'+(i+1)+'</div><h3>'+esc(h[0])+'</h3><p>'+esc(h[1])+'</p>'+(h[2]?'<ul>'+h[2].map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul>':'')+'</div>'}).join('');
+    var sy=s.sayaclar||site._sayaclar||[{n:24,k:'c1'},{n:10000,k:'c2'},{n:500,k:'c3'}];
+    e('sayac').innerHTML=sy.map(function(x){return '<div class="s"><b><span class="sn" data-n="'+x.n+'">'+(sayacBitti?x.n.toLocaleString(T('yer')):'0')+'</span><em>+</em></b><span>'+esc(L(x.etiket)||T(x.k))+'</span></div>'}).join('');
+    if(!sayacBitti)sayacBaslat();
+    var fs=function(n){return Number(n).toLocaleString(T('yer'))};
+    e('yfg').innerHTML='<div class="t gel"><span class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l5-3v15"/><path d="M10 21V4l9 4v13"/></svg></span><div><span>'+esc(T('fGel'))+'</span><b>Emlak Konut GYO</b><span>'+esc(T('fGelAlt'))+'</span></div></div>'+
+      [[+T('fAlanV'),'',T('fAlan')],[19,'',T('fEtap')],[11000,'+',T('fKonut')],[240,'+',T('fTicari')],[503,'',T('fOfis')],[1.6,'',T('fYesil')]].map(function(x){return '<div class="t"><b>'+esc(typeof x[0]==='number'?fs(x[0]):x[0])+'<em>'+x[1]+'</em></b><span>'+esc(x[2])+'</span></div>'}).join('');
+    e('yfWa').href=wa(selam()+'\n'+T('yfMsg'));
+    e('yfe').innerHTML='<table><thead><tr><th>'+esc(T('eE'))+'</th><th>'+esc(T('eK'))+'</th><th>'+esc(T('eT'))+'</th><th>'+esc(T('eD'))+'</th></tr></thead><tbody>'+ETAP.map(function(r){var of=r[0]===18;return '<tr><td>'+r[0]+'</td><td>'+(of?esc(T('eOfis')):fs(r[1]))+'</td><td>'+fs(r[2])+(of?' '+esc(T('fOfis')):'')+'</td><td dir="ltr">'+(r[3]||'—')+'</td></tr>'}).join('')+'</tbody></table>';
+    e('ofisMadde').innerHTML=T('om').map(function(m){return '<li>'+esc(m)+'</li>'}).join('');
+    kpCiz(); tsCiz();
+    var vl=s.videolar||[];
+    e('videolar').classList.toggle('hide',!vl.length);
+    e('navVid').classList.toggle('hide',!vl.length);
+    e('vid').innerHTML=vl.map(function(v){v=typeof v==='string'?{yt:v}:v;var b=L(v.baslik)||'';
+      if(v.ig)return '<button type="button" class="v igf" data-ig="'+esc(v.ig)+'" aria-label="'+esc(b||'Instagram Reels')+'"><img loading="lazy" alt="" src="https://dogusportal.com/assets/video-kapak/'+esc(v.ig)+'.webp" onerror="this.remove()"><span class="igl"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg></span><span class="oy"></span><span class="vb">'+esc(b||'Instagram Reels')+'</span></button>';
+      return '<button type="button" class="v'+(v.yatay?' yatay':'')+'" data-yt="'+esc(v.yt)+'" aria-label="'+esc(b||T('n5'))+'"><img loading="lazy" alt="" src="https://dogusportal.com/assets/video-kapak/'+esc(v.yt)+'.webp" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/'+esc(v.yt)+'/hqdefault.jpg\'"><span class="oy"></span>'+(b?'<span class="vb">'+esc(b)+'</span>':'')+'</button>'}).join('');
+    vSay();
+    e('fKonu').innerHTML=T('konular').map(function(k){return '<option>'+esc(k)+'</option>'}).join('');
+    e('yor').innerHTML=benim.slice(0,6).map(function(y){
+      var ay=y.tarih?new Date(y.tarih).toLocaleDateString(T('yer'),{month:'long',year:'numeric'}):'';
+      var av=y.foto?'<img src="'+esc(y.foto)+'" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML=\'<span class=bas-h>'+esc(kisa(y.yazar)[0])+'</span>\'">':'<span class="bas-h">'+esc(kisa(y.yazar)[0])+'</span>';
+      return '<div class="c"><div class="yildiz">'+'★★★★★'.slice(0,y.puan)+'</div><p lang="tr" dir="ltr">'+esc(y.metin)+'</p><div class="kim">'+av+'<div>'+esc(kisa(y.yazar))+'<small>Google · '+ay+'</small></div></div></div>';
+    }).join('');
+  }
+  var sayacBitti=false;
+  function sayacBaslat(){
+    var k=e('sayac');
+    var calis=function(){sayacBitti=true;var t0=performance.now();k.querySelectorAll('.sn').forEach(function(x){var n=+x.dataset.n;
+      (function ad(t){var p=Math.min(1,(t-t0)/1800),v=Math.round(n*(1-Math.pow(1-p,3)));x.textContent=v.toLocaleString(T('yer'));if(p<1)requestAnimationFrame(ad)})(t0)})};
+    if(!('IntersectionObserver' in window))return calis();
+    var io=new IntersectionObserver(function(en){if(en[0].isIntersecting){io.disconnect();calis()}},{threshold:.4});io.observe(k);
+  }
+
+  // Videolar: yatay kaydırıcı + sayfa içi oynatıcı (iframe sadece dokununca yüklenir)
+  var vKart=function(){return [].slice.call(e('vid').children)}, vmI=-1;
+  var vAdim=function(){var k=vKart()[0];return k?k.getBoundingClientRect().width+14:200};
+  function vSay(){var n=vKart().length,m=Math.min(n,8);e('vNok').innerHTML=n>1?new Array(m+1).join('<i></i>'):'';vDurum()}
+  function vDurum(){var v=e('vid'),max=v.scrollWidth-v.clientWidth,x=Math.abs(v.scrollLeft);
+    e('vaP').disabled=x<5;e('vaN').disabled=x>max-5;
+    var ns=e('vNok').children;if(!ns.length)return;var a=max>0?Math.round(x/max*(ns.length-1)):0;
+    [].forEach.call(ns,function(d,i){d.classList.toggle('on',i===a)})}
+  var rtl=function(){return document.documentElement.dir==='rtl'?-1:1};
+  e('vid').addEventListener('scroll',function(){requestAnimationFrame(vDurum)},{passive:true});
+  window.addEventListener('resize',vDurum);
+  e('vaP').addEventListener('click',function(){e('vid').scrollBy({left:-vAdim()*2*rtl(),behavior:'smooth'})});
+  e('vaN').addEventListener('click',function(){e('vid').scrollBy({left:vAdim()*2*rtl(),behavior:'smooth'})});
+  // Oynatıcı kutusu iframe yüklenmeden önce videonun gerçek ölçüsüyle (dikey 9:16, yatay 16:9) piksel olarak ayarlanır; sonradan boyut değişmez
+  function vmOlcu(b){var vw=Math.min(window.innerWidth,document.documentElement.clientWidth)-32,vh=window.innerHeight-110,w,h;
+    if(b.classList.contains('yatay')){w=Math.min(vw,960,vh*16/9);h=w*9/16}
+    else{w=Math.min(vw,400,vh*9/16);h=w*16/9}
+    return [Math.floor(w),Math.floor(h)]}
+  // Siteye indirilmiş reels (https://dogusportal.com/assets/reels/{kod}.mp4) kendi oynatıcımızda gerçek oranıyla açılır; olmayanlar Instagram gömmesiyle
+  var VIDS={};fetch('https://dogusportal.com/assets/video-kapak/sonuc.json').then(function(r){return r.ok?r.json():{}}).then(function(j){(j.videolar||[]).forEach(function(k){VIDS[k]=1})}).catch(function(){});
+  var vKendi=function(b){return b.dataset.ig&&VIDS[b.dataset.ig]};
+  function vmAc(i){var ks=vKart();if(i<0||i>=ks.length)return;vmI=i;var b=ks[i],k=e('vmK'),o=vmOlcu(b);
+    k.className='vmk'+(b.dataset.ig&&!vKendi(b)?' ig':'');k.style.width=o[0]+'px';k.style.height=o[1]+'px';
+    k.style.backgroundImage=b.dataset.ig?'url(https://dogusportal.com/assets/video-kapak/'+encodeURIComponent(b.dataset.ig)+'.webp)':'';
+    if(vKendi(b)){var vd=document.createElement('video');vd.src='https://dogusportal.com/assets/reels/'+encodeURIComponent(b.dataset.ig)+'.mp4';vd.poster='https://dogusportal.com/assets/video-kapak/'+encodeURIComponent(b.dataset.ig)+'.webp';
+      vd.controls=vd.autoplay=vd.playsInline=true;vd.setAttribute('playsinline','');vd.preload='auto';
+      k.classList.add('vd');k.innerHTML='';k.appendChild(vd);vd.play&&vd.play().catch(function(){});
+      e('vmP').hidden=i===0;e('vmN').hidden=i===ks.length-1;e('vm').hidden=false;document.body.style.overflow='hidden';
+      b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});return}
+    var f=document.createElement('iframe');f.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');f.allowFullscreen=true;
+    f.onload=function(){f.classList.add('hazir')};
+    if(b.dataset.ig){f.scrolling='no';f.title='Instagram Reels';f.src='https://www.instagram.com/reel/'+encodeURIComponent(b.dataset.ig)+'/embed/'}
+    else{f.title=b.getAttribute('aria-label')||'';f.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(b.dataset.yt)+'?autoplay=1&playsinline=1&rel=0'}
+    k.innerHTML='';k.appendChild(f);
+    e('vmP').hidden=i===0;e('vmN').hidden=i===ks.length-1;e('vm').hidden=false;document.body.style.overflow='hidden';
+    b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
+  window.addEventListener('resize',function(){if(vmI<0)return;var o=vmOlcu(vKart()[vmI]),k=e('vmK');k.style.width=o[0]+'px';k.style.height=o[1]+'px'});
+  function vmKapat(){e('vm').hidden=true;e('vmK').innerHTML='';document.body.style.overflow='';vmI=-1}
+  e('vid').addEventListener('click',function(ev){var b=ev.target.closest('.v');if(b)vmAc(vKart().indexOf(b))});
+  e('vmX').addEventListener('click',vmKapat);
+  e('vm').addEventListener('click',function(ev){if(ev.target===this)vmKapat()});
+  e('vmP').addEventListener('click',function(){vmAc(vmI-1)});
+  e('vmN').addEventListener('click',function(){vmAc(vmI+1)});
+  document.addEventListener('keydown',function(ev){if(e('vm').hidden)return;if(ev.key==='Escape')vmKapat();else if(ev.key==='ArrowRight')vmAc(vmI+1);else if(ev.key==='ArrowLeft')vmAc(vmI-1)});
+  var kpCur=0, lbList=[], lbI=0, TS=null;
+  var kpDosya=function(n,r,b){return 'https://dogusportal.com/assets/kat-planlari/'+(b?'':'k/')+'etap'+n+'-'+(r[0]<10?'0':'')+r[0]+'.jpg'};
+  var kpYazi=function(r){return r[1]+' · '+T('kpBlok')+' '+r[2]+' · '+T('kpTip')+' '+r[3]};
+  function kpCiz(){
+    e('kpEt').innerHTML=KP.map(function(x,i){return '<button type="button" class="'+(i===kpCur?'on':'')+'" data-k="'+i+'">'+x.n+'. '+esc(T('eE'))+'</button>'}).join('');
+    var x=KP[kpCur], l=x.p.slice().sort(function(a,b){return parseInt(a[1])-parseInt(b[1])});
+    lbList=l.map(function(r){return [kpDosya(x.n,r,1),x.n+'. '+T('eE')+' · '+kpYazi(r)]});
+    e('kpg').innerHTML=l.map(function(r,i){return '<button type="button" data-l="'+i+'"><img loading="lazy" alt="" src="'+kpDosya(x.n,r)+'"><span><b>'+esc(r[1])+'</b> · '+esc(T('kpBlok'))+' '+esc(r[2])+'</span></button>'}).join('');
+  }
+  var gun=function(t){return new Date(t+'T12:00:00').toLocaleDateString(T('yer'),{day:'numeric',month:'long'})};
+  function tsCiz(){
+    var bug=new Date().toISOString().slice(0,10), h='<div class="not">'+esc(T('tsNot'))+'</div>';
+    ((TS&&TS.etaplar)||[]).forEach(function(et){
+      var ad=et.id==='3-2'?'3. '+T('eE')+' (2)':et.id+'. '+T('eE');
+      h+='<h4>'+esc(ad)+'</h4>'+(et.bloklar||[]).map(function(b){
+        var d=bug>b.bit?['ok',T('tsOk')]:bug>=b.bas?['su',T('tsSu')]:['sir',T('tsSir')];
+        return '<div class="r"><b>'+esc(b.b)+'</b><span class="t">'+esc(b.bas===b.bit?gun(b.bas):gun(b.bas)+' – '+gun(b.bit))+'</span><span class="d '+d[0]+'">'+esc(d[1])+'</span></div>'}).join('');
+    });
+    h+='<h4>'+esc(T('tsBitti'))+'</h4><div class="r"><span class="t">'+TESLIM_OK.map(function(n){return n+'. '+esc(T('eE'))}).join(' · ')+'</span><span class="d ok">'+esc(T('tsOk'))+'</span></div>';
+    e('tsl').innerHTML=h;
+  }
+  var tsYuk=function(){if(TS)return;TS={};fetch('https://dogusportal.com/data/teslim-takvimi.json'+cb).then(function(r){return r.json()}).then(function(j){TS=j;tsCiz()}).catch(function(){TS=null})};
+  e('yft').addEventListener('click',function(ev){var b=ev.target.closest('[data-t]');if(!b)return;var ac=b.getAttribute('aria-pressed')!=='true';
+    e('yft').querySelectorAll('[data-t]').forEach(function(x){var on=ac&&x===b;x.setAttribute('aria-pressed',on);e(x.dataset.t).hidden=!on});
+    if(ac&&b.dataset.t==='yfs')tsYuk();if(ac)e(b.dataset.t).scrollIntoView({behavior:'smooth',block:'nearest'})});
+  e('kpEt').addEventListener('click',function(ev){var b=ev.target.closest('[data-k]');if(!b)return;kpCur=+b.dataset.k;kpCiz()});
+  var lb=e('lb'), lbG=function(i){lbI=(i+lbList.length)%lbList.length;e('lbI').src=lbList[lbI][0];e('lbY').textContent=lbList[lbI][1]};
+  e('kpg').addEventListener('click',function(ev){var b=ev.target.closest('[data-l]');if(!b)return;lbG(+b.dataset.l);lb.hidden=false});
+  e('lbX').addEventListener('click',function(){lb.hidden=true});
+  e('lbP').addEventListener('click',function(){lbG(lbI-1)}); e('lbN').addEventListener('click',function(){lbG(lbI+1)});
+  lb.addEventListener('click',function(ev){if(ev.target===lb)lb.hidden=true});
+  (function(){var f=e('ofisFoto'),y=function(){f.style.backgroundImage='url(https://dogusportal.com/assets/ofis/ofis-dis.webp)'};
+    if(!('IntersectionObserver' in window))return y();var io=new IntersectionObserver(function(en){if(en[0].isIntersecting){io.disconnect();y()}},{rootMargin:'600px'});io.observe(f)})();
+  var yfm=e('yfModal');
+  var yfKapat=function(){yfm.hidden=true;document.body.style.overflow=''};
+  e('yfAc').addEventListener('click',function(){yfm.hidden=false;document.body.style.overflow='hidden'});
+  e('yfKapat').addEventListener('click',yfKapat);
+  yfm.addEventListener('click',function(ev){if(ev.target===yfm)yfKapat()});
+  document.addEventListener('keydown',function(ev){if(ev.key!=='Escape')return;if(!e('lb').hidden){e('lb').hidden=true;return}if(!yfm.hidden)yfKapat()});
+  var GAS='https://script.google.com/macros/s/AKfycbzOv_EaqijVkLwoyxJ9NNG6f2tETYY3Sf9JxQ824CmUgEaNoehFVbCtHk1iGqpvaZpF/exec';
+  var niyet=null, TALEP={'2':'satın alma','0':'satılık değerleme'};
+  var modal=e('modal');
+  var kapat=function(){modal.hidden=true;document.body.style.overflow=''};
+  e('mKapat').addEventListener('click',kapat);
+  modal.addEventListener('click',function(ev){if(ev.target===modal)kapat()});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!modal.hidden)kapat()});
+  document.querySelectorAll('[data-niyet]').forEach(function(x){x.addEventListener('click',function(){
+    niyet=x.dataset.niyet;
+    e('mUst').textContent=T('mUst'); e('mBaslik').textContent=x.textContent.trim();
+    e('mForm').hidden=false; e('mOk').hidden=true; var h=e('mForm').querySelector('.mhata'); if(h)h.remove();
+    modal.hidden=false; document.body.style.overflow='hidden';
+    setTimeout(function(){e('mAd').focus()},50);
+  })});
+  e('mForm').addEventListener('submit',async function(ev){
+    ev.preventDefault();
+    var b=e('mGonder'); if(b.disabled)return; b.disabled=true;
+    var h=this.querySelector('.mhata'); if(h)h.remove();
+    var konu=DIL.tr.konular[+niyet];
+    var veri={action:'form',danisman:d.ad,ad:e('mAd').value,telefon:e('mTel').value,talep:TALEP[niyet]||'bilgi',bot:e('mBot').value,
+      detay:'Konu: '+konu+(e('mNot').value?'\nNot: '+e('mNot').value.replace(/\n/g,' '):'')+'\nDil: '+DIL[dil].ad,sayfa:location.href.split('#')[0]};
+    try{
+      var r=await fetch(GAS,{method:'POST',body:JSON.stringify(veri)}); var j=await r.json();
+      if(!j.ok)throw new Error(j.hata||'hata');
+      e('mForm').hidden=true; e('mOkYazi').textContent=T('ok').replace('{ad}',d.ad); e('mOk').hidden=false;
+      e('mForm').reset();
+    }catch(x){
+      var p=document.createElement('p');p.className='mhata';p.textContent=T('hata');b.before(p);
+    }
+    b.disabled=false;
+  });
+  ciz();
+  e('sayfa').classList.remove('hide');
+  g=(await gP)||{yorumlar:[]}; benimHesap();
+  e('haritaLink').href=e('tumYorum').href=g.mapsUrl||'#';
+  e('yorumlar').classList.toggle('hide',!benim.length);
+  ciz();
+})();
+</script>
+</body>
+</html>
