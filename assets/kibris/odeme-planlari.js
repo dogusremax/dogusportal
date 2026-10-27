@@ -60,5 +60,28 @@
     if (m) { var b = new Date(), n = (+m[1] - b.getFullYear()) * 12 + (+m[2] - 1 - b.getMonth()); return Math.max(1, n); }
     return 24;
   }
-  window.KPL = { liste: liste, blokSira: blokSira, FIRMA: FIRMA, PROJE: PROJE };
+  // Katalog kapağının altındaki teslim şeridi (Umut 27.10.2026, seçenek C). 'ok' teslim edildi, 'hz' taşınmaya hazır, 'YYYY-AA' en yakın anahtar teslim.
+  var TESLIM = {
+    'Mykonos Homes': 'ok', 'Pearl Island Homes': 'ok', 'Bahamas Homes': 'hz', 'Hawaii Homes': 'hz', 'Bellagio': 'hz', 'Riverside Life Residence': 'hz',
+    'Courtyard Platinum': '2026-12', 'Aloha Beach Resort': '2026-12', 'Querencia Long Beach': '2027-03', 'Phuket Health & Wellness Resort': '2027-03',
+    'Natulux': '2027-05', 'La Palazzo': '2027-06', 'Solmaris': '2027-08', 'La Casalia': '2027-12', 'Ocean Life Residence': '2027-12',
+    'Grand Sapphire Blu': '2028-06', 'D-Point': '2028-12'
+  };
+  var AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  function rozet(proje) {
+    var t = TESLIM[proje]; if (!t) return '';
+    if (!document.getElementById('kplStil')) {
+      var st = document.createElement('style'); st.id = 'kplStil';
+      st.textContent = '.kpl-rz{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:9px 12px 10px;background:linear-gradient(0deg,rgba(8,16,36,.88),rgba(8,16,36,.55));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:#fff;font:700 12.5px/1.2 Figtree,Arial,sans-serif;text-align:left}' +
+        '.kpl-rz .t{display:flex;justify-content:space-between;gap:8px}.kpl-rz .t i{font-style:normal;opacity:.8;font-weight:600}' +
+        '.kpl-rz .p{height:5px;border-radius:5px;background:rgba(255,255,255,.25);margin-top:7px;overflow:hidden}.kpl-rz .p b{display:block;height:100%;background:#e9a23b;border-radius:5px}' +
+        '.kpl-rz.ok .p b,.kpl-rz.hz .p b{background:#34d399}:has(>.kpl-rz){position:relative}:has(>.kpl-rz)>.kch,:has(>.kpl-rz)>.chip{display:none}';
+      document.head.appendChild(st);
+    }
+    if (t === 'ok' || t === 'hz') return '<div class="kpl-rz ' + t + '"><div class="t"><span>' + (t === 'ok' ? '✓ Teslim edildi' : '🔑 Taşınmaya hazır') + '</span></div><div class="p"><b style="width:100%"></b></div></div>';
+    var m = t.split('-'), b = new Date(), ay = Math.max(0, (+m[0] - b.getFullYear()) * 12 + (+m[1] - 1 - b.getMonth()));
+    var yuzde = Math.max(8, Math.min(95, 100 - ay / 30 * 100));
+    return '<div class="kpl-rz yk"><div class="t"><span>🔑 Anahtar teslim: ' + AY[+m[1] - 1] + ' ' + m[0] + '</span><i>' + (ay ? ay + ' ay' : 'bu ay') + '</i></div><div class="p"><b style="width:' + yuzde + '%"></b></div></div>';
+  }
+  window.KPL = { liste: liste, blokSira: blokSira, rozet: rozet, FIRMA: FIRMA, PROJE: PROJE, TESLIM: TESLIM };
 })();

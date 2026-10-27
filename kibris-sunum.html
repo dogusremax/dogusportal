@@ -1710,9 +1710,9 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
       br.sort(function(a,b){return a.proje.localeCompare(b.proje,'tr');});
       var r=pr.concat(br);
       $k('ktG').innerHTML=r.length?r.map(function(p){var m=M[p.proje]||[''];
-        if(brosur(p))return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch ktn2">Tanıtım</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc([bol(p),p.uniteMix].filter(Boolean).join(' · ')||'Kuzey Kıbrıs')+'</div>'+
+        if(brosur(p))return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch ktn2">Tanıtım</span>'+KPL.rozet(p.proje)+'</div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc([bol(p),p.uniteMix].filter(Boolean).join(' · ')||'Kuzey Kıbrıs')+'</div>'+
           '<div class="kpr"><div><small>Başlangıç</small><b>'+(minF(p)?para(minF(p)):'—')+'</b></div><i>Bilgi ve katalog →</i></div></div></button>';
-        return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch">Satışta</span></div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc(bol(p))+'</div>'+
+        return '<button class="ktk" data-i="'+p._i+'"><div class="kcv" style="'+kapak(p)+'">'+bd(p)+'<span class="kch">Satışta</span>'+KPL.rozet(p.proje)+'</div><div class="kin"><h4>'+esc(p.proje)+'</h4><div class="kmt">'+esc(bol(p))+'</div>'+
           '<div class="kpr"><div><small>Başlangıç</small><b>'+para(minF(p,p._e))+'</b></div><i>'+p._e.length+' ünite</i></div></div></button>';}).join('')
         :'<div class="ktn">Bu süzgeçlere uygun proje bulunamadı.</div>';
     }
