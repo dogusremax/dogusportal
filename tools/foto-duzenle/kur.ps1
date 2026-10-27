@@ -16,7 +16,9 @@ if ($sha -ne $PROMPT_SHA) { throw "prompt.txt Umut'un promptuyla birebir aynı d
 Copy-Item -Force $Prompt (Join-Path $KOK 'prompt.txt')
 
 $eylem = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$KOK\isci.ps1`""
-$tetik = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
+# Oturum açılınca + her 5 dakikada bir (kapanmışsa yeniden başlar; zaten çalışıyorsa yeni kopya hemen çıkar)
+$tetik = @((New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"),
+           (New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) -RepetitionInterval (New-TimeSpan -Minutes 5)))
 $ayar = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName 'DogusFoto Isci' -Action $eylem -Trigger $tetik -Settings $ayar -Description 'RE/MAX Doğuş Fotoğraf Düzenle işçisi (dogusportal.com/foto-duzenle.html)' -Force | Out-Null
 

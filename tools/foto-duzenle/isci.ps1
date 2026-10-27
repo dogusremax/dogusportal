@@ -300,14 +300,33 @@ function IsIsle($is) {
 if ($Foto) { exit (TekFoto $Foto $Cikti) }
 
 # ---------------- ana döngü ----------------
+# İş sürerken Windows uykuya geçmesin (ES_CONTINUOUS | ES_SYSTEM_REQUIRED); iş bitince serbest
+Add-Type -Namespace DogusFoto -Name Guc -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);'
+# Kendini güncelle (Umut onayladı, 2026-10-27): dogusportal'daki yeni sürüm sözdizimi temizse üzerine yazar ve çıkar; görev 5 dk içinde yenisini başlatır
+function Guncelle {
+  try {
+    $yeni = Join-Path $KOK 'isci.yeni.ps1'
+    (New-Object Net.WebClient).DownloadFile("https://dogusportal.com/tools/foto-duzenle/isci.ps1?cb=$([DateTime]::UtcNow.Ticks)", $yeni)
+    $eski = Join-Path $KOK 'isci.ps1'
+    if ((Get-FileHash $yeni).Hash -eq (Get-FileHash $eski).Hash) { Remove-Item $yeni; return $false }
+    $h = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($yeni, [ref]$null, [ref]$h)
+    if ($h.Count) { Log 'güncelleme atlandı: sözdizimi hatası'; Remove-Item $yeni; return $false }
+    Move-Item -Force $yeni $eski; Log 'işçi güncellendi, yeniden başlıyor'; return $true
+  } catch { return $false }
+}
 $kilit = New-Object Threading.Mutex($false, 'Local\DogusFotoIsci')
 if (-not $kilit.WaitOne(0)) { exit 0 }
 Log 'işçi başladı'
+$sonGuncelleme = Get-Date
 while ($true) {
   try {
     $is = Servis @{ action = 'fdSiradaki' }
-    if ($is['success'] -and $is['is']) { ChromeAc; IsIsle $is }
+    if ($is['success'] -and $is['is']) {
+      [void][DogusFoto.Guc]::SetThreadExecutionState([uint32]'0x80000001')
+      try { ChromeAc; IsIsle $is } finally { [void][DogusFoto.Guc]::SetThreadExecutionState([uint32]'0x80000000') }
+    }
   } catch { Log ('hata: ' + $_.Exception.Message) }
+  if (-not $TekSefer -and ((Get-Date) - $sonGuncelleme).TotalMinutes -ge 30) { $sonGuncelleme = Get-Date; if (Guncelle) { $kilit.ReleaseMutex(); exit 0 } }
   if ($TekSefer) { break }
   Start-Sleep -Seconds 30
 }
