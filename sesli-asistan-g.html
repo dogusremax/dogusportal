@@ -121,6 +121,15 @@ function seslendir(metin) {
     } finally { if (k === kusak && bekleyen > 0 && (!j || !j.ok)) bekleyen--; }
   });
 }
+/* Açılış cümlesi hep aynı: stüdyo sesiyle önceden kaydedildi (assets/ses-ornek/acilis-sadaltager.mp3), beklemeden çalınır. */
+async function acilisCal(ilk) {
+  const k = kusak; bekleyen++;
+  try {
+    const r = await fetch('assets/ses-ornek/acilis-sadaltager.mp3?cb=' + Date.now());
+    const buf = await cikisCtx.decodeAudioData(await r.arrayBuffer());
+    if (k !== kusak) return; bekleyen--; calBuf(buf);
+  } catch (e) { if (k === kusak) { bekleyen--; seslendir(ilk); } }
+}
 function parcaEkle(t) {
   parca += t;
   let m; while ((m = /^([\s\S]*?[.?!…])(\s+)/.exec(parca))) { seslendir(m[1]); parca = parca.slice(m[0].length); }
@@ -136,7 +145,7 @@ function baglan(url, token, setup, ilk) {
       const m = JSON.parse(typeof ev.data === 'string' ? ev.data : await ev.data.text());
       if (m.setupComplete) {
         hazir = true; coz(s);
-        if (STUDYO) { acilisAtla = true; seslendir(ilk); }
+        if (STUDYO) { acilisAtla = true; acilisCal(ilk); }
         s.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: '(Telefon açıldı, arayan hatta. Açılış cümlesini aynen söyle: "' + ilk + '")' }] }], turnComplete: true } }));
         return;
       }
