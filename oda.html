@@ -146,7 +146,7 @@ main{padding:0 16px}
     <div class="ikon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><circle cx="15" cy="12" r="1"/></svg></div>
     <h1 class="disp">Oda Rezervasyon</h1>
     <p>Danışman PIN'inle giriş yap</p>
-    <input id="pinGir" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <input id="pinGir" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••">
     <div class="hata" id="girisHata"></div>
     <button class="ana" id="girisBtn" onclick="girisYap()">Giriş</button>
   </div>
@@ -188,7 +188,7 @@ main{padding:0 16px}
 
 <script>
 /* Apps Script /exec adresi. Boşken sayfa önizleme modunda çalışır. */
-var API = '';
+var API = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';   // Danışman Takip (OdaRezervasyon.js)
 
 var ODALAR = ['Toplantı Odası', 'Nöbet Odası'];
 var SAAT_BAS = '09:00', SAAT_BIT = '20:00', ADIM = 30, GUN_SAYISI = 14;
@@ -199,7 +199,7 @@ var GUN_UZUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'
 var AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 
 /* Önizleme modunda kullanılan PIN listesi (canlıda kontrol sunucuda yapılır) */
-var ONIZLEME_KISILER = {'1520':'Umut Tokkuş','1111':'Deneme Danışman','2222':'Deneme Danışman 2'};
+var ONIZLEME_KISILER = {'1111':'Deneme Danışman','2222':'Deneme Danışman 2'};
 
 var D = { pin:'', kisi:'', broker:false, oda:ODALAR[0], tarih:'', liste:[], sec:null };
 
@@ -238,7 +238,7 @@ function onizlemeIstek(action,v){
     var kisi=ONIZLEME_KISILER[D.pin||v.pin];
     if(action==='liste') return res({ok:true,liste:onizlemeVeri.slice()});
     if(!kisi) return res({ok:false,hata:'Hatalı PIN'});
-    if(action==='giris') return res({ok:true,kisi:kisi,broker:(v.pin||D.pin)==='1520'});
+    if(action==='giris') return res({ok:true,kisi:kisi,broker:false});
     if(action==='ekle'){
       var c=cakisiyorMu(onizlemeVeri,v.oda,v.tarih,v.bas,v.bit);
       if(c) return res({ok:false,hata:'Bu saat az önce doldu: '+c.bas+'–'+c.bit+' '+c.kisi,liste:onizlemeVeri.slice()});
@@ -248,7 +248,7 @@ function onizlemeIstek(action,v){
     if(action==='iptal'){
       var r=onizlemeVeri.filter(function(x){return x.id===v.id;})[0];
       if(!r) return res({ok:false,hata:'Rezervasyon bulunamadı'});
-      if(r.kisi!==kisi && D.pin!=='1520') return res({ok:false,hata:'Sadece kendi rezervasyonunu iptal edebilirsin'});
+      if(r.kisi!==kisi) return res({ok:false,hata:'Sadece kendi rezervasyonunu iptal edebilirsin'});
       onizlemeVeri=onizlemeVeri.filter(function(x){return x.id!==v.id;});
       return res({ok:true,liste:onizlemeVeri.slice()});
     }
@@ -261,9 +261,9 @@ function istek(action,v){
   if(!API) return onizlemeIstek(action,v);
   var kes=new AbortController(), sayac=setTimeout(function(){kes.abort();},25000);
   var p = action==='liste'
-    ? fetch(API+'?bas='+bugun(),{method:'GET',redirect:'follow',signal:kes.signal})
+    ? fetch(API+'?action=odaListe&bas='+bugun(),{method:'GET',redirect:'follow',signal:kes.signal})
     : fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify(Object.assign({action:action,pin:D.pin},v)),redirect:'follow',signal:kes.signal});
+        body:JSON.stringify(Object.assign({action:'oda',islem:action,pin:D.pin},v)),redirect:'follow',signal:kes.signal});
   return p.then(function(r){ return r.text(); }).then(function(t){
     clearTimeout(sayac);
     try{ return JSON.parse(t); }catch(e){ return {ok:false,hata:'Sunucudan beklenmeyen cevap'}; }
@@ -288,7 +288,9 @@ function girisYap(pin){
   });
 }
 function cikis(){ sakla('oda_pin',null); D.pin=''; $('pinGir').value=''; $('uygulama').classList.add('gizli'); $('girisEkrani').classList.remove('gizli'); }
-$('pinGir').addEventListener('keyup',function(e){ if(e.key==='Enter'||this.value.length===4) girisYap(); });
+/* Danışman PIN'i 4, broker PIN'i 6 hane: 4 hanede kısa bekleyip devam yazılmadıysa girer */
+var pinBekle=null;
+$('pinGir').addEventListener('keyup',function(e){ clearTimeout(pinBekle); var v=this.value; if(e.key==='Enter'||v.length===6) return girisYap(); if(v.length===4) pinBekle=setTimeout(function(){ if($('pinGir').value.length===4) girisYap(); },900); });
 
 /* ---------- Veri ---------- */
 var yukleniyor=false;
