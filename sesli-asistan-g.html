@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Sesli Asistan (Gemini) · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  .rozet{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:#3a2a00;color:#ffcf5c}
+  main{max-width:520px;margin:28px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:14px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  input:focus{border-color:#FB5160}
+  .tus{width:170px;height:170px;border-radius:50%;border:0;margin:14px auto 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+       background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff;font:800 20px 'Plus Jakarta Sans',sans-serif;cursor:pointer;
+       box-shadow:0 10px 40px rgba(220,28,46,.35);transition:transform .15s}
+  .tus small{font-size:12px;font-weight:600;opacity:.85}
+  .tus:disabled{opacity:.5}
+  .tus.acik{background:#111738;border:3px solid #FB5160}
+  .tus.konusuyor{animation:nabiz 1.1s ease-in-out infinite}
+  @keyframes nabiz{50%{transform:scale(1.06)}}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8);text-align:center}
+  .durum.hata{color:#ff8a95}
+  .dokum{display:flex;flex-direction:column;gap:8px}
+  .b{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+  .b.ofis{background:#111738;align-self:flex-start}
+  .b.arayan{background:#DC1C2E;align-self:flex-end}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .kart h2{font-size:18px;font-weight:800}
+  td{padding:4px 0;font-size:14px;vertical-align:top}
+  td:first-child{color:rgba(255,255,255,.55);width:110px;font-size:13px}
+  .not{font-size:12px;color:rgba(255,255,255,.5);text-align:center}
+</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Sesli asistan · Sadaltager</h1><span class="rozet">TEST</span></div>
+<main>
+  <div id="pinKutu">
+    <label for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  </div>
+  <button class="tus" id="tus"><span id="tusYazi">Konuş</span><small id="tusAlt">ofisi arıyormuş gibi</small></button>
+  <p id="durum" class="durum">Müşteri gibi konuşun. Bitince "Bitir"e basın; özet WhatsApp'ınıza gelir. Müşteri Takip'e yazılmaz.</p>
+  <div class="dokum" id="dokum"></div>
+  <div id="sonuc"></div>
+  <p class="not">Mikrofon izni istenirse "İzin ver" deyin. Kulaklıksız denemede telefonun hoparlörü kısık olsun.</p>
+</main>
+<script type="module">
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const WS = ['v1beta', 'v1alpha'].map(v => 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.' + v + '.GenerativeService.BidiGenerateContentConstrained?access_token=');
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) });
+  return r.json();
+}
+try { const p = sessionStorage.getItem('sesliPin'); if (p) $('pin').value = p; } catch (e) {}
+function tus(yazi, alt, sinif) { $('tusYazi').textContent = yazi; $('tusAlt').textContent = alt; $('tus').className = 'tus ' + (sinif || ''); }
+
+/* Döküm: Gemini sözleri parça parça gönderir; aynı kişinin parçaları tek balonda birleşir. */
+let satirlar = [], sonBalon = null, sonRol = '';
+function yaz(rol, parca) {
+  if (!parca) return;
+  if (rol !== sonRol || !sonBalon) {
+    sonBalon = document.createElement('div'); sonBalon.className = 'b ' + rol; $('dokum').appendChild(sonBalon);
+    satirlar.push({ rol, metin: '' }); sonRol = rol;
+  }
+  satirlar[satirlar.length - 1].metin += parca;
+  sonBalon.textContent = satirlar[satirlar.length - 1].metin;
+  sonBalon.scrollIntoView({ block: 'end', behavior: 'smooth' });
+}
+
+/* Mikrofon: 16 kHz, 16 bit PCM parçalar. Hoparlör: 24 kHz PCM sırayla çalınır; araya girilirse kuyruk boşaltılır. */
+const ISLEMCI = `class P extends AudioWorkletProcessor{constructor(){super();this.b=[]}process(i){const c=i[0][0];if(c){for(let k=0;k<c.length;k++)this.b.push(c[k]);if(this.b.length>=1600){const o=new Int16Array(this.b.length);for(let k=0;k<this.b.length;k++){const s=Math.max(-1,Math.min(1,this.b[k]));o[k]=s<0?s*32768:s*32767}this.port.postMessage(o.buffer,[o.buffer]);this.b=[]}}return true}}registerProcessor('p',P);`;
+let ws = null, mic = null, girisCtx = null, cikisCtx = null, siradaki = 0, kaynaklar = [], bitiyor = false, kapatIstendi = false, basZaman = 0, model = '';
+const b64 = buf => { let s = ''; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+function cal(veri) {
+  const ham = atob(veri), n = ham.length >> 1, f = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let v = ham.charCodeAt(2 * i) | (ham.charCodeAt(2 * i + 1) << 8); if (v >= 32768) v -= 65536; f[i] = v / 32768; }
+  const buf = cikisCtx.createBuffer(1, n, 24000); buf.copyToChannel(f, 0);
+  const k = cikisCtx.createBufferSource(); k.buffer = buf; k.connect(cikisCtx.destination);
+  siradaki = Math.max(siradaki, cikisCtx.currentTime + 0.05); k.start(siradaki); siradaki += buf.duration;
+  kaynaklar.push(k); k.onended = () => { kaynaklar = kaynaklar.filter(x => x !== k); if (!kaynaklar.length && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); if (kapatIstendi) bitti(); } };
+  tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…');
+}
+function sustur() { kaynaklar.forEach(k => { try { k.stop(); } catch (e) {} }); kaynaklar = []; siradaki = 0; }
+
+function baglan(url, token, setup, ilk) {
+  return new Promise((coz, red) => {
+    const s = new WebSocket(url + encodeURIComponent(token)); let hazir = false;
+    s.onopen = () => s.send(JSON.stringify({ setup }));
+    s.onerror = () => { if (!hazir) red(new Error('bağlantı kurulamadı')); };
+    s.onclose = e => { if (!hazir) red(new Error('bağlantı kapandı ' + e.code + ' ' + e.reason)); else if (!bitiyor) { durum('Bağlantı kapandı: ' + (e.reason || e.code), 'hata'); bitti(); } };
+    s.onmessage = async ev => {
+      const m = JSON.parse(typeof ev.data === 'string' ? ev.data : await ev.data.text());
+      if (m.setupComplete) {
+        hazir = true; coz(s);
+        s.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: '(Telefon açıldı, arayan hatta. Açılış cümlesini aynen söyle: "' + ilk + '")' }] }], turnComplete: true } }));
+        return;
+      }
+      const c = m.serverContent;
+      if (c) {
+        if (c.interrupted) sustur();
+        if (c.inputTranscription && c.inputTranscription.text) yaz('arayan', c.inputTranscription.text);
+        if (c.outputTranscription && c.outputTranscription.text) yaz('ofis', c.outputTranscription.text);
+        ((c.modelTurn || {}).parts || []).forEach(p => { if (p.inlineData && /audio/.test(p.inlineData.mimeType || 'audio')) cal(p.inlineData.data); });
+      }
+      if (m.toolCall) {
+        const fc = m.toolCall.functionCalls || [];
+        s.send(JSON.stringify({ toolResponse: { functionResponses: fc.map(f => ({ id: f.id, name: f.name, response: { sonuc: 'kapatılıyor' } })) } }));
+        if (fc.some(f => f.name === 'gorusmeyi_bitir')) { kapatIstendi = true; if (!kaynaklar.length) setTimeout(bitti, 800); }
+      }
+      if (m.goAway) durum('Oturum süresi doluyor.');
+    };
+  });
+}
+
+async function basla() {
+  const pin = $('pin').value.trim();
+  if (!pin) return durum('PIN girin.', 'hata');
+  $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = ''; satirlar = []; sonBalon = null; sonRol = ''; kapatIstendi = false;
+  durum('Asistan hazırlanıyor…');
+  try {
+    mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    girisCtx = new AudioContext({ sampleRate: 16000 }); cikisCtx = new AudioContext({ sampleRate: 24000 });
+    await cikisCtx.resume();
+    const j = await servis({ action: 'sesliAsistan', islem: 'gemini_baslat', pin });
+    if (!j.ok) throw new Error(j.error + (j.detay ? ' (' + j.detay + ')' : ''));
+    try { sessionStorage.setItem('sesliPin', pin); } catch (e) {}
+    $('pinKutu').style.display = 'none'; model = j.model;
+    let son;
+    for (const u of WS) { try { ws = await baglan(u, j.token, j.setup, j.ilk); break; } catch (e) { son = e; } }
+    if (!ws) throw son;
+    basZaman = Date.now();
+    await girisCtx.audioWorklet.addModule(URL.createObjectURL(new Blob([ISLEMCI], { type: 'application/javascript' })));
+    const dugum = new AudioWorkletNode(girisCtx, 'p');
+    dugum.port.onmessage = e => { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=16000', data: b64(e.data) } } })); };
+    girisCtx.createMediaStreamSource(mic).connect(dugum);
+    tus('Bitir', 'bağlandı', 'acik');
+  } catch (e) {
+    durum(/Permission|NotAllowed/i.test(String(e)) ? 'Mikrofon izni verilmedi.' : 'Hata: ' + e.message, 'hata');
+    kapat();
+  }
+  $('tus').disabled = false;
+}
+
+function kapat() {
+  try { if (ws) ws.close(); } catch (e) {} ws = null;
+  try { mic && mic.getTracks().forEach(t => t.stop()); } catch (e) {} mic = null;
+  try { girisCtx && girisCtx.close(); } catch (e) {} girisCtx = null;
+  sustur(); try { cikisCtx && cikisCtx.close(); } catch (e) {} cikisCtx = null;
+}
+
+async function bitti() {
+  if (bitiyor) return; bitiyor = true;
+  kapat();
+  tus('…', 'özet hazırlanıyor'); $('tus').disabled = true;
+  durum('Görüşme bitti. Özet çıkarılıyor, WhatsApp\'ınıza gönderiliyor…');
+  try {
+    const j = await servis({ action: 'sesliAsistan', islem: 'gemini_bitti', pin: $('pin').value.trim(), satirlar, sureMs: Date.now() - basZaman, model });
+    if (!j.ok) durum(j.error || 'Özet çıkarılamadı.', 'hata');
+    else if (j.bos) durum('Konuşma algılanmadı. Tekrar deneyin.', 'hata');
+    else {
+      const v = j.alanlar || {};
+      durum(j.bildirim ? 'Tamam: ' + j.bildirim + '.' : 'Tamam.');
+      $('sonuc').innerHTML = '<div class="kart"><h2>' + esc(j.kisa) + '</h2><table>' +
+        [['Ad', v.ad], ['Tip', v.tip], ['Talep', v.talep], ['Site/etap', v.bolge], ['Bütçe', v.butce], ['Oda', v.oda],
+         ['Telefon', j.tel], ['Sıcaklık', v.sicaklik], ['Danışman', j.danisman + ' (' + j.danismanNeden + ')'], ['Özet', v.ozet], ['Sonraki adım', v.sonraki_adim]]
+          .filter(r => r[1]).map(r => '<tr><td>' + r[0] + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div>';
+    }
+  } catch (e) { durum('Özet alınamadı: ' + e.message, 'hata'); }
+  bitiyor = false;
+  tus('Konuş', 'yeniden dene'); $('tus').disabled = false;
+}
+
+$('tus').onclick = () => ws ? bitti() : basla();
+</script>
+</body>
+</html>
