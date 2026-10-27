@@ -20,7 +20,7 @@ def oda(s):
             m=re.search(r'(\d+)\s*$',s);return v+((' '+m.group(1)) if m and m.group(1)!='1' else '')
     return s
 # sahne adı -> (proje, görünüm); listede olmayan sahne atlanır
-# Not: 'Courtyard Platinum' sahnesi yeni proje; COURT_YARD/COURTYARD sahneleri Long Beach'teki eski Courtyard sitesi (ayrı yer)
+# Not: 3DVista'daki 'Courtyard Platinum' sahnesi eski Courtyard sitesi; güncel görüntü 'Platinum'. Üretimden sonra platinum.py çalıştır.
 SAHNE={'LONG BEACH BIRDVIEW':('Long Beach','Havadan'),'Panorama':('Long Beach','Havadan 2'),'long_beach_4':('Long Beach','Havadan 3'),
  'HAVUZ':('Long Beach','Havuz'),'CAFE':('Long Beach','Kafe'),'TERAS BAR':('Long Beach','Teras bar'),'FITNESS':('Long Beach','Fitness'),
  'salon1':('Long Beach','Örnek daire 1 · Salon'),'yatak1':('Long Beach','Örnek daire 1 · Yatak odası'),'banyo_new':('Long Beach','Örnek daire 1 · Banyo'),

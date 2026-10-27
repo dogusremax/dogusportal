@@ -85,6 +85,10 @@
   .tt button{flex:1 1 auto;height:28px;padding:0 9px;border-radius:9px;font-size:.66rem;font-weight:800;background:rgba(255,255,255,.08);border:1px solid var(--line);white-space:nowrap;transition:background .2s,border-color .2s}
   .tt button:hover{background:rgba(255,255,255,.14)}
   .tt button.on{background:var(--coral);border-color:var(--coral)}
+  /* aynı firmanın turları (Northernland: Blu, Casa del Mare) firma düğmesinin altında ikinci sırada */
+  .ta:empty{display:none}.ta{margin-top:-2px}
+  .ta button{height:24px;font-size:.62rem;font-weight:700;border-radius:999px}
+  .ta button.on{background:#fff;color:#0a1440;border-color:#fff}
   #pano{transition:opacity .35s}#pano.sw{opacity:.25}
   .rail.min{transform:translateX(calc(-100% - 24px))}
   .rtab{position:fixed;z-index:14;left:calc(16px + var(--sal));top:50%;margin-top:-23px;height:46px;padding:0 14px;border-radius:14px;display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -269,7 +273,7 @@
   <a class="logo glass" href="kibris.html" aria-label="Kıbrıs projeleri"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"></a>
 </header>
 
-<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="tt" id="tt" role="tablist" aria-label="Turlar"></div><div class="ls" id="rls"></div></nav>
+<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="tt" id="tt" role="tablist" aria-label="Turlar"></div><div class="tt ta" id="ta" role="tablist" aria-label="Projeler"></div><div class="ls" id="rls"></div></nav>
 <button class="rtab glass ui" id="rTab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>PROJELER</button>
 <button class="nav nx glass ui" id="nx" aria-label="Sonraki proje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
 
@@ -299,7 +303,7 @@
   <div class="sc">
     <div id="dBroker" hidden style="margin-bottom:6px"><h4>Sunum</h4><div class="dl"><a href="kibris-sunum.html">Kıbrıs sunumuna geç</a></div></div>
     <h4>Turlar</h4>
-    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=sapphire" data-tur="sapphire">Grand Sapphire</a><a href="?tur=casadelmare" data-tur="casadelmare">Casa del Mare</a><a href="?tur=dovec" data-tur="dovec">Döveç</a></div>
+    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=dovec" data-tur="dovec">Döveç</a><a href="?tur=sapphire" data-tur="sapphire" data-firma="Northernland">Northernland</a></div>
     <h4>Projeler</h4>
     <input class="srch" id="srch" type="search" placeholder="Proje ara" autocomplete="off">
     <div class="dg" id="dg"></div>
@@ -348,10 +352,10 @@
   // turlar: menüden seçilir (?tur=), her biri kendi veri dosyası ve görüntü kaynağıyla
   var TURLAR={kibris:{ad:'Noyanlar',js:'assets/kibris360/data.js?v=3',src:'https://360.noyanlar.com/media',ext:'webp'},
     esentepe:{ad:'Cyprus Constructions',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'},
-    dovec:{ad:'Döveç',js:'assets/kibris360/data-dovec.js?v=4',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
+    dovec:{ad:'Döveç',js:'assets/kibris360/data-dovec.js?v=5',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
     // tek projelik turlar: listede projeler yerine projenin bölümleri (havadan, havuzlar, daire tipleri) yer alır
-    sapphire:{ad:'Grand Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1},
-    casadelmare:{ad:'Casa del Mare',js:'assets/kibris360/data-casadelmare.js?v=1',src:'https://360.northernland.com/casadelmare/media',ext:'jpg',tek:1}};
+    sapphire:{ad:'Grand Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1,firma:'Northernland',alt:'Grand Sapphire Blu'},
+    casadelmare:{ad:'Casa del Mare',js:'assets/kibris360/data-casadelmare.js?v=1',src:'https://360.northernland.com/casadelmare/media',ext:'jpg',tek:1,firma:'Northernland',alt:'Casa del Mare (Esentepe)'}};
   var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
   document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
   // tur verisini sayfayı yenilemeden yükle (her tur kendi window.K360 dizisini yazar)
@@ -386,9 +390,13 @@
     if(TEK)$('tIdx').lang='en';else $('tIdx').removeAttribute('lang');
     $('dNote').textContent=TEK?'Görüntüler projenin 360° çekim ve görselleridir; temsilidir. Fiyat ve teslim bilgisi için danışmanınıza ulaşın.':dNote0;
     
-    [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);a.setAttribute('aria-selected',a.getAttribute('data-tur')===TUR);});
+    var F=T.firma;$('ta').innerHTML=F?Object.keys(TURLAR).filter(function(t){return TURLAR[t].firma===F;}).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].alt||TURLAR[t].ad)+'</button>';}).join(''):'';
+    [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){var on=a.hasAttribute('data-firma')?a.getAttribute('data-firma')===F:a.getAttribute('data-tur')===TUR;a.classList.toggle('on',on);a.setAttribute('aria-selected',on);});
     G=[];GI={};K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});}
-  $('tt').innerHTML=Object.keys(TURLAR).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
+  // aynı firmanın turları tek düğme (firma adı); tıklanınca firmanın ilk turu açılır, diğerleri alt sırada
+  var FG={};$('tt').innerHTML=Object.keys(TURLAR).map(function(t){var F=TURLAR[t].firma;if(F){if(FG[F])return '';FG[F]=1;
+    return '<button type="button" role="tab" data-tur="'+t+'" data-firma="'+esc(F)+'">'+esc(F)+'</button>';}
+    return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
   turAyarla();$('tName').textContent=TA;
   function th(i){return (K[i].s||SRC)+'/'+(K[i].t||'panorama_'+K[i].id+'_t.'+EXT);}
   function sName(i){return K[i].g+(K[i].v?' · '+K[i].v:'');}
@@ -458,7 +466,7 @@
       var once=function(){$('pano').classList.remove('sw');};setTimeout(once,400);
       toast(TA+' turu');setTimeout(function(){busy=false;},6000);});}
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-tur]');if(!a||e.metaKey||e.ctrlKey)return;
-    e.preventDefault();drawer(false);turaGec(a.getAttribute('data-tur'));});
+    e.preventDefault();drawer(false);if(a.getAttribute('data-firma')&&a.getAttribute('data-firma')===TURLAR[TUR].firma)return;turaGec(a.getAttribute('data-tur'));});
   function stepG(d){var g=GI[K[cur].g],n=G[(g+d+G.length)%G.length];fly(n.s[0]);}
 
   /* ---------- arayüz ---------- */
