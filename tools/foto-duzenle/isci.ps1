@@ -104,25 +104,35 @@ function Bekle($kosulJs, $saniye, $aralik) {
 }
 
 # ---------------- ChatGPT: tek fotoğraf ----------------
+$JS_EDITOR = "document.querySelector('#prompt-textarea, div.ProseMirror[contenteditable=true]')"
+$JS_GONDER = "document.querySelector('[data-testid=`"send-button`"], button[aria-label=`"Gönder`"], button[aria-label=`"Send prompt`"], button[aria-label=`"Send`"]')"
+# Yeni görsel: gönderimden önce sayfada olmayan, 512px+ ve promptun (kullanıcı mesajının) ARDINDAN gelen img
 $JS_DURUM = @'
 (() => {
-  const stop = !!document.querySelector('[data-testid="stop-button"]');
-  const turlar = document.querySelectorAll('[data-message-author-role="assistant"], article[data-turn="assistant"]');
-  const son = turlar[turlar.length - 1];
+  const stop = !!document.querySelector('[data-testid="stop-button"], button[aria-label*="durdur" i], button[aria-label*="Stop" i]');
+  const once = window.__fdOnce || new Set();
+  const w = document.createTreeWalker(document.querySelector('main') || document.body, NodeFilter.SHOW_TEXT);
+  let isaret = null, n;
+  while ((n = w.nextNode())) if (n.nodeValue.indexOf('PROFESYONEL OLARAK DÜZENLE') >= 0 && !n.parentElement.closest('[contenteditable]')) isaret = n;
   let imgs = [];
-  document.querySelectorAll('article[data-turn="assistant"] img, [data-message-author-role="assistant"] img, img[alt*="Generated"], img[alt*="Oluşturul"]').forEach(i => {
-    if (i.closest('[data-message-author-role="user"], article[data-turn="user"]')) return;
-    if (i.complete && i.naturalWidth >= 512 && !/blur/.test(getComputedStyle(i).filter)) imgs.push({ src: i.currentSrc || i.src, w: i.naturalWidth, h: i.naturalHeight });
+  document.querySelectorAll('main img, img').forEach(i => {
+    const src = i.currentSrc || i.src;
+    if (!src || once.has(src) || /^blob:/.test(src)) return;
+    if (i.closest('[data-message-author-role="user"], article[data-turn="user"], [contenteditable]')) return;
+    if (isaret && !(isaret.compareDocumentPosition(i) & Node.DOCUMENT_POSITION_FOLLOWING)) return;
+    if (i.complete && i.naturalWidth >= 512 && !/blur/.test(getComputedStyle(i).filter)) imgs.push({ src, w: i.naturalWidth, h: i.naturalHeight });
   });
   imgs.sort((a, b) => b.w * b.h - a.w * a.h);
-  return JSON.stringify({ stop, img: imgs[0] || null, metin: son ? son.innerText.slice(0, 300) : '' });
+  const turlar = document.querySelectorAll('[data-message-author-role="assistant"], article[data-turn="assistant"]');
+  const son = turlar[turlar.length - 1];
+  return JSON.stringify({ stop, img: imgs[0] || null, metin: son ? son.innerText.slice(0, 300) : '', isaret: !!isaret });
 })()
 '@
 function ChatGPTDuzenle($girdiYol, $cikisYol) {
   SekmeAc 'https://chatgpt.com/'
   try {
     [void](Cdp 'Page.enable' $null); [void](Cdp 'Runtime.enable' $null)
-    $hazir = Bekle "(() => { if (document.querySelector('#prompt-textarea') && !document.querySelector('[data-testid=`"login-button`"]')) return 'ok'; if (document.readyState === 'complete' && (document.querySelector('[data-testid=`"login-button`"]') || [...document.querySelectorAll('a,button')].some(b => /^(Oturum aç|Giriş yap|Log in)$/i.test(b.innerText.trim())))) return 'giris'; return ''; })()" 90 1000
+    $hazir = Bekle "(() => { if ($JS_EDITOR && !document.querySelector('[data-testid=`"login-button`"]') && ![...document.querySelectorAll('a,button')].some(b => /^(Oturum aç|Giriş yap|Log in)$/i.test(b.innerText.trim()))) return 'ok'; if (document.readyState === 'complete' && (document.querySelector('[data-testid=`"login-button`"]') || [...document.querySelectorAll('a,button')].some(b => /^(Oturum aç|Giriş yap|Log in)$/i.test(b.innerText.trim())))) return 'giris'; return ''; })()" 90 1000
     if ($hazir -eq 'giris') { throw 'GIRIS' }
     if (-not $hazir) { throw 'ChatGPT sayfası açılmadı' }
     Start-Sleep -Seconds 2
@@ -132,15 +142,16 @@ function ChatGPTDuzenle($girdiYol, $cikisYol) {
     [void](Cdp 'DOM.setFileInputFiles' @{ files = @($girdiYol); objectId = $r['result']['objectId'] })
     # 2) prompt: dosyadan okunur, olduğu gibi yazılır
     $prompt = [IO.File]::ReadAllText($PROMPT_YOL, [Text.Encoding]::UTF8)
-    [void](JS "(() => { const e = document.querySelector('#prompt-textarea'); e.focus(); return true; })()")
+    [void](JS "(() => { const e = $JS_EDITOR; e.focus(); return true; })()")
     [void](Cdp 'Input.insertText' @{ text = $prompt })
     Start-Sleep -Seconds 2
     # Editördeki metin dosyayla aynı mı (boşluk farkları hariç) kontrol et
-    $yazilan = JS "document.querySelector('#prompt-textarea').innerText"
+    $yazilan = JS "$JS_EDITOR.innerText"
     $norm = { param($s) ($s -replace '\s+', '') }
     if ((& $norm $yazilan) -ne (& $norm $prompt)) { throw 'Prompt editöre birebir yazılamadı' }
     # 3) yükleme bitince gönder
-    $gonder = Bekle "(() => { const b = document.querySelector('[data-testid=`"send-button`"]'); if (!b || b.disabled) return false; b.click(); return true; })()" 120 1500
+    # yükleme sürerken gönder tuşu kapalıdır; açılınca sayfadaki mevcut görseller not edilir ve basılır
+    $gonder = Bekle "(() => { const b = $JS_GONDER; if (!b || b.disabled || b.getAttribute('aria-disabled') === 'true') return false; window.__fdOnce = new Set([...document.images].map(i => i.currentSrc || i.src)); b.click(); return true; })()" 120 1500
     if (-not $gonder) { throw 'Gönder tuşu açılmadı (fotoğraf yüklenemedi)' }
     # 4) görseli bekle (en fazla 8 dk)
     Start-Sleep -Seconds 10
@@ -156,7 +167,16 @@ function ChatGPTDuzenle($girdiYol, $cikisYol) {
     # 5) tam çözünürlükte indir (sayfanın kendi oturumuyla)
     $src = $d['img']['src'].Replace('\', '\\').Replace("'", "\'")
     # PNG'ye çevrilerek alınır (webp gelirse Windows okuyamaz)
-    $b64 = JS "fetch('$src', { credentials: 'include' }).then(r => r.blob()).then(createImageBitmap).then(i => { const c = document.createElement('canvas'); c.width = i.width; c.height = i.height; c.getContext('2d').drawImage(i, 0, 0); return new Promise(ok => c.toBlob(ok, 'image/png')); }).then(b => new Promise(ok => { const f = new FileReader(); f.onload = () => ok(String(f.result).split(',')[1]); f.readAsDataURL(b); }))"
+    $PNG = "then(b => createImageBitmap(b)).then(i => { const c = document.createElement('canvas'); c.width = i.width; c.height = i.height; c.getContext('2d').drawImage(i, 0, 0); return new Promise(ok => c.toBlob(ok, 'image/png')); }).then(b => new Promise(ok => { const f = new FileReader(); f.onload = () => ok(String(f.result).split(',')[1]); f.readAsDataURL(b); }))"
+    $b64 = $null
+    try { $b64 = JS "fetch('$src', { credentials: 'include' }).then(r => r.blob()).$PNG" } catch { Log "  fetch olmadı: $($_.Exception.Message)" }
+    if (-not $b64) {
+      # sayfanın zaten yüklediği dosyayı Chrome'dan al
+      $cerceve = (Cdp 'Page.getFrameTree' $null)['frameTree']['frame']['id']
+      $ic = Cdp 'Page.getResourceContent' @{ frameId = $cerceve; url = $d['img']['src'] }
+      $ham = $ic['content']; if (-not $ic['base64Encoded']) { throw 'Görsel içeriği metin döndü' }
+      $b64 = JS "fetch('data:image/*;base64,$ham').then(r => r.blob()).$PNG"
+    }
     if (-not $b64) { throw 'Görsel indirilemedi' }
     [IO.File]::WriteAllBytes($cikisYol, [Convert]::FromBase64String($b64))
   } finally { SekmeKapat }
