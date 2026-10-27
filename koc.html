@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#FAFAFD">
+<meta name="robots" content="noindex">
+<title>Doğuş Koç · RE/MAX Doğuş</title>
+<script src="assets/broker.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAFD; --ink:#16171D; --ink-2:#41434F; --mute:#83869A;
+    --line:#E6E6EE; --card:#FFFFFF;
+    --amber:#F5A104;  --amber-bg:#FFF3DC;  --amber-bd:#FBDFA6;
+    --coral:#FF5A3C;  --coral-bg:#FFEEEA;  --coral-bd:#FFCFC4;
+    --indigo:#3355FF; --indigo-bg:#E8EDFF; --indigo-bd:#C3CFFF;
+    --green:#16A36A;  --green-bg:#E6F7EF;  --green-bd:#B5E6CF;
+    --violet:#7A4DFF; --violet-bg:#F0EAFF; --violet-bd:#D8C9FF;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button,select,input,textarea{font:inherit;color:inherit}
+  button{background:none;border:0;cursor:pointer;padding:0}
+  .gizli{display:none!important}
+  .wrap{max-width:560px;margin:0 auto}
+
+  /* ---- Giriş ---- */
+  #giris{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:40px 24px calc(40px + env(safe-area-inset-bottom))}
+  .logo-koc{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;
+    background:radial-gradient(circle at 25% 15%,#8FA4FF,var(--indigo) 60%,#1F3BD6);color:#fff;
+    box-shadow:0 16px 30px -14px var(--indigo),inset 0 2px 3px rgba(255,255,255,.35),inset 0 -3px 6px rgba(0,0,0,.2)}
+  .logo-koc svg{width:32px;height:32px}
+  .baslik{font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 72,'wdth' 96,'wght' 800;font-size:44px;line-height:.95;letter-spacing:-.035em;color:var(--ink)}
+  .baslik em{font-style:normal;color:var(--indigo)}
+  .alt{margin-top:12px;color:var(--mute);font-size:15px;font-weight:500;max-width:32ch}
+  .pin-kutu{margin-top:30px;display:flex;gap:10px}
+  .pin-kutu input{flex:1;min-width:0;height:56px;border-radius:18px;border:1.5px solid var(--line);background:#fff;padding:0 18px;font-size:22px;letter-spacing:.3em;outline:none}
+  .pin-kutu input:focus{border-color:var(--indigo)}
+  .btn-ana{height:56px;padding:0 22px;border-radius:18px;background:var(--ink);color:#fff;font-weight:700;font-size:15.5px;flex:none}
+  .btn-ana:disabled{opacity:.5}
+  .hata{min-height:22px;margin-top:10px;color:var(--coral);font-size:14px;font-weight:600}
+  .geri-link{display:inline-block;margin-top:26px;color:var(--mute);font-size:14px;font-weight:600;text-decoration:none}
+
+  /* ---- Ana ekran ---- */
+  #ana{padding:calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+  .ust{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .ust a,.ust button{color:var(--mute);font-size:13.5px;font-weight:600;text-decoration:none}
+  .selam{font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 72,'wdth' 96,'wght' 800;font-size:38px;line-height:1;letter-spacing:-.03em;margin:18px 4px 6px}
+  .selam span{color:var(--indigo)}
+  .selam-alt{margin:0 4px 22px;color:var(--mute);font-size:14.5px;font-weight:500}
+
+  .not{background:var(--amber-bg);border:1.5px solid var(--amber-bd);border-radius:22px;padding:15px 16px;margin-bottom:18px}
+  .not b{display:block;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:#A86A00;margin-bottom:5px}
+  .not p{margin:0;font-size:15px;color:var(--ink-2)}
+
+  .broker{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:14px 16px;margin-bottom:18px}
+  .broker label{display:block;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+  .broker select{width:100%;height:46px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);padding:0 12px;font-weight:600}
+  .broker .satir{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .chip{height:36px;padding:0 14px;border-radius:12px;background:var(--bg);border:1.5px solid var(--line);font-size:13.5px;font-weight:700;color:var(--ink-2)}
+  .chip.aktif{background:var(--indigo-bg);border-color:var(--indigo-bd);color:var(--indigo)}
+  .broker .durum{margin-top:8px;font-size:13px;color:var(--mute)}
+  .onizleme{margin-top:10px;font-size:13.5px;color:var(--ink-2);max-height:320px;overflow:auto}
+  .onizleme div{padding:8px 0;border-top:1px solid var(--line)}
+
+  .modlar{display:flex;flex-direction:column;gap:12px}
+  .mod{display:flex;gap:14px;align-items:center;text-align:left;border-radius:24px;padding:18px 16px;background:#fff;border:1.5px solid var(--line);transition:transform .12s}
+  .mod:active{transform:scale(.985)}
+  .mod .ik{width:52px;height:52px;border-radius:17px;flex:none;display:flex;align-items:center;justify-content:center}
+  .mod .ik svg{width:26px;height:26px}
+  .mod h3{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'opsz' 36,'wght' 750;font-size:20px;letter-spacing:-.02em}
+  .mod p{margin:2px 0 0;color:var(--mute);font-size:14px;font-weight:500;line-height:1.35}
+  .mod.m1 .ik{background:var(--indigo-bg);color:var(--indigo)}
+  .mod.m2 .ik{background:var(--coral-bg);color:var(--coral)}
+  .mod.m3 .ik{background:var(--green-bg);color:var(--green)}
+
+  .senaryolar{display:none;flex-wrap:wrap;gap:8px;padding:4px 2px 6px}
+  .senaryolar.acik{display:flex}
+  .senaryolar button{padding:10px 14px;border-radius:14px;background:var(--coral-bg);border:1.5px solid var(--coral-bd);color:#B5341C;font-weight:700;font-size:14px}
+  .dipnot{margin:22px 6px 0;color:var(--mute);font-size:12.5px;line-height:1.45}
+
+  /* ---- Sohbet ---- */
+  #sohbet{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+  .s-bas{flex:none;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid var(--line);background:rgba(250,250,253,.92);backdrop-filter:blur(10px)}
+  .s-bas .geri{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+  .s-bas .geri svg{width:22px;height:22px}
+  .s-bas .ad{flex:1;min-width:0}
+  .s-bas .ad b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:'wght' 750;font-size:18px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .s-bas .ad span{display:block;font-size:12.5px;color:var(--mute);font-weight:600}
+  .s-bas .yeni{height:36px;padding:0 12px;border-radius:12px;background:#ECEEF6;font-size:13px;font-weight:700;color:var(--ink-2)}
+  #akis{flex:1;overflow-y:auto;padding:16px 12px 8px;-webkit-overflow-scrolling:touch}
+  .msj{max-width:86%;margin:0 0 10px;padding:11px 14px;border-radius:20px;font-size:15.5px;line-height:1.5;word-wrap:break-word;white-space:normal}
+  .msj.koc{background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+  .msj.ben{margin-left:auto;background:var(--indigo);color:#fff;border-bottom-right-radius:6px}
+  .msj.koc p{margin:0 0 8px}.msj.koc p:last-child{margin:0}
+  .msj.koc ul,.msj.koc ol{margin:4px 0 8px;padding-left:20px}
+  .msj.koc li{margin:2px 0}
+  .msj.sahne{max-width:100%;background:transparent;border:0;color:var(--mute);font-size:13px;text-align:center;padding:4px 10px;font-style:italic}
+  .msj.hatam{background:var(--coral-bg);border:1px solid var(--coral-bd);color:#9C2A14;font-size:14px}
+  .yaziyor{display:inline-flex;gap:4px;padding:14px 16px}
+  .yaziyor i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:z 1.2s infinite}
+  .yaziyor i:nth-child(2){animation-delay:.15s}.yaziyor i:nth-child(3){animation-delay:.3s}
+  @keyframes z{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  .araclar{flex:none;display:flex;gap:8px;padding:6px 12px 0;overflow-x:auto}
+  .araclar button{flex:none;height:34px;padding:0 13px;border-radius:12px;background:#fff;border:1.5px solid var(--line);font-size:13.5px;font-weight:700;color:var(--ink-2)}
+  .giris-alan{flex:none;display:flex;gap:8px;align-items:flex-end;padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
+  .giris-alan textarea{flex:1;min-width:0;resize:none;max-height:140px;min-height:48px;border-radius:18px;border:1.5px solid var(--line);background:#fff;padding:12px 15px;font-size:16px;line-height:1.4;outline:none}
+  .giris-alan textarea:focus{border-color:var(--indigo)}
+  .gonder{width:48px;height:48px;border-radius:16px;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+  .gonder:disabled{opacity:.4}
+  .gonder svg{width:22px;height:22px}
+  .kalan{text-align:center;font-size:12px;color:var(--mute);padding:0 0 2px}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ -->
+<section id="giris" class="wrap">
+  <div class="logo-koc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M19 15l.8 1.9L21.5 18l-1.7.8L19 21l-.8-2.2L16.5 18l1.7-1.1z"/></svg></div>
+  <div class="baslik">Doğuş<br><em>Koç</em></div>
+  <div class="alt">Kendi rakamlarınla haftalık koçluk, arama provası ve aklına takılan her iş sorusu.</div>
+  <div class="pin-kutu">
+    <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN" autocomplete="off">
+    <button class="btn-ana" id="girBtn" onclick="girisYap()">Gir</button>
+  </div>
+  <div class="hata" id="girisHata"></div>
+  <div style="color:var(--mute);font-size:13px">Danışman Takip PIN'inle gir.</div>
+  <a class="geri-link" href="index.html">← Portal</a>
+</section>
+
+<!-- ANA -->
+<section id="ana" class="wrap gizli">
+  <div class="ust"><a href="index.html">← Portal</a><button onclick="cikis()">Çıkış</button></div>
+  <div class="selam">Merhaba <span id="ilkAd"></span></div>
+  <div class="selam-alt" id="selamAlt">Bugün neye çalışalım?</div>
+
+  <div class="broker gizli" id="brokerKutu">
+    <label>Koçu hangi danışman gözüyle dene?</label>
+    <select id="danSec" onchange="danismanSec(this.value)"><option value="">Seç…</option></select>
+    <div id="haftalikKutu" class="gizli">
+      <label style="margin-top:16px">Pazartesi haftalık koç notları</label>
+      <div class="satir">
+        <button class="chip" onclick="haftalik('onizle')">Önizle</button>
+        <button class="chip" id="hAcik" onclick="haftalik('acik')">Açık</button>
+        <button class="chip" id="hKapali" onclick="haftalik('kapali')">Kapalı</button>
+      </div>
+      <div class="durum" id="hDurum"></div>
+      <div class="onizleme" id="hOnizleme"></div>
+    </div>
+  </div>
+
+  <div class="not gizli" id="notKutu"><b>Bu haftanın notu · <span id="notTarih"></span></b><p id="notMetin"></p></div>
+
+  <div class="modlar" id="modlar">
+    <button class="mod m1" onclick="sohbetAc('performans')">
+      <div class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 16v-5"/><path d="M11 16V7"/><path d="M16 16v-8"/><path d="M20 4l-4 4"/></svg></div>
+      <div><h3>Performans koçum</h3><p>Bu haftanın rakamlarına bakalım, hedef koyalım.</p></div>
+    </button>
+    <button class="mod m2" onclick="document.getElementById('senaryolar').classList.toggle('acik')">
+      <div class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></div>
+      <div><h3>Arama provası</h3><p>Ben müşteri olayım, sen konuş. Sonunda puan veririm.</p></div>
+    </button>
+    <div class="senaryolar" id="senaryolar">
+      <button onclick="sohbetAc('prova','fsbo')">Sahibinden mal sahibi</button>
+      <button onclick="sohbetAc('prova','yetki')">Yetki sunumu</button>
+      <button onclick="sohbetAc('prova','dusuk')">Yüksek fiyat isteyen</button>
+      <button onclick="sohbetAc('prova','alici')">Kararsız alıcı</button>
+      <button onclick="sohbetAc('prova','kiraci')">Kiracı itirazı</button>
+      <button onclick="sohbetAc('prova','kibris')">Kıbrıs yatırımcısı</button>
+    </div>
+    <button class="mod m3" onclick="sohbetAc('soru')">
+      <div class="ik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
+      <div><h3>Sor bana</h3><p>Tapu, kira, Kıbrıs, uygulamalar, müşteriye ne denir…</p></div>
+    </button>
+  </div>
+  <div class="dipnot">Koç yapay zekâdır; yanılabilir. Oran, ücret ve özel durumlar için Umut Bey'e danış. Sohbetler ofis kaydında tutulur.</div>
+</section>
+
+<!-- SOHBET -->
+<section id="sohbet" class="gizli">
+  <div class="s-bas">
+    <button class="geri" onclick="sohbetKapat()" aria-label="Geri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="ad"><b id="sBaslik">Koç</b><span id="sAlt"></span></div>
+    <button class="yeni" onclick="yeniSohbet()">Yeni</button>
+  </div>
+  <div id="akis" class="wrap" style="width:100%"></div>
+  <div class="wrap" style="width:100%">
+    <div class="araclar gizli" id="provaArac">
+      <button onclick="gonder('[DEĞERLENDİR]')">🎯 Değerlendir</button>
+      <button onclick="gonder('[TEKRAR]')">↺ Baştan</button>
+    </div>
+    <div class="giris-alan">
+      <textarea id="mesaj" rows="1" placeholder="Yaz…" oninput="boyut(this)"></textarea>
+      <button class="gonder" id="gonderBtn" onclick="gonder()" aria-label="Gönder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="kalan" id="kalan"></div>
+  </div>
+</section>
+
+<script>
+var SERVIS = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+var MODLAR = {
+  performans: { baslik: 'Performans koçum', alt: 'Kendi rakamlarınla' },
+  prova: { baslik: 'Arama provası', alt: '' },
+  soru: { baslik: 'Sor bana', alt: 'Ofis bilgisi ve süreçler' }
+};
+var SENARYO_AD = { fsbo:'Sahibinden mal sahibi', yetki:'Yetki sunumu', dusuk:'Yüksek fiyat isteyen', alici:'Kararsız alıcı', kiraci:'Kiracı itirazı', kibris:'Kıbrıs yatırımcısı' };
+var S = { pin:'', ad:'', ilkAd:'', broker:'', danisman:'', mod:'', senaryo:'', mesajlar:[], bekliyor:false };
+
+function $(id){ return document.getElementById(id); }
+function ss(k,v){ try{ if(v===undefined) return sessionStorage.getItem(k); if(v===null) sessionStorage.removeItem(k); else sessionStorage.setItem(k,v); }catch(e){ return null; } }
+function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){ return null; } }
+
+function istek(govde){
+  return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify(govde)})
+    .then(function(r){ return r.text(); })
+    .then(function(t){ try{ return JSON.parse(t); }catch(e){ return { ok:false, error:'Sunucu beklenmedik cevap verdi.' }; } });
+}
+
+/* ---------- Giriş ---------- */
+function girisYap(pinVerilen){
+  var pin = pinVerilen || $('pin').value.trim();
+  if(!/^\d{4,6}$/.test(pin)){ $('girisHata').textContent='PIN 4-6 haneli olmalı.'; return; }
+  $('girBtn').disabled=true; $('girisHata').textContent='Kontrol ediliyor…';
+  istek({action:'koc',islem:'giris',pin:pin}).then(function(r){
+    $('girBtn').disabled=false;
+    if(!r.ok){ $('girisHata').textContent=r.error||'Giriş yapılamadı.'; $('pin').value=''; ss('koc_pin',null); return; }
+    $('girisHata').textContent='';
+    S.pin=pin; ss('koc_pin',pin);
+    if(r.danismanlar){ // broker
+      S.broker=r.broker; S.ilkAd = r.broker==='makbule'?'Makbule':'Umut';
+      var sel=$('danSec');
+      r.danismanlar.forEach(function(d){ var o=document.createElement('option'); o.value=d.id; o.textContent=d.ad; sel.appendChild(o); });
+      $('brokerKutu').classList.remove('gizli');
+      if(r.broker==='umut'){ $('haftalikKutu').classList.remove('gizli'); haftalik('durum'); }
+      $('modlar').style.opacity='.45'; $('modlar').style.pointerEvents='none';
+      $('selamAlt').textContent='Önce bir danışman seç, koçu onun gözünden dene.';
+      var son=ss('koc_dan'); if(son){ sel.value=son; danismanSec(son); }
+    } else {
+      S.ad=r.ad; S.ilkAd=r.ilkAd; S.danisman='';
+      if(r.not){ $('notTarih').textContent=r.not.tarih; $('notMetin').textContent=r.not.metin; $('notKutu').classList.remove('gizli'); }
+    }
+    $('ilkAd').textContent=S.ilkAd;
+    $('giris').classList.add('gizli'); $('ana').classList.remove('gizli');
+  }).catch(function(){ $('girBtn').disabled=false; $('girisHata').textContent='Bağlantı hatası, tekrar dene.'; });
+}
+$('pin').addEventListener('keydown',function(e){ if(e.key==='Enter') girisYap(); });
+function cikis(){ ss('koc_pin',null); ss('koc_dan',null); location.reload(); }
+
+function danismanSec(id){
+  S.danisman=id; ss('koc_dan',id||null);
+  var ok=!!id;
+  $('modlar').style.opacity=ok?'1':'.45'; $('modlar').style.pointerEvents=ok?'auto':'none';
+  $('selamAlt').textContent= ok ? ($('danSec').selectedOptions[0].textContent+' olarak deniyorsun.') : 'Önce bir danışman seç, koçu onun gözünden dene.';
+}
+
+function haftalik(islem){
+  $('hDurum').textContent = islem==='onizle' ? 'Notlar hazırlanıyor (1-2 dakika sürebilir)…' : islem==='durum' ? '' : 'Kaydediliyor…';
+  if(islem==='onizle') $('hOnizleme').innerHTML='';
+  istek({action:'kocAyar',pin:S.pin,haftalik:islem}).then(function(r){
+    if(!r.ok){ $('hDurum').textContent=r.error||'Olmadı.'; return; }
+    if(r.sonuc){
+      $('hDurum').textContent='Önizleme — kimseye gönderilmedi.';
+      $('hOnizleme').innerHTML = r.sonuc.map(function(x){ return '<div><b>'+esc(x.ad)+':</b> '+esc(x.not||x.atlandi||x.hata||'')+'</div>'; }).join('');
+      return;
+    }
+    hDurumYaz(r.haftalik);
+  }).catch(function(){ $('hDurum').textContent='Bağlantı hatası.'; });
+}
+function hDurumYaz(d){
+  $('hAcik').classList.toggle('aktif',d==='acik'); $('hKapali').classList.toggle('aktif',d!=='acik');
+  $('hDurum').textContent = d==='acik' ? 'Açık: her Pazartesi 09:47\'de danışmanlara bildirim gider.' : 'Kapalı: kimseye gönderilmiyor.';
+}
+
+/* ---------- Sohbet ---------- */
+function anahtar(){ return 'koc_s_' + (S.danisman||S.ad) + '_' + S.mod + (S.senaryo?'_'+S.senaryo:''); }
+function sohbetAc(mod, senaryo){
+  S.mod=mod; S.senaryo=senaryo||'';
+  $('sBaslik').textContent=MODLAR[mod].baslik;
+  $('sAlt').textContent= mod==='prova' ? SENARYO_AD[senaryo] : MODLAR[mod].alt;
+  $('provaArac').classList.toggle('gizli', mod!=='prova');
+  $('mesaj').placeholder = mod==='prova' ? 'Müşteriye ne diyorsun?' : mod==='soru' ? 'Sorunu yaz…' : 'Yaz…';
+  $('kalan').textContent='';
+  var eski=null; try{ eski=JSON.parse(ls(anahtar())||'null'); }catch(e){}
+  // Performans sohbeti günlük taze başlar (rakamlar değişir); diğerleri kaldığı yerden
+  var bugun=new Date().toISOString().slice(0,10);
+  S.mesajlar = (eski && eski.m && (mod!=='performans' || eski.g===bugun)) ? eski.m : [];
+  $('sohbet').classList.remove('gizli'); document.body.style.overflow='hidden';
+  ciz();
+  if(!S.mesajlar.length) koc();
+  else setTimeout(function(){ $('mesaj').focus(); },150);
+  history.pushState({sohbet:1},'');
+}
+function sohbetKapat(fromPop){ $('sohbet').classList.add('gizli'); document.body.style.overflow=''; if(!fromPop && history.state && history.state.sohbet) history.back(); }
+window.addEventListener('popstate',function(){ if(!$('sohbet').classList.contains('gizli')) sohbetKapat(true); });
+function yeniSohbet(){ if(S.bekliyor) return; if(S.mesajlar.length>1 && !confirm('Bu sohbet silinsin, yenisi başlasın mı?')) return; S.mesajlar=[]; kaydet(); ciz(); koc(); }
+function kaydet(){ ls(anahtar(), JSON.stringify({g:new Date().toISOString().slice(0,10), m:S.mesajlar.slice(-60)})); }
+
+function gonder(sabit){
+  if(S.bekliyor) return;
+  var t = sabit || $('mesaj').value.trim();
+  if(!t) return;
+  S.mesajlar.push({rol:'ben',metin:t});
+  if(!sabit){ $('mesaj').value=''; boyut($('mesaj')); }
+  kaydet(); ciz(); koc();
+}
+function koc(){
+  S.bekliyor=true; $('gonderBtn').disabled=true; ciz(true);
+  istek({action:'koc',islem:'sohbet',pin:S.pin,danisman:S.danisman,mod:S.mod,senaryo:S.senaryo,mesajlar:S.mesajlar})
+    .then(function(r){
+      S.bekliyor=false; $('gonderBtn').disabled=false;
+      if(!r.ok){ ciz(false, r.error||'Koç cevap veremedi.'); return; }
+      S.mesajlar.push({rol:'koc',metin:r.metin}); kaydet(); ciz();
+      $('kalan').textContent = (r.kalan!=null && r.kalan<=15) ? ('Bugün '+r.kalan+' mesaj hakkın kaldı') : '';
+    }).catch(function(){ S.bekliyor=false; $('gonderBtn').disabled=false; ciz(false,'Bağlantı hatası. Tekrar göndermek için mesajı yeniden yaz.'); });
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+/* Basit biçim: **kalın**, *eğik*, - madde, 1. madde, paragraflar */
+function bicim(t){
+  var satirlar=esc(t).split('\n'), html='', liste=null;
+  function kapat(){ if(liste){ html+='</'+liste+'>'; liste=null; } }
+  satirlar.forEach(function(s){
+    var m;
+    if((m=s.match(/^\s*[-•*]\s+(.*)/))){ if(liste!=='ul'){ kapat(); html+='<ul>'; liste='ul'; } html+='<li>'+m[1]+'</li>'; }
+    else if((m=s.match(/^\s*\d+[.)]\s+(.*)/))){ if(liste!=='ol'){ kapat(); html+='<ol>'; liste='ol'; } html+='<li>'+m[1]+'</li>'; }
+    else if(!s.trim()){ kapat(); }
+    else { kapat(); html+='<p>'+s.replace(/^#+\s*/,'')+'</p>'; }
+  });
+  kapat();
+  return html.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/(^|[^*])\*(?!\s)(.+?)\*/g,'$1<i>$2</i>');
+}
+function ciz(yaziyor, hataMetni){
+  var a=$('akis'), h='';
+  S.mesajlar.forEach(function(m){
+    if(m.rol==='ben'){
+      var t = m.metin==='[DEĞERLENDİR]' ? '🎯 Değerlendir' : m.metin==='[TEKRAR]' ? '↺ Baştan başla' : m.metin;
+      h+='<div class="msj ben">'+esc(t).replace(/\n/g,'<br>')+'</div>';
+    } else {
+      var metin=m.metin, sahne='';
+      var sm=metin.match(/^\s*\[(Senaryo:[^\]]+)\]\s*/i);
+      if(sm){ sahne=sm[1]; metin=metin.slice(sm[0].length); }
+      if(sahne) h+='<div class="msj sahne">'+esc(sahne)+'</div>';
+      h+='<div class="msj koc">'+bicim(metin)+'</div>';
+    }
+  });
+  if(yaziyor) h+='<div class="msj koc yaziyor"><i></i><i></i><i></i></div>';
+  if(hataMetni) h+='<div class="msj hatam">'+esc(hataMetni)+'</div>';
+  a.innerHTML=h;
+  requestAnimationFrame(function(){ a.scrollTop=a.scrollHeight; });
+}
+function boyut(el){ el.style.height='auto'; el.style.height=Math.min(140,el.scrollHeight)+'px'; }
+$('mesaj').addEventListener('keydown',function(e){ if(e.key==='Enter' && !e.shiftKey && window.matchMedia('(pointer:fine)').matches){ e.preventDefault(); gonder(); } });
+
+/* Açılışta: oturum varsa ya da portalda broker girişi yapılmışsa PIN sorma */
+(function(){
+  var p = ss('koc_pin') || (window.brokerPinAl && brokerPinAl()) || '';
+  if(p){ $('pin').value=p; girisYap(p); }
+  else setTimeout(function(){ $('pin').focus(); },200);
+})();
+</script>
+</body>
+</html>
