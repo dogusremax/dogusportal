@@ -125,6 +125,7 @@
   </div>
 
   <button class="gonder" id="gonderBtn" disabled><span>Gönder</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+  <p class="ipucu" id="neden" style="text-align:center;margin-top:-6px">Önce fotoğraf ekle.</p>
   <div id="ilerleme" hidden>
     <div class="cubuk"><i id="cubuk"></i></div>
     <p class="durum" id="durum"></p>
@@ -203,7 +204,10 @@ function ciz() {
   $('adetYazi').textContent = fotolar.length + ' fotoğraf seçildi';
   guncelle();
 }
-function guncelle() { $('gonderBtn').disabled = gonderiyor || !fotolar.length || !$('klasor').value.trim(); }
+function guncelle() {
+  $('gonderBtn').disabled = gonderiyor || !fotolar.length || !$('klasor').value.trim();
+  $('neden').textContent = gonderiyor ? '' : !fotolar.length ? 'Önce fotoğraf ekle.' : !$('klasor').value.trim() ? 'Gönder için klasör adını yaz.' : '';
+}
 
 /* ---------- gönder ---------- */
 function b64(blob) {
@@ -248,7 +252,7 @@ $('gonderBtn').onclick = async () => {
 };
 
 /* ---------- işler ---------- */
-const ETIKET = { sirada: 'Sırada', isleniyor: 'ChatGPT\'de', bitti: 'Hazır, Mac\'e iniyor', teslim: 'Masaüstünde', hata: 'Durdu' };
+const ETIKET = { sirada: 'Sırada (Windows bekleniyor)', isleniyor: 'ChatGPT\'de', bitti: 'Hazır, Mac\'e iniyor', teslim: 'Masaüstünde', hata: 'Durdu' };
 function once(t) {
   if (!t) return '—';
   const s = Math.round((Date.now() - t) / 1000);
