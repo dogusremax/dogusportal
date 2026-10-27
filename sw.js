@@ -32,20 +32,30 @@ self.addEventListener('push', event => {
     tag: d.etiket || undefined,
     renotify: !!d.etiket,   // aynı türden yeni bildirim de sesle uyarsın
     silent: false,
-    data: { link: d.link || '', bid: d.bid || '', kim: d.kim || '', hid: d.hid || '' }
+    data: { link: d.link || '', bid: d.bid || '', kim: d.kim || '', hid: d.hid || '',
+      baslik: d.baslik || d.title || '', metin: d.metin || d.body || '' }
   })]));
 });
 
+// Dış site linki (ör. sahibinden ilanı) iPhone'da ana ekran uygulamasından doğrudan açılmıyor, dokunuş boşa gidiyordu.
+// Bu yüzden önce portalda ac.html açılır: bildirimin kendisi + "İlanı aç" düğmesi + Bildirimlerim.
+function acilacak(d) {
+  const link = (d && d.link) || self.registration.scope;
+  let u; try { u = new URL(link, self.registration.scope); } catch (e) { return self.registration.scope; }
+  if (u.origin === self.location.origin) return u.href;
+  const q = new URLSearchParams({ u: u.href, b: (d && d.baslik) || '', m: (d && d.metin) || '', cb: Date.now() });
+  return new URL('ac.html?' + q, self.registration.scope).href;
+}
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const link = (event.notification.data && event.notification.data.link) || self.registration.scope;
-  event.waitUntil(Promise.all([iz('dokundu', event.notification.data), okundu(event.notification.data),
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      if (link === self.registration.scope) {
+  const d = event.notification.data || {};
+  const link = acilacak(d);
+  // Pencereyi hemen aç (iz/okundu istekleri beklenmez; iOS geç açılan pencereyi engelleyebiliyor)
+  const ac = link === self.registration.scope
+    ? self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
         const acik = list.find(c => c.url.startsWith(self.registration.scope));
-        if (acik) return acik.focus();
-      }
-      return self.clients.openWindow(link);
-    })
-  ]));
+        return acik ? acik.focus() : self.clients.openWindow(link);
+      })
+    : self.clients.openWindow(link);
+  event.waitUntil(Promise.all([ac.catch(() => {}), iz('dokundu', d), okundu(d)]));
 });
