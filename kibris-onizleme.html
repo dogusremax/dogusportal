@@ -2,7 +2,6 @@
 <html lang="tr" dir="ltr">
 <head>
 <meta charset="utf-8">
-<script>/* dogusportal.com/kibris.html -> kibrisburda.com (asıl adres). sync.sh curl ile çektiği için kibrisburda kopyasında çalışmaz. */if(/(^|\.)dogusportal\.com$/.test(location.hostname))location.replace("https://kibrisburda.com/"+location.search+location.hash);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CRGBP7JB7P"></script>
 <script>
@@ -12,8 +11,8 @@
   gtag('config', 'G-CRGBP7JB7P');
 </script>
 <meta name="theme-color" content="#050A30">
-<meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
 <title>Kuzey Kıbrıs'ta Satılık Konut Projeleri · RE/MAX Doğuş</title>
 <meta name="description" content="Kuzey Kıbrıs'ta satılık daire ve villa: Girne, İskele, Esentepe ve Karpaz'da denize yakın, sterlin bazlı projeler. RE/MAX Doğuş ile ücretsiz yatırım danışmanlığı.">
 <meta property="og:title" content="Denize karşı, sterlinle. · Kuzey Kıbrıs">
@@ -563,6 +562,13 @@ footer{padding-block:36px;font-size:.85rem;color:var(--muted)}
 footer .wrap{display:flex;flex-direction:column;gap:6px}
 footer b{color:var(--ink)}
 footer .telif{font-size:.72rem;line-height:1.5;opacity:.75}
+.kbr{padding-block:28px 8px}
+html:not([lang="tr"]) .kbr{display:none}
+.kbr ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.kbr a{height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);color:var(--ink);font-weight:600;font-size:.95rem;text-decoration:none;transition:border-color .2s,background .2s}
+.kbr a:hover{border-color:var(--gold,#E9C27A);background:rgba(255,255,255,.06)}
+.kbr a i{font-style:normal;color:var(--muted);flex:none}
+[dir="rtl"] .kbr a i{transform:scaleX(-1)}
 .mono{font-family:var(--f-mono)}
 
 /* ---------- sticky mobile bar ---------- */
@@ -1155,6 +1161,36 @@ html{overflow-x:hidden}
 .kr-r b{white-space:nowrap}
 .kr-c .kr-n{font-size:.8rem;color:var(--muted);margin:0}
 .kr-c .btn{margin-top:auto;align-self:flex-start;padding:10px 16px;font-size:.85rem;background:#003B95;color:#fff}
+/* ===== Golden Visa (oturma izni) ===== */
+.gv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:28px}
+.gv-g{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.gv-g h3{margin:0;font-size:1.15rem;display:flex;align-items:center;gap:10px}
+.gv-g h3 i{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sea-soft);color:var(--gold,var(--sun))}
+.gv-g>p{margin:-6px 0 0;font-size:.82rem;color:var(--muted)}
+.gv-t{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gv-c{border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.gv-c span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.gv-c b{font:800 2.6rem/1 var(--f-head,inherit);letter-spacing:-.03em;margin-top:6px}
+.gv-c b small{font-size:.95rem;font-weight:700;letter-spacing:0;margin-inline-start:6px;color:var(--muted)}
+.gv-c em{font-style:normal;font-size:.84rem;line-height:1.35;color:var(--ok,#3DBB82);margin-top:4px}
+.gv-c.inc em{color:var(--sun)}
+.gv-c.gv-hi{border-color:var(--gold,var(--sun));background:linear-gradient(160deg,rgba(233,194,122,.16),transparent 70%)}
+.gv-c.gv-hi b{color:var(--gold,var(--sun))}
+.gv-fx{font-size:.82rem;color:var(--muted);margin:12px 0 0}
+.gv-pts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin-top:32px}
+.gv-pts h3{margin:0 0 6px;font-size:1.02rem}
+.gv-pts p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.gv-w{margin-top:16px;display:grid;gap:14px}
+@media (min-width:860px){.gv-w{grid-template-columns:auto 1fr;align-items:center}}
+.gv-w .gv-n{display:flex;gap:18px;flex-wrap:wrap}
+.gv-w .gv-n div{display:flex;flex-direction:column}
+.gv-w .gv-n b{font:800 1.6rem/1.1 var(--f-head,inherit);white-space:nowrap}
+.gv-w .gv-n span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.gv-w h3{margin:0 0 6px;font-size:1.02rem}
+.gv-w p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.gv-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:28px}
+.gv-cta p{margin:0;font-weight:600}
+[lang="fa"] .gv-c span,[lang="fa"] .gv-w .gv-n span{letter-spacing:0;text-transform:none}
 .uc-box{margin-top:24px}
 .uc-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
 .uc-f label{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted)}
@@ -1255,43 +1291,9 @@ html{overflow-x:hidden}
 .alb-lb-tr{direction:ltr}
 /* Bölümler arası boşluk: tüm içerik bölümlerinde eşit ve dengeli */
 #forbes,#test,#prensip,#ayricalik,#gezi,#hakkimizda{padding-block:clamp(32px,3.5vw,48px)}
-
-/* değer artışı grafiği */
-.v2 .deger{padding-top:48px}
-.dg-box{margin-top:24px}
-.dg-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
-.dg-k div{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--line);padding-left:12px}
-.dg-k b{font-size:1.7rem;line-height:1.1;font-weight:800}
-.dg-k span{font-weight:600}
-.dg-k small{font-size:.74rem;color:var(--muted)}
-.dg-leg{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin-bottom:6px}
-.dg-leg i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-inline-end:6px;vertical-align:middle}
-.dg-svg{width:100%;height:auto;display:block;overflow:visible}
-.dg-g{stroke:var(--line);stroke-width:1}
-.dg-yl,.dg-xl{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
-.dg-anim path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.8s cubic-bezier(.45,0,.2,1)}
-.dg-anim .dg-girne path{transition-delay:.35s}.dg-anim .dg-iskele path{transition-delay:.6s}
-.dg-anim circle{opacity:0;transition:opacity .4s ease 1.6s}
-.dg-anim.go path{stroke-dashoffset:0}.dg-anim.go circle{opacity:1}
-.dg-pb{margin-top:32px;border-top:1px solid var(--line);padding-top:24px}
-.dg-pb h3{margin:0 0 4px;font-size:1.1rem}.dg-pb>p{margin:0 0 12px;font-size:.85rem;color:var(--muted)}
-.dg-r{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:4px 14px;align-items:center;padding:10px 0;border-top:1px dashed var(--line)}
-.dg-rh{display:flex;justify-content:space-between;gap:8px;font-size:.9rem}.dg-rh b{color:var(--sun);white-space:nowrap}
-.dg-bars{display:flex;flex-direction:column;gap:3px;min-width:0}
-.dg-bar{display:flex;align-items:center;gap:8px;min-width:0}
-.dg-bar i{display:block;height:9px;border-radius:5px;min-width:4px;flex:none;max-width:calc(100% - 84px)}
-.dg-bar small{font-size:.7rem;color:var(--muted);white-space:nowrap}
-.dg-pb .note{margin-top:14px}
-.dg-pb.dg-anim .dg-bar i{transform:scaleX(0);transform-origin:left;transition:transform 1s cubic-bezier(.45,0,.2,1)}
-[dir=rtl] .dg-pb.dg-anim .dg-bar i{transform-origin:right}
-.dg-pb.dg-anim.go .dg-bar i{transform:scaleX(1)}
-@media (max-width:560px){.dg-r{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){.dg-pb .dg-bar i{transition:none!important;transform:none!important}.dg-anim path,.dg-anim circle{transition:none!important;stroke-dashoffset:0!important;opacity:1!important}}
-
 </style>
 </head>
 <body class="v2">
-<div class="pv-ban" role="note"><b>ÖNİZLEME</b><a href="#/hesap/kira-oranlari">Kira oranları</a><a href="#/yasam/ucus">Uçak bileti</a><a href="#/hesap/deger-artisi">Değer artışı</a></div>
 <div class="cur" id="cur" aria-hidden="true"><span id="curtxt"></span></div>
 
 <!-- ======= KABUK: masaüstünde yan ray, mobilde üst bar + alt sekmeler ======= -->
@@ -1704,15 +1706,6 @@ html{overflow-x:hidden}
         <p class="note" data-kr="note"></p>
       </div>
     </section>
-    <section class="deger" id="deger-artisi">
-      <div class="wrap">
-        <span class="eyebrow" data-dg="e"></span>
-        <h2 data-dg="h"></h2>
-        <p class="lead" data-dg="l"></p>
-        <div class="panel dg-box" id="dg-box"></div>
-        <p class="note" data-dg="note"></p>
-      </div>
-    </section>
     <a class="next" href="#/masraf" data-go="masraf"><span class="next-k" data-nvt="next"></span><span class="next-t"><em>08</em><b data-nvt="masraf"></b></span><i aria-hidden="true">→</i></a>
   </div>
   <div class="view" data-view="masraf" hidden>
@@ -1750,6 +1743,14 @@ html{overflow-x:hidden}
   </div>
   <div class="view" data-view="surec" hidden>
     <header class="ph"><span class="ph-n">09</span><span class="ph-k"><b data-nvt="surec"></b><i>/ 11</i></span></header>
+    <section class="gvisa" id="golden-visa">
+      <div class="wrap">
+        <span class="eyebrow" data-gv="e"></span>
+        <h2 data-gv="h"></h2>
+        <p class="lead" data-gv="l"></p>
+        <div id="gv-box"></div>
+      </div>
+    </section>
     <section class="adimlar" id="adimlar">
       <div class="wrap">
         <span class="eyebrow" data-tl="e"></span>
@@ -1828,6 +1829,7 @@ html{overflow-x:hidden}
   </div>
 </section>
   </div>
+  <nav class="kbr" aria-label="Kuzey Kıbrıs rehberleri"><div class="wrap"><span class="eyebrow">Kuzey Kıbrıs rehberleri</span><ul><li><a href="https://kibrisburda.com/iskele-satilik-daire.html"><span>İskele'de satılık daire</span><i aria-hidden="true">→</i></a></li><li><a href="https://kibrisburda.com/kuzey-kibris-daire-fiyatlari.html"><span>Kuzey Kıbrıs daire fiyatları 2026</span><i aria-hidden="true">→</i></a></li><li><a href="https://kibrisburda.com/kuzey-kibris-tapu-masraflari.html"><span>Tapu ve alım masrafları</span><i aria-hidden="true">→</i></a></li><li><a href="https://kibrisburda.com/kuzey-kibris-oturma-izni.html"><span>Ev alarak oturma izni</span><i aria-hidden="true">→</i></a></li></ul></div></nav>
   <footer>
   <div class="wrap">
     <b>RE/MAX Doğuş · UMT Group Gayrimenkul Yatırım Danışmanlık</b>
@@ -1888,7 +1890,7 @@ tr:{
   s4_h:"Satın alma izni", s4_p:"Yabancı alıcılar için Bakanlar Kurulu izni başvurusu avukat aracılığıyla yapılır. Bu süreçte ödeme planınız devam eder.",
   s5_h:"Teslim ve tapu", s5_p:"Anahtar teslimi, ardından tapu devri. İsterseniz kiralama ve yönetim için yerel ortaklarımızla devam ediyoruz.",
   faq_e:"Sık sorulanlar", faq_h:"Kafanızdaki <em>soru işaretleri</em>",
-  q1_q:"Tapu türleri ne demek, hangisi güvenli?", q1_a:"Kuzey Kıbrıs'ta arazinin geçmişine göre farklı tapu türleri var: Türk koçanı (1974 öncesi Kıbrıslı Türk mülkü), eşdeğer koçan ve tahsis koçanı. Önerdiğimiz her projenin arazi tapu türünü yazılı olarak paylaşıyor, avukat kontrolünden geçiriyoruz.",
+  q1_q:"Tapu türleri ne demek, hangisi güvenli?", q1_a:"Kuzey Kıbrıs'ta arazinin geçmişine göre üç tapu türü var. Türk koçanı: 1974 öncesi Kıbrıslı Türk mülkü; en güvenli ve en değerli tür, yabancıya satışta sorun yok, fiyatı da diğerlerinden yüksek. Eşdeğer koçan: 1974 sonrası, güneyde mülk bırakan Kıbrıslı Türklere karşılık olarak devletin verdiği tapu; KKTC'de tam yasal, piyasada en yaygın tür ve yabancıya satışı serbest. Tahsis koçanı: devletin verdiği kullanım hakkıdır, mülkiyet devlette kalır; bu yüzden yatırım için önermiyoruz. Önerdiğimiz her projenin arazi tapu türünü yazılı olarak paylaşıyor, avukat kontrolünden geçiriyoruz.",
   q2_q:"Türk vatandaşı olarak kaç daire alabilirim?", q2_a:"KKTC mevzuatı TC vatandaşlarına diğer yabancılardan daha fazla konut edinme hakkı tanıyor. Sınırlar son yıllarda birkaç kez güncellendiği için, alım öncesi sizin durumunuza göre güncel sınırı teyit ediyoruz.",
   q3_q:"Ödemeyi hangi para birimiyle yapıyorum?", q3_a:"Projelerin büyük kısmı sterlin bazlı fiyatlanıyor ve sözleşmede belirtilen para birimiyle ödeniyor. Taksitler faizsizdir; kur farkı riski yalnızca sizin TL'den çevirdiğiniz anla sınırlı kalır.",
   q4_q:"Ek masraflar ne kadar tutar?", q4_a:"Damga vergisi, tapu harcı, KDV ve yabancı alıcı izin harcı gibi kalemler var. Her proje için kalem kalem masraf tablosunu PDF olarak gönderiyoruz.",
@@ -1957,7 +1959,7 @@ en:{
   s4_h:"Purchase permit", s4_p:"For foreign buyers, a lawyer applies for the Council of Ministers permit. Your payment plan continues in the meantime.",
   s5_h:"Handover and title deed", s5_p:"Key handover, then title deed transfer. If you wish, we continue with our local partners for letting and management.",
   faq_e:"FAQ", faq_h:"Your <em>questions</em>, answered",
-  q1_q:"What do the title deed types mean, and which is safe?", q1_a:"Title deeds in North Cyprus differ by the land's history: Turkish title (Turkish Cypriot property from before 1974), exchange title (eşdeğer) and allocation title (tahsis). For every project we suggest, we state the land's title type in writing and have it checked by a lawyer.",
+  q1_q:"What do the title deed types mean, and which is safe?", q1_a:"North Cyprus has three title types, depending on the land's history. Turkish title: Turkish Cypriot property from before 1974; the safest and most valuable type, with no issue selling to foreigners, and priced higher than the others. Exchange title (eşdeğer): issued by the state after 1974 to Turkish Cypriots in return for property they left in the south; fully legal in the TRNC, the most common type on the market, and freely sold to foreigners. Allocation title (tahsis): a right of use granted by the state while ownership stays with the state, so we do not recommend it for investment. For every project we suggest, we state the land's title type in writing and have it checked by a lawyer.",
   q2_q:"How many properties can I buy as a foreigner?", q2_a:"North Cyprus limits the number of homes a foreigner can buy, and the limit depends on nationality. The limits have changed several times in recent years, so we confirm the current limit for your case before you buy.",
   q3_q:"Which currency do I pay in?", q3_a:"Most projects are priced in pounds sterling and paid in the currency stated in the contract. Instalments are interest-free, so currency risk only applies when you convert your own money.",
   q4_q:"How much are the extra costs?", q4_a:"They include stamp duty, title deed fees, VAT and the foreign buyer permit fee. We send a line-by-line cost table for each project as a PDF.",
@@ -2026,7 +2028,7 @@ ru:{
   s4_h:"Разрешение на покупку", s4_p:"Для иностранных покупателей разрешение Совета министров оформляет адвокат. План оплаты в это время продолжается.",
   s5_h:"Сдача и титул", s5_p:"Передача ключей, затем переоформление титула. По желанию продолжаем с местными партнёрами по аренде и управлению.",
   faq_e:"Частые вопросы", faq_h:"Ответы на <em>ваши вопросы</em>",
-  q1_q:"Что означают типы титулов и какой из них надёжен?", q1_a:"Титулы на Северном Кипре различаются по истории земли: турецкий титул (собственность киприотов-турок до 1974 года), эквивалентный (eşdeğer) и титул распределения (tahsis). По каждому предлагаемому проекту мы письменно указываем тип титула земли и проверяем его у адвоката.",
+  q1_q:"Что означают типы титулов и какой из них надёжен?", q1_a:"На Северном Кипре три вида титулов, в зависимости от истории земли. Турецкий титул: собственность киприотов-турок до 1974 года; самый надёжный и ценный вид, продажа иностранцам без ограничений, цена выше остальных. Эквивалентный титул (eşdeğer): выдан государством после 1974 года киприотам-туркам взамен собственности, оставленной на юге; полностью законен в ТРСК, самый распространённый на рынке и свободно продаётся иностранцам. Титул распределения (tahsis): право пользования от государства, собственность остаётся за государством, поэтому для инвестиций мы его не рекомендуем. По каждому предлагаемому проекту мы письменно указываем вид титула земли и проверяем его у юриста.",
   q2_q:"Сколько объектов я могу купить как иностранец?", q2_a:"На Северном Кипре действует лимит на количество жилья для иностранца, и он зависит от гражданства. За последние годы лимиты несколько раз менялись, поэтому перед покупкой мы подтверждаем актуальный лимит для вашего случая.",
   q3_q:"В какой валюте я плачу?", q3_a:"Большинство проектов оцениваются в фунтах стерлингов и оплачиваются в валюте, указанной в договоре. Рассрочка беспроцентная; валютный риск возникает только в момент, когда вы конвертируете свои деньги.",
   q4_q:"Каковы дополнительные расходы?", q4_a:"Это гербовый сбор, пошлина за титул, НДС и сбор за разрешение для иностранного покупателя. По каждому проекту присылаем подробную таблицу расходов в PDF.",
@@ -2095,7 +2097,7 @@ fa:{
   s4_h:"مجوز خرید", s4_p:"برای خریداران خارجی، درخواست مجوز هیئت وزیران از طریق وکیل انجام می‌شود. در این مدت برنامهٔ پرداخت شما ادامه دارد.",
   s5_h:"تحویل و سند", s5_p:"تحویل کلید و سپس انتقال سند. اگر بخواهید، اجاره و مدیریت ملک را با همکاران محلی‌مان ادامه می‌دهیم.",
   faq_e:"پرسش‌های رایج", faq_h:"پاسخ به <em>پرسش‌های شما</em>",
-  q1_q:"انواع سند چه معنایی دارند و کدام امن است؟", q1_a:"اسناد در قبرس شمالی بسته به پیشینهٔ زمین متفاوت‌اند: سند ترکی (ملک ترک‌های قبرسی پیش از ۱۹۷۴)، سند معادل (eşdeğer) و سند تخصیصی (tahsis). برای هر پروژه‌ای که پیشنهاد می‌کنیم، نوع سند زمین را کتبی اعلام می‌کنیم و آن را به تأیید وکیل می‌رسانیم.",
+  q1_q:"انواع سند چه معنایی دارند و کدام امن است؟", q1_a:"در قبرس شمالی بسته به پیشینهٔ زمین سه نوع سند وجود دارد. سند ترکی: ملک ترک‌های قبرسی پیش از ۱۹۷۴؛ امن‌ترین و باارزش‌ترین نوع، فروش به خارجی‌ها بی‌مشکل است و قیمتش از بقیه بالاتر است. سند معادل (eşdeğer): پس از ۱۹۷۴ از سوی دولت به ترک‌های قبرسی در ازای ملکی که در جنوب جا گذاشتند داده شده؛ در جمهوری ترک قبرس شمالی کاملاً قانونی، رایج‌ترین نوع در بازار و فروش آن به خارجی‌ها آزاد است. سند تخصیصی (tahsis): حق استفاده‌ای است که دولت می‌دهد و مالکیت نزد دولت می‌ماند؛ به همین دلیل آن را برای سرمایه‌گذاری توصیه نمی‌کنیم. برای هر پروژه‌ای که پیشنهاد می‌کنیم، نوع سند زمین را کتبی اعلام می‌کنیم و آن را به تأیید وکیل می‌رسانیم.",
   q2_q:"به‌عنوان خارجی چند ملک می‌توانم بخرم؟", q2_a:"قبرس شمالی برای تعداد واحدهایی که یک خارجی می‌تواند بخرد سقف تعیین کرده که به تابعیت بستگی دارد. این سقف‌ها در سال‌های اخیر چند بار تغییر کرده‌اند؛ برای همین پیش از خرید، سقف فعلی را برای وضعیت شما تأیید می‌کنیم.",
   q3_q:"پرداخت با چه ارزی است؟", q3_a:"بیشتر پروژه‌ها به پوند استرلینگ قیمت‌گذاری می‌شوند و پرداخت به ارز ذکرشده در قرارداد انجام می‌شود. اقساط بدون بهره است و ریسک ارزی فقط هنگام تبدیل پول خودتان مطرح است.",
   q4_q:"هزینه‌های جانبی چقدر است؟", q4_a:"شامل حق تمبر، هزینهٔ سند، مالیات بر ارزش افزوده و هزینهٔ مجوز خریدار خارجی است. برای هر پروژه جدول ریز هزینه‌ها را به‌صورت PDF می‌فرستیم.",
@@ -2164,7 +2166,7 @@ de:{
   s4_h:"Kaufgenehmigung", s4_p:"Für ausländische Käufer beantragt ein Anwalt die Genehmigung des Ministerrats. Ihr Zahlungsplan läuft währenddessen weiter.",
   s5_h:"Übergabe und Urkunde", s5_p:"Schlüsselübergabe, danach die Übertragung der Eigentumsurkunde. Auf Wunsch geht es mit unseren lokalen Partnern für Vermietung und Verwaltung weiter.",
   faq_e:"Häufige Fragen", faq_h:"Antworten auf <em>Ihre Fragen</em>",
-  q1_q:"Was bedeuten die Arten von Eigentumsurkunden, und welche ist sicher?", q1_a:"Eigentumsurkunden in Nordzypern unterscheiden sich nach der Geschichte des Grundstücks: türkischer Titel (Eigentum türkischer Zyprer vor 1974), Äquivalenztitel (eşdeğer) und Zuteilungstitel (tahsis). Für jedes vorgeschlagene Projekt nennen wir Ihnen die Titelart schriftlich und lassen sie anwaltlich prüfen.",
+  q1_q:"Was bedeuten die Arten von Eigentumsurkunden, und welche ist sicher?", q1_a:"In Nordzypern gibt es je nach Geschichte des Grundstücks drei Titelarten. Türkischer Titel: Eigentum türkischer Zyprer vor 1974; die sicherste und wertvollste Art, problemlos an Ausländer verkäuflich und teurer als die anderen. Äquivalenztitel (eşdeğer): nach 1974 vom Staat an türkische Zyprer als Ausgleich für im Süden zurückgelassenes Eigentum vergeben; in der TRNZ voll rechtsgültig, die häufigste Art am Markt und frei an Ausländer verkäuflich. Zuteilungstitel (tahsis): ein vom Staat gewährtes Nutzungsrecht, das Eigentum bleibt beim Staat; deshalb empfehlen wir ihn nicht als Investition. Für jedes vorgeschlagene Projekt nennen wir Ihnen die Titelart schriftlich und lassen sie anwaltlich prüfen.",
   q2_q:"Wie viele Immobilien darf ich als Ausländer kaufen?", q2_a:"Nordzypern begrenzt die Zahl der Wohnungen, die ein Ausländer erwerben darf, abhängig von der Staatsangehörigkeit. Die Grenzen wurden in den letzten Jahren mehrfach geändert, daher bestätigen wir vor dem Kauf die aktuelle Grenze für Ihren Fall.",
   q3_q:"In welcher Währung zahle ich?", q3_a:"Die meisten Projekte sind in britischen Pfund ausgepreist und werden in der im Vertrag genannten Währung bezahlt. Die Raten sind zinsfrei; ein Währungsrisiko entsteht nur in dem Moment, in dem Sie Ihr Geld umtauschen.",
   q4_q:"Wie hoch sind die Nebenkosten?", q4_a:"Dazu zählen Stempelsteuer, Grundbuchgebühren, Mehrwertsteuer und die Genehmigungsgebühr für ausländische Käufer. Für jedes Projekt senden wir Ihnen eine detaillierte Kostentabelle als PDF.",
@@ -2233,7 +2235,7 @@ pl:{
   s4_h:"Zezwolenie na zakup", s4_p:"Dla nabywców zagranicznych o zgodę Rady Ministrów występuje prawnik. W tym czasie plan płatności biegnie dalej.",
   s5_h:"Odbiór i akt własności", s5_p:"Przekazanie kluczy, a następnie przeniesienie aktu własności. Jeśli chcesz, kontynuujemy z lokalnymi partnerami w zakresie najmu i zarządzania.",
   faq_e:"Częste pytania", faq_h:"Odpowiedzi na <em>Twoje pytania</em>",
-  q1_q:"Co oznaczają rodzaje aktów własności i który jest bezpieczny?", q1_a:"Akty własności na Cyprze Północnym różnią się w zależności od historii gruntu: tytuł turecki (własność Turków cypryjskich sprzed 1974 r.), tytuł ekwiwalentny (eşdeğer) i tytuł przydziałowy (tahsis). Dla każdego proponowanego projektu podajemy na piśmie rodzaj tytułu gruntu i zlecamy jego weryfikację prawnikowi.",
+  q1_q:"Co oznaczają rodzaje aktów własności i który jest bezpieczny?", q1_a:"Na Cyprze Północnym są trzy rodzaje tytułów, zależnie od historii gruntu. Tytuł turecki: własność Turków cypryjskich sprzed 1974 r.; najbezpieczniejszy i najcenniejszy, bez problemu sprzedawany cudzoziemcom, droższy od pozostałych. Tytuł ekwiwalentny (eşdeğer): wydany przez państwo po 1974 r. Turkom cypryjskim w zamian za majątek pozostawiony na południu; w pełni legalny w TRCP, najczęstszy na rynku i swobodnie sprzedawany cudzoziemcom. Tytuł przydziałowy (tahsis): prawo użytkowania nadane przez państwo, własność pozostaje przy państwie, dlatego nie polecamy go do inwestycji. Dla każdego proponowanego projektu podajemy na piśmie rodzaj tytułu gruntu i zlecamy jego weryfikację prawnikowi.",
   q2_q:"Ile nieruchomości mogę kupić jako obcokrajowiec?", q2_a:"Cypr Północny ogranicza liczbę mieszkań, które może kupić obcokrajowiec, w zależności od obywatelstwa. Limity kilkakrotnie zmieniano w ostatnich latach, dlatego przed zakupem potwierdzamy aktualny limit w Twoim przypadku.",
   q3_q:"W jakiej walucie płacę?", q3_a:"Większość projektów jest wyceniana w funtach szterlingach i opłacana w walucie wskazanej w umowie. Raty są nieoprocentowane; ryzyko walutowe pojawia się tylko w chwili, gdy wymieniasz własne pieniądze.",
   q4_q:"Ile wynoszą dodatkowe koszty?", q4_a:"To m.in. opłata skarbowa, opłata za akt własności, VAT i opłata za zezwolenie dla nabywcy zagranicznego. Dla każdego projektu wysyłamy szczegółową tabelę kosztów w PDF.",
@@ -2297,7 +2299,7 @@ const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => (o && o[k] != null) ? o
 
 /* ================= DİL SEÇİMİ ================= */
 const params = new URLSearchParams(location.search);
-function pickLang(){
+function pickLang(){ if (/bot|crawl|spider|slurp|inspectiontool|lighthouse/i.test(navigator.userAgent||"") && !LANGS.includes((params.get("lang")||"").toLowerCase())) return "tr";
   const q = (params.get("lang")||"").toLowerCase();
   if (LANGS.includes(q)) return q;
   try { const s = localStorage.getItem("kibris_lang"); if (LANGS.includes(s)) return s; } catch(e){}
@@ -2934,7 +2936,7 @@ const NV={
 };
 const root=document.documentElement, q=(s,c=document)=>[...c.querySelectorAll(s)], $$=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, fine=matchMedia("(pointer:fine)").matches;
-const SEC={hakkimizda:"home",maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
+const SEC={hakkimizda:"home",maras:"maras",mekanlar:"yasam",masraf:"masraf",karsilastir:"bolge",adimlar:"surec","golden-visa":"surec","yasam-rehberi":"yasam",gezi:"home",hikayeler:"home",test:"home",getiri:"bolge",sorular:"surec",top:"home",prensip:"home",ayricalik:"home",neden:"neden",rakamlar:"neden",gundem:"neden",bolge:"bolge",karpaz:"bolge",rehber:"yasam",hesap:"hesap",surec:"surec",isbirligi:"isbirligi",form:"form"};
 const VIEWS=q(".view").map(v=>v.dataset.view);
 let cur=null;
 const T=()=>NV[root.lang]||NV.en;
@@ -4061,84 +4063,198 @@ addEventListener("popstate",closeLB);
 hero.addEventListener("click",e=>{ if(e.target.closest("#ab-play")){ cat="all"; renderChips(); renderGrid(); openLB(MIX.indexOf(HERO[hi]),true); return; } cat="all"; renderChips(); renderGrid(); openLB(MIX.indexOf(HERO[hi])); });
 hero.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); hero.click(); } });
 })();
-
-/* ================= DEĞER ARTIŞI GRAFİĞİ (101evler/Reidin endeksi, daire ilan fiyatı £/m²) ================= */
-(function(){
+/* ================= GOLDEN VISA: KKTC oturma izni (İkamet İzinleri ve Vizeler (Değişiklik) Tüzüğü) ================= */
+(()=>{
+const GV={
+tr:{e:"Golden Visa · KKTC",h:"Ev alana <em>10 yıla kadar</em> oturma izni",l:"KKTC'de değişen İkamet İzinleri ve Vizeler Tüzüğü'ne göre, taşınmaz alan yabancıya verilen oturma izninin süresi elinizdeki belgeye ve taşınmazın değerine bağlı.",
+ g:[["Tapu koçanı kendi adınıza","Madde 4 · birden fazla taşınmazın toplam değeri sayılır"],["Pullu ve onaylı satış sözleşmesi","Tapusu henüz çıkmamış alıcılar · Gelir ve Vergi Dairesi'nden"]],
+ ge:"£300.000 ve üzeri",lt:"£300.000 altı",u:"yıl",no:"Gelir şartı yok",inc:"Gelir şartı: aylık 1 asgari ücret",n:["10","5","5","5"],
+ fx:"£300.000 veya Euro, Dolar ya da TL cinsinden karşılığı.",
+ p:[["10 yıl için tapu şart","10 yıllık izin yalnızca tapu koçanı kendi adına olan alıcıya verilir. £300.000 ve üzeri satış sözleşmesi olan alıcı 5 yıl alır."],["Sözleşme pullu olmalı","Satış sözleşmesi Gelir ve Vergi Dairesi'nden pullanmış ve onaylı olmalı; pulsuz sözleşme yeterli değil. Başvuru Bakanlığa yapılır."],["Aile ikamet izni","Aile İkamet İzni artık her defasında en fazla 10 yıl için verilebilir."],["6 yaş altı çocuklar","Tüzük yürürlüğe girdiğinde KKTC'de bulunan 6 yaş altı yabancı çocukların izinsiz kalış dönemine ait para cezaları silinir."]],
+ wn:["Net / ay","Brüt / ay"],w:["61.677 TL","70.893 TL"],wt:"Gelir şartı rakamlarla",wp:"1 asgari ücret, 1 Temmuz 2026'dan bu yana aylık net 61.677 TL, brüt 70.893 TL. Kendi ülkenizden apostilli belge ya da yurt içi veya yurt dışındaki bir bankadan alınan belgeyle kanıtlanır. Asgari ücret yılda iki kez (Ocak ve Temmuz) güncellenir; gelir şartı da buna göre değişir.",
+ src:"Kaynak: KKTC Resmî Gazetesi Ek III, Sayı 932 (s. 4543; satış sözleşmesi hükmü s. 4580), İkamet İzinleri ve Vizeler (Değişiklik) Tüzüğü. Resmî Gazete'de yayımlandığı gün yürürlüğe girer.",
+ warn:"Bu özet bilgilendirme amaçlıdır, hukuki danışmanlık değildir. Bağlayıcı olan Resmî Gazete metnidir; başvurudan önce Muhaceret Dairesi veya avukatla teyit edin.",
+ cq:"Hangi yolun size uygun olduğunu birlikte netleştirelim.",cb:"Danışmana sorun"},
+en:{e:"Golden Visa · North Cyprus",h:"Buy a home, get <em>up to 10 years</em> of residence",l:"Under North Cyprus's amended Residence Permits and Visas Regulation, the permit a foreign buyer receives depends on the document you hold and the value of the property.",
+ g:[["Title deed in your own name","Article 4 · several properties count by their total value"],["Stamped, approved sales contract","Buyers whose title deed is not issued yet · stamped by the Inland Revenue Office"]],
+ ge:"£300,000 or more",lt:"Below £300,000",u:"years",no:"No income requirement",inc:"Income of 1 minimum wage a month",n:["10","5","5","5"],
+ fx:"£300,000 or its equivalent in euros, dollars or Turkish lira.",
+ p:[["A title deed is needed for 10 years","The 10-year permit is only for buyers with a title deed in their own name. A buyer with a sales contract of £300,000 or more gets 5 years."],["The contract must be stamped","The sales contract must be stamped and approved by the Inland Revenue Office; an unstamped contract is not enough. The application is made to the Ministry."],["Family residence permit","A Family Residence Permit can now be granted for up to 10 years each time."],["Children under 6","When the regulation takes effect, fines for unauthorised stay owed by foreign children under 6 who are in North Cyprus are waived."]],
+ wn:["Net / month","Gross / month"],w:["61,677 TL","70,893 TL"],wt:"The income requirement in numbers",wp:"Since 1 July 2026, 1 minimum wage is 61,677 TL net or 70,893 TL gross a month. It is proven with an apostilled document from your home country or a letter from any bank in Cyprus or abroad. The minimum wage is updated twice a year (January and July), so the requirement changes with it.",
+ src:"Source: TRNC Official Gazette, Annex III, No. 932 (p. 4543; the sales contract provision on p. 4580), Residence Permits and Visas (Amendment) Regulation. It takes effect on the day it is published.",
+ warn:"This summary is for information only and is not legal advice. The text published in the Official Gazette is binding; confirm with the Immigration Office or a lawyer before applying.",
+ cq:"Let's work out which route fits you.",cb:"Ask an advisor"},
+ru:{e:"Golden Visa · Северный Кипр",h:"Купите жильё и получите <em>ВНЖ до 10 лет</em>",l:"По изменённому Регламенту о видах на жительство и визах ТРСК срок ВНЖ для иностранного покупателя зависит от документа на руках и стоимости недвижимости.",
+ g:[["Кочан (свидетельство о собственности) на ваше имя","Статья 4 · стоимость нескольких объектов суммируется"],["Договор купли-продажи с печатью и подтверждением","Для покупателей, у которых ещё нет кочана · заверен в Налоговом управлении"]],
+ ge:"£300 000 и выше",lt:"Ниже £300 000",u:"лет",no:"Без требования к доходу",inc:"Доход 1 минимальная зарплата в месяц",n:["10","5","5","5"],
+ fx:"£300 000 или эквивалент в евро, долларах или турецких лирах.",
+ p:[["Для 10 лет нужен кочан","ВНЖ на 10 лет дают только покупателям, у которых кочан оформлен на их имя. Покупатель с договором на £300 000 и выше получает 5 лет."],["Договор должен быть заверен","Договор купли-продажи должен быть проштампован и подтверждён Налоговым управлением; договора без печати недостаточно. Заявление подаётся в Министерство."],["Семейный ВНЖ","Семейный вид на жительство теперь может выдаваться каждый раз на срок до 10 лет."],["Дети до 6 лет","С вступлением регламента в силу штрафы за незаконное пребывание иностранных детей до 6 лет, находящихся в ТРСК, списываются."]],
+ wn:["Нетто / мес.","Брутто / мес."],w:["61 677 TL","70 893 TL"],wt:"Требование к доходу в цифрах",wp:"С 1 июля 2026 года 1 минимальная зарплата составляет 61 677 TL нетто или 70 893 TL брутто в месяц. Доход подтверждается апостилированным документом из вашей страны или справкой из любого банка на Кипре или за рубежом. Минимальная зарплата пересматривается дважды в год (январь и июль), вместе с ней меняется и требование.",
+ src:"Источник: Официальная газета ТРСК, Приложение III, № 932 (с. 4543; положение о договоре — с. 4580), Регламент о видах на жительство и визах (изменения). Вступает в силу в день публикации.",
+ warn:"Это краткий обзор для информации, а не юридическая консультация. Обязательную силу имеет текст в Официальной газете; перед подачей уточните детали в Иммиграционном управлении или у юриста.",
+ cq:"Давайте вместе определим, какой путь подходит вам.",cb:"Спросить консультанта"},
+fa:{e:"Golden Visa · قبرس شمالی",h:"خانه بخرید، <em>تا ۱۰ سال</em> اقامت بگیرید",l:"طبق آیین‌نامهٔ اصلاح‌شدهٔ اجازهٔ اقامت و ویزای قبرس شمالی، مدت اقامتی که به خریدار خارجی داده می‌شود به سندی که در دست دارید و ارزش ملک بستگی دارد.",
+ g:[["سند مالکیت (کوچان) به نام خودتان","مادهٔ ۴ · ارزش چند ملک با هم جمع می‌شود"],["قرارداد فروش مهرشده و تأییدشده","خریدارانی که هنوز سند ندارند · مهرشده در ادارهٔ درآمد و مالیات"]],
+ ge:"£300,000 و بیشتر",lt:"کمتر از £300,000",u:"سال",no:"بدون شرط درآمد",inc:"درآمد ماهانه به اندازهٔ ۱ حداقل دستمزد",n:["۱۰","۵","۵","۵"],
+ fx:"£300,000 یا معادل آن به یورو، دلار یا لیر ترکیه.",
+ p:[["برای ۱۰ سال سند لازم است","اقامت ۱۰ ساله فقط به خریدارانی داده می‌شود که سند مالکیت به نام خودشان است. خریدار با قرارداد فروش £300,000 یا بیشتر ۵ سال اقامت می‌گیرد."],["قرارداد باید مهر شده باشد","قرارداد فروش باید در ادارهٔ درآمد و مالیات مهر و تأیید شده باشد؛ قرارداد بدون مهر کافی نیست. درخواست به وزارتخانه داده می‌شود."],["اقامت خانوادگی","اجازهٔ اقامت خانوادگی اکنون هر بار حداکثر برای ۱۰ سال صادر می‌شود."],["کودکان زیر ۶ سال","با اجرای آیین‌نامه، جریمه‌های اقامت غیرمجاز کودکان خارجی زیر ۶ سال که در قبرس شمالی هستند بخشیده می‌شود."]],
+ wn:["خالص / ماه","ناخالص / ماه"],w:["61,677 TL","70,893 TL"],wt:"شرط درآمد به عدد",wp:"از ۱ ژوئیهٔ ۲۰۲۶، ۱ حداقل دستمزد ماهانه 61,677 لیر خالص یا 70,893 لیر ناخالص است. درآمد با سند آپوستیل‌شده از کشور خودتان یا نامهٔ هر بانکی در قبرس یا خارج از آن اثبات می‌شود. حداقل دستمزد سالی دو بار (ژانویه و ژوئیه) به‌روز می‌شود و شرط درآمد هم با آن تغییر می‌کند.",
+ src:"منبع: روزنامهٔ رسمی قبرس شمالی، پیوست III، شمارهٔ 932 (ص. 4543؛ بند قرارداد فروش ص. 4580)، آیین‌نامهٔ اجازهٔ اقامت و ویزا (اصلاحیه). از روز انتشار اجرا می‌شود.",
+ warn:"این خلاصه فقط برای اطلاع است و مشاورهٔ حقوقی نیست. متن منتشرشده در روزنامهٔ رسمی ملاک است؛ پیش از درخواست با ادارهٔ مهاجرت یا وکیل تأیید کنید.",
+ cq:"بیایید با هم ببینیم کدام مسیر برای شما مناسب است.",cb:"از مشاور بپرسید"},
+de:{e:"Golden Visa · Nordzypern",h:"Immobilie kaufen, <em>bis zu 10 Jahre</em> Aufenthalt",l:"Nach der geänderten Verordnung über Aufenthaltsgenehmigungen und Visa der TRNC hängt die Dauer der Genehmigung für ausländische Käufer vom Dokument ab, das Sie besitzen, und vom Wert der Immobilie.",
+ g:[["Grundbuchtitel (Koçan) auf Ihren Namen","Artikel 4 · mehrere Immobilien zählen mit ihrem Gesamtwert"],["Gestempelter, bestätigter Kaufvertrag","Käufer ohne ausgestellten Titel · vom Finanzamt gestempelt"]],
+ ge:"£300.000 oder mehr",lt:"Unter £300.000",u:"Jahre",no:"Kein Einkommensnachweis",inc:"Einkommen von 1 Mindestlohn pro Monat",n:["10","5","5","5"],
+ fx:"£300.000 oder der Gegenwert in Euro, Dollar oder türkischer Lira.",
+ p:[["Für 10 Jahre braucht es den Titel","Die 10-jährige Genehmigung gibt es nur mit einem Grundbuchtitel auf den eigenen Namen. Wer einen Kaufvertrag über £300.000 oder mehr hat, erhält 5 Jahre."],["Der Vertrag muss gestempelt sein","Der Kaufvertrag muss vom Finanzamt (Gelir ve Vergi Dairesi) gestempelt und bestätigt sein; ein ungestempelter Vertrag reicht nicht. Der Antrag geht an das Ministerium."],["Familienaufenthalt","Die Familienaufenthaltsgenehmigung kann jetzt jeweils für bis zu 10 Jahre erteilt werden."],["Kinder unter 6","Mit Inkrafttreten entfallen Bußgelder für unerlaubten Aufenthalt ausländischer Kinder unter 6 Jahren, die sich in Nordzypern aufhalten."]],
+ wn:["Netto / Monat","Brutto / Monat"],w:["61.677 TL","70.893 TL"],wt:"Der Einkommensnachweis in Zahlen",wp:"Seit 1. Juli 2026 beträgt 1 Mindestlohn monatlich 61.677 TL netto bzw. 70.893 TL brutto. Nachgewiesen wird er mit einem apostillierten Dokument aus Ihrem Heimatland oder einer Bescheinigung einer beliebigen Bank im In- oder Ausland. Der Mindestlohn wird zweimal jährlich (Januar und Juli) angepasst, der Nachweis ändert sich entsprechend.",
+ src:"Quelle: Amtsblatt der TRNC, Anhang III, Nr. 932 (S. 4543; Bestimmung zum Kaufvertrag S. 4580), Verordnung über Aufenthaltsgenehmigungen und Visa (Änderung). Sie tritt am Tag der Veröffentlichung in Kraft.",
+ warn:"Diese Übersicht dient nur der Information und ist keine Rechtsberatung. Verbindlich ist der im Amtsblatt veröffentlichte Text; klären Sie Details vor dem Antrag mit der Einwanderungsbehörde oder einem Anwalt.",
+ cq:"Finden wir gemeinsam heraus, welcher Weg zu Ihnen passt.",cb:"Berater fragen"},
+pl:{e:"Golden Visa · Cypr Północny",h:"Kup dom i zyskaj <em>do 10 lat</em> pobytu",l:"Zgodnie ze zmienionym Rozporządzeniem o zezwoleniach na pobyt i wizach TRNC okres zezwolenia dla zagranicznego nabywcy zależy od posiadanego dokumentu i wartości nieruchomości.",
+ g:[["Akt własności (koçan) na Twoje nazwisko","Art. 4 · wartość kilku nieruchomości się sumuje"],["Ostemplowana, zatwierdzona umowa sprzedaży","Nabywcy bez wydanego aktu · ostemplowana w Urzędzie Skarbowym"]],
+ ge:"£300 000 i więcej",lt:"Poniżej £300 000",u:"lat",no:"Bez wymogu dochodu",inc:"Dochód 1 płacy minimalnej miesięcznie",n:["10","5","5","5"],
+ fx:"£300 000 lub równowartość w euro, dolarach lub lirach tureckich.",
+ p:[["Na 10 lat potrzebny jest akt","Zezwolenie na 10 lat dostają tylko nabywcy z aktem własności na własne nazwisko. Nabywca z umową sprzedaży na £300 000 lub więcej dostaje 5 lat."],["Umowa musi być ostemplowana","Umowa sprzedaży musi być ostemplowana i zatwierdzona przez Urząd Skarbowy; umowa bez stempla nie wystarczy. Wniosek składa się do Ministerstwa."],["Rodzinne zezwolenie na pobyt","Rodzinne zezwolenie na pobyt może być teraz wydawane za każdym razem na maksymalnie 10 lat."],["Dzieci poniżej 6 lat","Z wejściem przepisów w życie kary za nielegalny pobyt cudzoziemskich dzieci poniżej 6 lat przebywających na Cyprze Północnym zostają umorzone."]],
+ wn:["Netto / mies.","Brutto / mies."],w:["61 677 TL","70 893 TL"],wt:"Wymóg dochodu w liczbach",wp:"Od 1 lipca 2026 r. 1 płaca minimalna wynosi 61 677 TL netto lub 70 893 TL brutto miesięcznie. Dochód potwierdza się dokumentem z apostille z kraju pochodzenia lub zaświadczeniem z dowolnego banku na Cyprze lub za granicą. Płaca minimalna jest aktualizowana dwa razy w roku (styczeń i lipiec), więc wymóg zmienia się razem z nią.",
+ src:"Źródło: Dziennik Urzędowy TRNC, Załącznik III, nr 932 (s. 4543; przepis o umowie sprzedaży s. 4580), Rozporządzenie o zezwoleniach na pobyt i wizach (zmiana). Wchodzi w życie w dniu publikacji.",
+ warn:"To podsumowanie ma charakter informacyjny i nie jest poradą prawną. Wiążący jest tekst opublikowany w Dzienniku Urzędowym; przed złożeniem wniosku potwierdź szczegóły w Urzędzie Imigracyjnym lub u prawnika.",
+ cq:"Ustalmy razem, która ścieżka jest dla Ciebie.",cb:"Zapytaj doradcę"}
+};
 const root=document.documentElement, $$=id=>document.getElementById(id);
-/* x: Aralık 2020'den itibaren ay sayısı, y: £/m² */
-const DS=[
- ["all",3.2,"var(--sun)",[[0,600],[24,827],[30,1004],[36,1113],[42,1225],[48,1274],[57,1427]]],
- ["girne",2.2,"var(--sea)",[[27,1158],[45,1582],[48,1599]]],
- ["iskele",2.2,"#5FD3B5",[[27,1431],[36,1826],[45,1801],[48,1734]]]
-];
-const DT={
-tr:{e:"Değer artışı",h:"Son 5 yılda <em>metrekare fiyatları</em>",l:"Kuzey Kıbrıs'ta daire ilan fiyatları, sterlin/m².",s:{all:"KKTC geneli",girne:"Girne",iskele:"İskele"},
- k:[["+%138","KKTC geneli","Ara 2020 £600 → Eyl 2025 £1.427"],["+%38","Girne","Mar 2023 £1.158 → Ara 2024 £1.599"],["+%21","İskele","Mar 2023 £1.431 → Ara 2024 £1.734"]],
- note:"Kaynak: 101evler/Reidin Emlak Endeksi (satış değil ilan fiyatları), Giynik Gazetesi ve Haber Kıbrıs haberleri üzerinden. Esentepe Girne'ye, Karpaz İskele'ye dahildir; alt bölge verisi yayımlanmıyor. Eylül 2025'te daire fiyatlarındaki yükseliş serisi durdu. Geçmiş artış gelecekteki getirinin garantisi değildir."},
-en:{e:"Value growth",h:"Price per m² <em>over five years</em>",l:"Apartment asking prices in North Cyprus, pounds per m².",s:{all:"North Cyprus",girne:"Kyrenia",iskele:"İskele"},
- k:[["+138%","North Cyprus","Dec 2020 £600 → Sep 2025 £1,427"],["+38%","Kyrenia","Mar 2023 £1,158 → Dec 2024 £1,599"],["+21%","İskele","Mar 2023 £1,431 → Dec 2024 £1,734"]],
- note:"Source: 101evler/Reidin property index (asking prices, not sales), as reported by Giynik Gazetesi and Haber Kıbrıs. Esentepe is part of Kyrenia and Karpaz of İskele; no sub-area data is published. The run of apartment price rises paused in September 2025. Past growth does not guarantee future returns."},
-ru:{e:"Рост стоимости",h:"Цена за м² <em>за пять лет</em>",l:"Цены предложения квартир на Северном Кипре, фунтов за м².",s:{all:"Северный Кипр",girne:"Кирения",iskele:"Искеле"},
- k:[["+138%","Северный Кипр","дек. 2020 £600 → сен. 2025 £1 427"],["+38%","Кирения","мар. 2023 £1 158 → дек. 2024 £1 599"],["+21%","Искеле","мар. 2023 £1 431 → дек. 2024 £1 734"]],
- note:"Источник: индекс недвижимости 101evler/Reidin (цены предложения, а не сделок) по данным Giynik Gazetesi и Haber Kıbrıs. Эсентепе входит в Кирению, Карпас в Искеле; данные по микрорайонам не публикуются. В сентябре 2025 года рост цен на квартиры приостановился. Прошлый рост не гарантирует будущую доходность."},
-fa:{e:"رشد ارزش",h:"قیمت هر متر مربع <em>در پنج سال</em>",l:"قیمت آگهی آپارتمان در قبرس شمالی، پوند بر متر مربع.",s:{all:"قبرس شمالی",girne:"گیرنه",iskele:"ایسکله"},
- k:[["+۱۳۸٪","قبرس شمالی","دسامبر ۲۰۲۰ £600 ← سپتامبر ۲۰۲۵ £1,427"],["+۳۸٪","گیرنه","مارس ۲۰۲۳ £1,158 ← دسامبر ۲۰۲۴ £1,599"],["+۲۱٪","ایسکله","مارس ۲۰۲۳ £1,431 ← دسامبر ۲۰۲۴ £1,734"]],
- note:"منبع: شاخص املاک 101evler/Reidin (قیمت آگهی، نه معامله) به نقل از Giynik Gazetesi و Haber Kıbrıs. اسنتپه جزو گیرنه و کارپاز جزو ایسکله است؛ دادهٔ زیرمنطقه منتشر نمی‌شود. در سپتامبر ۲۰۲۵ روند افزایش قیمت آپارتمان متوقف شد. رشد گذشته تضمین بازده آینده نیست."},
-de:{e:"Wertzuwachs",h:"Preis pro m² <em>in fünf Jahren</em>",l:"Angebotspreise für Wohnungen in Nordzypern, Pfund pro m².",s:{all:"Nordzypern",girne:"Kyrenia",iskele:"İskele"},
- k:[["+138 %","Nordzypern","Dez. 2020 £600 → Sep. 2025 £1.427"],["+38 %","Kyrenia","März 2023 £1.158 → Dez. 2024 £1.599"],["+21 %","İskele","März 2023 £1.431 → Dez. 2024 £1.734"]],
- note:"Quelle: Immobilienindex 101evler/Reidin (Angebots-, keine Verkaufspreise), laut Giynik Gazetesi und Haber Kıbrıs. Esentepe gehört zu Kyrenia, Karpaz zu İskele; Daten für Teilgebiete werden nicht veröffentlicht. Im September 2025 endete die Serie steigender Wohnungspreise vorerst. Vergangener Wertzuwachs garantiert keine künftige Rendite."},
-pl:{e:"Wzrost wartości",h:"Cena za m² <em>w ciągu pięciu lat</em>",l:"Ceny ofertowe mieszkań na Cyprze Północnym, funty za m².",s:{all:"Cypr Północny",girne:"Kyrenia",iskele:"İskele"},
- k:[["+138%","Cypr Północny","gru 2020 £600 → wrz 2025 £1 427"],["+38%","Kyrenia","mar 2023 £1 158 → gru 2024 £1 599"],["+21%","İskele","mar 2023 £1 431 → gru 2024 £1 734"]],
- note:"Źródło: indeks nieruchomości 101evler/Reidin (ceny ofertowe, nie transakcyjne) według Giynik Gazetesi i Haber Kıbrıs. Esentepe należy do Kyrenii, Karpaz do İskele; dane dla mniejszych obszarów nie są publikowane. We wrześniu 2025 seria wzrostów cen mieszkań się zatrzymała. Wcześniejszy wzrost nie gwarantuje przyszłych zysków."}
-};
-/* proje örnekleri (Esentepe): lansman, teslim, bugün (£ bin), geliştirici sunumu Tem 2025 */
-const PJ=[["g21",135,325,475],["bun",265,405,850],["l21",75,150,295],["st",40,120,175],["l31",175,325,550],["vil",450,1250,1850],["eco",175,null,550]];
-const PJT={
-tr:{h:"Esentepe'de proje örnekleri: lansmandan bugüne",l:"Aynı birimin satışa çıkış, teslim ve bugünkü fiyatı.",c:["Lansman","Teslim","Bugün"],u:{g21:"2+1 bahçe katı",bun:"Bungalov",l21:"2+1 loft",st:"Stüdyo",l31:"3+1 loft",vil:"Villa",eco:"Eko daire (yapımda)"},n:"Kaynak: Esentepe'de tamamlanmış projeleri olan yerel bir geliştiricinin Temmuz 2025 yatırım sunumu. Geliştirici beyanıdır, bağımsız olarak doğrulanmadı; lansman yılları sunumda belirtilmiyor."},
-en:{h:"Esentepe project examples: launch to today",l:"Price of the same unit at launch, at completion and today.",c:["Launch","Completion","Today"],u:{g21:"2+1 garden flat",bun:"Bungalow",l21:"2+1 loft",st:"Studio",l31:"3+1 loft",vil:"Villa",eco:"Eco apartment (under construction)"},n:"Source: July 2025 investor presentation of a local developer with completed projects in Esentepe. Developer's own figures, not independently verified; launch years are not stated."},
-ru:{h:"Примеры проектов в Эсентепе: от старта продаж до сегодня",l:"Цена одного и того же объекта на старте, при сдаче и сегодня.",c:["Старт","Сдача","Сегодня"],u:{g21:"2+1 с садом",bun:"Бунгало",l21:"Лофт 2+1",st:"Студия",l31:"Лофт 3+1",vil:"Вилла",eco:"Эко-апартаменты (строится)"},n:"Источник: инвестиционная презентация местного застройщика с завершёнными проектами в Эсентепе, июль 2025. Данные застройщика, независимо не проверены; годы старта продаж не указаны."},
-fa:{h:"نمونه پروژه‌ها در اسنتپه: از عرضه تا امروز",l:"قیمت همان واحد هنگام عرضه، هنگام تحویل و امروز.",c:["عرضه","تحویل","امروز"],u:{g21:"۲+۱ طبقه باغ",bun:"بانگلو",l21:"لافت ۲+۱",st:"استودیو",l31:"لافت ۳+۱",vil:"ویلا",eco:"آپارتمان اکو (در حال ساخت)"},n:"منبع: ارائهٔ سرمایه‌گذاری ژوئیهٔ ۲۰۲۵ یک سازندهٔ محلی با پروژه‌های تکمیل‌شده در اسنتپه. ارقام اعلامی سازنده است و به‌طور مستقل تأیید نشده؛ سال عرضه ذکر نشده است."},
-de:{h:"Projektbeispiele in Esentepe: vom Verkaufsstart bis heute",l:"Preis derselben Einheit bei Verkaufsstart, bei Fertigstellung und heute.",c:["Start","Fertigstellung","Heute"],u:{g21:"2+1 Gartenwohnung",bun:"Bungalow",l21:"2+1 Loft",st:"Studio",l31:"3+1 Loft",vil:"Villa",eco:"Eco-Apartment (im Bau)"},n:"Quelle: Investorenpräsentation (Juli 2025) eines lokalen Bauträgers mit fertiggestellten Projekten in Esentepe. Angaben des Bauträgers, nicht unabhängig geprüft; Startjahre werden nicht genannt."},
-pl:{h:"Przykłady projektów w Esentepe: od startu sprzedaży do dziś",l:"Cena tego samego lokalu na starcie, przy oddaniu i dziś.",c:["Start","Oddanie","Dziś"],u:{g21:"2+1 z ogrodem",bun:"Bungalow",l21:"Loft 2+1",st:"Studio",l31:"Loft 3+1",vil:"Willa",eco:"Apartament eko (w budowie)"},n:"Źródło: prezentacja inwestycyjna (lipiec 2025) lokalnego dewelopera z ukończonymi projektami w Esentepe. Dane dewelopera, niezweryfikowane niezależnie; lata startu sprzedaży nie są podane."}
-};
-const PC=["color-mix(in srgb,var(--sea) 45%,transparent)","var(--sea)","var(--sun)"];
-const L=()=>DT[root.lang]?root.lang:"en";
-let W=640,H=280; const PL=46,PR=16,PT=14,PB=30,X0=0,X1=57,Y0=400,Y1=2000;
-const sx=m=>PL+(m-X0)/(X1-X0)*(W-PL-PR), sy=v=>PT+(1-(v-Y0)/(Y1-Y0))*(H-PT-PB);
-function dg(){
-  const l=L(), t=DT[l], el=$$("dg-box"); if(!el) return;
-  const narrow=innerWidth<560; W=narrow?360:640; H=narrow?300:280;
-  document.querySelectorAll("[data-dg]").forEach(x=>{ const k=x.getAttribute("data-dg"); if(t[k]!=null) x.innerHTML=t[k]; });
-  const nf=new Intl.NumberFormat(l==="fa"?"en":l), nf1=new Intl.NumberFormat(l==="fa"?"en":l,{minimumFractionDigits:1,maximumFractionDigits:1}), p=PJT[l];
-  const grid=[500,1000,1500,2000].map(v=>`<line x1="${PL}" x2="${W-PR}" y1="${sy(v)}" y2="${sy(v)}" class="dg-g"/><text x="${PL-8}" y="${sy(v)+4}" class="dg-yl" text-anchor="end">£${nf.format(v)}</text>`).join("");
-  const xl=[2021,2022,2023,2024,2025].map((y,i)=>`<text x="${sx(1+i*12)}" y="${H-8}" class="dg-xl" text-anchor="middle">${y}</text>`).join("");
-  const lines=DS.map(([id,w,c,p])=>{ const d=p.map(([m,v],i)=>(i?"L":"M")+sx(m).toFixed(1)+" "+sy(v).toFixed(1)).join(" ");
-    return `<g class="dg-s dg-${id}"><path d="${d}" pathLength="1" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>${p.map(([m,v])=>`<circle cx="${sx(m).toFixed(1)}" cy="${sy(v).toFixed(1)}" r="${id==="all"?4:3}" fill="${c}"><title>£${nf.format(v)}/m²</title></circle>`).join("")}</g>`; }).join("");
-  const leg=DS.map(([id,,c])=>`<span><i style="background:${c}"></i>${t.s[id]}</span>`).join("");
-  el.innerHTML=`<div class="dg-k">${t.k.map(([v,n,d],i)=>`<div><b style="color:${DS[i][2]}">${v}</b><span>${n}</span><small${l==="fa"?"":' dir="ltr"'}>${d}</small></div>`).join("")}</div>
-   <div class="dg-leg">${leg}</div>
-   <svg class="dg-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t.h.replace(/<[^>]+>/g,"")}" dir="ltr">${grid}${xl}${lines}</svg>
-   <div class="dg-pb"><h3>${p.h}</h3><p>${p.l}</p>
-   <div class="dg-leg">${p.c.map((c,i)=>`<span><i style="background:${PC[i]}"></i>${c}</span>`).join("")}</div>
-   ${PJ.map(([id,...v])=>`<div class="dg-r"><div class="dg-rh"><span>${p.u[id]}</span><b>×${nf1.format(v[2]/v[0])}</b></div>
-     <div class="dg-bars">${v.map((x,i)=>x==null?"":`<div class="dg-bar"><i style="width:${(x/1850*100).toFixed(1)}%;background:${PC[i]};transition-delay:${(i*.15).toFixed(2)}s"></i><small>£${nf.format(x*1000)}</small></div>`).join("")}</div></div>`).join("")}
-   <p class="note">${p.n}</p></div>`;
-  anim(el);
+const IC=['<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>','<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><circle cx="12" cy="15" r="2.5"/></svg>'];
+function gv(){
+  const t=GV[root.lang]||GV.en, box=$$("gv-box"); if(!box) return;
+  document.querySelectorAll("[data-gv]").forEach(el=>{ const k=el.getAttribute("data-gv"); if(t[k]!=null) el.innerHTML=t[k]; });
+  const tile=(i,cls)=>`<div class="gv-c${cls}"><span>${i%2?t.lt:t.ge}</span><b>${t.n[i]}<small>${t.u}</small></b><em>${i===3?t.inc:t.no}</em></div>`;
+  box.innerHTML=`<div class="gv-grid">${t.g.map(([h,s],g)=>`<article class="gv-g"><h3><i>${IC[g]}</i>${h}</h3><p>${s}</p><div class="gv-t">${tile(g*2,g?"":" gv-hi")}${tile(g*2+1,g?" inc":"")}</div></article>`).join("")}</div>
+   <p class="gv-fx">${t.fx}</p>
+   <div class="gv-pts">${t.p.map(([h,p])=>`<div><h3>${h}</h3><p>${p}</p></div>`).join("")}</div>
+   <div class="gv-w panel"><div class="gv-n">${t.w.map((v,i)=>`<div><b dir="ltr">${v}</b><span>${t.wn[i]}</span></div>`).join("")}</div><div><h3>${t.wt}</h3><p>${t.wp}</p></div></div>
+   <div class="gv-cta"><p>${t.cq}</p><a class="btn btn-sun" href="#/form" data-go="form" data-ev="golden_visa_cta">${t.cb} →</a></div>
+   <p class="note">${t.src}</p><p class="note">${t.warn}</p>`;
 }
-let seen=false;
-function anim(el){
-  const svg=el.querySelector(".dg-svg"), pb=el.querySelector(".dg-pb"); if(!svg) return;
-  if(matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window)) return;
-  svg.classList.add("dg-anim"); if(seen){ requestAnimationFrame(()=>requestAnimationFrame(()=>svg.classList.add("go"))); } else {
-  const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ seen=true; svg.classList.add("go"); io.disconnect(); } }),{threshold:.35}); io.observe(svg); }
-  if(!pb) return; pb.classList.add("dg-anim");
-  const io2=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ pb.classList.add("go"); io2.disconnect(); } }),{threshold:.2}); io2.observe(pb);
-}
-dg();
-new MutationObserver(dg).observe(root,{attributes:true,attributeFilter:["lang"]});
-let rw=innerWidth, rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if((innerWidth<560)!==(rw<560)){ rw=innerWidth; dg(); } },200); });
+gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["lang"]});
 })();
-
+</script>
+<!-- ===== Büyük Kuzey Kıbrıs Buluşması: geri sayım kartı (yalnızca Türkçe, oturumda bir kez, 22 Kasım akşamı kendiliğinden kalkar) ===== -->
+<style>
+.sem{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:16px;background:rgba(2,4,20,.68);opacity:0;visibility:hidden;transition:opacity .45s,visibility 0s .45s}
+@supports (backdrop-filter:blur(1px)){.sem{backdrop-filter:blur(7px) saturate(1.2)}}
+.sem.on{opacity:1;visibility:visible;transition:opacity .45s}
+.sem-c{position:relative;width:min(440px,100%);max-height:calc(100svh - 32px);overflow:auto;overscroll-behavior:contain;border-radius:26px;padding:22px 22px 20px;color:#EEF1FA;font-family:var(--f-body);border:1px solid rgba(255,255,255,.12);
+  background:radial-gradient(120% 70% at 100% 0%,rgba(220,28,46,.30),transparent 55%),radial-gradient(90% 60% at 0% 100%,rgba(64,96,255,.20),transparent 60%),#050A30;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.08);transform:translateY(28px) scale(.96);transition:transform .6s var(--ease,cubic-bezier(.2,.8,.2,1))}
+.sem.on .sem-c{transform:none}
+.sem-c::before{content:"";position:absolute;top:0;left:22px;right:22px;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,transparent,#DC1C2E 20%,#DC1C2E 80%,transparent)}
+.sem-x{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(5,10,48,.6);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .2s,transform .3s}
+.sem-x:hover{background:#DC1C2E;transform:rotate(90deg)}
+.sem-lg{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 40px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sem-lg img{height:34px;width:auto;display:block}
+.sem-lg i{font-style:normal;color:rgba(238,241,250,.45);font:500 .9rem var(--f-mono)}
+.sem-hd{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.sem-inv{background:#DC1C2E;color:#fff;font:800 .68rem/1 var(--f-head,inherit);letter-spacing:.12em;text-transform:uppercase;padding:7px 10px 6px;border-radius:8px;transform:rotate(-2deg);box-shadow:0 10px 24px -10px rgba(220,28,46,.9)}
+.sem-ey{font:600 .7rem var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:#E9C27A}
+.sem-c h3{margin:10px 0 6px;font:800 clamp(1.6rem,7vw,2rem)/1.02 var(--f-head,inherit);letter-spacing:-.035em;color:#fff}
+.sem-c h3 em{font-family:"Instrument Serif","PT Serif",Georgia,serif;font-weight:400;font-style:italic;letter-spacing:-.01em;color:#E9C27A}
+.sem-sub{margin:0;color:rgba(238,241,250,.72);font-size:.9rem;line-height:1.45}
+.sem-sub b{color:#fff}
+.sem-k{margin:16px 0 0;font:600 .64rem var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:rgba(238,241,250,.55);display:flex;align-items:center;gap:8px}
+.sem-k::before{content:"";width:7px;height:7px;border-radius:50%;background:#DC1C2E;box-shadow:0 0 0 0 rgba(220,28,46,.6);animation:semp 1.6s infinite}
+@keyframes semp{70%{box-shadow:0 0 0 7px rgba(220,28,46,0)}100%{box-shadow:0 0 0 0 rgba(220,28,46,0)}}
+.sem-cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;direction:ltr}
+.sem-cd div{position:relative;overflow:hidden;text-align:center;padding:12px 4px 9px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1)}
+.sem-cd div::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(5,10,48,.55)}
+.sem-cd b{display:block;font:800 clamp(1.7rem,8vw,2.2rem)/1 var(--f-head,inherit);letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.sem-cd b.t{animation:semt .45s var(--ease,ease) both}
+@keyframes semt{from{opacity:.25;transform:translateY(-30%)}to{opacity:1;transform:none}}
+.sem-cd span{display:block;margin-top:6px;font:600 .58rem var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(238,241,250,.55)}
+.sem-cd div:last-child{border-color:rgba(220,28,46,.55);background:linear-gradient(180deg,rgba(220,28,46,.22),rgba(220,28,46,.04))}
+.sem-live{margin-top:8px;padding:14px;border-radius:14px;border:1px solid rgba(220,28,46,.55);background:rgba(220,28,46,.14);font:700 1rem/1.35 var(--f-head,inherit);color:#fff;text-align:center}
+.sem-in{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
+.sem-in li{display:flex;align-items:center;gap:11px;font-size:.9rem;color:#fff;font-weight:600;min-width:0}
+.sem-in li small{display:block;font-weight:500;font-size:.76rem;color:rgba(238,241,250,.6)}
+.sem-in svg{flex:0 0 auto;width:34px;height:34px;padding:8px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#E9C27A}
+.sem-in a{color:inherit;text-decoration:none}
+.sem-in a u{text-decoration:none;font-size:.74rem;font-weight:700;color:#E9C27A;margin-inline-start:6px;white-space:nowrap}
+.sem-fr{margin:14px 0 0;font-size:.78rem;color:#E9C27A;font-weight:600}
+.sem-bt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:12px}
+.sem-bt a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border-radius:999px;text-decoration:none;font:800 .9rem var(--f-head,inherit);white-space:nowrap;transition:transform .3s var(--ease,ease),box-shadow .3s}
+.sem-wa{background:#DC1C2E;color:#fff;box-shadow:0 14px 34px -14px rgba(220,28,46,.95)}
+.sem-wa:hover{transform:translateY(-2px)}
+.sem-bt svg{flex:0 0 auto}
+.sem-tel{border:1px solid rgba(255,255,255,.28);color:#fff;background:rgba(255,255,255,.05);direction:ltr}
+.sem-tel i{display:none;font-style:normal}
+@media (max-width:480px){.sem-tel{padding:0 18px!important}.sem-tel span{display:none}.sem-tel i{display:inline}.sem-bt a{font-size:.88rem}}
+@media (max-width:380px){.sem-c{padding:20px 16px 16px}.sem-lg img{height:28px}.sem-cd{gap:6px}}
+@media (max-height:700px){.sem-c{padding-top:16px;padding-bottom:16px}.sem-lg{padding:2px 40px 10px}.sem-lg img{height:26px}.sem-hd{margin-top:10px}.sem-c h3{margin:8px 0 4px;font-size:1.5rem}.sem-sub{font-size:.82rem;line-height:1.4}.sem-k{margin-top:10px}.sem-cd div{padding:9px 4px 7px}.sem-cd b{font-size:1.6rem}.sem-in{margin-top:10px;gap:5px}.sem-in li{font-size:.84rem}.sem-in svg{width:28px;height:28px;padding:6px}.sem-fr{margin-top:10px}.sem-bt{margin-top:10px}.sem-bt a{min-height:44px}}
+@media (prefers-reduced-motion:reduce){.sem-k::before{animation:none}}
+</style>
+<div class="sem" id="sem" role="dialog" aria-modal="true" aria-labelledby="sem-t" hidden>
+ <div class="sem-c">
+  <button class="sem-x" type="button" aria-label="Kapat">✕</button>
+  <div class="sem-lg"><img src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" width="94" height="34"><i aria-hidden="true">×</i><img src="assets/kibris/dovec-logo.webp" alt="Döveç Group" width="91" height="34"></div>
+  <div class="sem-hd"><span class="sem-inv">Davetlisiniz</span><span class="sem-ey">Ücretsiz seminer · İstanbul</span></div>
+  <h3 id="sem-t">Büyük Kuzey Kıbrıs <em>Buluşması</em></h3>
+  <p class="sem-sub"><b>Döveç İnşaat</b> temsilcileri Kuzey Kıbrıs'tan geliyor. Projeler, ödeme planları ve kira getirisi; sorularınızı doğrudan sorun.</p>
+  <p class="sem-k" id="sem-k">Buluşmaya kalan süre</p>
+  <div class="sem-cd" id="sem-cd"><div><b>--</b><span>Gün</span></div><div><b>--</b><span>Saat</span></div><div><b>--</b><span>Dakika</span></div><div><b>--</b><span>Saniye</span></div></div>
+  <ul class="sem-in">
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>21–22 Kasım 2026<small>Cumartesi – Pazar</small></span></li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Saat 13:00<small>Her iki gün</small></span></li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><a href="https://www.google.com/maps/search/?api=1&amp;query=Kalam%C4%B1%C5%9F+Marina+Hotel+Kad%C4%B1k%C3%B6y" target="_blank" rel="noopener" data-ev="seminer_konum"><span>Kalamış Marina Hotel<u>Yol tarifi →</u><small>Kadıköy, İstanbul</small></span></a></li>
+  </ul>
+  <p class="sem-fr">Katılım ücretsiz, kontenjan sınırlı. Ön kayıt gereklidir.</p>
+  <div class="sem-bt">
+   <a class="sem-wa" href="https://wa.me/902163151515?text=Merhaba%2C%2021%E2%80%9322%20Kas%C4%B1m%27daki%20B%C3%BCy%C3%BCk%20Kuzey%20K%C4%B1br%C4%B1s%20Bulu%C5%9Fmas%C4%B1%27na%20kay%C4%B1t%20olmak%20istiyorum." target="_blank" rel="noopener" data-ev="seminer_wa"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.2-.3-.2-.5-.3z"/></svg>WhatsApp'tan kayıt ol</a>
+   <a class="sem-tel" href="tel:+902163151515" data-ev="seminer_ara" aria-label="0216 315 15 15 numarasını ara"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span>0216 315 15 15</span><i>Ara</i></a>
+  </div>
+ </div>
+</div>
+<script>
+(()=>{
+ const START=Date.UTC(2026,10,21,10,0,0), END=Date.UTC(2026,10,22,15,0,0); /* 21 Kasım 13:00 TSİ başlar, 22 Kasım 18:00 TSİ'den sonra kart hiç çıkmaz */
+ const KEY="kibris_seminer_kapat", root=document.documentElement, box=document.getElementById("sem");
+ if(!box) return;
+ const force=/[?&]seminer=1\b/.test(location.search);
+ const ev=(n)=>{ try{ typeof track==="function"&&track(n,{dil:root.lang}); }catch(e){} try{ typeof gtag==="function"&&gtag("event",n); }catch(e){} };
+ let seen=false; try{ seen=sessionStorage.getItem(KEY)==="1"; }catch(e){}
+ if(!force&&(seen||Date.now()>END||/bot|crawl|spider|lighthouse/i.test(navigator.userAgent))) return;
+ const cd=document.getElementById("sem-cd"), nums=[...cd.querySelectorAll("b")], k=document.getElementById("sem-k");
+ let timer=0, last=document.activeElement;
+ const pad=n=>String(n).padStart(2,"0");
+ function tick(){
+  const ms=START-Date.now();
+  if(ms<=0){
+   if(!cd.dataset.live){ cd.dataset.live=1; cd.outerHTML='<div class="sem-live" id="sem-cd">'+(Date.now()<Date.UTC(2026,10,22,10,0,0)?"Buluşma başladı! İkinci gün 22 Kasım Pazar 13:00'te, Kalamış Marina Hotel'de bekliyoruz.":"Buluşma şu an Kalamış Marina Hotel'de. Bekliyoruz!")+'</div>'; k.textContent="Şimdi"; }
+   return;
+  }
+  const s=Math.floor(ms/1000), v=[Math.floor(s/86400),Math.floor(s%86400/3600),Math.floor(s%3600/60),s%60].map(pad);
+  nums.forEach((b,i)=>{ if(b.textContent!==v[i]){ b.textContent=v[i]; b.classList.remove("t"); void b.offsetWidth; b.classList.add("t"); } });
+ }
+ function open(){
+  if(root.lang!=="tr"||box.classList.contains("on")) return;
+  tick(); timer=setInterval(tick,1000);
+  box.hidden=false; last=document.activeElement;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add("on")));
+  document.body.classList.add("lock");
+  setTimeout(()=>{ try{ box.querySelector(".sem-x").focus({preventScroll:true}); }catch(e){} },350);
+  ev("seminer_popup");
+ }
+ function close(store){
+  if(!box.classList.contains("on")) return;
+  box.classList.remove("on"); clearInterval(timer);
+  if(!document.querySelector(".ovl.open")) document.body.classList.remove("lock");
+  setTimeout(()=>{ box.hidden=true; },460);
+  if(store){ try{ sessionStorage.setItem(KEY,"1"); }catch(e){} }
+  try{ last&&last.focus&&last.focus({preventScroll:true}); }catch(e){}
+ }
+ box.addEventListener("click",e=>{ if(e.target===box||e.target.closest(".sem-x")) close(true); });
+ document.addEventListener("keydown",e=>{ if(e.key==="Escape") close(true); });
+ box.querySelectorAll("[data-ev^='seminer_']").forEach(a=>a.addEventListener("click",()=>{ ev(a.dataset.ev); try{ sessionStorage.setItem(KEY,"1"); }catch(e){} }));
+ new MutationObserver(()=>{ if(root.lang!=="tr") close(false); }).observe(root,{attributes:true,attributeFilter:["lang"]});
+ setTimeout(open,force?300:2200);
+})();
 </script>
 </body>
 </html>
