@@ -25,6 +25,11 @@
     'Grand Sapphire Blu': [
       { ad: '1-2-3-6-7-8-9-10-11. Bloklar', blok: ['1', '2', '3', '6', '7', '8', '9', '10', '11'], pe: 35, tl: 0, ts: 0, teslim: '2028-06', not: 'Grand Sapphire Blu 1, 2, 3, 6, 7, 8, 9, 10 ve 11. Bloklar · teslim Haziran 2028. %35 peşinat; %65 teslime kadar eşit taksit. Kesin tutarı satış temsilcisiyle teyit edin.' },
       { ad: '4-5-12-13. Bloklar', blok: ['4', '5', '12', '13'], pe: 35, tl: 0, ts: 0, teslim: '2029-06', not: 'Grand Sapphire Blu 4, 5, 12 ve 13. Bloklar · teslim Haziran 2029. %35 peşinat; %65 teslime kadar eşit taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    // Noyanlar: Umut 27.10.2026; Ocean Life etapları blok adlarından (fiyat listesindeki etap notu)
+    'Ocean Life Residence': [
+      { ad: '1. Etap', blok: ['AFALINA-1', 'AFALINA-2', 'WHALE-2', 'ORCA-4', 'ORCA-5', 'ORCA-7', 'BELUGA-5'], pe: 35, tl: 0, ts: 30, sa: 30, teslim: '2027-12', not: 'Ocean Life 1. Etap · teslim Aralık 2027. %35 peşinat; %35 teslime kadar taksit; %30 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' },
+      { ad: '2. Etap', blok: ['AFALINA-3', 'AFALINA-4', 'ORCA-8', 'ORCA-9', 'ORCA-10'], pe: 35, tl: 0, ts: 30, sa: 30, teslim: '2028-12', not: 'Ocean Life 2. Etap · teslim Aralık 2028. %35 peşinat; %35 teslime kadar taksit; %30 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    'Riverside Life Residence': [{ ad: 'Riverside planı', pe: 50, tl: 0, ts: 50, sa: 36, not: 'Riverside Life: %50 peşinat; %50 teslimden sonra 36 ay taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Natulux': [{ ad: 'Natulux planı', pe: 35, tl: 0, ts: 30, sa: 12, teslim: '2027-05', not: 'Natulux · teslim Mayıs 2027. %35 peşinat, teslime kadar %35 taksit, teslimden sonra %30 (12 ay). ' + DV }]
   };
   // bloğa bağlı plan varsa o dairenin planının sırası, yoksa -1
