@@ -108,27 +108,52 @@ function seslendir(metin) {
   tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…');
   const istek = servis({ action: 'sesliAsistan', islem: 'gemini_seslendir', pin: $('pin').value.trim(), metin });
   sira = sira.then(async () => {
-    let j = null; try { j = await istek; } catch (e) {}
-    if (k !== kusak || !cikisCtx) return;
+    let j = null; try { j = await istek; } catch (e) { j = { ok: false, error: 'bağlantı: ' + e.message }; }
     try {
+      if (k !== kusak || !cikisCtx) return;
       if (!j || !j.ok) { durum('Seslendirme hatası: ' + ((j && j.error) || 'bağlantı'), 'hata'); return; }
-      const hz = /rate=(\d+)/.exec(j.mime || '');
-      if (/L16|pcm/i.test(j.mime || '')) { bekleyen--; cal(j.veri, hz ? +hz[1] : 24000); return; }
-      const ham = atob(j.veri), u = new Uint8Array(ham.length); for (let i = 0; i < ham.length; i++) u[i] = ham.charCodeAt(i);
-      const buf = await cikisCtx.decodeAudioData(u.buffer);
-      if (k !== kusak) return;
-      bekleyen--; calBuf(buf);
-    } finally { if (k === kusak && bekleyen > 0 && (!j || !j.ok)) bekleyen--; }
+      await sesCal(b64Bayt(j.veri), j.mime);
+    } catch (e) { durum('Ses çalınamadı: ' + e.message, 'hata'); }
+    finally { if (k === kusak) { bekleyen = Math.max(0, bekleyen - 1); if (!kaynaklar.length && !bekleyen && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); } } }
   });
 }
-/* Açılış cümlesi hep aynı: stüdyo sesiyle önceden kaydedildi (assets/ses-ornek/acilis-sadaltager.mp3), beklemeden çalınır. */
+const b64Bayt = v => { const ham = atob(v), u = new Uint8Array(ham.length); for (let i = 0; i < ham.length; i++) u[i] = ham.charCodeAt(i); return u; };
+/* WAV (PCM 16 bit) elle çözülür; Live sesinin çalındığı yolla aynı (iPhone Safari'de decodeAudioData'ya güvenmiyoruz). */
+async function sesCal(u, mime) {
+  const dv = new DataView(u.buffer);
+  const metin = (o, n) => String.fromCharCode.apply(null, u.subarray(o, o + n));
+  if (metin(0, 4) === 'RIFF') {
+    let o = 12, hz = 24000, kanal = 1;
+    while (o + 8 <= u.length) {
+      const ad = metin(o, 4), boy = dv.getUint32(o + 4, true);
+      if (ad === 'fmt ') { kanal = dv.getUint16(o + 10, true); hz = dv.getUint32(o + 12, true); }
+      if (ad === 'data') {
+        const n = Math.floor(Math.min(boy, u.length - o - 8) / 2 / kanal), f = new Float32Array(n);
+        for (let i = 0; i < n; i++) f[i] = dv.getInt16(o + 8 + i * 2 * kanal, true) / 32768;
+        const buf = cikisCtx.createBuffer(1, n, hz); buf.copyToChannel(f, 0); calBuf(buf); return;
+      }
+      o += 8 + boy + (boy & 1);
+    }
+    throw new Error('WAV içinde ses yok');
+  }
+  if (/L16|pcm/i.test(mime || '')) {
+    const hz = /rate=(\d+)/.exec(mime), n = u.length >> 1, f = new Float32Array(n);
+    for (let i = 0; i < n; i++) f[i] = dv.getInt16(i * 2, true) / 32768;
+    const buf = cikisCtx.createBuffer(1, n, hz ? +hz[1] : 24000); buf.copyToChannel(f, 0); calBuf(buf); return;
+  }
+  calBuf(await new Promise((ok, red) => cikisCtx.decodeAudioData(u.buffer, ok, red)));
+}
+/* Açılış cümlesi hep aynı: stüdyo sesiyle önceden kaydedildi (assets/ses-ornek/acilis-sadaltager.wav), beklemeden çalınır. */
 async function acilisCal(ilk) {
   const k = kusak; bekleyen++;
+  let tamam = false;
   try {
-    const r = await fetch('assets/ses-ornek/acilis-sadaltager.mp3?cb=' + Date.now());
-    const buf = await cikisCtx.decodeAudioData(await r.arrayBuffer());
-    if (k !== kusak) return; bekleyen--; calBuf(buf);
-  } catch (e) { if (k === kusak) { bekleyen--; seslendir(ilk); } }
+    const r = await fetch('assets/ses-ornek/acilis-sadaltager.wav?cb=' + Date.now());
+    if (!r.ok) throw new Error('açılış sesi ' + r.status);
+    const u = new Uint8Array(await r.arrayBuffer());
+    if (k !== kusak) return;
+    bekleyen--; tamam = true; await sesCal(u, 'audio/wav');
+  } catch (e) { if (k === kusak) { if (!tamam) bekleyen--; seslendir(ilk); } }
 }
 function parcaEkle(t) {
   parca += t;
@@ -170,11 +195,14 @@ function baglan(url, token, setup, ilk) {
 async function basla() {
   const pin = $('pin').value.trim();
   if (!pin) return durum('PIN girin.', 'hata');
+  // iPhone: hoparlör bağlamı dokunuşun içinde açılır ve sessiz bir parça çalınarak kilidi açılır.
+  cikisCtx = new AudioContext({ sampleRate: 24000 }); cikisCtx.resume();
+  try { const b = cikisCtx.createBufferSource(); b.buffer = cikisCtx.createBuffer(1, 1, 24000); b.connect(cikisCtx.destination); b.start(0); } catch (e) {}
   $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = ''; satirlar = []; sonBalon = null; sonRol = ''; kapatIstendi = false; parca = ''; acilisAtla = false;
   durum('Asistan hazırlanıyor…');
   try {
     mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
-    girisCtx = new AudioContext({ sampleRate: 16000 }); cikisCtx = new AudioContext({ sampleRate: 24000 });
+    girisCtx = new AudioContext({ sampleRate: 16000 });
     await cikisCtx.resume();
     const j = await servis({ action: 'sesliAsistan', islem: 'gemini_baslat', pin, studyo: STUDYO });
     if (!j.ok) throw new Error(j.error + (j.detay ? ' (' + j.detay + ')' : ''));
