@@ -5,7 +5,7 @@
 # Çıkan görseli merkezden 4:3 kırpıp 1600x1200 JPEG yapar ve geri yükler. Mac betiği masaüstüne indirir.
 # Oturum açılınca Görev Zamanlayıcı başlatır (kur.ps1), sürekli çalışır, 30 sn'de bir sıraya bakar.
 # Dosyalar: %LOCALAPPDATA%\DogusFoto\ (anahtar, prompt.txt, chrome profili, isci.log)
-param([switch]$TekSefer)
+param([switch]$TekSefer, [string]$Foto = '', [string]$Cikti = '')
 $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Add-Type -AssemblyName System.Web.Extensions, System.Drawing
@@ -20,7 +20,7 @@ $JSON.MaxJsonLength = [int]::MaxValue
 
 function Log($m) {
   $s = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ' + $m
-  Add-Content -Path (Join-Path $KOK 'isci.log') -Value $s -Encoding UTF8
+  for ($i = 0; $i -lt 5; $i++) { try { Add-Content -Path (Join-Path $KOK 'isci.log') -Value $s -Encoding UTF8; return } catch { Start-Sleep -Milliseconds 200 } }
 }
 $ANAHTAR = (Get-Content (Join-Path $KOK 'anahtar') -Raw).Trim()
 $PROMPT_YOL = Join-Path $KOK 'prompt.txt'
@@ -187,54 +187,85 @@ function Kirp43($girdi, $cikis) {
 
 # ---------------- iş ----------------
 function DosyaAdi($s) { return (($s -replace '[\\/:*?"<>|]', ' ') -replace '\s+', ' ').Trim() }
+# Tek fotoğraf, ayrı süreçte (paralel sekmeler için). Çıkış: 0 tamam, 2 ChatGPT girişi yok, 1 hata (.hata dosyasında)
+function TekFoto($girdi, $gpt) {
+  $deneme = 0
+  while ($true) {
+    try { ChatGPTDuzenle $girdi $gpt; return 0 }
+    catch {
+      if ($_.Exception.Message -eq 'GIRIS') { return 2 }
+      $deneme++; Log "  $([IO.Path]::GetFileName($girdi)) deneme $deneme hata: $($_.Exception.Message)"
+      if ($deneme -ge 2) { Set-Content -Path "$gpt.hata" -Value $_.Exception.Message -Encoding UTF8; return 1 }
+      Start-Sleep -Seconds 20
+    }
+  }
+}
+function Paralel { try { $n = [int](Get-Content (Join-Path $KOK 'paralel') -Raw).Trim(); if ($n -ge 1 -and $n -le 6) { return $n } } catch {}; return 3 }
 function IsIsle($is) {
   $id = $is['is']; $ad = DosyaAdi $is['ad']; $dosyalar = @($is['dosyalar'])
-  Log "iş $id '$ad' $($dosyalar.Count) fotoğraf"
+  $esZamanli = Paralel
+  Log "iş $id '$ad' $($dosyalar.Count) fotoğraf, aynı anda $esZamanli"
   $klasor = Join-Path $CIKTI_KOK $ad
   $ham = Join-Path $KOK "is\$id"
   New-Item -ItemType Directory -Force -Path $klasor, $ham | Out-Null
-  $tamam = 0; $hatalar = @()
-  for ($i = 0; $i -lt $dosyalar.Count; $i++) {
-    $f = $dosyalar[$i]; $no = [int]$f['no']; $sira = '{0:D2}' -f $no
-    Durum $id @{ islenen = $tamam; mesaj = "ChatGPT'de: $($i + 1). fotoğraf / $($dosyalar.Count)" }
+  $tamam = 0; $hatalar = @(); $bekleyen = New-Object System.Collections.ArrayList; $calisan = @{}; $giris = $false
+  Durum $id @{ islenen = 0; mesaj = 'Fotoğraflar alınıyor' }
+  foreach ($f in $dosyalar) {
+    $no = [int]$f['no']; $sira = '{0:D2}' -f $no
     try {
       $j = Servis @{ action = 'fdIndir'; is = $id; no = $no; tur = 'in' }
       if (-not $j['success']) { throw $j['error'] }
       $uz = [IO.Path]::GetExtension($f['ad']); if (-not $uz) { $uz = '.jpg' }
       $girdi = Join-Path $ham ("in_$sira" + $uz)
       [IO.File]::WriteAllBytes($girdi, [Convert]::FromBase64String($j['veri']))
-      $gpt = Join-Path $ham "gpt_$sira.png"
-      $deneme = 0
-      while ($true) {
-        try { ChatGPTDuzenle $girdi $gpt; break }
-        catch {
-          if ($_.Exception.Message -eq 'GIRIS') { throw }
-          $deneme++; Log "  $sira deneme $deneme hata: $($_.Exception.Message)"
-          if ($deneme -ge 2) { throw }
-          Start-Sleep -Seconds 20
-        }
+      [void]$bekleyen.Add(@{ no = $no; sira = $sira; girdi = $girdi; gpt = (Join-Path $ham "gpt_$sira.png") })
+    } catch { $hatalar += "$sira (indirilemedi: $($_.Exception.Message))" }
+  }
+  $betik = $MyInvocation.ScriptName; if (-not $betik) { $betik = $PSCommandPath }
+  while ($bekleyen.Count -or $calisan.Count) {
+    while (-not $giris -and $bekleyen.Count -and $calisan.Count -lt $esZamanli) {
+      $x = $bekleyen[0]; $bekleyen.RemoveAt(0)
+      Remove-Item -Force -ErrorAction SilentlyContinue $x.gpt, "$($x.gpt).hata"
+      $x.surec = Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -PassThru -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$betik`"", '-Foto', "`"$($x.girdi)`"", '-Cikti', "`"$($x.gpt)`"")
+      $calisan[$x.sira] = $x
+      Durum $id @{ islenen = $tamam; mesaj = "ChatGPT'de: $($calisan.Count) fotoğraf işleniyor · $tamam / $($dosyalar.Count) hazır" }
+      Start-Sleep -Seconds 8   # sekmeler aynı anda açılmasın
+    }
+    Start-Sleep -Seconds 3
+    foreach ($sira in @($calisan.Keys)) {
+      $x = $calisan[$sira]
+      if (-not $x.surec.HasExited) { continue }
+      $calisan.Remove($sira)
+      $kod = $x.surec.ExitCode
+      if ($kod -eq 2) { $giris = $true; $bekleyen.Clear(); continue }
+      if ($kod -ne 0 -or -not (Test-Path $x.gpt)) {
+        $m = 'bilinmeyen hata'; if (Test-Path "$($x.gpt).hata") { $m = (Get-Content "$($x.gpt).hata" -Raw -Encoding UTF8).Trim() }
+        $hatalar += "$sira ($m)"; Log "  $sira BAŞARISIZ: $m"; continue
       }
-      $son = Join-Path $klasor "$ad $sira.jpg"
-      Kirp43 $gpt $son
-      $veri = [Convert]::ToBase64String([IO.File]::ReadAllBytes($son))
-      $tamam++
-      Durum $id @{ no = $no; ad = "$ad $sira.jpg"; veri = $veri; islenen = $tamam; mesaj = "$tamam / $($dosyalar.Count) hazır" }
-      Log "  $sira tamam"
-    } catch {
-      if ($_.Exception.Message -eq 'GIRIS') {
-        Durum $id @{ durum = 'hata'; mesaj = 'ChatGPT oturumu kapalı: UMT''deki "ChatGPT İşçi" Chrome penceresinde giriş yap, sonra işi yeniden gönder.' }
-        Log '  ChatGPT girişi yok'; return
-      }
-      $hatalar += "$sira ($($_.Exception.Message))"; Log "  $sira BAŞARISIZ: $($_.Exception.Message)"
+      try {
+        $son = Join-Path $klasor "$ad $sira.jpg"
+        Kirp43 $x.gpt $son
+        $tamam++
+        Durum $id @{ no = $x.no; ad = "$ad $sira.jpg"; veri = [Convert]::ToBase64String([IO.File]::ReadAllBytes($son)); islenen = $tamam; mesaj = "$tamam / $($dosyalar.Count) hazır" }
+        Log "  $sira tamam"
+      } catch { $hatalar += "$sira ($($_.Exception.Message))"; Log "  $sira BAŞARISIZ: $($_.Exception.Message)" }
     }
   }
-  if ($tamam -eq 0) { Durum $id @{ durum = 'hata'; islenen = 0; mesaj = 'Hiçbir fotoğraf düzenlenemedi: ' + ($hatalar -join '; ') } }
+  if ($giris -and $tamam -eq 0) {
+    Durum $id @{ durum = 'hata'; mesaj = 'ChatGPT oturumu kapalı: Windows''taki ayrı ChatGPT Chrome penceresinde giriş yap, sonra işi yeniden gönder.' }
+    Log '  ChatGPT girişi yok'; return
+  }
+  if ($giris) { $hatalar += 'kalanlar (ChatGPT oturumu kapandı)' }
+  if ($tamam -eq 0) { Durum $id @{ durum = 'hata'; islenen = 0; mesaj = ('Hiçbir fotoğraf düzenlenemedi: ' + ($hatalar -join '; ')).Substring(0, [Math]::Min(300, ('Hiçbir fotoğraf düzenlenemedi: ' + ($hatalar -join '; ')).Length)) } }
   else {
     $m = "$tamam / $($dosyalar.Count) fotoğraf hazır"; if ($hatalar.Count) { $m += ' · olmayanlar: ' + ($hatalar -join '; ') }
     Durum $id @{ durum = 'bitti'; islenen = $tamam; mesaj = $m.Substring(0, [Math]::Min(300, $m.Length)) }
   }
   Log "iş $id bitti: $tamam / $($dosyalar.Count)"
 }
+
+# ---------------- tek fotoğraf modu (IsIsle başlatır) ----------------
+if ($Foto) { exit (TekFoto $Foto $Cikti) }
 
 # ---------------- ana döngü ----------------
 $kilit = New-Object Threading.Mutex($false, 'Local\DogusFotoIsci')
