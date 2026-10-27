@@ -14,7 +14,7 @@ $SERVIS = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06
 $KOK = Join-Path $env:LOCALAPPDATA 'DogusFoto'
 $CHROME = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
 $PORT = 9333
-$CIKTI_KOK = Join-Path ([Environment]::GetFolderPath('MyPictures')) 'ChatGPT_Duzenleme\portal'
+$CIKTI_KOK = Join-Path $env:USERPROFILE 'Pictures\ChatGPT_Duzenleme\portal'
 $JSON = New-Object System.Web.Script.Serialization.JavaScriptSerializer
 $JSON.MaxJsonLength = [int]::MaxValue
 
@@ -122,7 +122,7 @@ function ChatGPTDuzenle($girdiYol, $cikisYol) {
   SekmeAc 'https://chatgpt.com/'
   try {
     [void](Cdp 'Page.enable' $null); [void](Cdp 'Runtime.enable' $null)
-    $hazir = Bekle "(() => { if (document.querySelector('[data-testid=`"login-button`"]')) return 'giris'; return document.querySelector('#prompt-textarea') ? 'ok' : ''; })()" 90 1000
+    $hazir = Bekle "(() => { if (document.querySelector('#prompt-textarea') && !document.querySelector('[data-testid=`"login-button`"]')) return 'ok'; if (document.readyState === 'complete' && (document.querySelector('[data-testid=`"login-button`"]') || [...document.querySelectorAll('a,button')].some(b => /^(Oturum aç|Giriş yap|Log in)$/i.test(b.innerText.trim())))) return 'giris'; return ''; })()" 90 1000
     if ($hazir -eq 'giris') { throw 'GIRIS' }
     if (-not $hazir) { throw 'ChatGPT sayfası açılmadı' }
     Start-Sleep -Seconds 2
