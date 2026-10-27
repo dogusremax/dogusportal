@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Fotoğraf Düzenle · RE/MAX Doğuş</title>
+<link rel="icon" href="/assets/app-ikon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  :root{--zemin:#0b0f2a;--kutu:#111738;--kutu2:#161c44;--cizgi:rgba(255,255,255,.08);--soluk:rgba(255,255,255,.55);--kirmizi:#DC1C2E;--mavi:#3b6cf6;--yesil:#34d399;--sari:#fbbf24}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--zemin);color:#fff;min-height:100vh;
+    background-image:radial-gradient(900px 420px at 85% -10%,rgba(220,28,46,.18),transparent 60%),radial-gradient(800px 400px at -10% 10%,rgba(59,108,246,.16),transparent 60%)}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--cizgi)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700;flex:1}
+  .top a{color:var(--soluk);font-size:13px;text-decoration:none}
+  main{max-width:720px;margin:0 auto;padding:22px 16px 70px;display:flex;flex-direction:column;gap:16px}
+  .hero{display:flex;gap:14px;align-items:center}
+  .hero .ik{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#1d2763,#2a1240);display:grid;place-items:center;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .hero h2{font-size:22px;font-weight:800;letter-spacing:-.3px}
+  .hero p{font-size:13.5px;color:var(--soluk);margin-top:3px;line-height:1.45}
+  .adimlar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .adim{background:rgba(255,255,255,.04);border:1px solid var(--cizgi);border-radius:12px;padding:10px;font-size:11.5px;color:var(--soluk);line-height:1.35}
+  .adim b{display:block;color:#fff;font-size:12.5px;margin-bottom:2px}
+  .kart{background:var(--kutu);border:1px solid var(--cizgi);border-radius:18px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .kart h3{font-size:12px;font-weight:700;color:var(--soluk);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+  .birak{border:2px dashed rgba(255,255,255,.18);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.02)}
+  .birak:hover,.birak.ust{border-color:var(--kirmizi);background:rgba(220,28,46,.07)}
+  .birak .b1{font-size:16px;font-weight:700;margin-top:8px}
+  .birak .b2{font-size:12.5px;color:var(--soluk);margin-top:4px}
+  .izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin-top:14px}
+  .kucuk{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--kutu2)}
+  .kucuk img{width:100%;height:100%;object-fit:cover;display:block}
+  .kucuk .sil{position:absolute;top:5px;right:5px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:24px;cursor:pointer;padding:0}
+  .kucuk .no{position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;background:rgba(0,0,0,.55);border-radius:6px;padding:2px 6px}
+  .kucuk .tik{position:absolute;inset:0;background:rgba(11,15,42,.55);display:grid;place-items:center;font-size:22px}
+  .ozet{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--soluk)}
+  button.ghost{font:600 12px 'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.08);color:#fff;border:0;border-radius:8px;padding:7px 11px;cursor:pointer}
+  label.et{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+  .alan{position:relative}
+  .alan input{width:100%;font:600 16px 'Plus Jakarta Sans',sans-serif;background:var(--zemin);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 14px 14px 46px;outline:none}
+  .alan input:focus{border-color:var(--kirmizi)}
+  .alan .kl{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:20px}
+  .ipucu{font-size:12px;color:var(--soluk);margin-top:8px;line-height:1.5}
+  .ipucu code{background:rgba(255,255,255,.08);border-radius:5px;padding:1px 6px;color:#fff;font-family:inherit}
+  .gonder{width:100%;font:800 16px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:14px;padding:16px;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,#ef3347,#b5121f);box-shadow:0 10px 28px rgba(220,28,46,.35);display:flex;align-items:center;justify-content:center;gap:10px}
+  .gonder:disabled{opacity:.4;cursor:default;box-shadow:none}
+  .cubuk{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:12px}
+  .cubuk>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ef3347,#ff8a5c);transition:width .3s}
+  .durum{font-size:13.5px;color:rgba(255,255,255,.8);margin-top:10px;line-height:1.5}
+  .durum.hata{color:#ff8a95}
+  .is{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--cizgi)}
+  .is:first-child{border-top:0;padding-top:0}
+  .is .ad{font-weight:700;font-size:14.5px;word-break:break-word}
+  .is .alt{font-size:12px;color:var(--soluk);margin-top:2px}
+  .is .sag{margin-left:auto;text-align:right;flex:none}
+  .rozet{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:99px;padding:5px 10px;white-space:nowrap}
+  .r-sirada{background:rgba(251,191,36,.14);color:var(--sari)}
+  .r-isleniyor{background:rgba(59,108,246,.18);color:#8fb0ff}
+  .r-bitti{background:rgba(52,211,153,.14);color:var(--yesil)}
+  .r-teslim{background:rgba(52,211,153,.22);color:var(--yesil)}
+  .r-hata{background:rgba(255,138,149,.15);color:#ff8a95}
+  .nokta{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .r-isleniyor .nokta,.r-sirada .nokta{animation:atim 1.2s infinite}
+  @keyframes atim{50%{opacity:.25}}
+  .mini{height:5px;width:120px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:6px;margin-left:auto}
+  .mini>i{display:block;height:100%;background:#8fb0ff}
+  .saglik{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--soluk);margin-top:12px}
+  .saglik span b{color:#fff;font-weight:600}
+  #giris{max-width:320px;margin:70px auto;text-align:center;display:flex;flex-direction:column;gap:12px;padding:0 16px}
+  #giris input{font:700 24px 'Plus Jakarta Sans',sans-serif;text-align:center;letter-spacing:8px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:var(--kutu);color:#fff;outline:none}
+  #giris button{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:12px;background:var(--kirmizi);color:#fff;cursor:pointer}
+  @media (max-width:560px){.adimlar{grid-template-columns:1fr 1fr}.hero h2{font-size:19px}}
+</style>
+<script src="assets/broker.js"></script>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Fotoğraf Düzenle</h1><a href="https://dogusportal.com">Portal</a></div>
+
+<div id="giris" hidden>
+  <p class="durum">Broker PIN'i</p>
+  <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button id="girBtn">Giriş</button>
+  <p id="girisHata" class="durum hata"></p>
+</div>
+
+<main id="ana" hidden>
+  <div class="hero">
+    <div class="ik"><img src="assets/ikon3d/framed-picture.webp" alt="" width="36" height="36"></div>
+    <div>
+      <h2>Emlak fotoğraflarını profesyonelleştir</h2>
+      <p>Fotoğrafları bırak, klasör adını yaz, Gönder'e bas. Gerisi otomatik: ChatGPT'de senin promptunla düzenlenir, 1600×1200 olarak Mac masaüstüne iner.</p>
+    </div>
+  </div>
+
+  <div class="adimlar">
+    <div class="adim"><b>1 · Yükle</b>Fotoğraflar buluta gider</div>
+    <div class="adim"><b>2 · ChatGPT</b>Windows'ta tek tek, prompt birebir</div>
+    <div class="adim"><b>3 · 4:3</b>1600×1200 JPEG, sahibinden'e hazır</div>
+    <div class="adim"><b>4 · Mac</b>Masaüstüne klasör + bildirim</div>
+  </div>
+
+  <div class="kart">
+    <h3>Fotoğraflar</h3>
+    <div class="birak" id="birak">
+      <img src="assets/ikon3d/camera-with-flash.webp" alt="" width="44" height="44">
+      <div class="b1">Fotoğrafları buraya sürükle</div>
+      <div class="b2">ya da dokunup seç · JPG, PNG, HEIC · en fazla 40 fotoğraf</div>
+      <input id="dosya" type="file" accept="image/*" multiple hidden>
+    </div>
+    <div class="izgara" id="izgara"></div>
+    <div class="ozet" id="ozet" hidden><span id="adetYazi"></span><button class="ghost" id="temizle">Hepsini kaldır</button></div>
+  </div>
+
+  <div class="kart">
+    <h3>Klasör adı</h3>
+    <label class="et" for="klasor">Sonuç bu adla Mac masaüstüne klasör olarak gelir</label>
+    <div class="alan"><span class="kl">📁</span><input id="klasor" type="text" maxlength="80" placeholder="Örn: Fikirtepe 3+1 Daire 12" autocomplete="off"></div>
+    <p class="ipucu">Dosyalar klasörün içine <code>Klasör adı 01.jpg</code>, <code>Klasör adı 02.jpg</code> diye sıralanır.</p>
+  </div>
+
+  <button class="gonder" id="gonderBtn" disabled><span>Gönder</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+  <div id="ilerleme" hidden>
+    <div class="cubuk"><i id="cubuk"></i></div>
+    <p class="durum" id="durum"></p>
+  </div>
+
+  <div class="kart">
+    <h3 style="display:flex;align-items:center">İşler<button class="ghost" id="yenile" style="margin-left:auto;text-transform:none;letter-spacing:0">Yenile</button></h3>
+    <div id="isler" class="durum">Yükleniyor…</div>
+    <div class="saglik" id="saglik"></div>
+  </div>
+</main>
+
+<script>
+// danisman-takip · FotoDuzenle.js (fdYukle / fdBaslat / fdDurum). İşi Windows'taki UMT bilgisayarı yapar.
+const SERVIS = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
+const $ = id => document.getElementById(id);
+const MAX_BAYT = 8.5 * 1024 * 1024, MAX_ADET = 40;
+let PIN = '', fotolar = [], gonderiyor = false, izTimer = null;
+
+async function servis(veri, deneme) {
+  deneme = deneme || 0;
+  try {
+    const r = await fetch(SERVIS + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ pin: PIN }, veri)) });
+    const j = JSON.parse(await r.text());
+    if (!j.success && j.error === 'PIN') throw new Error('PIN');
+    return j;
+  } catch (e) {
+    if (e.message === 'PIN' || deneme >= 3) throw e;
+    await new Promise(ok => setTimeout(ok, 1500 * (deneme + 1)));
+    return servis(veri, deneme + 1);
+  }
+}
+
+/* ---------- giriş ---------- */
+async function gir(p) {
+  PIN = String(p || '').trim();
+  const ok = await brokerDogrula(PIN);
+  if (!ok) { $('girisHata').textContent = 'PIN hatalı.'; $('giris').hidden = false; return; }
+  $('giris').hidden = true; $('ana').hidden = false;
+  isleriYukle();
+}
+$('girBtn').onclick = () => gir($('pin').value);
+$('pin').onkeydown = e => { if (e.key === 'Enter') gir($('pin').value); };
+(brokerPinAl() ? gir(brokerPinAl()) : Promise.resolve($('giris').hidden = false));
+
+/* ---------- fotoğraf seçimi ---------- */
+const birak = $('birak');
+birak.onclick = () => $('dosya').click();
+$('dosya').onchange = e => { ekle(e.target.files); e.target.value = ''; };
+['dragenter', 'dragover'].forEach(t => birak.addEventListener(t, e => { e.preventDefault(); birak.classList.add('ust'); }));
+['dragleave', 'drop'].forEach(t => birak.addEventListener(t, e => { e.preventDefault(); birak.classList.remove('ust'); }));
+birak.addEventListener('drop', e => ekle(e.dataTransfer.files));
+$('temizle').onclick = () => { if (gonderiyor) return; fotolar.forEach(f => URL.revokeObjectURL(f.url)); fotolar = []; ciz(); };
+$('klasor').oninput = guncelle;
+
+function ekle(liste) {
+  if (gonderiyor) return;
+  for (const f of Array.from(liste || [])) {
+    if (!/^image\//.test(f.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(f.name)) continue;
+    if (fotolar.length >= MAX_ADET) break;
+    if (fotolar.some(x => x.dosya.name === f.name && x.dosya.size === f.size)) continue;
+    fotolar.push({ dosya: f, url: URL.createObjectURL(f) });
+  }
+  ciz();
+}
+function ciz() {
+  $('izgara').innerHTML = '';
+  fotolar.forEach((f, i) => {
+    const d = document.createElement('div'); d.className = 'kucuk';
+    d.innerHTML = '<img alt=""><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' + (gonderiyor ? '' : '<button class="sil" title="Kaldır">×</button>') + (f.yuklendi ? '<div class="tik">✓</div>' : '');
+    d.querySelector('img').src = f.url;
+    const s = d.querySelector('.sil'); if (s) s.onclick = ev => { ev.stopPropagation(); URL.revokeObjectURL(f.url); fotolar.splice(i, 1); ciz(); };
+    $('izgara').appendChild(d);
+  });
+  $('ozet').hidden = !fotolar.length;
+  $('adetYazi').textContent = fotolar.length + ' fotoğraf seçildi';
+  guncelle();
+}
+function guncelle() { $('gonderBtn').disabled = gonderiyor || !fotolar.length || !$('klasor').value.trim(); }
+
+/* ---------- gönder ---------- */
+function b64(blob) {
+  return new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = no; r.readAsDataURL(blob); });
+}
+// 8,5 MB'tan büyük ya da HEIC olmayan ama tarayıcının açabildiği dev dosyaları kaliteli JPEG'e indirir
+async function hazirla(f) {
+  if (f.size <= MAX_BAYT) return f;
+  const img = await createImageBitmap(f);
+  const o = Math.min(1, 4096 / Math.max(img.width, img.height));
+  const c = document.createElement('canvas'); c.width = Math.round(img.width * o); c.height = Math.round(img.height * o);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.93));
+}
+function yaz(m, yuzde, hata) {
+  $('ilerleme').hidden = false;
+  $('durum').textContent = m; $('durum').className = 'durum' + (hata ? ' hata' : '');
+  if (yuzde != null) $('cubuk').style.width = Math.max(0, Math.min(100, yuzde)) + '%';
+}
+$('gonderBtn').onclick = async () => {
+  if (gonderiyor || !fotolar.length) return;
+  const klasor = $('klasor').value.trim(); if (!klasor) return;
+  gonderiyor = true; guncelle(); ciz();
+  const is = (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)).toLowerCase();
+  try {
+    for (let i = 0; i < fotolar.length; i++) {
+      yaz('Fotoğraf yükleniyor: ' + (i + 1) + ' / ' + fotolar.length, i / fotolar.length * 100);
+      const blob = await hazirla(fotolar[i].dosya);
+      const j = await servis({ action: 'fdYukle', is, no: i + 1, ad: fotolar[i].dosya.name, mime: blob.type || 'image/jpeg', veri: await b64(blob) });
+      if (!j.success) throw new Error(j.error || 'yükleme');
+      fotolar[i].yuklendi = true; ciz();
+    }
+    yaz('Sıraya alınıyor…', 100);
+    const j = await servis({ action: 'fdBaslat', is, klasor, adet: fotolar.length });
+    if (!j.success) throw new Error(j.error || 'başlatılamadı');
+    yaz('✓ Gönderildi. "' + j.durum.ad + '" sıraya alındı; Windows bilgisayar birkaç dakika içinde başlar. Bitince telefonuna bildirim gelecek ve klasör Mac masaüstüne inecek. Bu sayfayı kapatabilirsin.', 100);
+    fotolar.forEach(f => URL.revokeObjectURL(f.url)); fotolar = []; $('klasor').value = '';
+    isleriYukle();
+  } catch (e) {
+    yaz(e.message === 'PIN' ? 'PIN geçersiz, sayfayı yenileyip tekrar gir.' : 'Gönderilemedi: ' + e.message + '. Tekrar Gönder\'e basabilirsin.', null, true);
+  } finally { gonderiyor = false; ciz(); }
+};
+
+/* ---------- işler ---------- */
+const ETIKET = { sirada: 'Sırada', isleniyor: 'ChatGPT\'de', bitti: 'Hazır, Mac\'e iniyor', teslim: 'Masaüstünde', hata: 'Durdu' };
+function once(t) {
+  if (!t) return '—';
+  const s = Math.round((Date.now() - t) / 1000);
+  if (s < 60) return 'az önce'; if (s < 3600) return Math.round(s / 60) + ' dk önce';
+  if (s < 86400) return Math.round(s / 3600) + ' saat önce';
+  return new Date(t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+function kacis(s) { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+async function isleriYukle() {
+  clearTimeout(izTimer);
+  try {
+    const j = await servis({ action: 'fdDurum' });
+    if (!j.success) throw new Error(j.error);
+    const l = j.liste || [];
+    $('isler').innerHTML = l.length ? l.map(d => {
+      const yuzde = d.adet ? Math.round(d.islenen / d.adet * 100) : 0;
+      return '<div class="is"><div style="min-width:0"><div class="ad">📁 ' + kacis(d.ad) + '</div><div class="alt">' + d.adet + ' fotoğraf · ' + once(d.olusturma) +
+        (d.mesaj ? ' · ' + kacis(d.mesaj) : '') + '</div></div><div class="sag"><span class="rozet r-' + d.durum + '"><span class="nokta"></span>' + (ETIKET[d.durum] || d.durum) +
+        (d.durum === 'isleniyor' ? ' ' + d.islenen + '/' + d.adet : '') + '</span>' + (d.durum === 'isleniyor' ? '<div class="mini"><i style="width:' + yuzde + '%"></i></div>' : '') + '</div></div>';
+    }).join('') : 'Henüz iş yok. İlk fotoğrafları yukarıdan gönder.';
+    const isci = j.isciSon, canli = isci && Date.now() - isci < 5 * 60 * 1000;
+    const mac = j.macSon, macCanli = mac && Date.now() - mac < 5 * 60 * 1000;
+    $('saglik').innerHTML = '<span>Windows (UMT): <b>' + (canli ? '🟢 hazır' : isci ? '🔴 kapalı (' + once(isci) + ')' : '⚪ henüz bağlanmadı') + '</b></span>' +
+      '<span>Mac: <b>' + (macCanli ? '🟢 hazır' : mac ? '🔴 kapalı (' + once(mac) + ')' : '⚪ henüz bağlanmadı') + '</b></span>';
+    if (l.some(d => d.durum === 'sirada' || d.durum === 'isleniyor' || d.durum === 'bitti')) izTimer = setTimeout(isleriYukle, 15000);
+  } catch (e) {
+    $('isler').textContent = e.message === 'PIN' ? 'PIN geçersiz.' : 'İşler okunamadı: ' + e.message;
+  }
+}
+$('yenile').onclick = isleriYukle;
+document.addEventListener('visibilitychange', () => { if (!document.hidden && PIN) isleriYukle(); });
+</script>
+</body>
+</html>
