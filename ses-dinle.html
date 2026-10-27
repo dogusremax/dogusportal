@@ -31,7 +31,9 @@
 <body>
 <div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Asistanın sesi</h1></div>
 <main>
-  <p>Bunlar asistanın canlı görüşmede gerçekten çıkardığı ses, Elvan. Üstteki oynatıcı tarayıcıdaki hâli, alttaki telefon hattından duyulacak hâli. Beğendiğinizin altındaki "Bunu seç"e basın.</p>
+  <div class="kart"><h2>Yeni: Google Gemini sesleri</h2><p class="kucuk">Hepsi aynı cümleleri okuyor: açılış + "Anladım Ayşe Hanım, Mina Towers'taki dairenizi kiraya vermek istiyorsunuz…". Üstteki tarayıcıdaki, alttaki telefon hattındaki hâli. Beğendiğinizin adını bana yazın.</p></div>
+  <div id="gemini"></div>
+  <p>Karşılaştırma için şu anki ses, Elvan (ElevenLabs). Yalnız açılış cümlesi.</p>
   <div id="liste"></div>
   <label for="pin">PIN (seçmek için)</label>
   <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
@@ -47,6 +49,13 @@ const SESLER = [
   { id: 'v2sicak', ad: '2 · Daha sıcak, biraz yavaş',      not: 'Aynı model, daha yumuşak ve sakin.', dosya: 'v2-sicak' },
   { id: 'v3',      ad: '3 · Hızlı sohbet modeli',           not: 'Cevaba daha çabuk başlar, ton biraz daha düz.', dosya: 'v3' }
 ];
+const GEMINI = [
+  ['sulafat', 'Sulafat', 'Kadın, sıcak'], ['achird', 'Achird', 'Kadın, samimi'], ['vindemiatrix', 'Vindemiatrix', 'Kadın, yumuşak'],
+  ['despina', 'Despina', 'Kadın, akıcı'], ['aoede', 'Aoede', 'Kadın, ferah'], ['sadaltager', 'Sadaltager', 'Erkek, bilgili'], ['algieba', 'Algieba', 'Erkek, akıcı']
+];
+$('gemini').innerHTML = GEMINI.map((g, i) => '<div class="kart" style="margin-bottom:12px"><h2>G' + (i + 1) + ' · ' + g[1] + '</h2><p class="kucuk">' + g[2] + '</p>' +
+  '<audio controls preload="metadata" src="assets/ses-ornek/gemini-' + g[0] + '.mp3?cb=' + cb + '"></audio>' +
+  '<p class="kucuk">Telefonda:</p><audio controls preload="metadata" src="assets/ses-ornek/gemini-' + g[0] + '-telefon.mp3?cb=' + cb + '"></audio></div>').join('');
 $('liste').innerHTML = SESLER.map(s => '<div class="kart" style="margin-bottom:12px"><h2>' + s.ad + '</h2><p class="kucuk">' + s.not + '</p>' +
   '<audio controls preload="metadata" src="assets/ses-ornek/' + s.dosya + '.mp3?cb=' + cb + '"></audio>' +
   '<p class="kucuk">Telefonda:</p><audio controls preload="metadata" src="assets/ses-ornek/' + s.dosya + '-telefon.mp3?cb=' + cb + '"></audio>' +
