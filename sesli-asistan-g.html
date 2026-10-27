@@ -91,7 +91,7 @@ function cal(veri, hz) {
 function calBuf(buf) {
   const k = cikisCtx.createBufferSource(); k.buffer = buf; k.connect(cikisCtx.destination);
   siradaki = Math.max(siradaki, cikisCtx.currentTime + 0.05); k.start(siradaki); siradaki += buf.duration;
-  kaynaklar.push(k); k.onended = () => { kaynaklar = kaynaklar.filter(x => x !== k); if (!kaynaklar.length && !bekleyen && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); if (kapatIstendi) bitti(); } };
+  kaynaklar.push(k); k.onended = () => { sonSes = Date.now(); kaynaklar = kaynaklar.filter(x => x !== k); if (!kaynaklar.length && !bekleyen && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); if (kapatIstendi) bitti(); } };
   tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…');
 }
 function sustur() { kusak++; bekleyen = 0; sira = Promise.resolve(); kaynaklar.forEach(k => { try { k.stop(); } catch (e) {} }); kaynaklar = []; siradaki = 0; }
@@ -100,7 +100,7 @@ function sustur() { kusak++; bekleyen = 0; sira = Promise.resolve(); kaynaklar.f
    cümle cümle sunucuya gider, Umut'un seçtiği örnekteki modelle (stüdyo seslendirme, Sadaltager) okunur ve sırayla çalınır.
    İstekler hemen paralel başlar, çalma sırası korunur. Adreste ?mod=canli olursa eski (Live sesi) yol kullanılır. */
 const STUDYO = new URLSearchParams(location.search).get('mod') !== 'canli';
-let kusak = 0, bekleyen = 0, sira = Promise.resolve(), parca = '', acilisAtla = false;
+let sonSes = 0, kusak = 0, bekleyen = 0, sira = Promise.resolve(), parca = '', acilisAtla = false;
 function seslendir(metin) {
   metin = metin.replace(/\s+/g, ' ').trim();
   if (!metin || !/[\p{L}\d]/u.test(metin)) return;
@@ -151,8 +151,8 @@ function baglan(url, token, setup, ilk) {
       }
       const c = m.serverContent;
       if (c) {
-        if (c.interrupted) { sustur(); parca = ''; }
-        if (c.inputTranscription && c.inputTranscription.text) { if (STUDYO && (kaynaklar.length || bekleyen)) sustur(); yaz('arayan', c.inputTranscription.text); }
+        if (c.interrupted && !STUDYO) sustur();
+        if (c.inputTranscription && c.inputTranscription.text) yaz('arayan', c.inputTranscription.text);
         if (c.outputTranscription && c.outputTranscription.text) { yaz('ofis', c.outputTranscription.text); if (STUDYO && !acilisAtla) parcaEkle(c.outputTranscription.text); }
         if (!STUDYO) ((c.modelTurn || {}).parts || []).forEach(p => { if (p.inlineData && /audio/.test(p.inlineData.mimeType || 'audio')) cal(p.inlineData.data); });
         if (c.turnComplete) { if (STUDYO && !acilisAtla) seslendir(parca); parca = ''; acilisAtla = false; }
@@ -186,7 +186,8 @@ async function basla() {
     basZaman = Date.now();
     await girisCtx.audioWorklet.addModule(URL.createObjectURL(new Blob([ISLEMCI], { type: 'application/javascript' })));
     const dugum = new AudioWorkletNode(girisCtx, 'p');
-    dugum.port.onmessage = e => { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=16000', data: b64(e.data) } } })); };
+    // Stüdyo modunda asistan konuşurken mikrofon Live'a gitmez: hoparlörden gelen kendi sesini müşteri sanıp karışık (yabancı) yazı üretiyor ve konuşmayı kesiyordu.
+    dugum.port.onmessage = e => { if (STUDYO && (kaynaklar.length || bekleyen || Date.now() - sonSes < 600)) return; if (ws && ws.readyState === 1) ws.send(JSON.stringify({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=16000', data: b64(e.data) } } })); };
     girisCtx.createMediaStreamSource(mic).connect(dugum);
     tus('Bitir', 'bağlandı', 'acik');
   } catch (e) {
