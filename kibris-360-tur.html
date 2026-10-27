@@ -12,15 +12,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta property="og:title" content="Kuzey Kıbrıs 360° · RE/MAX Doğuş">
 <meta property="og:description" content="Projeleri havadan 360° gezin.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://360.noyanlar.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--navy:#050A30;--red:#DC1C2E;--coral:#FB5160;--glass:rgba(5,10,48,.8);--glass2:rgba(5,10,48,.84);--line:rgba(255,255,255,.14);--mut:rgba(255,255,255,.66);
+  :root{--navy:#050A30;--red:#DC1C2E;--coral:#FB5160;--glass:rgba(5,10,48,.8);--glass2:rgba(5,10,48,.84);--line:rgba(255,255,255,.14);--mut:rgba(255,255,255,.82);
     --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px)}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;overflow:hidden;background:var(--navy);color:#fff;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  html,body{height:100%;overflow:hidden;background:var(--navy);color:#fff;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}
+  input,select,textarea{font:inherit}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   a{color:inherit;text-decoration:none}
   input{font:inherit}
@@ -39,28 +37,28 @@
   .intro.out{opacity:0;visibility:hidden}
   .intro .in{text-align:center;padding:24px}
   .intro img{width:min(230px,56vw);height:auto;filter:drop-shadow(0 10px 30px rgba(0,0,0,.45))}
-  .intro h1{margin-top:22px;font-size:clamp(1.6rem,4.6vw,2.6rem);font-weight:800}
+  .intro h1{margin-top:22px;font-size:clamp(1.6rem,4.6vw,2.6rem);font-weight:700}
   .intro h1 span{color:var(--coral)}
-  .intro p{margin-top:6px;color:var(--mut);font-weight:600;letter-spacing:.32em;font-size:.72rem;text-transform:uppercase}
+  .intro p{margin-top:6px;color:var(--mut);font-weight:600;letter-spacing:.04em;font-size:.74rem;text-transform:uppercase}
   .intro .bar{width:min(260px,64vw);height:3px;border-radius:3px;background:rgba(255,255,255,.12);margin:30px auto 0;overflow:hidden}
   .intro .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--coral));transition:width .4s ease}
 
   .top{position:fixed;z-index:20;top:calc(14px + var(--sat));left:calc(16px + var(--sal));right:calc(16px + var(--sar));display:flex;align-items:flex-start;gap:12px;pointer-events:none}
   .top>*{pointer-events:auto}
-  .mbtn{display:flex;align-items:center;gap:10px;height:46px;padding:0 18px 0 14px;border-radius:14px;font-weight:800;letter-spacing:.14em;font-size:.78rem}
+  .mbtn{display:flex;align-items:center;gap:10px;height:46px;padding:0 18px 0 14px;border-radius:14px;font-weight:700;letter-spacing:.04em;font-size:.78rem}
   .hb{width:20px;height:14px;position:relative}
   .hb i{position:absolute;left:0;height:2px;border-radius:2px;background:#fff;transition:width .3s}
   .hb i:nth-child(1){top:0;width:20px}.hb i:nth-child(2){top:6px;width:14px}.hb i:nth-child(3){top:12px;width:20px}
   .mbtn:hover .hb i:nth-child(2){width:20px}
   .ttl{margin:0 auto;text-align:center;padding:8px 18px 9px;border-radius:14px;min-width:0;max-width:50vw}
-  .ttl small{display:block;font-size:.6rem;font-weight:700;letter-spacing:.24em;color:var(--coral);text-transform:uppercase}
-  .ttl b{display:block;font-size:1.05rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ttl small{display:block;font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--coral);text-transform:uppercase}
+  .ttl b{display:block;font-size:1.05rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .ttl .vw{display:flex;gap:4px;margin-top:5px;overflow-x:auto;scrollbar-width:none;max-width:min(560px,56vw);margin-left:auto;margin-right:auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-image:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);padding:0 8px}
   .ttl .vw::-webkit-scrollbar{display:none}
   .ttl .vw button{flex:none;white-space:nowrap}
   .ttl .vw button:first-child{margin-left:auto}.ttl .vw button:last-child{margin-right:auto}
   .ttl .vw:empty{display:none}
-  .ttl .vw button{font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--mut)}
+  .ttl .vw button{font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--mut)}
   .ttl .vw button.on{background:var(--coral);color:#fff}
   .ttl.sw b{animation:tin .7s ease}
   @keyframes tin{from{opacity:0;transform:translateY(6px)}}
@@ -69,7 +67,7 @@
 
   /* proje listesi (Noyanlar'daki sol küçük resim listesi) */
   .rail{position:fixed;z-index:15;left:calc(16px + var(--sal));top:calc(76px + var(--sat));bottom:calc(84px + var(--sab));width:212px;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-  .rail .rh{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;font-size:.62rem;font-weight:800;letter-spacing:.22em;color:var(--mut);text-transform:uppercase}
+  .rail .rh{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--mut);text-transform:uppercase}
   .rail .rh button{width:26px;height:26px;border-radius:8px;display:grid;place-items:center}
   .rail .rh button:hover{background:rgba(255,255,255,.12)}
   .rail .ls{overflow-y:auto;padding:2px 8px 10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent;flex:1}
@@ -80,18 +78,14 @@
   .rail .th img{width:100%;height:100%;object-fit:cover;display:block}
   .rail .it.on .th{box-shadow:0 0 0 2.5px var(--coral)}
   .rail .it b{font-size:.78rem;font-weight:700;line-height:1.2;display:block}
-  .rail .it small{font-size:.62rem;color:var(--mut);font-weight:500}
+  .rail .it small{font-size:.74rem;color:var(--mut);font-weight:500}
   .rail .tt{display:flex;gap:4px;flex-wrap:wrap;padding:0 10px 8px}
-  .tt button{flex:1 1 auto;height:28px;padding:0 9px;border-radius:9px;font-size:.66rem;font-weight:800;background:rgba(255,255,255,.08);border:1px solid var(--line);white-space:nowrap;transition:background .2s,border-color .2s}
+  .tt button{flex:1 1 auto;height:28px;padding:0 9px;border-radius:9px;font-size:.74rem;font-weight:700;background:rgba(255,255,255,.08);border:1px solid var(--line);white-space:nowrap;transition:background .2s,border-color .2s}
   .tt button:hover{background:rgba(255,255,255,.14)}
   .tt button.on{background:var(--coral);border-color:var(--coral)}
-  /* aynı firmanın turları (Northernland: Blu, Casa del Mare) firma düğmesinin altında ikinci sırada */
-  .ta:empty{display:none}.ta{margin-top:-2px}
-  .ta button{height:24px;font-size:.62rem;font-weight:700;border-radius:999px}
-  .ta button.on{background:#fff;color:#0a1440;border-color:#fff}
   #pano{transition:opacity .35s}#pano.sw{opacity:.25}
   .rail.min{transform:translateX(calc(-100% - 24px))}
-  .rtab{position:fixed;z-index:14;left:calc(16px + var(--sal));top:50%;margin-top:-23px;height:46px;padding:0 14px;border-radius:14px;display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;opacity:0;pointer-events:none;transition:opacity .3s}
+  .rtab{position:fixed;z-index:14;left:calc(16px + var(--sal));top:50%;margin-top:-23px;height:46px;padding:0 14px;border-radius:14px;display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity .3s}
   .rail.min+.rtab{opacity:1;pointer-events:auto}
 
   .nav{position:fixed;z-index:14;top:50%;width:54px;height:54px;margin-top:-27px;border-radius:50%;display:grid;place-items:center;transition:transform .25s,background .25s}
@@ -105,21 +99,21 @@
   .ctl button.on{background:var(--coral)}
   .ctl svg{width:20px;height:20px}
   .ctl .sep{width:1px;height:24px;background:var(--line);margin:0 4px}
-  .ctl [data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,4px);white-space:nowrap;font-size:.7rem;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--glass2);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+  .ctl [data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,4px);white-space:nowrap;font-size:.74rem;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--glass2);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
   .ctl [data-tip]:hover::after{opacity:1;transform:translate(-50%,0)}
-  .ctl .wa{width:auto;padding:0 14px 0 11px;gap:7px;display:flex;align-items:center;background:#1fb855;font-weight:800;font-size:.8rem}
+  .ctl .wa{width:auto;padding:0 14px 0 11px;gap:7px;display:flex;align-items:center;white-space:nowrap;background:#1fb855;font-weight:700;font-size:.8rem}
   .ctl .wa:hover{background:#19a14a}
   .ctl .wa svg{fill:#fff}
-  .ctl .gece{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:800;font-size:.8rem;background:rgba(255,255,255,.1)}.ctl .gece[hidden]{display:none}
+  .ctl .gece{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:700;font-size:.8rem;background:rgba(255,255,255,.1)}.ctl .gece[hidden]{display:none}
   .ctl .gece.on{background:#2a3a8c}
-  .ctl .calc{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:800;font-size:.8rem;background:rgba(255,255,255,.1)}
+  .ctl .calc{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:700;font-size:.8rem;background:rgba(255,255,255,.1)}
   .tourbar{position:absolute;left:10px;right:10px;bottom:2px;height:2px;border-radius:2px;overflow:hidden;opacity:0;transition:opacity .3s}
   .tourbar i{display:block;height:100%;width:0;background:var(--coral)}
   .ctl.touring .tourbar{opacity:1}
 
   /* proje etiketleri */
   .hs{width:0!important;height:0!important;overflow:visible;z-index:3}
-  .hs .b{position:absolute;left:0;bottom:calc(8px + var(--lift,0px));transform:translateX(-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(5,10,48,.82);box-shadow:0 8px 22px -6px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.18);font-size:.74rem;font-weight:800;letter-spacing:.02em;transition:background .25s,transform .25s,opacity .3s}
+  .hs .b{position:absolute;left:0;bottom:calc(8px + var(--lift,0px));transform:translateX(-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(5,10,48,.82);box-shadow:0 8px 22px -6px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.18);font-size:.74rem;font-weight:700;letter-spacing:.02em;transition:background .25s,transform .25s,opacity .3s}
   .hs .b i{width:24px;height:24px;border-radius:50%;background:var(--coral);display:grid;place-items:center;flex:none}
   .hs .b svg{width:13px;height:13px}
   .hs .st{position:absolute;left:-1px;bottom:0;width:2px;height:calc(8px + var(--lift,0px));background:rgba(255,255,255,.85)}
@@ -128,7 +122,7 @@
   .hs.go:hover{z-index:6}
   .hs.go:hover .b{background:var(--coral);transform:translateX(-50%) scale(1.07)}
   .hs.go:hover .b i{background:#fff;color:var(--navy)}
-  .hs.pl .b{padding:3px 10px;background:rgba(5,10,48,.6);font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+  .hs.pl .b{padding:3px 10px;background:rgba(5,10,48,.6);font-weight:700;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
   .hs.pl .b i{display:none}
   .hs.pl .dt{box-shadow:none;width:6px;height:6px;left:-3px;top:-3px}
   .hs.cmp .b{opacity:0;visibility:hidden;pointer-events:none}
@@ -148,7 +142,7 @@
   .xbtn:hover{background:rgba(255,255,255,.16)}
   .xbtn svg{width:18px;height:18px}
   .drawer .sc{overflow-y:auto;flex:1;padding:4px 20px calc(24px + var(--sab));scrollbar-width:thin}
-  .drawer h4{font-size:.64rem;letter-spacing:.24em;font-weight:800;color:var(--coral);margin:20px 0 10px;text-transform:uppercase}
+  .drawer h4{font-size:.74rem;letter-spacing:.04em;font-weight:700;color:var(--coral);margin:20px 0 10px;text-transform:uppercase}
   .drawer h4:first-child{margin-top:6px}
   .srch{width:100%;height:42px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;padding:0 14px;outline:none}
   .srch:focus{border-color:var(--coral)}
@@ -156,61 +150,61 @@
   .dg button{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;text-align:left;background:#1b2a6b}
   .dg button img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
   .dg button:hover img{transform:scale(1.08)}
-  .dg button span{position:absolute;inset:auto 0 0 0;padding:20px 8px 7px;background:linear-gradient(transparent,rgba(5,10,48,.94));font-size:.7rem;font-weight:800;line-height:1.15}
+  .dg button span{position:absolute;inset:auto 0 0 0;padding:20px 8px 7px;background:linear-gradient(transparent,rgba(5,10,48,.94));font-size:.74rem;font-weight:700;line-height:1.15}
   .dg button.on{box-shadow:0 0 0 2px var(--coral)}
   .tl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .tl a{height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.86rem;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+  .tl a{height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.86rem;background:rgba(255,255,255,.07);border:1px solid var(--line)}
   .tl a.on{background:var(--coral);border-color:var(--coral)}
   .dl a{display:flex;align-items:center;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--line);font-weight:700;font-size:.9rem}
   .dl a::after{content:'→';color:var(--mut)}
   .cta{display:flex;gap:8px;margin-top:18px}
-  .cta a{flex:1;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:.84rem}
+  .cta a{flex:1;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:.84rem}
   .cta .w{background:#1fb855}.cta .p{background:rgba(255,255,255,.1)}
   .cta svg{width:18px;height:18px;fill:#fff}
-  .note{margin-top:18px;font-size:.66rem;color:rgba(255,255,255,.42);line-height:1.5}
+  .note{margin-top:18px;font-size:.74rem;color:rgba(255,255,255,.72);line-height:1.5}
 
   /* yatırım paneli */
   .panel{position:fixed;z-index:30;top:calc(76px + var(--sat));right:calc(16px + var(--sar));width:360px;max-height:calc(100% - 170px - var(--sat) - var(--sab));overflow:auto;border-radius:22px;background:rgba(5,10,48,.88);border:1px solid var(--line);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);transform:translateX(calc(100% + 30px));opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s;scrollbar-width:none;padding:20px}
   .panel::-webkit-scrollbar{display:none}
   .panel.on{transform:none;opacity:1}
   .panel .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-  .panel .ph small{font-size:.6rem;font-weight:800;letter-spacing:.22em;color:var(--coral);text-transform:uppercase}
-  .panel h3{font-size:1.4rem;font-weight:800;line-height:1.15;margin-top:2px}
-  .panel label{display:block;font-size:.68rem;font-weight:700;color:var(--mut);margin:12px 0 5px}
+  .panel .ph small{font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--coral);text-transform:uppercase}
+  .panel h3{font-size:1.4rem;font-weight:700;line-height:1.15;margin-top:2px}
+  .panel label{display:block;font-size:.74rem;font-weight:700;color:var(--mut);margin:12px 0 5px}
   .panel input{width:100%;height:42px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;padding:0 12px;font-weight:600;outline:none}
   .panel input:focus{border-color:var(--coral)}
   .panel .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
   .kpi div{background:rgba(255,255,255,.07);border-radius:14px;padding:12px}
-  .kpi b{display:block;font-size:1.35rem;font-weight:800}
-  .kpi span{font-size:.66rem;color:var(--mut);font-weight:600}
+  .kpi b{display:block;font-size:1.35rem;font-weight:700}
+  .kpi span{font-size:.74rem;color:var(--mut);font-weight:600}
   .kpi .g b{color:#3ddc84}
   .acts{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-  .acts a,.acts button{height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:.84rem}
+  .acts a,.acts button{height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:.84rem}
   .acts .wa{background:#1fb855}
   .acts .sec{background:rgba(255,255,255,.1)}
   .acts svg{width:18px;height:18px;fill:#fff}
   .ubox{margin-top:14px;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
   .ubox .uh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-  .ubox .uh b{font-size:.78rem;font-weight:800}.ubox .uh span{font-size:.6rem;color:var(--mut);font-weight:600}
+  .ubox .uh b{font-size:.78rem;font-weight:700}.ubox .uh span{font-size:.74rem;color:var(--mut);font-weight:600}
   .uchips{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin:9px 0 8px}.uchips::-webkit-scrollbar{display:none}
-  .uchips button{flex:none;height:28px;padding:0 10px;border-radius:999px;font-size:.7rem;font-weight:800;background:rgba(255,255,255,.08);white-space:nowrap}
+  .uchips button{flex:none;height:28px;padding:0 10px;border-radius:999px;font-size:.74rem;font-weight:700;background:rgba(255,255,255,.08);white-space:nowrap}
   .uchips button.on{background:var(--coral)}
   .ulist{max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;scrollbar-width:thin}
   .ulist button{display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.05);font-size:.74rem}
   .ulist button:hover,.ulist button.on{background:rgba(255,255,255,.14)}.ulist button.on{box-shadow:inset 0 0 0 1.5px var(--coral)}
-  .ulist b{font-weight:800}.ulist i{font-style:normal;font-weight:800;color:#3ddc84;text-align:right}.ulist small{grid-column:1/-1;color:var(--mut);font-size:.64rem;font-weight:600}
-  .ulist .no{padding:10px;color:var(--mut);font-size:.72rem}
+  .ulist b{font-weight:700}.ulist i{font-style:normal;font-weight:700;color:#3ddc84;text-align:right}.ulist small{grid-column:1/-1;color:var(--mut);font-size:.74rem;font-weight:600}
+  .ulist .no{padding:10px;color:var(--mut);font-size:.74rem}
   .kpi.k3{grid-template-columns:1fr 1fr}
   .kpi .sm b{font-size:1.05rem}
   .mas{margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.78rem}
-  .mas .mh{font-size:.78rem;font-weight:800;margin-bottom:6px}
+  .mas .mh{font-size:.78rem;font-weight:700;margin-bottom:6px}
   .mas>div:not(.mh){display:flex;justify-content:space-between;gap:10px;padding:5px 0}
-  .mas span{color:var(--mut);font-weight:600}.mas b{font-weight:800;font-variant-numeric:tabular-nums}
+  .mas span{color:var(--mut);font-weight:600}.mas b{font-weight:700;font-variant-numeric:tabular-nums}
   .mas .ara{border-top:1px solid var(--line);margin-top:4px;padding-top:8px}
-  .mas .mtop{border-top:1px solid var(--line);margin-top:4px;padding-top:9px;font-size:.92rem}.mas .mtop span{color:#fff;font-weight:800}.mas .mtop b{color:#3ddc84}
-  .mas p{font-size:.62rem;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.45}
-  .panel .tip{font-size:.66rem;color:rgba(255,255,255,.45);margin-top:12px;line-height:1.5}
+  .mas .mtop{border-top:1px solid var(--line);margin-top:4px;padding-top:9px;font-size:.92rem}.mas .mtop span{color:#fff;font-weight:700}.mas .mtop b{color:#3ddc84}
+  .mas p{font-size:.74rem;color:rgba(255,255,255,.72);margin-top:6px;line-height:1.45}
+  .panel .tip{font-size:.74rem;color:rgba(255,255,255,.72);margin-top:12px;line-height:1.5}
 
   .hint{position:fixed;z-index:12;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-size:.8rem;font-weight:700;pointer-events:none;transition:opacity .6s}
   .hint svg{width:22px;height:22px;animation:sway 2.2s ease-in-out infinite}
@@ -238,18 +232,19 @@
     .rail .it{flex-direction:column;width:64px;flex:none;gap:4px;padding:3px;text-align:center}
     .rail .it.on{background:none}
     .rail .th{width:50px;height:50px}
-    .rail .it b{font-size:.58rem;text-shadow:0 1px 6px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:60px}
+    .rail .it{width:74px}
+    .rail .it b{font-size:.72rem;line-height:1.15;text-shadow:0 1px 6px rgba(0,0,0,.9);white-space:normal;overflow:hidden;width:72px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
     .rail .it small{display:none}
     .rail .tt{flex-wrap:nowrap;overflow-x:auto;padding:0 12px 2px;scrollbar-width:none}
     .rail .tt::-webkit-scrollbar{display:none}
-    .tt button{flex:none;height:26px;font-size:.62rem;background:rgba(5,10,48,.55);}
+    .tt button{flex:none;height:26px;font-size:.74rem;background:rgba(5,10,48,.55);}
     .rtab,.nav{display:none}
     .ctl{left:10px;right:10px;transform:none;bottom:calc(10px + var(--sab));justify-content:space-between;border-radius:16px}
     .ctl .sep,.ctl .zm,.ctl .fs{display:none}
     .ctl .wa .tx,.ctl .calc .tx{display:none}.ctl .wa,.ctl .calc{padding:0 12px}
     .ctl [data-tip]::after{display:none}
     .panel{top:auto;bottom:0;left:0;right:0;width:auto;max-height:80svh;border-radius:24px 24px 0 0;transform:translateY(105%);opacity:1;padding:18px 18px calc(18px + var(--sab))}
-    .hs .b{font-size:.66rem;padding:3px 9px 3px 3px}.hs .b i{width:20px;height:20px}
+    .hs .b{font-size:.74rem;padding:3px 9px 3px 3px}.hs .b i{width:20px;height:20px}
     .hint{top:44%}
   }
   @media (min-width:761px){.mobonly{display:none!important}}
@@ -273,7 +268,7 @@
   <a class="logo glass" href="kibris.html" aria-label="Kıbrıs projeleri"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş"></a>
 </header>
 
-<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="tt" id="tt" role="tablist" aria-label="Turlar"></div><div class="tt ta" id="ta" role="tablist" aria-label="Projeler"></div><div class="ls" id="rls"></div></nav>
+<nav class="rail glass ui" id="rail" aria-label="Projeler"><div class="rh"><span>Projeler</span><button id="rMin" aria-label="Listeyi gizle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div><div class="tt" id="tt" role="tablist" aria-label="Turlar"></div><div class="ls" id="rls"></div></nav>
 <button class="rtab glass ui" id="rTab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>PROJELER</button>
 <button class="nav nx glass ui" id="nx" aria-label="Sonraki proje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
 
@@ -303,7 +298,7 @@
   <div class="sc">
     <div id="dBroker" hidden style="margin-bottom:6px"><h4>Sunum</h4><div class="dl"><a href="kibris-sunum.html">Kıbrıs sunumuna geç</a></div></div>
     <h4>Turlar</h4>
-    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=dovec" data-tur="dovec">Döveç</a><a href="?tur=sapphire" data-tur="sapphire" data-firma="Northernland">Northernland</a></div>
+    <div class="tl"><a href="?tur=kibris" data-tur="kibris">Noyanlar</a><a href="?tur=esentepe" data-tur="esentepe">Cyprus Constructions</a><a href="?tur=dovec" data-tur="dovec">Döveç</a><a href="?tur=northernland" data-tur="northernland">Northernland</a></div>
     <h4>Projeler</h4>
     <input class="srch" id="srch" type="search" placeholder="Proje ara" autocomplete="off">
     <div class="dg" id="dg"></div>
@@ -353,10 +348,12 @@
   var TURLAR={kibris:{ad:'Noyanlar',js:'assets/kibris360/data.js?v=3',src:'https://360.noyanlar.com/media',ext:'webp'},
     esentepe:{ad:'Cyprus Constructions',js:'assets/kibris360/data-esentepe.js?v=2',src:'https://360.cyprusconstructions.com/media',ext:'jpg'},
     dovec:{ad:'Döveç',js:'assets/kibris360/data-dovec.js?v=5',src:'https://360.dovecgroup.com/main/media',ext:'jpg'},
-    // tek projelik turlar: listede projeler yerine projenin bölümleri (havadan, havuzlar, daire tipleri) yer alır
-    sapphire:{ad:'Grand Sapphire',js:'assets/kibris360/data-sapphire.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg',tek:1,firma:'Northernland',alt:'Grand Sapphire Blu'},
-    casadelmare:{ad:'Casa del Mare',js:'assets/kibris360/data-casadelmare.js?v=1',src:'https://360.northernland.com/casadelmare/media',ext:'jpg',tek:1,firma:'Northernland',alt:'Casa del Mare (Esentepe)'}};
-  var TUR=new URLSearchParams(location.search).get('tur');if(!TURLAR[TUR])TUR='kibris';
+    // Northernland: Grand Sapphire Blu ve Casa del Mare (sahneler kendi görüntü kaynağını 's' alanında taşır)
+    northernland:{ad:'Northernland',js:'assets/kibris360/data-northernland.js?v=1',src:'https://360.northernland.com/blu/media',ext:'jpg'}};
+  // eski bağlantılar (?tur=sapphire, ?tur=casadelmare) Northernland turunda ilgili projeyi açar
+  var ESKI={sapphire:0,casadelmare:114},TUR=new URLSearchParams(location.search).get('tur'),ESKI_S=null;
+  if(TUR in ESKI){ESKI_S=ESKI[TUR];TUR='northernland';}
+  if(!TURLAR[TUR])TUR='kibris';
   document.write('<script src="'+TURLAR[TUR].js+'"><\/script>');
   // tur verisini sayfayı yenilemeden yükle (her tur kendi window.K360 dizisini yazar)
   var TDATA={};
@@ -390,26 +387,22 @@
     if(TEK)$('tIdx').lang='en';else $('tIdx').removeAttribute('lang');
     $('dNote').textContent=TEK?'Görüntüler projenin 360° çekim ve görselleridir; temsilidir. Fiyat ve teslim bilgisi için danışmanınıza ulaşın.':dNote0;
     
-    var F=T.firma;$('ta').innerHTML=F?Object.keys(TURLAR).filter(function(t){return TURLAR[t].firma===F;}).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].alt||TURLAR[t].ad)+'</button>';}).join(''):'';
-    [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){var on=a.hasAttribute('data-firma')?a.getAttribute('data-firma')===F:a.getAttribute('data-tur')===TUR;a.classList.toggle('on',on);a.setAttribute('aria-selected',on);});
+    [].forEach.call(document.querySelectorAll('[data-tur]'),function(a){a.classList.toggle('on',a.getAttribute('data-tur')===TUR);a.setAttribute('aria-selected',a.getAttribute('data-tur')===TUR);});
     G=[];GI={};K.forEach(function(k,i){if(!(k.g in GI)){GI[k.g]=G.length;G.push({ad:k.g,s:[]});}G[GI[k.g]].s.push(i);});}
-  // aynı firmanın turları tek düğme (firma adı); tıklanınca firmanın ilk turu açılır, diğerleri alt sırada
-  var FG={};$('tt').innerHTML=Object.keys(TURLAR).map(function(t){var F=TURLAR[t].firma;if(F){if(FG[F])return '';FG[F]=1;
-    return '<button type="button" role="tab" data-tur="'+t+'" data-firma="'+esc(F)+'">'+esc(F)+'</button>';}
-    return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
+  $('tt').innerHTML=Object.keys(TURLAR).map(function(t){return '<button type="button" role="tab" data-tur="'+t+'">'+esc(TURLAR[t].ad)+'</button>';}).join('');
   turAyarla();$('tName').textContent=TA;
   function th(i){return (K[i].s||SRC)+'/'+(K[i].t||'panorama_'+K[i].id+'_t.'+EXT);}
   function sName(i){return K[i].g+(K[i].v?' · '+K[i].v:'');}
 
   /* ---------- görüntüleyici ---------- */
-  var pv=null,cur=+(q.get('s')||0),ready=false,busy=false;
+  var pv=null,cur=+(q.get('s')||0)+(ESKI_S||0),ready=false,busy=false;
   var m=/p=([0-9A-F_]{8})/.exec(location.hash);if(m)K.forEach(function(k,i){if(k.id.indexOf(m[1])===0)cur=i;});
   if(!K[cur])cur=0;
   function hf(){return 100;}
   // dik ekranda görüş dikeyde geniş: ufku biraz yukarı al ki gökyüzü ekranı kaplamasın
   function pp(p){return innerHeight>innerWidth*1.2?Math.max(-80,p-12):p;}
   // Gece görünümü: Gemini ile üretilip birleştirilen gece panoramaları, karolar bizim sunucuda (tools/kibris360/gece.py, eq2kup.py)
-  var GECE={sapphire:{base:'assets/kibris360/gece/sapphire',ids:['8B84939C_32CF_18BB_41C1_3FD8568EF350','0684FD46_43FE_682D_4196_545B9B3EA7DE','0427F80B_43CA_683B_41AD_20B7EA5E524B','043C7F35_43C6_686F_41C9_52819AD0AF2B','04617707_43CE_782B_4199_DA2D681F7C2F','043DA000_43FA_5825_41CA_8ABC985C6D80','06F45458_43FA_5825_41B8_86520C561494','041E0E4F_43FD_E83B_41C8_E8E5AD0EC7BF']},
+  var GECE={northernland:{base:'assets/kibris360/gece/sapphire',ids:['8B84939C_32CF_18BB_41C1_3FD8568EF350','0684FD46_43FE_682D_4196_545B9B3EA7DE','0427F80B_43CA_683B_41AD_20B7EA5E524B','043C7F35_43C6_686F_41C9_52819AD0AF2B','04617707_43CE_782B_4199_DA2D681F7C2F','043DA000_43FA_5825_41CA_8ABC985C6D80','06F45458_43FA_5825_41B8_86520C561494','041E0E4F_43FD_E83B_41C8_E8E5AD0EC7BF']},
     kibris:{base:'assets/kibris360/gece/noyanlar',ids:['9A074050_946A_AAFA_41BF_D02A95061EF6','9A07D83C_946A_9AAA_41B9_B0DD87FC8736','9A07F393_946A_AE7E_41E1_AAA28753FC36','9A07FDC5_946B_95DA_41D4_865842C952B2','9A093AC4_946A_9FDA_41E0_91BB92A5B7D7','ABA2F363_A545_678F_41CE_6EA78D3A0089','B48AD650_C9D6_60A3_41D8_DC23394F53EB','B48ADAA3_C9D6_A1E5_41D6_BD5112E796A1','BCF5B20C_B131_7919_41D4_F0F587212E5F','DC20FF55_9704_D173_41E1_C503911EF10C','C74D467A_9704_5331_41CC_16AEB7C3FCE9','DB50E62B_9704_52D7_41DD_E5686A6E5483','AB3DBC55_A547_218B_41D0_01C72515B20A','DFA205D8_971D_D171_41D2_D8FBDB45A4E9','9A096313_946A_EE7E_41C0_4563D67EC725','023C5AA8_11BF_2024_41A6_8F31B69EC6C2','9A07E193_946A_6A7E_41B2_CA62D8CEE22C','DF082862_9707_FF51_41D0_4B4F72015480','9A0730AA_946B_ABAE_41C0_0C74406B4F56','9A0752ED_946B_AFAA_41B2_039EC5704C47','B0880149_A543_239B_41BC_D91175D8352E','9A077BE5_946B_BDDA_41CF_FBB905B50C29','9A075F51_946A_76FA_41D8_D8EBA091E538','9A073DDF_946A_B5E6_41B2_9E26D6CE479C','9A075C0B_946A_9A6E_41E0_5FA847D8B146','DF7BF9AA_970C_51D1_41C5_8FC7E8F436A9','9A0777A6_946B_F5A6_41C9_A0BF546B9414','DF4FB02D_970C_4ED3_41CC_7AEAA1CB2B26','9A09515A_946D_AAEE_41AD_F3DBAF2ECFFD','9A0692A6_946A_6FA6_41D9_759BA7DB046F','9A08FF89_946D_966A_41E0_7140578BBF64']}},GC=false;
   function geceVar(i){var g=GECE[TUR];return !!(g&&g.ids.indexOf(K[i].id)>-1);}
   function scene(i){var k=K[i];if(GC&&geceVar(i))return Object.assign(scene0(i),{base:GECE[TUR].base+'/panorama_'+k.id+'_0',n:[4,2,1],ext:'jpg'});return scene0(i);}
@@ -466,7 +459,7 @@
       var once=function(){$('pano').classList.remove('sw');};setTimeout(once,400);
       toast(TA+' turu');setTimeout(function(){busy=false;},6000);});}
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-tur]');if(!a||e.metaKey||e.ctrlKey)return;
-    e.preventDefault();drawer(false);if(a.getAttribute('data-firma')&&a.getAttribute('data-firma')===TURLAR[TUR].firma)return;turaGec(a.getAttribute('data-tur'));});
+    e.preventDefault();drawer(false);turaGec(a.getAttribute('data-tur'));});
   function stepG(d){var g=GI[K[cur].g],n=G[(g+d+G.length)%G.length];fly(n.s[0]);}
 
   /* ---------- arayüz ---------- */
@@ -560,7 +553,7 @@
   var TES={'Döveç':{'D-Point':'Aralık 2028','Querencia':'Mart 2027','Courtyard Platinum':'Bloğa göre Aralık 2025 / Aralık 2026 / Mayıs 2027','Natulux':'Mayıs 2027','La Casalia':'Aralık 2027','Laisla':'Kısmen teslim edildi'},
     'Cyprus Constructions':{'Phuket':'Mart 2027','Bahamas':'Taşınmaya hazır','Hawaii Homes':'Taşınmaya hazır','Mykonos':'Teslim edildi','Pearl Island':'Teslim edildi','Maldives':'Teslim edildi','Idyll':'Teslim edildi'},
     'Noyanlar':{'Ocean Life':'2028','Olea':'2027','Sea Breeze':'2028','Sky Diora':'2027','Solmaris':'2027','La Palazzo':'2027','Terra Life':'2026','Neo Residence':'Taşınmaya hazır','Riverside':'Tamamlandı','Royal Sun Elite':'Teslim edildi','Royal Point':'Teslim edildi','Angel Towers':'Teslim edildi','City Life 2':'Teslim edildi','Rose Villas':'Teslim edildi'},
-    'Grand Sapphire':{'Grand Sapphire':'Blu 1. faz Eylül 2027, 2. faz Eylül 2028'}};
+    'Northernland':{'Grand Sapphire Blu':'Blu 1. faz Eylül 2027, 2. faz Eylül 2028'}};
   function tesBul(){var t=TES[TA];return t&&t[pj()]||'';}
   function key(){return 'k360:'+pj();}
   function calc(on){$('panel').classList.toggle('on',on);$('panel').setAttribute('aria-hidden',!on);$('bCalc').classList.toggle('on',on);}
