@@ -253,7 +253,7 @@ function IsIsle($is) {
   foreach ($f in $dosyalar) {
     $no = [int]$f['no']; $sira = '{0:D2}' -f $no
     # önceki çalışmada bitip yüklenmiş olan fotoğraf yeniden ChatGPT'ye gitmez
-    if (Test-Path (Join-Path $ham "yuklendi_$sira")) { $tamam++; continue }
+    if ((Test-Path (Join-Path $ham "yuklendi_$sira")) -or (@($is['bitenler']) -contains $no)) { $tamam++; continue }
     try {
       $j = Servis @{ action = 'fdIndir'; is = $id; no = $no; tur = 'in' }
       if (-not $j['success']) { throw $j['error'] }
@@ -339,9 +339,10 @@ if (Test-Path $suren) {
   try { $eskiIs = (Get-Content $suren -Raw).Trim(); [void](Servis @{ action = 'fdYenidenSiraya'; is = $eskiIs }); Log "yarıda kalan iş yeniden sırada: $eskiIs" } catch {}
   Remove-Item -Force -ErrorAction SilentlyContinue $suren
 }
+$ilk = 1
 while ($true) {
   try {
-    $is = Servis @{ action = 'fdSiradaki' }
+    $is = Servis @{ action = 'fdSiradaki'; ilk = $ilk }; $ilk = 0
     if ($is['success'] -and $is['is']) {
       [void][DogusFoto.Guc]::SetThreadExecutionState([uint32]'0x80000001')
       try { ChromeAc; IsIsle $is } finally { [void][DogusFoto.Guc]::SetThreadExecutionState([uint32]'0x80000000') }
