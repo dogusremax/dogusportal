@@ -38,11 +38,18 @@ function Durum($is, $alanlar) { $g = @{ action = 'fdIsYaz'; is = $is }; foreach 
 function ChromeHazir {
   try { $null = Invoke-RestMethod -Uri "http://127.0.0.1:$PORT/json/version" -TimeoutSec 3; return $true } catch { return $false }
 }
+# İşçi Chrome'u ve işçi süreçleri bilgisayarı yormasın (Umut: "Windows çok ağır")
+function DusukOncelik {
+  try {
+    Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.CommandLine -like '*DogusFoto*' } |
+      ForEach-Object { try { (Get-Process -Id $_.ProcessId).PriorityClass = 'Idle' } catch {} }
+  } catch {}
+}
 function ChromeAc {
   if (ChromeHazir) { return }
   $profil = Join-Path $KOK 'chrome'
   Start-Process -FilePath $CHROME -ArgumentList @("--remote-debugging-port=$PORT", "--user-data-dir=`"$profil`"", '--no-first-run', '--no-default-browser-check', '--restore-last-session=false', 'about:blank')
-  for ($i = 0; $i -lt 30; $i++) { Start-Sleep -Seconds 1; if (ChromeHazir) { return } }
+  for ($i = 0; $i -lt 30; $i++) { Start-Sleep -Seconds 1; if (ChromeHazir) { DusukOncelik; return } }
   throw 'Chrome açılamadı'
 }
 
@@ -232,7 +239,7 @@ function TekFoto($girdi, $gpt) {
     }
   }
 }
-function Paralel { try { $n = [int](Get-Content (Join-Path $KOK 'paralel') -Raw).Trim(); if ($n -ge 1 -and $n -le 6) { return $n } } catch {}; return 3 }
+function Paralel { try { $n = [int](Get-Content (Join-Path $KOK 'paralel') -Raw).Trim(); if ($n -ge 1 -and $n -le 6) { return $n } } catch {}; return 1 }
 function IsIsle($is) {
   $id = $is['is']; $ad = DosyaAdi $is['ad']; $dosyalar = @($is['dosyalar'])
   $esZamanli = Paralel
@@ -241,9 +248,12 @@ function IsIsle($is) {
   $ham = Join-Path $KOK "is\$id"
   New-Item -ItemType Directory -Force -Path $klasor, $ham | Out-Null
   $tamam = 0; $hatalar = @(); $bekleyen = New-Object System.Collections.ArrayList; $calisan = @{}; $giris = $false
+  Set-Content -Path (Join-Path $KOK 'suren-is') -Value $id -Encoding ASCII
   Durum $id @{ islenen = 0; mesaj = 'Fotoğraflar alınıyor' }
   foreach ($f in $dosyalar) {
     $no = [int]$f['no']; $sira = '{0:D2}' -f $no
+    # önceki çalışmada bitip yüklenmiş olan fotoğraf yeniden ChatGPT'ye gitmez
+    if (Test-Path (Join-Path $ham "yuklendi_$sira")) { $tamam++; continue }
     try {
       $j = Servis @{ action = 'fdIndir'; is = $id; no = $no; tur = 'in' }
       if (-not $j['success']) { throw $j['error'] }
@@ -259,6 +269,8 @@ function IsIsle($is) {
       $x = $bekleyen[0]; $bekleyen.RemoveAt(0)
       Remove-Item -Force -ErrorAction SilentlyContinue $x.gpt, "$($x.gpt).hata"
       $x.surec = Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -PassThru -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$betik`"", '-Foto', "`"$($x.girdi)`"", '-Cikti', "`"$($x.gpt)`"")
+      try { $x.surec.PriorityClass = 'BelowNormal' } catch {}
+      DusukOncelik
       $calisan[$x.sira] = $x
       Durum $id @{ islenen = $tamam; mesaj = "ChatGPT'de: $($calisan.Count) fotoğraf işleniyor · $tamam / $($dosyalar.Count) hazır" }
       Start-Sleep -Seconds 8   # sekmeler aynı anda açılmasın
@@ -279,6 +291,7 @@ function IsIsle($is) {
         Kirp43 $x.gpt $son
         $tamam++
         Durum $id @{ no = $x.no; ad = "$ad $sira.jpg"; veri = [Convert]::ToBase64String([IO.File]::ReadAllBytes($son)); islenen = $tamam; mesaj = "$tamam / $($dosyalar.Count) hazır" }
+        Set-Content -Path (Join-Path $ham "yuklendi_$sira") -Value 1
         Log "  $sira tamam"
       } catch { $hatalar += "$sira ($($_.Exception.Message))"; Log "  $sira BAŞARISIZ: $($_.Exception.Message)" }
     }
@@ -293,6 +306,7 @@ function IsIsle($is) {
     $m = "$tamam / $($dosyalar.Count) fotoğraf hazır"; if ($hatalar.Count) { $m += ' · olmayanlar: ' + ($hatalar -join '; ') }
     Durum $id @{ durum = 'bitti'; islenen = $tamam; mesaj = $m.Substring(0, [Math]::Min(300, $m.Length)) }
   }
+  Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $KOK 'suren-is')
   Log "iş $id bitti: $tamam / $($dosyalar.Count)"
 }
 
@@ -317,7 +331,14 @@ function Guncelle {
 $kilit = New-Object Threading.Mutex($false, 'Local\DogusFotoIsci')
 if (-not $kilit.WaitOne(0)) { exit 0 }
 Log 'işçi başladı'
+if (-not $TekSefer -and (Guncelle)) { $kilit.ReleaseMutex(); exit 0 }
 $sonGuncelleme = Get-Date
+$suren = Join-Path $KOK 'suren-is'
+if (Test-Path $suren) {
+  # önceki işçi iş ortasında kapandıysa (güncelleme, yeniden başlatma) iş hemen kaldığı yerden sürer
+  try { $eskiIs = (Get-Content $suren -Raw).Trim(); [void](Servis @{ action = 'fdYenidenSiraya'; is = $eskiIs }); Log "yarıda kalan iş yeniden sırada: $eskiIs" } catch {}
+  Remove-Item -Force -ErrorAction SilentlyContinue $suren
+}
 while ($true) {
   try {
     $is = Servis @{ action = 'fdSiradaki' }
