@@ -15,7 +15,7 @@ $sha = (Get-FileHash -Algorithm SHA256 -Path $Prompt).Hash
 if ($sha -ne $PROMPT_SHA) { throw "prompt.txt Umut'un promptuyla birebir aynı değil (SHA-256 $sha)" }
 Copy-Item -Force $Prompt (Join-Path $KOK 'prompt.txt')
 
-$eylem = New-ScheduledTaskAction -Execute 'conhost.exe' -Argument "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$KOK\isci.ps1`""
+$eylem = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$KOK\isci.ps1`""
 $tetik = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
 $ayar = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName 'DogusFoto Isci' -Action $eylem -Trigger $tetik -Settings $ayar -Description 'RE/MAX Doğuş Fotoğraf Düzenle işçisi (dogusportal.com/foto-duzenle.html)' -Force | Out-Null

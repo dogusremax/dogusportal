@@ -142,13 +142,25 @@ function ChatGPTDuzenle($girdiYol, $cikisYol) {
     [void](Cdp 'DOM.setFileInputFiles' @{ files = @($girdiYol); objectId = $r['result']['objectId'] })
     # 2) prompt: dosyadan okunur, olduğu gibi yazılır
     $prompt = [IO.File]::ReadAllText($PROMPT_YOL, [Text.Encoding]::UTF8)
-    [void](JS "(() => { const e = $JS_EDITOR; e.focus(); return true; })()")
-    [void](Cdp 'Input.insertText' @{ text = $prompt })
-    Start-Sleep -Seconds 2
-    # Editördeki metin dosyayla aynı mı (boşluk farkları hariç) kontrol et
-    $yazilan = JS "$JS_EDITOR.innerText"
+    # Önce düz metin YAPIŞTIRMA (editör yazım kısayollarını çalıştırmaz), olmazsa Input.insertText.
+    # Her denemeden sonra editördeki metin dosyayla (boşluk farkları hariç) karşılaştırılır; tutmazsa gönderilmez.
     $norm = { param($s) ($s -replace '\s+', '') }
-    if ((& $norm $yazilan) -ne (& $norm $prompt)) { throw 'Prompt editöre birebir yazılamadı' }
+    $metinJs = $JSON.Serialize($prompt)
+    $tuttu = $false
+    foreach ($yol in @('yapistir', 'yaz')) {
+      [void](JS "(() => { const e = $JS_EDITOR; e.focus(); document.execCommand('selectAll'); document.execCommand('delete'); return true; })()")
+      if ($yol -eq 'yapistir') {
+        [void](JS "(() => { const e = $JS_EDITOR; const dt = new DataTransfer(); dt.setData('text/plain', $metinJs); e.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true })); return true; })()")
+      } else { [void](Cdp 'Input.insertText' @{ text = $prompt }) }
+      Start-Sleep -Seconds 2
+      $yazilan = [string](JS "$JS_EDITOR.innerText")
+      $a1 = & $norm $yazilan; $a2 = & $norm $prompt
+      if ($a1 -eq $a2) { $tuttu = $true; break }
+      $k = 0; while ($k -lt [Math]::Min($a1.Length, $a2.Length) -and $a1[$k] -eq $a2[$k]) { $k++ }
+      $bas = [Math]::Max(0, $k - 25)
+      Log ("  prompt farkı ($yol): editör " + $a1.Length + " / dosya " + $a2.Length + " karakter, ilk fark " + $k + ": editör '" + $a1.Substring($bas, [Math]::Min(60, $a1.Length - $bas)) + "' dosya '" + $a2.Substring($bas, [Math]::Min(60, $a2.Length - $bas)) + "'")
+    }
+    if (-not $tuttu) { throw 'Prompt editöre birebir yazılamadı' }
     # 3) yükleme bitince gönder
     # yükleme sürerken gönder tuşu kapalıdır; açılınca sayfadaki mevcut görseller not edilir ve basılır
     $gonder = Bekle "(() => { const b = $JS_GONDER; if (!b || b.disabled || b.getAttribute('aria-disabled') === 'true') return false; window.__fdOnce = new Set([...document.images].map(i => i.currentSrc || i.src)); b.click(); return true; })()" 120 1500
