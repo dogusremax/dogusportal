@@ -1,0 +1,34 @@
+name: Bronz statü paylaşımı
+# RE/MAX Europe Bronz statü gönderisi + story (elle, Umut onayıyla 27 Eki 2026)
+on:
+  workflow_dispatch:
+    inputs:
+      hedef:
+        description: 'Ne paylaşılsın?'
+        type: choice
+        default: 'ikisi'
+        options: ['ikisi', 'gonderi', 'story']
+      ortak:
+        description: 'Ortak gönderi + story etiketi (virgülle IG kullanıcı adları)'
+        default: 'umuttokkus'
+permissions:
+  contents: read
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - name: Güncel IG token'ı al
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - name: Instagram'a paylaş
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          HEDEF: ${{ inputs.hedef }}
+          ORTAK: ${{ inputs.ortak }}
+        run: node scripts/bronz-ig.js
