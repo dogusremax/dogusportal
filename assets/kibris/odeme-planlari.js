@@ -30,6 +30,13 @@
       { ad: '1. Etap', blok: ['AFALINA-1', 'AFALINA-2', 'WHALE-2', 'ORCA-4', 'ORCA-5', 'ORCA-7', 'BELUGA-5'], pe: 35, tl: 0, ts: 30, sa: 30, teslim: '2027-12', not: 'Ocean Life 1. Etap · teslim Aralık 2027. %35 peşinat; %35 teslime kadar taksit; %30 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' },
       { ad: '2. Etap', blok: ['AFALINA-3', 'AFALINA-4', 'ORCA-8', 'ORCA-9', 'ORCA-10'], pe: 35, tl: 0, ts: 30, sa: 30, teslim: '2028-12', not: 'Ocean Life 2. Etap · teslim Aralık 2028. %35 peşinat; %35 teslime kadar taksit; %30 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Riverside Life Residence': [{ ad: 'Riverside planı', pe: 50, tl: 0, ts: 50, sa: 36, not: 'Riverside Life: %50 peşinat; %50 teslimden sonra 36 ay taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    // Noyanlar "Tüm Projeler" listesi (21.04.2026), Umut 27.10.2026
+    'La Palazzo': [
+      { ad: '1. Etap', pe: 30, tl: 0, ts: 40, sa: 30, teslim: '2027-06', not: 'La Palazzo 1. Etap · teslim Haziran 2027. %30 peşinat; %30 teslime kadar taksit; %40 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' },
+      { ad: '2. Etap', pe: 30, tl: 0, ts: 40, sa: 30, teslim: '2028-02', not: 'La Palazzo 2. Etap · teslim Şubat 2028. %30 peşinat; %30 teslime kadar taksit; %40 teslimden sonra 30 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    'Solmaris': [{ ad: 'Solmaris planı', pe: 30, tl: 0, ts: 40, sa: 24, teslim: '2027-08', not: 'Solmaris · teslim Ağustos 2027, trafo dahil. %30 peşinat; %30 teslime kadar taksit; %40 teslimden sonra 24 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    'Four Seasons Life III': [{ ad: 'Four Seasons III planı', pe: 35, tl: 0, ts: 40, sa: 24, teslim: '2026-12', not: 'Four Seasons Life III · teslim Aralık 2026. %35 peşinat; %25 teslime kadar taksit; %40 teslimden sonra 24 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
+    'Bellagio': [{ ad: 'Bellagio planı', pe: 50, tl: 0, ts: 50, sa: 50, not: 'Bellagio · taşınmaya hazır, trafo dahil + full eşya paketi. %50 peşinat; %50 50 ay taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Natulux': [{ ad: 'Natulux planı', pe: 35, tl: 0, ts: 30, sa: 12, teslim: '2027-05', not: 'Natulux · teslim Mayıs 2027. %35 peşinat, teslime kadar %35 taksit, teslimden sonra %30 (12 ay). ' + DV }]
   };
   // bloğa bağlı plan varsa o dairenin planının sırası, yoksa -1
