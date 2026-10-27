@@ -37,7 +37,7 @@
     'Solmaris': [{ ad: 'Solmaris planı', pe: 30, tl: 0, ts: 40, sa: 24, teslim: '2027-08', not: 'Solmaris · teslim Ağustos 2027, trafo dahil. %30 peşinat; %30 teslime kadar taksit; %40 teslimden sonra 24 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Four Seasons Life III': [{ ad: 'Four Seasons III planı', pe: 35, tl: 0, ts: 40, sa: 24, teslim: '2026-12', not: 'Four Seasons Life III · teslim Aralık 2026. %35 peşinat; %25 teslime kadar taksit; %40 teslimden sonra 24 ay. Kesin tutarı satış temsilcisiyle teyit edin.' }],
     'Bellagio': [{ ad: 'Bellagio planı', pe: 50, tl: 0, ts: 50, sa: 50, not: 'Bellagio · taşınmaya hazır, trafo dahil + full eşya paketi. %50 peşinat; %50 50 ay taksit. Kesin tutarı satış temsilcisiyle teyit edin.' }],
-    'Natulux': [{ ad: 'Natulux planı', pe: 35, tl: 0, ts: 30, sa: 12, teslim: '2027-05', not: 'Natulux · teslim Mayıs 2027. %35 peşinat, teslime kadar %35 taksit, teslimden sonra %30 (12 ay). ' + DV }]
+    'Natulux': [{ ad: 'Natulux planı', pe: 35, tl: 0, ts: 30, ay: 6, sa: 12, teslim: '2027-05', not: 'Natulux · teslim Mayıs 2027. %35 peşinat; %35 teslime kadar 6 eşit taksit (son taksit Nisan 2027); %30 teslimden sonra 12 eşit taksit (son taksit Nisan 2028). ' + DV }]
   };
   // bloğa bağlı plan varsa o dairenin planının sırası, yoksa -1
   function blokSira(p, blok) {
