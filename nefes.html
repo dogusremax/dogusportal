@@ -123,6 +123,7 @@ a{color:var(--acc)}
     <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
       <pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:10px"></pre>
       <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details>
   </section>
@@ -193,6 +194,7 @@ a{color:var(--acc)}
     <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
       <pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:10px"></pre>
       <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details>
   </section>
@@ -508,14 +510,16 @@ function iqRender(){
 }
 function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı'),()=>prompt('Kopyala:',t))}
 function iqSt(t){iq.st=t;iqRender()}
-async function iqConnect(auto){
+async function iqConnect(auto,all){
   if(iq.scp&&!auto){return iqPoll()}
-  if(iq.dev&&!auto){clearTimeout(iq.rt);try{await iqLink(iq.dev);return}catch(e){dbg('yeniden bağlanamadı: '+e.message)}}
+  if(iq.dev&&!auto&&!all){clearTimeout(iq.rt);try{await iqLink(iq.dev);return}catch(e){dbg('yeniden bağlanamadı: '+e.message)}}
   if(!navigator.bluetooth){if(!auto)toast('Bu tarayıcı Bluetooth desteklemiyor — Bluefy ile aç');return}
   try{
     let dev=null;
     if(auto){if(!navigator.bluetooth.getDevices)return;const ds=await navigator.bluetooth.getDevices();dev=ds.find(d=>/iqos/i.test(d.name||''))||ds[0];if(!dev)return}
-    else dev=await navigator.bluetooth.requestDevice({filters:[{namePrefix:'IQOS'},{namePrefix:'iqos'},{namePrefix:'Iqos'},{services:[IQ.core]}],optionalServices:[IQ.core]});
+    else dev=all?await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[IQ.core]})
+      :await navigator.bluetooth.requestDevice({filters:[{namePrefix:'IQOS'},{namePrefix:'iqos'},{namePrefix:'Iqos'},{services:[IQ.core]}],optionalServices:[IQ.core]});
+    dbg('seçilen cihaz: '+(dev.name||'(isimsiz)'));
     await iqLink(dev);
   }catch(e){iqSt('bağlı değil');dbg('bağlantı hatası: '+e.message);if(!auto)toast('Bağlanamadı: '+e.message)}
 }
