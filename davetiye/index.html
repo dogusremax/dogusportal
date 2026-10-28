@@ -436,7 +436,7 @@ footer p{margin-top:16px;font-size:12px}
   window.__davetSfx=function(ctx,n,t){ AC=ctx; NB=null; SFX[n](t); };
   /* ---- arka plan müziği (telifsiz, bizim için üretildi): mühre dokununca yavaşça başlar ---- */
   var MUZ_VOL=.26, muzBuf=null, muzGain=null, muzRaw=null;
-  try{ fetch('muzik.m4a').then(function(r){ return r.arrayBuffer(); }).then(function(b){ muzRaw=b; }).catch(function(){}); }catch(e){}
+  try{ fetch('muzik.mp3').then(function(r){ return r.arrayBuffer(); }).then(function(b){ muzRaw=b; }).catch(function(){}); }catch(e){}
   function muzik(){
     var a=ac(); if(!a||muzGain) return;
     muzGain=a.createGain(); muzGain.gain.value=0.0001; muzGain.connect(a.destination);
@@ -444,7 +444,7 @@ footer p{margin-top:16px;font-size:12px}
       muzGain.gain.setValueAtTime(0.0001,a.currentTime+.3); muzGain.gain.exponentialRampToValueAtTime(soundOn?MUZ_VOL:0.0001,a.currentTime+3.5); }
     function dec(raw){ try{ var pr=a.decodeAudioData(raw.slice(0),go,function(){}); if(pr&&pr.then) pr.then(go).catch(function(){}); }catch(e){} }
     var once=false; go=(function(g){ return function(b){ if(once) return; once=true; g(b); }; })(go);
-    if(muzRaw) dec(muzRaw); else fetch('muzik.m4a').then(function(r){ return r.arrayBuffer(); }).then(dec).catch(function(){});
+    if(muzRaw) dec(muzRaw); else fetch('muzik.mp3').then(function(r){ return r.arrayBuffer(); }).then(dec).catch(function(){});
   }
   function muzSet(){ if(!muzGain||!AC) return; var t=AC.currentTime; muzGain.gain.cancelScheduledValues(t); muzGain.gain.setValueAtTime(Math.max(muzGain.gain.value,0.0001),t); muzGain.gain.exponentialRampToValueAtTime(soundOn?MUZ_VOL:0.0001,t+.6); }
   document.addEventListener('visibilitychange',function(){ if(!AC) return; if(document.hidden) AC.suspend(); else AC.resume(); });
