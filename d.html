@@ -5,8 +5,8 @@
 <meta property="og:title" content="Kuzey Kıbrıs Yatırımcı Lansmanı · Davetiye">
 <meta property="og:description" content="22 Kasım 2026 Pazar · 13:30 · Kalamış Marina Hotel">
 <meta property="og:image" content="https://dogusportal.com/davetiye/zarf-poster.jpg">
-<script>/* Kısa davetiye linki: dogusportal.com/d?Ad-Soyad → /davetiye/?ad=Ad Soyad */
-(function(){ var q=location.search.slice(1), ad='';
+<script>/* Kısa davetiye linki: dogusportal.com/d?a=Ad-Soyad → /davetiye/?ad=Ad Soyad */
+(function(){ var q=location.search.slice(1).replace(/^a=/,'').split('&')[0], ad='';
   try{ ad=decodeURIComponent(q.replace(/\+/g,' ')).replace(/-/g,' ').trim(); }catch(e){}
   location.replace('/davetiye/'+(ad?'?ad='+encodeURIComponent(ad):'')); })();</script>
 <style>body{margin:0;background:#050A30}</style>
