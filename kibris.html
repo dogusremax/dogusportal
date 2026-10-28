@@ -2824,6 +2824,7 @@ $("leadform").addEventListener("submit", async e=>{
   }
   if(!ok){ leadGonderiliyor=false; btn.disabled=false; btn.textContent=c.retry; err.textContent=E.net; return; }
   try{ window.fbq && fbq('track','Lead',{content_name:"Kibris", value:payload.puan, dil:L}); }catch(x){}
+  try{ typeof gtag==="function" && gtag('event','generate_lead',{form_name:"kibris", dil:L, transport_type:"beacon"}); }catch(x){}   // Analytics: gönderilen form (28 Eki)
   sent = payload;
   done(sent);
 });
@@ -2901,6 +2902,7 @@ $("pform").addEventListener("submit", async e=>{
   const payload={action:"talepBildir", tur:"kibris_"+pType, kaynak:"kibrisburda.com · İş birliği formu", waIzin:"1", tip:pType, ad:basHarf(v("pf-name")), firma:v("pf-firm"), sehir:v("pf-city"), katilimci:v("pf-size"), tarih:v("pf-when"), tel, mail:v("pf-mail"), not:v("pf-note"), dil:L, ...SRC, sayfa:location.href.split("?")[0], zaman_damgasi:new Date().toISOString()};
   if(CONFIG.GAS_URL){ try{ await fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}); }catch(x){} }
   try{ window.fbq && fbq('track','Lead',{content_name:"Kibris-"+pType, dil:L}); }catch(x){}
+  try{ typeof gtag==="function" && gtag('event','generate_lead',{form_name:"kibris_"+pType, dil:L, transport_type:"beacon"}); }catch(x){}
   $("pform").innerHTML=`<div class="pm-ok"><div class="tick">✓</div><p>${f.ok}</p>${CONFIG.GAS_URL?"":`<div class="demo">${D().done.demo}</div>`}</div>`;
 });
 
