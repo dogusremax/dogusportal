@@ -268,7 +268,7 @@ footer p{margin-top:16px;font-size:12px}
 </head>
 <body>
 <div id="gate" class="vid" lang="tr" role="dialog" aria-label="Davetiyeyi aç">
-  <video id="film" playsinline webkit-playsinline preload="auto" poster="zarf-poster.jpg" aria-hidden="true"><source src="zarf-film.webm" type="video/webm"><source src="zarf-film.mp4" type="video/mp4"></video>
+  <video id="film" playsinline webkit-playsinline preload="auto" poster="zarf-poster.jpg" aria-hidden="true"><source src="zarf-film.mp4" type="video/mp4"><source src="zarf-film.webm" type="video/webm"></video>
   <div class="g-top"><small>RE/MAX Doğuş</small><b>Size özel bir <strong>davetiye</strong> var</b></div>
   <div class="stage">
     <div class="env" id="env" role="button" tabindex="0" aria-label="Mührü kır ve zarfı aç">
@@ -409,7 +409,11 @@ footer p{margin-top:16px;font-size:12px}
   function syncBtn(){ sb.classList.toggle('off',!soundOn); sb.setAttribute('aria-pressed',soundOn); sb.setAttribute('aria-label',soundOn?'Sesi kapat':'Sesi aç'); }
   syncBtn();
   sb.addEventListener('click',function(e){ e.stopPropagation(); soundOn=!soundOn; syncBtn(); if(film) film.muted=!soundOn; muzSet(); try{ localStorage.setItem('davetSes',soundOn?'1':'0'); }catch(_){} });
-  function ac(){ if(!AC){ var C=window.AudioContext||window.webkitAudioContext; if(!C) return null; AC=new C(); } if(AC.state==='suspended') AC.resume(); return AC; }
+  function ac(){ // iPhone: sessiz moddayken de çalsın (audioSession), ilk dokunuşta ses kilidini aç
+    try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}
+    if(!AC){ var C=window.AudioContext||window.webkitAudioContext; if(!C) return null; AC=new C();
+      try{ var b=AC.createBuffer(1,1,22050), z=AC.createBufferSource(); z.buffer=b; z.connect(AC.destination); z.start(0); }catch(e){} }
+    if(AC.state!=='running'){ try{ AC.resume(); }catch(e){} } return AC; }
   var NB=null;
   function noise(){ if(NB) return NB; var n=AC.sampleRate*2, b=AC.createBuffer(1,n,AC.sampleRate), d=b.getChannelData(0); for(var i=0;i<n;i++) d[i]=Math.random()*2-1; return NB=b; }
   // bir gürültü katmanı: filtre + zarf; grain>0 ise kağıt hışırtısı gibi düzensiz genlik
@@ -448,6 +452,7 @@ footer p{margin-top:16px;font-size:12px}
   }
   function muzSet(){ if(!muzGain||!AC) return; var t=AC.currentTime; muzGain.gain.cancelScheduledValues(t); muzGain.gain.setValueAtTime(Math.max(muzGain.gain.value,0.0001),t); muzGain.gain.exponentialRampToValueAtTime(soundOn?MUZ_VOL:0.0001,t+.6); }
   document.addEventListener('visibilitychange',function(){ if(!AC) return; if(document.hidden) AC.suspend(); else AC.resume(); });
+  ['touchend','click'].forEach(function(ev){ document.addEventListener(ev,function(){ if(AC&&AC.state!=='running'&&!document.hidden){ try{ AC.resume(); }catch(e){} } },true); });
   function sfx(n){ if(!soundOn) return; var a=ac(); if(!a) return; try{ SFX[n](a.currentTime+.01); }catch(e){} }
   function crumbs(){
     var host=gate.querySelector('.env-in');
