@@ -452,13 +452,14 @@ function iqRender(){
    :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> (${u==='puff'?'nefes sayıyor':u==='stick'?'stick sayıyor':'birim öğreniliyor'})`:'')
      +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'');
   document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
-  document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':'🔗 IQOS\'a bağlan'});
+  document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':(iq.dev?'🔁 Yeniden bağlan':'🔗 IQOS\'a bağlan')});
   document.querySelectorAll('.iqDbg').forEach(e=>e.textContent=(q.dbg||[]).slice().reverse().join('\n'));
 }
 function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı'),()=>prompt('Kopyala:',t))}
 function iqSt(t){iq.st=t;iqRender()}
 async function iqConnect(auto){
   if(iq.scp&&!auto){return iqPoll()}
+  if(iq.dev&&!auto){clearTimeout(iq.rt);try{await iqLink(iq.dev);return}catch(e){dbg('yeniden bağlanamadı: '+e.message)}}
   if(!navigator.bluetooth){if(!auto)toast('Bu tarayıcı Bluetooth desteklemiyor — Bluefy ile aç');return}
   try{
     let dev=null;
@@ -480,8 +481,14 @@ async function iqLink(dev){
   iqS().name=dev.name||'IQOS';iqSt('bağlı');dbg('bağlandı: '+(dev.name||'?'));
   clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);iqPoll();
 }
-function iqLost(){iq.scp=null;clearInterval(iq.timer);iqSt('koptu — yeniden deneniyor');dbg('bağlantı koptu');
-  setTimeout(()=>{if(iq.dev&&!iq.scp)iqLink(iq.dev).catch(e=>{iqSt('bağlı değil');dbg('yeniden bağlanamadı: '+e.message)})},5000)}
+function iqLost(){iq.scp=null;clearInterval(iq.timer);dbg('bağlantı koptu');iqRetry(0)}
+function iqRetry(n){
+  clearTimeout(iq.rt);if(!iq.dev||iq.scp)return;
+  iqSt(`koptu — yeniden bağlanıyor (${n+1}. deneme)`);
+  iq.rt=setTimeout(()=>{if(document.hidden||iq.scp||iq.linking)return iqRetry(n);
+    iq.linking=1;iqLink(iq.dev).then(()=>{iq.linking=0},e=>{iq.linking=0;dbg('yeniden bağlanamadı: '+e.message);iqRetry(n+1)})},
+    Math.min(60e3,[3e3,5e3,10e3,20e3,30e3][n]||60e3));
+}
 async function iqPoll(){
   if(!iq.scp)return;
   try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
@@ -527,7 +534,7 @@ function iqAuto(t,bulk){
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():iqConnect(true)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev?(clearTimeout(iq.rt),iqRetry(0)):iqConnect(true))}});
 iqRender();if(navigator.bluetooth&&S.iq&&S.iq.name)iqConnect(true);
 </script>
 </body>
