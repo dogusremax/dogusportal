@@ -93,6 +93,10 @@ a{color:var(--acc)}
     </div>
     <div class="card"><h2>Saatlere göre (günlük ortalama)</h2><div class="bars" id="mBars"></div>
       <div style="display:flex;justify-content:space-between" class="note"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>
+    <div class="card iqCard"><h2>IQOS otomatik sayım</h2><p class="note iqSt">…</p>
+      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <details style="margin-top:10px"><summary class="note">Teknik kayıt</summary><pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:6px"></pre>
+      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details></div>
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
@@ -154,6 +158,10 @@ a{color:var(--acc)}
       </div>
     </div>
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
+    <div class="card iqCard"><h2>IQOS otomatik sayım</h2><p class="note iqSt">…</p>
+      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <details style="margin-top:10px"><summary class="note">Teknik kayıt</summary><pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:6px"></pre>
+      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
   </section>
@@ -293,10 +301,11 @@ async function topUp(manual){
 }
 
 /* ---- KAYIT ---- */
-function logSmoke(){
-  const now=Date.now(), sl=slotsFor(planDate()).filter(s=>s.kind==='smoke');
+function logSmoke(at,src){
+  if(src!=='iqos'&&iqRecentAuto()) return toast('IQOS bunu zaten saydı 👍');
+  const now=at||Date.now(), sl=slotsFor(planDate(new Date(now))).filter(s=>s.kind==='smoke');
   const near=sl.find(s=>now>=s.ts-2*6e4&&now<=s.ts+10*6e4);
-  S.log=S.log||[]; S.log.push({t:now,type:near?'smoke':'extra'}); save();
+  S.log=S.log||[]; S.log.push({t:now,type:near?'smoke':'extra',src}); save();
   toast(near?'Kaydedildi 👍':'Plan dışı kaydedildi — sorun değil, devam'); render();
 }
 function logSkip(){S.log=S.log||[];S.log.push({t:Date.now(),type:'skip'});save();toast('Harika, bir tane az 💪');render()}
@@ -400,7 +409,7 @@ function mStats(){
 }
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
 const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
-function mPlus(){S.mlog=S.mlog||[];S.mlog.push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
+function mPlus(){if(iqRecentAuto())return toast('IQOS bunu zaten saydı 👍');S.mlog=S.mlog||[];S.mlog.push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
   const b=$('plusBtn');b.style.transform='scale(.92)';setTimeout(()=>b.style.transform='',120);mRender()}
 function mUndo(){if(!(S.mlog||[]).length)return;const t=S.mlog[S.mlog.length-1];
   if(confirm('Saat '+hm(new Date(t))+' kaydı silinsin mi?')){S.mlog.pop();save();mRender()}}
@@ -428,11 +437,98 @@ function mFinish(){
   preview();toast('Ölçümün forma işlendi — kontrol et, başlat');
 }
 
+/* ---- IQOS BLUETOOTH (Bluefy / Chrome) ---- */
+const IQ={core:'daebb240-b041-11e4-9e45-0002a5d5c51b',scp:'e16c6e20-b041-11e4-a4c3-0002a5d5c51b',bat:'f8a54120-b041-11e4-9be7-0002a5d5c51b',
+  tele:[0x00,0xC9,0x10,0x02,0x01,0x01,0x75,0xD6],SESSION:8*6e4};
+let iq={dev:null,scp:null,timer:null,st:'bağlı değil'};
+function iqS(){S.iq=S.iq||{dbg:[],sizes:[]};return S.iq}
+const hex=b=>[...b].map(x=>x.toString(16).padStart(2,'0')).join(' ');
+function dbg(m){const q=iqS();q.dbg.push(hm(new Date())+' '+m);if(q.dbg.length>120)q.dbg.splice(0,q.dbg.length-120);save();iqRender()}
+function iqUnit(){const z=iqS().sizes;if(z.length<2)return null;const m=[...z].sort((a,b)=>a-b)[Math.floor(z.length/2)];return m>3?'puff':'stick'}
+function iqRecentAuto(){const q=S.iq;return q&&q.lastAuto&&Date.now()-q.lastAuto<10*6e4}
+function iqRender(){
+  const q=iqS(),has=!!navigator.bluetooth,u=iqUnit();
+  const txt=!has?'Otomatik sayım için bu sayfayı ücretsiz <b>Bluefy</b> uygulamasında aç. Safari Bluetooth\'a erişemiyor; burada + ile devam edebilirsin.'
+   :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> (${u==='puff'?'nefes sayıyor':u==='stick'?'stick sayıyor':'birim öğreniliyor'})`:'')
+     +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'');
+  document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
+  document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':'🔗 IQOS\'a bağlan'});
+  document.querySelectorAll('.iqDbg').forEach(e=>e.textContent=(q.dbg||[]).slice().reverse().join('\n'));
+}
+function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı'),()=>prompt('Kopyala:',t))}
+function iqSt(t){iq.st=t;iqRender()}
+async function iqConnect(auto){
+  if(iq.scp&&!auto){return iqPoll()}
+  if(!navigator.bluetooth){if(!auto)toast('Bu tarayıcı Bluetooth desteklemiyor — Bluefy ile aç');return}
+  try{
+    let dev=null;
+    if(auto){if(!navigator.bluetooth.getDevices)return;const ds=await navigator.bluetooth.getDevices();dev=ds.find(d=>/iqos/i.test(d.name||''))||ds[0];if(!dev)return}
+    else dev=await navigator.bluetooth.requestDevice({filters:[{namePrefix:'IQOS'},{namePrefix:'iqos'},{namePrefix:'Iqos'},{services:[IQ.core]}],optionalServices:[IQ.core]});
+    await iqLink(dev);
+  }catch(e){iqSt('bağlı değil');dbg('bağlantı hatası: '+e.message);if(!auto)toast('Bağlanamadı: '+e.message)}
+}
+async function iqLink(dev){
+  iq.dev=dev;iqSt('bağlanıyor…');
+  if(!dev._nf){dev.addEventListener('gattserverdisconnected',iqLost);dev._nf=1}
+  const srv=await dev.gatt.connect(),svc=await srv.getPrimaryService(IQ.core);
+  iq.scp=await svc.getCharacteristic(IQ.scp);await iq.scp.startNotifications();
+  if(!iq.scp._nf){iq.scp.addEventListener('characteristicvaluechanged',iqFrame);iq.scp._nf=1}
+  try{const b=await svc.getCharacteristic(IQ.bat);
+    if(b.properties.notify||b.properties.indicate){await b.startNotifications();b.addEventListener('characteristicvaluechanged',e=>{dbg('pil ← '+hex(new Uint8Array(e.target.value.buffer)));setTimeout(iqPoll,1500)});dbg('pil sinyali dinleniyor')}
+    else dbg('pil sinyali yok');
+  }catch(e){dbg('pil: '+e.message)}
+  iqS().name=dev.name||'IQOS';iqSt('bağlı');dbg('bağlandı: '+(dev.name||'?'));
+  clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);iqPoll();
+}
+function iqLost(){iq.scp=null;clearInterval(iq.timer);iqSt('koptu — yeniden deneniyor');dbg('bağlantı koptu');
+  setTimeout(()=>{if(iq.dev&&!iq.scp)iqLink(iq.dev).catch(e=>{iqSt('bağlı değil');dbg('yeniden bağlanamadı: '+e.message)})},5000)}
+async function iqPoll(){
+  if(!iq.scp)return;
+  try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
+  catch(e){dbg('okuma hatası: '+e.message)}
+}
+function iqFrame(e){
+  const b=new Uint8Array(e.target.value.buffer);
+  if(b.length>=6&&b[2]===0x90&&b[3]===0x22&&b[4]===1&&b[5]===1){
+    const n=Math.floor((b[3]-2)/8),tags={};let cnt=null;
+    for(let i=0;i<n&&6+i*8+8<=b.length;i++){const o=6+i*8,val=b[o+4]|(b[o+5]<<8),tag=b[o+7];tags[tag.toString(16)]=val;if(tag===0x8E)cnt=val}
+    const q=iqS();if(JSON.stringify(tags)!==JSON.stringify(q.tags)){q.tags=tags;dbg('sayaçlar '+JSON.stringify(tags))}
+    if(cnt!=null)iqCount(cnt);
+  }else dbg('← '+hex(b));
+}
+function iqCount(v){
+  const q=iqS(),now=Date.now(),prev=q.lastSeen||0;
+  if(q.last==null||v<q.last){q.last=v;q.lastSeen=now;save();iqRender();return}
+  const d=v-q.last;q.last=v;q.lastSeen=now;
+  if(d>0){
+    dbg(`sayaç +${d} (${v})`);
+    if(now-prev>15*6e4&&prev){            // bağlı değilken birikenler
+      const u=iqUnit()||'puff',k=u==='puff'?Math.max(1,Math.round(d/14)):d;
+      dbg(`ara dönem: ${k} stick (${u==='puff'?'nefesten hesap':'doğrudan'})`);
+      for(let i=1;i<=k;i++)iqAuto(prev+(now-prev)*i/(k+1),true);
+      q.lastInc=now;
+    }else if(!q.lastInc||now-q.lastInc>IQ.SESSION){   // yeni stick
+      if(q.sessInc){q.sizes.push(q.sessInc);if(q.sizes.length>12)q.sizes.shift()}
+      q.sessInc=d;q.lastInc=now;iqAuto(now,false);
+    }else{q.sessInc=(q.sessInc||0)+d;q.lastInc=now}
+  }
+  save();iqRender();
+}
+function iqAuto(t,bulk){
+  const q=iqS();
+  const manual=S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[]);
+  if(!bulk&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
+  q.autoN=(q.autoN||0)+1;q.lastAuto=Date.now();q.autoTs=(q.autoTs||[]).concat(Math.round(t)).slice(-200);
+  if(S.setup&&S.setup.start){logSmoke(Math.round(t),'iqos')}
+  else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast('IQOS: 1 stick sayıldı ✓')}
+}
+
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.setup)topUp(false)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():iqConnect(true)}});
+iqRender();if(navigator.bluetooth&&S.iq&&S.iq.name)iqConnect(true);
 </script>
 </body>
 </html>
