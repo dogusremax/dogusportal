@@ -40,6 +40,7 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
   <a class="btn ikincil" id="kutu" href="/bildirimlerim.html">Tüm bildirimlerim</a>
   <p class="not">Bu bildirim Bildirimlerim kutusunda da duruyor, sonra oradan tekrar açabilirsin.</p>
 </main>
+<script src="/assets/bildirim-link.js"></script>
 <script>
 (function () {
   // Telefon bildirimine dokununca sw.js dış linkleri buraya yönlendirir (?u=link&b=başlık&m=metin)
@@ -49,8 +50,9 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
   var cb = Date.now();
   $('geri').href = '/?cb=' + cb; $('kutu').href = '/bildirimlerim.html?cb=' + cb;
   if (!/^https:\/\//.test(u)) { $('git').style.display = 'none'; return; }
-  $('git').href = u;
-  $('git').textContent = /sahibinden\.com/.test(u) ? "İlanı sahibinden'de aç" : 'Bağlantıyı aç';
+  var l = bildirimLink(u);
+  $('git').href = l.u;
+  $('git').textContent = l.etiket;
 })();
 </script>
 </body>
