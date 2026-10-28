@@ -57,6 +57,11 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--blue);outl
 .arcta .btn{background:#fff;color:#a3122a;font-size:16px}
 .arcta.off{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
 .arcta.off p{color:var(--muted);opacity:1}
+.arcta label{color:#fff;opacity:.95}
+.arcta input{background:rgba(255,255,255,.95);color:#152238;border:0}
+.linkbtn{font:inherit;font-size:13.5px;font-weight:700;background:transparent;border:0;color:#fff;text-decoration:underline;cursor:pointer;padding:2px}
+.walls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#camVideo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:49;background:#000}
 details.card summary{font-weight:700;cursor:pointer}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:99px;padding:9px 13px;cursor:pointer}
@@ -170,11 +175,22 @@ nav button[aria-current="true"] i{background:var(--red);border-color:var(--red);
     <div class="arcta" id="arBox">
       <b>Kamerayla ölç</b>
       <p id="arInfo">Kamera açılır. Her odada köşelere nişan alıp dokun; oda gerçek ölçüsüyle çizilir, odalar kendi yerine oturur.</p>
-      <button class="btn" id="arStart">Kamerayı aç</button>
+      <label id="boyWrap" hidden>Boyun (cm) — mesafe göz yüksekliğinden hesaplanır<input id="f-boy" type="number" inputmode="numeric" min="130" max="210" placeholder="170"></label>
+      <button class="btn" id="arStart" hidden>Kamerayı aç</button>
+      <button class="btn" id="tiltStart" hidden>Kamerayı aç</button>
+      <button class="linkbtn" id="tiltAlt" hidden>AR açılmazsa: eğim yöntemiyle ölç</button>
     </div>
     <details class="card" id="nasil">
       <summary>Nasıl ölçülür? (30 saniyelik okuma)</summary>
-      <ul class="tips">
+      <ul class="tips" id="nasilTilt" hidden>
+        <li><b>Odanın ortasına geç ve ölçüm bitene kadar yerinden kıpırdama.</b> Sadece olduğun yerde dön.</li>
+        <li>Telefonu göz hizasında, dik tut. Altta odanın türünü seç.</li>
+        <li>Ekrandaki artıyı duvarların yerle birleştiği köşenin tam dibine getir, sabit tut, <b>Köşe</b>'ye bas. Sırayla bütün köşeler.</li>
+        <li><b>Odayı bitir</b>. Yine kıpırdamadan kapı ve pencerelerin iki kenarını işaretleyebilirsin.</li>
+        <li>Sonraki odanın ortasına yürü, aynısını yap. Odalar yan yana gelir; planda parmakla yerine sürükle, duvarlar birbirine yapışır.</li>
+        <li>Hassasiyet için: bir duvarı lazerle ölçüp odaya dokunarak yaz; oda ve bundan sonraki ölçümler buna göre ayarlanır.</li>
+      </ul>
+      <ul class="tips" id="nasilAR">
         <li>Kamerayı açınca telefonu yere doğru tut ve yavaşça sağa sola gezdir. Zemin bulununca ortadaki halka yere oturur.</li>
         <li>Altta odanın türünü seç (Salon, Mutfak…).</li>
         <li>Duvarların yerle birleştiği köşeye halkayı getir, <b>Köşe</b>'ye bas. Sırayla bütün köşeleri gez. L oda da olur.</li>
@@ -227,6 +243,7 @@ nav button[aria-current="true"] i{background:var(--red);border-color:var(--red);
     <label>Boy (m)<input id="r-h" type="number" step="0.05" min="0.5" inputmode="decimal"></label>
   </div>
   <p class="hint" id="r-arinfo" hidden></p>
+  <div class="walls" id="r-walls" hidden></div>
   <div class="btns">
     <button class="btn ghost sm" id="r-rot">Çevir</button>
     <button class="btn ghost sm" id="r-dup">Kopyala</button>
@@ -242,6 +259,7 @@ nav button[aria-current="true"] i{background:var(--red);border-color:var(--red);
   <button data-v="cikti"><i>4</i>Çıktı</button>
 </nav>
 
+<video id="camVideo" playsinline muted autoplay hidden></video>
 <!-- AR katmanı -->
 <div id="ar" hidden>
   <div class="ar-top">
@@ -406,9 +424,9 @@ function delOpening(i){const o=S.acik[i];if(!o)return;if(delOpening._p===i){S.ac
 /* ---------- oda düzenleme paneli ---------- */
 function cur(){return S.rooms.find(r=>r.id===sel)}
 function openSheet(id){sel=id;const r=cur();if(!r)return;$("#shTitle").textContent=r.ad;$("#r-ad").value=r.ad;$("#r-tur").value=r.t;
-  const rc=isRect(r);$("#r-dims").hidden=!rc;$("#r-rot").hidden=!rc;$("#r-dup").hidden=!rc;$("#r-arinfo").hidden=rc;
+  const rc=isRect(r)&&!r.src;$("#r-dims").hidden=!rc;$("#r-dup").hidden=!rc;$("#r-arinfo").hidden=rc;$("#r-walls").hidden=rc;
   if(rc){const b=rb(r);$("#r-w").value=+b.w.toFixed(2);$("#r-h").value=+b.h.toFixed(2)}
-  else $("#r-arinfo").textContent=`Kamerayla ölçüldü · ${r.pts.length} köşe · ${fmt(area(r),1)} m²`;
+  else{$("#r-arinfo").textContent=`Kamerayla ölçüldü · ${fmt(area(r),1)} m². Lazerle ölçtüğün bir duvarı yazarsan oda ona göre düzelir.`;drawWalls(r)}
   $("#sheet").hidden=false;drawPlan(false)}
 function closeSheet(silent){sel=null;$("#sheet").hidden=true;if(!silent&&!$("#v-plan").hidden)drawPlan(true)}
 $("#shClose").onclick=()=>closeSheet();$("#r-ok").onclick=()=>closeSheet();
@@ -416,7 +434,16 @@ $("#r-ad").oninput=e=>{cur().ad=e.target.value;save();drawPlan(false)};
 $("#r-tur").onchange=e=>{cur().t=e.target.value;save();drawPlan(false)};
 ["w","h"].forEach(k=>$("#r-"+k).oninput=e=>{const v=parseFloat(String(e.target.value).replace(",","."));if(!(v>=.3&&v<=40))return;
   const r=cur(),b=rb(r);r.pts=rect(b.x,b.y,k==="w"?v:b.w,k==="h"?v:b.h);save();drawPlan(false)});
-$("#r-rot").onclick=()=>{const r=cur(),b=rb(r);r.pts=rect(b.x,b.y,b.h,b.w);$("#r-w").value=+b.h.toFixed(2);$("#r-h").value=+b.w.toFixed(2);save();drawPlan(true)};
+$("#r-rot").onclick=()=>{const r=cur(),b=rb(r);
+  if(isRect(r)&&!r.src){r.pts=rect(b.x,b.y,b.h,b.w);$("#r-w").value=+b.h.toFixed(2);$("#r-h").value=+b.w.toFixed(2)}
+  else{const cx=b.x+b.w/2,cy=b.y+b.h/2;r.pts=r.pts.map(([x,y])=>[+(cx-(y-cy)).toFixed(3),+(cy+(x-cx)).toFixed(3)])}
+  save();drawPlan(true)};
+function drawWalls(r){const W=$("#r-walls");W.innerHTML=r.pts.map((p,i)=>{const q=r.pts[(i+1)%r.pts.length];
+    return `<label>Duvar ${i+1}<input type="number" step="0.01" inputmode="decimal" data-i="${i}" value="${Math.hypot(q[0]-p[0],q[1]-p[1]).toFixed(2)}"></label>`}).join("");
+  W.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{const v=parseFloat(String(inp.value).replace(",","."));const i=+inp.dataset.i,p=r.pts[i],q=r.pts[(i+1)%r.pts.length],old=Math.hypot(q[0]-p[0],q[1]-p[1]);
+    if(!(v>0.2&&v<40&&old>0.05))return;const k=v/old,b=rb(r);r.pts=r.pts.map(([x,y])=>[+(b.x+(x-b.x)*k).toFixed(3),+(b.y+(y-b.y)*k).toFixed(3)]);
+    if(r.src==="egim"){try{localStorage.setItem("kp_kal",String(kal()*k))}catch(e){}toast("Oda düzeltildi; sonraki ölçümler de buna göre ayarlandı")}else toast("Oda düzeltildi");
+    save();drawPlan(false);openSheet(r.id)})}
 $("#r-dup").onclick=()=>{const r=cur(),b=rb(r),n={id:uid(),t:r.t,ad:nextName(r.t),pts:rect(b.x+b.w,b.y,b.w,b.h)};S.rooms.push(n);save();drawPlan(true);openSheet(n.id)};
 $("#r-del").onclick=function(){if(this.dataset.c!=="1"){this.dataset.c="1";this.textContent="Silinsin mi?";setTimeout(()=>{this.dataset.c="";this.textContent="Sil"},2500);return}
   this.dataset.c="";this.textContent="Sil";delete photos[sel];S.rooms=S.rooms.filter(r=>r.id!==sel);save();closeSheet()};
@@ -425,15 +452,18 @@ $("#r-del").onclick=function(){if(this.dataset.c!=="1"){this.dataset.c="1";this.
    KAMERAYLA ÖLÇÜM (WebXR — Android Chrome)
    ===================================================================== */
 let THREE=null,arOK=false;
+const TILT_OK=typeof window.DeviceOrientationEvent!=="undefined"&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+function useTiltUI(primary){$("#tiltStart").hidden=!primary;$("#boyWrap").hidden=false;$("#nasilTilt").hidden=false;$("#nasilAR").hidden=true;$("#tiltAlt").hidden=true;$("#arStart").hidden=true;
+  $("#arInfo").textContent="Kamera açılır. Odanın ortasında dur, her köşeye nişan alıp dokun; telefonun eğiminden mesafe hesaplanır ve oda çizilir."}
+try{const b=localStorage.getItem("kp_boy");if(b)$("#f-boy").value=b}catch(e){}
+$("#f-boy").addEventListener("input",e=>{try{localStorage.setItem("kp_boy",e.target.value)}catch(_){}});
 (async function(){let ok=false;try{ok=!!(navigator.xr&&await navigator.xr.isSessionSupported("immersive-ar"))}catch(e){}
   arOK=ok;
   if(ok){try{THREE=await import("/akasya/3d/vendor/three/three.module.min.js")}catch(e){arOK=false}}
-  if(!arOK){const box=$("#arBox");box.classList.add("off");
-    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-    $("#arInfo").innerHTML=ios?"iPhone'da Safari kameralı ölçüme henüz izin vermiyor. Odaları aşağıdan elle ekle; ölçüyü iPhone'daki <b>Ölçüm</b> uygulamasıyla alabilirsin."
-      :"Bu telefonda ya da tarayıcıda kameralı ölçüm açılmadı. Android'de <b>Chrome</b> ile aç; Google Play Hizmetleri (AR) kurulu olmalı. Şimdilik odaları elle ekle.";
-    $("#arStart").hidden=true;$("#nasil").hidden=true}})();
-
+  if(arOK){$("#arStart").hidden=false;$("#tiltAlt").hidden=!TILT_OK;return}
+  if(TILT_OK){useTiltUI(true);return}
+  $("#arBox").classList.add("off");$("#arInfo").textContent="Bu telefonda kamerayla ölçüm açılmadı. Odaları aşağıdan elle ekle.";$("#nasil").hidden=true})();
+$("#tiltAlt").onclick=()=>{useTiltUI(true);toast("Eğim yöntemi seçildi")};
 let A=null; // aktif oturum durumu
 const arTypesEl=$("#arTypes");
 arTypesEl.innerHTML=Object.entries(TYPES).map(([k,v])=>`<button data-t="${k}" aria-pressed="${k==="salon"}">${v.ad}</button>`).join("");
@@ -460,7 +490,7 @@ async function startAR(){if(!arOK||!THREE||A)return;
   const hitSource=await session.requestHitTestSource({space:viewer});
   ov.addEventListener("beforexrselect",ev=>ev.preventDefault());
   const tp=arTypesEl.querySelector('[aria-pressed="true"]');
-  A={session,renderer,scene,camera,reticle,live,done,hitSource,pts:[],cur:null,type:tp?tp.dataset.t:"salon",mode:"kose",op:[],
+  A={kind:"xr",session,renderer,scene,camera,reticle,live,done,hitSource,pts:[],cur:null,type:tp?tp.dataset.t:"salon",mode:"kose",op:[],
      theta:null,off:null,rooms:[],ops:[],square:true,lastUI:0,found:false};
   session.addEventListener("end",endAR);
   renderer.setAnimationLoop((t,frame)=>{if(!frame||!A)return;const ref=renderer.xr.getReferenceSpace(),hits=frame.getHitTestResults(hitSource);
@@ -476,9 +506,9 @@ function line3(pts,color,closed){const v=pts.map(p=>new THREE.Vector3(p.x,p.y+0.
   const g=new THREE.BufferGeometry().setFromPoints(v);return new THREE.Line(g,new THREE.LineBasicMaterial({color}))}
 function marker(p,color){const m=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.01,20),new THREE.MeshBasicMaterial({color}));m.position.set(p.x,p.y+0.005,p.z);return m}
 function clearGroup(g){while(g.children.length){const c=g.children.pop();c.geometry&&c.geometry.dispose();c.material&&c.material.dispose()}}
-function rebuildLive(){clearGroup(A.live);const pts=A.mode==="kose"?A.pts:A.op;const col=A.mode==="kose"?0xdc1c2e:(A.mode==="kapi"?0xffb020:0x48b0ff);
+function rebuildLive(){if(A.kind!=="xr")return;clearGroup(A.live);const pts=A.mode==="kose"?A.pts:A.op;const col=A.mode==="kose"?0xdc1c2e:(A.mode==="kapi"?0xffb020:0x48b0ff);
   pts.forEach(p=>A.live.add(marker(p,col)));if(pts.length>1)A.live.add(line3(pts,col,false));A.rub=null}
-function rubber(){if(A.rub){A.live.remove(A.rub);A.rub.geometry.dispose();A.rub.material.dispose();A.rub=null}
+function rubber(){if(A.kind!=="xr")return;if(A.rub){A.live.remove(A.rub);A.rub.geometry.dispose();A.rub.material.dispose();A.rub=null}
   const pts=A.mode==="kose"?A.pts:A.op;if(!pts.length||!A.cur)return;
   A.rub=line3([pts[pts.length-1],A.cur],0xffffff,false);A.live.add(A.rub)}
 
@@ -487,59 +517,73 @@ function toPlan(p){const c=Math.cos(-A.theta),s=Math.sin(-A.theta);return[p.x*c-
 function calcTheta(pts){let C=0,Sn=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz),ang=Math.atan2(dz,dx);C+=L*Math.cos(4*ang);Sn+=L*Math.sin(4*ang)}
   return Math.atan2(Sn,C)/4}
 
-function arPoint(){if(!A)return;if(!A.cur){toast("Halka yere oturmadı; telefonu biraz gezdir");return}
+function arPoint(){if(!A)return;
+  const p=A.kind==="tilt"?(A.buf.length?tiltPoint(avgDir(A.buf)):null):(A.cur?{...A.cur}:null);
+  if(!p){toast(A.kind==="tilt"?"Artı yere değmiyor ya da çok uzak; köşenin dibine nişan al":"Halka yere oturmadı; telefonu biraz gezdir");return}
   if(navigator.vibrate)navigator.vibrate(25);
-  const p={...A.cur};
   if(A.mode==="kose"){const f=A.pts[0];
     if(A.pts.length>=3&&Math.hypot(p.x-f.x,p.z-f.z)<0.25){closeRoom();return}
     A.pts.push(p)}
   else{A.op.push(p);if(A.op.length===2){saveOpening();return}}
   rebuildLive();arUI();drawMini()}
 function arUndo(){if(!A)return;if(A.mode!=="kose"){A.op.pop()}else if(A.pts.length)A.pts.pop();
-  else if(A.rooms.length){const id=A.rooms.pop();S.rooms=S.rooms.filter(r=>r.id!==id);clearGroup(A.done);
-    // önceki odaları yeniden çiz
-    A.doneLines=(A.doneLines||[]).slice(0,-1);A.doneLines.forEach(pts=>A.done.add(line3(pts,0x2f6fff,true)));save();toast("Son oda silindi")}
+  else if(A.rooms.length){const id=A.rooms.pop();S.rooms=S.rooms.filter(r=>r.id!==id);A.doneLines=(A.doneLines||[]).slice(0,-1);
+    if(A.kind==="xr"){clearGroup(A.done);A.doneLines.forEach(pts=>A.done.add(line3(pts,0x2f6fff,true)))}
+    A.lastShift=null;save();toast("Son oda silindi")}
   rebuildLive();arUI();drawMini()}
 function closeRoom(){if(A.pts.length<3){toast("En az 3 köşe gerekli");return}
+  const tilt=A.kind==="tilt";
   if(A.theta===null){A.theta=calcTheta(A.pts);A.off=[0,0];
-    const raw=A.pts.map(toPlan);let mnx=1e9,mny=1e9;raw.forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y)});
-    if(S.rooms.length){const bb=bbox();A.off=[bb.x+bb.w+1.5-mnx,bb.y-mny]}else A.off=[-mnx,-mny]}
+    if(!tilt){const raw=A.pts.map(toPlan);let mnx=1e9,mny=1e9;raw.forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y)});
+      if(S.rooms.length){const bb=bbox();A.off=[bb.x+bb.w+1.5-mnx,bb.y-mny]}else A.off=[-mnx,-mny]}}
   let pts=A.pts.map(toPlan);if(A.square)pts=squarePts(pts);
-  const r={id:uid(),t:A.type,ad:nextName(A.type),pts:pts.map(([x,y])=>[+x.toFixed(3),+y.toFixed(3)]),ar:1};
+  if(tilt){let mnx=1e9,mny=1e9;pts.forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y)});
+    const prev=A.rooms.length?S.rooms.find(r=>r.id===A.rooms[A.rooms.length-1]):null;let tx,ty;
+    if(prev){const q=rb(prev);tx=q.x+q.w;ty=q.y}else if(S.rooms.length){const bb=bbox();tx=bb.x+bb.w+1.5;ty=bb.y}else{tx=0;ty=0}
+    A.lastShift=[tx-mnx,ty-mny];pts=pts.map(([x,y])=>[x+A.lastShift[0],y+A.lastShift[1]])}
+  const r={id:uid(),t:A.type,ad:nextName(A.type),pts:pts.map(([x,y])=>[+x.toFixed(3),+y.toFixed(3)]),src:tilt?"egim":"ar"};
   S.rooms.push(r);A.rooms.push(r.id);save();
-  A.doneLines=(A.doneLines||[]).concat([A.pts.slice()]);A.done.add(line3(A.pts,0x2f6fff,true));
+  A.doneLines=(A.doneLines||[]).concat([A.pts.slice()]);if(!tilt)A.done.add(line3(A.pts,0x2f6fff,true));
   A.pts=[];rebuildLive();if(navigator.vibrate)navigator.vibrate([30,40,30]);
   toast(`${r.ad} eklendi · ${fmt(area(r),1)} m²`);arUI();drawMini()}
-function saveOpening(){if(A.theta===null){A.op=[];rebuildLive();toast("Önce bir odayı bitir, sonra kapı/pencere ekle");return}
-  const o={tip:A.mode,a:toPlan(A.op[0]).map(v=>+v.toFixed(3)),b:toPlan(A.op[1]).map(v=>+v.toFixed(3))};S.acik.push(o);A.ops.push(o);save();
-  A.done.add(line3(A.op,A.mode==="kapi"?0xffb020:0x48b0ff,false));
+function saveOpening(){const tilt=A.kind==="tilt";
+  if(A.theta===null||(tilt&&!A.lastShift)){A.op=[];rebuildLive();toast("Önce odayı bitir, sonra yerinden kıpırdamadan kapı/pencere ekle");return}
+  const sh=tilt?A.lastShift:[0,0],tp=q=>{const v=toPlan(q);return[+(v[0]+sh[0]).toFixed(3),+(v[1]+sh[1]).toFixed(3)]};
+  const o={tip:A.mode,a:tp(A.op[0]),b:tp(A.op[1])};S.acik.push(o);A.ops.push(o);save();
+  if(!tilt)A.done.add(line3(A.op,A.mode==="kapi"?0xffb020:0x48b0ff,false));
   toast((A.mode==="kapi"?"Kapı":"Pencere")+" eklendi · "+fmt(Math.hypot(A.op[1].x-A.op[0].x,A.op[1].z-A.op[0].z),2)+" m");
   A.op=[];setMode("kose")}
 function setMode(m){if(!A)return;A.mode=A.mode===m&&m!=="kose"?"kose":m;A.op=[];
   $("#arDoor").setAttribute("aria-pressed",A.mode==="kapi");$("#arWin").setAttribute("aria-pressed",A.mode==="pencere");rebuildLive();arUI()}
 function arUI(){if(!A)return;const T=TYPES[A.type];let m,s;
-  if(!A.found){m="Zemin aranıyor…";s="Telefonu yere doğru tut, yavaşça sağa sola gezdir."}
+  const tilt=A.kind==="tilt";
+  if(!A.found){m=tilt?"Sensör bekleniyor…":"Zemin aranıyor…";s=tilt?"Telefonu dik tut, hafifçe oynat.":"Telefonu yere doğru tut, yavaşça sağa sola gezdir."}
+  else if(tilt&&A.mode==="kose"&&!A.pts.length){m=`${T.ad}: ilk köşe`;s=A.rooms.length?"Yeni odanın ortasına geç. Artıyı köşenin tam dibine getir, sabit tut, Köşe'ye bas.":"Odanın ortasında dur, kıpırdama. Artıyı köşenin tam dibine getir, sabit tut, Köşe'ye bas."}
   else if(A.mode==="kapi"){m=A.op.length?"Kapının öbür kenarı":"Kapının bir kenarı";s="Kapı boşluğunun yerle birleştiği noktaya nişan al, Nokta'ya bas."}
   else if(A.mode==="pencere"){m=A.op.length?"Pencerenin öbür kenarı":"Pencerenin bir kenarı";s="Pencerenin altındaki duvar dibine nişan al, Nokta'ya bas."}
   else if(!A.pts.length){m=`${T.ad}: ilk köşe`;s="Duvarların yerle birleştiği köşeye halkayı getir, Köşe'ye bas."}
-  else{m=`${T.ad}: ${A.pts.length+1}. köşe`;s=A.pts.length>=3?"Sıradaki köşe ya da Odayı bitir. İlk köşeye dokunmak da odayı kapatır.":"Duvar boyunca sıradaki köşeye yürü."}
+  else{m=`${T.ad}: ${A.pts.length+1}. köşe`;s=A.pts.length>=3?"Sıradaki köşe ya da Odayı bitir. İlk köşeye dokunmak da odayı kapatır.":(tilt?"Olduğun yerde dönerek sıradaki köşeye nişan al.":"Duvar boyunca sıradaki köşeye yürü.")}
   $("#arMsg").textContent=m;$("#arSub").textContent=s;
   $("#arPoint").textContent=A.mode==="kose"?"Köşe":"Nokta";
   $("#arClose").disabled=!(A.mode==="kose"&&A.pts.length>=3)}
 function arLive(){const pts=A.mode==="kose"?A.pts:A.op,d=$("#arDist");
-  if(pts.length&&A.cur){const l=pts[pts.length-1];d.hidden=false;d.textContent=fmt(Math.hypot(A.cur.x-l.x,A.cur.z-l.z),2)+" m"}else d.hidden=true;
+  if(pts.length&&A.cur){const l=pts[pts.length-1];d.hidden=false;d.textContent=fmt(Math.hypot(A.cur.x-l.x,A.cur.z-l.z),2)+" m"}
+  else if(A.kind==="tilt"&&A.found){d.hidden=false;d.textContent=A.cur?fmt(Math.hypot(A.cur.x,A.cur.z),2)+" m uzakta":"Çok uzak"}
+  else d.hidden=true;
   drawMini()}
 function drawMini(){const c=$("#mini"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);if(!A)return;
-  const polys=A.rooms.map(id=>S.rooms.find(r=>r.id===id)).filter(Boolean).map(r=>r.pts);
+  const polys=A.kind==="xr"?A.rooms.map(id=>S.rooms.find(r=>r.id===id)).filter(Boolean).map(r=>r.pts):[];
   const th=A.theta===null?0:A.theta,co=Math.cos(-th),si=Math.sin(-th),off=A.off||[0,0];
   const tp=p=>[p.x*co-p.z*si+off[0],p.x*si+p.z*co+off[1]];
   const curP=A.pts.map(tp),c0=A.cur?tp(A.cur):null,all=polys.flat().concat(curP);if(c0)all.push(c0);
+  const me=A.kind==="tilt"?tp({x:0,y:0,z:0}):null;if(me&&all.length)all.push(me);
   if(!all.length){x.fillStyle="rgba(255,255,255,.6)";x.font="600 20px sans-serif";x.textAlign="center";x.fillText("Plan",W/2,H/2+7);return}
   let a=1e9,b=1e9,cc=-1e9,d=-1e9;all.forEach(([px,py])=>{a=Math.min(a,px);b=Math.min(b,py);cc=Math.max(cc,px);d=Math.max(d,py)});
   const sc=Math.min((W-28)/Math.max(cc-a,2),(H-28)/Math.max(d-b,2)),ox=W/2-(a+cc)/2*sc,oy=H/2-(b+d)/2*sc,P=([px,py])=>[ox+px*sc,oy+py*sc];
   x.lineWidth=3;polys.forEach(p=>{x.beginPath();p.forEach((q,i)=>{const[u,v]=P(q);i?x.lineTo(u,v):x.moveTo(u,v)});x.closePath();x.fillStyle="rgba(255,255,255,.18)";x.fill();x.strokeStyle="#fff";x.stroke()});
   if(curP.length){x.beginPath();curP.forEach((q,i)=>{const[u,v]=P(q);i?x.lineTo(u,v):x.moveTo(u,v)});if(c0){const[u,v]=P(c0);x.lineTo(u,v)}x.strokeStyle="#ff4d5e";x.stroke()}
-  if(c0){const[u,v]=P(c0);x.beginPath();x.arc(u,v,6,0,7);x.fillStyle="#ff4d5e";x.fill()}}
+  if(c0){const[u,v]=P(c0);x.beginPath();x.arc(u,v,6,0,7);x.fillStyle="#ff4d5e";x.fill()}
+  if(me){const[u,v]=P(me);x.beginPath();x.arc(u,v,7,0,7);x.fillStyle="#fff";x.fill();x.strokeStyle="#003da5";x.lineWidth=3;x.stroke()}}
 function endAR(){if(!A)return;const a=A;A=null;
   if(a.pts.length>=3){A=a;try{closeRoom()}catch(e){}A=null}
   try{a.renderer.setAnimationLoop(null);a.hitSource.cancel()}catch(e){}
@@ -549,7 +593,38 @@ function endAR(){if(!A)return;const a=A;A=null;
 $("#arPoint").onclick=arPoint;$("#arUndo").onclick=arUndo;$("#arClose").onclick=()=>A&&closeRoom();
 $("#arDoor").onclick=()=>setMode("kapi");$("#arWin").onclick=()=>setMode("pencere");
 $("#arSquare").onclick=function(){if(!A)return;A.square=!A.square;this.setAttribute("aria-pressed",A.square);toast(A.square?"Duvarlar dik açıya düzlenecek":"Ölçüldüğü gibi bırakılacak")};
-$("#arDone").onclick=()=>{if(A)A.session.end()};
+$("#arDone").onclick=()=>{if(!A)return;if(A.kind==="xr")A.session.end();else endTilt()};
+$("#tiltStart").onclick=startTilt;
+
+/* ---------- EĞİM YÖNTEMİ (iPhone + her telefon) ---------- */
+function kal(){let k=1;try{k=parseFloat(localStorage.getItem("kp_kal"))||1}catch(e){}return Math.min(1.3,Math.max(.75,k))}
+function EYE(){const b=parseFloat($("#f-boy").value)||170;return Math.min(2.1,Math.max(1.1,b*0.93/100))*kal()}
+async function startTilt(){if(A)return;
+  try{if(typeof DeviceOrientationEvent.requestPermission==="function"){const r=await DeviceOrientationEvent.requestPermission();if(r!=="granted"){toast("Hareket ve yön izni verilmedi; Ayarlar > Safari'den aç");return}}}
+  catch(e){toast("Hareket sensörü izni alınamadı");return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false})}
+  catch(e){toast("Kamera izni verilmedi");return}
+  const v=$("#camVideo");v.srcObject=stream;v.hidden=false;try{await v.play()}catch(e){}
+  $("#ar").hidden=false;const tp=arTypesEl.querySelector('[aria-pressed="true"]');
+  A={kind:"tilt",stream,pts:[],cur:null,type:tp?tp.dataset.t:"salon",mode:"kose",op:[],theta:null,off:[0,0],rooms:[],ops:[],square:true,found:false,buf:[],h:EYE(),lastShift:null};
+  $("#arSquare").setAttribute("aria-pressed","true");
+  window.addEventListener("deviceorientation",onOri,true);
+  A.tick=setInterval(()=>{if(A&&A.kind==="tilt")arLive()},120);
+  arUI();drawMini()}
+function dirFrom(al,be,ga){const r=Math.PI/180,a=al*r,b=be*r,g=ga*r,cA=Math.cos(a),sA=Math.sin(a),cB=Math.cos(b),sB=Math.sin(b),cG=Math.cos(g),sG=Math.sin(g);
+  return[-(cG*sA*sB+cA*sG),-(sA*sG-cA*cG*sB),-(cB*cG)]}
+function avgDir(arr){let x=0,y=0,z=0;arr.forEach(d=>{x+=d[0];y+=d[1];z+=d[2]});const L=Math.hypot(x,y,z)||1;return[x/L,y/L,z/L]}
+function tiltPoint(d){const hl=Math.hypot(d[0],d[1]),down=-d[2];if(hl<1e-4)return{x:0,y:0,z:0};
+  const phi=Math.atan2(down,hl);if(phi<12*Math.PI/180)return null;const dist=A.h/Math.tan(phi);
+  return{x:dist*d[0]/hl,y:0,z:-dist*d[1]/hl}}
+function onOri(e){if(!A||A.kind!=="tilt"||e.beta==null)return;A.buf.push(dirFrom(e.alpha||0,e.beta,e.gamma||0));if(A.buf.length>10)A.buf.shift();
+  if(!A.found){A.found=true;arUI()}A.cur=tiltPoint(avgDir(A.buf.slice(-3)))}
+function endTilt(){if(!A||A.kind!=="tilt")return;
+  if(A.pts.length>=3){try{closeRoom()}catch(e){}}
+  const a=A;A=null;window.removeEventListener("deviceorientation",onOri,true);clearInterval(a.tick);
+  try{a.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+  const v=$("#camVideo");v.srcObject=null;v.hidden=true;$("#ar").hidden=true;$("#arDist").hidden=true;save();drawPlan(true);
+  if(a.rooms.length)toast(`${a.rooms.length} oda eklendi; planda yerlerine sürükle`)}
 
 /* ---------- fotoğraflar ---------- */
 const order=()=>[...S.rooms].sort((a,b)=>TYPES[a.t].o-TYPES[b.t].o);
