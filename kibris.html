@@ -2713,14 +2713,31 @@ let calcTouched=false; ["price","m1","m2","rent"].forEach(id=>$(id).addEventList
 /* ================= FORM ================= */
 const KEYS = ["amac","butce","odeme","zaman","tur","iletisim"];
 const ans = {};          // seçilen şıkların index'i
-const contact = {ad:"", tel:"", mail:"", kvkk:false};
+const contact = {ad:"", soyad:"", tel:"", mail:"", kvkk:false};
+/* Ad ve Soyad ayrı kutu, baş harf büyük, rakamsız ve en az 2 harf (yenifikirtepeburada.com ad-kontrol.js ile aynı kural; Umut, 28 Eki) */
+const ADS={tr:["Ad","Soyad","Adınız","Soyadınız","Lütfen adınızı eksiksiz giriniz.","Lütfen soyadınızı eksiksiz giriniz.","Lütfen adınızı ve soyadınızı eksiksiz giriniz.","E-posta adresi geçersiz görünüyor."],
+ en:["First name","Last name","e.g. John","e.g. Smith","Please enter your full first name.","Please enter your full last name.","Please enter your full first and last name.","The email address looks invalid."],
+ ru:["Имя","Фамилия","Например, Иван","Например, Петров","Пожалуйста, укажите имя полностью.","Пожалуйста, укажите фамилию полностью.","Пожалуйста, укажите полностью имя и фамилию.","Адрес эл. почты указан неверно."],
+ fa:["نام","نام خانوادگی","نام شما","نام خانوادگی شما","لطفاً نام خود را به‌طور کامل وارد کنید.","لطفاً نام خانوادگی خود را به‌طور کامل وارد کنید.","لطفاً نام و نام خانوادگی خود را به‌طور کامل وارد کنید.","نشانی ایمیل نامعتبر به نظر می‌رسد."],
+ de:["Vorname","Nachname","z. B. Anna","z. B. Müller","Bitte geben Sie Ihren vollständigen Vornamen ein.","Bitte geben Sie Ihren vollständigen Nachnamen ein.","Bitte geben Sie Ihren vollständigen Vor- und Nachnamen ein.","Die E-Mail-Adresse scheint ungültig zu sein."],
+ pl:["Imię","Nazwisko","np. Jan","np. Kowalski","Prosimy podać pełne imię.","Prosimy podać pełne nazwisko.","Prosimy podać pełne imię i nazwisko.","Adres e-mail wygląda na nieprawidłowy."]};
+const AD=()=>ADS[L]||ADS.en;
+let HARF; try{ HARF=new RegExp("\\p{L}","gu"); }catch(e){ HARF=/[A-Za-zÀ-ɏͰ-ϿЀ-ӿ؀-ۿ]/g; }
+const harfSay=k=>(k.match(HARF)||[]).length;
+const adParca=v=>{ const t=String(v||"").trim(); return !!t && !/\d/.test(t) && t.split(/\s+/).some(x=>harfSay(x)>=2); };
+const adTam=v=>{ const t=String(v||"").trim(); if(!t||/\d/.test(t)) return false; const k=t.split(/\s+/).filter(x=>harfSay(x)>0); return k.length>=2&&harfSay(k[0])>=2&&harfSay(k[k.length-1])>=2; };
+const basHarf=v=>String(v||"").replace(/(^|[\s\-'’.])([^\s\-'’.])/g,(m,a,h)=>{ let b=(L==="tr"&&h==="i")?"İ":(h==="ı"?"I":h.toUpperCase()); return a+(b.length===h.length?b:h); });
+function basHarfBagla(inp){ if(!inp) return; inp.setAttribute("autocapitalize","words");
+  inp.addEventListener("input",()=>{ const v=inp.value, y=basHarf(v); if(y===v) return; const a=inp.selectionStart,b=inp.selectionEnd; inp.value=y; try{inp.setSelectionRange(a,b);}catch(e){} }); }
+const mailGecerli=m=>!m||/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
+let leadGonderiliyor=false;
 let step = 0, sent = null;
 $("prog").innerHTML = KEYS.map(()=>"<i></i>").join("");
 const optLabel = (k,i,lang) => I18N[lang||L].q[k].o[i][0];
 
 function saveContact(){
   if(!$("f-ad")) return;
-  contact.ad=$("f-ad").value; contact.tel=$("f-tel").value; contact.mail=$("f-mail").value; contact.kvkk=$("f-kvkk").checked;
+  contact.ad=$("f-ad").value; contact.soyad=$("f-soyad").value; contact.tel=$("f-tel").value; contact.mail=$("f-mail").value; contact.kvkk=$("f-kvkk").checked;
 }
 function render(){
   if(sent){ done(sent); return; }
@@ -2730,13 +2747,17 @@ function render(){
   if(key==="iletisim"){
     $("qbox").innerHTML = `<div class="qhead">${c.last} · ${step+1}/${KEYS.length}</div>
       <div class="q">${c.q}</div>
-      <div class="inp"><label for="f-ad">${c.name}</label><input id="f-ad" autocomplete="name" placeholder="${esc(c.name_ph)}" value="${esc(contact.ad)}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="inp"><label for="f-ad">${AD()[0]}</label><input id="f-ad" autocomplete="given-name" placeholder="${esc(AD()[2])}" value="${esc(contact.ad)}"></div>
+        <div class="inp"><label for="f-soyad">${AD()[1]}</label><input id="f-soyad" autocomplete="family-name" placeholder="${esc(AD()[3])}" value="${esc(contact.soyad)}"></div>
+      </div>
       <div class="inp"><label for="f-tel">${c.tel}</label><input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="${esc(c.tel_ph)}" value="${esc(contact.tel)}"></div>
       <div class="inp"><label for="f-mail">${c.mail} <span style="font-weight:400;color:var(--muted)">${c.opt}</span></label><input id="f-mail" type="email" autocomplete="email" placeholder="name@mail.com" value="${esc(contact.mail)}"></div>
       <label class="consent"><input type="checkbox" id="f-kvkk" ${contact.kvkk?"checked":""}><span>${c.consent}</span></label>
       <div class="err" id="f-err" role="alert"></div>`;
     $("fnav").innerHTML = `<button type="button" class="back" id="f-back">${c.back}</button><button type="submit" class="btn submit" id="f-send">${c.submit}</button>`;
     $("f-back").onclick=()=>{saveContact();step--;render();};
+    basHarfBagla($("f-ad")); basHarfBagla($("f-soyad"));
     return;
   }
   const q=Q(key);
@@ -2778,11 +2799,14 @@ $("leadform").addEventListener("submit", async e=>{
   e.preventDefault();
   saveContact();
   const err=$("f-err"), E=D().err, c=D().c;
-  const ad=contact.ad.trim(), tel=normTel(contact.tel);
-  if(ad.length<3){err.textContent=E.name;$("f-ad").focus();return;}
+  if(leadGonderiliyor) return;                       // çift dokunmada talep iki kez gitmesin
+  const ad=(basHarf(contact.ad.trim())+" "+basHarf(contact.soyad.trim())).trim(), tel=normTel(contact.tel);
+  if(!adParca(contact.ad)){err.textContent=AD()[4];$("f-ad").focus();return;}
+  if(!adParca(contact.soyad)){err.textContent=AD()[5];$("f-soyad").focus();return;}
   if(!tel){err.textContent=E.tel;$("f-tel").focus();return;}
+  if(!mailGecerli(contact.mail.trim())){err.textContent=AD()[7];$("f-mail").focus();return;}
   if(!contact.kvkk){err.textContent=E.kvkk;return;}
-  err.textContent="";
+  err.textContent=""; leadGonderiliyor=true;
   const btn=$("f-send"); btn.disabled=true; btn.textContent=c.sending;
   const payload = {
     action:"talepBildir", tur:"kibris", kaynak:"kibrisburda.com · Kuzey Kıbrıs talep formu", waIzin:"1",
@@ -2798,7 +2822,7 @@ $("leadform").addEventListener("submit", async e=>{
     try{ await fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}); }
     catch(x){ ok=false; }
   }
-  if(!ok){ btn.disabled=false; btn.textContent=c.retry; err.textContent=E.net; return; }
+  if(!ok){ leadGonderiliyor=false; btn.disabled=false; btn.textContent=c.retry; err.textContent=E.net; return; }
   try{ window.fbq && fbq('track','Lead',{content_name:"Kibris", value:payload.puan, dil:L}); }catch(x){}
   sent = payload;
   done(sent);
@@ -2858,6 +2882,7 @@ function openPartner(k,keep){
      <button type="submit" class="btn submit" id="pf-send" style="width:100%">${f.send}</button>`;
   for(const id in prev){ const e=$(id); if(e){ if(e.type==="checkbox") e.checked=prev[id]; else e.value=prev[id]; } }
   $("pmodal").hidden=false; document.body.style.overflow="hidden";
+  basHarfBagla($("pf-name"));
   if(!keep){ setTimeout(()=>{const n=$("pf-name"); if(n) n.focus();},50); track("IsbirligiAc",{tip:k}); }
 }
 function closePartner(){ $("pmodal").hidden=true; document.body.style.overflow=""; pType=null; }
@@ -2868,9 +2893,12 @@ $("pform").addEventListener("submit", async e=>{
   e.preventDefault();
   const f=D().pt.f, v=id=>($(id)?$(id).value.trim():"");
   const tel=normTel(v("pf-tel"));
-  if(v("pf-name").length<3 || v("pf-firm").length<2 || !tel || !$("pf-kvkk").checked){ $("pf-err").textContent=f.err; return; }
+  if(!adTam(v("pf-name"))){ $("pf-err").textContent=AD()[6]; $("pf-name").focus(); return; }
+  if(!mailGecerli(v("pf-mail"))){ $("pf-err").textContent=AD()[7]; $("pf-mail").focus(); return; }
+  if(v("pf-firm").length<2 || !tel || !$("pf-kvkk").checked){ $("pf-err").textContent=f.err; return; }
+  if($("pf-send").disabled) return;
   const btn=$("pf-send"); btn.disabled=true; btn.textContent=f.sending;
-  const payload={action:"talepBildir", tur:"kibris_"+pType, kaynak:"kibrisburda.com · İş birliği formu", waIzin:"1", tip:pType, ad:v("pf-name"), firma:v("pf-firm"), sehir:v("pf-city"), katilimci:v("pf-size"), tarih:v("pf-when"), tel, mail:v("pf-mail"), not:v("pf-note"), dil:L, ...SRC, sayfa:location.href.split("?")[0], zaman_damgasi:new Date().toISOString()};
+  const payload={action:"talepBildir", tur:"kibris_"+pType, kaynak:"kibrisburda.com · İş birliği formu", waIzin:"1", tip:pType, ad:basHarf(v("pf-name")), firma:v("pf-firm"), sehir:v("pf-city"), katilimci:v("pf-size"), tarih:v("pf-when"), tel, mail:v("pf-mail"), not:v("pf-note"), dil:L, ...SRC, sayfa:location.href.split("?")[0], zaman_damgasi:new Date().toISOString()};
   if(CONFIG.GAS_URL){ try{ await fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}); }catch(x){} }
   try{ window.fbq && fbq('track','Lead',{content_name:"Kibris-"+pType, dil:L}); }catch(x){}
   $("pform").innerHTML=`<div class="pm-ok"><div class="tick">✓</div><p>${f.ok}</p>${CONFIG.GAS_URL?"":`<div class="demo">${D().done.demo}</div>`}</div>`;
