@@ -14,8 +14,8 @@ targets:
       path: Sources/Info.plist
       properties:
         CFBundleDisplayName: "Doğuş Plan"
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSCameraUsageDescription: "Odaları ölçmek ve fotoğraf çekmek için kamera kullanılır."
         NSPhotoLibraryUsageDescription: "İlan fotoğraflarını seçmek için kullanılır."
         NSPhotoLibraryAddUsageDescription: "Kat planını ve fotoğrafları galeriye kaydetmek için kullanılır."
@@ -29,4 +29,6 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.0"
         CODE_SIGN_STYLE: Automatic
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

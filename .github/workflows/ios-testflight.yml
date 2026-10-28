@@ -1,0 +1,67 @@
+name: ios-testflight
+# Elle çalıştırılır. Apple Developer hesabı açılıp şu GitHub secret'ları eklenince çalışır:
+# ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (App Store Connect API anahtarı, Admin), APPLE_TEAM_ID
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+jobs:
+  yukle:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Anahtar kontrolü
+        id: k
+        env:
+          A: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          if [ -z "$A" ]; then echo "eksik=1" >> "$GITHUB_OUTPUT"; echo "Apple anahtarları henüz eklenmemiş"; fi
+      - name: XcodeGen
+        if: steps.k.outputs.eksik != '1'
+        run: brew install xcodegen
+      - name: Arşivle ve TestFlight'a yükle
+        id: yukle
+        if: steps.k.outputs.eksik != '1'
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cd ios
+          xcodegen generate
+          mkdir -p "$HOME/keys"
+          printf '%s\n' "$KEY_P8" > "$HOME/keys/AuthKey.p8"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/keys/AuthKey.p8" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER")
+          xcodebuild -project DogusKatPlani.xcodeproj -scheme DogusKatPlani -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/app.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION="${{ github.run_number }}" "${AUTH[@]}" archive > ../tf.log 2>&1
+          cat > "$RUNNER_TEMP/export.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/app.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+            -exportPath "$RUNNER_TEMP/out" "${AUTH[@]}" >> ../tf.log 2>&1
+      - name: Sonucu yaz
+        if: always()
+        run: |
+          {
+            echo "durum: ${{ steps.yukle.outcome }} (anahtar eksik: ${{ steps.k.outputs.eksik }})"
+            echo "yapı no: ${{ github.run_number }}"
+            date -u
+            grep -E "error:|ERROR|Upload succeeded|EXPORT SUCCEEDED|ARCHIVE (SUCCEEDED|FAILED)|\*\* " tf.log 2>/dev/null | head -60 || true
+          } > ios/testflight-sonucu.txt
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add ios/testflight-sonucu.txt
+          git commit -m "iOS TestFlight sonucu [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
