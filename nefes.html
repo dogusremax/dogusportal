@@ -450,7 +450,7 @@ function iqRender(){
   const q=iqS(),has=!!navigator.bluetooth,u=iqUnit();
   const txt=!has?'Otomatik sayım için bu sayfayı ücretsiz <b>Bluefy</b> uygulamasında aç. Safari Bluetooth\'a erişemiyor; burada + ile devam edebilirsin.'
    :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> (${u==='puff'?'nefes sayıyor':u==='stick'?'stick sayıyor':'birim öğreniliyor'})`:'')
-     +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'');
+     +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'')+(has&&q.name?`<br>Arka planda okuma: <b>${q.bgReads||0}</b> kez${q.bgLast?' (son '+hm(new Date(q.bgLast))+')':''} ${q.bgReads?'✅ arka plan çalışıyor':'— henüz yok'}`:'');
   document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
   document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':(iq.dev?'🔁 Yeniden bağlan':'🔗 IQOS\'a bağlan')});
   document.querySelectorAll('.iqDbg').forEach(e=>e.textContent=(q.dbg||[]).slice().reverse().join('\n'));
@@ -491,6 +491,7 @@ function iqRetry(n){
 }
 async function iqPoll(){
   if(!iq.scp)return;
+  if(document.hidden){const q=iqS();q.bgReads=(q.bgReads||0)+1;q.bgLast=Date.now();save()}
   try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
   catch(e){dbg('okuma hatası: '+e.message)}
 }
@@ -534,7 +535,7 @@ function iqAuto(t,bulk){
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev?(clearTimeout(iq.rt),iqRetry(0)):iqConnect(true))}});
+document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev?(clearTimeout(iq.rt),iqRetry(0)):iqConnect(true))}});
 iqRender();if(navigator.bluetooth&&S.iq&&S.iq.name)iqConnect(true);
 </script>
 </body>
