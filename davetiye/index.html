@@ -173,7 +173,7 @@ body.scrolled .scroll-hint{opacity:0}
   background:linear-gradient(100deg,#8a6224 0%,#d8b066 22%,#f4dfa6 32%,#b98b42 48%,#e0bd74 70%,#83591c 100%);background-size:220% 100%;
   -webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
 @keyframes shine{to{background-position:-220% 0}}
-.foil{animation-iteration-count:2}
+.foil{animation-iteration-count:2;animation-delay:1.4s}
 .card .sub{font-size:clamp(17px,4.8vw,21px);font-weight:300;letter-spacing:-.01em;color:var(--ink)}
 .card .sub b{font-weight:700}
 .card .rl{width:44px;height:1.5px;background:var(--red);margin:24px auto}
@@ -408,7 +408,7 @@ footer p{margin-top:16px;font-size:12px}
   var sb=document.getElementById('snd');
   function syncBtn(){ sb.classList.toggle('off',!soundOn); sb.setAttribute('aria-pressed',soundOn); sb.setAttribute('aria-label',soundOn?'Sesi kapat':'Sesi aç'); }
   syncBtn();
-  sb.addEventListener('click',function(e){ e.stopPropagation(); soundOn=!soundOn; syncBtn(); if(film) film.muted=!soundOn; try{ localStorage.setItem('davetSes',soundOn?'1':'0'); }catch(_){} });
+  sb.addEventListener('click',function(e){ e.stopPropagation(); soundOn=!soundOn; syncBtn(); if(film) film.muted=!soundOn; muzSet(); try{ localStorage.setItem('davetSes',soundOn?'1':'0'); }catch(_){} });
   function ac(){ if(!AC){ var C=window.AudioContext||window.webkitAudioContext; if(!C) return null; AC=new C(); } if(AC.state==='suspended') AC.resume(); return AC; }
   var NB=null;
   function noise(){ if(NB) return NB; var n=AC.sampleRate*2, b=AC.createBuffer(1,n,AC.sampleRate), d=b.getChannelData(0); for(var i=0;i<n;i++) d[i]=Math.random()*2-1; return NB=b; }
@@ -434,6 +434,20 @@ footer p{margin-top:16px;font-size:12px}
     whoosh:function(t){ layer(t,.9,'bandpass',350,1800,.8,.2,.35); }
   };
   window.__davetSfx=function(ctx,n,t){ AC=ctx; NB=null; SFX[n](t); };
+  /* ---- arka plan müziği (telifsiz, bizim için üretildi): mühre dokununca yavaşça başlar ---- */
+  var MUZ_VOL=.26, muzBuf=null, muzGain=null, muzRaw=null;
+  try{ fetch('muzik.m4a').then(function(r){ return r.arrayBuffer(); }).then(function(b){ muzRaw=b; }).catch(function(){}); }catch(e){}
+  function muzik(){
+    var a=ac(); if(!a||muzGain) return;
+    muzGain=a.createGain(); muzGain.gain.value=0.0001; muzGain.connect(a.destination);
+    function go(buf){ var src=a.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(muzGain); src.start(a.currentTime+.3);
+      muzGain.gain.setValueAtTime(0.0001,a.currentTime+.3); muzGain.gain.exponentialRampToValueAtTime(soundOn?MUZ_VOL:0.0001,a.currentTime+3.5); }
+    function dec(raw){ try{ var pr=a.decodeAudioData(raw.slice(0),go,function(){}); if(pr&&pr.then) pr.then(go).catch(function(){}); }catch(e){} }
+    var once=false; go=(function(g){ return function(b){ if(once) return; once=true; g(b); }; })(go);
+    if(muzRaw) dec(muzRaw); else fetch('muzik.m4a').then(function(r){ return r.arrayBuffer(); }).then(dec).catch(function(){});
+  }
+  function muzSet(){ if(!muzGain||!AC) return; var t=AC.currentTime; muzGain.gain.cancelScheduledValues(t); muzGain.gain.setValueAtTime(Math.max(muzGain.gain.value,0.0001),t); muzGain.gain.exponentialRampToValueAtTime(soundOn?MUZ_VOL:0.0001,t+.6); }
+  document.addEventListener('visibilitychange',function(){ if(!AC) return; if(document.hidden) AC.suspend(); else AC.resume(); });
   function sfx(n){ if(!soundOn) return; var a=ac(); if(!a) return; try{ SFX[n](a.currentTime+.01); }catch(e){} }
   function crumbs(){
     var host=gate.querySelector('.env-in');
@@ -450,26 +464,25 @@ footer p{margin-top:16px;font-size:12px}
   ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ envEl.addEventListener(ev,function(){ envEl.classList.remove('press'); }); });
   var started=false;
   var film=document.getElementById('film'), useFilm=!!film.canPlayType && (film.canPlayType('video/webm; codecs="vp9, opus"')!==''||film.canPlayType('video/mp4; codecs="avc1.42E01E"')!=='');
-  var FLY_T=4.2, BOX={l:.1632,r:.8331,t:.2478,b:.4637};
+  var FLY_T=5.1;
   if(!useFilm) gate.classList.remove('vid');
   function noFilm(){ if(!started){ useFilm=false; gate.classList.remove('vid'); } }
   film.addEventListener('error',noFilm); var srcs=film.querySelectorAll('source'); if(srcs.length) srcs[srcs.length-1].addEventListener('error',noFilm);
-  function flyFromFilm(){
-    var r=film.getBoundingClientRect(), vw=film.videoWidth||1080, vh=film.videoHeight||1920;
-    var fit=getComputedStyle(film).objectFit, sc=fit==='contain'?Math.min(r.width/vw,r.height/vh):Math.max(r.width/vw,r.height/vh);
-    var dw=vw*sc, dh=vh*sc, ox=r.left+(r.width-dw)/2, oy=r.top+(r.height-dh)/2;
-    fly({left:ox+BOX.l*dw, top:oy+BOX.t*dh, width:(BOX.r-BOX.l)*dw, height:(BOX.b-BOX.t)*dh}, '<div class="lt-img"></div>');
+  function showCard(){ // film ekranı kağıtla doldurdu; sayfa yalnızca opaklıkla belirir
+    body.classList.remove('locked'); window.scrollTo(0,0);
+    card.style.transition='opacity .6s ease'; card.classList.remove('wait');
+    gate.style.transition='opacity .6s ease .15s,visibility .6s .15s'; reveal();
   }
   function playFilm(){
     film.muted=!soundOn; gate.classList.add('go');
     var pr=film.play();
     if(navigator.vibrate) at(900,function(){ navigator.vibrate([14,30,8]); });
-    (function w(){ if(!useFilm) return; if(film.currentTime>=FLY_T||film.ended){ flyFromFilm(); return; } requestAnimationFrame(w); })();
+    (function w(){ if(!useFilm) return; if(film.currentTime>=FLY_T||film.ended){ showCard(); return; } requestAnimationFrame(w); })();
     if(pr&&pr.catch) pr.catch(function(){ film.muted=true; film.play().catch(function(){ useFilm=false; gate.classList.remove('vid'); gate.classList.remove('go'); started=false; timers.forEach(clearTimeout); open(); }); });
   }
   function open(){
     if(started) return; started=true;
-    ac(); envEl.classList.remove('press');
+    ac(); envEl.classList.remove('press'); muzik();
     if(useFilm){ playFilm(); return; }
     sfx('tap');
     gate.classList.add('go');
@@ -482,7 +495,7 @@ footer p{margin-top:16px;font-size:12px}
   }
   gate.addEventListener('click', function(e){ if(e.target.closest('#skip,#snd')) return; open(); });
   document.getElementById('env').addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
-  document.getElementById('skip').addEventListener('click', function(){ started=true; try{ film.pause(); }catch(e){} reveal(); });
+  document.getElementById('skip').addEventListener('click', function(){ started=true; ac(); muzik(); try{ film.pause(); }catch(e){} reveal(); });
 
   var T=Date.parse('2026-11-22T13:30:00+03:00');
   function pad(n){ return String(n).padStart(2,'0'); }
