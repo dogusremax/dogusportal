@@ -166,7 +166,7 @@ function onizle() {
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
   $('onizleGrup').innerHTML = waBicim(metinWa() || '…');
   const kisi = (KISILER.find(k => k.sec) || { ad: 'Gizem Gök' }).ad;
-  const ozel = (m || '…').replace(/\?\{adsoyad\}/g, '?' + encodeURIComponent(kisi.trim().replace(/\s+/g, '-'))).replace(/=\{adsoyad\}/g, '=' + encodeURIComponent(kisi)).replace(/\{adsoyad\}/g, kisi)
+  const ozel = (m || '…').replace(/\/d\?a=\{adsoyad\}/g, '/d?a=' + encodeURIComponent(kisi.trim().replace(/\s+/g, '-'))).replace(/=\{adsoyad\}/g, '=' + encodeURIComponent(kisi)).replace(/\{adsoyad\}/g, kisi)
                          .replace(/=\{ad\}/g, '=' + encodeURIComponent(ilk)).replace(/\{ad\}/g, ilk);
   $('onizle').innerHTML = videoSec()
     ? '🎬 <i>[video]</i>\n\n' + waBicim(`Merhaba ${ilk} 👋\n\n${ozel}\n\nAyrıntılar yukarıdaki videoda 👆\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`)
@@ -337,7 +337,7 @@ $('video').onchange = () => {
 };
 $('davetMetin').onclick = () => {
   if (ed.textContent.trim() && !confirm('Yazdığın metnin yerine davetiye metni konacak. Devam?')) return;
-  ed.innerText = '22 Kasım Pazar 13:30, Kalamış Marina Hotel. Kuzey Kıbrıs Yatırımcı Lansmanı dijital davetiyemizi test etmeni rica ederim. Linke dokun, sonra mühre dokun; zarf sesli açılacak. Nasıl göründüğünü bana yaz: dogusportal.com/d?{adsoyad}';
+  ed.innerText = '22 Kasım Pazar 13:30, Kalamış Marina Hotel. Kuzey Kıbrıs Yatırımcı Lansmanı dijital davetiyemizi test etmeni rica ederim. Linke dokun, sonra mühre dokun; zarf sesli açılacak. Nasıl göründüğünü bana yaz: dogusportal.com/d?a={adsoyad}';
   DUYURU_ID = ''; SONUC = {}; ciz();
 };
 $('girBtn').onclick = () => giris($('pin').value.trim());
