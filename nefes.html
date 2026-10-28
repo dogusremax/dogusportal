@@ -63,6 +63,24 @@ input,select{width:100%;font:inherit;color:var(--tx);background:var(--card2);bor
 .prog{height:8px;background:var(--card2);border-radius:9px;overflow:hidden;margin-top:8px}
 .prog i{display:block;height:100%;background:var(--acc)}
 a{color:var(--acc)}
+.conn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;border-radius:16px;margin-bottom:14px;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--card)}
+.conn i{width:10px;height:10px;border-radius:50%;flex:none;background:var(--mut)}
+.conn.ok i{background:var(--acc);box-shadow:0 0 0 4px rgba(95,211,161,.18)}
+.conn.warn i{background:var(--warn);box-shadow:0 0 0 4px rgba(242,180,90,.18)}
+.conn small{display:block;font-weight:500;color:var(--mut);font-size:12px}
+.conn .go{margin-left:auto;font-size:12px;color:var(--warn)}
+.hero{text-align:center;padding:26px 18px 18px}
+.hero .num{font-family:'Bricolage Grotesque';font-weight:800;font-size:84px;line-height:1;letter-spacing:-2px}
+.mini{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.mini button{padding:9px 14px;font-size:13px}
+.legend{display:flex;gap:14px;justify-content:center;font-size:11.5px;color:var(--mut);margin-top:6px}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--acc)}
+.legend span.e::before{background:none;border:1.5px solid var(--acc)}
+.legend span.m::before{background:var(--warn)}
+.money{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.money div{background:var(--card2);border-radius:14px;padding:12px;text-align:center}
+.money b{display:block;font-family:'Bricolage Grotesque';font-size:22px}
+.money span{font-size:11.5px;color:var(--mut)}
 .log{font-size:13px;display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
 </style>
 </head>
@@ -72,13 +90,19 @@ a{color:var(--acc)}
 
   <!-- ÖLÇÜM -->
   <section id="vMeasure" class="hide">
-    <div class="card" style="text-align:center">
-      <p class="note">Ölçüm aşaması — hiçbir şeyi değiştirme, normal iç. Her sigarada sadece <b>+</b>'ya bas.</p>
-      <button id="plusBtn" onclick="mPlus()" style="width:180px;height:180px;border-radius:50%;margin:18px auto 8px;display:block;font-size:64px;background:var(--acc);color:#06281b;font-family:'Bricolage Grotesque'">+</button>
-      <div class="big" style="font-size:38px" id="mToday">0</div>
-      <p class="note">bugün · son sigara <b id="mLast">—</b></p>
-      <button class="ghost" style="margin-top:10px;padding:8px 14px" onclick="mUndo()">↩︎ Son kaydı geri al</button>
+    <button class="conn iqBadge" onclick="iqConnect(false)"><i></i><div><span class="iqB1">…</span><small class="iqB2"></small></div><span class="go iqB3"></span></button>
+    <div class="card hero">
+      <p class="note">Ölçüm · normal iç, hiçbir şeyi değiştirme</p>
+      <div class="num" id="mToday">0</div>
+      <p class="note">stick bugün · son <b id="mLast">—</b></p>
+      <svg id="mLine" viewBox="0 0 300 34" width="100%" height="34" style="margin-top:14px;display:block"></svg>
+      <div style="display:flex;justify-content:space-between" class="note"><span>04</span><span>10</span><span>16</span><span>22</span><span>04</span></div>
+      <div class="legend"><span>tam saat</span><span class="e">tahmini saat</span><span class="m">elle</span></div>
+      <div class="mini"><button class="ghost" onclick="mPlus()">＋ Elle ekle</button><button class="ghost" onclick="mUndo()">↩︎ Geri al</button></div>
     </div>
+    <div class="card"><h2>Harcama</h2><div class="money">
+      <div><b id="mSpentT">0₺</b><span>bugün harcanan</span></div><div><b id="mSpentAll">0₺</b><span>ölçüm boyunca</span></div></div>
+      <button class="ghost full" style="margin-top:10px;padding:10px;font-size:13px" onclick="setPrice()">TEREA kutu fiyatı: <b id="mPrice">—</b> · değiştir</button></div>
     <div class="card">
       <div class="stat">
         <div><b id="mDays">0</b><span>tam gün</span></div>
@@ -86,28 +110,29 @@ a{color:var(--acc)}
         <div><b id="mInt">—</b><span>dk ort. aralık</span></div>
       </div>
       <div class="stat">
-        <div><b id="mFirst">—</b><span>ilk sigara</span></div>
-        <div><b id="mLastT">—</b><span>son sigara</span></div>
+        <div><b id="mFirst">—</b><span>ilk stick</span></div>
+        <div><b id="mLastT">—</b><span>son stick</span></div>
         <div><b id="mPeak">—</b><span>en yoğun saat</span></div>
       </div>
     </div>
     <div class="card"><h2>Saatlere göre (günlük ortalama)</h2><div class="bars" id="mBars"></div>
       <div style="display:flex;justify-content:space-between" class="note"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>
-    <div class="card iqCard"><h2>IQOS otomatik sayım</h2><p class="note iqSt">…</p>
-      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
-      <details style="margin-top:10px"><summary class="note">Teknik kayıt</summary><pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:6px"></pre>
-      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details></div>
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
+      <p class="note iqSt" style="margin-top:10px">…</p>
+      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:10px"></pre>
+      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details>
   </section>
 
   <!-- KURULUM -->
   <section id="vSetup" class="hide">
     <div class="card">
       <h2>Planını kuralım</h2>
-      <p class="note">Yöntem: <b>programlı azaltma</b>. Sadece bildirim gelince içersin; sigaralar arası süre her gün biraz uzar, son gün bırakırsın.</p>
-      <label>Şu an günde kaç sigara?</label><input id="sBase" type="number" inputmode="numeric" value="40">
+      <p class="note">Yöntem: <b>programlı azaltma</b>. Sadece bildirim gelince içersin; stick'ler arası süre her gün biraz uzar, son gün bırakırsın.</p>
+      <label>Şu an günde kaç stick?</label><input id="sBase" type="number" inputmode="numeric" value="40">
       <div class="row">
         <div><label>Uyanış</label><input id="sWake" type="time" value="07:30"></div>
         <div><label>Yatış</label><input id="sSleep" type="time" value="00:00"></div>
@@ -117,7 +142,7 @@ a{color:var(--acc)}
           <select id="sWeeks"><option value="4">4 hafta</option><option value="6">6 hafta</option><option value="8" selected>8 hafta</option><option value="10">10 hafta</option><option value="12">12 hafta</option></select></div>
         <div><label>Başlangıç</label><input id="sStart" type="date"></div>
       </div>
-      <label>Paket fiyatı (₺)</label><input id="sPrice" type="number" inputmode="numeric" value="110">
+      <label>TEREA kutu fiyatı (20'lik kutu, ₺)</label><input id="sPrice" type="number" inputmode="numeric" value="110">
       <div id="preview" class="card" style="margin:14px 0 0;background:var(--card2)"></div>
     </div>
     <div class="card">
@@ -133,17 +158,19 @@ a{color:var(--acc)}
 
   <!-- BUGÜN -->
   <section id="vToday" class="hide">
+    <button class="conn iqBadge" onclick="iqConnect(false)"><i></i><div><span class="iqB1">…</span><small class="iqB2"></small></div><span class="go iqB3"></span></button>
     <div class="card">
       <div class="ring">
         <svg width="230" height="230"><circle cx="115" cy="115" r="100" stroke="#24342e" stroke-width="14" fill="none"/><circle id="arc" cx="115" cy="115" r="100" stroke="#5fd3a1" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="0"/></svg>
-        <div class="in"><small id="ringLbl">Sonraki sigara</small><div class="big" id="cd">--:--</div><small id="nextAt"></small></div>
+        <div class="in"><small id="ringLbl">Sonraki stick</small><div class="big" id="cd">--:--</div><small id="nextAt"></small></div>
       </div>
       <p class="note" style="text-align:center" id="rule">Bildirim gelince <b>5 dakika</b> içinde iç. Kaçırdıysan bir sonrakini bekle.</p>
+      <p class="note" style="text-align:center;margin-top:4px">İçtiğinde IQOS kendisi bildiriyor — bir şeye basma.</p>
       <div class="btns">
-        <button class="pri" onclick="logSmoke()">🚬 İçtim</button>
-        <button onclick="openCraving()">😮‍💨 Canım çekti</button>
+        <button class="pri" onclick="openCraving()">😮‍💨 Canım çekti</button>
+        <button onclick="logSkip()">💪 Atladım</button>
       </div>
-      <button class="ghost full" style="margin-top:10px" onclick="logSkip()">💪 Bu sigarayı atladım</button>
+      <div class="mini"><button class="ghost" onclick="logSmoke()">＋ Elle ekle</button></div>
     </div>
     <div class="card">
       <div class="stat">
@@ -153,17 +180,21 @@ a{color:var(--acc)}
       </div>
       <div class="stat">
         <div><b id="stAvoid">0</b><span>içilmeyen</span></div>
-        <div><b id="stMoney">0₺</b><span>cepte kalan</span></div>
+        <div><b id="stFit">—</b><span>plana uyum</span></div>
         <div><b id="stLeft">0</b><span>gün kaldı</span></div>
       </div>
+      <p class="note" id="stSum" style="text-align:center;margin-top:10px"></p>
     </div>
+    <div class="card"><h2>Para</h2><div class="money">
+      <div><b id="stSpent">0₺</b><span>program boyunca harcanan</span></div><div><b id="stMoney">0₺</b><span>cepte kalan</span></div></div></div>
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
-    <div class="card iqCard"><h2>IQOS otomatik sayım</h2><p class="note iqSt">…</p>
-      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
-      <details style="margin-top:10px"><summary class="note">Teknik kayıt</summary><pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:6px"></pre>
-      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
+      <p class="note iqSt" style="margin-top:10px">…</p>
+      <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
+      <pre class="iqDbg" style="font-size:11px;white-space:pre-wrap;color:var(--mut);max-height:220px;overflow:auto;margin-top:10px"></pre>
+      <button class="ghost" style="padding:8px 12px;margin-top:6px" onclick="iqCopy()">Kaydı kopyala</button></details>
   </section>
 
   <!-- PLAN -->
@@ -286,7 +317,7 @@ async function topUp(manual){
           const free=diffDays(endDate(),date)+1;
           await ntfy(s.ts,free===1?'Bugün bırakma günü 🌱':`${free}. gün sigarasız 🌱`, free===1?'Bugün hiç yok. Zor anda uygulamadaki "Canım çekti"ye bas.':'Devam. Her gün bir öncekinden kolay.','seedling');
         }else{
-          await ntfy(s.ts,`🚬 Sigara zamanı (${s.i}/${s.n})`,MOT[(s.i+s.n)%MOT.length],'smoking');
+          await ntfy(s.ts,`🚬 Stick zamanı (${s.i}/${s.n})`,MOT[(s.i+s.n)%MOT.length],'smoking');
         }
         S.sent[s.ts]=1; last=Math.max(last,s.ts); n++; save();
       }
@@ -306,7 +337,7 @@ function logSmoke(at,src){
   const now=at||Date.now(), sl=slotsFor(planDate(new Date(now))).filter(s=>s.kind==='smoke');
   const near=sl.find(s=>now>=s.ts-2*6e4&&now<=s.ts+10*6e4);
   S.log=S.log||[]; S.log.push({t:now,type:near?'smoke':'extra',src}); save();
-  toast(near?'Kaydedildi 👍':'Plan dışı kaydedildi — sorun değil, devam'); render();
+  toast(near?(src==='iqos'?'IQOS: planlı stick ✓':'Kaydedildi 👍'):src==='iqos'?'IQOS: plan dışı stick kaydedildi':'Plan dışı kaydedildi — sorun değil, devam'); render();
 }
 function logSkip(){S.log=S.log||[];S.log.push({t:Date.now(),type:'skip'});save();toast('Harika, bir tane az 💪');render()}
 function hold(){if(!confirm('Program 1 gün uzasın, yarın bugünkü seviyede kal?'))return;S.hold=(S.hold||0)+1;save();toast('Tempo yavaşladı');render()}
@@ -352,6 +383,9 @@ function render(){
   const days=Math.max(0,diffDays(c.start,dstr(new Date()))+ (Date.now()>=new Date(c.start+'T00:00:00')?1:0));
   const allSmoked=log.filter(l=>l.type!=='skip').length, avoided=Math.max(0,days*c.base-allSmoked);
   $('stAvoid').textContent=avoided;$('stMoney').textContent=Math.round(avoided/20*c.price).toLocaleString('tr-TR')+'₺';$('stLeft').textContent=left;
+  $('stSpent').textContent=Math.round(allSmoked/20*c.price).toLocaleString('tr-TR')+'₺';
+  const onPlan=today.filter(l=>l.type==='smoke').length;$('stFit').textContent=smoked?'%'+Math.round(onPlan/smoked*100):'—';
+  $('stSum').innerHTML=plan?`Hak <b>${plan}</b> · içilen <b>${smoked}</b>${smoked>plan?` · <span style="color:var(--warn)">${smoked-plan} fazla</span>`:''}`:'';
   $('slots').innerHTML=sm.length?sm.map(s=>`<span class="slot ${s.ts<now-5*6e4?'past':''} ${nxt&&s.ts===nxt.ts?'next':''}">${hm(new Date(s.ts))}</span>`).join(''):'<span class="note">Bugün sigara yok 🌱</span>';
   const lt=S.lastTop; $('notifInfo').innerHTML=!lt?'Henüz kurulmadı.':(lt.err?`<span style="color:var(--bad)">Son deneme hata verdi (${lt.err}).</span> `:'')+(lt.last?`Bildirimler <b>${new Date(lt.last).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</b> saatine kadar kurulu.`:'Kurulu bildirim yok.');
   // plan sekmesi
@@ -368,7 +402,7 @@ const fmtDur=ms=>{const dd=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5);retu
 
 /* ---- KURULUM ---- */
 function rndTopic(){const a='abcdefghjkmnpqrstuvwxyz23456789';let s='nefes-';for(let i=0;i<14;i++)s+=a[Math.floor(Math.random()*a.length)];return s}
-function readSetup(){return{base:Math.max(1,+$('sBase').value||40),wake:$('sWake').value||'07:30',sleep:$('sSleep').value||'00:00',weeks:+$('sWeeks').value,start:$('sStart').value,price:+$('sPrice').value||0,topic:$('sTopic').value}}
+function readSetup(){return{base:Math.max(1,+$('sBase').value||40),wake:$('sWake').value||'07:30',sleep:$('sSleep').value||'00:00',weeks:+$('sWeeks').value,start:$('sStart').value,price:+$('sPrice').value||S.price||0,topic:$('sTopic').value}}
 function preview(){
   const c=readSetup(); if(!c.start) return; const[w,s]=windowMin(c), T=totalDays(c);
   const pts=[0,3,7,14,21,28,35,42,49,56,63,70,77,84].filter(x=>x<T);
@@ -377,7 +411,7 @@ function preview(){
 ['sBase','sWake','sSleep','sWeeks','sStart'].forEach(i=>$(i).addEventListener('input',preview));
 function editSetup(){
   const c=S.setup||{}; $('sBase').value=c.base||40;$('sWake').value=c.wake||'07:30';$('sSleep').value=c.sleep||'00:00';$('sWeeks').value=c.weeks||8;
-  $('sStart').value=c.start||dstr(new Date(Date.now()+864e5));$('sPrice').value=c.price||110;$('sTopic').value=c.topic||rndTopic();
+  $('sStart').value=c.start||dstr(new Date(Date.now()+864e5));$('sPrice').value=c.price||S.price||'';$('sTopic').value=c.topic||rndTopic();
   $('backMeasure').classList.toggle('hide',!!(S.setup&&S.setup.start));
   $('nav').classList.add('hide');show('vSetup');preview();
 }
@@ -388,6 +422,8 @@ function saveSetup(){
     const keep={},today=planDate();for(const k in (S.locked||{})) if(k<=addDays(today,1)) keep[k]=S.locked[k]; S.locked=keep; }
   S.setup=c; S.hold=S.hold||0; save(); $('nav').classList.remove('hide'); show('vToday'); render(); topUp(true);
 }
+function setPrice(){const v=prompt('TEREA kutu fiyatı (20 stick, ₺):',S.price||(S.setup&&S.setup.price)||'');if(v==null)return;const n=+String(v).replace(',','.');if(!(n>0))return toast('Geçerli bir fiyat yaz');
+  S.price=n;if(S.setup)S.setup.price=n;save();mRender();render()}
 function copyTopic(){const t=S.setup?.topic||$('sTopic').value;navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı: '+t),()=>prompt('Kopyala:',t))}
 function resetAll(){if(confirm('Tüm plan ve kayıtlar silinsin mi?')){localStorage.removeItem(K);S={};editSetup()}}
 
@@ -410,14 +446,23 @@ function mStats(){
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
 const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
 function mPlus(){if(iqRecentAuto())return toast('IQOS bunu zaten saydı 👍');S.mlog=S.mlog||[];S.mlog.push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
-  const b=$('plusBtn');b.style.transform='scale(.92)';setTimeout(()=>b.style.transform='',120);mRender()}
+  toast('Elle eklendi');mRender()}
 function mUndo(){if(!(S.mlog||[]).length)return;const t=S.mlog[S.mlog.length-1];
   if(confirm('Saat '+hm(new Date(t))+' kaydı silinsin mi?')){S.mlog.pop();save();mRender()}}
 function mRender(){
   const st=mStats(), L=S.mlog||[], td=st.byDay[st.today]||[];
   $('dayPill').textContent='Ölçüm · '+(st.days+1)+'. gün';
   $('mToday').textContent=td.length;
-  $('mLast').textContent=L.length?Math.round((Date.now()-L[L.length-1])/6e4)+' dk önce':'—';
+  const lt=L.length?L[L.length-1]:null,ago=lt?Math.round((Date.now()-lt)/6e4):0;
+  $('mLast').textContent=lt?hm(new Date(lt))+' · '+(ago<60?ago+' dk':Math.floor(ago/60)+' sa '+(ago%60)+' dk')+' önce':'—';
+  // zaman çizelgesi (04:00 → 04:00)
+  const d0=new Date(st.today+'T04:00:00').getTime(),q=S.iq||{},ex=new Set(q.autoTs||[]),es=new Set(q.estTs||[]);
+  $('mLine').innerHTML='<line x1="4" y1="17" x2="296" y2="17" stroke="#2a3a34" stroke-width="2"/>'+td.map(t=>{const x=4+292*Math.min(1,Math.max(0,(t-d0)/864e5));
+    return es.has(t)?`<circle cx="${x}" cy="17" r="5" fill="none" stroke="#5fd3a1" stroke-width="1.6"/>`:`<circle cx="${x}" cy="17" r="5" fill="${ex.has(t)?'#5fd3a1':'#f2b45a'}"/>`}).join('');
+  const pr=S.price||(S.setup&&S.setup.price)||0,per=pr/20;
+  $('mPrice').textContent=pr?pr.toLocaleString('tr-TR')+'₺':'girilmedi';
+  $('mSpentT').textContent=pr?Math.round(td.length*per).toLocaleString('tr-TR')+'₺':'—';
+  $('mSpentAll').textContent=pr?Math.round(L.length*per).toLocaleString('tr-TR')+'₺':'—';
   $('mDays').textContent=st.days;$('mAvg').textContent=st.avg?st.avg.toFixed(1):'—';
   $('mInt').textContent=st.gap?Math.round(st.gap):'—';
   $('mFirst').textContent=mhm(st.fM);$('mLastT').textContent=mhm(st.lM);
@@ -452,6 +497,12 @@ function iqRender(){
    :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> (${u==='puff'?'nefes sayıyor':u==='stick'?'stick sayıyor':'birim öğreniliyor'})`:'')
      +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'')+(has&&q.name?`<br>Arka planda okuma: <b>${q.bgReads||0}</b> kez${q.bgLast?' (son '+hm(new Date(q.bgLast))+')':''} ${q.bgReads?'✅ arka plan çalışıyor':'— henüz yok'}`:'');
   document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
+  let cls='',b1,b2='',b3='';
+  if(!has){b1='Otomatik sayım kapalı';b2='Bluefy uygulamasında açınca IQOS kendisi sayar'}
+  else if(iq.scp){cls='ok';b1='IQOS bağlı';const a=q.lastSeen?Math.round((Date.now()-q.lastSeen)/6e4):null;b2=a==null?'okunuyor…':(a<1?'az önce okundu':`son okuma ${a} dk önce`)}
+  else if(iq.st&&iq.st.startsWith('bağlanıyor')){cls='warn';b1='Bağlanıyor…'}
+  else{cls='warn';b1=iq.dev||q.name?'IQOS bağlı değil':'IQOS\'a bağlan';b2=iq.dev||q.name?'aradakiler bağlanınca sayaçtan eklenir':'otomatik sayım için bir kez bağla';b3=iq.dev||q.name?'Yeniden bağlan ›':'Bağlan ›'}
+  document.querySelectorAll('.iqBadge').forEach(e=>{e.className='conn iqBadge '+cls;e.querySelector('.iqB1').textContent=b1;e.querySelector('.iqB2').textContent=b2;e.querySelector('.iqB3').textContent=b3});
   document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':(iq.dev?'🔁 Yeniden bağlan':'🔗 IQOS\'a bağlan')});
   document.querySelectorAll('.iqDbg').forEach(e=>e.textContent=(q.dbg||[]).slice().reverse().join('\n'));
 }
@@ -525,8 +576,8 @@ function iqCount(v){
 function iqAuto(t,bulk){
   const q=iqS();
   const manual=S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[]);
-  if(!bulk&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
-  q.autoN=(q.autoN||0)+1;q.lastAuto=Date.now();q.autoTs=(q.autoTs||[]).concat(Math.round(t)).slice(-200);
+  if(!bulk&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m)&&!(q.estTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
+  q.autoN=(q.autoN||0)+1;q.lastAuto=Date.now();if(bulk)q.estTs=(q.estTs||[]).concat(Math.round(t)).slice(-200);else q.autoTs=(q.autoTs||[]).concat(Math.round(t)).slice(-200);
   if(S.setup&&S.setup.start){logSmoke(Math.round(t),'iqos')}
   else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast('IQOS: 1 stick sayıldı ✓')}
 }
@@ -534,6 +585,7 @@ function iqAuto(t,bulk){
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
+setInterval(iqRender,30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
 document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev?(clearTimeout(iq.rt),iqRetry(0)):iqConnect(true))}});
 iqRender();if(navigator.bluetooth&&S.iq&&S.iq.name)iqConnect(true);
