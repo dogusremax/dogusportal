@@ -75,6 +75,10 @@
     <div id="emojiler" class="emojiler"></div>
     <div id="metin" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Örn: Cuma 10:00'da ofiste aylık toplantımız var, katılımınızı rica ederim."></div>
     <div id="say" class="say">0 / 900</div>
+    <div id="davetHazir" style="margin-top:10px">
+      <button type="button" class="ghost" id="davetMetin" style="font-size:13px;padding:9px 12px">Lansman davetiyesi metnini yerleştir</button>
+      <p class="ipucu">Metindeki <b>{adsoyad}</b> her danışmanın tam adıyla, <b>{ad}</b> ilk adıyla değişir. Linkteki ad davetiyede "Sayın …" olarak görünür.</p>
+    </div>
     <p class="ipucu">WhatsApp yalnızca kalın, italik, üstü çizili ve sabit genişlik yazıyı destekler; yazı tipi seçimi yoktur. Önizleme, danışmanın telefonunda göreceğinin aynısıdır.</p>
   </div>
 
@@ -83,11 +87,7 @@
     <select id="video" style="width:100%;font:600 15px 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px">
       <option value="">Videosuz · normal duyuru</option>
     </select>
-    <video id="videoOn" muted playsinline controls preload="metadata" hidden style="display:block;height:360px;max-width:100%;margin:10px auto 0;border-radius:12px;background:#000"></video>
-    <div id="davetHazir" hidden style="margin-top:10px">
-      <button type="button" class="ghost" id="davetMetin" style="font-size:13px;padding:9px 12px">Lansman davetiyesi metnini yerleştir</button>
-      <p class="ipucu">Metindeki <b>{adsoyad}</b> her danışmanın tam adıyla, <b>{ad}</b> ilk adıyla değişir. Linkteki ad davetiyede "Sayın …" olarak görünür.</p>
-    </div>
+    <video id="videoOn" muted playsinline controls preload="metadata" hidden style="width:100%;max-height:320px;margin-top:10px;border-radius:10px;background:#000"></video>
     <p class="ipucu">Video seçilirse mesaj Meta onaylı videolu şablonla gider: en üstte video, altında "Merhaba {ad} 👋", senin metnin ve "Ayrıntılar yukarıdaki videoda 👆".</p>
   </div>
   <div class="kutu">
@@ -333,7 +333,6 @@ $('goBtn').onclick = async () => {
 $('video').onchange = () => {
   const v = VIDEOLAR.find(x => x.id === videoSec());
   $('videoOn').hidden = !v; if (v) $('videoOn').src = v.url; else $('videoOn').removeAttribute('src');
-  $('davetHazir').hidden = videoSec() !== 'davetiye';
   DUYURU_ID = ''; SONUC = {}; ciz();
 };
 $('davetMetin').onclick = () => {
