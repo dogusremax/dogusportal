@@ -6,6 +6,7 @@
 <script src="assets/iz.js"></script>
 <script src="assets/kibris/plan-arac.js"></script>
 <script src="assets/kibris/odeme-planlari.js"></script>
+<script src="assets/kibris/tl-kur.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
@@ -1886,5 +1887,7 @@ span.cnt{display:inline!important;font:inherit!important;opacity:1!important;mar
   fit();render();wake();
 })();
 </script>
+<script>/* £ fiyatların altına anlık TL karşılığı + uyarı (assets/kibris/tl-kur.js) */
+KTL.kur({sel:".foot .price,td.p,#s-plan .bar b,#s-plan .card b,.kpr b,#kcO b,.kpa-top b",not:["#s-plan .plan2","#s-cc .tb","#kcO"]});</script>
 </body>
 </html>
