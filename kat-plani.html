@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>Kat Planı · RE/MAX Doğuş</title>
+<link rel="icon" href="/assets/app-ikon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Tek sütun telefon uygulaması; altta 4 sekme (Mülk → Plan → Fotoğraf → Çıktı); AR modunda tam ekran kamera katmanı */
+:root{
+  --bg:#f3f5f9; --panel:#ffffff; --ink:#152238; --muted:#5d6a80; --line:#dde2ec;
+  --red:#dc1c2e; --blue:#003da5; --blue-soft:#e6edf9; --ok:#1d8a4e; --warn:#b45309;
+  --grid:#e8ecf3; --wall:#1b2333;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0e1420; --panel:#172031; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3650;
+  --blue:#6f9cf0; --blue-soft:#1d2b47; --grid:#1f2a3e; --wall:#dfe6f2; --ok:#4cc483; --warn:#f0a548; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
+.top{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  display:flex;align-items:center;gap:12px}
+.brand{width:6px;align-self:stretch;border-radius:3px;background:linear-gradient(var(--red) 50%,var(--blue) 50%)}
+.top h1{font-family:var(--display);font-weight:800;font-size:19px;margin:0;line-height:1.1}
+.top small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .t{min-width:0;flex:1}
+.top a{color:var(--muted);font-size:13px;text-decoration:none;font-weight:600}
+.pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap;font-variant-numeric:tabular-nums}
+main{padding:16px max(16px,env(safe-area-inset-right,0px)) 110px max(16px,env(safe-area-inset-left,0px));max-width:760px;margin:0 auto}
+section{display:flex;flex-direction:column;gap:14px}
+h2{font-family:var(--display);font-weight:800;font-size:22px;margin:4px 0 0;text-wrap:balance}
+.lead{color:var(--muted);margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;flex-direction:column;gap:6px}
+input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;text-transform:none;letter-spacing:0}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:13px 14px;cursor:pointer;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center}
+.btn.red{background:var(--red)}
+.btn.ghost{background:var(--blue-soft);color:var(--blue)}
+.btn.line{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:8px 12px;font-size:13.5px;border-radius:10px}
+.btn:disabled{opacity:.45;cursor:default}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btns .btn{flex:1 1 auto}
+.arcta{background:linear-gradient(135deg,#dc1c2e,#a3122a);color:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.arcta b{font-family:var(--display);font-size:20px;line-height:1.15}
+.arcta p{margin:0;font-size:13.5px;opacity:.92}
+.arcta .btn{background:#fff;color:#a3122a;font-size:16px}
+.arcta.off{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.arcta.off p{color:var(--muted);opacity:1}
+details.card summary{font-weight:700;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:99px;padding:9px 13px;cursor:pointer}
+.chip b{color:var(--blue)}
+.planwrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#plan{display:block;width:100%;height:min(62vh,520px);user-select:none;-webkit-user-select:none;touch-action:none}
+.room{cursor:grab}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat span{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--panel);border-top:1px solid var(--line);border-radius:18px 18px 0 0;
+  box-shadow:0 -10px 30px rgba(10,20,40,.18);padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:12px;max-width:760px;margin:0 auto}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sheet .hd b{font-family:var(--display);font-size:18px}
+.x{font:inherit;font-size:22px;line-height:1;border:0;background:transparent;color:var(--muted);cursor:pointer;padding:4px 8px}
+.ph-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.ph-head b{font-family:var(--display);font-size:17px}
+.ph-head span{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tips{margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex-direction:column;gap:3px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.th{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:var(--bg);max-width:100%}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .bad{position:absolute;left:4px;bottom:4px;font-size:10.5px;font-weight:700;background:var(--warn);color:#fff;border-radius:6px;padding:2px 6px}
+.th button{position:absolute;right:4px;top:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px;cursor:pointer}
+.add{border:1.5px dashed var(--line);border-radius:10px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;gap:2px;text-transform:none;letter-spacing:0}
+.add input{display:none}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600}
+.switch input{width:auto;transform:scale(1.3)}
+#outImg{width:100%;border-radius:10px;border:1px solid var(--line);display:block;background:#fff}
+.note{font-size:13px;color:var(--muted);background:var(--blue-soft);border-radius:10px;padding:10px 12px;margin:0}
+.ok{color:var(--ok);font-weight:700}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);
+  padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+nav button{font:inherit;border:0;background:transparent;color:var(--muted);padding:9px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;font-weight:700;cursor:pointer}
+nav button i{font-style:normal;font-family:var(--display);font-size:13px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid currentColor}
+nav button[aria-current="true"]{color:var(--red)}
+nav button[aria-current="true"] i{background:var(--red);border-color:var(--red);color:#fff}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--ink);color:var(--panel);font-weight:600;font-size:14px;padding:10px 16px;border-radius:99px;max-width:90vw;text-align:center}
+
+/* ---- AR katmanı (kamera üstü) ---- */
+#ar{position:fixed;inset:0;z-index:50;color:#fff;font-family:var(--body);pointer-events:none;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+#ar *{pointer-events:auto}
+#ar .glass{background:rgba(12,18,32,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:16px}
+.ar-top{display:flex;gap:10px;align-items:flex-start}
+.ar-status{flex:1;padding:12px 14px;min-width:0}
+.ar-status b{display:block;font-size:16px;line-height:1.25}
+.ar-status span{display:block;font-size:13px;opacity:.85;margin-top:3px}
+#mini{width:118px;height:118px;flex:none;display:block}
+.ar-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none!important;display:flex;flex-direction:column;align-items:center;gap:8px}
+.cross{width:34px;height:34px;border:2px solid rgba(255,255,255,.95);border-radius:50%;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.cross::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#dc1c2e}
+#arDist{font-family:var(--display);font-weight:800;font-size:24px;padding:4px 12px;font-variant-numeric:tabular-nums;pointer-events:none!important}
+.ar-bot{display:flex;flex-direction:column;gap:10px}
+.ar-types{display:flex;gap:6px;overflow-x:auto;padding:8px;scrollbar-width:none}
+.ar-types::-webkit-scrollbar{display:none}
+.ar-types button{flex:none;font:inherit;font-size:13.5px;font-weight:700;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:99px;padding:8px 12px}
+.ar-types button[aria-pressed="true"]{background:#fff;color:#152238;border-color:#fff}
+.ar-main{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:8px;align-items:stretch}
+.ar-main button,.ar-sub button{font:inherit;font-weight:800;border:0;border-radius:14px;color:#fff;background:rgba(12,18,32,.72);padding:12px 6px;font-size:14px}
+#arPoint{background:#dc1c2e;font-size:18px;padding:18px 6px;box-shadow:0 6px 20px rgba(220,28,46,.45)}
+#arPoint:active{transform:scale(.97)}
+#arClose{background:#003da5}
+.ar-sub{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ar-sub button{font-size:13px;font-weight:700;padding:10px 4px}
+.ar-sub button[aria-pressed="true"]{background:#fff;color:#152238}
+.ar-main button:disabled{opacity:.4}
+#arCanvasHolder{position:fixed;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.4}}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand" aria-hidden="true"></div>
+  <div class="t"><h1>Kat Planı</h1><small id="topSub">Yeni mülk</small></div>
+  <span class="pill" id="topPill">0 m²</span>
+</header>
+
+<main>
+  <!-- 1. MÜLK -->
+  <section id="v-mulk">
+    <h2>Mülke girmeden önce</h2>
+    <p class="lead">Bilgileri doldur. Dairede kamerayla köşelere dokun, plan kendiliğinden çizilsin. Fotoğraflar oda oda sıraya girer, ilana hazır çıkar.</p>
+    <div class="card">
+      <label>İlan başlığı / proje<input id="f-baslik" placeholder="Örn. Fikirtepe Yenitepe 3+1"></label>
+      <label>Adres (çıktıda görünür)<input id="f-adres" placeholder="Mahalle, site, blok"></label>
+      <div class="row">
+        <label>Kat<input id="f-kat" placeholder="5. kat"></label>
+        <label>Kuzey yönü<select id="f-yon">
+          <option value="">Belirtme</option><option value="0">Planın üstü</option><option value="90">Sağı</option><option value="180">Altı</option><option value="270">Solu</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="card">
+      <label>Danışman<select id="f-danisman"></select></label>
+      <label>Danışman telefonu<input id="f-tel" inputmode="tel" placeholder="05xx xxx xx xx"></label>
+    </div>
+    <div class="btns">
+      <button class="btn" id="goPlan">Ölçmeye başla</button>
+      <button class="btn line" id="yeniMulk">Yeni mülk</button>
+    </div>
+  </section>
+
+  <!-- 2. PLAN -->
+  <section id="v-plan" hidden>
+    <div class="arcta" id="arBox">
+      <b>Kamerayla ölç</b>
+      <p id="arInfo">Kamera açılır. Her odada köşelere nişan alıp dokun; oda gerçek ölçüsüyle çizilir, odalar kendi yerine oturur.</p>
+      <button class="btn" id="arStart">Kamerayı aç</button>
+    </div>
+    <details class="card" id="nasil">
+      <summary>Nasıl ölçülür? (30 saniyelik okuma)</summary>
+      <ul class="tips">
+        <li>Kamerayı açınca telefonu yere doğru tut ve yavaşça sağa sola gezdir. Zemin bulununca ortadaki halka yere oturur.</li>
+        <li>Altta odanın türünü seç (Salon, Mutfak…).</li>
+        <li>Duvarların yerle birleştiği köşeye halkayı getir, <b>Köşe</b>'ye bas. Sırayla bütün köşeleri gez. L oda da olur.</li>
+        <li>Son köşeden sonra <b>Odayı bitir</b>. Oda ölçüsüyle çizilir. Kamerayı kapatmadan diğer odaya yürü, aynısını yap.</li>
+        <li>Kapı ve pencere için ilgili düğmeye bas, kenarlarına birer kez dokun.</li>
+        <li>Dolap köşeyi kapatıyorsa dolabın önündeki yere dokun; birkaç santim fark eder.</li>
+        <li>Hepsi bitince <b>Bitti</b>. İsim ve tür sonradan da değişir.</li>
+      </ul>
+    </details>
+    <p class="hint">Elle eklemek için oda türüne dokun. Odalara dokunup ad ve ölçü değiştir, sürükleyerek taşı.</p>
+    <div class="chips" id="roomChips"></div>
+    <div class="planwrap"><svg id="plan" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div class="stats">
+      <div class="stat"><span>Net alan</span><b id="sM2">0</b></div>
+      <div class="stat"><span>Oda</span><b id="sOda">0+0</b></div>
+      <div class="stat"><span>Bölüm</span><b id="sAdet">0</b></div>
+    </div>
+  </section>
+
+  <!-- 3. FOTOĞRAF -->
+  <section id="v-foto" hidden>
+    <h2>Fotoğraflar</h2>
+    <p class="lead">Her oda için çek; ilan sırasına göre dizilir. Dikey çekilenler işaretlenir.</p>
+    <div class="card"><div class="switch"><span>Otomatik ışık ve renk düzeltme</span><input type="checkbox" id="autoEnh" checked></div></div>
+    <div id="fotoList" style="display:flex;flex-direction:column;gap:14px"></div>
+  </section>
+
+  <!-- 4. ÇIKTI -->
+  <section id="v-cikti" hidden>
+    <h2>İlana hazır</h2>
+    <p class="lead">Kat planı görseli ilanın son fotoğrafı olarak eklenir.</p>
+    <img id="outImg" alt="Kat planı önizlemesi">
+    <div class="btns">
+      <button class="btn red" id="shPlan">Kat planını paylaş</button>
+      <button class="btn" id="shAll">Tüm fotoğraflar + plan</button>
+    </div>
+    <div class="card" id="kontrol"></div>
+    <p class="note">Plan temsilidir; ölçüler yerinde alınmıştır, yaklaşık değerlerdir. Bu not görselin altında da yazar.</p>
+  </section>
+</main>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="hd"><b id="shTitle">Oda</b><button class="x" id="shClose" aria-label="Kapat">×</button></div>
+  <div class="row">
+    <label>Oda adı<input id="r-ad"></label>
+    <label>Tür<select id="r-tur"></select></label>
+  </div>
+  <div class="row" id="r-dims">
+    <label>En (m)<input id="r-w" type="number" step="0.05" min="0.5" inputmode="decimal"></label>
+    <label>Boy (m)<input id="r-h" type="number" step="0.05" min="0.5" inputmode="decimal"></label>
+  </div>
+  <p class="hint" id="r-arinfo" hidden></p>
+  <div class="btns">
+    <button class="btn ghost sm" id="r-rot">Çevir</button>
+    <button class="btn ghost sm" id="r-dup">Kopyala</button>
+    <button class="btn line sm" id="r-del">Sil</button>
+    <button class="btn sm" id="r-ok">Tamam</button>
+  </div>
+</div>
+
+<nav id="nav">
+  <button data-v="mulk" aria-current="true"><i>1</i>Mülk</button>
+  <button data-v="plan"><i>2</i>Plan</button>
+  <button data-v="foto"><i>3</i>Fotoğraf</button>
+  <button data-v="cikti"><i>4</i>Çıktı</button>
+</nav>
+
+<!-- AR katmanı -->
+<div id="ar" hidden>
+  <div class="ar-top">
+    <div class="ar-status glass"><b id="arMsg">Zemin aranıyor…</b><span id="arSub">Telefonu yere doğru tut, yavaşça sağa sola gezdir.</span></div>
+    <canvas id="mini" class="glass" width="236" height="236"></canvas>
+  </div>
+  <div class="ar-mid"><div class="cross"></div><div id="arDist" class="glass" hidden>0,00 m</div></div>
+  <div class="ar-bot">
+    <div class="ar-types glass" id="arTypes"></div>
+    <div class="ar-main">
+      <button id="arUndo">Geri al</button>
+      <button id="arPoint">Köşe</button>
+      <button id="arClose" disabled>Odayı bitir</button>
+    </div>
+    <div class="ar-sub">
+      <button id="arDoor" aria-pressed="false">Kapı</button>
+      <button id="arWin" aria-pressed="false">Pencere</button>
+      <button id="arSquare" aria-pressed="true">Düz duvar</button>
+      <button id="arDone">Bitti</button>
+    </div>
+  </div>
+</div>
+<div id="arCanvasHolder"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DANISMANLAR=["Umut Tokkuş","Makbule Tokkuş","Aysun Yılmaz","Ayşegül Alpay","Evşen Özazman","Gamze Yetkin","Gizem Gök","İrem Aleyna Tetik","Orhan Özazman","Özlem Varol"];
+const TYPES={
+ salon:{ad:"Salon",w:5,h:4,c:"#f6e7cf",o:1,tips:["Odanın en uzak köşesinden, göğüs hizasından çek","Pencere arkada kalsın, karşıya doğru çekme","Geniş açı 0,5× kullan, en az 2 farklı köşeden"]},
+ mutfak:{ad:"Mutfak",w:3,h:2.6,c:"#dcefe3",o:2,tips:["Tezgâhın üstünü boşalt","Dolapların tamamı kadraja girsin","Aspiratör ışığını da aç"]},
+ yatak:{ad:"Yatak Odası",w:3.5,h:3,c:"#dfe8f6",o:3,tips:["Yatak düzgün, yastıklar dik","Kapıdan içeri doğru köşeden çek","Dolap kapakları kapalı"]},
+ cocuk:{ad:"Çocuk Odası",w:3,h:2.8,c:"#e9e2f5",o:4,tips:["Oyuncakları topla","Köşeden, pencereyi yandan alarak çek"]},
+ banyo:{ad:"Banyo",w:2.2,h:1.8,c:"#d9eef2",o:5,tips:["Klozet kapağı kapalı, havlular düzgün","Kapı eşiğinden, ayna karşına gelmeden çek","Kişisel eşyaları kaldır"]},
+ wc:{ad:"WC",w:1.5,h:1.2,c:"#d9eef2",o:6,tips:["Tek kare yeterli, kapak kapalı"]},
+ balkon:{ad:"Balkon",w:3,h:1.4,c:"#e6efd8",o:7,tips:["Manzarayı içeriden dışarı doğru çek","Gündüz, güneş arkandayken"]},
+ antre:{ad:"Antre",w:2,h:1.6,c:"#efe9df",o:8,tips:["Kapıdan içeri, salona doğru çek"]},
+ koridor:{ad:"Koridor",w:3,h:1.1,c:"#efe9df",o:9,tips:["Gerek yoksa çekme"]},
+ giyinme:{ad:"Giyinme",w:2,h:1.5,c:"#ede4ec",o:10,tips:["Kapaklar kapalı"]},
+ kiler:{ad:"Kiler",w:1.2,h:1,c:"#efe9df",o:11,tips:["Gerek yoksa çekme"]}
+};
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const fmt=(n,d=1)=>n.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+let S={mulk:{baslik:"",adres:"",kat:"",yon:"",danisman:"",tel:""},rooms:[],acik:[]};
+let photos={};let sel=null;
+
+/* ---------- geometri ---------- */
+const rect=(x,y,w,h)=>[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
+function area(r){const p=r.pts;let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1]}return Math.abs(a)/2}
+function rb(r){let a=1e9,b=1e9,c=-1e9,d=-1e9;r.pts.forEach(([x,y])=>{a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)});return{x:a,y:b,w:c-a,h:d-b}}
+function isRect(r){if(r.pts.length!==4)return false;const b=rb(r);return r.pts.every(([x,y])=>(Math.abs(x-b.x)<1e-6||Math.abs(x-b.x-b.w)<1e-6)&&(Math.abs(y-b.y)<1e-6||Math.abs(y-b.y-b.h)<1e-6))}
+function inPoly(x,y,p){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const[xi,yi]=p[i],[xj,yj]=p[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c}
+function segDist(px,py,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy;let t=L?((px-a[0])*dx+(py-a[1])*dy)/L:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-a[0]-t*dx,py-a[1]-t*dy)}
+function labelPt(r){const p=r.pts,b=rb(r);let best=null,bd=-1;
+  for(let i=1;i<24;i++)for(let j=1;j<24;j++){const x=b.x+b.w*i/24,y=b.y+b.h*j/24;if(!inPoly(x,y,p))continue;
+    let d=1e9;for(let k=0;k<p.length;k++)d=Math.min(d,segDist(x,y,p[k],p[(k+1)%p.length]));if(d>bd){bd=d;best=[x,y]}}
+  return{pt:best||[b.x+b.w/2,b.y+b.h/2],r:Math.max(bd,0)}}
+function bbox(){if(!S.rooms.length)return{x:0,y:0,w:8,h:6};let a=1e9,b=1e9,c=-1e9,d=-1e9;
+  S.rooms.forEach(r=>{const q=rb(r);a=Math.min(a,q.x);b=Math.min(b,q.y);c=Math.max(c,q.x+q.w);d=Math.max(d,q.y+q.h)});return{x:a,y:b,w:c-a,h:d-b}}
+// köşeyi düzle: eksene yakın kenarları tam yatay/dikey yap
+function squarePts(p,tol=10){const n=p.length,xs=p.map(q=>q[0]),ys=p.map(q=>q[1]),t=Math.tan(tol*Math.PI/180);
+  const nx=xs.slice(),ny=ys.slice();
+  for(let i=0;i<n;i++){const j=(i+1)%n,dx=xs[j]-xs[i],dy=ys[j]-ys[i];
+    if(Math.abs(dy)<=Math.abs(dx)*t){const m=(ys[i]+ys[j])/2;ny[i]=ny[j]=m}
+    else if(Math.abs(dx)<=Math.abs(dy)*t){const m=(xs[i]+xs[j])/2;nx[i]=nx[j]=m}}
+  return p.map((_,i)=>[+nx[i].toFixed(3),+ny[i].toFixed(3)])}
+function overlaps(r){const b=rb(r);return S.rooms.some(o=>{if(o===r)return false;const q=rb(o);
+  if(Math.min(b.x+b.w,q.x+q.w)-Math.max(b.x,q.x)<=.08||Math.min(b.y+b.h,q.y+q.h)-Math.max(b.y,q.y)<=.08)return false;
+  const lp=labelPt(r).pt;return inPoly(lp[0],lp[1],o.pts)})}
+
+/* ---------- kayıt ---------- */
+function save(){try{localStorage.setItem("kp_v2",JSON.stringify(S))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem("kp_v2"));if(d&&d.rooms){S=d;S.acik=S.acik||[]}}catch(e){}
+  if(!S.rooms.length&&!localStorage.getItem("kp_seen")){
+    try{localStorage.setItem("kp_seen","1")}catch(e){}
+    S.rooms=[{t:"salon",ad:"Salon",p:rect(0,0,5.2,4.1)},{t:"mutfak",ad:"Mutfak",p:rect(5.2,0,3,2.6)},{t:"balkon",ad:"Balkon",p:rect(0,-1.4,3.6,1.4)},
+      {t:"antre",ad:"Antre",p:rect(5.2,2.6,3,1.5)},{t:"yatak",ad:"Yatak Odası",p:rect(0,4.1,3.6,3.2)},{t:"banyo",ad:"Banyo",p:rect(3.6,4.1,2.2,1.9)},
+      {t:"cocuk",ad:"Çocuk Odası",p:rect(5.8,4.1,2.4,3.2)},{t:"koridor",ad:"Koridor",p:rect(3.6,6,2.2,1.3)}].map(r=>({id:uid(),t:r.t,ad:r.ad,pts:r.p}));
+    S.acik=[{tip:"kapi",a:[6.2,4.1],b:[7.1,4.1]},{tip:"pencere",a:[1,-1.4],b:[2.8,-1.4]},{tip:"pencere",a:[0,5],b:[0,6.6]}];
+    S.mulk.baslik="Örnek daire (Yeni mülk ile temizle)"}}
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,2400)}
+
+/* ---------- sekmeler ---------- */
+function show(v){["mulk","plan","foto","cikti"].forEach(k=>$("#v-"+k).hidden=k!==v);
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v));
+  closeSheet(true);if(v==="plan")drawPlan(true);if(v==="foto")drawFotos();if(v==="cikti")drawOut();window.scrollTo(0,0)}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("#goPlan").onclick=()=>show("plan");
+
+/* ---------- mülk formu ---------- */
+$("#f-danisman").innerHTML='<option value="">Seç</option>'+DANISMANLAR.map(d=>`<option>${d}</option>`).join("");
+const F=["baslik","adres","kat","yon","danisman","tel"];
+function fillForm(){F.forEach(k=>$("#f-"+k).value=S.mulk[k]||"")}
+F.forEach(k=>$("#f-"+k).addEventListener("input",e=>{S.mulk[k]=e.target.value;
+  if(k==="danisman"){try{const t=localStorage.getItem("kp_tel_"+e.target.value);if(t){S.mulk.tel=t;$("#f-tel").value=t}}catch(_){}}
+  if(k==="tel"&&S.mulk.danisman){try{localStorage.setItem("kp_tel_"+S.mulk.danisman,e.target.value)}catch(_){}}
+  save();head()}));
+$("#yeniMulk").onclick=function(){
+  if(this.dataset.c!=="1"){this.dataset.c="1";this.textContent="Emin misin? Tekrar dokun";setTimeout(()=>{this.dataset.c="";this.textContent="Yeni mülk"},3000);return}
+  const d=S.mulk.danisman,t=S.mulk.tel;S={mulk:{baslik:"",adres:"",kat:"",yon:"",danisman:d,tel:t},rooms:[],acik:[]};photos={};save();fillForm();head();
+  this.dataset.c="";this.textContent="Yeni mülk";toast("Temiz sayfa açıldı")};
+
+/* ---------- özet ---------- */
+function totals(){const m2=S.rooms.reduce((a,r)=>a+area(r),0);
+  const y=S.rooms.filter(r=>r.t==="yatak"||r.t==="cocuk").length,s=S.rooms.filter(r=>r.t==="salon").length;
+  return{m2,oda:`${y}+${s}`,adet:S.rooms.length}}
+function head(){const t=totals();$("#topSub").textContent=S.mulk.baslik||"Yeni mülk";$("#topPill").textContent=fmt(t.m2,0)+" m² · "+t.oda;
+  $("#sM2").textContent=fmt(t.m2,1);$("#sOda").textContent=t.oda;$("#sAdet").textContent=t.adet}
+function nextName(t){const same=S.rooms.filter(r=>r.t===t).length;return TYPES[t].ad+(same&&["yatak","banyo","balkon","wc","cocuk"].includes(t)?" "+(same+1):"")}
+
+/* ---------- elle oda ekleme ---------- */
+$("#roomChips").innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="chip" data-t="${k}"><b>+</b> ${v.ad}</button>`).join("");
+document.querySelectorAll("#roomChips .chip").forEach(b=>b.onclick=()=>addRoom(b.dataset.t));
+$("#r-tur").innerHTML=Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v.ad}</option>`).join("");
+function addRoom(t){const T=TYPES[t],bb=bbox();let x,y;
+  if(!S.rooms.length){x=0;y=0}else if(bb.w+T.w<=12){x=bb.x+bb.w;y=bb.y}else{x=bb.x;y=bb.y+bb.h}
+  const r={id:uid(),t,ad:nextName(t),pts:rect(x,y,T.w,T.h)};S.rooms.push(r);save();drawPlan(true);openSheet(r.id)}
+
+/* ---------- açıklıklar (kapı/pencere) duvara oturt ---------- */
+function fitOpening(o){let best=null,bd=1e9;const mx=(o.a[0]+o.b[0])/2,my=(o.a[1]+o.b[1])/2;
+  S.rooms.forEach(r=>{const p=r.pts;for(let i=0;i<p.length;i++){const A=p[i],B=p[(i+1)%p.length],d=segDist(mx,my,A,B);if(d<bd){bd=d;best={A,B,r}}}});
+  if(!best||bd>.6)return{a:o.a,b:o.b,n:[0,0]};
+  const{A,B,r}=best,dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+  const pr=q=>{let t=(q[0]-A[0])*ux+(q[1]-A[1])*uy;t=Math.max(0,Math.min(L,t));return[A[0]+ux*t,A[1]+uy*t]};
+  const a=pr(o.a),b=pr(o.b),lp=labelPt(r).pt;let n=[-uy,ux];if((lp[0]-a[0])*n[0]+(lp[1]-a[1])*n[1]<0)n=[uy,-ux];
+  return{a,b,n}}
+
+/* ---------- plan çizimi (SVG, metre) ---------- */
+const svg=$("#plan");let VB=null;
+function drawPlan(fit){const bb=bbox();
+  if(fit||!VB){const p=1.2;VB={x:bb.x-p,y:bb.y-p,w:Math.max(bb.w+2*p,6),h:Math.max(bb.h+2*p,5)}}
+  svg.setAttribute("viewBox",`${VB.x} ${VB.y} ${VB.w} ${VB.h}`);
+  let g="";
+  for(let i=Math.floor(VB.x);i<=VB.x+VB.w;i++)g+=`<line x1="${i}" y1="${VB.y}" x2="${i}" y2="${VB.y+VB.h}" stroke="var(--grid)" stroke-width="0.02"/>`;
+  for(let i=Math.floor(VB.y);i<=VB.y+VB.h;i++)g+=`<line x1="${VB.x}" y1="${i}" x2="${VB.x+VB.w}" y2="${i}" stroke="var(--grid)" stroke-width="0.02"/>`;
+  const fs=Math.max(0.24,Math.min(0.34,VB.w/28));
+  S.rooms.forEach(r=>{const T=TYPES[r.t],L=labelPt(r),ov=overlaps(r),s=sel===r.id,f=L.r<.8?fs*.8:fs;
+    g+=`<g class="room" data-id="${r.id}"><polygon points="${r.pts.map(p=>p.join(",")).join(" ")}" fill="${T.c}" stroke="${ov?"var(--red)":"var(--wall)"}" stroke-width="${s?0.12:0.08}" stroke-linejoin="miter" ${s?'stroke-dasharray="0.25 0.12"':""}/>
+      <text x="${L.pt[0]}" y="${L.pt[1]-f*.15}" text-anchor="middle" font-size="${f}" font-weight="700" fill="#1b2333" font-family="Plus Jakarta Sans, sans-serif">${esc(r.ad)}</text>
+      <text x="${L.pt[0]}" y="${L.pt[1]+f*1.05}" text-anchor="middle" font-size="${f*.82}" fill="#46536a" font-family="Plus Jakarta Sans, sans-serif">${fmt(area(r),1)} m²</text></g>`});
+  (S.acik||[]).forEach((o,i)=>{const q=fitOpening(o);g+=`<line class="acik" data-i="${i}" x1="${q.a[0]}" y1="${q.a[1]}" x2="${q.b[0]}" y2="${q.b[1]}" stroke="${o.tip==="kapi"?"#dc1c2e":"#2f8fd8"}" stroke-width="0.16" stroke-linecap="butt"/>`});
+  svg.innerHTML=g;head()}
+
+/* sürükle + mıknatıs */
+let drag=null;
+function pt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+svg.addEventListener("pointerdown",e=>{const ac=e.target.closest(".acik");if(ac){delOpening(+ac.dataset.i);return}
+  const g=e.target.closest(".room");if(!g)return;const r=S.rooms.find(o=>o.id===g.dataset.id);const p=pt(e),b=rb(r);
+  drag={r,dx:p.x-b.x,dy:p.y-b.y,sx:e.clientX,sy:e.clientY,moved:false,orig:r.pts.map(q=>q.slice()),ob:b,ac:(S.acik||[]).map(o=>({a:o.a.slice(),b:o.b.slice()}))};
+  g.setPointerCapture(e.pointerId)});
+svg.addEventListener("pointermove",e=>{if(!drag)return;if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>6)drag.moved=true;if(!drag.moved)return;
+  const p=pt(e),r=drag.r,b=drag.ob;let nx=Math.round((p.x-drag.dx)*20)/20,ny=Math.round((p.y-drag.dy)*20)/20;
+  let bx=.3,by=.3,sx=nx,sy=ny;
+  S.rooms.forEach(o=>{if(o===r)return;const q=rb(o);[q.x,q.x+q.w,q.x-b.w,q.x+q.w-b.w].forEach(c=>{const d=Math.abs(nx-c);if(d<bx){bx=d;sx=c}});
+    [q.y,q.y+q.h,q.y-b.h,q.y+q.h-b.h].forEach(c=>{const d=Math.abs(ny-c);if(d<by){by=d;sy=c}})});
+  const ddx=sx-b.x,ddy=sy-b.y;r.pts=drag.orig.map(([x,y])=>[+(x+ddx).toFixed(3),+(y+ddy).toFixed(3)]);drawPlan(false)});
+svg.addEventListener("pointerup",()=>{if(!drag)return;const d=drag;drag=null;if(d.moved){save();drawPlan(true)}else openSheet(d.r.id)});
+function delOpening(i){const o=S.acik[i];if(!o)return;if(delOpening._p===i){S.acik.splice(i,1);delOpening._p=null;save();drawPlan(false);toast("Silindi");return}
+  delOpening._p=i;setTimeout(()=>delOpening._p=null,2500);toast((o.tip==="kapi"?"Kapıyı":"Pencereyi")+" silmek için tekrar dokun")}
+
+/* ---------- oda düzenleme paneli ---------- */
+function cur(){return S.rooms.find(r=>r.id===sel)}
+function openSheet(id){sel=id;const r=cur();if(!r)return;$("#shTitle").textContent=r.ad;$("#r-ad").value=r.ad;$("#r-tur").value=r.t;
+  const rc=isRect(r);$("#r-dims").hidden=!rc;$("#r-rot").hidden=!rc;$("#r-dup").hidden=!rc;$("#r-arinfo").hidden=rc;
+  if(rc){const b=rb(r);$("#r-w").value=+b.w.toFixed(2);$("#r-h").value=+b.h.toFixed(2)}
+  else $("#r-arinfo").textContent=`Kamerayla ölçüldü · ${r.pts.length} köşe · ${fmt(area(r),1)} m²`;
+  $("#sheet").hidden=false;drawPlan(false)}
+function closeSheet(silent){sel=null;$("#sheet").hidden=true;if(!silent&&!$("#v-plan").hidden)drawPlan(true)}
+$("#shClose").onclick=()=>closeSheet();$("#r-ok").onclick=()=>closeSheet();
+$("#r-ad").oninput=e=>{cur().ad=e.target.value;save();drawPlan(false)};
+$("#r-tur").onchange=e=>{cur().t=e.target.value;save();drawPlan(false)};
+["w","h"].forEach(k=>$("#r-"+k).oninput=e=>{const v=parseFloat(String(e.target.value).replace(",","."));if(!(v>=.3&&v<=40))return;
+  const r=cur(),b=rb(r);r.pts=rect(b.x,b.y,k==="w"?v:b.w,k==="h"?v:b.h);save();drawPlan(false)});
+$("#r-rot").onclick=()=>{const r=cur(),b=rb(r);r.pts=rect(b.x,b.y,b.h,b.w);$("#r-w").value=+b.h.toFixed(2);$("#r-h").value=+b.w.toFixed(2);save();drawPlan(true)};
+$("#r-dup").onclick=()=>{const r=cur(),b=rb(r),n={id:uid(),t:r.t,ad:nextName(r.t),pts:rect(b.x+b.w,b.y,b.w,b.h)};S.rooms.push(n);save();drawPlan(true);openSheet(n.id)};
+$("#r-del").onclick=function(){if(this.dataset.c!=="1"){this.dataset.c="1";this.textContent="Silinsin mi?";setTimeout(()=>{this.dataset.c="";this.textContent="Sil"},2500);return}
+  this.dataset.c="";this.textContent="Sil";delete photos[sel];S.rooms=S.rooms.filter(r=>r.id!==sel);save();closeSheet()};
+
+/* =====================================================================
+   KAMERAYLA ÖLÇÜM (WebXR — Android Chrome)
+   ===================================================================== */
+let THREE=null,arOK=false;
+(async function(){let ok=false;try{ok=!!(navigator.xr&&await navigator.xr.isSessionSupported("immersive-ar"))}catch(e){}
+  arOK=ok;
+  if(ok){try{THREE=await import("/akasya/3d/vendor/three/three.module.min.js")}catch(e){arOK=false}}
+  if(!arOK){const box=$("#arBox");box.classList.add("off");
+    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    $("#arInfo").innerHTML=ios?"iPhone'da Safari kameralı ölçüme henüz izin vermiyor. Odaları aşağıdan elle ekle; ölçüyü iPhone'daki <b>Ölçüm</b> uygulamasıyla alabilirsin."
+      :"Bu telefonda ya da tarayıcıda kameralı ölçüm açılmadı. Android'de <b>Chrome</b> ile aç; Google Play Hizmetleri (AR) kurulu olmalı. Şimdilik odaları elle ekle.";
+    $("#arStart").hidden=true;$("#nasil").hidden=true}})();
+
+let A=null; // aktif oturum durumu
+const arTypesEl=$("#arTypes");
+arTypesEl.innerHTML=Object.entries(TYPES).map(([k,v])=>`<button data-t="${k}" aria-pressed="${k==="salon"}">${v.ad}</button>`).join("");
+arTypesEl.querySelectorAll("button").forEach(b=>b.onclick=()=>{arTypesEl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));if(A)A.type=b.dataset.t;arUI()});
+
+$("#arStart").onclick=startAR;
+async function startAR(){if(!arOK||!THREE||A)return;
+  const ov=$("#ar");let session;
+  try{session=await navigator.xr.requestSession("immersive-ar",{requiredFeatures:["hit-test"],optionalFeatures:["dom-overlay"],domOverlay:{root:ov}})}
+  catch(e){toast("Kamera açılamadı: izin ver ya da Chrome'u güncelle");return}
+  ov.hidden=false;
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(window.devicePixelRatio);renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType("local");
+  $("#arCanvasHolder").appendChild(renderer.domElement);
+  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.01,40);
+  scene.add(new THREE.HemisphereLight(0xffffff,0xbbbbff,3));
+  const reticle=new THREE.Mesh(new THREE.RingGeometry(0.06,0.08,32).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0xffffff}));
+  reticle.matrixAutoUpdate=false;reticle.visible=false;scene.add(reticle);
+  const dot=new THREE.Mesh(new THREE.CircleGeometry(0.012,16).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0xdc1c2e}));reticle.add(dot);
+  const live=new THREE.Group();scene.add(live);const done=new THREE.Group();scene.add(done);
+  await renderer.xr.setSession(session);
+  const viewer=await session.requestReferenceSpace("viewer");
+  const hitSource=await session.requestHitTestSource({space:viewer});
+  ov.addEventListener("beforexrselect",ev=>ev.preventDefault());
+  const tp=arTypesEl.querySelector('[aria-pressed="true"]');
+  A={session,renderer,scene,camera,reticle,live,done,hitSource,pts:[],cur:null,type:tp?tp.dataset.t:"salon",mode:"kose",op:[],
+     theta:null,off:null,rooms:[],ops:[],square:true,lastUI:0,found:false};
+  session.addEventListener("end",endAR);
+  renderer.setAnimationLoop((t,frame)=>{if(!frame||!A)return;const ref=renderer.xr.getReferenceSpace(),hits=frame.getHitTestResults(hitSource);
+    if(hits.length){const pose=hits[0].getPose(ref);if(pose){reticle.visible=true;reticle.matrix.fromArray(pose.transform.matrix);
+      const p=pose.transform.position;A.cur={x:p.x,y:p.y,z:p.z};if(!A.found){A.found=true;arUI()}}}
+    else{reticle.visible=false;A.cur=null}
+    rubber();if(t-A.lastUI>120){A.lastUI=t;arLive()}
+    renderer.render(scene,camera)});
+  arUI();drawMini()}
+
+/* 3B çizgiler */
+function line3(pts,color,closed){const v=pts.map(p=>new THREE.Vector3(p.x,p.y+0.005,p.z));if(closed&&v.length)v.push(v[0].clone());
+  const g=new THREE.BufferGeometry().setFromPoints(v);return new THREE.Line(g,new THREE.LineBasicMaterial({color}))}
+function marker(p,color){const m=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.01,20),new THREE.MeshBasicMaterial({color}));m.position.set(p.x,p.y+0.005,p.z);return m}
+function clearGroup(g){while(g.children.length){const c=g.children.pop();c.geometry&&c.geometry.dispose();c.material&&c.material.dispose()}}
+function rebuildLive(){clearGroup(A.live);const pts=A.mode==="kose"?A.pts:A.op;const col=A.mode==="kose"?0xdc1c2e:(A.mode==="kapi"?0xffb020:0x48b0ff);
+  pts.forEach(p=>A.live.add(marker(p,col)));if(pts.length>1)A.live.add(line3(pts,col,false));A.rub=null}
+function rubber(){if(A.rub){A.live.remove(A.rub);A.rub.geometry.dispose();A.rub.material.dispose();A.rub=null}
+  const pts=A.mode==="kose"?A.pts:A.op;if(!pts.length||!A.cur)return;
+  A.rub=line3([pts[pts.length-1],A.cur],0xffffff,false);A.live.add(A.rub)}
+
+/* AR → plan koordinatı */
+function toPlan(p){const c=Math.cos(-A.theta),s=Math.sin(-A.theta);return[p.x*c-p.z*s+A.off[0],p.x*s+p.z*c+A.off[1]]}
+function calcTheta(pts){let C=0,Sn=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz),ang=Math.atan2(dz,dx);C+=L*Math.cos(4*ang);Sn+=L*Math.sin(4*ang)}
+  return Math.atan2(Sn,C)/4}
+
+function arPoint(){if(!A)return;if(!A.cur){toast("Halka yere oturmadı; telefonu biraz gezdir");return}
+  if(navigator.vibrate)navigator.vibrate(25);
+  const p={...A.cur};
+  if(A.mode==="kose"){const f=A.pts[0];
+    if(A.pts.length>=3&&Math.hypot(p.x-f.x,p.z-f.z)<0.25){closeRoom();return}
+    A.pts.push(p)}
+  else{A.op.push(p);if(A.op.length===2){saveOpening();return}}
+  rebuildLive();arUI();drawMini()}
+function arUndo(){if(!A)return;if(A.mode!=="kose"){A.op.pop()}else if(A.pts.length)A.pts.pop();
+  else if(A.rooms.length){const id=A.rooms.pop();S.rooms=S.rooms.filter(r=>r.id!==id);clearGroup(A.done);
+    // önceki odaları yeniden çiz
+    A.doneLines=(A.doneLines||[]).slice(0,-1);A.doneLines.forEach(pts=>A.done.add(line3(pts,0x2f6fff,true)));save();toast("Son oda silindi")}
+  rebuildLive();arUI();drawMini()}
+function closeRoom(){if(A.pts.length<3){toast("En az 3 köşe gerekli");return}
+  if(A.theta===null){A.theta=calcTheta(A.pts);A.off=[0,0];
+    const raw=A.pts.map(toPlan);let mnx=1e9,mny=1e9;raw.forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y)});
+    if(S.rooms.length){const bb=bbox();A.off=[bb.x+bb.w+1.5-mnx,bb.y-mny]}else A.off=[-mnx,-mny]}
+  let pts=A.pts.map(toPlan);if(A.square)pts=squarePts(pts);
+  const r={id:uid(),t:A.type,ad:nextName(A.type),pts:pts.map(([x,y])=>[+x.toFixed(3),+y.toFixed(3)]),ar:1};
+  S.rooms.push(r);A.rooms.push(r.id);save();
+  A.doneLines=(A.doneLines||[]).concat([A.pts.slice()]);A.done.add(line3(A.pts,0x2f6fff,true));
+  A.pts=[];rebuildLive();if(navigator.vibrate)navigator.vibrate([30,40,30]);
+  toast(`${r.ad} eklendi · ${fmt(area(r),1)} m²`);arUI();drawMini()}
+function saveOpening(){if(A.theta===null){A.op=[];rebuildLive();toast("Önce bir odayı bitir, sonra kapı/pencere ekle");return}
+  const o={tip:A.mode,a:toPlan(A.op[0]).map(v=>+v.toFixed(3)),b:toPlan(A.op[1]).map(v=>+v.toFixed(3))};S.acik.push(o);A.ops.push(o);save();
+  A.done.add(line3(A.op,A.mode==="kapi"?0xffb020:0x48b0ff,false));
+  toast((A.mode==="kapi"?"Kapı":"Pencere")+" eklendi · "+fmt(Math.hypot(A.op[1].x-A.op[0].x,A.op[1].z-A.op[0].z),2)+" m");
+  A.op=[];setMode("kose")}
+function setMode(m){if(!A)return;A.mode=A.mode===m&&m!=="kose"?"kose":m;A.op=[];
+  $("#arDoor").setAttribute("aria-pressed",A.mode==="kapi");$("#arWin").setAttribute("aria-pressed",A.mode==="pencere");rebuildLive();arUI()}
+function arUI(){if(!A)return;const T=TYPES[A.type];let m,s;
+  if(!A.found){m="Zemin aranıyor…";s="Telefonu yere doğru tut, yavaşça sağa sola gezdir."}
+  else if(A.mode==="kapi"){m=A.op.length?"Kapının öbür kenarı":"Kapının bir kenarı";s="Kapı boşluğunun yerle birleştiği noktaya nişan al, Nokta'ya bas."}
+  else if(A.mode==="pencere"){m=A.op.length?"Pencerenin öbür kenarı":"Pencerenin bir kenarı";s="Pencerenin altındaki duvar dibine nişan al, Nokta'ya bas."}
+  else if(!A.pts.length){m=`${T.ad}: ilk köşe`;s="Duvarların yerle birleştiği köşeye halkayı getir, Köşe'ye bas."}
+  else{m=`${T.ad}: ${A.pts.length+1}. köşe`;s=A.pts.length>=3?"Sıradaki köşe ya da Odayı bitir. İlk köşeye dokunmak da odayı kapatır.":"Duvar boyunca sıradaki köşeye yürü."}
+  $("#arMsg").textContent=m;$("#arSub").textContent=s;
+  $("#arPoint").textContent=A.mode==="kose"?"Köşe":"Nokta";
+  $("#arClose").disabled=!(A.mode==="kose"&&A.pts.length>=3)}
+function arLive(){const pts=A.mode==="kose"?A.pts:A.op,d=$("#arDist");
+  if(pts.length&&A.cur){const l=pts[pts.length-1];d.hidden=false;d.textContent=fmt(Math.hypot(A.cur.x-l.x,A.cur.z-l.z),2)+" m"}else d.hidden=true;
+  drawMini()}
+function drawMini(){const c=$("#mini"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);if(!A)return;
+  const polys=A.rooms.map(id=>S.rooms.find(r=>r.id===id)).filter(Boolean).map(r=>r.pts);
+  const th=A.theta===null?0:A.theta,co=Math.cos(-th),si=Math.sin(-th),off=A.off||[0,0];
+  const tp=p=>[p.x*co-p.z*si+off[0],p.x*si+p.z*co+off[1]];
+  const curP=A.pts.map(tp),c0=A.cur?tp(A.cur):null,all=polys.flat().concat(curP);if(c0)all.push(c0);
+  if(!all.length){x.fillStyle="rgba(255,255,255,.6)";x.font="600 20px sans-serif";x.textAlign="center";x.fillText("Plan",W/2,H/2+7);return}
+  let a=1e9,b=1e9,cc=-1e9,d=-1e9;all.forEach(([px,py])=>{a=Math.min(a,px);b=Math.min(b,py);cc=Math.max(cc,px);d=Math.max(d,py)});
+  const sc=Math.min((W-28)/Math.max(cc-a,2),(H-28)/Math.max(d-b,2)),ox=W/2-(a+cc)/2*sc,oy=H/2-(b+d)/2*sc,P=([px,py])=>[ox+px*sc,oy+py*sc];
+  x.lineWidth=3;polys.forEach(p=>{x.beginPath();p.forEach((q,i)=>{const[u,v]=P(q);i?x.lineTo(u,v):x.moveTo(u,v)});x.closePath();x.fillStyle="rgba(255,255,255,.18)";x.fill();x.strokeStyle="#fff";x.stroke()});
+  if(curP.length){x.beginPath();curP.forEach((q,i)=>{const[u,v]=P(q);i?x.lineTo(u,v):x.moveTo(u,v)});if(c0){const[u,v]=P(c0);x.lineTo(u,v)}x.strokeStyle="#ff4d5e";x.stroke()}
+  if(c0){const[u,v]=P(c0);x.beginPath();x.arc(u,v,6,0,7);x.fillStyle="#ff4d5e";x.fill()}}
+function endAR(){if(!A)return;const a=A;A=null;
+  if(a.pts.length>=3){A=a;try{closeRoom()}catch(e){}A=null}
+  try{a.renderer.setAnimationLoop(null);a.hitSource.cancel()}catch(e){}
+  try{a.renderer.dispose();a.renderer.domElement.remove()}catch(e){}
+  $("#ar").hidden=true;$("#arDist").hidden=true;save();drawPlan(true);
+  if(a.rooms.length)toast(`${a.rooms.length} oda eklendi`)}
+$("#arPoint").onclick=arPoint;$("#arUndo").onclick=arUndo;$("#arClose").onclick=()=>A&&closeRoom();
+$("#arDoor").onclick=()=>setMode("kapi");$("#arWin").onclick=()=>setMode("pencere");
+$("#arSquare").onclick=function(){if(!A)return;A.square=!A.square;this.setAttribute("aria-pressed",A.square);toast(A.square?"Duvarlar dik açıya düzlenecek":"Ölçüldüğü gibi bırakılacak")};
+$("#arDone").onclick=()=>{if(A)A.session.end()};
+
+/* ---------- fotoğraflar ---------- */
+const order=()=>[...S.rooms].sort((a,b)=>TYPES[a.t].o-TYPES[b.t].o);
+function drawFotos(){const L=$("#fotoList");
+  if(!S.rooms.length){L.innerHTML='<p class="note">Önce Plan sekmesinden oda ekle; her oda için çekim listesi burada açılır.</p>';return}
+  L.innerHTML=order().map(r=>{const ps=photos[r.id]||[];return `<div class="card">
+    <div class="ph-head"><b>${esc(r.ad)}</b><span>${fmt(area(r),1)} m² · ${ps.length?`<span class="ok">${ps.length} fotoğraf</span>`:"çekilmedi"}</span></div>
+    <ul class="tips">${TYPES[r.t].tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+    <div class="thumbs">${ps.map((p,i)=>`<div class="th"><img src="${p.src}" alt="">${p.portrait?'<span class="bad">Dikey</span>':""}<button data-r="${r.id}" data-i="${i}" aria-label="Fotoğrafı sil">×</button></div>`).join("")}
+      <label class="add">+ Çek / seç<input type="file" accept="image/*" multiple data-r="${r.id}"></label></div></div>`}).join("");
+  L.querySelectorAll("input[type=file]").forEach(inp=>inp.onchange=async()=>{const id=inp.dataset.r;toast("Fotoğraflar hazırlanıyor…");
+    for(const f of inp.files){try{photos[id]=(photos[id]||[]).concat(await prep(f))}catch(e){}}drawFotos();toast("Eklendi")});
+  L.querySelectorAll(".th button").forEach(b=>b.onclick=()=>{photos[b.dataset.r].splice(+b.dataset.i,1);drawFotos()})}
+function loadImg(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src})}
+async function prep(file){const url=URL.createObjectURL(file),img=await loadImg(url);URL.revokeObjectURL(url);
+  let w=img.naturalWidth,h=img.naturalHeight;const s=Math.min(1,2048/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.drawImage(img,0,0,w,h);
+  if($("#autoEnh").checked)enhance(x,w,h);
+  return{src:c.toDataURL("image/jpeg",.88),portrait:h>w*1.05}}
+function enhance(x,w,h){const d=x.getImageData(0,0,w,h),p=d.data,hist=new Uint32Array(256);let n=0,sum=0;
+  for(let i=0;i<p.length;i+=16){const l=(p[i]*77+p[i+1]*150+p[i+2]*29)>>8;hist[l]++;n++;sum+=l}
+  let lo=0,hi=255,acc=0;for(let v=0;v<256;v++){acc+=hist[v];if(acc>n*.005){lo=v;break}}
+  acc=0;for(let v=255;v>=0;v--){acc+=hist[v];if(acc>n*.005){hi=v;break}}
+  if(hi-lo<40)return;const mean=sum/n,gm=mean<95?.78:mean<125?.88:1;const L=new Uint8ClampedArray(256);
+  for(let v=0;v<256;v++)L[v]=255*Math.pow(Math.min(1,Math.max(0,(v-lo)/(hi-lo))),gm);
+  for(let i=0;i<p.length;i+=4){const r=L[p[i]],g=L[p[i+1]],b=L[p[i+2]],m=(r+g+b)/3;
+    p[i]=m+(r-m)*1.08;p[i+1]=m+(g-m)*1.08;p[i+2]=m+(b-m)*1.08}
+  x.putImageData(d,0,0)}
+
+/* ---------- çıktı: kat planı görseli ---------- */
+function renderPlan(){const W=2000,H=1500,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  x.fillStyle="#ffffff";x.fillRect(0,0,W,H);
+  x.fillStyle="#dc1c2e";x.fillRect(0,0,W/2,14);x.fillStyle="#003da5";x.fillRect(W/2,0,W/2,14);
+  x.fillStyle="#152238";x.font="800 54px 'Bricolage Grotesque', sans-serif";x.fillText(S.mulk.baslik||"Kat Planı",70,105,W-480);
+  const t=totals();x.font="500 30px 'Plus Jakarta Sans', sans-serif";x.fillStyle="#5d6a80";
+  x.fillText([S.mulk.adres,S.mulk.kat,t.oda+" · net ≈ "+fmt(t.m2,0)+" m²"].filter(Boolean).join("  ·  "),70,152,W-480);
+  x.textAlign="right";x.fillStyle="#dc1c2e";x.font="800 40px 'Bricolage Grotesque', sans-serif";x.fillText("RE/MAX",W-70,100);
+  x.fillStyle="#003da5";x.fillText("DOĞUŞ",W-70,145);x.textAlign="left";
+  if(!S.rooms.length)return c;
+  const bb=bbox(),top=210,bot=H-170,aw=W-140,ah=bot-top,sc=Math.min(aw/bb.w,ah/bb.h,190),ox=70+(aw-bb.w*sc)/2-bb.x*sc,oy=top+(ah-bb.h*sc)/2-bb.y*sc;
+  const X=v=>ox+v*sc,Y=v=>oy+v*sc,wall=Math.max(6,.13*sc);
+  const path=r=>{x.beginPath();r.pts.forEach(([px,py],i)=>i?x.lineTo(X(px),Y(py)):x.moveTo(X(px),Y(py)));x.closePath()};
+  S.rooms.forEach(r=>{path(r);x.fillStyle=TYPES[r.t].c;x.fill()});
+  x.strokeStyle="#1b2333";x.lineJoin="miter";x.lineWidth=wall;S.rooms.forEach(r=>{path(r);x.stroke()});
+  // kapı ve pencereler
+  (S.acik||[]).forEach(o=>{const q=fitOpening(o),ax=X(q.a[0]),ay=Y(q.a[1]),bx=X(q.b[0]),by=Y(q.b[1]),L=Math.hypot(bx-ax,by-ay);if(L<4)return;
+    x.lineCap="butt";x.strokeStyle="#ffffff";x.lineWidth=wall+3;x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();
+    if(o.tip==="kapi"){const nx=q.n[0],ny=q.n[1],lx=ax+nx*L,ly=ay+ny*L;
+      x.strokeStyle="#1b2333";x.lineWidth=3;x.beginPath();x.moveTo(ax,ay);x.lineTo(lx,ly);x.stroke();
+      const a0=Math.atan2(ly-ay,lx-ax),a1=Math.atan2(by-ay,bx-ax);let d=a1-a0;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+      x.lineWidth=1.6;x.setLineDash([8,6]);x.beginPath();x.arc(ax,ay,L,a0,a1,d<0);x.stroke();x.setLineDash([])}
+    else{const ux=(bx-ax)/L,uy=(by-ay)/L,px=-uy*wall/2,py=ux*wall/2;x.strokeStyle="#1b2333";x.lineWidth=2;
+      [[px,py],[-px,-py],[0,0]].forEach(([dx,dy])=>{x.beginPath();x.moveTo(ax+dx,ay+dy);x.lineTo(bx+dx,by+dy);x.stroke()})}});
+  x.textAlign="center";S.rooms.forEach(r=>{const L=labelPt(r),cx=X(L.pt[0]),cy=Y(L.pt[1]),mn=L.r*2*sc,b=rb(r),maxW=b.w*sc-16,f=Math.max(18,Math.min(36,mn/5.2));
+    x.fillStyle="#1b2333";x.font=`700 ${f}px 'Plus Jakarta Sans', sans-serif`;x.fillText(r.ad,cx,cy-f*.2,maxW);
+    x.fillStyle="#46536a";x.font=`500 ${f*.78}px 'Plus Jakarta Sans', sans-serif`;x.fillText(fmt(area(r),1)+" m²",cx,cy+f*.85,maxW);
+    if(isRect(r)&&mn>f*4.5)x.fillText(fmt(b.w,2)+" × "+fmt(b.h,2),cx,cy+f*1.85,maxW)});
+  const sy=H-110;x.textAlign="left";x.fillStyle="#1b2333";x.fillRect(70,sy,sc,8);x.fillRect(70,sy-10,4,28);x.fillRect(70+sc-4,sy-10,4,28);
+  x.font="600 24px 'Plus Jakarta Sans', sans-serif";x.fillText("1 m",80+sc,sy+12);
+  if(S.mulk.yon!==""&&S.mulk.yon!=null){const a=+S.mulk.yon*Math.PI/180,cx=W-120,cy=H-130;x.save();x.translate(cx,cy);x.rotate(a);x.fillStyle="#dc1c2e";
+    x.beginPath();x.moveTo(0,-46);x.lineTo(18,18);x.lineTo(0,6);x.lineTo(-18,18);x.closePath();x.fill();x.restore();
+    x.textAlign="center";x.fillStyle="#1b2333";x.font="800 26px 'Bricolage Grotesque', sans-serif";x.fillText("K",cx+Math.sin(a)*72,cy-Math.cos(a)*72+9)}
+  x.textAlign="left";x.fillStyle="#5d6a80";x.font="500 22px 'Plus Jakarta Sans', sans-serif";x.fillText("Plan temsilidir, ölçüler yaklaşıktır.",70,H-50);
+  x.textAlign="center";x.fillStyle="#152238";x.font="700 26px 'Plus Jakarta Sans', sans-serif";
+  x.fillText([S.mulk.danisman,S.mulk.tel,"0216 315 15 15"].filter(Boolean).join("  ·  "),W/2,H-50);
+  return c}
+let lastPlan=null;
+function drawOut(){lastPlan=renderPlan();$("#outImg").src=lastPlan.toDataURL("image/png");
+  const t=totals(),os=order(),eksik=os.filter(r=>!(photos[r.id]||[]).length&&!["koridor","kiler","giyinme"].includes(r.t)),dik=os.reduce((a,r)=>a+(photos[r.id]||[]).filter(p=>p.portrait).length,0);
+  const item=(ok,m)=>`<li>${ok?'<span class="ok">✓</span>':'<span style="color:var(--warn);font-weight:700">!</span>'} ${m}</li>`;
+  $("#kontrol").innerHTML=`<b>Kontrol</b><ul class="tips" style="list-style:none;padding:0">
+    ${item(S.mulk.baslik&&S.mulk.danisman,S.mulk.baslik&&S.mulk.danisman?"Başlık ve danışman yazılı":"Mülk sekmesinde başlık veya danışman eksik")}
+    ${item(!S.rooms.some(overlaps),S.rooms.some(overlaps)?"Üst üste binen oda var (planda kırmızı)":"Odalar düzgün yerleşmiş")}
+    ${item(!eksik.length,eksik.length?"Fotoğrafı olmayan: "+eksik.map(r=>esc(r.ad)).join(", "):"Her odanın fotoğrafı var")}
+    ${item(!dik,dik?dik+" dikey fotoğraf var, yatay çekilmesi daha iyi":"Fotoğraflar yatay")}
+    <li>Net ≈ <b>${fmt(t.m2,1)} m²</b> · ${t.oda} · ${t.adet} bölüm</li></ul>`}
+function slug(s){return (s||"plan").toLocaleLowerCase("tr").replace(/[çğıöşü]/g,c=>({ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u"}[c])).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+const toBlob=(c,type,q)=>new Promise(ok=>c.toBlob(ok,type,q));
+async function share(files){
+  try{if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:S.mulk.baslik||"Kat planı"});return}}catch(e){if(e.name==="AbortError")return}
+  for(const f of files){const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,350))}
+  toast("İndirildi")}
+$("#shPlan").onclick=async()=>{const b=await toBlob(lastPlan||renderPlan(),"image/png");share([new File([b],slug(S.mulk.baslik)+"-kat-plani.png",{type:"image/png"})])};
+$("#shAll").onclick=async()=>{const fs=[];let n=1;
+  for(const r of order())for(const p of (photos[r.id]||[])){const b=await (await fetch(p.src)).blob();fs.push(new File([b],String(n++).padStart(2,"0")+"-"+slug(r.ad)+".jpg",{type:"image/jpeg"}))}
+  const b=await toBlob(lastPlan||renderPlan(),"image/jpeg",.92);fs.push(new File([b],String(n).padStart(2,"0")+"-kat-plani.jpg",{type:"image/jpeg"}));
+  if(fs.length===1)toast("Henüz fotoğraf yok, yalnız plan paylaşılıyor");share(fs)};
+
+load();fillForm();head();
+if(document.fonts)document.fonts.ready.then(()=>{if(!$("#v-cikti").hidden)drawOut()});
+</script>
+</body>
+</html>
