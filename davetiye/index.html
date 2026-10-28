@@ -187,7 +187,10 @@ body.scrolled .scroll-hint{opacity:0}
 .kose.tl{top:20px;left:20px}.kose.tr{top:20px;right:20px;transform:scaleX(-1)}
 .kose.bl{bottom:20px;left:20px;transform:scaleY(-1)}.kose.br{bottom:20px;right:20px;transform:scale(-1,-1)}
 .card.wait .kose,.card.tex .kose{opacity:0}
-@media (min-aspect-ratio:3/4){.kose{display:none}}
+@media (min-aspect-ratio:3/4){ /* geniş ekranda kağıt ortada: süsler kağıdın köşelerine oturur */
+  .kose{width:calc(40px*var(--k));height:calc(40px*var(--k))}
+  .kose.tl,.kose.tr{top:calc(50% - 346.67px*var(--k) + 16px*var(--k))}.kose.bl,.kose.br{bottom:calc(50% - 346.67px*var(--k) + 16px*var(--k))}
+  .kose.tl,.kose.bl{left:calc(50% - 195px*var(--k) + 16px*var(--k))}.kose.tr,.kose.br{right:calc(50% - 195px*var(--k) + 16px*var(--k))}}
 
 .card .sealm{width:74px;margin:0 auto 12px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}
 .card .k{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d);font-weight:600}
