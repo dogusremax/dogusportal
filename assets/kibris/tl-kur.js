@@ -10,8 +10,9 @@
   var NOT = ['<b class="tlk-w">Uyarı:</b> TL tutarlar yalnızca bilgi amaçlıdır ve kura göre anlık değişir. Fiyat, sözleşme ve ödemeler sterlin (£) üzerindendir. TL karşılıkları anlık piyasa kuruyla (GBP döviz satış) hesaplanır: <b>£1 = {k} TL</b> ({t} itibarıyla, dakikada bir güncellenir).',
              '<b class="tlk-w">Uyarı:</b> TL tutarlar yalnızca bilgi amaçlıdır ve kura göre değişir. Fiyat, sözleşme ve ödemeler sterlin (£) üzerindendir. TL karşılıkları TCMB GBP döviz satış kuruyla hesaplanır: <b>£1 = {k} TL</b> ({t}, 15:30).'];
   var css = document.createElement('style');
-  css.textContent = '[data-tlk]::after{content:attr(data-tlk);display:block;font:500 max(.68rem,.42em)/1.3 Arial,Helvetica,sans-serif;letter-spacing:0;text-transform:none;opacity:.72;margin-top:2px;white-space:nowrap;direction:ltr}' +
-    '.tlk-not{margin:10px 0 0;padding:8px 11px;border:1px solid rgba(201,150,60,.5);background:rgba(242,181,92,.09);border-radius:10px;font:400 .74rem/1.45 Arial,Helvetica,sans-serif;letter-spacing:0;text-align:left;text-transform:none}' +
+  css.textContent = '[data-tlk]{font-family:Arial,Helvetica,sans-serif!important;font-weight:700!important;letter-spacing:0!important;font-variant-numeric:tabular-nums}' +
+    '[data-tlk]::after{content:attr(data-tlk);display:block;font:700 max(.78rem,.46em)/1.3 Arial,Helvetica,sans-serif;letter-spacing:0;text-transform:none;opacity:.88;margin-top:2px;white-space:nowrap;direction:ltr}' +
+    '.tlk-not{margin:10px 0 0;padding:8px 11px;border:1px solid rgba(201,150,60,.5);background:rgba(242,181,92,.09);border-radius:10px;font:400 .82rem/1.5 Arial,Helvetica,sans-serif;letter-spacing:0;text-align:left;text-transform:none}' +
     '.tlk-not .tlk-w{color:#C9963C}@media print{.tlk-not{break-inside:avoid}}';
   document.head.appendChild(css);
 

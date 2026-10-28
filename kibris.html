@@ -4283,13 +4283,14 @@ gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["l
 </script>
 <style>
 /* canlı TL karşılığı: £ tutarın altında küçük, düz Arial */
-[data-tlk]::after{content:attr(data-tlk);display:block;font:500 max(.7rem,.42em)/1.3 Arial,Helvetica,sans-serif;letter-spacing:0;text-transform:none;color:#9AA6C8;-webkit-text-fill-color:#9AA6C8;margin-top:3px;white-space:nowrap;direction:ltr}
+[data-tlk],.ms-field[data-tlk] input,.ms-field[data-tlk] span{font-family:Arial,Helvetica,sans-serif!important;font-weight:700!important;letter-spacing:0!important;font-variant-numeric:tabular-nums}
+[data-tlk]::after{content:attr(data-tlk);display:block;font:700 max(.8rem,.46em)/1.3 Arial,Helvetica,sans-serif;letter-spacing:0;text-transform:none;color:#D5DDF2;-webkit-text-fill-color:#D5DDF2;margin-top:3px;white-space:nowrap;direction:ltr}
 .field label output[data-tlk]{text-align:end}
 .stage .amt[data-tlk]::after,.ms-it .v[data-tlk]::after{text-align:end}
 .ms-leg li b[data-tlk]{text-align:end}
 .kr-r b[data-tlk]{text-align:end}
-.ms-field[data-tlk]{flex-wrap:wrap}.ms-field[data-tlk]::after{flex-basis:100%;margin:-4px 0 2px;font-size:.8rem}
-.tl-not{margin:12px 0 0;font:400 .74rem/1.45 Arial,Helvetica,sans-serif;color:#9AA6C8;letter-spacing:0}
+.ms-field[data-tlk]{flex-wrap:wrap}.ms-field[data-tlk]::after{flex-basis:100%;margin:-4px 0 2px;font-size:.9rem}
+.tl-not{margin:12px 0 0;font:400 .84rem/1.5 Arial,Helvetica,sans-serif;color:#D5DDF2;letter-spacing:0}
 .tl-not b{color:var(--ink);font-weight:700}
 .tl-not{border:1px solid rgba(242,181,92,.35);background:rgba(242,181,92,.07);border-radius:10px;padding:9px 12px}
 .tl-not .tl-w{color:var(--gold)}
