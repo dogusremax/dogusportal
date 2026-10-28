@@ -2286,8 +2286,8 @@ for (const l in PARTNER) I18N[l].pt = PARTNER[l];
 <script>
 /* ================= AYARLAR ================= */
 const CONFIG = {
-  GAS_URL: "",                       // Apps Script web app /exec adresi — boşken önizleme modunda çalışır
-  WHATSAPP: "905324781331",
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec",   // dogus-whatsapp-service (yenifikirtepeburada.com formlarıyla aynı servis, action=talepBildir)
+  WHATSAPP: "902163151515",          // ofis hattı: WhatsApp asistanı bu hattı görür (Umut, 28 Eki)
   META_PIXEL_ID: ""                  // Meta Pixel ID girilince Lead olayı gönderilir
 };
 const LANGS = ["tr","en","ru","fa","de","pl"];
@@ -2785,9 +2785,10 @@ $("leadform").addEventListener("submit", async e=>{
   err.textContent="";
   const btn=$("f-send"); btn.disabled=true; btn.textContent=c.sending;
   const payload = {
+    action:"talepBildir", tur:"kibris", kaynak:"kibrisburda.com · Kuzey Kıbrıs talep formu", waIzin:"1",
     ad, tel, mail:contact.mail.trim(), dil:L,
     amac:optLabel("amac",ans.amac,"tr"), butce:optLabel("butce",ans.butce,"tr"), odeme:optLabel("odeme",ans.odeme,"tr"),
-    zaman:optLabel("zaman",ans.zaman,"tr"), tur:optLabel("tur",ans.tur,"tr"),
+    zaman:optLabel("zaman",ans.zaman,"tr"), tur_istek:optLabel("tur",ans.tur,"tr"),
     puan:score(), bolge:regionChosen,
     fiyat_sim: calcTouched? +$("price").value : "", sure_sn: Math.round((Date.now()-t0)/1000), scroll: maxScroll,
     ...SRC, sayfa: location.href.split("?")[0], zaman_damgasi: new Date().toISOString()
@@ -2869,7 +2870,7 @@ $("pform").addEventListener("submit", async e=>{
   const tel=normTel(v("pf-tel"));
   if(v("pf-name").length<3 || v("pf-firm").length<2 || !tel || !$("pf-kvkk").checked){ $("pf-err").textContent=f.err; return; }
   const btn=$("pf-send"); btn.disabled=true; btn.textContent=f.sending;
-  const payload={tip:pType, ad:v("pf-name"), firma:v("pf-firm"), sehir:v("pf-city"), katilimci:v("pf-size"), tarih:v("pf-when"), tel, mail:v("pf-mail"), not:v("pf-note"), dil:L, ...SRC, sayfa:location.href.split("?")[0], zaman_damgasi:new Date().toISOString()};
+  const payload={action:"talepBildir", tur:"kibris_"+pType, kaynak:"kibrisburda.com · İş birliği formu", waIzin:"1", tip:pType, ad:v("pf-name"), firma:v("pf-firm"), sehir:v("pf-city"), katilimci:v("pf-size"), tarih:v("pf-when"), tel, mail:v("pf-mail"), not:v("pf-note"), dil:L, ...SRC, sayfa:location.href.split("?")[0], zaman_damgasi:new Date().toISOString()};
   if(CONFIG.GAS_URL){ try{ await fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}); }catch(x){} }
   try{ window.fbq && fbq('track','Lead',{content_name:"Kibris-"+pType, dil:L}); }catch(x){}
   $("pform").innerHTML=`<div class="pm-ok"><div class="tick">✓</div><p>${f.ok}</p>${CONFIG.GAS_URL?"":`<div class="demo">${D().done.demo}</div>`}</div>`;
@@ -3464,7 +3465,7 @@ const root=document.documentElement, $$=id=>document.getElementById(id), L=()=>Y
 const RN=id=>{ try{ return D().regions[id]; }catch(e){ return {name:id}; } };
 const fill=(s,o)=>s.replace(/\{(\w+)\}/g,(_,k)=>o[k]);
 const pctf=n=>{ const l=root.lang, v=(+n).toLocaleString({tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL"}[l]||"en-GB"); return l==="tr"?"%"+v:(["ru","de","pl"].includes(l)?v+" %":v+"%"); };
-const wa=msg=>{ let n="905324781331"; try{ n=CONFIG.WHATSAPP||n; }catch(e){} return `https://wa.me/${n}?text=${encodeURIComponent(msg)}`; };
+const wa=msg=>{ let n="902163151515"; try{ n=CONFIG.WHATSAPP||n; }catch(e){} return `https://wa.me/${n}?text=${encodeURIComponent(msg)}`; };
 const wa0=()=>{ try{ return D().wa0; }catch(e){ return ""; } };
 const head=(attr,o)=>["e","h","l"].forEach(k=>document.querySelectorAll(`[${attr}="${k}"]`).forEach(el=>{ if(o[k]!=null) el.innerHTML=o[k]; }));
 const dots=n=>`<span class="cp-dots" aria-label="${n}/5">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
@@ -3752,7 +3753,7 @@ const num=(v,l)=>(+v).toLocaleString({tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL
 function ab(){
   const l=L(), t=AB[l], box=$$("ab-box"); if(!box) return;
   ["e","h","l"].forEach(k=>document.querySelectorAll(`[data-ab="${k}"]`).forEach(el=>el.innerHTML=t[k]));
-  let wa="https://wa.me/905324781331"; try{ wa+="?text="+encodeURIComponent(D().wa0); }catch(e){}
+  let wa="https://wa.me/"+CONFIG.WHATSAPP; try{ wa+="?text="+encodeURIComponent(D().wa0); }catch(e){}
   const o=t.of;
   box.innerHTML=`<article class="ab-of panel"><img src="assets/dogus-logo.png" alt="RE/MAX Doğuş" width="200" height="72" loading="lazy" decoding="async">
      <span class="vn-k">${o.k}</span><h3>${o.n}</h3><span class="ab-s">${o.s}</span>
