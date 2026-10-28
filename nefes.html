@@ -503,7 +503,7 @@ function iqRender(){
   if(!has){b1='Otomatik sayım kapalı';b2='Bluefy uygulamasında açınca IQOS kendisi sayar'}
   else if(iq.scp){cls='ok';b1='IQOS bağlı';const a=q.lastSeen?Math.round((Date.now()-q.lastSeen)/6e4):null;b2=a==null?'okunuyor…':(a<1?'az önce okundu':`son okuma ${a} dk önce`)}
   else if(iq.st&&iq.st.startsWith('bağlanıyor')){cls='warn';b1='Bağlanıyor…'}
-  else{cls='warn';b1=iq.dev||q.name?'IQOS bağlı değil':'IQOS\'a bağlan';b2=iq.dev||q.name?'aradakiler bağlanınca sayaçtan eklenir':'otomatik sayım için bir kez bağla';b3=iq.dev||q.name?'Yeniden bağlan ›':'Bağlan ›'}
+  else{cls='warn';b1=iq.dev||q.name?'IQOS bağlı değil':'IQOS\'a bağlan';b2=iq.err?('Hata: '+iq.err):(iq.dev||q.name?'aradakiler bağlanınca sayaçtan eklenir':'otomatik sayım için bir kez bağla');b3=iq.dev||q.name?'Yeniden bağlan ›':'Bağlan ›'}
   document.querySelectorAll('.iqBadge').forEach(e=>{e.className='conn iqBadge '+cls;e.querySelector('.iqB1').textContent=b1;e.querySelector('.iqB2').textContent=b2;e.querySelector('.iqB3').textContent=b3});
   document.querySelectorAll('.iqBtn').forEach(e=>{e.classList.toggle('hide',!has);e.textContent=iq.scp?'🔄 Şimdi oku':(iq.dev?'🔁 Yeniden bağlan':'🔗 IQOS\'a bağlan')});
   document.querySelectorAll('.iqDbg').forEach(e=>e.textContent=(q.dbg||[]).slice().reverse().join('\n'));
@@ -512,7 +512,7 @@ function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeT
 function iqSt(t){iq.st=t;iqRender()}
 async function iqConnect(auto,all){
   if(iq.scp&&!auto){return iqPoll()}
-  if(iq.dev&&!auto&&!all){clearTimeout(iq.rt);try{await iqLink(iq.dev);return}catch(e){dbg('yeniden bağlanamadı: '+e.message)}}
+  if(!auto){clearTimeout(iq.rt);if(iq.dev){try{iq.dev.gatt.disconnect()}catch(e){}}iq.dev=null;iq.scp=null;iq.linking=0}
   if(!navigator.bluetooth){if(!auto)toast('Bu tarayıcı Bluetooth desteklemiyor — Bluefy ile aç');return}
   try{
     let dev=null;
@@ -521,12 +521,13 @@ async function iqConnect(auto,all){
       :await navigator.bluetooth.requestDevice({filters:[{namePrefix:'IQOS'},{namePrefix:'iqos'},{namePrefix:'Iqos'},{services:[IQ.core]}],optionalServices:[IQ.core]});
     dbg('seçilen cihaz: '+(dev.name||'(isimsiz)'));
     await iqLink(dev);
-  }catch(e){iqSt('bağlı değil');dbg('bağlantı hatası: '+e.message);if(!auto)toast('Bağlanamadı: '+e.message)}
+  }catch(e){iq.err=e.message;iqSt('bağlı değil');dbg('bağlantı hatası: '+e.message);if(!auto)toast('Bağlanamadı: '+e.message)}
 }
 async function iqLink(dev){
-  iq.dev=dev;iqSt('bağlanıyor…');
+  iq.dev=dev;iq.err=null;iqSt('bağlanıyor…');
   if(!dev._nf){dev.addEventListener('gattserverdisconnected',iqLost);dev._nf=1}
-  const srv=await dev.gatt.connect(),svc=await srv.getPrimaryService(IQ.core);
+  const srv=await Promise.race([dev.gatt.connect(),new Promise((_,r)=>setTimeout(()=>r(new Error('12 sn içinde bağlanamadı — IQOS uyanık ve yakında mı?')),12e3))]);
+  const svc=await srv.getPrimaryService(IQ.core);
   iq.scp=await svc.getCharacteristic(IQ.scp);await iq.scp.startNotifications();
   if(!iq.scp._nf){iq.scp.addEventListener('characteristicvaluechanged',iqFrame);iq.scp._nf=1}
   try{const b=await svc.getCharacteristic(IQ.bat);
@@ -591,8 +592,8 @@ if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');rend
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(iqRender,30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev?(clearTimeout(iq.rt),iqRetry(0)):iqConnect(true))}});
-iqRender();if(navigator.bluetooth&&S.iq&&S.iq.name)iqConnect(true);
+document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
+iqRender();
 </script>
 </body>
 </html>
