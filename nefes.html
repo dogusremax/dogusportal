@@ -532,11 +532,11 @@ async function iqLink(dev){
   iq.scp=await svc.getCharacteristic(IQ.scp);await iq.scp.startNotifications();
   if(!iq.scp._nf){iq.scp.addEventListener('characteristicvaluechanged',iqFrame);iq.scp._nf=1}
   try{const b=await svc.getCharacteristic(IQ.bat);
-    if(b.properties.notify||b.properties.indicate){await b.startNotifications();b.addEventListener('characteristicvaluechanged',e=>{dbg('pil ← '+hex(new Uint8Array(e.target.value.buffer)));setTimeout(iqPoll,1500)});dbg('pil sinyali dinleniyor')}
+    if(b.properties.notify||b.properties.indicate){await b.startNotifications();b.addEventListener('characteristicvaluechanged',e=>{dbg('pil ← '+hex(new Uint8Array(e.target.value.buffer,e.target.value.byteOffset||0,e.target.value.byteLength)));setTimeout(iqPoll,1500)});dbg('pil sinyali dinleniyor')}
     else dbg('pil sinyali yok');
   }catch(e){dbg('pil: '+e.message)}
   iqS().name=dev.name||'IQOS';iqSt('bağlı');dbg('bağlandı: '+(dev.name||'?'));
-  clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);iqPoll();
+  clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);iqPoll();setTimeout(iqPoll,3000);
 }
 function iqLost(){iq.scp=null;clearInterval(iq.timer);dbg('bağlantı koptu');iqRetry(0)}
 function iqRetry(n){
@@ -548,12 +548,16 @@ function iqRetry(n){
 }
 async function iqPoll(){
   if(!iq.scp)return;
+  clearTimeout(iq.wd);iq.wd=setTimeout(()=>{iq.miss=(iq.miss||0)+1;dbg('cevap gelmedi ('+iq.miss+')');
+    if(iq.miss>=3&&iq.dev){iq.miss=0;dbg('bağlantı yenileniyor');try{iq.dev.gatt.disconnect()}catch(e){};iq.scp=null;iqLink(iq.dev).catch(e=>{dbg('yenilenemedi: '+e.message);iqRetry(0)})}
+    else iqPoll()},20e3);
   if(document.hidden){const q=iqS();q.bgReads=(q.bgReads||0)+1;q.bgLast=Date.now();save()}
   try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
   catch(e){dbg('okuma hatası: '+e.message)}
 }
 function iqFrame(e){
-  const b=new Uint8Array(e.target.value.buffer);
+  clearTimeout(iq.wd);iq.miss=0;
+  const v=e.target.value,b=new Uint8Array(v.buffer,v.byteOffset||0,v.byteLength);
   if(b.length>=6&&b[2]===0x90&&b[3]===0x22&&b[4]===1&&b[5]===1){
     const n=Math.floor((b[3]-2)/8),tags={};let cnt=null;
     for(let i=0;i<n&&6+i*8+8<=b.length;i++){const o=6+i*8,val=b[o+4]|(b[o+5]<<8),tag=b[o+7];tags[tag.toString(16)]=val;if(tag===0x8E)cnt=val}
