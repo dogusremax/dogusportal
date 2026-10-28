@@ -4262,24 +4262,27 @@ gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["l
 .ms-field[data-tlk]{flex-wrap:wrap}.ms-field[data-tlk]::after{flex-basis:100%;margin:-4px 0 2px;font-size:.8rem}
 .tl-not{margin:12px 0 0;font:400 .74rem/1.45 Arial,Helvetica,sans-serif;color:#9AA6C8;letter-spacing:0}
 .tl-not b{color:var(--ink);font-weight:700}
+.tl-not{border:1px solid rgba(242,181,92,.35);background:rgba(242,181,92,.07);border-radius:10px;padding:9px 12px}
+.tl-not .tl-w{color:var(--gold)}
 </style>
 <script>
 /* ================= CANLI TL KARŞILIĞI =================
-   £ fiyatların altına TCMB GBP döviz satış kuruyla TL karşılığı yazılır. Kur assets/kibris/kur.json'dan (Actions, TCMB) açılışta
-   önbelleksiz çekilir; alınamazsa ya da 10 günden eskiyse TL satırları hiç görünmez. Tutarlar hesaplayıcılar değiştikçe tazelenir. */
+   £ fiyatların altına GBP döviz satış kuruyla TL karşılığı yazılır. Kur piyasadan (finans.truncgil.com, dakikalık) çekilir ve sayfa
+   açıkken her dakika tazelenir; o kaynak yanıt vermezse TCMB kuru (assets/kibris/kur.json, Actions) kullanılır. İkisi de yoksa
+   ya da kur 10 günden eskiyse TL satırları hiç görünmez. Tutarlar hesaplayıcılar değiştikçe tazelenir. */
 (function(){
 const root=document.documentElement;
 const SEL="#o-price,#o-rent,#r-down,#r-s1,#r-s2,#r-s3,.gt-in label output,.gt-k b,.kr-r b,.gv-c>span,#ms-total,#ms-leg b,#ms-phases .v,.ms-field";
 const NOTE_AFTER=["#hesap .calc","#gt-box","#kr-box","#masraf .ms","#gv-box"];
-const NT={tr:"TL karşılıkları TCMB GBP döviz satış kuruyla hesaplanır: <b>£1 = {k} TL</b> ({t}, 15:30). Ödemeler sözleşmedeki para birimiyle yapılır.",
- en:"Lira amounts use the Central Bank of Türkiye GBP selling rate: <b>£1 = {k} TL</b> ({t}, 15:30). Payments are made in the contract currency.",
- ru:"Суммы в лирах по курсу продажи GBP ЦБ Турции: <b>£1 = {k} TL</b> ({t}, 15:30). Оплата производится в валюте договора.",
- fa:"معادل لیر با نرخ فروش پوند بانک مرکزی ترکیه: <b>£1 = {k} TL</b> ({t}، 15:30). پرداخت‌ها به ارز قرارداد انجام می‌شود.",
- de:"Lira-Beträge zum GBP-Verkaufskurs der türkischen Zentralbank: <b>£1 = {k} TL</b> ({t}, 15:30). Gezahlt wird in der Vertragswährung.",
- pl:"Kwoty w lirach według kursu sprzedaży GBP Banku Centralnego Turcji: <b>£1 = {k} TL</b> ({t}, 15:30). Płatności w walucie umowy."};
+const NT={tr:["<b class=\"tl-w\">Uyarı:</b> TL tutarlar yalnızca bilgi amaçlıdır ve kura göre anlık değişir. Fiyat, sözleşme ve ödemeler sterlin (£) üzerindendir. TL karşılıkları anlık piyasa kuruyla (GBP döviz satış) hesaplanır: <b>£1 = {k} TL</b> ({t} itibarıyla, dakikada bir güncellenir).","<b class=\"tl-w\">Uyarı:</b> TL tutarlar yalnızca bilgi amaçlıdır ve kura göre anlık değişir. Fiyat, sözleşme ve ödemeler sterlin (£) üzerindendir. TL karşılıkları TCMB GBP döviz satış kuruyla hesaplanır: <b>£1 = {k} TL</b> ({t}, 15:30)."],
+ en:["<b class=\"tl-w\">Note:</b> Lira amounts are for information only and change with the exchange rate. Prices, contracts and payments are in sterling (£). Lira amounts use the live market GBP selling rate: <b>£1 = {k} TL</b> (as of {t}, updated every minute).","<b class=\"tl-w\">Note:</b> Lira amounts are for information only and change with the exchange rate. Prices, contracts and payments are in sterling (£). Lira amounts use the Central Bank of Türkiye GBP selling rate: <b>£1 = {k} TL</b> ({t}, 15:30)."],
+ ru:["<b class=\"tl-w\">Внимание:</b> суммы в лирах носят справочный характер и меняются вместе с курсом. Цена, договор и платежи — в фунтах стерлингов (£). Суммы в лирах по текущему рыночному курсу продажи GBP: <b>£1 = {k} TL</b> (на {t}, обновляется каждую минуту).","<b class=\"tl-w\">Внимание:</b> суммы в лирах носят справочный характер и меняются вместе с курсом. Цена, договор и платежи — в фунтах стерлингов (£). Суммы в лирах по курсу продажи GBP ЦБ Турции: <b>£1 = {k} TL</b> ({t}, 15:30)."],
+ fa:["<b class=\"tl-w\">توجه:</b> مبالغ لیر فقط برای اطلاع است و با نرخ ارز تغییر می‌کند. قیمت، قرارداد و پرداخت‌ها به پوند (£) است. معادل لیر با نرخ لحظه‌ای فروش پوند در بازار: <b>£1 = {k} TL</b> ({t}، هر دقیقه به‌روز می‌شود).","<b class=\"tl-w\">توجه:</b> مبالغ لیر فقط برای اطلاع است و با نرخ ارز تغییر می‌کند. قیمت، قرارداد و پرداخت‌ها به پوند (£) است. معادل لیر با نرخ فروش پوند بانک مرکزی ترکیه: <b>£1 = {k} TL</b> ({t}، 15:30)."],
+ de:["<b class=\"tl-w\">Hinweis:</b> Lira-Beträge dienen nur zur Information und ändern sich mit dem Kurs. Preis, Vertrag und Zahlungen lauten auf Pfund Sterling (£). Lira-Beträge zum aktuellen GBP-Verkaufskurs am Markt: <b>£1 = {k} TL</b> (Stand {t}, minütlich aktualisiert).","<b class=\"tl-w\">Hinweis:</b> Lira-Beträge dienen nur zur Information und ändern sich mit dem Kurs. Preis, Vertrag und Zahlungen lauten auf Pfund Sterling (£). Lira-Beträge zum GBP-Verkaufskurs der türkischen Zentralbank: <b>£1 = {k} TL</b> ({t}, 15:30)."],
+ pl:["<b class=\"tl-w\">Uwaga:</b> kwoty w lirach mają charakter wyłącznie informacyjny i zmieniają się wraz z kursem. Cena, umowa i płatności są w funtach (£). Kwoty w lirach według bieżącego rynkowego kursu sprzedaży GBP: <b>£1 = {k} TL</b> (stan na {t}, aktualizacja co minutę).","<b class=\"tl-w\">Uwaga:</b> kwoty w lirach mają charakter wyłącznie informacyjny i zmieniają się wraz z kursem. Cena, umowa i płatności są w funtach (£). Kwoty w lirach według kursu sprzedaży GBP Banku Centralnego Turcji: <b>£1 = {k} TL</b> ({t}, 15:30)."]};
 const LOC={tr:"tr-TR",ru:"ru-RU",de:"de-DE",pl:"pl-PL"};
 const loc=()=>LOC[root.lang]||"tr-TR";
-let K=0, T="", raf=0;
+let K=0, T="", P=0, raf=0, obs=false;   // P=1: piyasa kuru, 0: TCMB
 const tl=n=>Math.round(n*K).toLocaleString(loc());
 const num=s=>+String(s).replace(/\D/g,"");
 function tag(el){
@@ -4290,22 +4293,37 @@ function tag(el){
   if(v){ if(el.dataset.tlk!==v) el.dataset.tlk=v; } else if(el.hasAttribute("data-tlk")) el.removeAttribute("data-tlk");
 }
 function note(){
-  const t=(NT[root.lang]||NT.en).replace("{k}",K.toLocaleString(loc(),{minimumFractionDigits:4,maximumFractionDigits:4})).replace("{t}",T);
+  const t=(NT[root.lang]||NT.en)[P?0:1].replace("{k}",K.toLocaleString(loc(),{minimumFractionDigits:4,maximumFractionDigits:4})).replace("{t}",T);
   NOTE_AFTER.forEach(s=>{ const box=document.querySelector(s); if(!box) return;
     let p=box.nextElementSibling; if(!p||!p.classList.contains("tl-not")){ p=document.createElement("p"); p.className="tl-not"; box.after(p); }
     if(p.innerHTML!==t) p.innerHTML=t; });
 }
 function run(){ raf=0; if(!K) return; document.querySelectorAll(SEL).forEach(tag); note(); }
 const later=()=>{ if(!raf) raf=requestAnimationFrame(run); };
-fetch("assets/kibris/kur.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(k=>{
-  if(!k||!(k.kur>0)||!k.tarih) return;
-  if((Date.now()-new Date(k.tarih+"T12:00:00Z"))/864e5>10) return;      // kur çok eskiyse gösterme
-  K=+k.kur; const [y,a,g]=k.tarih.split("-"); T=g+"."+a+"."+y;
-  run();
-  new MutationObserver(later).observe(document.body,{childList:true,subtree:true,characterData:true});
-  new MutationObserver(later).observe(root,{attributes:true,attributeFilter:["lang"]});
-  document.addEventListener("input",later,true);
-}).catch(()=>{});
+const old=d=>(Date.now()-d)/864e5>10;                                   // kur çok eskiyse gösterme
+function set(k,t,p){
+  K=k; T=t; P=p; run();
+  if(!obs){ obs=true;
+    new MutationObserver(later).observe(document.body,{childList:true,subtree:true,characterData:true});
+    new MutationObserver(later).observe(root,{attributes:true,attributeFilter:["lang"]});
+    document.addEventListener("input",later,true); }
+}
+function tcmb(){ if(P) return;
+  fetch("assets/kibris/kur.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(k=>{
+    if(P||!k||!(k.kur>0)||!k.tarih||old(new Date(k.tarih+"T12:00:00Z"))) return;
+    const [y,a,g]=k.tarih.split("-"); set(+k.kur,g+"."+a+"."+y,0); }).catch(()=>{});
+}
+function piyasa(){
+  // Update_Date İstanbul saatiyle "2026-10-28 05:45:04"
+  return fetch("https://finans.truncgil.com/v4/today.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    const k=j&&j.GBP&&+j.GBP.Selling, m=j&&/^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.exec(j.Update_Date||"");
+    if(!(k>20&&k<1000)||!m||old(Date.UTC(+m[1],m[2]-1,+m[3],m[4]-3,+m[5]))) throw 0;
+    set(k,m[3]+"."+m[2]+"."+m[1]+" "+m[4]+":"+m[5],1);
+  });
+}
+piyasa().catch(()=>{ tcmb(); setTimeout(()=>piyasa().catch(()=>{}),5000); });   // piyasa kaynağı geç kalırsa TCMB, sonra yeniden dene
+setInterval(()=>{ if(!document.hidden) piyasa().catch(()=>{ if(!K) tcmb(); }); },60000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&P) piyasa().catch(()=>{}); });
 })();
 </script>
 </body>
