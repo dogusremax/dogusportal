@@ -181,6 +181,14 @@ body.scrolled .scroll-hint{opacity:0}
 .card::after{content:"";position:absolute;inset:17px;border:.5px solid rgba(168,126,58,.35);pointer-events:none;z-index:1;transition:opacity 1s ease .45s}
 .card.wait::before,.card.wait::after,.card.wait .scroll-hint{opacity:0}
 @media (min-aspect-ratio:3/4){.card::before,.card::after{display:none}}
+/* köşe süslemesi: ince altın, çerçeveyle birlikte yavaşça belirir */
+.kose{position:absolute;width:40px;height:40px;z-index:1;pointer-events:none;color:#A87E3A;opacity:.85;transition:opacity 1.2s ease .6s}
+.kose svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round}
+.kose.tl{top:20px;left:20px}.kose.tr{top:20px;right:20px;transform:scaleX(-1)}
+.kose.bl{bottom:20px;left:20px;transform:scaleY(-1)}.kose.br{bottom:20px;right:20px;transform:scale(-1,-1)}
+.card.wait .kose,.card.tex .kose{opacity:0}
+@media (min-aspect-ratio:3/4){.kose{display:none}}
+
 .card .sealm{width:74px;margin:0 auto 12px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}
 .card .k{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d);font-weight:600}
 .card .to{margin-top:12px;font-size:13px;color:#4a4f72;font-weight:300}
@@ -307,6 +315,7 @@ footer p{margin-top:16px;font-size:12px}
 </div>
 
   <section class="card wait" lang="tr">
+   <span class="kose tl" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 3Q19 3 25 8Q29.5 12 26 15.5Q22.5 18 20.5 14.5Q19.5 12.2 21.8 11.6"/><path d="M3 3Q3 19 8 25Q12 29.5 15.5 26Q18 22.5 14.5 20.5Q12.2 19.5 11.6 21.8"/><path d="M3 3Q12 5 14 14Q5 12 3 3Z" fill="currentColor" fill-opacity=".35"/><circle cx="18.5" cy="18.5" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="kose tr" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 3Q19 3 25 8Q29.5 12 26 15.5Q22.5 18 20.5 14.5Q19.5 12.2 21.8 11.6"/><path d="M3 3Q3 19 8 25Q12 29.5 15.5 26Q18 22.5 14.5 20.5Q12.2 19.5 11.6 21.8"/><path d="M3 3Q12 5 14 14Q5 12 3 3Z" fill="currentColor" fill-opacity=".35"/><circle cx="18.5" cy="18.5" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="kose bl" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 3Q19 3 25 8Q29.5 12 26 15.5Q22.5 18 20.5 14.5Q19.5 12.2 21.8 11.6"/><path d="M3 3Q3 19 8 25Q12 29.5 15.5 26Q18 22.5 14.5 20.5Q12.2 19.5 11.6 21.8"/><path d="M3 3Q12 5 14 14Q5 12 3 3Z" fill="currentColor" fill-opacity=".35"/><circle cx="18.5" cy="18.5" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="kose br" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 3Q19 3 25 8Q29.5 12 26 15.5Q22.5 18 20.5 14.5Q19.5 12.2 21.8 11.6"/><path d="M3 3Q3 19 8 25Q12 29.5 15.5 26Q18 22.5 14.5 20.5Q12.2 19.5 11.6 21.8"/><path d="M3 3Q12 5 14 14Q5 12 3 3Z" fill="currentColor" fill-opacity=".35"/><circle cx="18.5" cy="18.5" r="1.1" fill="currentColor" stroke="none"/></svg></span>
    <div class="sheet"><div class="in">
     <img class="sealm" src="seal-sm.png" alt="RE/MAX Doğuş mührü">
     <div class="k">RE/MAX Doğuş × Döveç Group</div>
