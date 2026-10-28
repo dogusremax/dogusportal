@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nefes">
+<meta name="theme-color" content="#0f1714">
+<title>Nefes · Sigara Bırakma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1714;--card:#17221e;--card2:#1e2c27;--line:#2a3a34;--tx:#eef4f1;--mut:#93a8a0;--acc:#5fd3a1;--acc2:#2f9e74;--warn:#f2b45a;--bad:#ef7d6b}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;min-height:100vh;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 90px)}
+h1,h2,.big{font-family:'Bricolage Grotesque',sans-serif}
+h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
+h2{font-size:17px;font-weight:600;margin-bottom:10px}
+.wrap{max-width:480px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.pill{font-size:12px;color:var(--mut);background:var(--card);border:1px solid var(--line);padding:5px 10px;border-radius:99px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
+.ring{position:relative;width:230px;height:230px;margin:6px auto 10px}
+.ring svg{transform:rotate(-90deg)}
+.ring .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring .big{font-size:46px;font-weight:800;letter-spacing:-1px}
+.ring small{color:var(--mut);font-size:13px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.stat div{background:var(--card2);border-radius:14px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-family:'Bricolage Grotesque';font-size:21px}
+.stat span{font-size:11.5px;color:var(--mut)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+button{font:inherit;border:0;border-radius:14px;padding:14px;font-weight:700;cursor:pointer;color:var(--tx);background:var(--card2)}
+button.pri{background:var(--acc);color:#06281b}
+button.ghost{background:transparent;border:1px solid var(--line)}
+button.full{width:100%}
+button:active{transform:scale(.98)}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 5px}
+input,select{width:100%;font:inherit;color:var(--tx);background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.note{font-size:13px;color:var(--mut)}
+.note b{color:var(--tx)}
+.slots{display:flex;flex-wrap:wrap;gap:6px}
+.slot{font-size:12.5px;padding:5px 9px;border-radius:9px;background:var(--card2);color:var(--mut)}
+.slot.past{opacity:.4;text-decoration:line-through}
+.slot.next{background:var(--acc);color:#06281b;font-weight:700}
+.bars{display:flex;align-items:flex-end;gap:3px;height:90px;margin-top:8px}
+.bars i{flex:1;background:var(--acc2);border-radius:3px 3px 0 0;min-height:2px}
+.bars i.today{background:var(--acc)}
+.bars i.done{background:#3a5249}
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(15,23,20,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0 calc(env(safe-area-inset-bottom) + 8px)}
+.nav button{background:none;padding:6px 10px;font-size:12px;color:var(--mut);font-weight:600}
+.nav button.on{color:var(--acc)}
+.nav button span{display:block;font-size:20px}
+.hide{display:none!important}
+.toast{position:fixed;left:50%;top:20px;transform:translateX(-50%);background:var(--acc);color:#06281b;padding:10px 16px;border-radius:12px;font-weight:700;z-index:9;max-width:90%;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;z-index:8}
+.sheet{background:var(--card);width:100%;max-width:480px;margin:0 auto;border-radius:24px 24px 0 0;padding:22px 18px calc(env(safe-area-inset-bottom) + 22px)}
+.breath{width:140px;height:140px;border-radius:50%;background:radial-gradient(var(--acc),var(--acc2));margin:18px auto;transition:transform 4s ease-in-out;transform:scale(.6)}
+.tip{background:var(--card2);border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px}
+.prog{height:8px;background:var(--card2);border-radius:9px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--acc)}
+a{color:var(--acc)}
+.log{font-size:13px;display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Nefes</h1><span class="pill" id="dayPill">Kurulum</span></div>
+
+  <!-- ÖLÇÜM -->
+  <section id="vMeasure" class="hide">
+    <div class="card" style="text-align:center">
+      <p class="note">Ölçüm aşaması — hiçbir şeyi değiştirme, normal iç. Her sigarada sadece <b>+</b>'ya bas.</p>
+      <button id="plusBtn" onclick="mPlus()" style="width:180px;height:180px;border-radius:50%;margin:18px auto 8px;display:block;font-size:64px;background:var(--acc);color:#06281b;font-family:'Bricolage Grotesque'">+</button>
+      <div class="big" style="font-size:38px" id="mToday">0</div>
+      <p class="note">bugün · son sigara <b id="mLast">—</b></p>
+      <button class="ghost" style="margin-top:10px;padding:8px 14px" onclick="mUndo()">↩︎ Son kaydı geri al</button>
+    </div>
+    <div class="card">
+      <div class="stat">
+        <div><b id="mDays">0</b><span>tam gün</span></div>
+        <div><b id="mAvg">—</b><span>günlük ort.</span></div>
+        <div><b id="mInt">—</b><span>dk ort. aralık</span></div>
+      </div>
+      <div class="stat">
+        <div><b id="mFirst">—</b><span>ilk sigara</span></div>
+        <div><b id="mLastT">—</b><span>son sigara</span></div>
+        <div><b id="mPeak">—</b><span>en yoğun saat</span></div>
+      </div>
+    </div>
+    <div class="card"><h2>Saatlere göre (günlük ortalama)</h2><div class="bars" id="mBars"></div>
+      <div style="display:flex;justify-content:space-between" class="note"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>
+    <div class="card"><h2>Ölçüm tamam mı?</h2>
+      <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
+      <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
+  </section>
+
+  <!-- KURULUM -->
+  <section id="vSetup" class="hide">
+    <div class="card">
+      <h2>Planını kuralım</h2>
+      <p class="note">Yöntem: <b>programlı azaltma</b>. Sadece bildirim gelince içersin; sigaralar arası süre her gün biraz uzar, son gün bırakırsın.</p>
+      <label>Şu an günde kaç sigara?</label><input id="sBase" type="number" inputmode="numeric" value="40">
+      <div class="row">
+        <div><label>Uyanış</label><input id="sWake" type="time" value="07:30"></div>
+        <div><label>Yatış</label><input id="sSleep" type="time" value="00:00"></div>
+      </div>
+      <div class="row">
+        <div><label>Program süresi</label>
+          <select id="sWeeks"><option value="4">4 hafta</option><option value="6">6 hafta</option><option value="8" selected>8 hafta</option><option value="10">10 hafta</option><option value="12">12 hafta</option></select></div>
+        <div><label>Başlangıç</label><input id="sStart" type="date"></div>
+      </div>
+      <label>Paket fiyatı (₺)</label><input id="sPrice" type="number" inputmode="numeric" value="110">
+      <div id="preview" class="card" style="margin:14px 0 0;background:var(--card2)"></div>
+    </div>
+    <div class="card">
+      <h2>Bildirim kanalı</h2>
+      <p class="note">iPhone'da uygulama kapalıyken bildirim için ücretsiz <b>ntfy</b> uygulaması kullanılıyor. App Store'dan "ntfy" indir → <b>+</b> → aşağıdaki konu adını yaz → abone ol.</p>
+      <label>Konu adı (sana özel, gizli)</label>
+      <div class="row" style="grid-template-columns:1fr auto"><input id="sTopic" readonly><button class="ghost" onclick="copyTopic()">Kopyala</button></div>
+      <button class="ghost full" style="margin-top:10px" onclick="testNotif()">🔔 Deneme bildirimi gönder</button>
+    </div>
+    <button class="pri full" onclick="saveSetup()">Planı başlat</button>
+    <button class="ghost full" style="margin-top:10px" id="backMeasure" onclick="show('vMeasure');mRender()">← Ölçüme dön</button>
+  </section>
+
+  <!-- BUGÜN -->
+  <section id="vToday" class="hide">
+    <div class="card">
+      <div class="ring">
+        <svg width="230" height="230"><circle cx="115" cy="115" r="100" stroke="#24342e" stroke-width="14" fill="none"/><circle id="arc" cx="115" cy="115" r="100" stroke="#5fd3a1" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="0"/></svg>
+        <div class="in"><small id="ringLbl">Sonraki sigara</small><div class="big" id="cd">--:--</div><small id="nextAt"></small></div>
+      </div>
+      <p class="note" style="text-align:center" id="rule">Bildirim gelince <b>5 dakika</b> içinde iç. Kaçırdıysan bir sonrakini bekle.</p>
+      <div class="btns">
+        <button class="pri" onclick="logSmoke()">🚬 İçtim</button>
+        <button onclick="openCraving()">😮‍💨 Canım çekti</button>
+      </div>
+      <button class="ghost full" style="margin-top:10px" onclick="logSkip()">💪 Bu sigarayı atladım</button>
+    </div>
+    <div class="card">
+      <div class="stat">
+        <div><b id="stPlan">0</b><span>bugünkü hak</span></div>
+        <div><b id="stDone">0</b><span>içilen</span></div>
+        <div><b id="stInt">0</b><span>dk aralık</span></div>
+      </div>
+      <div class="stat">
+        <div><b id="stAvoid">0</b><span>içilmeyen</span></div>
+        <div><b id="stMoney">0₺</b><span>cepte kalan</span></div>
+        <div><b id="stLeft">0</b><span>gün kaldı</span></div>
+      </div>
+    </div>
+    <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
+    <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
+      <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
+  </section>
+
+  <!-- PLAN -->
+  <section id="vPlan" class="hide">
+    <div class="card"><h2>Program</h2><p class="note" id="planSum"></p><div class="bars" id="bars"></div>
+      <div class="prog"><i id="progBar"></i></div><p class="note" id="progTxt" style="margin-top:6px"></p></div>
+    <div class="card"><h2>Zor bir gün mü?</h2>
+      <p class="note">Plana yetişemiyorsan bırakma; tempoyu 1 gün yavaşlat. Yarından itibaren dünkü seviyede kalırsın, program 1 gün uzar.</p>
+      <button class="ghost full" style="margin-top:10px" onclick="hold()">⏸ 1 gün yavaşlat</button></div>
+    <div class="card"><h2>Profesyonel destek</h2>
+      <p class="note">Günde 2 paket yüksek bağımlılık demek. Araştırmada en iyi sonuç, programlı azaltma <b>+ bırakmadan önce başlanan nikotin bandı</b> ile alındı. Doktor uygun görürse ilaç ve bant/sakız sigara bırakma polikliniklerinde <b>ücretsiz</b>.</p>
+      <a href="tel:171"><button class="pri full" style="margin-top:12px">📞 ALO 171'i ara</button></a></div>
+    <div class="card"><h2>Son kayıtlar</h2><div id="logList"></div></div>
+  </section>
+
+  <!-- AYARLAR -->
+  <section id="vSet" class="hide">
+    <div class="card"><h2>Ayarlar</h2>
+      <p class="note">ntfy konu adı: <b id="topicShow"></b></p>
+      <button class="ghost full" style="margin-top:10px" onclick="copyTopic()">Konu adını kopyala</button>
+      <button class="ghost full" style="margin-top:10px" onclick="testNotif()">🔔 Deneme bildirimi</button>
+      <button class="ghost full" style="margin-top:10px" onclick="editSetup()">✏️ Planı düzenle</button>
+      <button class="ghost full" style="margin-top:10px;color:var(--bad)" onclick="resetAll()">Her şeyi sıfırla</button>
+    </div>
+    <p class="note">Not: ntfy'ye en fazla 3 gün ileriye bildirim kurulabiliyor. Uygulama her açıldığında önümüzdeki ~36 saati kurar; ufuk bitmeden sana "uygulamayı bir kez aç" hatırlatması gelir.</p>
+  </section>
+</div>
+
+<nav class="nav hide" id="nav">
+  <button data-v="vToday" class="on"><span>⏱</span>Bugün</button>
+  <button data-v="vPlan"><span>📈</span>Plan</button>
+  <button data-v="vSet"><span>⚙️</span>Ayarlar</button>
+</nav>
+
+<div class="modal hide" id="crave" onclick="if(event.target===this)closeCraving()">
+  <div class="sheet">
+    <h2>Dalga geçer — ortalama 3-5 dakika</h2>
+    <div class="breath" id="breath"></div>
+    <p class="note" style="text-align:center" id="breathTxt">Nefes al…</p>
+    <div class="tip" id="tip1"></div><div class="tip" id="tip2"></div>
+    <button class="pri full" style="margin-top:14px" onclick="closeCraving()">Geçti, devam</button>
+  </div>
+</div>
+
+<script>
+const K='nefes_v1';
+let S=load();
+function load(){try{return JSON.parse(localStorage.getItem(K))||{}}catch(e){return{}}}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const toMin=t=>{const[a,b]=t.split(':').map(Number);return a*60+b};
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return dstr(d)};
+const diffDays=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+
+/* ---- PLAN MOTORU ---- */
+function totalDays(c){return c.weeks*7}
+function countForEff(e,c){
+  const T=totalDays(c), base=c.base, fin=Math.min(3,base);
+  if(e>=T) return 0;
+  if(e<3) return base;                       // 3 gün ritim: aynı sayı, sabit aralık
+  const r=Math.pow(fin/base,1/(T-1-2));
+  return Math.max(1,Math.round(base*Math.pow(r,e-2)));
+}
+function countFor(date,c=S.setup){
+  const d=diffDays(c.start,date); if(d<0) return null;
+  if(S.locked&&S.locked[date]!=null) return S.locked[date];
+  return countForEff(Math.max(0,d-(S.hold||0)),c);
+}
+function windowMin(c){let w=toMin(c.wake),s=toMin(c.sleep);if(s<=w)s+=1440;return[w,s]}
+function slotsFor(date,c=S.setup){
+  const n=countFor(date,c); if(n==null) return [];
+  const[w,s]=windowMin(c), base=new Date(date+'T00:00:00').getTime();
+  if(n===0) return [{ts:base+(w+60)*6e4,kind:'free'}];
+  const iv=(s-w)/n, out=[];
+  for(let i=0;i<n;i++) out.push({ts:base+Math.round((w+iv*(i+.5)))*6e4,kind:'smoke',i:i+1,n});
+  return out;
+}
+function planDate(now=new Date()){
+  const m=now.getHours()*60+now.getMinutes(), w=toMin(S.setup.wake), s=toMin(S.setup.sleep);
+  return (s<=w && m<s+60) || m<Math.min(w,240) ? dstr(new Date(now-864e5)) : dstr(now);
+}
+function endDate(){return addDays(S.setup.start,totalDays(S.setup)+(S.hold||0))}
+
+/* ---- BİLDİRİM (ntfy) ---- */
+const MOT=['Sadece şimdi. Sonraki için beklemek senin kararın.','Her uzayan aralık, beynine "bekleyebilirim" diyor.','Pencere 5 dakika. Sonrası yok.','İstersen bunu atla — hanene yazılır.','Bugün dünden az. Bu yeterli.'];
+async function ntfy(ts,title,message,tags){
+  const body={topic:S.setup.topic,title,message,tags:[tags||'smoking'],priority:4,click:location.href.split('#')[0]};
+  if(ts) body.delay=String(Math.floor(ts/1000));
+  const r=await fetch('https://ntfy.sh/',{method:'POST',body:JSON.stringify(body)});
+  if(!r.ok) throw new Error(r.status);
+}
+async function testNotif(){
+  const t=$('sTopic').value||S.setup?.topic; if(!t) return;
+  if(!S.setup) S.setup={topic:t};
+  try{await ntfy(0,'Nefes ✅','Bildirimler çalışıyor. Bu telefona gelecek.','white_check_mark');toast('Gönderildi — ntfy\'yi kontrol et')}
+  catch(e){toast('Gönderilemedi: '+e.message)}
+}
+let busy=false;
+async function topUp(manual){
+  if(busy||!S.setup) return; busy=true;
+  const now=Date.now(), horizon=now+36*3600e3; S.sent=S.sent||{}; S.locked=S.locked||{};
+  // eski kayıtları temizle
+  for(const k in S.sent) if(+k.replace(/\D/g,'')<now-2*864e5) delete S.sent[k];
+  let n=0, last=0, err=null;
+  const pd=planDate();
+  try{
+    for(let k=0;k<3&&n<50;k++){
+      const date=addDays(pd,k); if(diffDays(S.setup.start,date)<0) continue;
+      const list=slotsFor(date);
+      for(const s of list){
+        if(s.ts<=now+15e3||s.ts>horizon) continue;
+        if(S.sent[s.ts]){last=Math.max(last,s.ts);continue}
+        if(n>=50) break;
+        if(S.locked[date]==null) S.locked[date]=countFor(date);
+        if(s.kind==='free'){
+          const free=diffDays(endDate(),date)+1;
+          await ntfy(s.ts,free===1?'Bugün bırakma günü 🌱':`${free}. gün sigarasız 🌱`, free===1?'Bugün hiç yok. Zor anda uygulamadaki "Canım çekti"ye bas.':'Devam. Her gün bir öncekinden kolay.','seedling');
+        }else{
+          await ntfy(s.ts,`🚬 Sigara zamanı (${s.i}/${s.n})`,MOT[(s.i+s.n)%MOT.length],'smoking');
+        }
+        S.sent[s.ts]=1; last=Math.max(last,s.ts); n++; save();
+      }
+    }
+    // ufuk bitmeden hatırlatma
+    if(last){const rt=last-90*6e4, key='r'+last;
+      if(rt>now+6e4 && !S.sent[key]){await ntfy(rt,'Nefes: bildirimler bitiyor','Uygulamayı bir kez aç, sonraki bildirimler kurulsun.','bell');S.sent[key]=1;}}
+  }catch(e){err=e.message}
+  S.lastTop={at:now,last,n,err}; save(); busy=false;
+  if(manual) toast(err?('Hata: '+err+' — biraz sonra tekrar dene'):(n?`${n} bildirim kuruldu`:'Hepsi zaten kurulu'));
+  render();
+}
+
+/* ---- KAYIT ---- */
+function logSmoke(){
+  const now=Date.now(), sl=slotsFor(planDate()).filter(s=>s.kind==='smoke');
+  const near=sl.find(s=>now>=s.ts-2*6e4&&now<=s.ts+10*6e4);
+  S.log=S.log||[]; S.log.push({t:now,type:near?'smoke':'extra'}); save();
+  toast(near?'Kaydedildi 👍':'Plan dışı kaydedildi — sorun değil, devam'); render();
+}
+function logSkip(){S.log=S.log||[];S.log.push({t:Date.now(),type:'skip'});save();toast('Harika, bir tane az 💪');render()}
+function hold(){if(!confirm('Program 1 gün uzasın, yarın bugünkü seviyede kal?'))return;S.hold=(S.hold||0)+1;save();toast('Tempo yavaşladı');render()}
+
+/* ---- ÇEKME ANI ---- */
+const TIPS=['Bir bardak soğuk su iç, yavaş yavaş.','Yerinden kalk, 3 dakika yürü ya da merdiven çık.','Ellerini meşgul et: bir mesaj yaz, bir arama yap.','Dişlerini fırçala ya da şekersiz sakız çiğne.','Kendine söyle: "10 dakika sonra karar vereceğim."','Kahve/çay + sigara eşleşmesini bugün boz: içeceği başka yerde iç.'];
+let bt=null;
+function openCraving(){
+  const a=[...TIPS].sort(()=>Math.random()-.5);$('tip1').textContent='• '+a[0];$('tip2').textContent='• '+a[1];
+  $('crave').classList.remove('hide');let inh=true;const b=$('breath');
+  const step=()=>{b.style.transform=inh?'scale(1)':'scale(.6)';$('breathTxt').textContent=inh?'Nefes al… (4)':'Yavaşça ver… (4)';inh=!inh};
+  step();bt=setInterval(step,4000);
+}
+function closeCraving(){clearInterval(bt);$('crave').classList.add('hide')}
+
+/* ---- EKRAN ---- */
+function show(v){document.querySelectorAll('section').forEach(s=>s.classList.add('hide'));$(v).classList.remove('hide');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{show(b.dataset.v);render()});
+
+function render(){
+  if(!S.setup||!S.setup.start) return;
+  const c=S.setup, pd=planDate(), now=Date.now(), d=diffDays(c.start,pd);
+  const plan=countFor(pd)??0, sl=slotsFor(pd), sm=sl.filter(s=>s.kind==='smoke');
+  const log=S.log||[], dayStart=new Date(pd+'T00:00:00').getTime()+windowMin(c)[0]*6e4-60*6e4;
+  const today=log.filter(l=>l.t>=dayStart&&l.t<dayStart+864e5);
+  const smoked=today.filter(l=>l.type!=='skip').length;
+  const total=Math.max(0,totalDays(c)+(S.hold||0)), left=Math.max(0,diffDays(pd,endDate()));
+  $('dayPill').textContent=d<0?`${-d} gün sonra başlıyor`:(plan===0?`Sigarasız · ${diffDays(endDate(),pd)+1}. gün`:`Gün ${d+1}/${total}`);
+  // geri sayım
+  const nxt=sm.find(s=>s.ts>now-5*6e4);
+  if(d<0){$('cd').textContent='—';$('nextAt').textContent='Başlangıç '+c.start;$('arc').style.strokeDashoffset=628.3}
+  else if(plan===0){$('ringLbl').textContent='Sigarasız';$('cd').textContent=fmtDur(now-new Date(endDate()+'T00:00:00').getTime()+0);$('nextAt').textContent='bırakma gününden beri';$('arc').style.strokeDashoffset=0}
+  else if(nxt){const open=nxt.ts<=now;const iv=(windowMin(c)[1]-windowMin(c)[0])/plan*6e4;
+    $('ringLbl').textContent=open?'Pencere açık':'Sonraki sigara';
+    $('cd').textContent=open?fmtMs(nxt.ts+5*6e4-now):fmtMs(nxt.ts-now);
+    $('nextAt').textContent=open?'şimdi içebilirsin':hm(new Date(nxt.ts));
+    $('arc').style.stroke=open?'#f2b45a':'#5fd3a1';
+    $('arc').style.strokeDashoffset=open?0:628.3*Math.min(1,(nxt.ts-now)/iv)}
+  else{$('ringLbl').textContent='Bugünlük bitti';$('cd').textContent='✓';$('nextAt').textContent='yarın '+c.wake+' sonrası';$('arc').style.strokeDashoffset=0}
+  $('stPlan').textContent=plan;$('stDone').textContent=smoked;
+  $('stInt').textContent=plan?Math.round((windowMin(c)[1]-windowMin(c)[0])/plan):'∞';
+  const days=Math.max(0,diffDays(c.start,dstr(new Date()))+ (Date.now()>=new Date(c.start+'T00:00:00')?1:0));
+  const allSmoked=log.filter(l=>l.type!=='skip').length, avoided=Math.max(0,days*c.base-allSmoked);
+  $('stAvoid').textContent=avoided;$('stMoney').textContent=Math.round(avoided/20*c.price).toLocaleString('tr-TR')+'₺';$('stLeft').textContent=left;
+  $('slots').innerHTML=sm.length?sm.map(s=>`<span class="slot ${s.ts<now-5*6e4?'past':''} ${nxt&&s.ts===nxt.ts?'next':''}">${hm(new Date(s.ts))}</span>`).join(''):'<span class="note">Bugün sigara yok 🌱</span>';
+  const lt=S.lastTop; $('notifInfo').innerHTML=!lt?'Henüz kurulmadı.':(lt.err?`<span style="color:var(--bad)">Son deneme hata verdi (${lt.err}).</span> `:'')+(lt.last?`Bildirimler <b>${new Date(lt.last).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</b> saatine kadar kurulu.`:'Kurulu bildirim yok.');
+  // plan sekmesi
+  const bars=[];let mx=c.base;for(let i=0;i<total+3;i++){const dt=addDays(c.start,i),n=countFor(dt);bars.push(`<i class="${dt===pd?'today':(i<d?'done':'')}" style="height:${Math.max(2,n/mx*100)}%"></i>`)}
+  $('bars').innerHTML=bars.join('');
+  const pc=Math.min(100,Math.max(0,(d+1)/total*100));$('progBar').style.width=pc+'%';
+  $('progTxt').textContent=`Bırakma günü: ${new Date(endDate()+'T00:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'})}`;
+  $('planSum').innerHTML=`Günde <b>${c.base}</b> ile başlayıp ilk 3 gün aynı sayıda ama <b>sabit aralıkla</b> içiyorsun. Sonra her gün ~%${Math.round((1-Math.pow(Math.min(3,c.base)/c.base,1/(totalDays(c)-3)))*100)} azalıyor, aralık <b>${Math.round((windowMin(c)[1]-windowMin(c)[0])/c.base)} dk</b>'dan <b>${Math.round((windowMin(c)[1]-windowMin(c)[0])/Math.min(3,c.base))} dk</b>'ya çıkıyor.${S.hold?` (${S.hold} gün yavaşlatıldı)`:''}`;
+  $('logList').innerHTML=log.slice(-12).reverse().map(l=>`<div class="log"><span>${new Date(l.t).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</span><span>${l.type==='smoke'?'🚬 planlı':l.type==='extra'?'⚠️ plan dışı':'💪 atlandı'}</span></div>`).join('')||'<p class="note">Kayıt yok.</p>';
+  $('topicShow').textContent=c.topic;
+}
+const fmtMs=ms=>{ms=Math.max(0,ms);const s=Math.floor(ms/1e3),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}:${pad(m)}:${pad(s%60)}`:`${pad(m)}:${pad(s%60)}`};
+const fmtDur=ms=>{const dd=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5);return dd?`${dd}g ${h}s`:`${h}s`};
+
+/* ---- KURULUM ---- */
+function rndTopic(){const a='abcdefghjkmnpqrstuvwxyz23456789';let s='nefes-';for(let i=0;i<14;i++)s+=a[Math.floor(Math.random()*a.length)];return s}
+function readSetup(){return{base:Math.max(1,+$('sBase').value||40),wake:$('sWake').value||'07:30',sleep:$('sSleep').value||'00:00',weeks:+$('sWeeks').value,start:$('sStart').value,price:+$('sPrice').value||0,topic:$('sTopic').value}}
+function preview(){
+  const c=readSetup(); if(!c.start) return; const[w,s]=windowMin(c), T=totalDays(c);
+  const pts=[0,3,7,14,21,28,35,42,49,56,63,70,77,84].filter(x=>x<T);
+  $('preview').innerHTML='<p class="note" style="margin-bottom:6px"><b>Önizleme</b> — günlük sayı · aralık</p>'+pts.map(x=>{const n=countForEff(x,c);return`<div class="log"><span>${x===0?'1. gün':(x/7)+'. hafta sonu'}</span><span>${n} adet · ${Math.round((s-w)/n)} dk</span></div>`}).join('')+`<div class="log"><span>${T+1}. gün</span><span>🌱 bırakma</span></div>`;
+}
+['sBase','sWake','sSleep','sWeeks','sStart'].forEach(i=>$(i).addEventListener('input',preview));
+function editSetup(){
+  const c=S.setup||{}; $('sBase').value=c.base||40;$('sWake').value=c.wake||'07:30';$('sSleep').value=c.sleep||'00:00';$('sWeeks').value=c.weeks||8;
+  $('sStart').value=c.start||dstr(new Date(Date.now()+864e5));$('sPrice').value=c.price||110;$('sTopic').value=c.topic||rndTopic();
+  $('backMeasure').classList.toggle('hide',!!(S.setup&&S.setup.start));
+  $('nav').classList.add('hide');show('vSetup');preview();
+}
+function saveSetup(){
+  const c=readSetup(); if(!c.start) return toast('Başlangıç tarihi seç');
+  const changed=S.setup&&(S.setup.start!==c.start||S.setup.base!==c.base||S.setup.weeks!==c.weeks||S.setup.wake!==c.wake||S.setup.sleep!==c.sleep);
+  if(changed){ // kurulmuş bildirimler iptal edilemez; kilitli günler korunur, yenileri yeni plana göre
+    const keep={},today=planDate();for(const k in (S.locked||{})) if(k<=addDays(today,1)) keep[k]=S.locked[k]; S.locked=keep; }
+  S.setup=c; S.hold=S.hold||0; save(); $('nav').classList.remove('hide'); show('vToday'); render(); topUp(true);
+}
+function copyTopic(){const t=S.setup?.topic||$('sTopic').value;navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı: '+t),()=>prompt('Kopyala:',t))}
+function resetAll(){if(confirm('Tüm plan ve kayıtlar silinsin mi?')){localStorage.removeItem(K);S={};editSetup()}}
+
+/* ---- ÖLÇÜM ---- */
+const mKey=t=>dstr(new Date(t-4*36e5));            // gün 04:00'te döner
+function mStats(){
+  const L=S.mlog||[], byDay={};
+  L.forEach(t=>(byDay[mKey(t)]=byDay[mKey(t)]||[]).push(t));
+  const today=mKey(Date.now()), first=L.length?mKey(L[0]):null;
+  const full=Object.keys(byDay).filter(k=>k!==today&&(k!==first||isFullFirst()));
+  const days=full.length, cnt=full.map(k=>byDay[k].length);
+  const avg=days?cnt.reduce((a,b)=>a+b,0)/days:null;
+  const mins=t=>{const d=new Date(t);let m=d.getHours()*60+d.getMinutes();return m<240?m+1440:m};
+  const med=a=>{a=[...a].sort((x,y)=>x-y);return a.length?a[Math.floor(a.length/2)]:null};
+  const fM=med(full.map(k=>mins(byDay[k][0]))), lM=med(full.map(k=>mins(byDay[k][byDay[k].length-1])));
+  const gaps=[];full.concat(byDay[today]?[today]:[]).forEach(k=>{const a=byDay[k];for(let i=1;i<a.length;i++)gaps.push((a[i]-a[i-1])/6e4)});
+  const hrs=Array(24).fill(0);full.forEach(k=>byDay[k].forEach(t=>hrs[new Date(t).getHours()]++));
+  return{byDay,today,days,avg,fM,lM,gap:gaps.length?gaps.reduce((a,b)=>a+b,0)/gaps.length:null,hrs};
+}
+function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
+const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
+function mPlus(){S.mlog=S.mlog||[];S.mlog.push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
+  const b=$('plusBtn');b.style.transform='scale(.92)';setTimeout(()=>b.style.transform='',120);mRender()}
+function mUndo(){if(!(S.mlog||[]).length)return;const t=S.mlog[S.mlog.length-1];
+  if(confirm('Saat '+hm(new Date(t))+' kaydı silinsin mi?')){S.mlog.pop();save();mRender()}}
+function mRender(){
+  const st=mStats(), L=S.mlog||[], td=st.byDay[st.today]||[];
+  $('dayPill').textContent='Ölçüm · '+(st.days+1)+'. gün';
+  $('mToday').textContent=td.length;
+  $('mLast').textContent=L.length?Math.round((Date.now()-L[L.length-1])/6e4)+' dk önce':'—';
+  $('mDays').textContent=st.days;$('mAvg').textContent=st.avg?st.avg.toFixed(1):'—';
+  $('mInt').textContent=st.gap?Math.round(st.gap):'—';
+  $('mFirst').textContent=mhm(st.fM);$('mLastT').textContent=mhm(st.lM);
+  const mx=Math.max(...st.hrs);$('mPeak').textContent=mx?pad(st.hrs.indexOf(mx))+':00':'—';
+  $('mBars').innerHTML=st.hrs.map(h=>`<i style="height:${mx?Math.max(2,h/mx*100):2}%"></i>`).join('');
+  $('mReady').innerHTML=st.days>=3?`<b>${st.days} tam gün</b> ölçüldü: günde ortalama <b>${st.avg.toFixed(1)}</b> sigara, ilk ${mhm(st.fM)}, son ${mhm(st.lM)}. Plan bunlarla kurulacak.`:`En az 3 tam gün ölç (şu an ${st.days}). İş günü + hafta sonu karışık olursa daha doğru olur.`;
+  $('mGo').style.opacity=st.days>=3?1:.5;
+}
+function mFinish(){
+  const st=mStats();
+  if(st.days<3&&!confirm(`Sadece ${st.days} tam gün ölçüldü. Yine de plan kurulsun mu?`))return;
+  editSetup();
+  if(st.avg){$('sBase').value=Math.round(st.avg)}
+  if(st.fM!=null){$('sWake').value=mhm(st.fM-15)}           // ilk sigaradan 15 dk önce uyanmış say
+  if(st.lM!=null){$('sSleep').value=mhm(st.lM+15)}
+  $('sStart').value=dstr(new Date(Date.now()+864e5));
+  preview();toast('Ölçümün forma işlendi — kontrol et, başlat');
+}
+
+/* ---- AÇILIŞ ---- */
+if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
+else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
+setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.setup)topUp(false)});
+</script>
+</body>
+</html>
