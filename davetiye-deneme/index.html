@@ -430,7 +430,9 @@ footer p{margin-top:16px;font-size:12px}
   var NB=null;
   function noise(){ if(NB) return NB; var n=AC.sampleRate*2, b=AC.createBuffer(1,n,AC.sampleRate), d=b.getChannelData(0); for(var i=0;i<n;i++) d[i]=Math.random()*2-1; return NB=b; }
   // bir gürültü katmanı: filtre + zarf; grain>0 ise kağıt hışırtısı gibi düzensiz genlik
+  var SFX_VOL=.63; // efektler biraz kısık (filmin ses izi ayrıca -4 dB kodlandı)
   function layer(t0,dur,type,f0,f1,q,peak,atk,grain){
+    peak*=SFX_VOL;
     var a=AC, src=a.createBufferSource(); src.buffer=noise(); src.loop=true;
     var f=a.createBiquadFilter(); f.type=type; f.Q.value=q; f.frequency.setValueAtTime(f0,t0); f.frequency.exponentialRampToValueAtTime(f1,t0+dur);
     var g=a.createGain(); g.gain.setValueAtTime(0.0001,t0);
@@ -438,7 +440,7 @@ footer p{margin-top:16px;font-size:12px}
     else { g.gain.exponentialRampToValueAtTime(peak,t0+atk); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur); }
     src.connect(f); f.connect(g); g.connect(a.destination); src.start(t0,Math.random()); src.stop(t0+dur+.05);
   }
-  function thump(t0,freq,peak,dur){ var a=AC,o=a.createOscillator(),g=a.createGain(); o.frequency.setValueAtTime(freq,t0); o.frequency.exponentialRampToValueAtTime(freq*.5,t0+dur);
+  function thump(t0,freq,peak,dur){ peak*=SFX_VOL; var a=AC,o=a.createOscillator(),g=a.createGain(); o.frequency.setValueAtTime(freq,t0); o.frequency.exponentialRampToValueAtTime(freq*.5,t0+dur);
     g.gain.setValueAtTime(peak,t0); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur); o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0+dur+.02); }
   var SFX={
     tap:function(t){ thump(t,140,.25,.09); layer(t,.07,'lowpass',1800,600,.7,.18,.004); },
@@ -452,7 +454,7 @@ footer p{margin-top:16px;font-size:12px}
   };
   window.__davetSfx=function(ctx,n,t){ AC=ctx; NB=null; SFX[n](t); };
   /* ---- arka plan müziği (telifsiz, bizim için üretildi): mühre dokununca yavaşça başlar ---- */
-  var MUZ_VOL=.16, muzBuf=null, muzGain=null, muzRaw=null;
+  var MUZ_VOL=.12, muzBuf=null, muzGain=null, muzRaw=null;
   try{ fetch('muzik.mp3').then(function(r){ return r.arrayBuffer(); }).then(function(b){ muzRaw=b; }).catch(function(){}); }catch(e){}
   function muzik(){
     var a=ac(); if(!a||muzGain) return;
@@ -489,7 +491,7 @@ footer p{margin-top:16px;font-size:12px}
   function showCard(){ // film ekranı kağıtla doldurdu; sayfa yalnızca opaklıkla belirir
     body.classList.remove('locked'); window.scrollTo(0,0);
     card.style.transition='none'; card.classList.remove('wait');
-    gate.style.transition='opacity .35s linear,visibility .35s'; reveal();
+    gate.style.transition='opacity .8s cubic-bezier(.45,0,.55,1),visibility .8s'; reveal();
   }
   function playFilm(){
     film.muted=!soundOn; gate.classList.add('go');
