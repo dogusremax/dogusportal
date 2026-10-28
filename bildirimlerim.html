@@ -31,6 +31,9 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
 .kart .bas { font-weight:600; font-size:14.5px; line-height:1.35; }
 .kart.okundu .bas { font-weight:500; color:#3a4456; }
 .kart .metin { font-size:13px; color:var(--dim); line-height:1.45; margin-top:3px; white-space:pre-line; overflow:hidden; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; }
+.kart .metin.tam { -webkit-line-clamp:unset; display:block; color:var(--text); }
+.kart.vurgu { border-color:var(--red); box-shadow:0 0 0 3px rgba(220,28,46,.14); }
+.kart .ac { display:inline-block; margin-top:8px; font:600 13px 'Inter',sans-serif; color:var(--blue); }
 .kart .saat { font-size:11.5px; color:#9aa3b5; flex:none; margin-top:2px; }
 .kart:not(.okundu) { border-color:#f3c7cc; box-shadow:0 2px 10px -4px rgba(220,28,46,.18); }
 .bos { text-align:center; padding:56px 16px; color:var(--dim); font-size:14.5px; line-height:1.6; }
@@ -51,11 +54,15 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
   <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
   <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
 </main>
+<script src="/assets/bildirim-link.js"></script>
 <script>
 (function () {
   var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
   var token = ''; try { token = localStorage.getItem('bld_token') || ''; } catch (e) {}
   var ornek = /[?&]ornek=1/.test(location.search);   // önizleme: örnek verilerle
+  // Linksiz bildirime dokununca sw.js buraya ?h=<kimlik> ile gelir: o bildirim vurgulanır, tam metni açılır
+  var hedef = (location.search.match(/[?&]h=(g[0-9a-f]{20})/) || [])[1] || '', acik = {};
+  if (hedef) acik[hedef] = true;
   document.getElementById('geri').href = '/?cb=' + Date.now();
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -90,12 +97,16 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
     l.forEach(function (x, i) {
       var g = gunAdi(x.t);
       if (g !== son) { h += '<div class="gun">' + g + '</div>'; son = g; }
-      h += '<div class="kart' + (x.okundu ? ' okundu' : '') + '" data-i="' + i + '"><span class="nokta"></span><div class="govde">' +
-        '<div class="bas">' + esc(x.baslik) + '</div>' + (x.metin ? '<div class="metin">' + esc(x.metin) + '</div>' : '') +
+      var tam = acik[x.hid], m = tam && x.uzun ? x.uzun : x.metin;
+      h += '<div class="kart' + (x.okundu ? ' okundu' : '') + (x.hid && x.hid === hedef ? ' vurgu' : '') + '" data-i="' + i + '"><span class="nokta"></span><div class="govde">' +
+        '<div class="bas">' + esc(x.baslik) + '</div>' + (m ? '<div class="metin' + (tam ? ' tam' : '') + '">' + esc(m) + '</div>' : '') +
+        (x.link ? '<span class="ac">' + esc(/^https:\/\/(www\.)?dogusportal\.com(\/|$)/.test(x.link) ? 'Aç ›' : bildirimLink(x.link).etiket + ' ›') + '</span>' : '') +
         '</div><span class="saat">' + saat(x.t) + '</span></div>';
     });
     $('liste').innerHTML = h;
     $('not').style.display = '';
+    var v = hedef && document.querySelector('.kart.vurgu');
+    if (v && !ciz.kaydi) { ciz.kaydi = true; v.scrollIntoView({ block: 'center' }); }
   }
   $('liste').onclick = function (e) {
     var k = e.target.closest('.kart'); if (!k) return;
@@ -104,7 +115,9 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
       x.okundu = true; veri.okunmamis = Math.max(0, veri.okunmamis - 1); ciz();
       if (!ornek) post({ islem: 'okundu', hid: x.hid }).catch(function () {});
     }
-    if (x.link) location.href = x.link;
+    if (!x.link) { acik[x.hid] = !acik[x.hid]; ciz(); return; }
+    if (/^https:\/\/(www\.)?dogusportal\.com(\/|$)/.test(x.link)) location.href = x.link;
+    else window.open(bildirimLink(x.link).u, '_blank', 'noopener');   // iPhone ana ekran uygulamasında dış site yalnız böyle açılıyor
   };
   $('hepsi').onclick = function () {
     veri.liste.forEach(function (x) { x.okundu = true; }); veri.okunmamis = 0; ciz();

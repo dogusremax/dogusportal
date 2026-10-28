@@ -39,7 +39,9 @@ self.addEventListener('push', event => {
 
 // Dış site linki (ör. sahibinden ilanı) iPhone'da ana ekran uygulamasından doğrudan açılmıyor, dokunuş boşa gidiyordu.
 // Bu yüzden önce portalda ac.html açılır: bildirimin kendisi + "İlanı aç" düğmesi + Bildirimlerim.
+// Linksiz bildirim (ör. günlük özet, Meta şablon haberi) Bildirimlerim'de kendisi vurgulu, tam metniyle açılır.
 function acilacak(d) {
+  if (!(d && d.link) && d && d.hid) return new URL('bildirimlerim.html?h=' + encodeURIComponent(d.hid) + '&cb=' + Date.now(), self.registration.scope).href;
   const link = (d && d.link) || self.registration.scope;
   let u; try { u = new URL(link, self.registration.scope); } catch (e) { return self.registration.scope; }
   if (u.origin === self.location.origin) return u.href;
