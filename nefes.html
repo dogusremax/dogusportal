@@ -512,6 +512,7 @@ function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeT
 function iqSt(t){iq.st=t;iqRender()}
 async function iqConnect(auto,all){
   if(iq.scp&&!auto){return iqPoll()}
+  if(!auto&&!all&&iq.known&&!iq.triedKnown){iq.triedKnown=1;try{await iqLink(iq.known);return}catch(e){dbg('kayıtlı cihaza bağlanamadı: '+e.message);iq.err='kayıtlı cihaza bağlanamadı — tekrar dokun, listeden seç';iqSt('bağlı değil');return}}
   if(!auto){clearTimeout(iq.rt);if(iq.dev){try{iq.dev.gatt.disconnect()}catch(e){}}iq.dev=null;iq.scp=null;iq.linking=0}
   if(!navigator.bluetooth){if(!auto)toast('Bu tarayıcı Bluetooth desteklemiyor — Bluefy ile aç');return}
   try{
@@ -577,6 +578,9 @@ function iqCount(v){
     }else{q.sessInc=(q.sessInc||0)+d;q.lastInc=now}
   }
   save();iqRender();
+async function iqKnown(){try{if(navigator.bluetooth&&navigator.bluetooth.getDevices){const ds=await navigator.bluetooth.getDevices();
+  iq.known=ds.find(d=>/iqos/i.test(d.name||''))||ds[0]||null;dbg('kayıtlı cihaz: '+(iq.known?(iq.known.name||'(isimsiz)'):'yok'))}else dbg('getDevices desteklenmiyor')}catch(e){dbg('getDevices: '+e.message)}}
+if(navigator.bluetooth&&S.iq&&S.iq.name)iqKnown();
 }
 function iqAuto(t,bulk){
   const q=iqS();
