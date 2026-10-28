@@ -1,0 +1,43 @@
+name: ios-build
+on:
+  push:
+    paths:
+      - 'ios/project.yml'
+      - 'ios/Sources/**'
+      - '.github/workflows/ios-build.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ios-build
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: XcodeGen
+        run: brew install xcodegen
+      - name: Derle (imzasız, cihaz için)
+        id: derle
+        run: |
+          cd ios
+          xcodegen generate
+          set -o pipefail
+          xcodebuild -project DogusKatPlani.xcodeproj -scheme DogusKatPlani -configuration Release \
+            -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build > build.log 2>&1
+      - name: Sonucu yaz
+        if: always()
+        run: |
+          cd ios
+          {
+            echo "durum: ${{ steps.derle.outcome }}"
+            echo "commit: ${GITHUB_SHA}"
+            date -u
+            grep -E "error:|BUILD (SUCCEEDED|FAILED)|\*\* " build.log | head -80 || true
+          } > derleme-sonucu.txt
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add derleme-sonucu.txt
+          git commit -m "iOS derleme sonucu [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

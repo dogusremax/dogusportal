@@ -178,6 +178,7 @@ nav button[aria-current="true"] i{background:var(--red);border-color:var(--red);
       <label id="boyWrap" hidden>Boyun (cm) — mesafe göz yüksekliğinden hesaplanır<input id="f-boy" type="number" inputmode="numeric" min="130" max="210" placeholder="170"></label>
       <button class="btn" id="arStart" hidden>Kamerayı aç</button>
       <button class="btn" id="tiltStart" hidden>Kamerayı aç</button>
+      <button class="btn" id="natStart" hidden>Kamerayı aç</button>
       <button class="linkbtn" id="tiltAlt" hidden>AR açılmazsa: eğim yöntemiyle ölç</button>
     </div>
     <details class="card" id="nasil">
@@ -457,7 +458,15 @@ function useTiltUI(primary){$("#tiltStart").hidden=!primary;$("#boyWrap").hidden
   $("#arInfo").textContent="Kamera açılır. Odanın ortasında dur, her köşeye nişan alıp dokun; telefonun eğiminden mesafe hesaplanır ve oda çizilir."}
 try{const b=localStorage.getItem("kp_boy");if(b)$("#f-boy").value=b}catch(e){}
 $("#f-boy").addEventListener("input",e=>{try{localStorage.setItem("kp_boy",e.target.value)}catch(_){}});
-(async function(){let ok=false;try{ok=!!(navigator.xr&&await navigator.xr.isSessionSupported("immersive-ar"))}catch(e){}
+const NATIVE=!!(window.DOGUS_NATIVE&&window.DOGUS_NATIVE.ar&&window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.olcum);
+if(NATIVE){$("#natStart").hidden=false;$("#arInfo").textContent="Kamera açılır. Her odada köşelere nişan alıp dokun; oda gerçek ölçüsüyle çizilir, odalar kendi yerine oturur."}
+$("#natStart").onclick=()=>{const tp=arTypesEl.querySelector('[aria-pressed="true"]');window.webkit.messageHandlers.olcum.postMessage({tur:tp?tp.dataset.t:"salon"})};
+window.nativeOlcumSonuc=function(d){try{if(typeof d==="string")d=JSON.parse(d);const onceki=A;
+  A={kind:"native",pts:[],theta:null,off:null,rooms:[],ops:[],square:d.square!==false,type:"salon",mode:"kose",op:[],doneLines:[],found:true};
+  (d.rooms||[]).forEach(r=>{A.type=TYPES[r.t]?r.t:"salon";A.pts=(r.pts||[]).map(p=>({x:p[0],y:p[1],z:p[2]}));if(A.pts.length>=3)closeRoom()});
+  (d.acik||[]).forEach(o=>{if(!A.rooms.length)return;A.mode=o.tip==="kapi"?"kapi":"pencere";A.op=[{x:o.a[0],y:o.a[1],z:o.a[2]},{x:o.b[0],y:o.b[1],z:o.b[2]}];saveOpening()});
+  const n=A.rooms.length;A=onceki;save();show("plan");drawPlan(true);toast(n+" oda eklendi")}catch(e){A=null;toast("Ölçüm aktarılamadı")}};
+(async function(){if(NATIVE)return;let ok=false;try{ok=!!(navigator.xr&&await navigator.xr.isSessionSupported("immersive-ar"))}catch(e){}
   arOK=ok;
   if(ok){try{THREE=await import("/akasya/3d/vendor/three/three.module.min.js")}catch(e){arOK=false}}
   if(arOK){$("#arStart").hidden=false;$("#tiltAlt").hidden=!TILT_OK;return}
@@ -543,14 +552,14 @@ function closeRoom(){if(A.pts.length<3){toast("En az 3 köşe gerekli");return}
     A.lastShift=[tx-mnx,ty-mny];pts=pts.map(([x,y])=>[x+A.lastShift[0],y+A.lastShift[1]])}
   const r={id:uid(),t:A.type,ad:nextName(A.type),pts:pts.map(([x,y])=>[+x.toFixed(3),+y.toFixed(3)]),src:tilt?"egim":"ar"};
   S.rooms.push(r);A.rooms.push(r.id);save();
-  A.doneLines=(A.doneLines||[]).concat([A.pts.slice()]);if(!tilt)A.done.add(line3(A.pts,0x2f6fff,true));
+  A.doneLines=(A.doneLines||[]).concat([A.pts.slice()]);if(A.kind==="xr")A.done.add(line3(A.pts,0x2f6fff,true));
   A.pts=[];rebuildLive();if(navigator.vibrate)navigator.vibrate([30,40,30]);
   toast(`${r.ad} eklendi · ${fmt(area(r),1)} m²`);arUI();drawMini()}
 function saveOpening(){const tilt=A.kind==="tilt";
   if(A.theta===null||(tilt&&!A.lastShift)){A.op=[];rebuildLive();toast("Önce odayı bitir, sonra yerinden kıpırdamadan kapı/pencere ekle");return}
   const sh=tilt?A.lastShift:[0,0],tp=q=>{const v=toPlan(q);return[+(v[0]+sh[0]).toFixed(3),+(v[1]+sh[1]).toFixed(3)]};
   const o={tip:A.mode,a:tp(A.op[0]),b:tp(A.op[1])};S.acik.push(o);A.ops.push(o);save();
-  if(!tilt)A.done.add(line3(A.op,A.mode==="kapi"?0xffb020:0x48b0ff,false));
+  if(A.kind==="xr")A.done.add(line3(A.op,A.mode==="kapi"?0xffb020:0x48b0ff,false));
   toast((A.mode==="kapi"?"Kapı":"Pencere")+" eklendi · "+fmt(Math.hypot(A.op[1].x-A.op[0].x,A.op[1].z-A.op[0].z),2)+" m");
   A.op=[];setMode("kose")}
 function setMode(m){if(!A)return;A.mode=A.mode===m&&m!=="kose"?"kose":m;A.op=[];
@@ -704,6 +713,9 @@ function drawOut(){lastPlan=renderPlan();$("#outImg").src=lastPlan.toDataURL("im
 function slug(s){return (s||"plan").toLocaleLowerCase("tr").replace(/[çğıöşü]/g,c=>({ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u"}[c])).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 const toBlob=(c,type,q)=>new Promise(ok=>c.toBlob(ok,type,q));
 async function share(files){
+  if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.paylas){
+    const enc=f=>new Promise(ok=>{const r=new FileReader();r.onload=()=>ok({ad:f.name,veri:String(r.result).split(",")[1]});r.readAsDataURL(f)});
+    window.webkit.messageHandlers.paylas.postMessage({files:await Promise.all(files.map(enc))});return}
   try{if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:S.mulk.baslik||"Kat planı"});return}}catch(e){if(e.name==="AbortError")return}
   for(const f of files){const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,350))}
   toast("İndirildi")}

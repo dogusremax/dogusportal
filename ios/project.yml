@@ -1,0 +1,32 @@
+name: DogusKatPlani
+options:
+  bundleIdPrefix: com.remaxdogus
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  DogusKatPlani:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    scheme: {}
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: "Doğuş Plan"
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        NSCameraUsageDescription: "Odaları ölçmek ve fotoğraf çekmek için kamera kullanılır."
+        NSPhotoLibraryUsageDescription: "İlan fotoğraflarını seçmek için kullanılır."
+        NSPhotoLibraryAddUsageDescription: "Kat planını ve fotoğrafları galeriye kaydetmek için kullanılır."
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities: [arkit]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.remaxdogus.katplani
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
