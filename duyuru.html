@@ -79,6 +79,18 @@
   </div>
 
   <div class="kutu">
+    <h2>Video (isteğe bağlı)</h2>
+    <select id="video" style="width:100%;font:600 15px 'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px">
+      <option value="">Videosuz · normal duyuru</option>
+    </select>
+    <video id="videoOn" muted playsinline controls preload="metadata" hidden style="width:100%;max-height:320px;margin-top:10px;border-radius:10px;background:#000"></video>
+    <div id="davetHazir" hidden style="margin-top:10px">
+      <button type="button" class="ghost" id="davetMetin" style="font-size:13px;padding:9px 12px">Lansman davetiyesi metnini yerleştir</button>
+      <p class="ipucu">Metindeki <b>{adsoyad}</b> her danışmanın tam adıyla, <b>{ad}</b> ilk adıyla değişir. Linkteki ad davetiyede "Sayın …" olarak görünür.</p>
+    </div>
+    <p class="ipucu">Video seçilirse mesaj Meta onaylı videolu şablonla gider: en üstte video, altında "Merhaba {ad} 👋", senin metnin ve "Ayrıntılar yukarıdaki videoda 👆".</p>
+  </div>
+  <div class="kutu">
     <h2>Kimlere</h2>
     <div class="hizli"><button class="ghost" id="hepsi">Hepsini seç</button><button class="ghost" id="hicbiri">Temizle</button></div>
     <div id="kisiler" class="kisiler"></div>
@@ -105,7 +117,8 @@
 const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 const $ = id => document.getElementById(id);
 const depo = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
-let PIN = '', KISILER = [], SONUC = {}, DUYURU_ID = '', SABLON = '';
+let PIN = '', KISILER = [], SONUC = {}, DUYURU_ID = '', SABLON = '', VSABLON = '', VIDEOLAR = [];
+const videoSec = () => $('video').value;
 
 // Meta değişkende satır sonu kabul etmez: tek paragraf (sunucu da aynısını yapar)
 const temiz = m => m.replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ').trim();
@@ -127,7 +140,8 @@ async function giris(p) {
   try {
     const j = await servis({ islem: 'liste' }, 60000);
     if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
-    KISILER = j.kisiler || []; SABLON = j.sablonDurum || '';
+    KISILER = j.kisiler || []; SABLON = j.sablonDurum || ''; VSABLON = j.videoSablonDurum || ''; VIDEOLAR = j.videolar || [];
+    VIDEOLAR.forEach(v => { const o = document.createElement('option'); o.value = v.id; o.textContent = '🎬 ' + v.ad; $('video').appendChild(o); });
     $('giris').hidden = true; $('ana').hidden = false;
     // Varsayılan: Umut hariç herkes (Umut testle kendine görür)
     KISILER.forEach(k => { k.sec = k.numara && k.ad !== 'Umut Tokkuş'; });
@@ -151,7 +165,12 @@ function onizle() {
   $('say').textContent = m.length + ' / 900'; $('say').classList.toggle('asim', m.length > 900);
   const ilk = (KISILER.find(k => k.sec) || { ad: 'Gizem' }).ad.split(' ')[0];
   $('onizleGrup').innerHTML = waBicim(metinWa() || '…');
-  $('onizle').innerHTML = waBicim(`Merhaba ${ilk},\n\n${m || '…'}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
+  const kisi = (KISILER.find(k => k.sec) || { ad: 'Gizem Gök' }).ad;
+  const ozel = (m || '…').replace(/=\{adsoyad\}/g, '=' + encodeURIComponent(kisi)).replace(/\{adsoyad\}/g, kisi)
+                         .replace(/=\{ad\}/g, '=' + encodeURIComponent(ilk)).replace(/\{ad\}/g, ilk);
+  $('onizle').innerHTML = videoSec()
+    ? '🎬 <i>[video]</i>\n\n' + waBicim(`Merhaba ${ilk} 👋\n\n${ozel}\n\nAyrıntılar yukarıdaki videoda 👆\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`)
+    : waBicim(`Merhaba ${ilk},\n\n${ozel}\n\nRE/MAX Doğuş Otomatik Bilgilendirme Mesajı`);
 }
 
 // WhatsApp biçimi: *kalın* _italik_ ~üstü çizili~ ```sabit```
@@ -263,12 +282,13 @@ $('emojiBtn').onclick = () => $('emojiler').classList.toggle('acik');
 
 function butonlar() {
   const m = temiz(metinWa()), n = KISILER.filter(k => k.sec).length;
-  const onayli = SABLON === 'APPROVED';
+  const onayli = (videoSec() ? VSABLON : SABLON) === 'APPROVED';
   $('grupBtn').disabled = !m;
   $('testBtn').disabled = !m || !onayli;
   $('goBtn').disabled = !m || !n || !onayli;
   $('goBtn').textContent = n ? `${n} kişiye gönder` : 'Gönder';
-  if (!onayli) durum('Duyuru şablonu henüz Meta onaylı değil (' + (SABLON || '?') + '). Onaylanınca gönderim açılır.', true);
+  if (!onayli) durum((videoSec() ? 'Videolu şablon' : 'Duyuru şablonu') + ' henüz Meta onaylı değil (' + ((videoSec() ? VSABLON : SABLON) || '?') + '). Onaylanınca gönderim açılır.', true);
+  else if ($('durum').classList.contains('hata') && /onaylı değil/.test($('durum').textContent)) durum('');
 }
 
 function durum(t, hata) { $('durum').textContent = t; $('durum').classList.toggle('hata', !!hata); }
@@ -287,7 +307,7 @@ $('testBtn').onclick = async () => {
   if (!confirm('Duyuru SADECE senin test numarana gidecek. Devam?')) return;
   $('testBtn').disabled = true; durum('Test gönderiliyor…');
   try {
-    const j = await servis({ islem: 'test', metin: metinWa() });
+    const j = await servis({ islem: 'test', metin: metinWa(), video: videoSec() });
     j.ok ? durum('Test gönderildi. Telefonunu kontrol et.') : durum('Test gidemedi: ' + j.error, true);
   } catch (e) { durum('Test gidemedi: ' + e.message, true); }
   butonlar();
@@ -295,12 +315,12 @@ $('testBtn').onclick = async () => {
 
 $('goBtn').onclick = async () => {
   const kimler = KISILER.filter(k => k.sec).map(k => k.ad);
-  if (!confirm(`Duyuru ${kimler.length} kişiye WhatsApp ile gidecek:\n\n${kimler.map(k => '• ' + k).join('\n')}\n\nOnaylıyor musun?`)) return;
+  if (!confirm(`${videoSec() ? 'Videolu duyuru' : 'Duyuru'} ${kimler.length} kişiye WhatsApp ile gidecek:\n\n${kimler.map(k => '• ' + k).join('\n')}\n\nOnaylıyor musun?`)) return;
   // Aynı metin tekrar basılırsa aynı kimlik gider; sunucu aynı kişiye ikinci kez göndermez
   if (!DUYURU_ID) DUYURU_ID = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   $('goBtn').disabled = $('testBtn').disabled = true; durum('Gönderiliyor…');
   try {
-    const j = await servis({ islem: 'gonder', id: DUYURU_ID, metin: metinWa(), kimler });
+    const j = await servis({ islem: 'gonder', id: DUYURU_ID, metin: metinWa(), kimler, video: videoSec() });
     if (!j.ok) throw new Error(j.error || 'Gönderilemedi');
     (j.sonuclar || []).forEach(s => SONUC[s.isim] = s);
     const hata = (j.sonuclar || []).filter(s => !s.ok).length;
@@ -310,6 +330,17 @@ $('goBtn').onclick = async () => {
   } catch (e) { durum('Gönderim başarısız: ' + e.message, true); butonlar(); }
 };
 
+$('video').onchange = () => {
+  const v = VIDEOLAR.find(x => x.id === videoSec());
+  $('videoOn').hidden = !v; if (v) $('videoOn').src = v.url; else $('videoOn').removeAttribute('src');
+  $('davetHazir').hidden = videoSec() !== 'davetiye';
+  DUYURU_ID = ''; SONUC = {}; ciz();
+};
+$('davetMetin').onclick = () => {
+  if (ed.textContent.trim() && !confirm('Yazdığın metnin yerine davetiye metni konacak. Devam?')) return;
+  ed.innerText = '22 Kasım Pazar 13:30, Kalamış Marina Hotel. Kuzey Kıbrıs Yatırımcı Lansmanı dijital davetiyemizi test etmeni rica ederim. Linke dokun, sonra mühre dokun; zarf sesli açılacak. Nasıl göründüğünü bana yaz: https://dogusportal.com/davetiye/?ad={adsoyad}';
+  DUYURU_ID = ''; SONUC = {}; ciz();
+};
 $('girBtn').onclick = () => giris($('pin').value.trim());
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('girBtn').click(); });
 /* Her girişte PIN sorulur (Umut, 18 Eki): kayıtlı PIN ile otomatik giriş yok */
