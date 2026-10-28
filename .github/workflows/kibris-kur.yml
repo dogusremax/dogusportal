@@ -1,7 +1,8 @@
 name: Kıbrıs sterlin kuru (TCMB)
 on:
   schedule:
-    - cron: "45 12,15 * * 1-5"   # TCMB kurları 15:30'da (TSİ) yayımlar; 15:45 ve 18:45'te çekilir
+    - cron: "40,55 12 * * 1-5"    # TCMB kurları 15:30'da (TSİ) yayımlar; site TL karşılıkları için yayından hemen sonra çekilir
+    - cron: "20 13,15 * * 1-5"    # gecikmeye karşı yedek
   workflow_dispatch:
 permissions:
   contents: write
