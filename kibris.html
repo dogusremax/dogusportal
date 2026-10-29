@@ -4242,8 +4242,8 @@ gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["l
  if(!box) return;
  const force=/[?&]seminer=1\b/.test(location.search);
  const ev=(n)=>{ try{ typeof track==="function"&&track(n,{dil:root.lang}); }catch(e){} try{ typeof gtag==="function"&&gtag("event",n); }catch(e){} };
- let seen=false; try{ seen=sessionStorage.getItem(KEY)==="1"; }catch(e){}
- if(!force&&(seen||Date.now()>END||/bot|crawl|spider|lighthouse/i.test(navigator.userAgent))) return;
+ /* Umut, 29 Eki: her sayfa açılışında gösterilir (geri dönen ziyaretçi kayıt butonunu bulsun); kapatma yalnız o görüntüleme için */
+ if(!force&&(Date.now()>END||/bot|crawl|spider|lighthouse/i.test(navigator.userAgent))) return;
  const cd=document.getElementById("sem-cd"), nums=[...cd.querySelectorAll("b")], k=document.getElementById("sem-k");
  let timer=0, last=document.activeElement;
  const pad=n=>String(n).padStart(2,"0");
