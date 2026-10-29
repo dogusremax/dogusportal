@@ -107,12 +107,14 @@
       kisi.value = ls('bld_kisi'); goster(kisi, true); goster($('bldAc'), true);
     }
   }
+  // Portalda tek "Bildirimler" kartı: kapalıyken bu paneli açar, açıkken Bildirimlerim listesine gider
   function kartGuncelle() {
-    var d = document.getElementById('bldKartDesc');
-    if (d) d.textContent = acikMi() ? 'Açık · ' + ls('bld_kisi') : 'Yeni müşteri ve takip hatırlatmaları telefonuna gelsin';
+    var d = document.getElementById('bldlerimDesc');
+    if (d) d.textContent = acikMi() ? 'Açık · ' + ls('bld_kisi') + ' · son 30 günün bildirimleri' : 'Kapalı · dokun, yeni müşteri ve takip hatırlatmaları telefonuna gelsin';
   }
+  window.bildirimAcikMi = acikMi;
   window.bildirimPaneli = function () { yaz(''); ciz(); ort.classList.add('acik'); };
-  function kapat() { ort.classList.remove('acik'); kartGuncelle(); }
+  function kapat() { ort.classList.remove('acik'); kartGuncelle(); bildirimlerimSay(); document.dispatchEvent(new Event('bildirimDegisti')); }
   $('bldKapat').onclick = kapat;
   ort.onclick = function (e) { if (e.target === ort) kapat(); };
   $('bldAc').onclick = function () {
@@ -154,12 +156,12 @@
     var kart = document.getElementById('bldlerimKart');
     if (!kart) return;
     kart.style.display = '';
-    if (!ls('bld_token')) return;   // kart görünür, sayfa bu cihazda bildirimin kapalı olduğunu söyler
+    if (!ls('bld_token')) { document.getElementById('bldlerimSayi').style.display = 'none'; return; }
     post('bildirimlerim', { token: ls('bld_token'), islem: 'liste' }).then(function (j) {
       if (!j.ok) return;
       var n = j.okunmamis || 0, r = document.getElementById('bldlerimSayi'), d = document.getElementById('bldlerimDesc');
       r.textContent = n > 9 ? '9+' : String(n); r.style.display = n > 0 ? '' : 'none';
-      d.textContent = n > 0 ? n + ' okunmamış bildirimin var' : 'Kaçırdığın bildirimler burada, son 30 gün';
+      d.textContent = n > 0 ? n + ' okunmamış bildirimin var' : 'Açık · ' + ls('bld_kisi') + ' · son 30 günün bildirimleri';
       try { if (navigator.setAppBadge) (n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(function () {}); } catch (e) {}
     }).catch(function () {});
   }
