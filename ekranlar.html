@@ -163,6 +163,23 @@
   .adimlar{margin:0 0 14px;padding-left:18px;color:var(--ink-2);font-size:13.5px;line-height:1.6}
   .adimlar b{color:var(--ink)}
   .kucukLink{display:block;margin:12px auto 0;color:var(--mute);font-size:12px;text-decoration:underline}
+
+  .sayfa{max-height:88vh;overflow-y:auto}
+  .sonuclar{margin-top:12px}
+  .sonuclar .bas{display:block;color:var(--mute);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 8px}
+  .vk{display:flex;gap:12px;width:100%;text-align:left;padding:7px 0;align-items:center;border-radius:12px}
+  .vk:active{background:var(--card2)}
+  .vk:disabled{opacity:.5}
+  .vk.gidiyor{opacity:1;background:rgba(255,181,71,.12)}
+  .vr{width:112px;height:63px;border-radius:10px;flex:none;background:var(--bg2) center/cover no-repeat;position:relative}
+  .vr i{position:absolute;right:5px;bottom:5px;font-style:normal;font-size:10.5px;font-weight:700;background:rgba(0,0,0,.78);color:#fff;padding:1px 5px;border-radius:5px}
+  .vy{min-width:0;flex:1}
+  .vy b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;font-weight:650;line-height:1.3;color:var(--ink)}
+  .vy small{display:block;margin-top:3px;color:var(--mute);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  details.link{margin-top:14px;color:var(--mute);font-size:12.5px}
+  details.link summary{cursor:pointer;list-style:none}
+  details.link summary::-webkit-details-marker{display:none}
+  input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none}
 </style>
 
 </head>
@@ -470,17 +487,44 @@ function kapatSayfa(){ document.getElementById("perde").classList.remove("acik")
 
 function videoSayfa(tv) {
   aktifTv = tv;
-  const sonlar = (veri.ytSon || []).map(l => `<button onclick="document.getElementById('ytLink').value=this.textContent">${esc(l)}</button>`).join("");
+  const sonlar = (veri.ytSon || []).filter(x => x.v).slice(0, 6);
   acSayfa(`
     <h3>${esc(tvAd(tv))} · YouTube</h3>
-    <p class="alt">Videonun bağlantısını yapıştır. TV kapalıysa önce açılır.</p>
-    <div class="girdi">
-      <input id="ytLink" inputmode="url" placeholder="https://youtu.be/…" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <button onclick="yapistir()">Yapıştır</button>
-    </div>
-    <button class="oynat" id="oynatBtn" onclick="videoAc()">${IKON_YT} TV'de oynat</button>
-    ${sonlar ? `<div class="sonlar"><small>Son açılanlar</small>${sonlar}</div>` : ""}
+    <p class="alt">Ara, seç, TV'de oynasın. TV kapalıysa önce açılır.</p>
+    <form class="girdi" onsubmit="ara();return false">
+      <input id="ytAra" type="search" enterkeyhint="search" placeholder="Ne izlemek istersin?" autocomplete="off">
+      <button type="submit">Ara</button>
+    </form>
+    <div id="sonuclar" class="sonuclar">${sonlar.length ? `<small class="bas">Son açılanlar</small>` + sonlar.map(kartVideo).join("") : ""}</div>
+    <details class="link"><summary>Bağlantı yapıştırarak aç</summary>
+      <div class="girdi" style="margin-top:8px">
+        <input id="ytLink" inputmode="url" placeholder="https://youtu.be/…" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button onclick="videoAc(document.getElementById('ytLink').value,'')">Oynat</button>
+      </div>
+    </details>
     <button class="kucukLink" onclick="eslesmeKaldir('${tv}')">YouTube bağlantısını kaldır</button>`);
+  setTimeout(() => { const g = document.getElementById("ytAra"); if (g) g.focus(); }, 250);
+}
+
+function kartVideo(x) {
+  const resim = x.v ? `https://i.ytimg.com/vi/${encodeURIComponent(x.v)}/mqdefault.jpg` : "";
+  const alt = [x.k].filter(Boolean).map(esc).join(" · ");
+  return `<button class="vk" data-v="${esc(x.v)}" data-b="${esc(x.b || "")}" onclick="videoAc(this.dataset.v,this.dataset.b,this)">
+    <span class="vr"${resim ? ` style="background-image:url('${resim}')"` : ""}>${x.s ? `<i>${esc(x.s)}</i>` : ""}</span>
+    <span class="vy"><b>${esc(x.b || "Video")}</b>${alt ? `<small>${alt}</small>` : ""}</span>
+  </button>`;
+}
+
+async function ara() {
+  const q = document.getElementById("ytAra").value.trim();
+  if (!q) return;
+  const k = document.getElementById("sonuclar");
+  k.innerHTML = '<div class="iskelet" style="height:64px"></div><div class="iskelet" style="height:64px"></div><div class="iskelet" style="height:64px"></div>';
+  document.getElementById("ytAra").blur();
+  try {
+    const d = await api({ islem: "ytAra", q });
+    k.innerHTML = d.sonuc.length ? d.sonuc.map(kartVideo).join("") : '<p class="bos">Sonuç bulunamadı.</p>';
+  } catch (e) { k.innerHTML = `<p class="bos">${esc(e.message)}</p>`; }
 }
 
 async function yapistir() {
@@ -488,17 +532,19 @@ async function yapistir() {
   catch (e) { toast("Kutuya uzun basıp Yapıştır'ı seç"); }
 }
 
-async function videoAc() {
-  const link = document.getElementById("ytLink").value.trim();
-  if (!link) { toast("Önce bağlantıyı yapıştır"); return; }
-  const b = document.getElementById("oynatBtn");
-  b.disabled = true; b.textContent = "Gönderiliyor…";
+async function videoAc(link, baslik, el) {
+  link = String(link || "").trim();
+  if (!link) { toast("Önce bir video seç ya da bağlantı yapıştır"); return; }
+  document.querySelectorAll(".vk").forEach(b => b.disabled = true);
+  if (el) el.classList.add("gidiyor");
+  toast("TV'ye gönderiliyor…", 6000);
   try {
-    await api({ islem: "ytVideo", tv: aktifTv, baglanti: link });
-    kapatSayfa(); toast("Video TV'de açılıyor ▶", 3500); setTimeout(yukle, 2500);
+    await api({ islem: "ytVideo", tv: aktifTv, baglanti: link, baslik });
+    kapatSayfa(); toast("▶ " + (baslik || "Video") + " TV'de açılıyor", 3500); setTimeout(yukle, 2500);
   } catch (e) {
     toast(hataMetni(e.message), 5000);
-    b.disabled = false; b.innerHTML = IKON_YT + " TV'de oynat";
+    document.querySelectorAll(".vk").forEach(b => b.disabled = false);
+    if (el) el.classList.remove("gidiyor");
   }
 }
 
