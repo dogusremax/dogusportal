@@ -145,8 +145,6 @@ textarea#hakkimda{min-height:220px}
     <section class="kart">
       <h2>Tanıtım bilgileri</h2>
       <p class="alt">Türkçe yaz; İngilizce, Rusça, Farsça, Almanca ve Lehçe sayfalara otomatik çevrilir.</p>
-      <label for="unvan">Unvan <small>(boş bırakırsan "Profesyonel Gayrimenkul Danışmanı")</small></label>
-      <input id="unvan" maxlength="70">
       <label for="ozet">Kısa tanıtım <small>(fotoğrafının yanındaki cümle)</small></label>
       <textarea id="ozet" maxlength="260"></textarea>
       <label for="hakkimda">Hakkımda <small>(paragrafları boş satırla ayır)</small></label>
@@ -261,7 +259,6 @@ function doldur() {
   var t = String(s.telefon || '').replace(/^90/, '0').replace(/(\d{4})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
   $('telefon').value = t;
   $('instagram').value = s.instagram || d.instagram || '';
-  $('unvan').value = tr(s.unvan);
   $('ozet').value = tr(s.ozet);
   $('hakkimda').value = (tr(s.hakkimda) || []).join('\n\n');
   $('hitap').value = tr(s.hitap);
@@ -273,7 +270,7 @@ function doldur() {
 }
 function form() {
   return { tema: S.tema, telefon: $('telefon').value.replace(/\D/g, ''), instagram: $('instagram').value.trim().replace(/^@/, ''),
-    unvan: $('unvan').value.trim(), ozet: $('ozet').value.trim(),
+    ozet: $('ozet').value.trim(),
     hakkimda: $('hakkimda').value.split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean),
     hitap: $('hitap').value.trim(),
     videolar: S.videolar.map(function (v) { var o = v.ig ? { ig: v.ig } : { yt: v.yt }; if (v.baslik.trim()) o.baslik = v.baslik.trim(); return o; }) };
@@ -291,7 +288,7 @@ function durum(m, cls) {
   $('dur').className = 'dur' + (cls ? ' ' + cls : '');
   $('dur').textContent = m || (d ? Object.keys(d).length + ' değişiklik kaydedilmedi' : 'Değişiklik yok');
 }
-['telefon', 'instagram', 'unvan', 'ozet', 'hakkimda', 'hitap'].forEach(function (i) { $(i).addEventListener('input', function () { durum(); }); });
+['telefon', 'instagram', 'ozet', 'hakkimda', 'hitap'].forEach(function (i) { $(i).addEventListener('input', function () { durum(); }); });
 window.addEventListener('beforeunload', function (e) { if (degisenler()) { e.preventDefault(); e.returnValue = ''; } });
 
 /* temalar: her kutu kendi renkleriyle küçük bir site önizlemesi */
