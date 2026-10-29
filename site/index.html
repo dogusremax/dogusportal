@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Danışman Web Siteleri · RE/MAX Doğuş</title>
+<link rel="icon" href="/assets/ikon3d/globe-with-meridians.webp">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--line:#e3e7ee;--red:#DC1C2E;--navy:#050A30;--ink:#111827;--mute:#6b7280}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+header{background:var(--navy);color:#fff;padding:18px 16px 22px}
+header .w,main{max-width:760px;margin:0 auto}
+header a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px}
+h1{font-size:24px;font-weight:800;margin:14px 0 6px;letter-spacing:-.02em}
+header p{color:rgba(255,255,255,.75);font-size:14px;line-height:1.5}
+main{padding:16px 16px 40px;display:grid;gap:12px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;grid-template-columns:64px 1fr;gap:6px 14px;align-items:center}
+.k img{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top;background:#e9edf3;grid-row:span 2}
+.k b{font-size:17px;font-weight:700}
+.k small{display:block;color:var(--mute);font-size:13px;margin-top:2px;word-break:break-all}
+.dg{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.dg a,.dg button{display:flex;align-items:center;justify-content:center;min-height:42px;border-radius:12px;font:600 14px 'Inter',sans-serif;text-decoration:none;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;-webkit-appearance:none;width:100%}
+.dg .ac{background:var(--red);border-color:var(--red);color:#fff}
+.dg .wa{background:#25D366;border-color:#25D366;color:#fff}
+.not{font-size:13px;color:var(--mute);line-height:1.5;padding:4px 2px}
+@media(min-width:620px){.k{grid-template-columns:72px 1fr auto}.k img{width:72px;height:72px;grid-row:auto}.dg{grid-column:auto;margin-top:0;grid-template-columns:repeat(3,auto)}.dg a,.dg button{padding:0 16px}}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <a href="/">← Doğuş Portal</a>
+  <h1>Danışman Web Siteleri</h1>
+  <p>Her danışmanın kendi sitesi: kendi numarası, WhatsApp'ı ve Fikirtepe etap teslim takvimiyle. Linki müşteriye gönderebilirsin.</p>
+</div></header>
+<main id="liste"></main>
+<script>
+var S=[['ozlem_varol','Özlem Varol','https://ozlemvarol.com/'],['gamze','Gamze Yetkin','gamzeyetkin'],['irem','İrem Aleyna Tetik','iremtetik'],['aysegul_alpay','Ayşegül Alpay','aysegulalpay'],['aysun','Aysun Yılmaz','aysunyilmaz'],['evsen','Evşen Özazman','evsenozazman'],['orhan','Orhan Özazman','orhanozazman'],['gizem','Gizem Gök','gizemgok']];
+document.getElementById('liste').innerHTML=S.map(function(s,i){
+  var u=s[2].indexOf('http')===0?s[2]:'https://dogusportal.com/site/'+s[2]+'/';
+  return '<div class="k"><img src="/assets/ekip/kucuk/'+s[0]+'.webp" alt="" loading="lazy"><div><b>'+s[1]+'</b><small>'+u.replace('https://','').replace(/\/$/,'')+'</small></div>'+
+  '<div class="dg"><a class="ac" href="'+u+'" target="_blank" rel="noopener">Aç</a><button type="button" data-u="'+u+'">Kopyala</button><a class="wa" href="https://wa.me/?text='+encodeURIComponent(s[1]+' · RE/MAX Doğuş\n'+u)+'" target="_blank" rel="noopener">Paylaş</a></div></div>';
+}).join('')+'<p class="not">Alan adları alındıkça linkler kendi adreslerine (adsoyad.com) taşınacak.</p>';
+document.addEventListener('click',function(e){var b=e.target.closest('[data-u]');if(!b)return;var t=b.textContent,ok=function(){b.textContent='Kopyalandı';setTimeout(function(){b.textContent=t},1500)};
+  if(navigator.clipboard)navigator.clipboard.writeText(b.dataset.u).then(ok,function(){prompt('Link:',b.dataset.u)});else prompt('Link:',b.dataset.u)});
+</script>
+</body>
+</html>
