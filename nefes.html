@@ -525,7 +525,7 @@ function iqRecentAuto(){const q=S.iq;return q&&q.lastAuto&&Date.now()-q.lastAuto
 function iqRender(){
   const q=iqS(),has=!!navigator.bluetooth,u=iqUnit();
   const txt=!has?'Otomatik sayım için bu sayfayı ücretsiz <b>Bluefy</b> uygulamasında aç. Safari Bluetooth\'a erişemiyor; burada + ile devam edebilirsin.'
-   :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> (${u==='puff'?'nefes sayıyor':u==='stick'?'stick sayıyor':'birim öğreniliyor'})`:'')
+   :`Durum: <b>${iq.st}</b>${q.name?' · '+q.name:''}`+(q.last!=null?`<br>Cihaz sayacı: <b>${q.last}</b> `:'')
      +(q.lastSeen?` · son okuma ${hm(new Date(q.lastSeen))}`:'')+(q.autoN?`<br>Otomatik sayılan: <b>${q.autoN}</b> stick`:'')+(has&&q.name?`<br>Arka planda okuma: <b>${q.bgReads||0}</b> kez${q.bgLast?' (son '+hm(new Date(q.bgLast))+')':''} ${q.bgReads?'✅ arka plan çalışıyor':'— henüz yok'}`:'');
   document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
   let cls='',b1,b2='',b3='';
@@ -578,7 +578,7 @@ function iqRetry(n){
   iqSt('IQOS uykuda — uyanınca kendiliğinden bağlanır');
   iq.rt=setTimeout(()=>{if(iq.scp)return;if(document.hidden||iq.linking)return iqRetry(n);
     iq.linking=1;iqLink(iq.dev).then(()=>{iq.linking=0},e=>{iq.linking=0;if(n%15===0)dbg('IQOS uykuda, bekleniyor…');iqRetry(n+1)})},
-    document.hidden?30e3:4e3);
+    n===0?300:(document.hidden?30e3:4e3));
 }
 async function iqPoll(){
   if(!iq.scp||iq.busy)return;
@@ -603,9 +603,8 @@ function iqCount(v){
   const d=v-q.last;q.last=v;q.lastSeen=now;
   if(d>0){
     dbg(`sayaç +${d} (${v})`);
-    if(prev&&now-prev>3*6e4&&(!q.lastInc||now-q.lastInc>IQ.SESSION)){            // okunamayan dönemde birikenler
-      const u=iqUnit()||'puff',k=u==='puff'?Math.max(1,Math.round(d/14)):d;
-      dbg(`ara dönem: ${k} stick (${u==='puff'?'nefesten hesap':'doğrudan'})`);
+    if(prev&&now-prev>3*6e4){            // okunamayan dönemde birikenler
+      const k=d;
       // TAHMİN YOK: sayfa bu arada hep açık ve bağlanmaya çalışıyorduysa, IQOS ancak stick bitip kutuya girince uyanır → son stick'in saati = şimdi (gerçek)
       const watched=iq.loadedAt<prev&&iq.hidAt<prev&&!document.hidden;
       const ax=new Set((q.autoTs||[]).concat(q.estTs||[]));
@@ -622,15 +621,9 @@ function iqCount(v){
       }
       q.manUsed=(q.manUsed||[]).concat(man).slice(-200);
       q.lastInc=now;
-    }else if(!q.lastInc||now-q.lastInc>IQ.SESSION){   // yeni stick
-      if(q.sessInc){q.sizes.push(q.sessInc);if(q.sizes.length>12)q.sizes.shift()}
-      q.sessInc=d;q.lastInc=now;iqAuto(now,false);
-    }else{q.sessInc=(q.sessInc||0)+d;q.lastInc=now}
+    }else{for(let i=0;i<d;i++)iqAuto(now-i*1000,false,i>0);q.lastInc=now}   // her artış bir stick
   }
   save();iqRender();
-async function iqKnown(){try{if(navigator.bluetooth&&navigator.bluetooth.getDevices){const ds=await navigator.bluetooth.getDevices();
-  iq.known=ds.find(d=>/iqos/i.test(d.name||''))||ds[0]||null;dbg('kayıtlı cihaz: '+(iq.known?(iq.known.name||'(isimsiz)'):'yok'))}else dbg('getDevices desteklenmiyor')}catch(e){dbg('getDevices: '+e.message)}}
-if(navigator.bluetooth&&S.iq&&S.iq.name)iqKnown();
 }
 function iqAuto(t,bulk,force){
   const q=iqS();
@@ -641,6 +634,10 @@ function iqAuto(t,bulk,force){
   else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast(bulk?'IQOS: saati bilinmeyen stick eklendi':'IQOS: 1 stick sayıldı ✓')}
 }
 
+async function iqKnown(){try{if(navigator.bluetooth&&navigator.bluetooth.getDevices){const ds=await navigator.bluetooth.getDevices();
+  iq.known=ds.find(d=>/iqos/i.test(d.name||''))||ds[0]||null;dbg('kayıtlı cihaz: '+(iq.known?(iq.known.name||'(isimsiz)'):'yok'))}else dbg('getDevices desteklenmiyor')}catch(e){dbg('getDevices: '+e.message)}}
+async function iqAutoStart(){await iqKnown();if(iq.known&&!iq.scp){iq.dev=iq.known;if(!iq.dev._nf){iq.dev.addEventListener('gattserverdisconnected',iqLost);iq.dev._nf=1}iqRetry(0)}}
+if(navigator.bluetooth&&S.iq&&S.iq.name)iqAutoStart();
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
