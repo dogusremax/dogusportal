@@ -136,6 +136,50 @@
   footer{padding:20px 6px 0;color:var(--mute);font-size:12px;font-weight:500;line-height:1.6;text-align:center}
   footer b{color:var(--ink-2)}
   footer button{color:var(--mute);text-decoration:underline;font-size:12px;font-weight:600;margin-top:6px}
+
+  /* YouTube video açma */
+  .videoBtn{margin-top:12px;width:100%;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;
+    background:rgba(255,107,78,.1);border:1px solid rgba(255,107,78,.28);color:var(--coral);font-size:13px;font-weight:650;position:relative}
+  .videoBtn svg{width:16px;height:16px}
+  .videoBtn.bagla{background:var(--bg2);border-color:var(--line);color:var(--ink-2)}
+  .perde{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:20;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+  .perde.acik{opacity:1;pointer-events:auto}
+  .sayfa{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(30px);transition:transform .25s cubic-bezier(.3,.7,.4,1)}
+  .perde.acik .sayfa{transform:none}
+  .tutac{width:36px;height:4px;border-radius:2px;background:var(--faint);margin:0 auto 14px}
+  .sayfa h3{margin:0 0 3px;font-size:17px;font-weight:750;letter-spacing:-.015em}
+  .sayfa .alt{margin:0 0 14px;color:var(--mute);font-size:13px}
+  .girdi{display:flex;gap:8px}
+  .girdi input{flex:1;min-width:0;height:46px;border-radius:13px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);padding:0 13px;font-size:14px}
+  .girdi input:focus{outline:none;border-color:var(--amber)}
+  .girdi button{height:46px;padding:0 14px;border-radius:13px;background:var(--card2);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink-2)}
+  .oynat{width:100%;height:48px;border-radius:24px;margin-top:12px;background:var(--amber);color:#1A1306;font-weight:750;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px}
+  .oynat svg{width:18px;height:18px}
+  .oynat:disabled{opacity:.55}
+  .sonlar{margin-top:16px}
+  .sonlar small{display:block;color:var(--mute);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+  .sonlar button{display:block;width:100%;text-align:left;padding:9px 0;border-bottom:1px solid var(--line);color:var(--ink-2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sonlar button:last-child{border-bottom:0}
+  .adimlar{margin:0 0 14px;padding-left:18px;color:var(--ink-2);font-size:13.5px;line-height:1.6}
+  .adimlar b{color:var(--ink)}
+  .kucukLink{display:block;margin:12px auto 0;color:var(--mute);font-size:12px;text-decoration:underline}
+
+  .sayfa{max-height:88vh;overflow-y:auto}
+  .sonuclar{margin-top:12px}
+  .sonuclar .bas{display:block;color:var(--mute);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 8px}
+  .vk{display:flex;gap:12px;width:100%;text-align:left;padding:7px 0;align-items:center;border-radius:12px}
+  .vk:active{background:var(--card2)}
+  .vk:disabled{opacity:.5}
+  .vk.gidiyor{opacity:1;background:rgba(255,181,71,.12)}
+  .vr{width:112px;height:63px;border-radius:10px;flex:none;background:var(--bg2) center/cover no-repeat;position:relative}
+  .vr i{position:absolute;right:5px;bottom:5px;font-style:normal;font-size:10.5px;font-weight:700;background:rgba(0,0,0,.78);color:#fff;padding:1px 5px;border-radius:5px}
+  .vy{min-width:0;flex:1}
+  .vy b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;font-weight:650;line-height:1.3;color:var(--ink)}
+  .vy small{display:block;margin-top:3px;color:var(--mute);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  details.link{margin-top:14px;color:var(--mute);font-size:12.5px}
+  details.link summary{cursor:pointer;list-style:none}
+  details.link summary::-webkit-details-marker{display:none}
+  input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none}
 </style>
 
 </head>
@@ -211,6 +255,10 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="perde" id="perde" onclick="if(event.target===this)kapatSayfa()">
+  <div class="sayfa" id="sayfa"></div>
+</div>
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbzWtvlQxgUzeFeVWc2EeKqEqaySI7ynUluRkQHqgF6WfHbUKpyD93KMwOKxisocHPm6/exec";
@@ -316,6 +364,9 @@ function tvKarti(t) {
       ${t.youtubeDestek ? `<button class="hap yt" onclick="komut('${t.id}','youtube',null,this)">${IKON_YT} YouTube</button>` : ""}
       ${kaynaklar ? `<div class="kaynaklar">${kaynaklar}</div>` : ""}
     </div>
+    ${t.ytBagli
+      ? `<button class="videoBtn" onclick="videoSayfa('${t.id}')">${IKON_YT} YouTube'da video aç</button>`
+      : `<button class="videoBtn bagla" onclick="eslesSayfa('${t.id}')">${IKON_YT} Video açmak için YouTube'u bağla</button>`}
     <div class="ayar">
       <label><input type="checkbox" class="mini" ${t.youtube ? "checked" : ""} ${t.youtubeDestek ? "" : "disabled"} onchange="ayar('${t.id}',{youtube:this.checked})"> Açılınca YouTube</label>
       <label>Açılış sesi <select onchange="ayar('${t.id}',{ses:this.value})">${sesSec}</select></label>
@@ -428,9 +479,109 @@ function hataMetni(m) {
   return m;
 }
 
+/* ---------- YouTube'da istenen videoyu aç ---------- */
+let aktifTv = null;
+function tvAd(id){ const t = veri.tvler.find(x => x.id === id); return t ? t.ad : ""; }
+function acSayfa(html){ document.getElementById("sayfa").innerHTML = '<div class="tutac"></div>' + html; document.getElementById("perde").classList.add("acik"); }
+function kapatSayfa(){ document.getElementById("perde").classList.remove("acik"); }
+
+function videoSayfa(tv) {
+  aktifTv = tv;
+  const sonlar = (veri.ytSon || []).filter(x => x.v).slice(0, 6);
+  acSayfa(`
+    <h3>${esc(tvAd(tv))} · YouTube</h3>
+    <p class="alt">Ara, seç, TV'de oynasın. TV kapalıysa önce açılır.</p>
+    <form class="girdi" onsubmit="ara();return false">
+      <input id="ytAra" type="search" enterkeyhint="search" placeholder="Ne izlemek istersin?" autocomplete="off">
+      <button type="submit">Ara</button>
+    </form>
+    <div id="sonuclar" class="sonuclar">${sonlar.length ? `<small class="bas">Son açılanlar</small>` + sonlar.map(kartVideo).join("") : ""}</div>
+    <details class="link"><summary>Bağlantı yapıştırarak aç</summary>
+      <div class="girdi" style="margin-top:8px">
+        <input id="ytLink" inputmode="url" placeholder="https://youtu.be/…" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button onclick="videoAc(document.getElementById('ytLink').value,'')">Oynat</button>
+      </div>
+    </details>
+    <button class="kucukLink" onclick="eslesmeKaldir('${tv}')">YouTube bağlantısını kaldır</button>`);
+  setTimeout(() => { const g = document.getElementById("ytAra"); if (g) g.focus(); }, 250);
+}
+
+function kartVideo(x) {
+  const resim = x.v ? `https://i.ytimg.com/vi/${encodeURIComponent(x.v)}/mqdefault.jpg` : "";
+  const alt = [x.k].filter(Boolean).map(esc).join(" · ");
+  return `<button class="vk" data-v="${esc(x.v)}" data-b="${esc(x.b || "")}" onclick="videoAc(this.dataset.v,this.dataset.b,this)">
+    <span class="vr"${resim ? ` style="background-image:url('${resim}')"` : ""}>${x.s ? `<i>${esc(x.s)}</i>` : ""}</span>
+    <span class="vy"><b>${esc(x.b || "Video")}</b>${alt ? `<small>${alt}</small>` : ""}</span>
+  </button>`;
+}
+
+async function ara() {
+  const q = document.getElementById("ytAra").value.trim();
+  if (!q) return;
+  const k = document.getElementById("sonuclar");
+  k.innerHTML = '<div class="iskelet" style="height:64px"></div><div class="iskelet" style="height:64px"></div><div class="iskelet" style="height:64px"></div>';
+  document.getElementById("ytAra").blur();
+  try {
+    const d = await api({ islem: "ytAra", q });
+    k.innerHTML = d.sonuc.length ? d.sonuc.map(kartVideo).join("") : '<p class="bos">Sonuç bulunamadı.</p>';
+  } catch (e) { k.innerHTML = `<p class="bos">${esc(e.message)}</p>`; }
+}
+
+async function yapistir() {
+  try { const m = await navigator.clipboard.readText(); if (m) document.getElementById("ytLink").value = m.trim(); }
+  catch (e) { toast("Kutuya uzun basıp Yapıştır'ı seç"); }
+}
+
+async function videoAc(link, baslik, el) {
+  link = String(link || "").trim();
+  if (!link) { toast("Önce bir video seç ya da bağlantı yapıştır"); return; }
+  document.querySelectorAll(".vk").forEach(b => b.disabled = true);
+  if (el) el.classList.add("gidiyor");
+  toast("TV'ye gönderiliyor…", 6000);
+  try {
+    await api({ islem: "ytVideo", tv: aktifTv, baglanti: link, baslik });
+    kapatSayfa(); toast("▶ " + (baslik || "Video") + " TV'de açılıyor", 3500); setTimeout(yukle, 2500);
+  } catch (e) {
+    toast(hataMetni(e.message), 5000);
+    document.querySelectorAll(".vk").forEach(b => b.disabled = false);
+    if (el) el.classList.remove("gidiyor");
+  }
+}
+
+function eslesSayfa(tv) {
+  aktifTv = tv;
+  acSayfa(`
+    <h3>${esc(tvAd(tv))} · YouTube'u bağla</h3>
+    <p class="alt">Her TV için bir kez yapılır.</p>
+    <ol class="adimlar">
+      <li>TV'de <b>YouTube</b> uygulamasını aç.</li>
+      <li>Sol menüden <b>Ayarlar</b> (⚙️) → <b>Telefonla bağla</b> / <b>TV kodu ile bağla</b>.</li>
+      <li>Ekranda çıkan <b>12 haneli mavi kodu</b> buraya yaz.</li>
+    </ol>
+    <div class="girdi"><input id="ytKod" inputmode="numeric" placeholder="123 456 789 012" autocomplete="off"></div>
+    <button class="oynat" id="eslesBtn" onclick="eslestir()">Bağla</button>`);
+}
+
+async function eslestir() {
+  const kod = document.getElementById("ytKod").value;
+  const b = document.getElementById("eslesBtn");
+  b.disabled = true; b.textContent = "Bağlanıyor…";
+  try {
+    await api({ islem: "ytEslestir", tv: aktifTv, kod });
+    toast("YouTube bağlandı ✓"); await yukle(); videoSayfa(aktifTv);
+  } catch (e) {
+    toast(hataMetni(e.message), 5000); b.disabled = false; b.textContent = "Bağla";
+  }
+}
+
+async function eslesmeKaldir(tv) {
+  if (!confirm("Bu TV'nin YouTube bağlantısı kaldırılsın mı?")) return;
+  try { await api({ islem: "ytEslesmeSil", tv }); kapatSayfa(); yukle(); } catch (e) { toast(hataMetni(e.message), 4200); }
+}
+
 function otomatik() {
   clearInterval(zamanlayici);
-  zamanlayici = setInterval(() => { if (!document.hidden && veri && veri.bagli && !mesgul) yukle(); }, 20000);
+  zamanlayici = setInterval(() => { if (!document.hidden && veri && veri.bagli && !mesgul && !document.getElementById("perde").classList.contains("acik")) yukle(); }, 20000);
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && veri) yukle(); });
 
