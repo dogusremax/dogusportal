@@ -120,7 +120,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v9</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -191,7 +191,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v9</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -453,8 +453,15 @@ function mStats(){
 }
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
 const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
-function mPlus(){if(iqRecentAuto())return toast('IQOS bunu zaten saydı 👍');S.mlog=S.mlog||[];S.mlog.push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
-  toast('Elle eklendi');mRender()}
+function mPlus(){
+  const v=prompt('Ne zaman içtin? (SS:DD) — şimdi içtiysen boş bırak:','');if(v===null)return;
+  let t=Date.now(),back=false;
+  if(v.trim()){const m=v.trim().match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return toast('Saat SS:DD biçiminde olmalı');
+    const n=new Date();n.setHours(+m[1],+m[2],0,0);if(n>Date.now())n.setDate(n.getDate()-1);t=n.getTime();back=true}
+  else if(iqRecentAuto())return toast('IQOS bunu zaten saydı 👍');
+  S.mlog=S.mlog||[];S.mlog.push(t);S.mlog.sort((a,b)=>a-b);
+  if(back){S.iq=S.iq||{dbg:[],sizes:[]};S.iq.backTs=(S.iq.backTs||[]).concat(t).slice(-200)}
+  save();if(navigator.vibrate)navigator.vibrate(30);toast(back?'Geriye dönük eklendi':'Elle eklendi');mRender()}
 function mUndo(){if(!(S.mlog||[]).length)return;const t=S.mlog[S.mlog.length-1];
   if(confirm('Saat '+hm(new Date(t))+' kaydı silinsin mi?')){S.mlog.pop();save();mRender()}}
 function mRender(){
@@ -607,7 +614,7 @@ function iqCount(v){
       const k=d;
       // TAHMİN YOK: sayfa bu arada hep açık ve bağlanmaya çalışıyorduysa, IQOS ancak stick bitip kutuya girince uyanır → son stick'in saati = şimdi (gerçek)
       const watched=iq.loadedAt<prev&&iq.hidAt<prev&&!document.hidden;
-      const ax=new Set((q.autoTs||[]).concat(q.estTs||[]));
+      const ax=new Set((q.autoTs||[]).concat(q.estTs||[],q.backTs||[]));
       const man=(S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[])).filter(t=>t>prev&&t<=now&&!ax.has(t));
       if(man.length)dbg(`ara dönemde ${man.length} elle kayıt var, düşüldü`);
       let left=Math.max(0,k-man.length);
@@ -628,7 +635,7 @@ function iqCount(v){
 function iqAuto(t,bulk,force){
   const q=iqS();
   const manual=S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[]);
-  if(!bulk&&!force&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m)&&!(q.estTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
+  if(!bulk&&!force&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m)&&!(q.estTs||[]).includes(m)&&!(q.backTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
   q.autoN=(q.autoN||0)+1;q.lastAuto=Date.now();if(bulk)q.estTs=(q.estTs||[]).concat(Math.round(t)).slice(-200);else q.autoTs=(q.autoTs||[]).concat(Math.round(t)).slice(-200);
   if(S.setup&&S.setup.start){if(bulk){S.log=S.log||[];S.log.push({t:Math.round(t),type:'unk',src:'iqos'});save();render()}else logSmoke(Math.round(t),'iqos')}
   else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast(bulk?'IQOS: saati bilinmeyen stick eklendi':'IQOS: 1 stick sayıldı ✓')}
