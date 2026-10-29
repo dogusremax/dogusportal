@@ -96,6 +96,19 @@ textarea#hakkimda{min-height:220px}
 .alt-bar .btn{min-width:130px}
 .alt-bar .btn:disabled{opacity:.45}
 .yuk{padding:40px 0;text-align:center;color:var(--mute)}
+.alt-bar .btn.b{min-width:0}
+/* önizleme */
+.oz{position:fixed;inset:0;z-index:50;background:#1b2033;display:flex;flex-direction:column}
+.oz-ust{background:#fff;border-bottom:1px solid var(--line);padding:10px 14px calc(10px)}
+.oz-ust .w{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.oz-ust .btn{min-height:44px;font-size:15px;padding:0 14px}
+.oz-ust #ozKaydet{margin-left:auto}
+.oz-cihaz{display:none;background:#eef1f6;border-radius:12px;padding:4px;gap:4px}
+.oz-cihaz button{border:0;background:none;padding:9px 14px;border-radius:9px;font-size:14px;cursor:pointer;color:var(--ink)}
+.oz-cihaz button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.oz-alan{flex:1;display:flex;justify-content:center;overflow:hidden}
+.oz-alan iframe{width:100%;height:100%;border:0;background:#fff}
+@media(min-width:700px){.oz-cihaz{display:flex}.oz-alan{padding:16px}.oz-alan iframe{border-radius:14px}.oz.tel .oz-alan iframe{width:390px;max-height:844px;border-radius:28px;box-shadow:0 0 0 10px #000}}
 </style>
 </head>
 <body>
@@ -165,8 +178,19 @@ textarea#hakkimda{min-height:220px}
 
 <div class="alt-bar" id="altBar" hidden><div class="w">
   <div id="dur" class="dur">Değişiklik yok</div>
+  <button id="onizleBtn" class="btn b" type="button">Önizle</button>
   <button id="kaydet" class="btn k" disabled>Kaydet</button>
 </div></div>
+
+<!-- Önizleme: kaydetmeden sitenin değişikliklerle görünümü (danisman.html?onizle=1) -->
+<div id="oz" class="oz" hidden>
+  <div class="oz-ust"><div class="w">
+    <button id="ozKapat" class="btn b" type="button">← Düzenlemeye dön</button>
+    <div class="oz-cihaz"><button type="button" data-c="tel" class="on">Telefon</button><button type="button" data-c="pc">Bilgisayar</button></div>
+    <button id="ozKaydet" class="btn k" type="button">Kaydet</button>
+  </div></div>
+  <div class="oz-alan"><iframe id="ozFrame" title="Site önizlemesi"></iframe></div>
+</div>
 
 <script>
 var API_GIRIS = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
@@ -342,6 +366,31 @@ $('siteKopya').onclick = function () {
 };
 
 /* kaydet */
+/* önizleme: değişiklikler bu tarayıcıya yazılır, site ?onizle=1 ile onları gösterir */
+function onizleVeri() {
+  var f = form(), d = degisenler() || {}, v = {};
+  if ('tema' in d) v.tema = f.tema;
+  if ('telefon' in d && f.telefon) v.telefon = f.telefon.replace(/^0/, '90').replace(/^5/, '905');
+  if ('instagram' in d) v.instagram = f.instagram;
+  ['ozet', 'hitap'].forEach(function (k) { if (k in d) v[k] = { tr: f[k] }; });
+  if ('hakkimda' in d) v.hakkimda = { tr: f.hakkimda };
+  if ('videolar' in d) v.videolar = f.videolar.map(function (x) { var o = x.ig ? { ig: x.ig } : { yt: x.yt }; if (x.baslik) o.baslik = { tr: x.baslik }; return o; });
+  return v;
+}
+function onizleAc() {
+  ls('site_onizle', JSON.stringify({ id: S.id, veri: onizleVeri() }));
+  $('ozFrame').src = '/danisman.html?id=' + encodeURIComponent(S.id) + '&lang=tr&onizle=1&t=' + Date.now();
+  $('oz').hidden = false; document.body.style.overflow = 'hidden';
+  $('ozKaydet').disabled = !degisenler();
+}
+function onizleKapat() { $('oz').hidden = true; $('ozFrame').src = 'about:blank'; document.body.style.overflow = ''; }
+$('onizleBtn').onclick = onizleAc;
+$('ozKapat').onclick = onizleKapat;
+$('oz').querySelector('.oz-cihaz').onclick = function (e) { var b = e.target.closest('[data-c]'); if (!b) return;
+  [].forEach.call(this.children, function (x) { x.classList.toggle('on', x === b); }); $('oz').classList.toggle('tel', b.dataset.c === 'tel'); };
+$('oz').classList.add('tel');
+$('ozKaydet').onclick = function () { onizleKapat(); $('kaydet').click(); };
+
 $('kaydet').onclick = async function () {
   var d = degisenler(); if (!d) return;
   $('kaydet').disabled = true; durum('Kaydediliyor…');

@@ -457,6 +457,9 @@ var SIRA=['tr','en','ru','fa','de','pl'];
   var gP=j('data/google-yorumlar.json'), rP=j('data/remax-profil.json'), rp={};
   var res=await Promise.all([j('data/danismanlar.json'),j('data/danisman-site.json')]);
   var site=res[1]||{}, d=(res[0]||[]).find(function(x){return x.id===id}), s=site[id], g={yorumlar:[]};
+  // Düzenleme panelinin önizlemesi (site/duzenle.html): kaydedilmemiş değişiklikler aynı tarayıcıdan okunur
+  var onizle=q.get('onizle')==='1';
+  if(onizle){try{var oz=JSON.parse(localStorage.getItem('site_onizle')||'null');if(oz&&oz.id===id&&s)s=Object.assign({},s,oz.veri)}catch(x){}}
   var L=function(v){if(v==null)return v;if(typeof v==='string'||Array.isArray(v))return v;return v[dil]!=null?v[dil]:(dil!=='tr'&&v.en!=null?v.en:v.tr)};
   var T=function(k){var t=DIL[dil][k];return t!=null?t:DIL.tr[k]};
 
@@ -468,7 +471,7 @@ var SIRA=['tr','en','ru','fa','de','pl'];
 
   if(!d||!s){ciz0();e('yok').classList.remove('hide');return}
   if(window.siteTema)siteTema(s.tema||'klasik');
-  try{localStorage.setItem('stema_'+id,s.tema||'klasik')}catch(x){}
+  if(!onizle)try{localStorage.setItem('stema_'+id,s.tema||'klasik')}catch(x){}
   var ofis='902163151515', tel=s.telefon||ofis;
   var tTel=tel.replace(/^90/,'0').replace(/(\d{4})(\d{3})(\d{2})(\d{2})/,'$1 $2 $3 $4');
   var wa=function(m){return 'https://wa.me/'+tel+'?text='+encodeURIComponent(m)};
