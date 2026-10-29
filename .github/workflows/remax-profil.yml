@@ -1,0 +1,21 @@
+name: RE/MAX profil yorumları
+on:
+  schedule:
+    - cron: "17 5 * * *"   # her gün 08:17 TR — danışman sitelerindeki RE/MAX müşteri yorumları ve hesaplar
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: remax-profil
+  cancel-in-progress: false
+jobs:
+  profil:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/remax-profil.py
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add data/remax-profil.json
+          git diff --cached --quiet || (git commit -m "RE/MAX profil yorumları güncellendi" && git pull --rebase && git push)
