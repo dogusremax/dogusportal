@@ -477,7 +477,8 @@ var SIRA=['tr','en','ru','fa','de','pl'];
   e('waSabit').classList.remove('hide');
   e('telHero').href=e('telBilgi').href='tel:+'+tel; e('telYazi').textContent=tTel;
   if(d.remax)e('remaxLink').href=d.remax;else e('remaxLink').classList.add('hide');
-  if(d.instagram){e('igLink').href='https://www.instagram.com/'+d.instagram+'/';e('igLink').textContent='@'+d.instagram}else e('igLink').classList.add('hide');
+  var ig=s.instagram||d.instagram;
+  if(ig){e('igLink').href='https://www.instagram.com/'+ig+'/';e('igLink').textContent='@'+ig}else e('igLink').classList.add('hide');
   e('yorumlar').classList.add('hide');
   e('yil').textContent=e('yil2').textContent=new Date().getFullYear();
   e('form').addEventListener('submit',function(ev){
