@@ -570,7 +570,7 @@ async function iqLink(dev){
     else dbg('pil sinyali yok');
   }catch(e){dbg('pil: '+e.message)}
   iqS().name=dev.name||'IQOS';iqSt('bağlı');dbg('bağlandı: '+(dev.name||'?'));
-  clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);iqPoll();setTimeout(iqPoll,3000);
+  iq.busy=0;clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);setTimeout(iqPoll,1500);
 }
 function iqLost(){iq.scp=null;clearInterval(iq.timer);dbg('bağlantı koptu');iqRetry(0)}
 function iqRetry(n){
@@ -581,16 +581,14 @@ function iqRetry(n){
     document.hidden?30e3:4e3);
 }
 async function iqPoll(){
-  if(!iq.scp)return;
-  clearTimeout(iq.wd);iq.wd=setTimeout(()=>{iq.miss=(iq.miss||0)+1;dbg('cevap gelmedi ('+iq.miss+')');
-    if(iq.miss>=3&&iq.dev){iq.miss=0;dbg('bağlantı yenileniyor');try{iq.dev.gatt.disconnect()}catch(e){};iq.scp=null;iqLink(iq.dev).catch(e=>{dbg('yenilenemedi: '+e.message);iqRetry(0)})}
-    else iqPoll()},20e3);
+  if(!iq.scp||iq.busy)return;
+  iq.busy=1;clearTimeout(iq.wd);iq.wd=setTimeout(()=>{iq.busy=0},8e3);   // cevap gelmezse 8 sn sonra kilidi aç, bağlantıya dokunma
   if(document.hidden){const q=iqS();q.bgReads=(q.bgReads||0)+1;q.bgLast=Date.now();save()}
   try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
-  catch(e){dbg('okuma hatası: '+e.message)}
+  catch(e){iq.busy=0;dbg('okuma hatası: '+e.message);if(/disconnect|not connected|GATT Server/i.test(e.message)){iq.scp=null;iqRetry(0)}}
 }
 function iqFrame(e){
-  clearTimeout(iq.wd);iq.miss=0;
+  clearTimeout(iq.wd);iq.busy=0;
   const v=e.target.value,b=new Uint8Array(v.buffer,v.byteOffset||0,v.byteLength);
   if(b.length>=6&&b[2]===0x90&&b[3]===0x22&&b[4]===1&&b[5]===1){
     const n=Math.floor((b[3]-2)/8),tags={};let cnt=null;
@@ -605,7 +603,7 @@ function iqCount(v){
   const d=v-q.last;q.last=v;q.lastSeen=now;
   if(d>0){
     dbg(`sayaç +${d} (${v})`);
-    if(now-prev>15*6e4&&prev){            // bağlı değilken birikenler
+    if(prev&&now-prev>3*6e4&&(!q.lastInc||now-q.lastInc>IQ.SESSION)){            // okunamayan dönemde birikenler
       const u=iqUnit()||'puff',k=u==='puff'?Math.max(1,Math.round(d/14)):d;
       dbg(`ara dönem: ${k} stick (${u==='puff'?'nefesten hesap':'doğrudan'})`);
       // TAHMİN YOK: sayfa bu arada hep açık ve bağlanmaya çalışıyorduysa, IQOS ancak stick bitip kutuya girince uyanır → son stick'in saati = şimdi (gerçek)
@@ -646,9 +644,9 @@ function iqAuto(t,bulk,force){
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
-setInterval(()=>{iqRender();if(!document.hidden&&iqStale()&&!iq.linking)iqRefresh()},30000);
+setInterval(iqRender,30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?(iqStale()?iqRefresh():iqPoll()):(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
 iqRender();
 </script>
 </body>
