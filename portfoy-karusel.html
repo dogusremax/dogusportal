@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="assets/broker.js"></script>
+<script src="assets/karusel-tasarim.js"></script>
 <script>
   /* Broker kapısı: portal bu cihazda broker modundaysa doğrudan açılır, değilse sayfada PIN sorulur (yönlendirme yok) */
   window.PORTAL = /dogusportal\.com$|github\.io$/.test(location.hostname);
@@ -85,6 +86,12 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 .fbgrid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
 .fbgrid canvas{width:100%;height:auto;display:block}
 .fbgrid .more{position:relative}
+.tasarimlar{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.tsb{border:none;background:none;font:inherit;cursor:pointer;text-align:center;padding:0}
+.tsb canvas{width:100%;height:auto;display:block;border-radius:10px;border:3px solid transparent;box-shadow:0 4px 12px rgba(10,22,40,.12);background:#ddd}
+.tsb.on canvas{border-color:var(--red);box-shadow:0 6px 16px rgba(225,27,43,.28)}
+.tsb span{display:block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;margin-top:6px;color:var(--ink)}
+.tsb.on span{color:var(--red)}
 .fbgrid .more span{position:absolute;inset:0;background:rgba(0,0,0,.45);color:#fff;font-size:28px;font-weight:700;display:grid;place-items:center}
 </style>
 </head>
@@ -109,8 +116,14 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 
 <div class="wrap">
 
+<section id="sec-tasarim">
+  <h2><span class="n">1</span>Tasarım</h2>
+  <div class="tasarimlar" id="tasarimlar"></div>
+  <p class="small">Seçtiğin tasarım tüm slaytlara uygulanır; yazılar ve fotoğraflar aynen kalır.</p>
+</section>
+
 <section id="sec-dan">
-  <h2><span class="n">1</span>Danışman</h2>
+  <h2><span class="n">2</span>Danışman</h2>
   <div class="dans" id="dans"></div>
   <div class="row">
     <div><label>Cep telefonu</label><input type="tel" id="d_phone" placeholder="05xx xxx xx xx"></div>
@@ -120,14 +133,14 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 </section>
 
 <section id="sec-photos">
-  <h2><span class="n">2</span>Fotoğraflar</h2>
+  <h2><span class="n">3</span>Fotoğraflar</h2>
   <button class="btn ghost" onclick="document.getElementById('bulk').click()">📷 Fotoğrafları toplu yükle</button>
   <input type="file" id="bulk" accept="image/*" multiple hidden>
   <p class="small">Seçtiğin sırayla kapağa ve slaytlara dağılır. Sonra her fotoğrafı aşağıdan tek tek değiştirebilirsin.</p>
 </section>
 
 <section id="sec-cover">
-  <h2><span class="n">3</span>Kapak</h2>
+  <h2><span class="n">4</span>Kapak</h2>
   <div class="slot"><div class="slot-h"><b>Kapak fotoğrafı</b></div><div class="pics" id="pic-cover"></div></div>
   <div class="row">
     <div><label>Etiket</label><input type="text" data-k="cover.badge"></div>
@@ -143,7 +156,7 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 </section>
 
 <section id="sec-slides">
-  <h2><span class="n">4</span>Fotoğraf slaytları</h2>
+  <h2><span class="n">5</span>Fotoğraf slaytları</h2>
   <p class="small">Kalın yazmak istediğin kelimeyi yıldız içine al: <b>Ferah, *aydınlık* salon</b></p>
   <div id="slideList"></div>
   <div style="display:flex;gap:8px;margin-top:12px">
@@ -153,7 +166,7 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 </section>
 
 <section id="sec-feat">
-  <h2><span class="n">5</span>Özellikler</h2>
+  <h2><span class="n">6</span>Özellikler</h2>
   <label>Üst etiket</label><input type="text" data-k="feat.eyebrow">
   <div class="row">
     <div><label>Başlık 1. satır</label><input type="text" data-k="feat.t1"></div>
@@ -166,7 +179,7 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 </section>
 
 <section id="sec-close">
-  <h2><span class="n">6</span>Kapanış</h2>
+  <h2><span class="n">7</span>Kapanış</h2>
   <label>Üst etiket</label><input type="text" data-k="close.eyebrow">
   <div class="row3">
     <div><label>Satır 1</label><input type="text" data-k="close.h1"></div>
@@ -181,7 +194,7 @@ input[type=password]:focus,input:focus,textarea:focus,select:focus{border-color:
 </section>
 
 <section id="sec-cap">
-  <h2><span class="n">7</span>Paylaşım açıklaması</h2>
+  <h2><span class="n">8</span>Paylaşım açıklaması</h2>
   <textarea id="caption" rows="9"></textarea>
   <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
     <button class="btn ghost sm" onclick="capEdited=false;updateCaption(true)">↺ Otomatik açıklamayı yeniden oluştur</button>
@@ -294,7 +307,8 @@ function getK(path){ return path.split('.').reduce((o,k)=>o&&o[k],S); }
 function setK(path,v){ const ks=path.split('.'); let o=S; ks.slice(0,-1).forEach(k=>o=o[k]); o[ks[ks.length-1]]=v; }
 
 /* ================== ÇİZİM YARDIMCILARI ================== */
-function F(size,weight){ return `${weight||400} ${size}px Inter, system-ui, sans-serif`; }
+const INTER='Inter, system-ui, sans-serif'; let AILE=INTER;
+function F(size,weight){ return `${weight||400} ${size}px ${AILE}`; }
 function tw(ctx,t,size,weight,sp){ ctx.font=F(size,weight); if(!sp) return ctx.measureText(t).width; let w=0; for(const ch of t) w+=ctx.measureText(ch).width+sp*size; return w-sp*size; }
 function txt(ctx,t,x,y,size,weight,color,sp,align){
   ctx.font=F(size,weight); ctx.fillStyle=color; ctx.textBaseline='alphabetic';
@@ -470,6 +484,23 @@ function ekDeki(w){ const v=(w.toLocaleLowerCase('tr-TR').match(/[aeıioöuü](?
 function defDesc(){ const c=S.cover; const p=([c.the,c.proje].filter(Boolean).join(' ')+(c.konum?' '+cap(c.konum):'')).trim(); return (p? p+ekDeki(p)+' ':'')+(c.big?c.big+' ':'')+'için detaylı bilgi ve yerinde gösterim.'; }
 function cap(s){ return s.toLocaleLowerCase('tr-TR').replace(/(^|\s)\S/g,m=>m.toLocaleUpperCase('tr-TR')); }
 
+/* ================== TASARIMLAR ================== */
+const TASARIMLAR = Object.assign({klasik:{ad:'Klasik',aile:INTER,cover:drawCover,photo:drawPhoto,feat:drawFeat,close:drawClose}}, window.KARUSEL_TASARIMLARI||{});
+function tasarim(){ return TASARIMLAR[S.tasarim]||TASARIMLAR.klasik; }
+function ciz(D,ctx,s,n,T){ const eski=AILE; AILE=D.aile; try{ if(s.k==='cover') D.cover(ctx,T); else if(s.k==='photo') D.photo(ctx,s.i,n,T); else if(s.k==='feat') D.feat(ctx,n,T); else D.close(ctx,n,T); } finally{ AILE=eski; } }
+let _off; function renderThumbs(){
+  const box=document.getElementById('tasarimlar'); if(!box) return; const T=slideList().length;
+  _off=_off||Object.assign(document.createElement('canvas'),{width:W,height:H}); const oc=_off.getContext('2d');
+  Object.entries(TASARIMLAR).forEach(([id,D])=>{
+    let b=box.querySelector('[data-id="'+id+'"]');
+    if(!b){ b=document.createElement('button'); b.className='tsb'; b.dataset.id=id; b.innerHTML='<canvas width="216" height="270"></canvas><span></span>'; b.querySelector('span').textContent=D.ad;
+      b.onclick=()=>{ S.tasarim=id; render(); }; box.appendChild(b); }
+    b.classList.toggle('on',(S.tasarim||'klasik')===id);
+    oc.clearRect(0,0,W,H); try{ ciz(D,oc,{k:'cover'},1,T); }catch(e){ console.error(e); }
+    const tc=b.querySelector('canvas').getContext('2d'); tc.imageSmoothingQuality='high'; tc.clearRect(0,0,216,270); tc.drawImage(_off,0,0,216,270); });
+}
+let _tt; function thumbsLater(){ clearTimeout(_tt); _tt=setTimeout(renderThumbs,250); }
+
 function slideList(){ const L=[{k:'cover'}]; S.slides.forEach((s,i)=>L.push({k:'photo',i})); L.push({k:'feat'},{k:'close'}); return L; }
 function render(){
   const L=slideList(), T=L.length, strip=document.getElementById('strip');
@@ -480,9 +511,9 @@ function render(){
     box.querySelector('.no').textContent=(idx+1)+'/'+T;
     box.onclick=()=>{ const id=s.k==='cover'?'sec-cover':s.k==='photo'?'slot-'+s.i:s.k==='feat'?'sec-feat':'sec-close'; const el=document.getElementById(id); el&&el.scrollIntoView({behavior:'smooth',block:'center'}); };
     const ctx=box.querySelector('canvas').getContext('2d'); ctx.clearRect(0,0,W,H);
-    try{ if(s.k==='cover') drawCover(ctx,T); else if(s.k==='photo') drawPhoto(ctx,s.i,idx+1,T); else if(s.k==='feat') drawFeat(ctx,idx+1,T); else drawClose(ctx,idx+1,T); }catch(e){ console.error(e); }
+    try{ ciz(tasarim(),ctx,s,idx+1,T); }catch(e){ console.error(e); }
   });
-  updateCaption(); save();
+  updateCaption(); save(); thumbsLater();
 }
 let _t; function rerender(){ clearTimeout(_t); _t=setTimeout(render,120); }
 
@@ -620,7 +651,7 @@ document.getElementById('pinIn').addEventListener('keydown',e=>{ if(e.key==='Ent
 if(window.PORTAL && !window.yetkili()){ document.getElementById('pinGate').style.display='flex'; setTimeout(()=>document.getElementById('pinIn').focus(),200); }
 (async()=>{
   load();
-  window.LOGOIMG=await imgLoad(LOGO);
+  window.LOGOIMG=await imgLoad(LOGO); window.LOGOKOYU=await imgLoad('assets/dogus-logo-koyu.png');
   await Promise.all(DANISMANLAR.map(async d=>{ DANIMG[d.id]=await imgLoad(d.img); }));
   try{ await Promise.all([300,400,500,600,700].map(w=>document.fonts.load(`${w} 40px Inter`))); await document.fonts.ready; }catch(e){}
   init();
