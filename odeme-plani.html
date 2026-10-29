@@ -114,7 +114,7 @@ tr.tt td.a{font-size:19px;font-weight:700}
   // Danışman: planı hazırlayanın girişinden (sunumda kibrisKim, burada kayıtlı şifre girişi ya da portal broker girişi); fotoğraf assets/kibris/danisman/<id>.webp
   var DAN={umut:['Umut Tokkuş','0532 472 41 48','Broker · RE/MAX Doğuş'],makbule:['Makbule Tokkuş','0532 478 13 31','Yurt Dışı Proje Koordinatörü'],
     gizem:['Gizem Gök','0507 097 74 31'],aysegul:['Ayşegül Alpay','0532 456 79 56'],aysun:['Aysun Yılmaz','0532 363 35 54'],evsen:['Evşen Özazman','0532 518 11 67'],
-    gamze:['Gamze Yetkin','0538 354 41 65'],irem:['İrem Aleyna Tetik','0530 445 44 61'],orhan:['Orhan Özazman','0533 436 19 95'],ozlem:['Özlem Varol','0533 624 85 98']};
+    gamze:['Gamze Yetkin','0538 354 41 65'],irem:['İrem Aleyna Tetik','0546 281 91 77'],orhan:['Orhan Özazman','0533 436 19 95'],ozlem:['Özlem Varol','0533 624 85 98']};
   var API='https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec',KIMLIK={aysegul_alpay:'aysegul',ozlem_varol:'ozlem'};
   function ls(k,v){try{if(v===undefined)return localStorage.getItem(k)||'';if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return '';}}
   var KIM=D.dk||ls('kpaKim')||(/makbule/i.test(ls('dogusBrokerAd'))?'makbule':ls('dogusBrokerAd')?'umut':'');
