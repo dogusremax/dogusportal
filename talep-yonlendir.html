@@ -17,7 +17,13 @@
   main{max-width:720px;margin:0 auto;padding:18px 16px 60px;display:flex;flex-direction:column;gap:16px}
   .nobet{display:flex;align-items:center;gap:10px;background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 16px;font-size:14px}
   .nobet b{color:#ffd166}
-  .nobet button{margin-left:auto}
+  .nobet{flex-wrap:wrap}
+  .nobet .sag{margin-left:auto;display:flex;gap:6px}
+  .nobet small{display:block;font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+  .devir{background:#111738;border:1px solid #DC1C2E;border-radius:14px;padding:14px 16px}
+  .devir .soru{margin-bottom:8px}
+  .devir .alt{display:flex;gap:8px;margin-top:10px}
+  .devir .alt button{flex:1;padding:13px}
   h2{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin:4px 2px 0}
   .kart{background:#111738;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden}
   .kart.acik{border-color:#DC1C2E}
@@ -74,7 +80,15 @@
 </div>
 
 <main id="ana" hidden>
-  <div class="nobet"><span>Bugün nöbet: <b id="nobetAd">…</b></span><button class="ghost" id="yenile">Yenile</button></div>
+  <div class="nobet"><span>Bugün nöbet: <b id="nobetAd">…</b><small id="nobetNot" hidden></small></span><span class="sag"><button class="ghost" id="devirAc">Nöbeti devret</button><button class="ghost" id="yenile">Yenile</button></span></div>
+  <div class="devir" id="devir" hidden>
+    <div class="soru">Bugünün talepleri kime gitsin?</div>
+    <select class="sec" id="devirSec"></select>
+    <div class="alt"><button class="ghost" id="devirKapat">Vazgeç</button><button id="devirGonder" disabled>Aktar</button></div>
+    <button class="ghost" id="devirIptal" style="margin-top:10px;width:100%" hidden>Devri geri al</button>
+    <p class="durum" id="devirDurum"></p>
+    <p class="ipucu">Bugün site formundan, 0216 WhatsApp hattından ve arama kayıtlarından gelen yeni talepler seçtiğin danışmana gider. Takvim ve sabahki story değişmez; devir yalnız bugün geçerli, yarın takvime döner. Ofis seçersen talepler sana düşer, buradan yönlendirirsin.</p>
+  </div>
   <h2 id="bekBaslik">Bekleyen talepler</h2>
   <div id="bekleyen" style="display:flex;flex-direction:column;gap:10px"></div>
   <p class="ipucu">Ofis nöbeti günü site formundan ve 0216 WhatsApp hattından gelen, sizin adınıza açılmış talepler. Talebe dokun, danışmanı seç, Gönder'e bas: müşteri danışmanın Müşteri Takip listesine geçer, danışmana "Ofis sana yeni müşteri atadı" bildirimi ve WhatsApp mesajı gider.</p>
@@ -131,6 +145,9 @@ const nobetciMi = ad => VERI && VERI.nobet && ilk(VERI.nobet).toLocaleLowerCase(
 function ciz() {
   const j = VERI;
   $('nobetAd').textContent = j.nobet || 'Ofis';
+  $('nobetNot').hidden = !j.devir;
+  $('nobetNot').textContent = j.devir ? `Devredildi · takvimde ${j.takvimNobetci || 'Ofis'}` : '';
+  $('devirIptal').hidden = !j.devir;
   const b = j.bekleyen || [];
   $('bekBaslik').textContent = b.length ? `Bekleyen talepler · ${b.length}` : 'Bekleyen talepler';
   $('bekleyen').innerHTML = !b.length ? '<div class="bos">Yönlendirilecek talep yok 👍</div>' : b.map(k => {
@@ -205,6 +222,32 @@ document.addEventListener('click', async e => {
     } catch (err) { kontrol('Bağlantı koptu.'); }
   }
 });
+// Bugünlük nöbet devri (TalepYonlendir.js islem=devret / devirIptal, NobetDevir sayfası)
+function devirAc() {
+  const j = VERI || {}, simdi = j.nobet || 'Ofis';
+  $('devirSec').innerHTML = '<option value="">Danışman seç…</option>' + (j.danismanlar || []).concat(['Ofis'])
+    .filter(a => a !== simdi).map(a => `<option value="${esc(a)}">${esc(a)}${a === 'Ofis' ? ' (talepler bana)' : ''}</option>`).join('');
+  $('devirGonder').disabled = true; $('devirGonder').textContent = 'Aktar'; $('devirDurum').textContent = '';
+  $('devir').hidden = false;
+}
+async function devirIstek(veri, onay) {
+  if (!confirm(onay)) return;
+  ['devirGonder', 'devirIptal'].forEach(i => $(i).disabled = true);
+  $('devirDurum').className = 'durum'; $('devirDurum').textContent = 'Kaydediliyor…';
+  try {
+    const j = await servis(veri, 60000);
+    if (!j.ok) throw new Error(j.error || 'Kaydedilemedi.');
+    VERI = j; ciz(); $('devir').hidden = true;
+    gecici(`✓ Bugünün talepleri artık ${j.nobet || 'Ofis'} adına gidiyor.`, false);
+  } catch (e) { $('devirDurum').className = 'durum hata'; $('devirDurum').textContent = e.message; }
+  finally { $('devirGonder').disabled = !$('devirSec').value; $('devirIptal').disabled = false; }
+}
+$('devirAc').onclick = () => $('devir').hidden ? devirAc() : ($('devir').hidden = true);
+$('devirKapat').onclick = () => { $('devir').hidden = true; };
+$('devirSec').onchange = () => { const v = $('devirSec').value; $('devirGonder').disabled = !v; $('devirGonder').textContent = v ? 'Aktar → ' + v : 'Aktar'; };
+$('devirGonder').onclick = () => { const v = $('devirSec').value; if (v) devirIstek({ islem: 'devret', danisman: v }, `Bugünün talepleri ${v} adına gitsin mi?`); };
+$('devirIptal').onclick = () => devirIstek({ islem: 'devirIptal' }, `Devir kaldırılsın, talepler yeniden ${VERI.takvimNobetci || 'takvimdeki nöbetçi'} adına gitsin mi?`);
+
 document.addEventListener('change', e => {
   const sec = e.target.closest('[data-sec]');
   if (!sec) return;
