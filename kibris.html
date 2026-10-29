@@ -4174,8 +4174,8 @@ gv(); new MutationObserver(gv).observe(root,{attributes:true,attributeFilter:["l
   box-shadow:0 40px 90px -30px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.08);transform:translateY(28px) scale(.96);transition:transform .6s var(--ease,cubic-bezier(.2,.8,.2,1))}
 .sem.on .sem-c{transform:none}
 .sem-c::before{content:"";position:absolute;top:0;left:22px;right:22px;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,transparent,#DC1C2E 20%,#DC1C2E 80%,transparent)}
-.sem-x{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(5,10,48,.6);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .2s,transform .3s}
-.sem-x:hover{background:#DC1C2E;transform:rotate(90deg)}
+.sem-x{position:absolute;top:12px;inset-inline-end:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:2px solid #fff;background:#DC1C2E;color:#fff;font-size:1.05rem;font-weight:900;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 18px -6px rgba(220,28,46,.9);transition:background .2s,transform .3s}
+.sem-x:hover{background:#B8121F;transform:rotate(90deg)}
 .sem-lg{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 40px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
 .sem-lg img{height:34px;width:auto;display:block}
 .sem-lg i{font-style:normal;color:rgba(238,241,250,.45);font:500 .9rem var(--f-mono)}
