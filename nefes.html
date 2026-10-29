@@ -120,7 +120,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v9</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v10</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -191,7 +191,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v9</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v10</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -458,7 +458,7 @@ function mPlus(){
   let t=Date.now(),back=false;
   if(v.trim()){const m=v.trim().match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return toast('Saat SS:DD biçiminde olmalı');
     const n=new Date();n.setHours(+m[1],+m[2],0,0);if(n>Date.now())n.setDate(n.getDate()-1);t=n.getTime();back=true}
-  else if(iqRecentAuto())return toast('IQOS bunu zaten saydı 👍');
+  else if(iqRecentAuto()){toast('IQOS bunu az önce saydı — saati bilinmiyorsa "Saatleri düzelt"ten gir');return mList()}
   S.mlog=S.mlog||[];S.mlog.push(t);S.mlog.sort((a,b)=>a-b);
   if(back){S.iq=S.iq||{dbg:[],sizes:[]};S.iq.backTs=(S.iq.backTs||[]).concat(t).slice(-200)}
   save();if(navigator.vibrate)navigator.vibrate(30);toast(back?'Geriye dönük eklendi':'Elle eklendi');mRender()}
@@ -579,16 +579,18 @@ async function iqLink(dev){
   iqS().name=dev.name||'IQOS';iqSt('bağlı');dbg('bağlandı: '+(dev.name||'?'));
   iq.busy=0;clearInterval(iq.timer);iq.timer=setInterval(iqPoll,60e3);setTimeout(iqPoll,1500);
 }
+function iqAct(){const n=Date.now();if(iq.lastAct)iq.maxGap=Math.max(iq.maxGap||0,n-iq.lastAct);iq.lastAct=n}
 function iqLost(){iq.scp=null;clearInterval(iq.timer);dbg('bağlantı koptu');iqRetry(0)}
 function iqRetry(n){
   clearTimeout(iq.rt);if(!iq.dev||iq.scp)return;
   iqSt('IQOS uykuda — uyanınca kendiliğinden bağlanır');
-  iq.rt=setTimeout(()=>{if(iq.scp)return;if(document.hidden||iq.linking)return iqRetry(n);
+  iq.rt=setTimeout(()=>{if(iq.scp)return;iqAct();if(document.hidden||iq.linking)return iqRetry(n);
     iq.linking=1;iqLink(iq.dev).then(()=>{iq.linking=0},e=>{iq.linking=0;if(n%15===0)dbg('IQOS uykuda, bekleniyor…');iqRetry(n+1)})},
     n===0?300:(document.hidden?30e3:4e3));
 }
 async function iqPoll(){
   if(!iq.scp||iq.busy)return;
+  iqAct();
   iq.busy=1;clearTimeout(iq.wd);iq.wd=setTimeout(()=>{iq.busy=0},8e3);   // cevap gelmezse 8 sn sonra kilidi aç, bağlantıya dokunma
   if(document.hidden){const q=iqS();q.bgReads=(q.bgReads||0)+1;q.bgLast=Date.now();save()}
   try{const v=new Uint8Array(IQ.tele);(iq.scp.writeValueWithResponse?await iq.scp.writeValueWithResponse(v):await iq.scp.writeValue(v))}
@@ -606,14 +608,14 @@ function iqFrame(e){
 }
 function iqCount(v){
   const q=iqS(),now=Date.now(),prev=q.lastSeen||0;
-  if(q.last==null||v<q.last){q.last=v;q.lastSeen=now;save();iqRender();return}
-  const d=v-q.last;q.last=v;q.lastSeen=now;
+  if(q.last==null||v<q.last){q.last=v;q.lastSeen=now;iq.maxGap=0;iq.lastAct=now;save();iqRender();return}
+  const d=v-q.last;q.last=v;q.lastSeen=now;const _mg=iq.maxGap;iq.maxGap=0;iq.lastAct=now;
   if(d>0){
     dbg(`sayaç +${d} (${v})`);
     if(prev&&now-prev>3*6e4){            // okunamayan dönemde birikenler
       const k=d;
       // TAHMİN YOK: sayfa bu arada hep açık ve bağlanmaya çalışıyorduysa, IQOS ancak stick bitip kutuya girince uyanır → son stick'in saati = şimdi (gerçek)
-      const watched=iq.loadedAt<prev&&iq.hidAt<prev&&!document.hidden;
+      const watched=iq.loadedAt<prev&&(_mg||0)<2.5*6e4;dbg(`kesintisiz izleme: ${watched?'evet':'hayır'} (en uzun sessizlik ${Math.round((_mg||0)/1e3)} sn)`);
       const ax=new Set((q.autoTs||[]).concat(q.estTs||[],q.backTs||[]));
       const man=(S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[])).filter(t=>t>prev&&t<=now&&!ax.has(t));
       if(man.length)dbg(`ara dönemde ${man.length} elle kayıt var, düşüldü`);
