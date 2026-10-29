@@ -1,0 +1,36 @@
+name: Danışman sitesi panelden güncellendi
+# site/duzenle.html → danisman-takip SiteDuzenle.js data/danisman-site.json'a yazar; siteler veriyi canlı okur.
+# Burada yalnız dosyaya gömülü kalanlar yenilenir: teslim takvimindeki telefon (site/uret.py) ve yeni videoların kapak/mp4'ü.
+on:
+  push:
+    branches: [main]
+    paths: [data/danisman-site.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: danisman-site
+  cancel-in-progress: false
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: python3 site/uret.py
+      - run: npm i --no-save sharp@0.33.5 && (command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg))
+      - name: Güncel IG token'ı al
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
+      - run: node scripts/video-kapak.js || true
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add site assets/video-kapak assets/reels
+          git diff --cached --quiet || (git commit -m "Danışman sitesi: teslim takvimi telefonu ve video kapakları" && git pull --rebase && git push)

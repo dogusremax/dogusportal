@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#050A30">
+<title>Sitemi Düzenle · RE/MAX Doğuş</title>
+<link rel="icon" href="/assets/ikon3d/hammer-and-wrench.webp">
+<script src="/assets/site-tema.js"></script>
+<script src="/assets/imza.js?v=4"></script>
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--line:#dfe4ec;--red:#DC1C2E;--navy:#050A30;--ink:#0d1330;--mute:#5d6585}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;font-weight:700;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+button,input,textarea{font-family:Arial,Helvetica,sans-serif;font-weight:700}
+[hidden]{display:none!important}
+header{background:var(--navy);color:#fff;padding:16px 16px 20px}
+header .w,main{max-width:720px;margin:0 auto}
+header a{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px}
+.ust{display:flex;align-items:center;gap:12px;margin-top:12px}
+.ust img.ik{width:46px;height:46px}
+h1{font-size:23px;line-height:1.2}
+header p{color:rgba(255,255,255,.78);font-size:14px;line-height:1.45;margin-top:4px}
+main{padding:14px 14px 0;display:grid;gap:14px}
+.kart{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.kart h2{font-size:18px;margin-bottom:4px}
+.kart .alt{font-size:13.5px;color:var(--mute);line-height:1.45;margin-bottom:12px}
+label{display:block;font-size:14px;margin:12px 0 6px}
+label small{color:var(--mute);font-size:12.5px}
+input,textarea{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;background:#fbfcfe;color:var(--ink)}
+input:focus,textarea:focus{outline:0;border-color:var(--navy);background:#fff}
+textarea{min-height:110px;resize:vertical;line-height:1.45}
+textarea#hakkimda{min-height:220px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;border:0;font-size:16px;cursor:pointer;-webkit-appearance:none;text-decoration:none}
+.btn.k{background:var(--red);color:#fff}
+.btn.l{background:var(--navy);color:#fff}
+.btn.b{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+/* giriş */
+.giris{max-width:420px;margin:0 auto}
+.kimSec{width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-size:16px;text-align:left;color:var(--ink)}
+.kimSec img,.kimListe img{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#e9edf3}
+.kimSec .ok{margin-left:auto;color:var(--mute)}
+.kimListe{margin-top:6px;border:1.5px solid var(--line);border-radius:14px;background:#fff;max-height:330px;overflow:auto}
+.kimListe button{width:100%;display:flex;align-items:center;gap:12px;padding:9px 12px;border:0;background:none;font-size:15px;text-align:left;cursor:pointer;color:var(--ink)}
+.kimListe button.on{background:#f1f3f8}
+.kimListe small{display:block;color:var(--mute);font-size:12px}
+.hata{color:#c21426;font-size:14px;min-height:20px;margin-top:10px}
+.hata.bekle{color:var(--mute)}
+/* kimlik şeridi */
+.ben{display:flex;align-items:center;gap:12px}
+.ben img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;background:#e9edf3}
+.ben b{font-size:17px;display:block}
+.ben small{color:var(--mute);font-size:13px}
+.ben .cik{margin-left:auto;background:none;border:0;color:var(--mute);font-size:14px;cursor:pointer;text-decoration:underline}
+.secici{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.secici::-webkit-scrollbar{display:none}
+.secici button{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;width:74px;border:0;background:none;cursor:pointer;font-size:12px;color:var(--ink)}
+.secici img{width:54px;height:54px;border-radius:50%;object-fit:cover;object-position:top;background:#e9edf3;border:3px solid transparent}
+.secici button.on img{border-color:var(--red)}
+.adres{display:flex;gap:8px;margin-top:12px}
+.adres .btn{flex:1;font-size:15px;min-height:44px}
+/* temalar */
+.temalar{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.temalar{grid-template-columns:repeat(3,1fr)}}
+.tm{position:relative;border:2px solid var(--line);border-radius:16px;background:#fff;padding:0;overflow:hidden;cursor:pointer;text-align:left;color:var(--ink)}
+.tm.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+.tm .on-i{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--ink);display:none;place-items:center;font-size:14px;z-index:2}
+.tm.on .on-i{display:grid}
+.tm .ust2{height:78px;background:var(--navy);position:relative;overflow:hidden;padding:12px}
+.tm .ust2:before{content:"";position:absolute;right:-26px;top:-30px;width:92px;height:92px;border-radius:50%;background:var(--grad)}
+.tm .ust2 i{display:block;width:62%;height:8px;border-radius:4px;background:rgba(255,255,255,.85);position:relative}
+.tm .ust2 i+i{width:40%;margin-top:7px;background:rgba(255,255,255,.45)}
+.tm .ust2 em{position:absolute;left:12px;bottom:10px;width:58px;height:18px;border-radius:9px;background:var(--red)}
+.tm .ad{display:block;padding:9px 11px;font-size:14px}
+/* videolar */
+.ekle{display:flex;gap:8px}
+.ekle input{flex:1;min-width:0}
+.ekle .btn{flex:none}
+.vl{display:grid;gap:10px;margin-top:12px}
+.vi{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:8px}
+.vi .kp{width:64px;height:96px;border-radius:10px;background:#0d1330 center/cover no-repeat;position:relative;overflow:hidden;grid-row:span 2}
+.vi .kp span{position:absolute;left:4px;bottom:4px;font-size:10px;color:#fff;background:rgba(0,0,0,.55);padding:2px 5px;border-radius:6px}
+.vi input{padding:10px 12px;font-size:15px}
+.vi .is{display:flex;gap:6px;align-items:center}
+.vi .is a{font-size:13px;color:var(--mute);margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vi .is button{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:16px;cursor:pointer;color:var(--ink)}
+.vi .is button.sil{color:#c21426}
+.bos{font-size:14px;color:var(--mute);padding:6px 2px}
+/* kaydet şeridi */
+.alt-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:20}
+.alt-bar .w{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.alt-bar .dur{flex:1;font-size:13.5px;color:var(--mute);line-height:1.35}
+.alt-bar .dur.iyi{color:#0b7a43}
+.alt-bar .dur.kotu{color:#c21426}
+.alt-bar .btn{min-width:130px}
+.alt-bar .btn:disabled{opacity:.45}
+.yuk{padding:40px 0;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <a href="/site/">← Danışman Web Siteleri</a>
+  <div class="ust"><img class="ik" src="/assets/ikon3d/hammer-and-wrench.webp" alt=""><div>
+    <h1>Sitemi Düzenle</h1>
+    <p>Renkleri, bilgilerini ve Instagram videolarını buradan değiştir. Kaydettiğinde siten kendiliğinden güncellenir.</p>
+  </div></div>
+</div></header>
+
+<main>
+  <!-- Giriş: Doğuş Posta / Ofis Takvimi ile aynı şifre ve oturum -->
+  <section id="giris" class="kart giris" hidden>
+    <h2>Giriş</h2>
+    <p class="alt">Doğuş Posta ve Ofis Takvimi'ne girdiğin şifreyle gir. Bir kez girmen yeterli.</p>
+    <div id="kimler"></div>
+    <label for="pin">Şifren</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="••••">
+    <button id="girBtn" class="btn k" style="width:100%;margin-top:14px">Giriş yap</button>
+    <div id="girisHata" class="hata"></div>
+  </section>
+
+  <div id="yukleniyor" class="yuk">Yükleniyor…</div>
+
+  <div id="panel" hidden style="display:grid;gap:14px">
+    <section class="kart">
+      <div class="ben"><img id="benFoto" alt=""><div><b id="benAd"></b><small id="benAlt"></small></div><button class="cik" id="cikis">Çıkış</button></div>
+      <div id="secici" class="secici" hidden></div>
+      <div class="adres"><a id="siteAc" class="btn l" target="_blank" rel="noopener">Sitemi aç</a><button id="siteKopya" class="btn b" type="button">Linki kopyala</button></div>
+    </section>
+
+    <section class="kart">
+      <h2>Renk teması</h2>
+      <p class="alt">Sitenin ana rengini seç. Logo ve yazılar aynı kalır, renkler değişir.</p>
+      <div id="temalar" class="temalar"></div>
+    </section>
+
+    <section class="kart">
+      <h2>İletişim</h2>
+      <label for="telefon">WhatsApp ve telefon numaran</label>
+      <input id="telefon" type="tel" inputmode="tel" placeholder="05xx xxx xx xx">
+      <label for="instagram">Instagram kullanıcı adın <small>(@ olmadan)</small></label>
+      <input id="instagram" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="kullaniciadi">
+    </section>
+
+    <section class="kart">
+      <h2>Tanıtım bilgileri</h2>
+      <p class="alt">Türkçe yaz; İngilizce, Rusça, Farsça, Almanca ve Lehçe sayfalara otomatik çevrilir.</p>
+      <label for="unvan">Unvan <small>(boş bırakırsan "Profesyonel Gayrimenkul Danışmanı")</small></label>
+      <input id="unvan" maxlength="70">
+      <label for="ozet">Kısa tanıtım <small>(fotoğrafının yanındaki cümle)</small></label>
+      <textarea id="ozet" maxlength="260"></textarea>
+      <label for="hakkimda">Hakkımda <small>(paragrafları boş satırla ayır)</small></label>
+      <textarea id="hakkimda"></textarea>
+      <label for="hitap">WhatsApp mesajında hitap <small>(ör. Gamze Hanım)</small></label>
+      <input id="hitap" maxlength="40">
+    </section>
+
+    <section class="kart">
+      <h2>Videolarım</h2>
+      <p class="alt">Instagram videonun (Reels) ya da YouTube videonun linkini yapıştır, "Ekle"ye bas. Sitende "Videolarım" bölümünde, Özlem Varol'un sitesindeki gibi kaydırmalı görünür. Kapak resmi kaydettikten birkaç dakika sonra gelir.</p>
+      <div class="ekle"><input id="vLink" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="instagram.com/reel/…"><button id="vEkle" class="btn l" type="button">Ekle</button></div>
+      <div id="vHata" class="hata" style="min-height:0"></div>
+      <div id="vl" class="vl"></div>
+    </section>
+  </div>
+</main>
+
+<div class="alt-bar" id="altBar" hidden><div class="w">
+  <div id="dur" class="dur">Değişiklik yok</div>
+  <button id="kaydet" class="btn k" disabled>Kaydet</button>
+</div></div>
+
+<script>
+var API_GIRIS = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+var API_KAYIT = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
+// site/index.html ile aynı liste: [id, ad, adres]
+var SITELER = [['ozlem_varol','Özlem Varol','https://ozlemvarol.com/'],['gamze','Gamze Yetkin','gamzeyetkin'],['irem','İrem Aleyna Tetik','iremtetik'],['aysegul_alpay','Ayşegül Alpay','aysegulalpay'],['aysun','Aysun Yılmaz','aysunyilmaz'],['evsen','Evşen Özazman','evsenozazman'],['orhan','Orhan Özazman','orhanozazman'],['gizem','Gizem Gök','gizemgok']];
+var $ = function (i) { return document.getElementById(i); };
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+var ls = function (k, v) { try { if (v === undefined) return localStorage.getItem(k) || ''; if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return ''; };
+var siteAdres = function (s) { return s[2].indexOf('http') === 0 ? s[2] : 'https://dogusportal.com/site/' + s[2] + '/'; };
+var S = { oturum: ls('posta_oturum'), kim: ls('posta_kim'), ad: '', broker: false, id: '', veri: null, ekip: [], ilk: null, tema: 'klasik', videolar: [] };
+
+/* ---- giriş (takvim.html ile aynı) ---- */
+var kisi = function (id) { return (window.IMZA_KISILER || []).find(function (x) { return x.id === id; }); };
+var SECILEN = S.kim || ls('posta_son_kim') || 'gamze';
+function kimlerCiz(acik) {
+  var l = (window.IMZA_KISILER || []).slice().sort(function (a, b) { return a.ad.localeCompare(b.ad, 'tr'); });
+  var k = kisi(SECILEN) || l[0]; SECILEN = k.id;
+  var foto = function (x) { return '<img src="/assets/imza/' + x.id + '.png" alt="">'; };
+  $('kimler').innerHTML = '<button type="button" class="kimSec">' + foto(k) + '<span>' + esc(k.ad) + '</span><span class="ok">▾</span></button>' +
+    (acik ? '<div class="kimListe">' + l.map(function (x) { return '<button type="button" data-id="' + x.id + '" class="' + (x.id === k.id ? 'on' : '') + '">' + foto(x) + '<span>' + esc(x.ad) + '<small>' + esc(x.unvan) + '</small></span></button>'; }).join('') + '</div>' : '');
+  $('kimler').querySelector('.kimSec').onclick = function (e) { e.stopPropagation(); kimlerCiz(!acik); };
+  [].forEach.call($('kimler').querySelectorAll('.kimListe button'), function (x) { x.onclick = function () { SECILEN = x.dataset.id; ls('posta_son_kim', SECILEN); kimlerCiz(); $('pin').focus(); }; });
+}
+document.addEventListener('click', function (e) { if ($('kimler').querySelector('.kimListe') && !$('kimler').contains(e.target)) kimlerCiz(); });
+async function api(url, body) {
+  var r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  return r.json();
+}
+function girisGoster(m) {
+  $('yukleniyor').hidden = true; $('panel').hidden = true; $('altBar').hidden = true; $('giris').hidden = false;
+  kimlerCiz(); $('girisHata').textContent = m || ''; $('pin').value = '';
+}
+async function girisYap() {
+  var pin = $('pin').value.trim(); if (!pin) { $('pin').focus(); return; }
+  $('girBtn').disabled = true; $('girisHata').textContent = 'Kontrol ediliyor…'; $('girisHata').classList.add('bekle');
+  try {
+    var j = await api(API_GIRIS, { action: 'takvim', islem: 'giris', kim: SECILEN, pin: pin });
+    if (!j.ok) throw new Error(j.error || 'Giriş yapılamadı');
+    S.oturum = j.oturum; S.kim = j.kim; S.ad = j.ad; S.broker = !!j.broker;
+    ls('posta_oturum', S.oturum); ls('posta_kim', S.kim);
+    $('giris').hidden = true; await basla();
+  } catch (e) { $('girisHata').textContent = e.message; $('pin').value = ''; }
+  finally { $('girBtn').disabled = false; $('girisHata').classList.remove('bekle'); }
+}
+$('girBtn').onclick = girisYap;
+$('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') girisYap(); });
+$('cikis').onclick = function () {
+  if (!confirm((S.ad || 'Bu hesap') + ' olarak girdin. Çıkış yapılsın mı?\n(Doğuş Posta ve Ofis Takvimi\'nden de çıkılır.)')) return;
+  ['posta_oturum', 'posta_kim', 'posta_hesap', 'ot_onbellek', 'ot_depo'].forEach(function (k) { ls(k, null); });
+  S.oturum = ''; S.kim = ''; girisGoster();
+};
+
+/* ---- panel ---- */
+async function basla() {
+  $('yukleniyor').hidden = false;
+  if (!S.oturum) return girisGoster();
+  var res = await Promise.all([
+    api(API_GIRIS, { action: 'takvim', islem: 'ben', oturum: S.oturum }).catch(function () { return { ok: false }; }),
+    fetch('/data/danisman-site.json?cb=' + Date.now()).then(function (r) { return r.json(); }),
+    fetch('/data/danismanlar.json?cb=' + Date.now()).then(function (r) { return r.json(); }).catch(function () { return []; })
+  ]);
+  var ben = res[0];
+  if (!ben.ok) return girisGoster(ben.error === 'OTURUM_YOK' ? '' : 'Bağlantı kurulamadı, tekrar dene.');
+  S.kim = ben.kim; S.ad = ben.ad; S.broker = !!ben.broker; S.veri = res[1]; S.ekip = res[2] || [];
+  var izinli = SITELER.filter(function (s) { return S.broker || s[0] === S.kim; });
+  $('yukleniyor').hidden = true;
+  if (!izinli.length) { $('yukleniyor').hidden = false; $('yukleniyor').textContent = 'Sana ait bir danışman sitesi bulunamadı.'; return; }
+  var q = new URLSearchParams(location.search).get('id');
+  S.id = (izinli.find(function (s) { return s[0] === q; }) || izinli.find(function (s) { return s[0] === ls('sd_son'); }) || izinli[0])[0];
+  if (S.broker) {
+    $('secici').hidden = false;
+    $('secici').innerHTML = izinli.map(function (s) { return '<button type="button" data-id="' + s[0] + '"><img src="/assets/ekip/kucuk/' + s[0] + '.webp" alt="">' + esc(s[1].split(' ')[0]) + '</button>'; }).join('');
+    $('secici').onclick = function (e) { var b = e.target.closest('[data-id]'); if (!b || b.dataset.id === S.id) return;
+      if (degisenler() && !confirm('Kaydedilmemiş değişiklikler var. Yine de başka siteye geçilsin mi?')) return;
+      S.id = b.dataset.id; ls('sd_son', S.id); doldur(); };
+  }
+  $('panel').hidden = false; $('altBar').hidden = false;
+  doldur();
+}
+
+var tr = function (v) { return v == null ? '' : (typeof v === 'string' || Array.isArray(v)) ? v : (v.tr != null ? v.tr : ''); };
+function doldur() {
+  var s = (S.veri || {})[S.id] || {}, d = S.ekip.find(function (x) { return x.id === S.id; }) || {}, site = SITELER.find(function (x) { return x[0] === S.id; });
+  [].forEach.call($('secici').children, function (b) { b.classList.toggle('on', b.dataset.id === S.id); });
+  $('benFoto').src = '/assets/ekip/kucuk/' + S.id + '.webp';
+  $('benAd').textContent = site[1];
+  $('benAlt').textContent = S.broker ? (S.kim === S.id ? '' : 'Broker olarak düzenliyorsun · ' + S.ad) : 'Kendi siteni düzenliyorsun';
+  $('siteAc').href = siteAdres(site);
+  var t = String(s.telefon || '').replace(/^90/, '0').replace(/(\d{4})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+  $('telefon').value = t;
+  $('instagram').value = s.instagram || d.instagram || '';
+  $('unvan').value = tr(s.unvan);
+  $('ozet').value = tr(s.ozet);
+  $('hakkimda').value = (tr(s.hakkimda) || []).join('\n\n');
+  $('hitap').value = tr(s.hitap);
+  S.tema = s.tema || 'klasik';
+  S.videolar = (s.videolar || []).map(function (v) { v = typeof v === 'string' ? { yt: v } : v; return { ig: v.ig, yt: v.yt, baslik: tr(v.baslik) || '' }; });
+  temaCiz(); vCiz();
+  S.ilk = form();
+  durum();
+}
+function form() {
+  return { tema: S.tema, telefon: $('telefon').value.replace(/\D/g, ''), instagram: $('instagram').value.trim().replace(/^@/, ''),
+    unvan: $('unvan').value.trim(), ozet: $('ozet').value.trim(),
+    hakkimda: $('hakkimda').value.split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean),
+    hitap: $('hitap').value.trim(),
+    videolar: S.videolar.map(function (v) { var o = v.ig ? { ig: v.ig } : { yt: v.yt }; if (v.baslik.trim()) o.baslik = v.baslik.trim(); return o; }) };
+}
+function degisenler() {
+  if (!S.ilk) return null;
+  var f = form(), o = {}, n = 0;
+  Object.keys(f).forEach(function (k) { if (JSON.stringify(f[k]) !== JSON.stringify(S.ilk[k])) { o[k] = f[k]; n++; } });
+  if (o.telefon !== undefined) o.telefon = $('telefon').value;
+  return n ? o : null;
+}
+function durum(m, cls) {
+  var d = degisenler();
+  $('kaydet').disabled = !d;
+  $('dur').className = 'dur' + (cls ? ' ' + cls : '');
+  $('dur').textContent = m || (d ? Object.keys(d).length + ' değişiklik kaydedilmedi' : 'Değişiklik yok');
+}
+['telefon', 'instagram', 'unvan', 'ozet', 'hakkimda', 'hitap'].forEach(function (i) { $(i).addEventListener('input', function () { durum(); }); });
+window.addEventListener('beforeunload', function (e) { if (degisenler()) { e.preventDefault(); e.returnValue = ''; } });
+
+/* temalar: her kutu kendi renkleriyle küçük bir site önizlemesi */
+function temaCiz() {
+  var T = window.SITE_TEMALAR || {};
+  $('temalar').innerHTML = Object.keys(T).map(function (k) {
+    return '<button type="button" class="tm' + (k === S.tema ? ' on' : '') + '" data-t="' + k + '"><span class="on-i">✓</span><div class="ust2"><i></i><i></i><em></em></div><span class="ad">' + esc(T[k].ad) + '</span></button>';
+  }).join('');
+  [].forEach.call($('temalar').children, function (b) { siteTema(b.dataset.t, b); });
+}
+$('temalar').onclick = function (e) { var b = e.target.closest('[data-t]'); if (!b) return; S.tema = b.dataset.t; temaCiz(); durum(); };
+
+/* videolar */
+function vKod(u) {
+  u = String(u || '').trim();
+  var m = u.match(/instagram\.com\/(?:[^/]+\/)?(?:reel|reels|p|tv)\/([A-Za-z0-9_-]{5,20})/i);
+  if (m) return { ig: m[1] };
+  m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/i);
+  if (m) return { yt: m[1] };
+  return null;
+}
+function vKapak(v) { return v.ig ? '/assets/video-kapak/' + v.ig + '.webp' : 'https://i.ytimg.com/vi/' + v.yt + '/hqdefault.jpg'; }
+function vLink(v) { return v.ig ? 'https://www.instagram.com/reel/' + v.ig + '/' : 'https://youtu.be/' + v.yt; }
+function vCiz() {
+  $('vl').innerHTML = S.videolar.length ? S.videolar.map(function (v, i) {
+    return '<div class="vi" data-i="' + i + '"><div class="kp" style="background-image:url(\'' + vKapak(v) + '\')"><span>' + (v.ig ? 'Instagram' : 'YouTube') + '</span></div>' +
+      '<input data-b="' + i + '" value="' + esc(v.baslik) + '" maxlength="70" placeholder="Başlık (isteğe bağlı)">' +
+      '<div class="is"><a href="' + vLink(v) + '" target="_blank" rel="noopener">' + esc(v.ig || v.yt) + '</a>' +
+      '<button type="button" data-y="-1" aria-label="Yukarı"' + (i ? '' : ' disabled') + '>↑</button><button type="button" data-y="1" aria-label="Aşağı"' + (i < S.videolar.length - 1 ? '' : ' disabled') + '>↓</button><button type="button" class="sil" aria-label="Sil">✕</button></div></div>';
+  }).join('') : '<div class="bos">Henüz video yok. Eklediğin ilk video sitende "Videolarım" bölümünü açar.</div>';
+}
+$('vl').addEventListener('input', function (e) { var i = e.target.dataset.b; if (i == null) return; S.videolar[+i].baslik = e.target.value; durum(); });
+$('vl').addEventListener('click', function (e) {
+  var k = e.target.closest('.vi'); if (!k || e.target.tagName !== 'BUTTON') return; var i = +k.dataset.i;
+  if (e.target.classList.contains('sil')) S.videolar.splice(i, 1);
+  else { var j = i + +e.target.dataset.y; var t = S.videolar[i]; S.videolar[i] = S.videolar[j]; S.videolar[j] = t; }
+  vCiz(); durum();
+});
+function vEkle() {
+  var v = vKod($('vLink').value);
+  if (!v) { $('vHata').textContent = 'Link tanınmadı. Instagram Reels ya da YouTube linki yapıştır.'; return; }
+  if (S.videolar.some(function (x) { return (x.ig || x.yt) === (v.ig || v.yt); })) { $('vHata').textContent = 'Bu video zaten listede.'; return; }
+  v.baslik = ''; S.videolar.unshift(v); $('vLink').value = ''; $('vHata').textContent = ''; vCiz(); durum();
+}
+$('vEkle').onclick = vEkle;
+$('vLink').addEventListener('keydown', function (e) { if (e.key === 'Enter') vEkle(); });
+
+$('siteKopya').onclick = function () {
+  var u = $('siteAc').href, b = this, ok = function () { b.textContent = 'Kopyalandı'; setTimeout(function () { b.textContent = 'Linki kopyala'; }, 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(u).then(ok, function () { prompt('Link:', u); }); else prompt('Link:', u);
+};
+
+/* kaydet */
+$('kaydet').onclick = async function () {
+  var d = degisenler(); if (!d) return;
+  $('kaydet').disabled = true; durum('Kaydediliyor…');
+  try {
+    var j = await api(API_KAYIT, { action: 'siteDuzenle', islem: 'kaydet', oturum: S.oturum, id: S.id, veri: d });
+    if (!j.ok) { if (j.error === 'OTURUM_YOK') return girisGoster('Oturumun kapanmış, tekrar gir.'); throw new Error(j.error || 'Kaydedilemedi'); }
+    S.veri[S.id] = j.veri; doldur();
+    durum('Kaydedildi ✓ Siten 1-2 dakika içinde güncellenir.', 'iyi');
+  } catch (e) { durum(e.message, 'kotu'); $('kaydet').disabled = false; }
+};
+
+basla();
+</script>
+</body>
+</html>
