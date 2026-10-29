@@ -97,7 +97,7 @@ a{color:var(--acc)}
       <p class="note">stick bugün · son <b id="mLast">—</b></p>
       <svg id="mLine" onclick="mList()" viewBox="0 0 300 34" width="100%" height="34" style="margin-top:14px;display:block;cursor:pointer"></svg>
       <div style="display:flex;justify-content:space-between" class="note"><span>04</span><span>10</span><span>16</span><span>22</span><span>04</span></div>
-      <div class="legend"><span>tam saat</span><span class="e">tahmini saat</span><span class="m">elle</span></div>
+      <div class="legend"><span>IQOS'tan</span><span class="m">elle</span></div><p class="note" id="mUnk" onclick="mList()" style="margin-top:6px;color:var(--warn)"></p>
       <div class="mini"><button class="ghost" onclick="mPlus()">＋ Elle ekle</button><button class="ghost" onclick="mList()">🕒 Saatleri düzelt</button></div>
     </div>
     <div class="card"><h2>Harcama</h2><div class="money">
@@ -232,7 +232,7 @@ a{color:var(--acc)}
 </nav>
 
 <div class="modal hide" id="mSheet" onclick="if(event.target===this)this.classList.add('hide')">
-  <div class="sheet"><h2>Bugünkü stick'ler</h2><p class="note">İçi boş olanların saati tahmini. Saate dokunup düzelt; yanlışsa sil.</p>
+  <div class="sheet"><h2>Bugünkü stick'ler</h2><p class="note">Saati bilinmeyenlere dokunup gerçek saati gir; yanlış kayıt varsa sil.</p>
     <div id="mItems" style="max-height:55vh;overflow:auto;margin-top:8px"></div>
     <button class="pri full" style="margin-top:14px" onclick="$('mSheet').classList.add('hide')">Tamam</button></div>
 </div>
@@ -401,7 +401,7 @@ function render(){
   const pc=Math.min(100,Math.max(0,(d+1)/total*100));$('progBar').style.width=pc+'%';
   $('progTxt').textContent=`Bırakma günü: ${new Date(endDate()+'T00:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'})}`;
   $('planSum').innerHTML=`Günde <b>${c.base}</b> ile başlayıp ilk 3 gün aynı sayıda ama <b>sabit aralıkla</b> içiyorsun. Sonra her gün ~%${Math.round((1-Math.pow(Math.min(3,c.base)/c.base,1/(totalDays(c)-3)))*100)} azalıyor, aralık <b>${Math.round((windowMin(c)[1]-windowMin(c)[0])/c.base)} dk</b>'dan <b>${Math.round((windowMin(c)[1]-windowMin(c)[0])/Math.min(3,c.base))} dk</b>'ya çıkıyor.${S.hold?` (${S.hold} gün yavaşlatıldı)`:''}`;
-  $('logList').innerHTML=log.slice(-12).reverse().map(l=>`<div class="log"><span>${new Date(l.t).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</span><span>${l.type==='smoke'?'🚬 planlı':l.type==='extra'?'⚠️ plan dışı':'💪 atlandı'}</span></div>`).join('')||'<p class="note">Kayıt yok.</p>';
+  $('logList').innerHTML=log.slice(-12).reverse().map(l=>`<div class="log"><span>${new Date(l.t).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</span><span>${l.type==='smoke'?'🚬 planlı':l.type==='extra'?'⚠️ plan dışı':l.type==='unk'?'❔ saati bilinmiyor':'💪 atlandı'}</span></div>`).join('')||'<p class="note">Kayıt yok.</p>';
   $('topicShow').textContent=c.topic;
 }
 const fmtMs=ms=>{ms=Math.max(0,ms);const s=Math.floor(ms/1e3),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}:${pad(m)}:${pad(s%60)}`:`${pad(m)}:${pad(s%60)}`};
@@ -445,9 +445,10 @@ function mStats(){
   const avg=days?cnt.reduce((a,b)=>a+b,0)/days:null;
   const mins=t=>{const d=new Date(t);let m=d.getHours()*60+d.getMinutes();return m<240?m+1440:m};
   const med=a=>{a=[...a].sort((x,y)=>x-y);return a.length?a[Math.floor(a.length/2)]:null};
-  const fM=med(full.map(k=>mins(byDay[k][0]))), lM=med(full.map(k=>mins(byDay[k][byDay[k].length-1])));
-  const gaps=[];full.concat(byDay[today]?[today]:[]).forEach(k=>{const a=byDay[k];for(let i=1;i<a.length;i++)gaps.push((a[i]-a[i-1])/6e4)});
-  const hrs=Array(24).fill(0);full.forEach(k=>byDay[k].forEach(t=>hrs[new Date(t).getHours()]++));
+  const unk=new Set((S.iq&&S.iq.estTs)||[]),kn=k=>byDay[k].filter(t=>!unk.has(t)),fd=full.filter(k=>kn(k).length);
+  const fM=med(fd.map(k=>mins(kn(k)[0]))), lM=med(fd.map(k=>mins(kn(k)[kn(k).length-1])));
+  const gaps=[];full.concat(byDay[today]?[today]:[]).forEach(k=>{const a=kn(k);for(let i=1;i<a.length;i++)gaps.push((a[i]-a[i-1])/6e4)});
+  const hrs=Array(24).fill(0);full.forEach(k=>kn(k).forEach(t=>hrs[new Date(t).getHours()]++));
   return{byDay,today,days,avg,fM,lM,gap:gaps.length?gaps.reduce((a,b)=>a+b,0)/gaps.length:null,hrs};
 }
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
@@ -460,12 +461,13 @@ function mRender(){
   const st=mStats(), L=S.mlog||[], td=st.byDay[st.today]||[];
   $('dayPill').textContent='Ölçüm · '+(st.days+1)+'. gün';
   $('mToday').textContent=td.length;
-  const lt=L.length?L[L.length-1]:null,ago=lt?Math.round((Date.now()-lt)/6e4):0;
+  const _u=new Set((S.iq&&S.iq.estTs)||[]),_k=L.filter(t=>!_u.has(t)),lt=_k.length?_k[_k.length-1]:null,ago=lt?Math.round((Date.now()-lt)/6e4):0;
   $('mLast').textContent=lt?hm(new Date(lt))+' · '+(ago<60?ago+' dk':Math.floor(ago/60)+' sa '+(ago%60)+' dk')+' önce':'—';
   // zaman çizelgesi (04:00 → 04:00)
   const d0=new Date(st.today+'T04:00:00').getTime(),q=S.iq||{},ex=new Set(q.autoTs||[]),es=new Set(q.estTs||[]);
-  $('mLine').innerHTML='<line x1="4" y1="17" x2="296" y2="17" stroke="#2a3a34" stroke-width="2"/>'+td.map(t=>{const x=4+292*Math.min(1,Math.max(0,(t-d0)/864e5));
-    return es.has(t)?`<circle cx="${x}" cy="17" r="5" fill="none" stroke="#5fd3a1" stroke-width="1.6"/>`:`<circle cx="${x}" cy="17" r="5" fill="${ex.has(t)?'#5fd3a1':'#f2b45a'}"/>`}).join('');
+  $('mLine').innerHTML='<line x1="4" y1="17" x2="296" y2="17" stroke="#2a3a34" stroke-width="2"/>'+td.filter(t=>!es.has(t)).map(t=>{const x=4+292*Math.min(1,Math.max(0,(t-d0)/864e5));
+    return `<circle cx="${x}" cy="17" r="5" fill="${ex.has(t)?'#5fd3a1':'#f2b45a'}"/>`}).join('');
+  const nu=td.filter(t=>es.has(t)).length;$('mUnk').textContent=nu?`+${nu} stick saati bilinmiyor (bağlantı yokken) — dokunup saatini girebilirsin`:'';
   const pr=S.price||(S.setup&&S.setup.price)||0,per=pr/20;
   $('mPrice').textContent=pr?pr.toLocaleString('tr-TR')+'₺':'girilmedi';
   $('mSpentT').textContent=pr?Math.round(td.length*per).toLocaleString('tr-TR')+'₺':'—';
@@ -482,14 +484,14 @@ function mList(){
   const st=mStats(),q=S.iq||{},es=new Set(q.estTs||[]),ex=new Set(q.autoTs||[]),L=S.mlog||[];
   const td=L.map((t,i)=>({t,i})).filter(o=>mKey(o.t)===st.today||(mKey(o.t)===dstr(new Date(new Date(st.today+'T12:00:00')-864e5))&&Date.now()-o.t<20*36e5));
   $('mItems').innerHTML=td.length?td.slice().reverse().map(o=>`<div class="log" style="align-items:center">
-    <button class="ghost" style="padding:8px 12px" onclick="mEdit(${o.i})">${es.has(o.t)?'○':'●'} ${new Date(o.t).toLocaleDateString('tr-TR',{weekday:'short'})} ${hm(new Date(o.t))}</button>
-    <span class="note">${es.has(o.t)?'tahmini':ex.has(o.t)?'IQOS':'elle'}</span>
+    <button class="ghost" style="padding:8px 12px" onclick="mEdit(${o.i})">${es.has(o.t)?'saati bilinmiyor — gir':new Date(o.t).toLocaleDateString('tr-TR',{weekday:'short'})+' '+hm(new Date(o.t))}</button>
+    <span class="note">${es.has(o.t)?'':ex.has(o.t)?'IQOS':'elle'}</span>
     <button class="ghost" style="padding:8px 12px;color:var(--bad)" onclick="mDel(${o.i})">Sil</button></div>`).join(''):'<p class="note">Bugün kayıt yok.</p>';
   $('mSheet').classList.remove('hide');
 }
 function mEdit(i){
   const L=S.mlog,old=L[i],d=new Date(old);
-  const v=prompt('Gerçek saat (SS:DD) — gece yarısından sonraysa yine saati yaz:',hm(d));if(!v)return;
+  const v=prompt('Gerçek saat (SS:DD):',(S.iq&&(S.iq.estTs||[]).includes(old))?'':hm(d));if(!v)return;
   const m=v.trim().match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return toast('Saat SS:DD biçiminde olmalı');
   let n=new Date(old);n.setHours(+m[1],+m[2],0,0);
   if(n.getTime()-old>12*36e5)n=new Date(n-864e5);else if(old-n.getTime()>12*36e5)n=new Date(+n+864e5);
@@ -514,7 +516,7 @@ function mFinish(){
 /* ---- IQOS BLUETOOTH (Bluefy / Chrome) ---- */
 const IQ={core:'daebb240-b041-11e4-9e45-0002a5d5c51b',scp:'e16c6e20-b041-11e4-a4c3-0002a5d5c51b',bat:'f8a54120-b041-11e4-9be7-0002a5d5c51b',
   tele:[0x00,0xC9,0x10,0x02,0x01,0x01,0x75,0xD6],SESSION:8*6e4};
-let iq={dev:null,scp:null,timer:null,st:'bağlı değil'};
+let iq={dev:null,scp:null,timer:null,st:'bağlı değil',loadedAt:Date.now(),hidAt:0};
 function iqS(){S.iq=S.iq||{dbg:[],sizes:[]};return S.iq}
 const hex=b=>[...b].map(x=>x.toString(16).padStart(2,'0')).join(' ');
 function dbg(m){const q=iqS();q.dbg.push(hm(new Date())+' '+m);if(q.dbg.length>120)q.dbg.splice(0,q.dbg.length-120);save();iqRender()}
@@ -573,10 +575,10 @@ async function iqLink(dev){
 function iqLost(){iq.scp=null;clearInterval(iq.timer);dbg('bağlantı koptu');iqRetry(0)}
 function iqRetry(n){
   clearTimeout(iq.rt);if(!iq.dev||iq.scp)return;
-  iqSt(`koptu — yeniden bağlanıyor (${n+1}. deneme)`);
-  iq.rt=setTimeout(()=>{if(document.hidden||iq.scp||iq.linking)return iqRetry(n);
-    iq.linking=1;iqLink(iq.dev).then(()=>{iq.linking=0},e=>{iq.linking=0;dbg('yeniden bağlanamadı: '+e.message);iqRetry(n+1)})},
-    Math.min(60e3,[3e3,5e3,10e3,20e3,30e3][n]||60e3));
+  iqSt('IQOS uykuda — uyanınca kendiliğinden bağlanır');
+  iq.rt=setTimeout(()=>{if(iq.scp)return;if(document.hidden||iq.linking)return iqRetry(n);
+    iq.linking=1;iqLink(iq.dev).then(()=>{iq.linking=0},e=>{iq.linking=0;if(n%15===0)dbg('IQOS uykuda, bekleniyor…');iqRetry(n+1)})},
+    document.hidden?30e3:4e3);
 }
 async function iqPoll(){
   if(!iq.scp)return;
@@ -606,16 +608,20 @@ function iqCount(v){
     if(now-prev>15*6e4&&prev){            // bağlı değilken birikenler
       const u=iqUnit()||'puff',k=u==='puff'?Math.max(1,Math.round(d/14)):d;
       dbg(`ara dönem: ${k} stick (${u==='puff'?'nefesten hesap':'doğrudan'})`);
-      const gap=now-prev,ts=[];
-      if(gap>4*36e5&&k>=1){ // gece/uzun ara: biri kopuştan hemen sonra, diğerleri son saatlere
-        const st=mStats(),iv=Math.max(15,Math.min(90,st.gap||35))*6e4;
-        ts.push(prev+10*6e4);for(let i=1;i<k;i++)ts.push(now-(k-i)*iv);
-      }else for(let i=1;i<=k;i++)ts.push(prev+gap*i/(k+1));
-      // bağlantı yokken elle eklenenleri düş (çift sayma olmasın)
+      // TAHMİN YOK: sayfa bu arada hep açık ve bağlanmaya çalışıyorduysa, IQOS ancak stick bitip kutuya girince uyanır → son stick'in saati = şimdi (gerçek)
+      const watched=iq.loadedAt<prev&&iq.hidAt<prev&&!document.hidden;
       const ax=new Set((q.autoTs||[]).concat(q.estTs||[]));
       const man=(S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[])).filter(t=>t>prev&&t<=now&&!ax.has(t));
       if(man.length)dbg(`ara dönemde ${man.length} elle kayıt var, düşüldü`);
-      ts.slice(0,Math.max(0,ts.length-man.length)).forEach(t=>iqAuto(t,true));
+      let left=Math.max(0,k-man.length);
+      if(left&&watched){iqAuto(now,false,true);left--}
+      if(left){
+        let y=0;const crossed=mKey(prev)!==mKey(now);
+        if(crossed){const r=prompt(`Bağlantı yokken ${left} stick içilmiş, saatleri bilinmiyor.\nKaçı dün (sabah 04:00'ten önce) içildi?`,'0');y=Math.min(left,Math.max(0,parseInt(r)||0))}
+        const d0=new Date(mKey(now)+'T04:00:00').getTime();
+        for(let i=0;i<left;i++)iqAuto(i<y?d0-(i+1)*1000:now-(i+1)*1000,true);
+        dbg(`ara dönem: ${left} stick, saati bilinmiyor${y?` (${y} tanesi düne)`:''}`);
+      }
       q.manUsed=(q.manUsed||[]).concat(man).slice(-200);
       q.lastInc=now;
     }else if(!q.lastInc||now-q.lastInc>IQ.SESSION){   // yeni stick
@@ -628,13 +634,13 @@ async function iqKnown(){try{if(navigator.bluetooth&&navigator.bluetooth.getDevi
   iq.known=ds.find(d=>/iqos/i.test(d.name||''))||ds[0]||null;dbg('kayıtlı cihaz: '+(iq.known?(iq.known.name||'(isimsiz)'):'yok'))}else dbg('getDevices desteklenmiyor')}catch(e){dbg('getDevices: '+e.message)}}
 if(navigator.bluetooth&&S.iq&&S.iq.name)iqKnown();
 }
-function iqAuto(t,bulk){
+function iqAuto(t,bulk,force){
   const q=iqS();
   const manual=S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[]);
-  if(!bulk&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m)&&!(q.estTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
+  if(!bulk&&!force&&manual.some(m=>Math.abs(m-t)<10*6e4&&!(q.autoTs||[]).includes(m)&&!(q.estTs||[]).includes(m))){dbg('elle basılmış, tekrar sayılmadı');return}
   q.autoN=(q.autoN||0)+1;q.lastAuto=Date.now();if(bulk)q.estTs=(q.estTs||[]).concat(Math.round(t)).slice(-200);else q.autoTs=(q.autoTs||[]).concat(Math.round(t)).slice(-200);
-  if(S.setup&&S.setup.start){logSmoke(Math.round(t),'iqos')}
-  else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast('IQOS: 1 stick sayıldı ✓')}
+  if(S.setup&&S.setup.start){if(bulk){S.log=S.log||[];S.log.push({t:Math.round(t),type:'unk',src:'iqos'});save();render()}else logSmoke(Math.round(t),'iqos')}
+  else{S.mlog=S.mlog||[];S.mlog.push(Math.round(t));S.mlog.sort((a,b)=>a-b);save();mRender();toast(bulk?'IQOS: saati bilinmeyen stick eklendi':'IQOS: 1 stick sayıldı ✓')}
 }
 
 /* ---- AÇILIŞ ---- */
@@ -642,7 +648,7 @@ if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');rend
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(()=>{iqRender();if(!document.hidden&&iqStale()&&!iq.linking)iqRefresh()},30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?(iqStale()?iqRefresh():iqPoll()):(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?(iqStale()?iqRefresh():iqPoll()):(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
 iqRender();
 </script>
 </body>
