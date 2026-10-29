@@ -454,7 +454,7 @@ function mStats(){
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
 const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
 function mPlus(){
-  const v=prompt('Ne zaman içtin? (SS:DD) — şimdi içtiysen boş bırak:','');if(v===null)return;
+  let v;try{v=prompt('Ne zaman içtin? (SS:DD) — şimdi içtiysen boş bırak:','')}catch(e){v=''}if(v===null)return;v=String(v||'');
   let t=Date.now(),back=false;
   if(v.trim()){const m=v.trim().match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return toast('Saat SS:DD biçiminde olmalı');
     const n=new Date();n.setHours(+m[1],+m[2],0,0);if(n>Date.now())n.setDate(n.getDate()-1);t=n.getTime();back=true}
