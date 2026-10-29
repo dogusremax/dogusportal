@@ -95,10 +95,10 @@ a{color:var(--acc)}
       <p class="note">Ölçüm · normal iç, hiçbir şeyi değiştirme</p>
       <div class="num" id="mToday">0</div>
       <p class="note">stick bugün · son <b id="mLast">—</b></p>
-      <svg id="mLine" viewBox="0 0 300 34" width="100%" height="34" style="margin-top:14px;display:block"></svg>
+      <svg id="mLine" onclick="mList()" viewBox="0 0 300 34" width="100%" height="34" style="margin-top:14px;display:block;cursor:pointer"></svg>
       <div style="display:flex;justify-content:space-between" class="note"><span>04</span><span>10</span><span>16</span><span>22</span><span>04</span></div>
       <div class="legend"><span>tam saat</span><span class="e">tahmini saat</span><span class="m">elle</span></div>
-      <div class="mini"><button class="ghost" onclick="mPlus()">＋ Elle ekle</button><button class="ghost" onclick="mUndo()">↩︎ Geri al</button></div>
+      <div class="mini"><button class="ghost" onclick="mPlus()">＋ Elle ekle</button><button class="ghost" onclick="mList()">🕒 Saatleri düzelt</button></div>
     </div>
     <div class="card"><h2>Harcama</h2><div class="money">
       <div><b id="mSpentT">0₺</b><span>bugün harcanan</span></div><div><b id="mSpentAll">0₺</b><span>ölçüm boyunca</span></div></div>
@@ -231,6 +231,11 @@ a{color:var(--acc)}
   <button data-v="vSet"><span>⚙️</span>Ayarlar</button>
 </nav>
 
+<div class="modal hide" id="mSheet" onclick="if(event.target===this)this.classList.add('hide')">
+  <div class="sheet"><h2>Bugünkü stick'ler</h2><p class="note">İçi boş olanların saati tahmini. Saate dokunup düzelt; yanlışsa sil.</p>
+    <div id="mItems" style="max-height:55vh;overflow:auto;margin-top:8px"></div>
+    <button class="pri full" style="margin-top:14px" onclick="$('mSheet').classList.add('hide')">Tamam</button></div>
+</div>
 <div class="modal hide" id="crave" onclick="if(event.target===this)closeCraving()">
   <div class="sheet">
     <h2>Dalga geçer — ortalama 3-5 dakika</h2>
@@ -473,6 +478,28 @@ function mRender(){
   $('mReady').innerHTML=st.days>=3?`<b>${st.days} tam gün</b> ölçüldü: günde ortalama <b>${st.avg.toFixed(1)}</b> sigara, ilk ${mhm(st.fM)}, son ${mhm(st.lM)}. Plan bunlarla kurulacak.`:`En az 3 tam gün ölç (şu an ${st.days}). İş günü + hafta sonu karışık olursa daha doğru olur.`;
   $('mGo').style.opacity=st.days>=3?1:.5;
 }
+function mList(){
+  const st=mStats(),q=S.iq||{},es=new Set(q.estTs||[]),ex=new Set(q.autoTs||[]),L=S.mlog||[];
+  const td=L.map((t,i)=>({t,i})).filter(o=>mKey(o.t)===st.today||(mKey(o.t)===dstr(new Date(new Date(st.today+'T12:00:00')-864e5))&&Date.now()-o.t<20*36e5));
+  $('mItems').innerHTML=td.length?td.slice().reverse().map(o=>`<div class="log" style="align-items:center">
+    <button class="ghost" style="padding:8px 12px" onclick="mEdit(${o.i})">${es.has(o.t)?'○':'●'} ${new Date(o.t).toLocaleDateString('tr-TR',{weekday:'short'})} ${hm(new Date(o.t))}</button>
+    <span class="note">${es.has(o.t)?'tahmini':ex.has(o.t)?'IQOS':'elle'}</span>
+    <button class="ghost" style="padding:8px 12px;color:var(--bad)" onclick="mDel(${o.i})">Sil</button></div>`).join(''):'<p class="note">Bugün kayıt yok.</p>';
+  $('mSheet').classList.remove('hide');
+}
+function mEdit(i){
+  const L=S.mlog,old=L[i],d=new Date(old);
+  const v=prompt('Gerçek saat (SS:DD) — gece yarısından sonraysa yine saati yaz:',hm(d));if(!v)return;
+  const m=v.trim().match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return toast('Saat SS:DD biçiminde olmalı');
+  let n=new Date(old);n.setHours(+m[1],+m[2],0,0);
+  if(n.getTime()-old>12*36e5)n=new Date(n-864e5);else if(old-n.getTime()>12*36e5)n=new Date(+n+864e5);
+  if(n.getTime()>Date.now())n=new Date(n-864e5);
+  const nt=n.getTime();S.iq=S.iq||{dbg:[],sizes:[]};const q=S.iq;
+  ['estTs','autoTs'].forEach(k=>{if(q[k]){const j=q[k].indexOf(old);if(j>=0)q[k].splice(j,1)}});
+  q.autoTs=(q.autoTs||[]).concat(nt);   // düzeltilen saat artık kesin
+  L[i]=nt;L.sort((a,b)=>a-b);save();mRender();mList();toast('Saat düzeltildi');
+}
+function mDel(i){if(!confirm(hm(new Date(S.mlog[i]))+' kaydı silinsin mi?'))return;S.mlog.splice(i,1);save();mRender();mList()}
 function mFinish(){
   const st=mStats();
   if(st.days<3&&!confirm(`Sadece ${st.days} tam gün ölçüldü. Yine de plan kurulsun mu?`))return;
@@ -574,7 +601,12 @@ function iqCount(v){
     if(now-prev>15*6e4&&prev){            // bağlı değilken birikenler
       const u=iqUnit()||'puff',k=u==='puff'?Math.max(1,Math.round(d/14)):d;
       dbg(`ara dönem: ${k} stick (${u==='puff'?'nefesten hesap':'doğrudan'})`);
-      for(let i=1;i<=k;i++)iqAuto(prev+(now-prev)*i/(k+1),true);
+      const gap=now-prev,ts=[];
+      if(gap>4*36e5&&k>=1){ // gece/uzun ara: biri kopuştan hemen sonra, diğerleri son saatlere
+        const st=mStats(),iv=Math.max(15,Math.min(90,st.gap||35))*6e4;
+        ts.push(prev+10*6e4);for(let i=1;i<k;i++)ts.push(now-(k-i)*iv);
+      }else for(let i=1;i<=k;i++)ts.push(prev+gap*i/(k+1));
+      ts.forEach(t=>iqAuto(t,true));
       q.lastInc=now;
     }else if(!q.lastInc||now-q.lastInc>IQ.SESSION){   // yeni stick
       if(q.sessInc){q.sizes.push(q.sessInc);if(q.sizes.length>12)q.sizes.shift()}
