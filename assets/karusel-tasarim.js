@@ -1,4 +1,4 @@
-/* İlan karuseli ek tasarımları (karusel.html + portfoy-karusel.html ortak).
+/* İlan karuseli ek tasarımları (karusel.html; danışman ve broker aynı sayfada).
    Her tasarım aynı veriyi (S, IMGS, danisman()) kendi düzeniyle çizer; yardımcılar sayfadan gelir. */
 (function(){
 const ARIAL='Arial, "Helvetica Neue", Helvetica, sans-serif';
