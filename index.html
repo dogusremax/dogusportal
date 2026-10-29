@@ -23,6 +23,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 img{max-width:100%;height:auto}
+/* İçerik Stüdyosu: 7 sosyal medya aracı tek kartta; kart açılınca hemen altında görünür, aramada her zaman bulunur */
+body:not(.icerik-acik):not(.araniyor) .app.grup-icerik{display:none!important}
+.app.grup-icerik{background:#f7f9fd;border-style:dashed}
+#icerikKart .app-arrow{transition:transform .2s}
+body.icerik-acik #icerikKart .app-arrow{transform:rotate(180deg)}
+body.icerik-acik #icerikKart{border-color:var(--remax-blue)}
 /* Broker'a özel kartlar */
 body:not(.broker) .app[data-broker]{display:none!important}
 .app[data-broker]{position:relative}
@@ -150,15 +156,10 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
     <button class="ara-sil" type="button" aria-label="Temizle">&times;</button>
   </div>
   <div class="grid">
-    <a class="app wide" id="bldlerimKart" href="https://dogusportal.com/bildirimlerim.html" onclick="this.href='https://dogusportal.com/bildirimlerim.html?cb='+Date.now()">
-      <div class="ik" style="position:relative"><img src="/assets/ikon3d/mobile-phone.webp" alt="" width="42" height="42" decoding="async"><span id="bldlerimSayi" style="display:none;position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#DC1C2E;color:#fff;font:700 12px/22px 'Inter',sans-serif;text-align:center;box-shadow:0 0 0 2px #fff"></span></div>
-      <div><div class="app-name">Bildirimlerim</div>
-      <div class="app-desc" id="bldlerimDesc">Kaçırdığın bildirimler burada, son 30 gün</div></div>
-    </a>
-    <a class="app wide" href="#" onclick="bildirimPaneli();return false;">
-      <div class="ik"><img src="/assets/ikon3d/bell.webp" alt="" width="42" height="42" decoding="async"></div>
+    <a class="app wide" id="bldlerimKart" href="https://dogusportal.com/bildirimlerim.html" onclick="if(window.bildirimAcikMi&&!bildirimAcikMi()){bildirimPaneli();return false;}this.href='https://dogusportal.com/bildirimlerim.html?cb='+Date.now()">
+      <div class="ik" style="position:relative"><img src="/assets/ikon3d/bell.webp" alt="" width="42" height="42" decoding="async"><span id="bldlerimSayi" style="display:none;position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#DC1C2E;color:#fff;font:700 12px/22px 'Inter',sans-serif;text-align:center;box-shadow:0 0 0 2px #fff"></span></div>
       <div><div class="app-name">Bildirimler</div>
-      <div class="app-desc" id="bldKartDesc">Yeni müşteri ve takip hatırlatmaları telefonuna gelsin</div></div>
+      <div class="app-desc" id="bldlerimDesc">Yeni müşteri ve takip hatırlatmaları telefonuna gelsin</div></div>
     </a>
 
     <a class="app" href="https://dogusportal.com/posta.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/posta.html?cb='+Date.now()">
@@ -246,32 +247,60 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Toplantı ve nöbet odası — saat seç, ayır</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" href="https://dogusportal.com/destek.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/destek.html?cb='+Date.now()">
-      <div class="ik"><img src="/assets/ikon3d/hammer-and-wrench.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Yazılım Destek</div>
-      <div class="app-desc">Sorun, istek ya da fikrini yaz, bize düşsün</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
     <a class="app" data-broker href="https://dogusportal.com/ekranlar.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/ekranlar.html?cb='+Date.now()">
       <div class="ik"><img src="/assets/ikon3d/framed-picture.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Ekranlar</div>
       <div class="app-desc">Ofis TV'lerini aç, kapat, YouTube'u başlat</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" data-broker href="https://dogusportal.com/video-duzenle.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/video-duzenle.html?cb='+Date.now()">
+    <a class="app wide" data-broker id="icerikKart" href="#" onclick="icerikAc();return false;" aria-expanded="false">
+      <div class="ik"><img src="/assets/ikon3d/artist-palette.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div><div class="app-name">İçerik Stüdyosu</div>
+      <div class="app-desc">Story, post, karusel, gazete, video ve fotoğraf araçları · 7 araç</div></div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/nobet-story.html');return false;">
+      <div class="ik"><img src="/assets/ikon3d/mobile-phone.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div class="app-name">Nöbetçi Story</div>
+      <div class="app-desc">Günün nöbetçisi — Instagram story görseli</div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/performans.html');return false;">
+      <div class="ik"><img src="/assets/ikon3d/bar-chart.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div class="app-name">Aylık Performans</div>
+      <div class="app-desc">Instagram görselleri — her ayın 1'i otomatik</div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/kira-artis.html');return false;">
+      <div class="ik"><img src="/assets/ikon3d/coin.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div class="app-name">Kira Artış Oranı</div>
+      <div class="app-desc">TÜFE görselleri — açıklandığı gün post ve story</div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="https://dogusportal.com/sizlerden-gelenler.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/sizlerden-gelenler.html?cb='+Date.now()">
+      <div class="ik"><img src="/assets/ikon3d/red-heart.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div class="app-name">Sizlerden Gelenler</div>
+      <div class="app-desc">Müşteri yorum postu oluşturucu</div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="https://dogusportal.com/gazete.html" target="_blank" rel="noopener">
+      <div class="ik"><img src="/assets/ikon3d/newspaper.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div class="app-name">Fikirtepe Gazetesi</div>
+      <div class="app-desc">Ön + arka sayfa gazete tasarımı</div>
+      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
+    <a class="app grup-icerik" data-broker href="https://dogusportal.com/video-duzenle.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/video-duzenle.html?cb='+Date.now()">
       <div class="ik"><img src="/assets/ikon3d/camera-with-flash.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Video Düzenle</div>
       <div class="app-desc">Videoya yazı ekle, yerini ve boyutunu değiştir</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-
-    <a class="app" data-broker href="https://dogusportal.com/foto-duzenle.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/foto-duzenle.html?cb='+Date.now()">
+    <a class="app grup-icerik" data-broker href="https://dogusportal.com/foto-duzenle.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/foto-duzenle.html?cb='+Date.now()">
       <div class="ik"><img src="/assets/ikon3d/framed-picture.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Fotoğraf Düzenle</div>
       <div class="app-desc">Emlak fotoğraflarını ChatGPT ile profesyonelleştir, Mac'e klasör olarak gelsin</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-
     <a class="app" href="https://dogusportal.com/kira-kontrat-listesi.html" target="_blank" rel="noopener">
       <div class="ik"><img src="/assets/ikon3d/clipboard.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Kira Kontrat Listesi</div>
@@ -295,15 +324,8 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 
     <a class="app" href="https://dogusportal.com/tapu-satis-listesi.html" target="_blank" rel="noopener">
       <div class="ik"><img src="/assets/ikon3d/scroll.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Tapu Satış Listesi</div>
-      <div class="app-desc">Tapuya gitmeden önce hazırlık listesi</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-
-    <a class="app" href="https://dogusportal.com/yabanci-satis-listesi.html" target="_blank" rel="noopener">
-      <div class="ik"><img src="/assets/ikon3d/globe-showing-europe-africa.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Yabancıya Satış Listesi</div>
-      <div class="app-desc">Yabancı alıcıya tapu devri hazırlıkları</div>
+      <div class="app-name">Satış Hazırlık Listesi</div>
+      <div class="app-desc">Tapuya gitmeden önce: Türk ve yabancı alıcı</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
 
@@ -315,8 +337,8 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
     </a>
     <a class="app" href="https://dogusportal.com/danisman-rehberi.html" target="_blank" rel="noopener">
       <div class="ik"><img src="/assets/ikon3d/open-book.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Danışman Rehberi</div>
-      <div class="app-desc">Tüm uygulamaları nasıl kullanacağını öğren</div>
+      <div class="app-name">Rehber ve Destek</div>
+      <div class="app-desc">Uygulamaları öğren; sorun, istek ya da fikrini yaz</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
 
@@ -326,25 +348,6 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">Performans analizi ve yol haritası</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/nobet-story.html');return false;">
-      <div class="ik"><img src="/assets/ikon3d/mobile-phone.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Nöbetçi Story</div>
-      <div class="app-desc">Günün nöbetçisi — Instagram story görseli</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-    <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/performans.html');return false;">
-      <div class="ik"><img src="/assets/ikon3d/bar-chart.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Aylık Performans</div>
-      <div class="app-desc">Instagram görselleri — her ayın 1'i otomatik</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-    <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/kira-artis.html');return false;">
-      <div class="ik"><img src="/assets/ikon3d/coin.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Kira Artış Oranı</div>
-      <div class="app-desc">TÜFE görselleri — açıklandığı gün post ve story</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-
     <a class="app" data-broker href="#" onclick="perfPinOpen('https://dogusportal.com/kira-takip.html');return false;">
       <div class="ik"><img src="/assets/ikon3d/house.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Kira Takip</div>
@@ -353,8 +356,8 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
     </a>
     <a class="app" data-broker href="https://dogusportal.com/sirket-evraklari.html" target="_blank" rel="noopener">
       <div class="ik"><img src="/assets/ikon3d/briefcase.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Şirket Evrakları</div>
-      <div class="app-desc">UMT GROUP evrakları — yükle, ara, gönder</div>
+      <div class="app-name">Evraklar</div>
+      <div class="app-desc">Şirket (UMT GROUP) ve danışman işe başlama evrakları</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
     <a class="app" data-broker href="https://dogusportal.com/talep-yonlendir.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/talep-yonlendir.html?cb='+Date.now()">
@@ -387,12 +390,6 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="app-desc">0216 315 15 15 müşteri mesajları — oku, cevap yaz</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
-    <a class="app" data-broker href="https://dogusportal.com/danisman-evrak.html" target="_blank" rel="noopener">
-      <div class="ik"><img src="/assets/ikon3d/file-folder.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Danışman Evrakları</div>
-      <div class="app-desc">Yeni danışmandan işe başlama belgelerini online iste</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
     <a class="app" href="https://dogusportal.com/dijitalkart.html" target="_blank" rel="noopener">
       <div class="ik"><img src="/assets/ikon3d/identification-card.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Dijital Kartım</div>
@@ -415,18 +412,6 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div class="ik"><img src="/assets/ikon3d/magnifying-glass-tilted-left.webp" alt="" width="42" height="42" decoding="async"></div>
       <div class="app-name">Revy</div>
       <div class="app-desc">FSBO ve bölge ilan listeleri</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-    <a class="app" data-broker href="https://dogusportal.com/sizlerden-gelenler.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/sizlerden-gelenler.html?cb='+Date.now()">
-      <div class="ik"><img src="/assets/ikon3d/red-heart.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Sizlerden Gelenler</div>
-      <div class="app-desc">Müşteri yorum postu oluşturucu</div>
-      <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </a>
-    <a class="app" data-broker href="https://dogusportal.com/gazete.html" target="_blank" rel="noopener">
-      <div class="ik"><img src="/assets/ikon3d/newspaper.webp" alt="" width="42" height="42" decoding="async"></div>
-      <div class="app-name">Fikirtepe Gazetesi</div>
-      <div class="app-desc">Ön + arka sayfa gazete tasarımı</div>
       <svg class="app-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
     <a class="app" href="https://dogusportal.com/karusel.html" target="_blank" rel="noopener">
@@ -462,6 +447,7 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
   function suz(){
     var q=sade(inp.value).trim(), kelimeler=q?q.split(/\s+/):[], ilk=null, sayi=0;
     kutu.classList.toggle('dolu',!!inp.value);
+    document.body.classList.toggle('araniyor',!!kelimeler.length);
     kartlar.forEach(function(a){
       a.classList.remove('ara-gizli','ara-ilk');
       if(!kelimeler.length)return;
@@ -513,6 +499,8 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 <script>
 var _perfUrl='';
 function perfPinOpen(url,baslik){if(url&&sessionStorage.getItem('perfAuth')==='ok'){window.open(url,'_blank');return;}_perfUrl=url;document.getElementById('pinTitle').textContent=baslik||'Broker girişi';var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
+function icerikAc(){var acik=document.body.classList.toggle('icerik-acik');document.getElementById('icerikKart').setAttribute('aria-expanded',acik);try{sessionStorage.setItem('icerikAcik',acik?'1':'');}catch(e){}}
+try{if(sessionStorage.getItem('icerikAcik'))document.body.classList.add('icerik-acik');}catch(e){}
 function perfPinClose(){document.getElementById('pinModal').style.display='none';_perfUrl='';}
 function perfPinCheck(){var p=document.getElementById('pinInput').value;brokerDogrula(p).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}});}
 document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===6)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});

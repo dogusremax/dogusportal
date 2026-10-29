@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/assets/app-ikon-180.png">
-<title>Bildirimlerim — RE/MAX Doğuş</title>
+<title>Bildirimler — RE/MAX Doğuş</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -47,14 +47,18 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
 <main>
   <header>
     <a class="geri" href="/" id="geri" aria-label="Portala dön">&#8249;</a>
-    <h1>Bildirimlerim</h1>
+    <h1>Bildirimler</h1>
     <span class="sayac" id="sayac"></span>
+    <button class="geri" type="button" title="Bildirim ayarları" aria-label="Bildirim ayarları" onclick="window.bildirimPaneli&&bildirimPaneli()" style="font-size:18px;cursor:pointer">🔔</button>
   </header>
   <div class="ust"><span id="kim"></span><button class="hepsi" id="hepsi">Tümünü okundu say</button></div>
   <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
   <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
 </main>
 <script src="/assets/bildirim-link.js"></script>
+<script src="/assets/bildirim.js"></script>
+<script>document.addEventListener('bildirimDegisti', function () { var t = ''; try { t = localStorage.getItem('bld_token') || ''; } catch (e) {} if (t !== (window.__bldIlk || '')) location.reload(); });
+try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}</script>
 <script>
 (function () {
   var WA = 'https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
@@ -136,13 +140,13 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
     ciz(); return;
   }
   if (!token) {
-    $('liste').innerHTML = '<div class="bos">Bu cihazda bildirimler kapalı, o yüzden liste burada görünmüyor.<br>Bildirimleri açtığın telefondan portala girip <b>Bildirimlerim</b>\'e bak. Bu cihazda da görmek istersen portaldaki <b>Bildirimler</b> kartından adını seçip aç.<br><br><a href="/?cb=' + Date.now() + '">Portala dön</a></div>';
+    $('liste').innerHTML = '<div class="bos">Bu cihazda bildirimler kapalı, o yüzden liste burada görünmüyor.<br>Bildirimleri açtığın telefonda da bu listeyi görürsün.<br><br><a href="#" onclick="bildirimPaneli();return false;">🔔 Bu cihazda bildirimleri aç</a></div>';
     return;
   }
   post({ islem: 'liste' }).then(function (j) {
     if (!j.ok) {
       $('liste').innerHTML = '<div class="bos">' + (j.error === 'ABONE_YOK'
-        ? 'Bu telefonun bildirim kaydı bulunamadı. Portalda <b>Bildirimler</b> kartından tekrar aç.'
+        ? 'Bu telefonun bildirim kaydı bulunamadı.<br><br><a href="#" onclick="bildirimPaneli();return false;">🔔 Bildirimleri tekrar aç</a>'
         : 'Bildirimler alınamadı. Biraz sonra tekrar dene.') + '</div>';
       return;
     }
