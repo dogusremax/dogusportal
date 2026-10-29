@@ -528,6 +528,7 @@ function iqRender(){
   document.querySelectorAll('.iqSt').forEach(e=>e.innerHTML=txt);
   let cls='',b1,b2='',b3='';
   if(!has){b1='Otomatik sayım kapalı';b2='Bluefy uygulamasında açınca IQOS kendisi sayar'}
+  else if(iqStale()&&q.lastSeen){cls='warn';b1='IQOS yanıt vermiyor';b2='son okuma '+Math.round((Date.now()-q.lastSeen)/6e4)+' dk önce';b3='Yenile ›'}
   else if(iq.scp){cls='ok';b1='IQOS bağlı';const a=q.lastSeen?Math.round((Date.now()-q.lastSeen)/6e4):null;b2=a==null?'okunuyor…':(a<1?'az önce okundu':`son okuma ${a} dk önce`)}
   else if(iq.st&&iq.st.startsWith('bağlanıyor')){cls='warn';b1='Bağlanıyor…'}
   else{cls='warn';b1=iq.dev||q.name?'IQOS bağlı değil':'IQOS\'a bağlan';b2=iq.err?('Hata: '+iq.err):(iq.dev||q.name?'aradakiler bağlanınca sayaçtan eklenir':'otomatik sayım için bir kez bağla');b3=iq.dev||q.name?'Yeniden bağlan ›':'Bağlan ›'}
@@ -537,7 +538,11 @@ function iqRender(){
 }
 function iqCopy(){const t=(iqS().dbg||[]).join('\n');navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı'),()=>prompt('Kopyala:',t))}
 function iqSt(t){iq.st=t;iqRender()}
+function iqStale(){const q=S.iq||{};return iq.scp&&(!q.lastSeen||Date.now()-q.lastSeen>3*6e4)}
+async function iqRefresh(){if(!iq.dev)return;dbg('bağlantı tazeleniyor');clearTimeout(iq.wd);try{iq.dev.gatt.disconnect()}catch(e){}iq.scp=null;
+  try{await iqLink(iq.dev)}catch(e){dbg('tazelenemedi: '+e.message);iq.err='yanıt yok — tekrar dokun';iqSt('bağlı değil');iqRetry(0)}}
 async function iqConnect(auto,all){
+  if(!auto&&!all&&iqStale()){return iqRefresh()}
   if(iq.scp&&!auto){return iqPoll()}
   if(!auto&&!all&&iq.known&&!iq.triedKnown){iq.triedKnown=1;try{await iqLink(iq.known);return}catch(e){dbg('kayıtlı cihaza bağlanamadı: '+e.message);iq.err='kayıtlı cihaza bağlanamadı — tekrar dokun, listeden seç';iqSt('bağlı değil');return}}
   if(!auto){clearTimeout(iq.rt);if(iq.dev){try{iq.dev.gatt.disconnect()}catch(e){}}iq.dev=null;iq.scp=null;iq.linking=0}
@@ -630,9 +635,9 @@ function iqAuto(t,bulk){
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
-setInterval(iqRender,30000);
+setInterval(()=>{iqRender();if(!document.hidden&&iqStale()&&!iq.linking)iqRefresh()},30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
+document.addEventListener('visibilitychange',()=>{if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?(iqStale()?iqRefresh():iqPoll()):(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
 iqRender();
 </script>
 </body>
