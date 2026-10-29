@@ -611,7 +611,12 @@ function iqCount(v){
         const st=mStats(),iv=Math.max(15,Math.min(90,st.gap||35))*6e4;
         ts.push(prev+10*6e4);for(let i=1;i<k;i++)ts.push(now-(k-i)*iv);
       }else for(let i=1;i<=k;i++)ts.push(prev+gap*i/(k+1));
-      ts.forEach(t=>iqAuto(t,true));
+      // bağlantı yokken elle eklenenleri düş (çift sayma olmasın)
+      const ax=new Set((q.autoTs||[]).concat(q.estTs||[]));
+      const man=(S.setup&&S.setup.start?(S.log||[]).filter(l=>l.type!=='skip'&&l.src!=='iqos').map(l=>l.t):(S.mlog||[])).filter(t=>t>prev&&t<=now&&!ax.has(t));
+      if(man.length)dbg(`ara dönemde ${man.length} elle kayıt var, düşüldü`);
+      ts.slice(0,Math.max(0,ts.length-man.length)).forEach(t=>iqAuto(t,true));
+      q.manUsed=(q.manUsed||[]).concat(man).slice(-200);
       q.lastInc=now;
     }else if(!q.lastInc||now-q.lastInc>IQ.SESSION){   // yeni stick
       if(q.sessInc){q.sizes.push(q.sessInc);if(q.sizes.length>12)q.sizes.shift()}
