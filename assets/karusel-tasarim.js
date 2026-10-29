@@ -738,5 +738,333 @@ close(ctx,n,T){ const d=danisman(), c=S.close;
   if(c.cta){ const fs=26, cw=tw(ctx,c.cta,fs,700,0)+64; rr(ctx,W-88-cw,1152,cw,80,40); ctx.fillStyle=OAC; ctx.fill(); txt(ctx,c.cta,W-88-cw/2,1201,fs,700,'#fff',0,'center'); }
 }};
 
-window.KARUSEL_TASARIMLARI={kemer,dergi,bento,cam,organik,beyaz,kirmizi,luks,panel,mavi};
+
+/* ================= 11) SİNEMA ================= */
+const SG='rgba(255,255,255,.55)';
+function kose(ctx,x,y,w,h,L,renk){ ctx.strokeStyle=renk; ctx.lineWidth=2; ctx.beginPath();
+  [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([a,b,sx,sy])=>{ ctx.moveTo(a+sx*L,b); ctx.lineTo(a,b); ctx.lineTo(a,b+sy*L); }); ctx.stroke(); }
+const sinema={ad:'Sinema',aile:ARIAL,
+cover(ctx,T){ const d=danisman(), c=S.cover;
+  ctx.fillStyle='#0A0A0A'; ctx.fillRect(0,0,W,H);
+  dBeyaz(ctx,W/2,64,54,true,false);
+  txt(ctx,'RE/MAX DOĞUŞ SUNAR',W/2,200,17,700,SG,.5,'center');
+  coverImg(ctx,IMGS.cover.img,0,240,W,640,IMGS.cover.fx,50);
+  ctx.fillStyle=lin(ctx,0,240,0,880,[[0,'rgba(10,10,10,.25)'],[.25,'rgba(10,10,10,0)'],[.8,'rgba(10,10,10,0)'],[1,'rgba(10,10,10,.5)']]); ctx.fillRect(0,240,W,640);
+  kose(ctx,40,270,W-80,580,34,'rgba(255,255,255,.7)');
+  if(c.badge) txt(ctx,U(c.badge),70,838,16,700,'#fff',.4);
+  projeYaz(ctx,c,W/2,1000,W-140,92,40,'rgba(255,255,255,.75)','#fff','center');
+  ctx.fillStyle=RED; ctx.fillRect(W/2-36,1036,72,3);
+  satir3(ctx,[c.big,U(c.konum),...chipList(c).slice(0,2)],W/2,1092,22,'rgba(255,255,255,.85)','·');
+  const sub=(c.sub||'').replace(/\n/g,' '); if(sub) rich(ctx,lines(ctx,sub,28,W-220).slice(0,1),W/2,1146,28,36,SG,'#fff','center');
+  ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fillRect(140,1198,W-280,1);
+  txt(ctx,'PORTFÖY DANIŞMANI',W/2,1240,15,700,SG,.45,'center');
+  const s=U(d.ad)+'   ·   '+telOf(d); txt(ctx,s,W/2,1284,fit(ctx,s,W-200,26,16,700,.12),700,'#fff',.12,'center');
+},
+photo(ctx,i,n,T){ const sl=S.slides[i];
+  ctx.fillStyle='#0A0A0A'; ctx.fillRect(0,0,W,H);
+  dBeyaz(ctx,56,50,46,false,false); txt(ctx,'SAHNE '+String(n).padStart(2,'0')+' / '+String(T).padStart(2,'0'),W-56,82,17,700,SG,.4,'right');
+  fotoAlan(ctx,sl,i,0,140,W,860,10,0,'#0A0A0A');
+  kose(ctx,36,170,W-72,800,30,'rgba(255,255,255,.65)');
+  if(sl.label) txt(ctx,U(sl.label),W/2,1076,18,700,SG,.45,'center');
+  const t=sigdir(ctx,sl.title||'',54,38,W-200,2); rich(ctx,t.L,W/2,1146,t.size,t.size*1.12,'rgba(255,255,255,.72)','#fff','center');
+  if(sl.sub) rich(ctx,lines(ctx,sl.sub,25,W-240).slice(0,2),W/2,1146+(t.L.length-1)*t.size*1.12+48,25,35,SG,'#fff','center');
+  ctx.fillStyle=RED; ctx.fillRect(W/2-24,H-56,48,3);
+},
+feat(ctx,n,T){ const f=S.feat;
+  ctx.fillStyle='#0A0A0A'; ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W/2,-100,0,W/2,-100,900); g.addColorStop(0,'rgba(255,255,255,.08)'); g.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  dBeyaz(ctx,56,50,46,false,false); txt(ctx,'SAHNE '+String(n).padStart(2,'0')+' / '+String(T).padStart(2,'0'),W-56,82,17,700,SG,.4,'right');
+  txt(ctx,U(f.eyebrow),W/2,220,18,700,SG,.45,'center');
+  txt(ctx,f.t1||'',W/2,306,fit(ctx,f.t1||'',W-180,70,36,400,-.01),400,'rgba(255,255,255,.8)',-.01,'center'); txt(ctx,f.t2||'',W/2,384,fit(ctx,f.t2||'',W-180,70,36,700,-.01),700,'#fff',-.01,'center');
+  ctx.fillStyle=RED; ctx.fillRect(W/2-36,422,72,3);
+  const st=stats(f); if(st.length){ const sw=(W-160)/st.length; st.forEach(([big,small],k)=>{ const x=80+k*sw; if(k){ ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fillRect(x,476,1,120); }
+    statYaz(ctx,big,x+sw/2,556,fit(ctx,big,sw-40,80,30,700,-.02),'#fff','center'); txt(ctx,U(small),x+sw/2,598,16,700,SG,.4,'center'); }); }
+  const it=items(f), cw=(W-160)/2, rh=126; ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fillRect(80,650,W-160,1);
+  it.forEach((x,k)=>{ const tx=80+(k%2)*cw+(k%2?24:0), ty=650+Math.floor(k/2)*rh; ikon(ctx,x[0],tx,ty+rh/2-18,36,'#fff',1.5);
+    const fs=fit(ctx,x[1],cw-80,29,18,700,0); txt(ctx,x[1],tx+58,ty+rh/2+fs*.36,fs,700,'#fff',0);
+    if(k%2===0){ ctx.fillStyle='rgba(255,255,255,.12)'; ctx.fillRect(80,ty+rh,W-160,1); } });
+},
+close(ctx,n,T){ const d=danisman(), c=S.close;
+  ctx.fillStyle='#0A0A0A'; ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W/2,200,0,W/2,400,520); g.addColorStop(0,'rgba(255,255,255,.2)'); g.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,900);
+  boy(ctx,d,W/2,760,620);
+  ctx.fillStyle=lin(ctx,0,600,0,760,[[0,'rgba(10,10,10,0)'],[1,'#0A0A0A']]); ctx.fillRect(0,600,W,161);
+  dBeyaz(ctx,56,50,46,false,false); txt(ctx,'SON',W-56,82,17,700,SG,.4,'right');
+  txt(ctx,'PORTFÖY DANIŞMANI',W/2,806,16,700,SG,.45,'center');
+  txt(ctx,U(d.ad),W/2,866,fit(ctx,U(d.ad),W-200,52,26,700,.08),700,'#fff',.08,'center');
+  ctx.fillStyle=RED; ctx.fillRect(W/2-36,898,72,3);
+  const hs=[[c.h1,400,'rgba(255,255,255,.75)'],[c.h2,700,'#fff'],[c.h3,400,'rgba(255,255,255,.75)']].filter(h=>h[0]); let fs=46;
+  const hw=s=>hs.reduce((a,h,i)=>a+tw(ctx,h[0]+(i<hs.length-1?' ':''),s,h[1],0),0); while(fs>26 && hw(fs)>W-180) fs-=2;
+  let x=W/2-hw(fs)/2; hs.forEach((h,i)=>{ x+=txt(ctx,h[0]+(i<hs.length-1?' ':''),x,976,fs,h[1],h[2],0); });
+  rich(ctx,lines(ctx,c.desc||defDesc(),23,W-260).slice(0,2),W/2,1022,23,32,SG,'#fff','center');
+  txt(ctx,telOf(d),W/2,1146,56,700,'#fff',.04,'center');
+  if(c.cta) pill(ctx,c.cta,W/2,1176,60,21,null,'#fff','center','rgba(255,255,255,.7)');
+  txt(ctx,c.addr||'',W/2,1290,fit(ctx,c.addr||'',W-200,17,12,400,0),400,'rgba(255,255,255,.4)',0,'center');
+}};
+
+/* ================= 12) GALERİ ================= */
+const GW='#ECE9E4', GI='#1C1C1C', GM='#77736C';
+function duvar(ctx){ ctx.fillStyle=GW; ctx.fillRect(0,0,W,H); const g=ctx.createRadialGradient(W/2,-200,0,W/2,-200,1300); g.addColorStop(0,'rgba(255,255,255,.75)'); g.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+function tablo(ctx,img,x,y,w,h,fx,fy,pas){ pas=pas??46;
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.28)'; ctx.shadowBlur=40; ctx.shadowOffsetY=24; ctx.fillStyle=GI; ctx.fillRect(x,y,w,h); ctx.restore();
+  ctx.fillStyle='#FBFAF7'; ctx.fillRect(x+12,y+12,w-24,h-24);
+  const ix=x+12+pas, iy=y+12+pas, iw=w-24-2*pas, ih=h-24-2*pas; ctx.save(); ctx.beginPath(); ctx.rect(ix,iy,iw,ih); ctx.clip(); if(img!==undefined) coverImg(ctx,img,ix,iy,iw,ih,fx,fy); ctx.restore();
+  ctx.strokeStyle='rgba(0,0,0,.12)'; ctx.lineWidth=2; ctx.strokeRect(ix-1,iy-1,iw+2,ih+2); return {ix,iy,iw,ih}; }
+function etiket(ctx,x,y,w,h){ ctx.save(); ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=18; ctx.shadowOffsetY=6; ctx.fillStyle='#fff'; ctx.fillRect(x,y,w,h); ctx.restore(); }
+const galeri={ad:'Galeri',aile:ARIAL,
+cover(ctx,T){ const d=danisman(), c=S.cover; duvar(ctx);
+  dKoyu(ctx,W/2,44,52,true);
+  tablo(ctx,IMGS.cover.img,110,140,860,800,IMGS.cover.fx,50);
+  etiket(ctx,110,1000,600,280);
+  if(c.badge) txt(ctx,U(c.badge),146,1048,15,700,RED,.32);
+  projeYaz(ctx,c,146,1104,530,48,28,GI,GI);
+  txt(ctx,[c.big,c.konum?cap(c.konum):''].filter(Boolean).join(' · '),146,1146,24,700,GM,0);
+  const sub=(c.sub||'').replace(/\n/g,' '); if(sub) rich(ctx,lines(ctx,sub,22,530).slice(0,2),146,1192,22,30,GM,GI);
+  const ch=chipList(c).join(' / '); if(ch) txt(ctx,ch,146,1252,fit(ctx,ch,530,18,12,700,0),700,GI,0);
+  avatar(ctx,d,840,1076,64,'#DCD7CF',GI,2);
+  adSatir(ctx,d,840,1186,24,GI,GI,240,'center'); txt(ctx,telOf(d),840,1222,22,700,GI,0,'center'); txt(ctx,'PORTFÖY DANIŞMANI',840,1256,13,700,GM,.24,'center');
+},
+photo(ctx,i,n,T){ const sl=S.slides[i], {a,b}=fotoBilgi(i); duvar(ctx);
+  dKoyu(ctx,W/2,44,46,true);
+  if(sl.tip==='ikili'){ tablo(ctx,a.img,90,170,440,800,a.f,50,34); tablo(ctx,b.img,550,170,440,800,b.f,50,34); }
+  else tablo(ctx,a.img,90,130,900,880,a.f,50);
+  etiket(ctx,90,1066,720,224);
+  if(sl.label) txt(ctx,U(sl.label),126,1112,15,700,RED,.32);
+  const t=sigdir(ctx,sl.title||'',40,28,650,2); rich(ctx,t.L,126,1164,t.size,t.size*1.15,GM,GI);
+  if(sl.sub) rich(ctx,lines(ctx,sl.sub,21,650).slice(0,2),126,1164+(t.L.length-1)*t.size*1.15+40,21,29,GM,GI);
+  txt(ctx,'No.',990,1170,22,400,GM,0,'right'); txt(ctx,String(n).padStart(2,'0'),990,1250,76,700,GI,-.03,'right');
+},
+feat(ctx,n,T){ const f=S.feat; duvar(ctx);
+  dKoyu(ctx,W/2,44,52,true); cnt(ctx,n,T,W-64,82,GM);
+  txt(ctx,U(f.eyebrow),W/2,210,17,700,RED,.36,'center');
+  txt(ctx,f.t1||'',W/2,292,fit(ctx,f.t1||'',W-180,68,36,400,-.02),400,GI,-.02,'center'); txt(ctx,f.t2||'',W/2,366,fit(ctx,f.t2||'',W-180,68,36,700,-.02),700,GI,-.02,'center');
+  const st=stats(f); if(st.length){ const g=26, sw=(W-160-g*(st.length-1))/st.length; st.forEach(([big,small],k)=>{ const x=80+k*(sw+g);
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,.25)'; ctx.shadowBlur=24; ctx.shadowOffsetY=12; ctx.fillStyle=GI; ctx.fillRect(x,420,sw,190); ctx.restore(); ctx.fillStyle='#FBFAF7'; ctx.fillRect(x+10,430,sw-20,170);
+    statYaz(ctx,big,x+sw/2,520,fit(ctx,big,sw-50,64,28,700,-.02),GI,'center'); txt(ctx,U(small),x+sw/2,564,15,700,GM,.3,'center'); }); }
+  etiket(ctx,80,650,W-160,620);
+  const it=items(f), cw=(W-160-80)/2, rh=Math.min(140,560/Math.max(1,Math.ceil(it.length/2)));
+  it.forEach((x,k)=>{ const tx=120+(k%2)*(cw+40), ty=680+Math.floor(k/2)*rh; ikon(ctx,x[0],tx,ty+rh/2-17,34,GI,1.5);
+    const fs=fit(ctx,x[1],cw-60,28,18,700,0); txt(ctx,x[1],tx+54,ty+rh/2+fs*.36,fs,700,GI,0);
+    if(k%2===0 && k+2<it.length){ ctx.fillStyle='rgba(0,0,0,.1)'; ctx.fillRect(120,ty+rh,W-240,1); } });
+},
+close(ctx,n,T){ const d=danisman(), c=S.close; duvar(ctx);
+  dKoyu(ctx,W/2,44,52,true); cnt(ctx,n,T,W-64,82,GM);
+  const r=tablo(ctx,undefined,260,130,560,700,50,50,40);
+  ctx.save(); ctx.beginPath(); ctx.rect(r.ix,r.iy,r.iw,r.ih); ctx.clip(); ctx.fillStyle=lin(ctx,0,r.iy,0,r.iy+r.ih,[[0,'#E7E2DA'],[1,'#CFC8BC']]); ctx.fillRect(r.ix,r.iy,r.iw,r.ih); boy(ctx,d,W/2,r.iy+r.ih,600); ctx.restore();
+  etiket(ctx,140,880,800,400);
+  txt(ctx,'PORTFÖY DANIŞMANI',W/2,934,15,700,RED,.34,'center');
+  adSatir(ctx,d,W/2,990,46,GI,GI,700,'center');
+  const hs=[[c.h1,400],[c.h2,700],[c.h3,400]].filter(h=>h[0]); let fs=36;
+  const hw=s=>hs.reduce((a,h,i)=>a+tw(ctx,h[0]+(i<hs.length-1?' ':''),s,h[1],0),0); while(fs>22 && hw(fs)>700) fs-=2;
+  let x=W/2-hw(fs)/2; hs.forEach((h,i)=>{ x+=txt(ctx,h[0]+(i<hs.length-1?' ':''),x,1050,fs,h[1],GI,0); });
+  rich(ctx,lines(ctx,c.desc||defDesc(),20,680).slice(0,2),W/2,1090,20,28,GM,GI,'center');
+  txt(ctx,telOf(d),W/2,1186,50,700,GI,.02,'center');
+  if(c.cta) txt(ctx,c.cta,W/2,1228,22,700,RED,0,'center');
+  txt(ctx,c.addr||'',W/2,1262,fit(ctx,c.addr||'',700,16,11,400,0),400,GM,0,'center');
+}};
+
+/* ================= 13) AURORA ================= */
+function aurora(ctx){ ctx.fillStyle='#070B18'; ctx.fillRect(0,0,W,H);
+  [[160,180,700,'rgba(43,92,255,.55)'],[980,1180,700,'rgba(225,27,43,.38)'],[960,260,560,'rgba(122,60,255,.32)'],[120,1200,520,'rgba(0,170,200,.22)']].forEach(([x,y,r,c])=>{ const g=ctx.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,c); g.addColorStop(1,c.replace(/[\d.]+\)$/,'0)')); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }); }
+function parlakKart(ctx,img,x,y,w,h,fx,fy){ golge(ctx,()=>rr(ctx,x,y,w,h,44),'rgba(43,92,255,.45)',80,20); fotoKutu(ctx,img,x,y,w,h,fx,fy);
+  ctx.save(); rr(ctx,x,y,w,h,44); ctx.clip(); ctx.fillStyle=lin(ctx,x,y,x+w*.6,y+h*.6,[[0,'rgba(255,255,255,.18)'],[.4,'rgba(255,255,255,0)']]); ctx.fillRect(x,y,w,h); ctx.restore();
+  ctx.save(); rr(ctx,x,y,w,h,44); ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); }
+/* yere yansıma: aşağı doğru şeritler halinde solar */
+function yansimaKart(ctx,img,x,y,w,h,fx,fy,rh){ if(!img) return; const n=16, sh=rh/n;
+  for(let k=0;k<n;k++){ const top=y+h+8+k*sh; ctx.save(); ctx.beginPath(); ctx.rect(x,top,w,sh+.5); ctx.clip(); ctx.globalAlpha=.26*(1-k/n)*(1-k/n);
+    ctx.translate(0,2*(y+h)+8); ctx.scale(1,-1); rr(ctx,x,y,w,h,44); ctx.clip(); coverImg(ctx,img,x,y,w,h,fx,fy); ctx.restore(); } }
+const auroraT={ad:'Aurora',aile:ARIAL,
+cover(ctx,T){ const d=danisman(), c=S.cover; aurora(ctx);
+  dBeyaz(ctx,W/2,44,58,true);
+  const x=110,y=140,w=860,h=700; yansimaKart(ctx,IMGS.cover.img,x,y,w,h,IMGS.cover.fx,50,120); parlakKart(ctx,IMGS.cover.img,x,y,w,h,IMGS.cover.fx,50);
+  if(c.badge){ const bt=U(c.badge), bw=tw(ctx,bt,18,700,.2)+44; camKutu(ctx,x+32,y+32,bw,46,23); txt(ctx,bt,x+32+bw/2,y+62,18,700,'#fff',.2,'center'); }
+  if(c.big){ const fs=fit(ctx,c.big,200,64,30,700,-.02), bw=tw(ctx,c.big,fs,700,-.02)+60; camKutu(ctx,x+w-32-bw,y+h-124,bw,92,46); txt(ctx,c.big,x+w-32-bw/2,y+h-78+fs*.36,fs,700,'#fff',-.02,'center'); }
+  if(c.konum) txt(ctx,U(c.konum),W/2,972,20,700,'rgba(160,190,255,.9)',.4,'center');
+  projeYaz(ctx,c,W/2,1052,W-160,78,40,'#fff','#fff','center');
+  const sub=(c.sub||'').replace(/\n/g,' '); if(sub) rich(ctx,lines(ctx,sub,28,W-200).slice(0,1),W/2,1100,28,36,'rgba(255,255,255,.8)','#fff','center');
+  chipsOrtali(ctx,chipList(c),W/2,1132,W-160,46,20,{cam:1,color:'#fff'});
+  const ad=d.ad, tel=telOf(d), wA=tw(ctx,ad,24,700,0), wT=tw(ctx,tel,24,400,0), bw=24+64+18+wA+26+wT+34, bx=W/2-bw/2;
+  camKutu(ctx,bx,1210,bw,88,44); avatar(ctx,d,bx+24+32,1254,32,'rgba(255,255,255,.25)');
+  txt(ctx,ad,bx+24+64+18,1263,24,700,'#fff',0); txt(ctx,tel,bx+24+64+18+wA+26,1263,24,400,'rgba(255,255,255,.85)',0);
+},
+photo(ctx,i,n,T){ const sl=S.slides[i], {a,b}=fotoBilgi(i); aurora(ctx);
+  dBeyaz(ctx,90,40,52,false); const cw=128; camKutu(ctx,990-cw,42,cw,48,24); cnt(ctx,n,T,990-cw/2,74,'#fff','center');
+  if(sl.tip==='ikili'){ [[a,90],[b,550]].forEach(([p,x])=>{ yansimaKart(ctx,p.img,x,124,440,780,p.f,50,110); parlakKart(ctx,p.img,x,124,440,780,p.f,50); }); }
+  else { yansimaKart(ctx,a.img,90,124,900,780,a.f,50,110); parlakKart(ctx,a.img,90,124,900,780,a.f,50); }
+  if(sl.label) txt(ctx,U(sl.label),W/2,1070,19,700,'rgba(160,190,255,.9)',.4,'center');
+  const t=sigdir(ctx,sl.title||'',56,40,W-200,2); rich(ctx,t.L,W/2,1142,t.size,t.size*1.1,'#fff','#fff','center');
+  if(sl.sub) rich(ctx,lines(ctx,sl.sub,25,W-240).slice(0,2),W/2,1142+(t.L.length-1)*t.size*1.1+46,25,35,'rgba(255,255,255,.75)','#fff','center');
+},
+feat(ctx,n,T){ aurora(ctx); const f=S.feat;
+  dBeyaz(ctx,W/2,44,58,true); cnt(ctx,n,T,W-64,84,'rgba(255,255,255,.8)');
+  txt(ctx,U(f.eyebrow),W/2,204,19,700,'rgba(160,190,255,.9)',.4,'center');
+  txt(ctx,f.t1||'',W/2,284,fit(ctx,f.t1||'',W-180,66,36,400,-.02),400,'#fff',-.02,'center'); txt(ctx,f.t2||'',W/2,356,fit(ctx,f.t2||'',W-180,66,36,700,-.02),700,'#fff',-.02,'center');
+  const st=stats(f); if(st.length){ const g=18, sw=(W-128-g*(st.length-1))/st.length;
+    st.forEach(([big,small],k)=>{ const x=64+k*(sw+g); camKutu(ctx,x,410,sw,176,32);
+      statYaz(ctx,big,x+sw/2,506,fit(ctx,big,sw-30,66,30,700,-.02),'#fff','center'); txt(ctx,U(small),x+sw/2,550,17,700,'rgba(255,255,255,.7)',.24,'center'); }); }
+  const it=items(f), tw2=(W-128-18)/2, th=128;
+  it.forEach((x,k)=>{ const tx=64+(k%2)*(tw2+18), ty=618+Math.floor(k/2)*(th+18); camKutu(ctx,tx,ty,tw2,th,30);
+    ctx.beginPath(); ctx.arc(tx+64,ty+th/2,36,0,Math.PI*2); ctx.fillStyle=lin(ctx,tx+28,ty,tx+100,ty+th,[[0,'rgba(43,92,255,.9)'],[1,'rgba(122,60,255,.9)']]); ctx.fill(); ikon(ctx,x[0],tx+64-18,ty+th/2-18,36,'#fff',1.8);
+    const fs=fit(ctx,x[1],tw2-140,30,18,700,0); txt(ctx,x[1],tx+120,ty+th/2+fs*.36,fs,700,'#fff',0); });
+  prog2(ctx,n,T,H-48,'rgba(255,255,255,.2)','#fff');
+},
+close(ctx,n,T){ const d=danisman(), c=S.close; aurora(ctx);
+  dBeyaz(ctx,W/2,44,58,true); cnt(ctx,n,T,W-64,84,'rgba(255,255,255,.8)');
+  camKutu(ctx,90,330,900,960,48);
+  const g=ctx.createRadialGradient(W/2,470,0,W/2,470,380); g.addColorStop(0,'rgba(120,150,255,.3)'); g.addColorStop(1,'rgba(120,150,255,0)'); ctx.fillStyle=g; ctx.fillRect(0,100,W,700);
+  boy(ctx,d,W/2,780,640);
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.fillRect(90,780,900,2);
+  txt(ctx,'PORTFÖY DANIŞMANI',W/2,834,17,700,'rgba(160,190,255,.9)',.4,'center');
+  adSatir(ctx,d,W/2,894,50,'#fff','#fff',800,'center');
+  const hs=[[c.h1,400],[c.h2,700],[c.h3,400]].filter(h=>h[0]); let fs=44;
+  const hw=s=>hs.reduce((a,h,i)=>a+tw(ctx,h[0]+(i<hs.length-1?' ':''),s,h[1],-.01),0); while(fs>26 && hw(fs)>800) fs-=2;
+  let x=W/2-hw(fs)/2; hs.forEach((h,i)=>{ x+=txt(ctx,h[0]+(i<hs.length-1?' ':''),x,974,fs,h[1],'#fff',-.01); });
+  rich(ctx,lines(ctx,c.desc||defDesc(),23,780).slice(0,2),W/2,1018,23,32,'rgba(255,255,255,.75)','#fff','center');
+  txt(ctx,telOf(d),W/2,1140,56,700,'#fff',.02,'center');
+  if(c.cta){ const fs2=22, cw=tw(ctx,c.cta,fs2,700,.18)+56; rr(ctx,W/2-cw/2,1166,cw,62,31); ctx.fillStyle=lin(ctx,W/2-cw/2,0,W/2+cw/2,0,[[0,'#2B5CFF'],[1,'#7A3CFF']]); ctx.fill(); txt(ctx,c.cta,W/2,1166+31+fs2*.36,fs2,700,'#fff',.18,'center'); }
+  txt(ctx,c.addr||'',W/2,1266,fit(ctx,c.addr||'',820,17,12,400,0),400,'rgba(255,255,255,.6)',0,'center');
+}};
+
+/* ================= 14) UYUMLU RENK ================= */
+const _renk=new WeakMap();
+function hsl(h,s,l){ return `hsl(${Math.round(h)},${Math.round(s*100)}%,${Math.round(l*100)}%)`; }
+function palet(img){ let h=215,s=.35;
+  if(img){ if(_renk.has(img)) return _renk.get(img);
+    try{ const c=document.createElement('canvas'); c.width=24; c.height=30; const x=c.getContext('2d'); x.drawImage(img,0,0,24,30); const p=x.getImageData(0,0,24,30).data;
+      let sx=0,sy=0,ws=0,ss=0; for(let k=0;k<p.length;k+=4){ const r=p[k]/255,g=p[k+1]/255,b=p[k+2]/255, mx=Math.max(r,g,b), mn=Math.min(r,g,b), sat=mx?((mx-mn)/mx):0; if(mx<.08||mx>.97) continue;
+        let hh=0; if(mx!==mn){ if(mx===r) hh=((g-b)/(mx-mn))%6; else if(mx===g) hh=(b-r)/(mx-mn)+2; else hh=(r-g)/(mx-mn)+4; } hh*=60; const wgt=sat*sat+.02; sx+=Math.cos(hh*Math.PI/180)*wgt; sy+=Math.sin(hh*Math.PI/180)*wgt; ws+=wgt; ss+=sat; }
+      if(ws){ h=(Math.atan2(sy,sx)*180/Math.PI+360)%360; s=Math.min(.55,Math.max(.18,ss/(p.length/4)*1.4)); } }catch(e){} }
+  const P={koyu:hsl(h,s*.9,.15), orta:hsl(h,s*.8,.27), acik:hsl(h,s*.5,.9), vurgu:hsl(h,Math.min(.8,s+.25),.68), zemin:hsl(h,s*.45,.93)};
+  if(img) _renk.set(img,P); return P; }
+const uyum={ad:'Uyumlu Renk',aile:ARIAL,
+cover(ctx,T){ const d=danisman(), c=S.cover, P=palet(IMGS.cover.img);
+  ctx.fillStyle=P.koyu; ctx.fillRect(0,0,W,H);
+  coverImg(ctx,IMGS.cover.img,0,0,W,900,IMGS.cover.fx,50);
+  ctx.fillStyle=lin(ctx,0,0,0,260,[[0,'rgba(0,0,0,.45)'],[1,'rgba(0,0,0,0)']]); ctx.fillRect(0,0,W,260);
+  const g=ctx.createLinearGradient(0,640,0,900); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,P.koyu); ctx.fillStyle=g; ctx.fillRect(0,640,W,261);
+  dBeyaz(ctx,64,56,76);
+  if(c.badge) pill(ctx,U(c.badge),W-64,72,48,19,P.vurgu,P.koyu,'right');
+  if(c.konum) txt(ctx,U(c.konum),64,890,22,700,P.vurgu,.32);
+  const bigW=c.big?tw(ctx,c.big,110,700,-.03):0; if(c.big) txt(ctx,c.big,W-64,984,110,700,P.vurgu,-.03,'right');
+  projeYaz(ctx,c,64,976,W-128-bigW-40,86,40,'#fff','#fff');
+  let y=1036; const sub=(c.sub||'').replace(/\n/g,' '); if(sub){ const L=lines(ctx,sub,30,W-128).slice(0,2); rich(ctx,L,64,y,30,38,P.acik,'#fff'); y+=(L.length-1)*38+30; } else y-=24;
+  chips(ctx,chipList(c),64,y,W-128,50,21,{bg:P.orta,color:'#fff'},1);
+  ctx.fillStyle='rgba(255,255,255,.14)'; ctx.fillRect(64,1186,W-128,2);
+  avatar(ctx,d,110,1262,46,P.orta,P.vurgu,3);
+  adSatir(ctx,d,180,1256,30,'#fff','#fff',440); txt(ctx,U(d.unvan),180,1288,15,700,P.acik,.2);
+  txt(ctx,telOf(d),W-64,1274,38,700,'#fff',0,'right');
+},
+photo(ctx,i,n,T){ const sl=S.slides[i], {a}=fotoBilgi(i), P=palet(a.img);
+  ctx.fillStyle=P.koyu; ctx.fillRect(0,0,W,H);
+  fotoAlan(ctx,sl,i,0,0,W,980,8,0,P.koyu);
+  ctx.fillStyle=lin(ctx,0,0,0,240,[[0,'rgba(0,0,0,.45)'],[1,'rgba(0,0,0,0)']]); ctx.fillRect(0,0,W,240);
+  const g=ctx.createLinearGradient(0,760,0,980); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,P.koyu); ctx.fillStyle=g; ctx.fillRect(0,760,W,221);
+  dBeyaz(ctx,64,56,64); const cw=132; rr(ctx,W-64-cw,62,cw,48,24); ctx.fillStyle=P.koyu; ctx.fill(); cnt(ctx,n,T,W-64-cw/2,94,'#fff','center');
+  if(sl.label) txt(ctx,U(sl.label),64,1036,20,700,P.vurgu,.32);
+  const t=sigdir(ctx,sl.title||'',60,42,W-128,2); rich(ctx,t.L,64,1110,t.size,t.size*1.1,'#fff',P.vurgu);
+  if(sl.sub) rich(ctx,lines(ctx,sl.sub,26,W-128).slice(0,2),64,1110+(t.L.length-1)*t.size*1.1+48,26,36,P.acik,'#fff');
+  prog2(ctx,n,T,H-44,'rgba(255,255,255,.15)',P.vurgu);
+},
+feat(ctx,n,T){ const f=S.feat, P=palet(IMGS.cover.img);
+  ctx.fillStyle=P.koyu; ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W,0,0,W,0,900); g.addColorStop(0,P.orta); g.addColorStop(1,P.koyu); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  dBeyaz(ctx,64,56,70); cnt(ctx,n,T,W-64,102,'rgba(255,255,255,.75)');
+  txt(ctx,U(f.eyebrow),64,206,20,700,P.vurgu,.32);
+  txt(ctx,f.t1||'',64,292,fit(ctx,f.t1||'',W-128,74,40,400,-.02),400,'#fff',-.02); txt(ctx,f.t2||'',64,370,fit(ctx,f.t2||'',W-128,74,40,700,-.02),700,P.vurgu,-.02);
+  const st=stats(f); if(st.length){ const sw=(W-128)/st.length; st.forEach(([big,small],k)=>{ const x=64+k*sw;
+    statYaz(ctx,big,x,500,fit(ctx,big,sw-40,84,30,700,-.03),'#fff'); txt(ctx,U(small),x,544,17,700,P.acik,.26); }); }
+  const it=items(f), tw2=(W-128-18)/2, th=126;
+  it.forEach((x,k)=>{ const tx=64+(k%2)*(tw2+18), ty=606+Math.floor(k/2)*(th+18); rr(ctx,tx,ty,tw2,th,28); ctx.fillStyle='rgba(255,255,255,.07)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(tx+64,ty+th/2,36,0,Math.PI*2); ctx.fillStyle=P.vurgu; ctx.fill(); ikon(ctx,x[0],tx+64-18,ty+th/2-18,36,P.koyu,2);
+    const fs=fit(ctx,x[1],tw2-140,30,18,700,0); txt(ctx,x[1],tx+120,ty+th/2+fs*.36,fs,700,'#fff',0); });
+  prog2(ctx,n,T,H-48,'rgba(255,255,255,.15)',P.vurgu);
+},
+close(ctx,n,T){ const d=danisman(), c=S.close, P=palet(IMGS.cover.img);
+  ctx.fillStyle=P.zemin; ctx.fillRect(0,0,W,H);
+  ctx.beginPath(); ctx.arc(780,640,330,0,Math.PI*2); ctx.fillStyle=P.acik; ctx.fill();
+  boy(ctx,d,770,1090,800);
+  dKoyu(ctx,64,56,66); cnt(ctx,n,T,W-64,100,P.koyu);
+  txt(ctx,U(c.eyebrow),64,230,20,700,P.orta,.32);
+  [[c.h1,400],[c.h2,700],[c.h3,400]].forEach(([t,w],k)=>{ t=t||''; txt(ctx,t,64,320+k*86,fit(ctx,t,520,84,40,w,-.03),w,P.koyu,-.03); });
+  rich(ctx,lines(ctx,c.desc||defDesc(),27,420).slice(0,4),64,560,27,38,P.orta,P.koyu);
+  txt(ctx,'PORTFÖY DANIŞMANI',64,860,18,700,P.orta,.26);
+  const nm=isim(d); txt(ctx,nm.first,64,926,fit(ctx,nm.first,430,58,28,400,-.02),400,P.koyu,-.02); txt(ctx,nm.last,64,988,fit(ctx,nm.last,430,58,28,700,-.02),700,P.koyu,-.02);
+  rr(ctx,40,1074,W-80,236,40); ctx.fillStyle=P.koyu; ctx.fill();
+  txt(ctx,'ARAYIN',100,1134,17,700,P.acik,.26); txt(ctx,telOf(d),100,1202,56,700,'#fff',0);
+  txt(ctx,c.addr||'',100,1250,fit(ctx,c.addr||'',540,18,12,400,0),400,P.acik,0);
+  if(c.cta){ const fs=26, cw=tw(ctx,c.cta,fs,700,0)+64; rr(ctx,W-88-cw,1152,cw,80,40); ctx.fillStyle=P.vurgu; ctx.fill(); txt(ctx,c.cta,W-88-cw/2,1201,fs,700,P.koyu,0,'center'); }
+}};
+
+/* ================= 15) KOLAJ ================= */
+const PK='#F3EEE5';
+function kagit(ctx){ ctx.fillStyle=PK; ctx.fillRect(0,0,W,H); ctx.fillStyle='rgba(120,100,70,.05)'; for(let y=60;y<H;y+=60) ctx.fillRect(0,y,W,1.5); }
+function baski(ctx,img,cx,cy,w,h,aci,fx,fy,alt,yazi){ alt=alt||18;
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(aci*Math.PI/180);
+  ctx.save(); ctx.shadowColor='rgba(60,40,20,.28)'; ctx.shadowBlur=36; ctx.shadowOffsetY=16; ctx.fillStyle='#fff'; ctx.fillRect(-w/2,-h/2,w,h); ctx.restore();
+  const p=18; ctx.save(); ctx.beginPath(); ctx.rect(-w/2+p,-h/2+p,w-2*p,h-p-alt); ctx.clip(); coverImg(ctx,img,-w/2+p,-h/2+p,w-2*p,h-p-alt,fx,fy); ctx.restore();
+  if(yazi) txt(ctx,yazi,-w/2+p+6,h/2-alt/2+8,22,700,NAVY,.1);
+  ctx.save(); ctx.rotate(-3*Math.PI/180); ctx.fillStyle='rgba(233,220,190,.82)'; ctx.fillRect(-70,-h/2-22,140,44); ctx.restore();
+  ctx.restore(); }
+function sticker(ctx,cx,cy,r,renk){ ctx.save(); ctx.shadowColor='rgba(60,40,20,.25)'; ctx.shadowBlur=16; ctx.shadowOffsetY=6; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=renk; ctx.fill(); ctx.restore(); }
+const kolaj={ad:'Kolaj',aile:ARIAL,
+cover(ctx,T){ const d=danisman(), c=S.cover, s0=IMGS.s0a||{}, s1=IMGS.s1a||{};
+  kagit(ctx);
+  dKoyu(ctx,64,52,58);
+  if(c.badge) pill(ctx,U(c.badge),W-64,60,48,19,RED,'#fff','right');
+  baski(ctx,s0.img,850,330,330,300,7,s0.f,50);
+  baski(ctx,s1.img,860,690,320,290,-6,s1.f,50);
+  baski(ctx,IMGS.cover.img,420,520,700,640,-3,IMGS.cover.fx,50,24);
+  if(c.big){ sticker(ctx,700,830,92,RED); const fs=fit(ctx,c.big,150,62,26,700,-.02); ctx.save(); ctx.translate(700,830); ctx.rotate(-8*Math.PI/180); txt(ctx,c.big,0,fs*.36,fs,700,'#fff',-.02,'center'); ctx.restore(); }
+  if(c.konum) txt(ctx,U(c.konum),64,966,22,700,RED,.32);
+  projeYaz(ctx,c,64,1050,W-128,84,40,NAVY,NAVY);
+  let y=1100; const sub=(c.sub||'').replace(/\n/g,' '); if(sub){ const L=lines(ctx,sub,30,W-128).slice(0,1); rich(ctx,L,64,y,30,38,GRAY,NAVY); y+=30; } else y-=24;
+  chips(ctx,chipList(c),64,y,W-128,48,21,{bg:'#fff',color:NAVY},1);
+  avatar(ctx,d,110,1262,46,'#E9E2D6','#fff',5);
+  adSatir(ctx,d,180,1256,30,NAVY,NAVY,440); txt(ctx,U(d.unvan),180,1288,15,700,'#8A8F9C',.2);
+  txt(ctx,telOf(d),W-64,1274,36,700,NAVY,0,'right');
+},
+photo(ctx,i,n,T){ const sl=S.slides[i], {a,b}=fotoBilgi(i), yon=i%2?1:-1;
+  kagit(ctx);
+  dKoyu(ctx,64,52,50); cnt(ctx,n,T,W-64,88,NAVY);
+  if(sl.tip==='ikili'){ baski(ctx,a.img,400,400,640,500,-4,50,a.f,60,U(sl.label)); baski(ctx,b.img,670,780,640,480,5,50,b.f); }
+  else baski(ctx,a.img,W/2,560,900,820,2*yon,a.f,50,80,U(sl.label));
+  const t=sigdir(ctx,sl.title||'',56,40,W-128,2); rich(ctx,t.L,64,1130,t.size,t.size*1.1,NAVY,RED);
+  if(sl.sub) rich(ctx,lines(ctx,sl.sub,26,W-128).slice(0,2),64,1130+(t.L.length-1)*t.size*1.1+48,26,36,GRAY,NAVY);
+},
+feat(ctx,n,T){ const f=S.feat; kagit(ctx);
+  dKoyu(ctx,64,52,58); cnt(ctx,n,T,W-64,88,NAVY);
+  txt(ctx,U(f.eyebrow),64,206,20,700,RED,.32);
+  txt(ctx,f.t1||'',64,290,fit(ctx,f.t1||'',W-128,74,40,400,-.02),400,NAVY,-.02); txt(ctx,f.t2||'',64,368,fit(ctx,f.t2||'',W-128,74,40,700,-.02),700,NAVY,-.02);
+  const st=stats(f), notlar=['#FFE7A3','#FFD3C9','#D6E8FF']; if(st.length){ const g=26, sw=(W-128-g*(st.length-1))/st.length;
+    st.forEach(([big,small],k)=>{ const x=64+k*(sw+g); ctx.save(); ctx.translate(x+sw/2,520); ctx.rotate((k%2?2.5:-2)*Math.PI/180);
+      ctx.save(); ctx.shadowColor='rgba(60,40,20,.2)'; ctx.shadowBlur=18; ctx.shadowOffsetY=8; ctx.fillStyle=notlar[k%3]; ctx.fillRect(-sw/2,-88,sw,176); ctx.restore();
+      statYaz(ctx,big,0,8,fit(ctx,big,sw-40,64,28,700,-.02),NAVY,'center'); txt(ctx,U(small),0,52,16,700,'rgba(10,22,40,.6)',.24,'center'); ctx.restore(); }); }
+  const it=items(f), tw2=(W-128-18)/2, th=124;
+  it.forEach((x,k)=>{ const tx=64+(k%2)*(tw2+18), ty=650+Math.floor(k/2)*(th+16);
+    ctx.save(); ctx.shadowColor='rgba(60,40,20,.12)'; ctx.shadowBlur=14; ctx.shadowOffsetY=5; ctx.fillStyle='#fff'; ctx.fillRect(tx,ty,tw2,th); ctx.restore();
+    ikon(ctx,x[0],tx+28,ty+th/2-19,38,RED,1.8);
+    const fs=fit(ctx,x[1],tw2-110,30,18,700,0); txt(ctx,x[1],tx+90,ty+th/2+fs*.36,fs,700,NAVY,0); });
+},
+close(ctx,n,T){ const d=danisman(), c=S.close; kagit(ctx);
+  ctx.save(); ctx.translate(790,560); ctx.rotate(4*Math.PI/180);
+  ctx.save(); ctx.shadowColor='rgba(60,40,20,.28)'; ctx.shadowBlur=36; ctx.shadowOffsetY=16; ctx.fillStyle='#fff'; ctx.fillRect(-250,-340,500,680); ctx.restore();
+  ctx.save(); ctx.beginPath(); ctx.rect(-232,-322,464,564); ctx.clip(); ctx.fillStyle=lin(ctx,0,-322,0,242,[[0,'#E9EEF5'],[1,'#CBD5E3']]); ctx.fillRect(-232,-322,464,564); boy(ctx,d,0,242,560); ctx.restore();
+  txt(ctx,d.ad,0,300,fit(ctx,d.ad,440,30,18,700,0),700,NAVY,0,'center');
+  ctx.save(); ctx.rotate(-3*Math.PI/180); ctx.fillStyle='rgba(233,220,190,.82)'; ctx.fillRect(-70,-362,140,44); ctx.restore(); ctx.restore();
+  dKoyu(ctx,64,52,58); cnt(ctx,n,T,W-64,88,NAVY);
+  txt(ctx,U(c.eyebrow),64,230,20,700,RED,.32);
+  [[c.h1,400],[c.h2,700],[c.h3,400]].forEach(([t,w],k)=>{ t=t||''; txt(ctx,t,64,320+k*86,fit(ctx,t,470,84,40,w,-.03),w,NAVY,-.03); });
+  rich(ctx,lines(ctx,c.desc||defDesc(),26,440).slice(0,4),64,560,26,36,GRAY,NAVY);
+  txt(ctx,'PORTFÖY DANIŞMANI',64,860,18,700,RED,.26);
+  const nm=isim(d); txt(ctx,nm.first,64,926,fit(ctx,nm.first,440,58,28,400,-.02),400,NAVY,-.02); txt(ctx,nm.last,64,988,fit(ctx,nm.last,440,58,28,700,-.02),700,NAVY,-.02);
+  ctx.save(); ctx.translate(W/2,1180); ctx.rotate(-1.5*Math.PI/180);
+  ctx.save(); ctx.shadowColor='rgba(60,40,20,.25)'; ctx.shadowBlur=24; ctx.shadowOffsetY=10; ctx.fillStyle=RED; rr(ctx,-500,-100,1000,200,28); ctx.fill(); ctx.restore();
+  txt(ctx,'ARAYIN',-450,-40,17,700,'rgba(255,255,255,.8)',.26); txt(ctx,telOf(d),-450,30,56,700,'#fff',0);
+  txt(ctx,c.addr||'',-450,72,fit(ctx,c.addr||'',540,17,12,400,0),400,'rgba(255,255,255,.8)',0);
+  if(c.cta){ const fs=24, cw=tw(ctx,c.cta,fs,700,0)+56; rr(ctx,450-cw,-36,cw,72,36); ctx.fillStyle='#fff'; ctx.fill(); txt(ctx,c.cta,450-cw/2,9,fs,700,RED,0,'center'); }
+  ctx.restore();
+}};
+
+/* Seçicide gösterilenler (Umut 29 Eki: Buzlu Cam + 3. set). Diğerleri yedek, istenirse buraya eklenir. */
+window.KARUSEL_TASARIMLARI={cam,sinema,galeri,aurora:auroraT,uyum,kolaj};
 })();
