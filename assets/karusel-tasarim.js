@@ -1361,6 +1361,6 @@ close(ctx,n,T){ const d=danisman(), c=S.close; suBas(ctx,n,T,U(c.eyebrow||'İlet
 }};
 function fotoKutuR(ctx,img,x,y,w,h,fx,fy){ ctx.save(); rr(ctx,x,y,w,h,20); ctx.clip(); coverImg(ctx,img,x,y,w,h,fx,fy); ctx.restore(); }
 
-/* Seçicide gösterilenler: Umut'un tuttukları (Buzlu Cam, Uyumlu Renk, Kolaj) + 4. set. Diğerleri yedek, istenirse buraya eklenir. */
-window.KARUSEL_TASARIMLARI={cam,uyum,kolaj,foy,isvicre,prestij,diyagonal,sunum};
+/* Seçicide gösterilenler (Umut 29 Eki onayı). Diğerleri yedek, istenirse buraya eklenir. */
+window.KARUSEL_TASARIMLARI={cam,uyum,kolaj,isvicre,prestij,diyagonal,sunum};
 })();
