@@ -68,7 +68,8 @@
 <script src="assets/emoji-secici.js"></script>
 </head>
 <body>
-<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Bildirim Gönder · Telefon</h1></div>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>Duyuru Gönder</h1></div>
+<div style="padding:0 20px"><style>.tm-nav{display:flex;gap:4px;padding:4px;margin:10px 0 0;background:rgba(255,255,255,.1);border-radius:11px}.tm-nav a{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:13px;font-weight:700;color:rgba(255,255,255,.75);text-decoration:none;white-space:nowrap}.tm-nav a.on{background:#fff;color:#0b1f4a}</style><nav class="tm-nav"><a href="bildirim-gonder.html" class="on">🔔 Telefon bildirimi</a><a href="duyuru.html">💬 WhatsApp</a></nav></div>
 
 <div id="giris">
   <p class="durum">Broker PIN'i</p>
@@ -270,6 +271,12 @@ $('girBtn').onclick = () => giris($('pin').value);
 $('pin').onkeydown = e => { if (e.key === 'Enter') giris($('pin').value); };
 const kayitli = window.brokerPinAl && brokerPinAl();
 if (kayitli) { $('pin').value = kayitli; giris(kayitli); }
+</script>
+<script>
+/* Duyuru Gönder: sekme değişirken yazılan metin öbür kanala taşınır (hiçbir şey kendiliğinden gönderilmez) */
+document.querySelectorAll('.tm-nav a:not(.on)').forEach(function(a){a.addEventListener('click',function(){var m=document.getElementById('metin');var t=m?(m.value!==undefined?m.value:m.innerText):'';try{if(t&&t.trim())sessionStorage.setItem('duyuru_taslak',t.trim());}catch(e){}});});
+window.addEventListener('load',function(){var t='';try{t=sessionStorage.getItem('duyuru_taslak')||'';sessionStorage.removeItem('duyuru_taslak');}catch(e){}var m=document.getElementById('metin');if(!t||!m)return;
+if(m.value!==undefined){if(!m.value){m.value=t.slice(0,m.maxLength>0?m.maxLength:t.length);m.dispatchEvent(new Event('input'));}}else if(!m.innerText.trim()){m.innerText=t;m.dispatchEvent(new Event('input'));}});
 </script>
 </body>
 </html>
