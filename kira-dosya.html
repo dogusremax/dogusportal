@@ -34,14 +34,21 @@ h1{font-weight:700;font-size:26px;margin:4px 0 4px;letter-spacing:-.02em}
 header .kck{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;backdrop-filter:blur(6px)}
 .kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--golge)}
 .etiket{display:block;font-size:12px;font-weight:700;color:var(--soluk);margin:0 0 6px;letter-spacing:.01em}
-input,select{width:100%;font-family:inherit;font-size:16px;color:var(--yazi);background:var(--dolgu);
+input,select,textarea{width:100%;font-family:inherit;font-size:16px;color:var(--yazi);background:var(--dolgu);
   border:1.5px solid transparent;border-radius:13px;padding:12px 14px;outline:none;margin-bottom:12px;
   transition:border-color .15s,background .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%236A7389' stroke-width='2'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 input[type=checkbox]{-webkit-appearance:auto;appearance:auto;width:20px;height:20px;padding:0;background:none;box-shadow:none;accent-color:var(--kirmizi)}
 input::placeholder{color:#A3AABB}
-input:focus,select:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0 0 4px rgba(220,28,46,.10)}
+textarea{resize:vertical;min-height:90px;line-height:1.45}
+details.kontrat>summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;padding:4px 0 10px}
+details.kontrat>summary::-webkit-details-marker{display:none}
+details.kontrat>summary::before{content:"▸ ";color:var(--kirmizi)}
+details.kontrat[open]>summary::before{content:"▾ "}
+.gunler{display:flex;align-items:center;gap:8px}
+.gunler input{width:70px;text-align:center}
+input:focus,select:focus,textarea:focus{border-color:var(--kirmizi);background:var(--kart);box-shadow:0 0 0 4px rgba(220,28,46,.10)}
 .ikili{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:430px){ .ikili{grid-template-columns:1fr;gap:0} }
 button{font-family:inherit;cursor:pointer}
@@ -346,6 +353,9 @@ function yeniEkrani(){
       '<div><span class="etiket">Kefil telefonu</span><input id="ftel" inputmode="tel"></div>' +
     '</div>' +
     '<div id="yeniBelge"></div>' +
+    '<details class="kontrat" style="margin:8px 0 14px;padding:12px 14px;background:var(--dolgu);border-radius:14px">' +
+      '<summary>📝 Kontrat bilgileri <span class="mini" style="font-weight:400">— şimdi ya da sonra dosyadan</span></summary>' +
+      '<div id="yeniKontrat"></div></details>' +
     '<button class="ana" id="ac">Dosyayı aç ve linkleri üret</button>' +
     '<p class="mini" style="margin-top:10px">Linkler 72 saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
     '</div>' +
@@ -359,7 +369,18 @@ function yeniEkrani(){
     $('yeniBelge').innerHTML = h;
   }
   alanlariYukle().then(yeniBelgeCiz);
+  $('yeniKontrat').innerHTML = kontratHtml({});
+  kontratBagla();
   $('kefilVar').onchange = function(e){ $('kefilKutu').style.display = e.target.checked ? 'grid' : 'none'; yeniBelgeCiz(); };
+  /* İlçe / mahalle elle girildiyse sözleşmedeki "Mahallesi - İlçe - Şehir" alanına öneri */
+  ['f-ilce','f-mahalle','f-site'].forEach(function(id){
+    var el = $(id); if (!el) return;
+    el.addEventListener('input', mahalleOner); el.addEventListener('change', mahalleOner);
+  });
+  function mahalleOner(){
+    var m = $('k_mahalle'); if (!m || (m.value && !m.dataset.oto)) return;
+    m.value = mahalleMetni($('f-mahalle').value.trim(), $('f-ilce').value.trim()); m.dataset.oto = m.value ? '1' : '';
+  }
   var sayilar = { kiraci: 1, sahip: 1 };
   function tarafSatirlari(kok, kutu, baslik, ornekAd){
     var h = '';
@@ -390,7 +411,7 @@ function yeniEkrani(){
     var v = { danisman: benim, adres: deger('adres'),
               kiraciAd: deger('ad_kiraci'), sahipAd: deger('ad_sahip'),
               kiraciSayi: sayilar.kiraci, sahipSayi: sayilar.sahip,
-              kefilVar: $('kefilVar').checked };
+              kefilVar: $('kefilVar').checked, kontrat: kontratOku() };
     if(!v.adres){ toast('Mülk adresi gerekli — site seçin ya da adresi elle girin'); return; }
     $('ac').disabled = true; $('ac').textContent = 'Açılıyor…';
     var tel = {}, ad = {};
@@ -418,6 +439,78 @@ function yeniEkrani(){
     });
   };
 }
+
+/* ---------- kontrat bilgileri ----------
+   Müşteri formunda olmayan, sözleşmede elle doldurulan alanlar. Anahtarlar Matbu Evraklar'daki
+   Kira Sözleşmesi alan adlarıyla aynı; "Sözleşmeyi hazırla" bunları doğrudan aktarır.
+   Yıllık kira, aylık kiranın yazıyla hali ve bitiş tarihi Matbu'da kendiliğinden hesaplanır. */
+var KONTRAT_SEC = {
+  cins: ['Daire','Dükkan','Ofis','Villa','Müstakil Ev'],
+  durum: ['Boş','Eşyalı','Yarı Eşyalı'],
+  amac: ['Konut','İşyeri'],
+  stopaj: ['Yok','Var'],
+  odemeDonem: ['Aylık','6 Aylık (Peşin)','12 Aylık (Peşin)','101 Günlük (Peşin)'],
+  depozitoBirim: ['TL','USD'],
+  demirbasVar: ['Var','Yok']
+};
+function mahalleMetni(mahalle, ilce){
+  if (!mahalle && !ilce) return '';
+  var sehir = /k(ı|i)br(ı|i)s/i.test(ilce) ? '' : 'İstanbul';
+  return [mahalle ? mahalle.replace(/\s*mah(\.|allesi)?$/i,'') + ' Mah.' : '', ilce, sehir].filter(String).join(' - ');
+}
+function htmlEsc(x){ return String(x == null ? '' : x).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function paraYaz(v){ var d = String(v||'').replace(/\D/g,'').replace(/^0+(?=\d)/,''); return d.replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function trTarih(iso){ var m = String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? m[3]+'.'+m[2]+'.'+m[1] : ''; }
+function isoTarih(tr){ var m = String(tr||'').match(/^(\d{2})\.(\d{2})\.(\d{4})$/); return m ? m[3]+'-'+m[2]+'-'+m[1] : ''; }
+function kontratHtml(k){
+  k = k || {};
+  var sec = function(id, etiket){
+    var v = k[id] || KONTRAT_SEC[id][0];
+    return '<div><span class="etiket">' + etiket + '</span><select id="k_' + id + '">' +
+      KONTRAT_SEC[id].map(function(o){ return '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select></div>';
+  };
+  return '' +
+    '<span class="etiket">Mahallesi - İlçe - Şehir</span>' +
+    '<input id="k_mahalle" placeholder="Dumlupınar Mah. - Kadıköy - İstanbul" value="' + htmlEsc(k.mahalle) + '">' +
+    '<div class="ikili">' + sec('cins', 'Kiralanan şeyin cinsi') + sec('durum', 'Mevcut durumu') + '</div>' +
+    '<div class="ikili">' + sec('amac', 'Ne için kullanılacak') + sec('stopaj', 'Stopaj') + '</div>' +
+    '<div class="ikili">' +
+      '<div><span class="etiket">Aylık kira (TL)</span><input id="k_aylik" inputmode="numeric" placeholder="35.000" value="' + htmlEsc(k.aylik) + '"></div>' +
+      sec('odemeDonem', 'Ödeme dönemi') +
+    '</div>' +
+    '<div id="k_gunKutu"><span class="etiket">Ödeme günleri</span><div class="gunler">' +
+      '<span class="mini">Her ayın</span><input id="k_odemeGunBas" inputmode="numeric" maxlength="2" placeholder="1" value="' + htmlEsc(k.odemeGunBas) + '">' +
+      '<span>-</span><input id="k_odemeGunBit" inputmode="numeric" maxlength="2" placeholder="5" value="' + htmlEsc(k.odemeGunBit) + '">' +
+      '<span class="mini">arasında</span></div></div>' +
+    '<div class="ikili">' +
+      '<div><span class="etiket">Kira başlangıcı</span><input id="k_baslangic" type="date" value="' + isoTarih(k.baslangic) + '"></div>' +
+      '<div><span class="etiket">Depozito</span><div style="display:flex;gap:8px">' +
+        '<input id="k_depozito" inputmode="numeric" placeholder="70.000" value="' + htmlEsc(k.depozito) + '">' +
+        '<select id="k_depozitoBirim" style="width:96px;flex:0 0 96px">' + KONTRAT_SEC.depozitoBirim.map(function(o){
+          return '<option' + (o === (k.depozitoBirim || 'TL') ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select></div></div>' +
+    '</div>' +
+    '<p class="mini" style="margin:-4px 0 12px">Kira 1 yıllık; bitiş tarihi, yıllık kira ve kiranın yazıyla hali sözleşmede kendiliğinden hesaplanır.</p>' +
+    sec('demirbasVar', 'Demirbaş (Ek-A)') +
+    '<textarea id="k_demirbas" placeholder="Her satıra bir demirbaş (en fazla 9)&#10;Ankastre fırın&#10;Bulaşık makinesi">' + htmlEsc(k.demirbas) + '</textarea>';
+}
+function kontratBagla(){
+  var ay = $('k_aylik'); if (ay) ay.oninput = function(){ ay.value = paraYaz(ay.value); };
+  var dp = $('k_depozito'); if (dp) dp.oninput = function(){ dp.value = paraYaz(dp.value); };
+  ['k_odemeGunBas','k_odemeGunBit'].forEach(function(id){ var e = $(id); if (e) e.oninput = function(){ e.value = e.value.replace(/\D/g,'').slice(0,2); }; });
+  var m = $('k_mahalle'); if (m) m.addEventListener('input', function(){ m.dataset.oto = ''; kelimeBuyut(m); });
+  var gun = function(){ var g = $('k_gunKutu'); if (g) g.style.display = ($('k_odemeDonem').value === 'Aylık') ? '' : 'none'; };
+  var db = function(){ var t = $('k_demirbas'); if (t) t.style.display = ($('k_demirbasVar').value === 'Yok') ? 'none' : ''; };
+  $('k_odemeDonem').onchange = gun; $('k_demirbasVar').onchange = db; gun(); db();
+}
+function kontratOku(){
+  var k = {}, g = function(id){ var e = $('k_' + id); return e ? String(e.value || '').trim() : ''; };
+  ['mahalle','cins','durum','amac','stopaj','aylik','odemeDonem','depozito','depozitoBirim','demirbasVar','demirbas'].forEach(function(x){ k[x] = g(x); });
+  if (k.odemeDonem === 'Aylık') { k.odemeGunBas = g('odemeGunBas'); k.odemeGunBit = g('odemeGunBit'); }
+  k.baslangic = trTarih(g('baslangic'));
+  return k;
+}
+/* Doldurulmuş sayılır mı: seçimlerin varsayılanları dışında en az bir değer girilmiş */
+function kontratDolu(k){ k = k || {}; return !!(k.aylik || k.baslangic || k.depozito || k.mahalle || k.demirbas); }
 
 /* ---------- dosya detayı ---------- */
 /* ---------- belge seçimi: istenmeyen belgeler linke &x= olarak eklenir ---------- */
@@ -505,6 +598,12 @@ function dosyaCiz(no){
 var SON_DOSYA = null;
 var MATBU_ADRES = 'https://dogusremax.github.io/matbuevraklar/';
 /* Form verilerini Matbu Evraklar'daki Kira Sözleşmesi alan adlarına çevirir */
+/* Formdaki medeni durum ve eş bilgileri → sözleşmedeki Medeni / EsIsim / EsTc */
+function esBilgisi(v){
+  if (!v.medeni) return {};
+  if (v.medeni !== 'Evli') return { Medeni: 'Bekar' };
+  return { Medeni: 'Evli', EsIsim: v.esAd, EsTc: v.esTc };
+}
 function sozlesmeyeAktar(d){
   var A = {}, kv = 0, kc = 0;
   var roller = (d.roller || []).slice();
@@ -543,13 +642,24 @@ function sozlesmeyeAktar(d){
     } else if (kok === 'kiraci') {
       kc++;
       ekle('kc', kc, { Isim: v.ad || (kc === 1 ? d.dosya.kiraci : ''), Tc: v.tc, Adres: v.adres, Is: v.isadres, Tel: v.tel });
+      ekle('kc', kc, esBilgisi(v));
     } else if (kok === 'kefil') {
       ekle('kf', 1, { Isim: v.ad, Tc: v.tc, Tel: v.tel, Is: v.isadres, Adres: v.adres });
+      ekle('kf', 1, esBilgisi(v));
     }
   });
   var adres = d.dosya.adres || '';
   A.mAdres = adres;
   var dm = adres.match(/Daire\s*([\w-]+)/i); if (dm) A.daireNo = dm[1];
+  /* Danışmanın dosyaya girdiği kontrat bilgileri */
+  var k = (d.dosya && d.dosya.kontrat) || {};
+  ['mahalle','cins','durum','amac','stopaj','aylik','odemeDonem','odemeGunBas','odemeGunBit','baslangic','depozito','depozitoBirim','demirbasVar']
+    .forEach(function(x){ if (k[x]) A[x] = k[x]; });
+  if (!A.mahalle) { var im = adres.match(/^([^·\/]+)\/\s*([^·]+?)\s*(·|$)/); if (im) A.mahalle = mahalleMetni(im[2].trim(), im[1].trim()); }
+  if (k.demirbasVar !== 'Yok' && k.demirbas) {
+    String(k.demirbas).split(/\n+/).map(function(x){ return x.trim(); }).filter(String).slice(0, 9)
+      .forEach(function(x, i){ A['d' + (i + 1)] = x; });
+  }
   var veri = { dosyaNo: d.dosya.no, kv: Math.max(kv,1), kc: Math.max(kc,1), alanlar: A, ekler: ekler };
   var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(veri)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   window.open(MATBU_ADRES + '#kira=' + b64, '_blank');
@@ -597,17 +707,47 @@ function dosyaGoster(no, d){
       h += '</div>';
     });
 
+    var kk = (d.dosya && d.dosya.kontrat) || {};
+    h += '<div class="grup">Kontrat bilgileri</div><div class="kart">' +
+           '<details class="kontrat"' + (kontratDolu(kk) ? '' : ' open') + '><summary>' +
+             (kontratDolu(kk) ? '📝 Girildi' + (kk.aylik ? ' · ' + kk.aylik + ' TL' : '') + (kk.baslangic ? ' · ' + kk.baslangic : '') + ' — düzenle'
+                              : '📝 Kira bedeli, tarihler, depozito, demirbaş') + '</summary>' +
+             '<p class="mini" style="margin:0 0 12px">Müşteri formunda sorulmayan bilgiler. Burada girersen sözleşme hazır çıkar.</p>' +
+             kontratHtml(kk) +
+             '<button class="ana" id="kKaydet">Kontrat bilgilerini kaydet</button>' +
+           '</details></div>';
+
     var gelen = 0, toplam = 0;
     (d.roller || []).forEach(function(r){ var t = d.taraflar[r]; if(!t) return; toplam++; if(t.durum === 'Gönderildi') gelen++; });
     h += '<div class="kart" style="margin-top:18px">' +
            '<div style="font-weight:700;font-size:15px;margin-bottom:4px">📄 Kira sözleşmesi</div>' +
            '<p class="mini" style="margin:0 0 12px">' + gelen + '/' + toplam + ' form geldi. Gelen bilgiler Matbu Evraklar\'da ' +
-           'Kira Sözleşmesi\'ne dolu aktarılır, yüklenen belgeler sözleşmenin arkasına basılır; kira bedeli, tarihler, depozito ve demirbaşları orada son anda doldurursun.</p>' +
+           'Kira Sözleşmesi\'ne dolu aktarılır, yüklenen belgeler sözleşmenin arkasına basılır. ' +
+           (kontratDolu(kk) ? 'Yukarıdaki kontrat bilgileri de sözleşmeye dolar; sadece kontrol edip basarsın.' : 'Kira bedeli, tarihler, depozito ve demirbaşları yukarıda girersen onlar da dolu gelir.') + '</p>' +
            '<button class="ana" id="sozlesme"' + (gelen ? '' : ' disabled') + '>Sözleşmeyi hazırla</button>' +
          '</div>';
     h += '<button class="kck" id="geri">← Listeye dön</button>';
     $('icerik').innerHTML = h;
-    if ($('sozlesme')) $('sozlesme').onclick = function(){ sozlesmeyeAktar(d); };
+    if ($('sozlesme')) $('sozlesme').onclick = function(){
+      /* Kaydedilmemiş kontrat değişikliği varsa onu da al ve arkada kaydet */
+      var k = kontratOku();
+      if (JSON.stringify(k) !== JSON.stringify(d.dosya.kontrat || {}) && kontratDolu(k)) {
+        d.dosya.kontrat = k;
+        apiPost('kontratKaydet', { pin: pin, no: no, kontrat: k }).catch(function(){});
+      }
+      sozlesmeyeAktar(d);
+    };
+    kontratBagla();
+    $('kKaydet').onclick = function(){
+      var b = $('kKaydet'), k = kontratOku();
+      b.disabled = true; b.textContent = 'Kaydediliyor…';
+      apiPost('kontratKaydet', { pin: pin, no: no, kontrat: k }).then(function(c){
+        if (!c.ok) { toast(c.hata || 'Kaydedilemedi'); b.disabled = false; b.textContent = 'Kontrat bilgilerini kaydet'; return; }
+        SON_DOSYA.dosya.kontrat = k;
+        toast('Kontrat bilgileri kaydedildi');
+        dosyaGoster(no, SON_DOSYA);
+      }).catch(function(e){ toast(e.message); b.disabled = false; b.textContent = 'Kontrat bilgilerini kaydet'; });
+    };
     Array.prototype.forEach.call(document.querySelectorAll('[data-bsec]'), function(c){
       c.onchange = function(){
         var r = c.dataset.bsec, x = [];
