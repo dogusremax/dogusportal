@@ -510,7 +510,7 @@ var SIRA=['tr','en','ru','fa','de','pl'];
     e('waHero').href=e('waSabit').href=wa(selam());
     e('hakkimdaMetin').innerHTML=(L(s.hakkimda)||[]).map(function(p){return '<p>'+esc(p)+'</p>'}).join('');
     e('hiz').innerHTML=(L(s.hizmetler)||L(site._hizmetler)||[]).map(function(h,i){return '<div class="c"><div class="n">'+(i+1)+'</div><h3>'+esc(h[0])+'</h3><p>'+esc(h[1])+'</p>'+(h[2]?'<ul>'+h[2].map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul>':'')+'</div>'}).join('');
-    var sy=s.sayaclar||site._sayaclar||[{n:24,k:'c1'},{n:10000,k:'c2'},{n:500,k:'c3'}];
+    var sy=s.sayaclar||site._sayaclar||[{n:24,k:'c1'},{n:10000,k:'c2'},{n:5000,k:'c3'}];
     e('sayac').innerHTML=sy.map(function(x){return '<div class="s"><b><span class="sn" data-n="'+x.n+'">'+(sayacBitti?x.n.toLocaleString(T('yer')):'0')+'</span><em>+</em></b><span>'+esc(L(x.etiket)||T(x.k))+'</span></div>'}).join('');
     if(!sayacBitti)sayacBaslat();
     var fs=function(n){return Number(n).toLocaleString(T('yer'))};
