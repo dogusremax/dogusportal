@@ -121,7 +121,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v10</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v11</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -192,7 +192,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v10</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v11</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -292,8 +292,17 @@ function endDate(){return addDays(S.setup.start,totalDays(S.setup)+(S.hold||0))}
 
 /* ---- BİLDİRİM (ntfy) ---- */
 const MOT=['Sadece şimdi. Sonraki için beklemek senin kararın.','Her uzayan aralık, beynine "bekleyebilirim" diyor.','Pencere 5 dakika. Sonrası yok.','İstersen bunu atla — hanene yazılır.','Bugün dünden az. Bu yeterli.'];
-async function ntfy(ts,title,message,tags){
+const ERTELE_DK=10;
+function ntfyActions(topic,slot,depth){
+  const ic={action:'http',label:'İç',url:'https://ntfy.sh/'+topic+'-log',method:'POST',body:'ic '+slot,clear:true};
+  if(depth>=2)return [ic];
+  const next={topic,title:'🚬 Ertelenen stick',message:ERTELE_DK+' dk bekledin 💪 Şimdi içebilir ya da bir kez daha erteleyebilirsin.',
+    tags:['hourglass_flowing_sand','ertele','s'+slot],priority:4,delay:ERTELE_DK+'m',actions:ntfyActions(topic,slot,depth+1)};
+  return [ic,{action:'http',label:'Ertele '+ERTELE_DK+' dk',url:'https://ntfy.sh/',method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(next),clear:true}];
+}
+async function ntfy(ts,title,message,tags,slot){
   const body={topic:S.setup.topic,title,message,tags:[tags||'smoking'],priority:4,click:location.href.split('#')[0]};
+  if(slot)body.actions=ntfyActions(S.setup.topic,slot,0);
   if(ts) body.delay=String(Math.floor(ts/1000));
   const r=await fetch('https://ntfy.sh/',{method:'POST',body:JSON.stringify(body)});
   if(!r.ok) throw new Error(r.status);
@@ -301,7 +310,7 @@ async function ntfy(ts,title,message,tags){
 async function testNotif(){
   const t=$('sTopic').value||S.setup?.topic; if(!t) return;
   if(!S.setup) S.setup={topic:t};
-  try{await ntfy(0,'Nefes ✅','Bildirimler çalışıyor. Bu telefona gelecek.','white_check_mark');toast('Gönderildi — ntfy\'yi kontrol et')}
+  try{await ntfy(0,'Nefes ✅ deneme','Butonları dene: "Ertele"ye basarsan '+ERTELE_DK+' dk sonra tekrar gelir.','white_check_mark',Date.now());toast('Gönderildi — telefonda ntfy\'yi kontrol et, butonlara bas')}
   catch(e){toast('Gönderilemedi: '+e.message)}
 }
 let busy=false;
@@ -325,7 +334,7 @@ async function topUp(manual){
           const free=diffDays(endDate(),date)+1;
           await ntfy(s.ts,free===1?'Bugün bırakma günü 🌱':`${free}. gün sigarasız 🌱`, free===1?'Bugün hiç yok. Zor anda uygulamadaki "Canım çekti"ye bas.':'Devam. Her gün bir öncekinden kolay.','seedling');
         }else{
-          await ntfy(s.ts,`🚬 Stick zamanı (${s.i}/${s.n})`,MOT[(s.i+s.n)%MOT.length],'smoking');
+          await ntfy(s.ts,`🚬 Stick zamanı (${s.i}/${s.n})`,MOT[(s.i+s.n)%MOT.length],'smoking',s.ts);
         }
         S.sent[s.ts]=1; last=Math.max(last,s.ts); n++; save();
       }
@@ -339,11 +348,20 @@ async function topUp(manual){
   render();
 }
 
+/* ---- ERTELEMELER (ntfy geçmişi) ---- */
+async function syncErtele(){
+  if(!S.setup||!S.setup.topic)return;
+  try{const r=await fetch('https://ntfy.sh/'+S.setup.topic+'/json?poll=1&since=2d');if(!r.ok)return;
+    const out=[];(await r.text()).split('\n').forEach(l=>{try{const m=JSON.parse(l);if(m.event==='message'&&(m.tags||[]).includes('ertele')){
+      const sl=(m.tags.find(t=>/^s\d+$/.test(t))||'').slice(1);out.push({slot:+sl,t:m.time*1000})}}catch(e){}});
+    S.ertele=out;save();render()}catch(e){}
+}
 /* ---- KAYIT ---- */
 function logSmoke(at,src){
   if(src!=='iqos'&&iqRecentAuto()) return toast('IQOS bunu zaten saydı 👍');
   const now=at||Date.now(), sl=slotsFor(planDate(new Date(now))).filter(s=>s.kind==='smoke');
-  const near=sl.find(s=>now>=s.ts-2*6e4&&now<=s.ts+10*6e4);
+  const er=(S.ertele||[]).filter(e=>now>=e.t-2*6e4&&now<=e.t+10*6e4);
+  const near=sl.find(s=>now>=s.ts-2*6e4&&now<=s.ts+10*6e4)||er[0];
   S.log=S.log||[]; S.log.push({t:now,type:near?'smoke':'extra',src}); save();
   toast(near?(src==='iqos'?'IQOS: planlı stick ✓':'Kaydedildi 👍'):src==='iqos'?'IQOS: plan dışı stick kaydedildi':'Plan dışı kaydedildi — sorun değil, devam'); render();
 }
@@ -393,7 +411,8 @@ function render(){
   $('stAvoid').textContent=avoided;$('stMoney').textContent=Math.round(avoided/20*c.price).toLocaleString('tr-TR')+'₺';$('stLeft').textContent=left;
   $('stSpent').textContent=Math.round(allSmoked/20*c.price).toLocaleString('tr-TR')+'₺';
   const onPlan=today.filter(l=>l.type==='smoke').length;$('stFit').textContent=smoked?'%'+Math.round(onPlan/smoked*100):'—';
-  $('stSum').innerHTML=plan?`Hak <b>${plan}</b> · içilen <b>${smoked}</b>${smoked>plan?` · <span style="color:var(--warn)">${smoked-plan} fazla</span>`:''}`:'';
+  const ertN=new Set((S.ertele||[]).filter(e=>e.t>=dayStart&&e.t<dayStart+864e5).map(e=>e.slot)).size;
+  $('stSum').innerHTML=plan?`Hak <b>${plan}</b> · içilen <b>${smoked}</b>${ertN?` · ertelenen <b>${ertN}</b> 💪`:''}${smoked>plan?` · <span style="color:var(--warn)">${smoked-plan} fazla</span>`:''}`:'';
   $('slots').innerHTML=sm.length?sm.map(s=>`<span class="slot ${s.ts<now-5*6e4?'past':''} ${nxt&&s.ts===nxt.ts?'next':''}">${hm(new Date(s.ts))}</span>`).join(''):'<span class="note">Bugün sigara yok 🌱</span>';
   const lt=S.lastTop; $('notifInfo').innerHTML=!lt?'Henüz kurulmadı.':(lt.err?`<span style="color:var(--bad)">Son deneme hata verdi (${lt.err}).</span> `:'')+(lt.last?`Bildirimler <b>${new Date(lt.last).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</b> saatine kadar kurulu.`:'Kurulu bildirim yok.');
   // plan sekmesi
@@ -649,11 +668,11 @@ async function iqKnown(){try{if(navigator.bluetooth&&navigator.bluetooth.getDevi
 async function iqAutoStart(){await iqKnown();if(iq.known&&!iq.scp){iq.dev=iq.known;if(!iq.dev._nf){iq.dev.addEventListener('gattserverdisconnected',iqLost);iq.dev._nf=1}iqRetry(0)}}
 if(navigator.bluetooth&&S.iq&&S.iq.name)iqAutoStart();
 /* ---- AÇILIŞ ---- */
-if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false)}
+if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false);syncErtele();setInterval(syncErtele,5*6e4)}
 else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(iqRender,30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();else syncErtele();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
 iqRender();
 </script>
 </body>
