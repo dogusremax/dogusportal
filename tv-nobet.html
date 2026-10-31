@@ -43,6 +43,9 @@
   .tamEkran.gor{display:block;animation:sol 1s ease both}
   .tamEkran img{width:100%;height:100%;object-fit:cover;display:block}
   @keyframes sol{from{opacity:0}to{opacity:1}}
+  .tamIpucu{position:fixed;left:50%;top:4vh;transform:translateX(-50%);z-index:20;background:rgba(0,0,0,.75);color:#fff;
+    font-size:2.6vh;font-weight:700;padding:1.6vh 3.4vh;border-radius:5vh;border:.25vh solid rgba(255,255,255,.25);display:none}
+  .tamIpucu b{color:#FFB547}
   .uyari{position:fixed;left:50%;bottom:3vh;transform:translateX(-50%);font-size:2vh;color:var(--mute);display:none}
 </style>
 </head>
@@ -58,6 +61,7 @@
 </div>
 <div class="tamEkran" id="tamEkran"><img id="tamResim" alt=""></div>
 <div class="uyari" id="uyari"></div>
+<div class="tamIpucu" id="tamIpucu">Tam ekran için kumandada <b>OK</b> tuşuna bas</div>
 
 <script>
 const NOBET_API = "https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";
@@ -159,6 +163,20 @@ function saat() {
 // Ekran uyumasın
 async function uyanik() { try { if ("wakeLock" in navigator) await navigator.wakeLock.request("screen"); } catch (e) {} }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { uyanik(); guncelle(); } });
+
+/* Tam ekran: tarayıcılar ancak bir tuşa/dokunuşa basılınca izin veriyor; kumandada OK yeterli */
+function tamMi() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function tamYap() {
+  const e = document.documentElement;
+  const f = e.requestFullscreen || e.webkitRequestFullscreen;
+  if (f && !tamMi()) { try { const p = f.call(e); if (p && p.catch) p.catch(() => {}); } catch (x) {} }
+}
+function ipucu() { document.getElementById("tamIpucu").style.display = tamMi() ? "none" : "block"; }
+["keydown", "click", "touchend"].forEach(t => document.addEventListener(t, () => { tamYap(); setTimeout(ipucu, 600); }));
+document.addEventListener("fullscreenchange", ipucu);
+document.addEventListener("webkitfullscreenchange", ipucu);
+setTimeout(() => { tamYap(); ipucu(); }, 800);   // bazı TV tarayıcıları kendiliğinden izin verir
+setInterval(ipucu, 5000);
 
 saat(); setInterval(saat, 15000);
 guncelle(); setInterval(guncelle, 5 * 60 * 1000);   // 5 dk'da bir nöbetçiyi kontrol et
