@@ -180,6 +180,12 @@
   details.link summary{cursor:pointer;list-style:none}
   details.link summary::-webkit-details-marker{display:none}
   input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none}
+
+  .sayfaUst{position:sticky;top:-10px;margin:-10px -18px 4px;padding:10px 18px 6px;background:var(--card);z-index:2}
+  .sayfaUst .tutac{margin:0 auto 4px}
+  .kapatX{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1px solid var(--line);color:var(--ink-2);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .perde{align-items:flex-end}
+  .sayfa{max-height:82vh}
 </style>
 
 </head>
@@ -482,8 +488,22 @@ function hataMetni(m) {
 /* ---------- YouTube'da istenen videoyu aç ---------- */
 let aktifTv = null;
 function tvAd(id){ const t = veri.tvler.find(x => x.id === id); return t ? t.ad : ""; }
-function acSayfa(html){ document.getElementById("sayfa").innerHTML = '<div class="tutac"></div>' + html; document.getElementById("perde").classList.add("acik"); }
-function kapatSayfa(){ document.getElementById("perde").classList.remove("acik"); }
+function acSayfa(html){
+  document.getElementById("sayfa").innerHTML =
+    '<div class="sayfaUst"><div class="tutac"></div><button class="kapatX" aria-label="Kapat" onclick="kapatSayfa()">✕</button></div>' + html;
+  const p = document.getElementById("perde");
+  if (!p.classList.contains("acik")) { try { history.pushState({ sayfa: 1 }, ""); } catch (e) {} }
+  p.classList.add("acik");
+}
+function kapatSayfa(geriden){
+  const p = document.getElementById("perde");
+  if (!p.classList.contains("acik")) return;
+  p.classList.remove("acik");
+  if (!geriden && history.state && history.state.sayfa) { try { history.back(); } catch (e) {} }
+}
+/* Telefonun geri tuşu / kaydırması sayfayı değil, açılan pencereyi kapatsın */
+window.addEventListener("popstate", () => kapatSayfa(true));
+document.addEventListener("keydown", e => { if (e.key === "Escape") kapatSayfa(); });
 
 function videoSayfa(tv) {
   aktifTv = tv;
