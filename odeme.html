@@ -142,6 +142,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
 .aciklama .uyari{display:flex;gap:10px;align-items:flex-start;color:var(--sari2);font-weight:700;font-size:14px;line-height:1.45;margin-bottom:12px}
 .aciklama .uyari b{font-size:19px;line-height:1}
 .aciklama .metin{background:var(--kart);border:1.5px dashed var(--sariK);border-radius:14px;padding:14px;font-size:17px;font-weight:800;line-height:1.4;word-break:break-word;margin-bottom:10px}
+.aciklama .kodNot{color:var(--sari2);font-size:14px;font-weight:700;line-height:1.4;margin:-2px 2px 10px}
 .aciklama .kopya{width:100%;padding:14px;font-size:15px;background:var(--sariK);border-color:var(--sariK);color:#2B1D00}
 .aciklama .kopya.ok{background:var(--yesil);border-color:var(--yesil);color:#fff}
 .adimlar{list-style:none;margin:0;padding:0;counter-reset:a}
@@ -283,6 +284,7 @@ input.hata,select.hata{border-color:var(--kirmizi);background:rgba(220,28,46,.05
     <div class="aciklama">
       <div class="uyari"><b>⚠️</b><span>Havale / EFT yaparken <u>açıklama</u> kısmına aşağıdaki metni mutlaka yazın. Ödemeniz bu açıklamayla eşleştirilir.</span></div>
       <div class="metin" id="mAciklama"></div>
+      <div class="kodNot" id="mKodNot" hidden>Sondaki <b id="mKod"></b> kodunu silmeyin, ödemeniz bu kodla eşleşir.</div>
       <button class="kopya" data-kopya="aciklama" type="button">Açıklamayı kopyala</button>
     </div>
 
@@ -375,6 +377,7 @@ function musteriGoster(v){
   $('mUnvan').textContent=UNVAN;
   $('mIban').textContent=ibanBosluklu(IBAN);
   $('mAciklama').textContent=aciklama;
+  var kodM=aciklama.match(/K[A-Z0-9]{4}(?![A-Z0-9])/g); if(kodM){ $('mKod').textContent=kodM[kodM.length-1]; $('mKodNot').hidden=false; }
   var tutarYazi=tutar?(tutar+' '+para):'';
   if(tutarYazi){ $('mTutar').textContent=tutarYazi; $('mTutar2').textContent=tutarYazi; }
   else { $('mTutar').textContent=tur||'Ödeme'; $('mTutarKart').querySelector('.k').textContent='Ödeme'; $('mTutarSatir').hidden=true; }
