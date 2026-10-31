@@ -580,6 +580,49 @@ async function yapistir() {
 async function videoAc(link, baslik, el) {
   link = String(link || "").trim();
   if (!link) { toast("Önce bir video seç ya da bağlantı yapıştır"); return; }
+  const tv = aktifTv, ad = tvAd(tv);
+  // Beklettirmeden pencereyi kapat, gönderim arka planda sürsün
+  kapatSayfa();
+  toast("▶ " + (baslik || "Video") + " · " + ad + "'a gönderiliyor", 4000);
+  try {
+    await api({ islem: "ytVideo", tv, baglanti: link, baslik });
+    toast("✓ " + (baslik || "Video") + " TV'de oynuyor", 3000);
+    setTimeout(yukle, 1500);
+  } catch (e) {
+    aktifTv = tv;
+    videoSayfa(tv);
+    const g = document.getElementById("ytAra"); if (g) g.blur();
+    hataGoster(e);
+  }
+}
+
+function hataGoster(e) {
+  let k = document.getElementById("ytHata");
+  if (!k) {
+    k = document.createElement("div"); k.id = "ytHata"; k.className = "ytHata";
+    const g = document.querySelector("#sayfa .alt"); g.insertAdjacentElement("afterend", k);
+  }
+  const metin = "Hata: " + e.message + (e.iz ? "\n\n" + e.iz : "");
+  k.innerHTML = `<b>Video açılamadı</b><span>${esc(e.message)}</span>
+    ${e.iz ? `<pre>${esc(e.iz)}</pre>` : ""}
+    <button onclick="hataKopyala()">Ayrıntıyı kopyala</button>`;
+  k.dataset.metin = metin;
+  k.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+async function hataKopyala() {
+  const t = document.getElementById("ytHata").dataset.metin;
+  try { await navigator.clipboard.writeText(t); toast("Kopyalandı, Claude'a yapıştır"); }
+  catch (e) { toast("Kopyalanamadı, ekran görüntüsü al"); }
+}
+
+async function yapistir() {
+  try { const m = await navigator.clipboard.readText(); if (m) document.getElementById("ytLink").value = m.trim(); }
+  catch (e) { toast("Kutuya uzun basıp Yapıştır'ı seç"); }
+}
+
+async function videoAc(link, baslik, el) {
+  link = String(link || "").trim();
+  if (!link) { toast("Önce bir video seç ya da bağlantı yapıştır"); return; }
   document.querySelectorAll(".vk").forEach(b => b.disabled = true);
   if (el) el.classList.add("gidiyor");
   toast("TV'ye gönderiliyor…", 6000);
