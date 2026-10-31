@@ -38,6 +38,11 @@
   .saat span{font-size:2.2vh;color:var(--mute);font-weight:700;letter-spacing:.3vh}
   .gecis{animation:gel .9s cubic-bezier(.3,.7,.4,1) both}
   @keyframes gel{from{opacity:0;transform:translateY(3vh)}to{opacity:1;transform:none}}
+  /* Hazır "Günün Nöbetçi Danışmanı" görseli varsa tüm ekranı kaplar */
+  .tamEkran{position:fixed;inset:0;z-index:5;background:#000;display:none}
+  .tamEkran.gor{display:block;animation:sol 1s ease both}
+  .tamEkran img{width:100%;height:100%;object-fit:cover;display:block}
+  @keyframes sol{from{opacity:0}to{opacity:1}}
   .uyari{position:fixed;left:50%;bottom:3vh;transform:translateX(-50%);font-size:2vh;color:var(--mute);display:none}
 </style>
 </head>
@@ -51,6 +56,7 @@
   </div>
   <div class="saat"><b id="saat">--:--</b><span>RE/MAX DOĞUŞ · FİKİRTEPE</span></div>
 </div>
+<div class="tamEkran" id="tamEkran"><img id="tamResim" alt=""></div>
 <div class="uyari" id="uyari"></div>
 
 <script>
@@ -58,6 +64,8 @@ const NOBET_API = "https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuU
 const TEL = "0216 315 15 15";
 const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+// TV'de tam ekran gösterilen hazır görseller (assets/tv-nobet/<kod>.jpg)
+const GORSEL = { orhan:1, ozlem_varol:1, aysegul_alpay:1, gamze:1, gizem:1, aysun:1, irem:1, evsen:1 };
 const VIDEO = { evsen:1, irem:1, gizem:1, orhan:1, ozlem_varol:1, gamze:1, aysegul_alpay:1 };
 const FOTO = { "evsen ozazman":"evsen", "irem aleyna tetik":"irem", "irem tetik":"irem", "gizem gok":"gizem", "orhan ozazman":"orhan",
   "ozlem varol":"ozlem_varol", "gamze yetkin":"gamze", "aysegul alpay":"aysegul_alpay", "aysun yilmaz":"aysun" };
@@ -100,6 +108,17 @@ function ciz(n) {
   const medya = document.getElementById("medya"), yazi = document.getElementById("yazi");
   const ofis = /^ofis/i.test(n.ad || "");
   const id = FOTO[norm(n.ad)];
+
+  // Nöbetçinin hazır görseli varsa onu tam ekran göster
+  const tam = document.getElementById("tamEkran"), tr = document.getElementById("tamResim");
+  if (!ofis && id && GORSEL[id]) {
+    tam.classList.remove("gor");
+    tr.onload = () => { void tam.offsetWidth; tam.classList.add("gor"); };
+    tr.onerror = () => tam.classList.remove("gor");
+    tr.src = "assets/tv-nobet/" + id + ".jpg?v=1";
+    medya.innerHTML = ""; return;
+  }
+  tam.classList.remove("gor");
   let m;
   if (ofis || !n.ad) m = `<div class="harf">🏠</div>`;
   else if (id && VIDEO[id]) m = `<video src="assets/nobet-video/${id}.mp4" autoplay muted loop playsinline></video>`;
