@@ -142,9 +142,8 @@ function rolAdi(rol){
 }
 var pin = '', benim = '', $ = function(id){ return document.getElementById(id); };
 
-try { pin = sessionStorage.getItem('kd_pin') || ''; benim = localStorage.getItem('kd_dan') || ''; } catch(e){}
-/* Portalda broker girişi yapıldıysa şifre sorma */
-if (window.brokerPinAl && brokerPinAl()) { pin = brokerPinAl(); benim = brokerAdAl() || benim; }
+/* Şifre her açılışta sorulur (Umut 31.10): kaydedilmez, portal girişi de otomatik kullanılmaz. Yalnız danışman adı hatırlanır. */
+try { benim = localStorage.getItem('kd_dan') || ''; sessionStorage.removeItem('kd_pin'); } catch(e){}
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
 /* Apps Script bazen yavaş/hatalı cevap verir: 25 sn zaman aşımı, JSON değilse anlaşılır hata */
@@ -176,6 +175,7 @@ function telWa(v){
 
 /* ---------- giriş ---------- */
 function markaYaz(){ var m = $('marka'); if (m) m.textContent = 'RE/MAX Doğuş' + (pin && benim ? ' · ' + benim : ''); }
+var girisSonrasiAcildi = false;
 function girisEkrani(mesaj){
   pin = ''; markaYaz();
   $('cikis').style.display='none';
@@ -188,8 +188,10 @@ function girisEkrani(mesaj){
     (mesaj ? '<p class="mini" style="margin-top:10px;color:var(--kirmizi)">'+mesaj+'</p>' : '') + '</div>';
   $('gir').onclick = function(){
     pin = $('pin').value.trim(); benim = $('dan').value;
-    try { sessionStorage.setItem('kd_pin', pin); localStorage.setItem('kd_dan', benim); } catch(e){}
-    listeEkrani();
+    try { localStorage.setItem('kd_dan', benim); } catch(e){}
+    var acNo = new URLSearchParams(location.search).get('no');
+    if (acNo && !girisSonrasiAcildi) { girisSonrasiAcildi = true; dosyaEkrani(acNo); }
+    else listeEkrani();
   };
   $('pin').addEventListener('keydown', function(e){ if(e.key==='Enter') $('gir').click(); });
 }
@@ -311,6 +313,13 @@ function yeniEkrani(){
     return h;
   };
   $('icerik').innerHTML =
+    '<div class="kart" style="border:2px solid var(--kirmizi)">' +
+      '<div style="font-weight:800;font-size:17px;margin-bottom:4px">📝 Kontrat bilgileri</div>' +
+      '<p class="mini" style="margin:0 0 14px">Kira bedeli, tarih, depozito ve demirbaşları şimdi gir; sözleşme hazır çıksın. ' +
+      'Bilmiyorsan boş bırak, sonra dosyadan girersin.</p>' +
+      '<div id="yeniKontrat"></div>' +
+    '</div>' +
+    '<div class="grup">Mülk ve taraflar</div>' +
     '<div class="kart">' +
     '<div class="ikili">' +
       '<div style="grid-column:1 / -1"><span class="etiket">Site / Proje</span>' +
@@ -354,9 +363,6 @@ function yeniEkrani(){
       '<div><span class="etiket">Kefil telefonu</span><input id="ftel" inputmode="tel"></div>' +
     '</div>' +
     '<div id="yeniBelge"></div>' +
-    '<details class="kontrat" style="margin:8px 0 14px;padding:12px 14px;background:var(--dolgu);border-radius:14px">' +
-      '<summary>📝 Kontrat bilgileri <span class="mini" style="font-weight:400">— şimdi ya da sonra dosyadan</span></summary>' +
-      '<div id="yeniKontrat"></div></details>' +
     '<button class="ana" id="ac">Dosyayı aç ve linkleri üret</button>' +
     '<p class="mini" style="margin-top:10px">Linkler 72 saat geçerli olur. Süre dolarsa dosyadan yeni link üretebilirsin.</p>' +
     '</div>' +
@@ -673,6 +679,16 @@ function dosyaGoster(no, d){
     var h = '<div class="kart"><div class="bas" style="font-weight:800;font-size:16px">' + (d.dosya.adres||'-') + '</div>' +
             '<div class="mini" style="margin-top:4px">' + d.dosya.no + ' · ' + (d.dosya.danisman||'') + ' · Durum: ' + d.dosya.durum + '</div></div>';
 
+    var kk = (d.dosya && d.dosya.kontrat) || {};
+    h += '<div class="grup">Kontrat bilgileri</div><div class="kart" style="border:2px solid ' + (kontratDolu(kk) ? 'var(--cizgi)' : 'var(--kirmizi)') + '">' +
+           '<details class="kontrat"' + (kontratDolu(kk) ? '' : ' open') + '><summary>' +
+             (kontratDolu(kk) ? '📝 Girildi' + (kk.aylik ? ' · ' + kk.aylik + ' TL' : '') + (kk.baslangic ? ' · ' + kk.baslangic : '') + ' — düzenle'
+                              : '📝 Kira bedeli, tarihler, depozito, demirbaş') + '</summary>' +
+             '<p class="mini" style="margin:0 0 12px">Müşteri formunda sorulmayan bilgiler. Burada girersen sözleşme hazır çıkar.</p>' +
+             kontratHtml(kk) +
+             '<button class="ana" id="kKaydet">Kontrat bilgilerini kaydet</button>' +
+           '</details></div>';
+
     (d.roller || ['kiraci','sahip','kefil']).forEach(function(rol){
       var t = d.taraflar[rol]; if(!t) return;
       var gonderildi = t.durum === 'Gönderildi';
@@ -707,16 +723,6 @@ function dosyaGoster(no, d){
       }
       h += '</div>';
     });
-
-    var kk = (d.dosya && d.dosya.kontrat) || {};
-    h += '<div class="grup">Kontrat bilgileri</div><div class="kart">' +
-           '<details class="kontrat"' + (kontratDolu(kk) ? '' : ' open') + '><summary>' +
-             (kontratDolu(kk) ? '📝 Girildi' + (kk.aylik ? ' · ' + kk.aylik + ' TL' : '') + (kk.baslangic ? ' · ' + kk.baslangic : '') + ' — düzenle'
-                              : '📝 Kira bedeli, tarihler, depozito, demirbaş') + '</summary>' +
-             '<p class="mini" style="margin:0 0 12px">Müşteri formunda sorulmayan bilgiler. Burada girersen sözleşme hazır çıkar.</p>' +
-             kontratHtml(kk) +
-             '<button class="ana" id="kKaydet">Kontrat bilgilerini kaydet</button>' +
-           '</details></div>';
 
     var gelen = 0, toplam = 0;
     (d.roller || []).forEach(function(r){ var t = d.taraflar[r]; if(!t) return; toplam++; if(t.durum === 'Gönderildi') gelen++; });
@@ -783,15 +789,12 @@ function dosyaGoster(no, d){
 }
 
 $('cikis').onclick = function(){
-  pin=''; try{ sessionStorage.removeItem('kd_pin'); }catch(e){}
+  pin='';
   girisEkrani();
 };
 
 /* açılış */
-var url = new URLSearchParams(location.search);
-if(url.get('no') && pin) dosyaEkrani(url.get('no'));
-else if(pin) listeEkrani();
-else girisEkrani();
+girisEkrani();
 </script>
 </body>
 </html>
