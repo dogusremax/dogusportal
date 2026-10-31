@@ -229,6 +229,8 @@ body{padding-bottom:0}
     <div class="nfoto" id="nobetFoto">🛡️</div>
     <div style="min-width:0"><span>Bugün nöbette</span><b id="nobetAd">—</b></div>
     <div class="nikon">
+      <a class="ikonbtn" href="oda.html" title="Oda ayır (toplantı ve nöbet odası)" aria-label="Oda ayır">🚪</a>
+      <a class="ikonbtn" id="nobetPlanBtn" href="nobet.html" title="Nöbet planla (broker)" aria-label="Nöbet planla" hidden>🗓️</a>
       <button class="ikonbtn" id="zil" title="Telefon bildirimleri" onclick="window.bildirimPaneli&&bildirimPaneli()">🔔</button>
       <button class="ikonbtn" id="cikisBtn" title="Çıkış" aria-label="Çıkış"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
     </div>
@@ -658,5 +660,7 @@ function hashAc(){ if (HASH && S.olaylar.length) detay(HASH[1], HASH[2]); }
 })();
 </script>
 <script src="assets/bildirim.js"></script>
+<script>/* Nöbet Takvimi ve Oda Rezervasyon bu sayfaya katıldı: nöbet planı düğmesi yalnız broker cihazında */
+try{if(localStorage.getItem('dogusBroker')==='ok'||sessionStorage.getItem('perfAuth')==='ok')document.getElementById('nobetPlanBtn').hidden=false;}catch(e){}</script>
 </body>
 </html>
