@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script>
+/* Ofis TV'sinin tarayıcısında (Samsung Tizen) portal açılırsa doğrudan nöbet ekranına geç.
+   Portalı TV'de görmek için adres sonuna ?portal ekle. */
+(function(){try{var u=navigator.userAgent||"";
+if(/Tizen|SMART-TV|SmartTV|Web0S|HbbTV/i.test(u)&&!/[?&]portal\b/.test(location.search)){location.replace("/tv-nobet.html");}}catch(e){}})();
+</script>
 <meta charset="utf-8">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CRGBP7JB7P"></script>
