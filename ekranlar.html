@@ -456,6 +456,9 @@ async function komut(tv, ne, deger, btn) {
   }
 }
 
+let sesSuruklenen = false;
+document.addEventListener("pointerdown", e => { if (e.target.closest && e.target.closest(".sesK")) sesSuruklenen = true; }, true);
+document.addEventListener("pointerup", () => { setTimeout(() => sesSuruklenen = false, 1500); }, true);
 const sesZaman = {};
 function sesKaydir(tv, el, son) {
   const v = Number(el.value);
@@ -819,7 +822,11 @@ async function eslesmeKaldir(tv) {
 
 function otomatik() {
   clearInterval(zamanlayici);
-  zamanlayici = setInterval(() => { if (!document.hidden && veri && veri.bagli && !mesgul && !document.getElementById("perde").classList.contains("acik")) yukle(); }, 20000);
+  // 8 sn'de bir TV'lerin gerçek durumunu (ses, açık/kapalı) çek; kaydırırken ya da pencere açıkken bekle
+  zamanlayici = setInterval(() => {
+    if (!document.hidden && veri && veri.bagli && !mesgul && !gonderiliyor && !sesSuruklenen
+        && !document.getElementById("perde").classList.contains("acik")) yukle();
+  }, 8000);
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && veri) yukle(); });
 
