@@ -645,10 +645,7 @@ function gonderBar(durum, baslik, ad, vid) {
   b.className = "gonderBar gor " + durum;
   b.onclick = () => { if (durum !== "gidiyor") b.classList.remove("gor"); };
   b.innerHTML = `<span class="gr" ${resim}></span><span class="gy"><small>${ust}</small><b>${esc(baslik || "Video")}</b>${durum === "gidiyor" ? '<em id="gSure">0 sn</em>' : ""}</span>${ikon}`;
-  if (durum === "gidiyor") {
-    const bas = Date.now();
-    b._z = setInterval(() => { const e = document.getElementById("gSure"); if (e) e.textContent = Math.round((Date.now() - bas) / 1000) + " sn · TV hazırlanıyor"; }, 1000);
-  }
+  if (durum === "gidiyor") { const e = document.getElementById("gSure"); if (e) e.textContent = "Hazırlanıyor"; }
   if (durum === "tamam") setTimeout(() => b.classList.remove("gor"), 3500);
   if (durum === "uyari") setTimeout(() => b.classList.remove("gor"), 8000);
 }
@@ -672,27 +669,35 @@ async function videoAc(link, baslik, el) {
   }
   kapatSayfa();
   gonderBar("gidiyor", baslik, ad, vid);
-  // En fazla 70 sn bekle; sayfa asla takılı kalmasın
-  let bitti = false;
-  const sure = setTimeout(() => {
-    if (bitti) return;
-    bitti = true; gonderiliyor = false;
-    gonderBar("uyari", baslik, ad, vid);
-  }, 70000);
+  const bas = Date.now();
+  const durumYaz = m => { const e = document.getElementById("gSure"); if (e) e.textContent = m + " · " + Math.round((Date.now() - bas) / 1000) + " sn"; };
   try {
-    await api({ islem: "ytVideo", tv, baglanti: link, baslik });
-    if (!bitti) { bitti = true; gonderBar("tamam", baslik, ad, vid); }
+    // 1) Kısa sorularla TV'yi ve YouTube'u hazırla (her istek 1-2 sn, sayfa hiç takılmaz)
+    let hazir = false, eskiSunucu = false;
+    for (let i = 0; i < 40 && !hazir; i++) {
+      let d;
+      try { d = await api({ islem: "ytHazir", tv }); }
+      catch (e) { if (/Bilinmeyen işlem/.test(e.message)) { eskiSunucu = true; break; } throw e; }
+      if (d.durum === "hazir") { hazir = true; break; }
+      durumYaz(d.durum === "tvAciliyor" ? "TV açılıyor" : "YouTube açılıyor");
+      await new Promise(t => setTimeout(t, 1500));
+    }
+    if (eskiSunucu) {
+      await api({ islem: "ytVideo", tv, baglanti: link, baslik });
+    } else {
+      if (!hazir) throw Object.assign(new Error("TV'deki YouTube 60 sn içinde hazır olmadı. TV açık mı, internete bağlı mı?"), { iz: "" });
+      // 2) Videoyu gönder (birkaç saniye)
+      durumYaz("Video gönderiliyor");
+      await api({ islem: "ytGonder", tv, baglanti: link, baslik });
+    }
+    gonderBar("tamam", baslik, ad, vid);
     setTimeout(yukle, 1500);
   } catch (e) {
-    if (!bitti) {
-      bitti = true;
-      gonderBar(null);
-      aktifTv = tv;
-      videoSayfa(tv);
-      hataGoster(e);
-    }
+    gonderBar(null);
+    aktifTv = tv;
+    videoSayfa(tv);
+    hataGoster(e);
   } finally {
-    clearTimeout(sure);
     gonderiliyor = false;
   }
 }
