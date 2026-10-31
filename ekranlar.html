@@ -231,6 +231,8 @@
   .acRozet{position:absolute;inset:0;border-radius:10px;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font-size:11.5px;font-weight:700;animation:belir .2s ease}
   .acRozet .donen{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:don .7s linear infinite}
   @keyframes belir{from{opacity:0}to{opacity:1}}
+
+  .gonderBar.uyari{border-color:rgba(255,181,71,.5)}
 </style>
 
 </head>
@@ -637,15 +639,18 @@ function gonderBar(durum, baslik, ad, vid) {
   clearInterval(b._z);
   if (!durum) { b.classList.remove("gor"); return; }
   const resim = vid && /^[\w-]{11}$/.test(vid) ? `style="background-image:url('https://i.ytimg.com/vi/${vid}/mqdefault.jpg')"` : "";
-  const ikon = durum === "gidiyor" ? '<i class="donen"></i>' : durum === "tamam" ? '<i class="tik">✓</i>' : '<i class="hata">!</i>';
-  const ust = durum === "gidiyor" ? `${esc(ad)} ekranına gönderiliyor` : durum === "tamam" ? `${esc(ad)} ekranında oynuyor` : "Gönderilemedi";
+  const ikon = durum === "gidiyor" ? '<i class="donen"></i>' : durum === "tamam" ? '<i class="tik">✓</i>' : '<i class="tik" style="background:var(--amber);color:#1A1306">!</i>';
+  const ust = durum === "gidiyor" ? `${esc(ad)} ekranına gönderiliyor` : durum === "tamam" ? `${esc(ad)} ekranında oynuyor`
+    : durum === "uyari" ? `${esc(ad)} yanıt vermedi · açıldıysa sorun yok` : "Gönderilemedi";
   b.className = "gonderBar gor " + durum;
+  b.onclick = () => { if (durum !== "gidiyor") b.classList.remove("gor"); };
   b.innerHTML = `<span class="gr" ${resim}></span><span class="gy"><small>${ust}</small><b>${esc(baslik || "Video")}</b>${durum === "gidiyor" ? '<em id="gSure">0 sn</em>' : ""}</span>${ikon}`;
   if (durum === "gidiyor") {
     const bas = Date.now();
     b._z = setInterval(() => { const e = document.getElementById("gSure"); if (e) e.textContent = Math.round((Date.now() - bas) / 1000) + " sn · TV hazırlanıyor"; }, 1000);
   }
   if (durum === "tamam") setTimeout(() => b.classList.remove("gor"), 3500);
+  if (durum === "uyari") setTimeout(() => b.classList.remove("gor"), 8000);
 }
 
 async function videoAc(link, baslik, el) {
@@ -667,16 +672,27 @@ async function videoAc(link, baslik, el) {
   }
   kapatSayfa();
   gonderBar("gidiyor", baslik, ad, vid);
+  // En fazla 70 sn bekle; sayfa asla takılı kalmasın
+  let bitti = false;
+  const sure = setTimeout(() => {
+    if (bitti) return;
+    bitti = true; gonderiliyor = false;
+    gonderBar("uyari", baslik, ad, vid);
+  }, 70000);
   try {
     await api({ islem: "ytVideo", tv, baglanti: link, baslik });
-    gonderBar("tamam", baslik, ad, vid);
+    if (!bitti) { bitti = true; gonderBar("tamam", baslik, ad, vid); }
     setTimeout(yukle, 1500);
   } catch (e) {
-    gonderBar(null);
-    aktifTv = tv;
-    videoSayfa(tv);
-    hataGoster(e);
+    if (!bitti) {
+      bitti = true;
+      gonderBar(null);
+      aktifTv = tv;
+      videoSayfa(tv);
+      hataGoster(e);
+    }
   } finally {
+    clearTimeout(sure);
     gonderiliyor = false;
   }
 }
