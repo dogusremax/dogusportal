@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nöbet Ekranı · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Ofisteki TV için yatay, tam ekran nöbetçi tanıtımı. Her gün kendiliğinden güncellenir. */
+  :root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--ink:#fff;--mute:rgba(255,255,255,.72)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--navy);color:var(--ink);cursor:none}
+  body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .sahne{position:fixed;inset:0;display:flex;align-items:center;gap:5vw;padding:0 6vw;
+    background:radial-gradient(80% 90% at 100% 110%,rgba(220,28,46,.55),transparent 60%),
+               radial-gradient(60% 70% at 0% -10%,rgba(251,81,96,.18),transparent 60%),var(--navy)}
+  .dev{position:absolute;right:-2vw;top:-8vh;font-size:70vh;font-weight:800;line-height:1;color:rgba(255,255,255,.04);letter-spacing:-.06em;pointer-events:none}
+  .medya{height:86vh;aspect-ratio:9/16;border-radius:2.2vh;overflow:hidden;flex:none;position:relative;
+    box-shadow:0 4vh 10vh rgba(0,0,0,.55),0 0 0 .35vh rgba(255,255,255,.12);background:#0b1040}
+  .medya video,.medya img{width:100%;height:100%;object-fit:cover;display:block}
+  .medya .harf{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30vh;font-weight:800;
+    background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral))}
+  .yazi{flex:1;min-width:0;position:relative;z-index:2}
+  .logo{height:8vh;margin-bottom:5vh;display:block}
+  .tarih{display:inline-block;background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral));padding:1.2vh 2.6vh;border-radius:5vh;
+    font-size:2.8vh;font-weight:700;box-shadow:0 1.5vh 4vh rgba(220,28,46,.45)}
+  .etiket{margin-top:5vh;font-size:2.6vh;font-weight:800;letter-spacing:.6vh;color:var(--coral)}
+  .isim{margin-top:1.5vh;font-size:11vh;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .alt{margin-top:3vh;font-size:3.4vh;color:var(--mute);line-height:1.45;max-width:60vw}
+  .tel{margin-top:6vh;display:flex;align-items:center;gap:2vh;font-size:4.4vh;font-weight:800}
+  .tel i{font-style:normal;width:7vh;height:7vh;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3.4vh;
+    background:rgba(255,255,255,.1);border:.25vh solid rgba(255,255,255,.18)}
+  .saat{position:absolute;right:4vw;bottom:5vh;text-align:right;z-index:2}
+  .saat b{display:block;font-size:6vh;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .saat span{font-size:2.2vh;color:var(--mute);font-weight:700;letter-spacing:.3vh}
+  .gecis{animation:gel .9s cubic-bezier(.3,.7,.4,1) both}
+  @keyframes gel{from{opacity:0;transform:translateY(3vh)}to{opacity:1;transform:none}}
+  .uyari{position:fixed;left:50%;bottom:3vh;transform:translateX(-50%);font-size:2vh;color:var(--mute);display:none}
+</style>
+</head>
+<body>
+<div class="sahne" id="sahne">
+  <div class="dev">D</div>
+  <div class="medya" id="medya"></div>
+  <div class="yazi gecis" id="yazi">
+    <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+    <div class="isim" style="font-size:7vh">Yükleniyor…</div>
+  </div>
+  <div class="saat"><b id="saat">--:--</b><span>RE/MAX DOĞUŞ · FİKİRTEPE</span></div>
+</div>
+<div class="uyari" id="uyari"></div>
+
+<script>
+const NOBET_API = "https://script.google.com/macros/s/AKfycbzDMpgNZAhXFZfCbp3iuUxNAJwjq8pB2xt86eluuj2JPNU-J2sfeCHUsG1m0OrJjo7RvA/exec";
+const TEL = "0216 315 15 15";
+const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+const VIDEO = { evsen:1, irem:1, gizem:1, orhan:1, ozlem_varol:1, gamze:1, aysegul_alpay:1 };
+const FOTO = { "evsen ozazman":"evsen", "irem aleyna tetik":"irem", "irem tetik":"irem", "gizem gok":"gizem", "orhan ozazman":"orhan",
+  "ozlem varol":"ozlem_varol", "gamze yetkin":"gamze", "aysegul alpay":"aysegul_alpay", "aysun yilmaz":"aysun" };
+const norm = s => String(s || "").toLocaleLowerCase("tr").replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g")
+  .replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/\s+/g," ").trim();
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const bugun = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Istanbul" });
+
+let gosterilen = "";
+
+async function zamanli(url, ms) {
+  const k = new AbortController(); const t = setTimeout(() => k.abort(), ms);
+  try { const r = await fetch(url, { signal: k.signal, cache: "no-store" }); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+
+/* Bugünün nöbetçisini bul: önce nöbet takvimi, olmazsa sabah üretilen story kaydı */
+async function nobetci() {
+  try {
+    const d = await zamanli(NOBET_API + "?action=today&cb=" + Date.now(), 20000);
+    if (d && d.ok) return { ad: d.name || "", tarih: d.date || bugun() };
+  } catch (e) {}
+  try {
+    const m = await zamanli("nobet-story/.media?cb=" + Date.now(), 10000);
+    if (m && m.date === bugun()) return { ad: m.kim || "", tarih: m.date, medya: m.url };
+  } catch (e) {}
+  return null;
+}
+
+function tarihYaz(t) {
+  const d = new Date(t + "T12:00:00+03:00");
+  return d.getDate() + " " + AYLAR[d.getMonth()] + " · " + GUNLER[d.getDay()];
+}
+
+function ciz(n) {
+  const anahtar = (n.tarih || "") + "|" + (n.ad || "");
+  if (anahtar === gosterilen) return;
+  gosterilen = anahtar;
+
+  const medya = document.getElementById("medya"), yazi = document.getElementById("yazi");
+  const ofis = /^ofis/i.test(n.ad || "");
+  const id = FOTO[norm(n.ad)];
+  let m;
+  if (ofis || !n.ad) m = `<div class="harf">🏠</div>`;
+  else if (id && VIDEO[id]) m = `<video src="assets/nobet-video/${id}.mp4" autoplay muted loop playsinline></video>`;
+  else if (id) m = `<img src="assets/ekip/${id}.png" alt="">`;
+  else m = `<div class="harf">${esc((n.ad || "D")[0])}</div>`;
+  medya.innerHTML = m;
+
+  yazi.classList.remove("gecis"); void yazi.offsetWidth; yazi.classList.add("gecis");
+  yazi.innerHTML = `
+    <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+    <div class="tarih">${esc(tarihYaz(n.tarih || bugun()))}</div>
+    ${ofis || !n.ad ? `
+      <div class="etiket">BUGÜN</div>
+      <div class="isim">Tüm ekip ofiste</div>
+      <div class="alt">Gayrimenkulünüz, yatırımınız ya da aklınızdaki soru için buyurun. Çay bizden.</div>`
+    : `
+      <div class="etiket">BUGÜNÜN NÖBETÇİSİ</div>
+      <div class="isim" style="${n.ad.length > 16 ? "font-size:8.5vh" : ""}">${esc(n.ad)}</div>
+      <div class="alt">Sorularınız için ofisimizdeyiz.</div>`}
+    <div class="tel"><i>📞</i>${TEL}</div>`;
+
+  const v = medya.querySelector("video");
+  if (v) { v.play().catch(() => {}); }
+}
+
+async function guncelle() {
+  const n = await nobetci();
+  const u = document.getElementById("uyari");
+  if (n) { u.style.display = "none"; ciz(n); }
+  else if (!gosterilen) { u.textContent = "Nöbet takvimine ulaşılamadı, tekrar deneniyor…"; u.style.display = "block"; }
+}
+
+function saat() {
+  document.getElementById("saat").textContent =
+    new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" });
+}
+
+// Ekran uyumasın
+async function uyanik() { try { if ("wakeLock" in navigator) await navigator.wakeLock.request("screen"); } catch (e) {} }
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { uyanik(); guncelle(); } });
+
+saat(); setInterval(saat, 15000);
+guncelle(); setInterval(guncelle, 5 * 60 * 1000);   // 5 dk'da bir nöbetçiyi kontrol et
+uyanik();
+// Her gece 03:00'te sayfayı tazele (uzun süre açık kalan TV tarayıcısı için)
+setInterval(() => {
+  const s = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" });
+  if (s === "03:00") location.reload();
+}, 60000);
+</script>
+</body>
+</html>

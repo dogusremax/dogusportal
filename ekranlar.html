@@ -397,6 +397,7 @@ function tvKarti(t) {
     `<button class="hap ${k.id === t.kaynak ? "secili" : ""}" onclick="komut('${t.id}','kaynak','${esc(k.id)}',this)">${esc(k.ad)}</button>`).join("");
   const sesSec = [null, 5, 10, 15, 20, 25, 30, 40].map(v =>
     `<option value="${v == null ? "" : v}" ${String(t.acilisSes ?? "") === String(v ?? "") ? "selected" : ""}>${v == null ? "Aynı" : v}</option>`).join("");
+  const acil = t.acilis || (t.youtube ? "youtube" : "");
   return `
   <div class="tv ${t.acik ? "acik" : ""} ${yok ? "yok" : ""}" id="tv-${t.id}">
     <div class="ust">
@@ -417,13 +418,18 @@ function tvKarti(t) {
       </div>
       <button class="hap" aria-label="${t.sessiz ? "Sesi aç" : "Sessize al"}" onclick="komut('${t.id}','${t.sessiz ? "sesAc" : "sessiz"}',null,this)">${t.sessiz ? IKON_SESSIZ : IKON_SES}</button>
       ${t.youtubeDestek ? `<button class="hap yt" onclick="komut('${t.id}','youtube',null,this)">${IKON_YT} YouTube</button>` : ""}
+      ${t.youtubeDestek ? `<button class="hap" onclick="komut('${t.id}','tarayici',null,this)">📅 Nöbet ekranı</button>` : ""}
       ${kaynaklar ? `<div class="kaynaklar">${kaynaklar}</div>` : ""}
     </div>
     ${t.ytBagli
       ? `<button class="videoBtn" onclick="videoSayfa('${t.id}')">${IKON_YT} YouTube'da video aç</button>`
       : `<button class="videoBtn bagla" onclick="eslesSayfa('${t.id}')">${IKON_YT} Video açmak için YouTube'u bağla</button>`}
     <div class="ayar">
-      <label><input type="checkbox" class="mini" ${t.youtube ? "checked" : ""} ${t.youtubeDestek ? "" : "disabled"} onchange="ayar('${t.id}',{youtube:this.checked})"> Açılınca YouTube</label>
+      <label>Açılınca <select ${t.youtubeDestek ? "" : "disabled"} onchange="ayar('${t.id}',{acilis:this.value})">
+        <option value="" ${!acil ? "selected" : ""}>TV yayını</option>
+        <option value="youtube" ${acil === "youtube" ? "selected" : ""}>YouTube</option>
+        <option value="nobet" ${acil === "nobet" ? "selected" : ""}>Nöbet ekranı</option>
+      </select></label>
       <label>Açılış sesi <select onchange="ayar('${t.id}',{ses:this.value})">${sesSec}</select></label>
     </div>
   </div>`;
@@ -447,6 +453,7 @@ async function komut(tv, ne, deger, btn) {
   try {
     await api({ islem: "komut", tv, ne, deger });
     if (ne === "youtube") toast("YouTube açılıyor");
+    if (ne === "tarayici") toast("Nöbet ekranı açılıyor");
     const tv0 = veri.tvler.find(x => x.id === tv);
     if (ne === "ac" && tv0 && tv0.youtube) toast("TV açıldı, YouTube başlıyor", 3500);
     setTimeout(yukle, ne === "ac" ? 4000 : 1800);
@@ -488,7 +495,7 @@ function ses(tv, yon) {
 }
 
 async function ayar(tv, a) {
-  try { await api({ islem: "ayar", tv, ayar: a }); toast("Kaydedildi"); const t = veri.tvler.find(x => x.id === tv); if ("youtube" in a) t.youtube = a.youtube; if ("ses" in a) t.acilisSes = a.ses === "" ? null : Number(a.ses); }
+  try { await api({ islem: "ayar", tv, ayar: a }); toast("Kaydedildi"); const t = veri.tvler.find(x => x.id === tv); if ("youtube" in a) t.youtube = a.youtube; if ("acilis" in a) { t.acilis = a.acilis; t.youtube = a.acilis === "youtube"; } if ("ses" in a) t.acilisSes = a.ses === "" ? null : Number(a.ses); }
   catch (e) { toast(hataMetni(e.message), 4200); yukle(); }
 }
 
