@@ -195,6 +195,22 @@
 
   /* iPhone, 16px'ten küçük yazılı kutuya dokununca sayfayı büyütür; bunu engelle */
   input, select, textarea{font-size:16px !important}
+
+  .gonderBar{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:15;max-width:496px;margin:0 auto;
+    display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:18px;background:#22232D;border:1px solid #33354A;
+    box-shadow:0 18px 40px -12px rgba(0,0,0,.7);transform:translateY(140%);transition:transform .3s cubic-bezier(.3,.7,.4,1)}
+  .gonderBar.gor{transform:none}
+  .gonderBar.gidiyor{border-color:rgba(255,181,71,.45)}
+  .gonderBar.tamam{border-color:rgba(61,220,151,.5)}
+  .gonderBar .gr{width:64px;height:36px;border-radius:8px;flex:none;background:var(--bg2) center/cover no-repeat}
+  .gonderBar .gy{flex:1;min-width:0}
+  .gonderBar small{display:block;font-size:11.5px;font-weight:700;color:var(--amber)}
+  .gonderBar.tamam small{color:var(--green)}
+  .gonderBar b{display:block;font-size:13.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+  .gonderBar em{display:block;font-style:normal;font-size:11px;color:var(--mute);margin-top:1px}
+  .gonderBar i{flex:none;font-style:normal}
+  .gonderBar .donen{width:22px;height:22px;border-radius:50%;border:2.5px solid rgba(255,181,71,.25);border-top-color:var(--amber);animation:don .8s linear infinite}
+  .gonderBar .tik{width:26px;height:26px;border-radius:50%;background:var(--green);color:#06210F;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
 </style>
 
 </head>
@@ -553,6 +569,73 @@ async function ara() {
     const d = await api({ islem: "ytAra", q });
     k.innerHTML = d.sonuc.length ? d.sonuc.map(kartVideo).join("") : '<p class="bos">Sonuç bulunamadı.</p>';
   } catch (e) { k.innerHTML = `<p class="bos">${esc(e.message)}</p>`; }
+}
+
+function hataGoster(e) {
+  let k = document.getElementById("ytHata");
+  if (!k) {
+    k = document.createElement("div"); k.id = "ytHata"; k.className = "ytHata";
+    const g = document.querySelector("#sayfa .alt"); g.insertAdjacentElement("afterend", k);
+  }
+  const metin = "Hata: " + e.message + (e.iz ? "\n\n" + e.iz : "");
+  k.innerHTML = `<b>Video açılamadı</b><span>${esc(e.message)}</span>
+    ${e.iz ? `<pre>${esc(e.iz)}</pre>` : ""}
+    <button onclick="hataKopyala()">Ayrıntıyı kopyala</button>`;
+  k.dataset.metin = metin;
+  k.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+async function hataKopyala() {
+  const t = document.getElementById("ytHata").dataset.metin;
+  try { await navigator.clipboard.writeText(t); toast("Kopyalandı, Claude'a yapıştır"); }
+  catch (e) { toast("Kopyalanamadı, ekran görüntüsü al"); }
+}
+
+async function yapistir() {
+  try { const m = await navigator.clipboard.readText(); if (m) document.getElementById("ytLink").value = m.trim(); }
+  catch (e) { toast("Kutuya uzun basıp Yapıştır'ı seç"); }
+}
+
+let gonderiliyor = false;
+function gonderBar(durum, baslik, ad, vid) {
+  let b = document.getElementById("gonderBar");
+  if (!b) { b = document.createElement("div"); b.id = "gonderBar"; b.className = "gonderBar"; document.body.appendChild(b); }
+  clearInterval(b._z);
+  if (!durum) { b.classList.remove("gor"); return; }
+  const resim = vid && /^[\w-]{11}$/.test(vid) ? `style="background-image:url('https://i.ytimg.com/vi/${vid}/mqdefault.jpg')"` : "";
+  const ikon = durum === "gidiyor" ? '<i class="donen"></i>' : durum === "tamam" ? '<i class="tik">✓</i>' : '<i class="hata">!</i>';
+  const ust = durum === "gidiyor" ? `${esc(ad)} ekranına gönderiliyor` : durum === "tamam" ? `${esc(ad)} ekranında oynuyor` : "Gönderilemedi";
+  b.className = "gonderBar gor " + durum;
+  b.innerHTML = `<span class="gr" ${resim}></span><span class="gy"><small>${ust}</small><b>${esc(baslik || "Video")}</b>${durum === "gidiyor" ? '<em id="gSure">0 sn</em>' : ""}</span>${ikon}`;
+  if (durum === "gidiyor") {
+    const bas = Date.now();
+    b._z = setInterval(() => { const e = document.getElementById("gSure"); if (e) e.textContent = Math.round((Date.now() - bas) / 1000) + " sn · TV hazırlanıyor"; }, 1000);
+  }
+  if (durum === "tamam") setTimeout(() => b.classList.remove("gor"), 3500);
+}
+
+async function videoAc(link, baslik, el) {
+  link = String(link || "").trim();
+  if (!link) { toast("Önce bir video seç ya da bağlantı yapıştır"); return; }
+  if (gonderiliyor) { toast("Önceki video hâlâ gönderiliyor, bekle"); return; }
+  gonderiliyor = true;
+  const tv = aktifTv, ad = tvAd(tv);
+  let vid = el && el.dataset ? el.dataset.v : "";
+  if (!vid) { const m = link.match(/(?:v=|youtu\.be\/|shorts\/)([\w-]{11})/); vid = m ? m[1] : ""; }
+  if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) {} }
+  kapatSayfa();
+  gonderBar("gidiyor", baslik, ad, vid);
+  try {
+    await api({ islem: "ytVideo", tv, baglanti: link, baslik });
+    gonderBar("tamam", baslik, ad, vid);
+    setTimeout(yukle, 1500);
+  } catch (e) {
+    gonderBar(null);
+    aktifTv = tv;
+    videoSayfa(tv);
+    hataGoster(e);
+  } finally {
+    gonderiliyor = false;
+  }
 }
 
 function hataGoster(e) {
