@@ -115,7 +115,8 @@ button{font-family:inherit;cursor:pointer}
       <p>Taraflara form linki gönder, bilgileri ve belgeleri tek yerde topla. <a href="kira-masasi-rehberi.html" style="color:#fff;font-weight:700;white-space:nowrap">Nasıl kullanılır? →</a></p>
     </div>
   </header>
-  <div class="kart onizle">
+  <div id="icerik"></div>
+  <div class="kart onizle" id="onizleKart" style="display:none;margin-top:18px">
     <span class="etiket">Müşteriye giden formları önizle</span>
     <div style="display:contents">
       <a class="kck" href="kira-form.html?onizle=kiraci" target="_blank">Kiracı</a>
@@ -123,7 +124,6 @@ button{font-family:inherit;cursor:pointer}
       <a class="kck" href="kira-form.html?onizle=kefil" target="_blank">Kefil</a>
     </div>
   </div>
-  <div id="icerik"></div>
   <a class="geri" href="https://dogusportal.com">← Portala dön</a>
 </div>
 <div class="toast" id="toast"></div>
@@ -143,7 +143,7 @@ function rolAdi(rol){
 var pin = '', benim = '', $ = function(id){ return document.getElementById(id); };
 
 /* Şifre her açılışta sorulur (Umut 31.10): kaydedilmez, portal girişi de otomatik kullanılmaz. Yalnız danışman adı hatırlanır. */
-try { benim = localStorage.getItem('kd_dan') || ''; sessionStorage.removeItem('kd_pin'); } catch(e){}
+try { localStorage.removeItem('kd_dan'); sessionStorage.removeItem('kd_pin'); } catch(e){}   /* danışman da her girişte seçilir */
 
 function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('gor'); setTimeout(function(){e.classList.remove('gor');},1900); }
 /* Apps Script bazen yavaş/hatalı cevap verir: 25 sn zaman aşımı, JSON değilse anlaşılır hata */
@@ -177,18 +177,20 @@ function telWa(v){
 function markaYaz(){ var m = $('marka'); if (m) m.textContent = 'RE/MAX Doğuş' + (pin && benim ? ' · ' + benim : ''); }
 var girisSonrasiAcildi = false;
 function girisEkrani(mesaj){
-  pin = ''; markaYaz();
+  pin = ''; benim = ''; markaYaz();
   $('cikis').style.display='none';
+  $('onizleKart').style.display='none';
   $('icerik').innerHTML =
     '<div class="kart"><span class="etiket">Şifren</span>' +
     '<input id="pin" type="password" inputmode="numeric" placeholder="••••">' +
-    '<span class="etiket">Danışman</span><select id="dan">' +
-    DANISMANLAR.map(function(d){ return '<option'+(d===benim?' selected':'')+'>'+d+'</option>'; }).join('') +
+    '<span class="etiket">Danışman</span><select id="dan"><option value="">— Danışman seçin —</option>' +
+    DANISMANLAR.map(function(d){ return '<option>'+d+'</option>'; }).join('') +
     '</select><button class="ana" id="gir">Giriş</button>' +
     (mesaj ? '<p class="mini" style="margin-top:10px;color:var(--kirmizi)">'+mesaj+'</p>' : '') + '</div>';
   $('gir').onclick = function(){
     pin = $('pin').value.trim(); benim = $('dan').value;
-    try { localStorage.setItem('kd_dan', benim); } catch(e){}
+    if (!benim) { toast('Danışmanını seç'); return; }
+    if (!pin) { toast('Şifreni gir'); return; }
     var acNo = new URLSearchParams(location.search).get('no');
     if (acNo && !girisSonrasiAcildi) { girisSonrasiAcildi = true; dosyaEkrani(acNo); }
     else listeEkrani();
@@ -201,6 +203,7 @@ var LISTE_ANAHTAR = function(){ return 'kd_liste_' + benim; };
 function listeEkrani(){
   markaYaz();
   $('cikis').style.display='block';
+  $('onizleKart').style.display='';
   alanlariYukle();   /* belge listesini arkada hazırla */
   var onbellek = null;
   try { onbellek = JSON.parse(localStorage.getItem(LISTE_ANAHTAR()) || 'null'); } catch(e){}
@@ -215,6 +218,7 @@ function listeEkrani(){
 }
 function listeCiz(d, eski){
     var h = '<button class="ana" id="yeni">+ Yeni kira dosyası</button>' +
+            '<p class="mini" style="margin:8px 2px 0">📝 Dosyayı açarken önce kontrat bilgilerini (kira bedeli, başlangıç tarihi, depozito, demirbaş) gir; sözleşme hazır çıkar.</p>' +
             '<div class="grup">Dosyalar</div>';
     h += d.liste.length ? d.liste.map(function(x){
       var s = String(x.durum||'');
