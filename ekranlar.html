@@ -186,6 +186,12 @@
   .kapatX{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1px solid var(--line);color:var(--ink-2);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
   .perde{align-items:flex-end}
   .sayfa{max-height:82vh}
+
+  .ytHata{margin:0 0 12px;padding:12px 14px;border-radius:14px;background:rgba(255,107,78,.1);border:1px solid rgba(255,107,78,.3)}
+  .ytHata b{display:block;color:var(--coral);font-size:13.5px;margin-bottom:3px}
+  .ytHata span{display:block;color:var(--ink-2);font-size:13px}
+  .ytHata pre{margin:8px 0 0;max-height:140px;overflow:auto;white-space:pre-wrap;word-break:break-all;font-size:10.5px;line-height:1.45;color:var(--mute);background:var(--bg2);border-radius:8px;padding:8px}
+  .ytHata button{margin-top:8px;height:32px;padding:0 12px;border-radius:10px;background:var(--card2);border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--ink-2)}
 </style>
 
 </head>
@@ -281,7 +287,7 @@ async function api(govde) {
   const r = await fetch(API, { method: "POST", body: JSON.stringify(Object.assign({ pin: PIN }, govde)) });
   const d = await r.json();
   if (d.yetki === false) { if (window.brokerCikis) brokerCikis(); sessionStorage.removeItem("perfAuth"); location.reload(); throw new Error("Yetkisiz"); }
-  if (!d.ok) throw new Error(d.hata || "Bilinmeyen hata");
+  if (!d.ok) { const h = new Error(d.hata || "Bilinmeyen hata"); h.iz = d.iz || ""; throw h; }
   return d;
 }
 
@@ -547,6 +553,25 @@ async function ara() {
   } catch (e) { k.innerHTML = `<p class="bos">${esc(e.message)}</p>`; }
 }
 
+function hataGoster(e) {
+  let k = document.getElementById("ytHata");
+  if (!k) {
+    k = document.createElement("div"); k.id = "ytHata"; k.className = "ytHata";
+    const g = document.querySelector("#sayfa .alt"); g.insertAdjacentElement("afterend", k);
+  }
+  const metin = "Hata: " + e.message + (e.iz ? "\n\n" + e.iz : "");
+  k.innerHTML = `<b>Video açılamadı</b><span>${esc(e.message)}</span>
+    ${e.iz ? `<pre>${esc(e.iz)}</pre>` : ""}
+    <button onclick="hataKopyala()">Ayrıntıyı kopyala</button>`;
+  k.dataset.metin = metin;
+  k.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+async function hataKopyala() {
+  const t = document.getElementById("ytHata").dataset.metin;
+  try { await navigator.clipboard.writeText(t); toast("Kopyalandı, Claude'a yapıştır"); }
+  catch (e) { toast("Kopyalanamadı, ekran görüntüsü al"); }
+}
+
 async function yapistir() {
   try { const m = await navigator.clipboard.readText(); if (m) document.getElementById("ytLink").value = m.trim(); }
   catch (e) { toast("Kutuya uzun basıp Yapıştır'ı seç"); }
@@ -562,9 +587,10 @@ async function videoAc(link, baslik, el) {
     await api({ islem: "ytVideo", tv: aktifTv, baglanti: link, baslik });
     kapatSayfa(); toast("▶ " + (baslik || "Video") + " TV'de açılıyor", 3500); setTimeout(yukle, 2500);
   } catch (e) {
-    toast(hataMetni(e.message), 5000);
     document.querySelectorAll(".vk").forEach(b => b.disabled = false);
     if (el) el.classList.remove("gidiyor");
+    toast("Açılamadı", 2500);
+    hataGoster(e);
   }
 }
 
