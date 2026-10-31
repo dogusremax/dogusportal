@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0D0E12">
 <meta name="robots" content="noindex">
 <title>Ekranlar · RE/MAX Doğuş</title>
@@ -192,6 +192,9 @@
   .ytHata span{display:block;color:var(--ink-2);font-size:13px}
   .ytHata pre{margin:8px 0 0;max-height:140px;overflow:auto;white-space:pre-wrap;word-break:break-all;font-size:10.5px;line-height:1.45;color:var(--mute);background:var(--bg2);border-radius:8px;padding:8px}
   .ytHata button{margin-top:8px;height:32px;padding:0 12px;border-radius:10px;background:var(--card2);border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--ink-2)}
+
+  /* iPhone, 16px'ten küçük yazılı kutuya dokununca sayfayı büyütür; bunu engelle */
+  input, select, textarea{font-size:16px !important}
 </style>
 
 </head>
@@ -529,7 +532,6 @@ function videoSayfa(tv) {
       </div>
     </details>
     <button class="kucukLink" onclick="eslesmeKaldir('${tv}')">YouTube bağlantısını kaldır</button>`);
-  setTimeout(() => { const g = document.getElementById("ytAra"); if (g) g.focus(); }, 250);
 }
 
 function kartVideo(x) {
