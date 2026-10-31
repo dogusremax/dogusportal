@@ -121,7 +121,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Ölçüm tamam mı?</h2>
       <p class="note" id="mReady">En az 3 tam gün ölç (iş günü + hafta sonu karışık olursa daha iyi). Sonra plan senin sayına ve saatlerine göre kurulur.</p>
       <button class="pri full" style="margin-top:12px" id="mGo" onclick="mFinish()">Planı ölçümüme göre kur →</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v11</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v12</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -192,7 +192,7 @@ a{color:var(--acc)}
     <div class="card"><h2>Bugünün saatleri</h2><div class="slots" id="slots"></div></div>
     <div class="card" id="notifCard"><h2>Bildirimler</h2><p class="note" id="notifInfo"></p>
       <button class="ghost full" style="margin-top:10px" onclick="topUp(true)">🔄 Bildirimleri yenile</button></div>
-    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v11</summary>
+    <details class="card"><summary class="note" style="cursor:pointer"><b>Teknik</b> — IQOS bağlantı ayrıntıları · sürüm v12</summary>
       <p class="note iqSt" style="margin-top:10px">…</p>
       <button class="ghost full iqBtn" style="margin-top:10px" onclick="iqConnect(false)">🔗 IQOS'a bağlan</button>
       <button class="ghost full" style="margin-top:10px" onclick="iqConnect(false,true)">📡 Tüm Bluetooth cihazlarını listele</button>
@@ -536,8 +536,10 @@ function mFinish(){
   if(st.avg){$('sBase').value=Math.round(st.avg)}
   if(st.fM!=null){$('sWake').value=mhm(st.fM-15)}           // ilk sigaradan 15 dk önce uyanmış say
   if(st.lM!=null){$('sSleep').value=mhm(st.lM+15)}
-  $('sStart').value=dstr(new Date(Date.now()+864e5));
-  preview();toast('Ölçümün forma işlendi — kontrol et, başlat');
+  {const n=new Date(),w=toMin($('sWake').value||'07:30'),m=n.getHours()*60+n.getMinutes();
+   const base=m<240?new Date(n-864e5):n;  // 04:00'ten önce = hâlâ önceki gün
+   $('sStart').value=(m<240||m<w)?dstr(m<240?n:base):dstr(new Date(+n+864e5))}
+  preview();toast('Ölçümün forma işlendi — telefonu bağla, dene, başlat');
 }
 
 /* ---- IQOS BLUETOOTH (Bluefy / Chrome) ---- */
@@ -669,7 +671,7 @@ async function iqAutoStart(){await iqKnown();if(iq.known&&!iq.scp){iq.dev=iq.kno
 if(navigator.bluetooth&&S.iq&&S.iq.name)iqAutoStart();
 /* ---- AÇILIŞ ---- */
 if(S.setup&&S.setup.start){$('nav').classList.remove('hide');show('vToday');render();topUp(false);syncErtele();setInterval(syncErtele,5*6e4)}
-else{show('vMeasure');mRender();setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
+else{show('vMeasure');mRender();if(mStats().days>=3&&!S.autoForm){S.autoForm=1;save();setTimeout(mFinish,400)}setInterval(()=>{if(!$('vMeasure').classList.contains('hide'))mRender()},30000)}
 setInterval(iqRender,30000);
 setInterval(()=>{if(!$('vToday').classList.contains('hide'))render()},1000);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)iq.hidAt=Date.now();else syncErtele();if(navigator.bluetooth&&S.iq&&S.iq.name)dbg(document.hidden?'arka plana geçti':'öne geldi');if(document.hidden)return;if(S.setup)topUp(false);if(navigator.bluetooth){iq.scp?iqPoll():(iq.dev&&(clearTimeout(iq.rt),iqRetry(0)))}});
