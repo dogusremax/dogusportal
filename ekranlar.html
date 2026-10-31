@@ -399,8 +399,8 @@ function tvKarti(t) {
     <div class="kontrol">
       <div class="sesK">
         <span class="sesI">${IKON_SES}</span>
-        <input type="range" min="0" max="${Math.max(50, t.ses || 0)}" step="1" value="${t.ses ?? 0}" aria-label="Ses"
-          style="--y:${Math.round(100 * (t.ses || 0) / Math.max(50, t.ses || 0))}%"
+        <input type="range" min="0" max="100" step="1" value="${t.ses ?? 0}" aria-label="Ses"
+          style="--y:${t.ses || 0}%"
           oninput="sesKaydir('${t.id}',this)" onchange="sesKaydir('${t.id}',this,true)">
         <output id="ses-${t.id}">${t.ses ?? "–"}</output>
       </div>
