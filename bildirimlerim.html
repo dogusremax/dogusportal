@@ -123,6 +123,10 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     $('kartarka').classList.add('acik');
   }
   function tekBitir() { if (document.body.classList.contains('tek')) { location.href = '/?cb=' + Date.now(); return true; } return false; }
+  // sw.js kart bilgisini #k= ile verir: liste yüklenmeden kart hemen açılır
+  var hizliKart = null;
+  try { var km = location.hash.match(/[#&]k=([^&]+)/); if (km) hizliKart = JSON.parse(decodeURIComponent(km[1])); } catch (e) {}
+  if (hedef && hizliKart && hizliKart.kart) kartAc({ baslik: '', metin: '' }, hizliKart);
   $('ktamam').onclick = function () { if (!tekBitir()) $('kartarka').classList.remove('acik'); };
   $('kartarka').onclick = function (e) { if (e.target === this && !document.body.classList.contains('tek')) this.classList.remove('acik'); };
 

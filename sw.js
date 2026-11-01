@@ -32,7 +32,7 @@ self.addEventListener('push', event => {
     tag: d.etiket || undefined,
     renotify: !!d.etiket,   // aynı türden yeni bildirim de sesle uyarsın
     silent: false,
-    data: { link: d.link || '', bid: d.bid || '', kim: d.kim || '', hid: d.hid || '',
+    data: { link: d.link || '', bid: d.bid || '', kim: d.kim || '', hid: d.hid || '', kart: d.kart || '',
       baslik: d.baslik || d.title || '', metin: d.metin || d.body || '' }
   })]));
 });
@@ -41,6 +41,8 @@ self.addEventListener('push', event => {
 // Bu yüzden önce portalda ac.html açılır: bildirimin kendisi + "İlanı aç" düğmesi + Bildirimlerim.
 // Linksiz bildirim (ör. günlük özet, Meta şablon haberi) Bildirimlerim'de kendisi vurgulu, tam metniyle açılır.
 function acilacak(d) {
+  // Kartlı bildirim: kart bilgisi linkte gider, sayfa sunucuyu beklemeden kartı hemen gösterir
+  if (d && d.kart && d.hid) return new URL('bildirimlerim.html?h=' + encodeURIComponent(d.hid) + '#k=' + encodeURIComponent(d.kart), self.registration.scope).href;
   if (!(d && d.link) && d && d.hid) return new URL('bildirimlerim.html?h=' + encodeURIComponent(d.hid) + '&cb=' + Date.now(), self.registration.scope).href;
   const link = (d && d.link) || self.registration.scope;
   let u; try { u = new URL(link, self.registration.scope); } catch (e) { return self.registration.scope; }
