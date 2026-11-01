@@ -239,6 +239,54 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
   <div class="foot"><span>Kaynak: Danışman Takip Uygulaması · Alınan Yetki kayıtları</span><span class="pg"></span></div>
 </section>
 
+<!-- podCiro ================================================ -->
+<section class="slide" data-title="Ciro Şampiyonları" data-notes="<b>Ciro:</b> Ayın brüt hizmet bedeli. Ortak işlemlerde bedel ortaklar arasında eşit bölünür. Sahneye davet et, alkışla.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Ciro Şampiyonları</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Ekim</span> ayının <em>en çok ciro yapan</em> 3 danışmanı</h2>
+    <div class="podium" id="podCiro"></div>
+  </div>
+  <div class="foot"><span>Kaynak: Kapanış Formu · brüt hizmet bedeli, ortak işlemde eşit pay</span><span class="pg"></span></div>
+</section>
+
+<!-- podIslem ================================================ -->
+<section class="slide" data-title="İşlem Şampiyonları" data-notes="<b>İşlem:</b> Ayın kapanış sayısı (satılık + kiralık). Ortak işlem her ortağa 1 işlem sayılır.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">İşlem Şampiyonları</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Ekim</span> ayının <em>en çok işlem yapan</em> 3 danışmanı</h2>
+    <div class="podium" id="podIslem"></div>
+  </div>
+  <div class="foot"><span>Kaynak: Kapanış Formu · satılık + kiralık kapanış sayısı</span><span class="pg"></span></div>
+</section>
+
+<!-- podMemnun ================================================ -->
+<section class="slide" data-title="Müşteri Memnuniyeti" data-notes="<b>Müşteri memnuniyeti:</b> Ay içinde danışmanın adıyla gelen Google yorumları. Her kapanıştan sonra yorum isteyelim.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Müşteri Memnuniyeti</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Ekim</span> ayında <em>en çok Google yorumu</em> alan 3 danışman</h2>
+    <div class="podium" id="podMemnun"></div>
+  </div>
+  <div class="foot"><span>Kaynak: Google yorumları · Danışman Takip eşleşmesi</span><span class="pg"></span></div>
+</section>
+
+<!-- podSosyal ================================================ -->
+<section class="slide" data-title="Sosyal Medya Şampiyonları" data-notes="<b>Sosyal medya:</b> @remaxdogus etiketinden otomatik sayılan içerik ve story/post paylaşımları, Danışman Takip puanıyla.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Sosyal Medya Şampiyonları</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Ekim</span> ayının <em>sosyal medyada</em> en aktif 3 danışmanı</h2>
+    <div class="podium" id="podSosyal"></div>
+  </div>
+  <div class="foot"><span>Kaynak: Danışman Takip · @remaxdogus etiketi (içerik 6 p, story/post 1 p)</span><span class="pg"></span></div>
+</section>
+
 <!-- 5 · AYIN PUAN LİDERLERİ ======================================= -->
 <section class="slide" data-title="Ayın Puan Tablosu" data-notes="Ayın puan tablosu: aktivite + istikrar bonusu + kapanış puanlarının toplamı. Zirvedekileri tebrik et; listede geride olanlarla birebir görüşme sözü ver.">
   <div class="grid-bg"></div>
@@ -611,11 +659,11 @@ document.getElementById('formBars').innerHTML=F.map(function(f,i){return '<div s
 /* =====================================================================
    CANLI VERİ
    ===================================================================== */
-var DATA = null, CACHE_KEY = 'toplanti_data_' + MONTH;
+var DATA = null, CACHE_KEY = 'toplanti_data_v2_' + MONTH;
 function setStatus(msg, err) { var s = document.getElementById('status'); s.innerHTML = msg; s.className = err ? 'err' : ''; if (!err) setTimeout(function() { s.style.opacity = 0; }, 3500); else s.style.opacity = 1; }
 function slim(d) { // önbelleğe sadece sunumun kullandığı kısmı yaz (localStorage sınırı)
   return { consultants: d.consultants || [], closings: (d.closings || []).filter(function(c) { return String(c.date || '').slice(0, 4) === MONTH.slice(0, 4); }),
-    activities: (d.activities || []).filter(function(a) { return a.timestamp && localDay(a.timestamp).slice(0, 7) === MONTH; }), yetkiler: [] };
+    activities: (d.activities || []).filter(function(a) { return a.timestamp && localDay(a.timestamp).slice(0, 7) === MONTH; }), yorumlar: d.yorumlar || [], yetkiler: [] };
 }
 var LOADING = false;
 function loadData(sessiz) {
@@ -650,6 +698,19 @@ function sigdir(cl) { // tablo kartın içine sığana kadar küçült
   if (!note) { note = document.createElement('div'); note.className = 'daha'; note.style.cssText = 'font-size:14px;color:var(--mute);padding:8px 14px'; cl.appendChild(note); }
   var onceki = (note.textContent.match(/\d+/) || [0])[0] * 1;
   while (card.scrollHeight > card.clientHeight + 1 && tb.rows.length > 1) { tb.deleteRow(-1); gizli++; note.textContent = '+ ' + (gizli + onceki) + ' işlem daha'; }
+}
+function kursu(elId, top, fmt, bos) {
+  var pod = document.getElementById(elId); if (!pod) return;
+  if (!top.length) { pod.innerHTML = '<div class="empty">' + (DATA ? bos : 'Veri bekleniyor…') + '</div>'; return; }
+  var order = top.length === 3 ? [1, 0, 2] : top.length === 2 ? [1, 0] : [0], hts = [330, 250, 190];
+  pod.innerHTML = order.map(function(i) {
+    var t = top[i], d = [1.1, 0.7, 0.4][i];
+    return '<div class="pod p' + (i + 1) + ' a" style="--d:' + d + '">' + av(t.c, i === 0 ? 150 : 128) + '<div class="nm">' + esc(t.c.name) + '</div><div class="ct">' + fmt(t) + '</div><div class="blk col-fill" style="--h:' + hts[i] + 'px;--d:' + (d + .2) + '">' + (i + 1) + '</div></div>';
+  }).join('');
+}
+function ilk3(map, C) {
+  return Object.keys(map).filter(function(id) { return map[id] > 0 && C[id] && !C[id].isAdmin; }).map(function(id) { return { c: C[id], n: map[id] }; })
+    .sort(function(a, b) { return b.n - a.n || String(a.c.name).localeCompare(String(b.c.name), 'tr'); }).slice(0, 3);
 }
 function renderData() {
   var D = DATA || { consultants: [], closings: [], activities: [], yetkiler: [] };
@@ -702,6 +763,22 @@ function renderData() {
       return '<div class="pod p' + (i + 1) + ' a" style="--d:' + d + '">' + av(t.c, i === 0 ? 150 : 128) + '<div class="nm">' + esc(t.c.name) + '</div><div class="ct"><b style="color:#fff;font-size:22px">' + t.n + '</b> yetki</div><div class="blk col-fill" style="--h:' + hts[i] + 'px;--d:' + (d + .2) + '">' + (i + 1) + '</div></div>';
     }).join('');
   }
+
+
+  /* --- Ciro / işlem / memnuniyet / sosyal medya kürsüleri --- */
+  var B = function(x) { return '<b style="color:#fff;font-size:22px">' + x + '</b>'; };
+  var ayKap = (D.closings || []).filter(function(c) { return String(c.date || '').slice(0, 7) === MONTH; });
+  var ortakSay = {}; ayKap.forEach(function(c) { var o = c.originalId || c.id; ortakSay[o] = (ortakSay[o] || 0) + 1; });
+  var ciro = {}, islem = {};
+  ayKap.forEach(function(c) { var o = c.originalId || c.id; ciro[c.consultantId] = (ciro[c.consultantId] || 0) + (+c.toplamHB || 0) / ortakSay[o]; islem[c.consultantId] = (islem[c.consultantId] || 0) + 1; });
+  kursu('podCiro', ilk3(ciro, C), function(t) { return B(fmtTL(t.n)); }, monthName + ' ayında kapanış bulunamadı.');
+  kursu('podIslem', ilk3(islem, C), function(t) { return B(t.n) + ' işlem'; }, monthName + ' ayında kapanış bulunamadı.');
+  var yor = {}, yild = {};
+  (D.yorumlar || []).forEach(function(y) { yor[y.consultantId] = (yor[y.consultantId] || 0) + 1; yild[y.consultantId] = (yild[y.consultantId] || 0) + (+y.yildiz || 0); });
+  kursu('podMemnun', ilk3(yor, C), function(t) { var o = yild[t.c.id] / t.n; return B(t.n) + ' yorum' + (o ? ' · ' + o.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' ★' : ''); }, monthName + ' ayında danışmanla eşleşen Google yorumu yok.');
+  var SMP = { sosyal_medya: 6, sosyal_medya_ortak: 3, story: 1, story_ortak: 0.5 }, sm = {}, smAdet = {};
+  acts.forEach(function(a) { if (SMP[a.type] == null) return; sm[a.consultantId] = (sm[a.consultantId] || 0) + SMP[a.type]; smAdet[a.consultantId] = (smAdet[a.consultantId] || 0) + 1; });
+  kursu('podSosyal', ilk3(sm, C), function(t) { return B(Math.round(t.n * 10) / 10) + ' puan · ' + smAdet[t.c.id] + ' paylaşım'; }, monthName + ' ayında sosyal medya kaydı yok.');
 
   /* --- Ayın puan tablosu --- */
   var mEnd = new Date(+MONTH.slice(0, 4), +MONTH.slice(5, 7), 1); // bir sonraki ayın 1'i
