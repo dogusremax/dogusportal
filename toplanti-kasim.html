@@ -38,7 +38,7 @@ button { font-family: inherit; cursor: pointer; }
 .slide.light { background: radial-gradient(1000px 600px at 100% 0, rgba(26,91,214,.10), transparent 60%), linear-gradient(160deg, #ffffff, #f2f5fb); color: #0b1a33; }
 
 /* Arka plan hareketli dekor */
-.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .35; animation: float 14s ease-in-out infinite; pointer-events: none; }
+.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .35; pointer-events: none; }
 @keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px,-30px); } }
 .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); pointer-events: none; }
 
@@ -64,7 +64,7 @@ button { font-family: inherit; cursor: pointer; }
 .light .sub { color: #51607d; }
 .foot { position: absolute; left: 90px; right: 90px; bottom: 34px; display: flex; justify-content: space-between; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: rgba(159,176,207,.7); font-weight: 600; z-index: 5; }
 .light .foot { color: #8a97b1; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; backdrop-filter: blur(6px); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; }
 .light .card { background: #fff; border-color: #e3e8f2; box-shadow: 0 12px 30px -18px rgba(11,26,51,.25); }
 .big { font-size: 84px; font-weight: 900; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .lbl { font-size: 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); margin-top: 12px; }
@@ -93,7 +93,7 @@ button { font-family: inherit; cursor: pointer; }
 .slide.active .col-fill { height: var(--h); transition-delay: calc(var(--d, 0) * 1s); }
 
 /* ---------- Kapak ---------- */
-.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: spin 60s linear infinite; }
+.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: none; --x: infinite; }
 .cover-ring::after { content: ""; position: absolute; inset: 90px; border-radius: 50%; border: 2px dashed rgba(232,194,110,.18); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .balloon-big { position: absolute; right: 150px; top: 200px; width: 380px; animation: bob 6s ease-in-out infinite; filter: drop-shadow(0 30px 50px rgba(0,0,0,.45)); }
@@ -256,7 +256,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
     <div class="kicker a">Ekim'de Devreye Girenler</div>
     <h2 class="title a" style="--d:.15">İşimizi <em>kolaylaştıran</em> yeni sistemler</h2>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:38px;flex:1">
-      <div class="card a" style="--d:0.3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><h4 data-k="ys1t">Kapora İste</h4><p data-k="ys1d">Kapora linkini sistemden isteyin. Ödeme bankadan dakikada bir kontrol edilir, gelince size anında bildirim düşer. Müşteri açıklamadaki sondaki kodu silmemeli.</p></div>
+      <div class="card a" style="--d:0.3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><h4 data-k="ys1t">Ofis WhatsApp asistanı</h4><p data-k="ys1d">Ofis hattına yazan müşteriye asistan anında cevap veriyor, talebi nöbetçiye ya da ilgili danışmana iletiyor. Kapora bekleyen müşteri doğrudan kendi danışmanına gidiyor.</p></div>
       <div class="card a" style="--d:0.4"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4 data-k="ys2t">Yorumlara otomatik cevap</h4><p data-k="ys2d">Instagram ve Facebook yorumları otomatik yanıtlanıyor. Fiyat veya etap soranlara özelden yazılıyor ve müşteri nöbetçiye ya da ilgili danışmana iletiliyor.</p></div>
       <div class="card a" style="--d:0.5"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><h4 data-k="ys3t">Kurumsal sayfalarımız</h4><p data-k="ys3d">Facebook ve LinkedIn şirket sayfalarımız yenilendi, TikTok hazırlanıyor. Eski Instagram gönderilerimiz kurumsal olarak bu kanallara taşınıyor.</p></div>
       <div class="card a" style="--d:0.6"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><h4 data-k="ys4t">Google yorumu = RE/MAX puanı</h4><p data-k="ys4d">Müşterinin Google yorumu, RE/MAX danışman sayfanıza da aktarılıyor. Bunun için Kapanış formunda müşterinin kendi e-posta ve telefonunu eksiksiz girin.</p></div>
@@ -265,6 +265,66 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
     </div>
   </div>
   <div class="foot"><span>RE/MAX Doğuş · Otomasyon</span><span class="pg"></span></div>
+</section>
+
+<!-- kira ================================================ -->
+<section class="slide" data-title="Kira Masası" data-notes="<b>Kira Masası:</b> Kiracı, ev sahibi ve kefilin bilgi ve belgeleri telefondan gelir, sözleşme tek tuşla dolu hazırlanır. Rehber portalda: Kira Masası Rehberi.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Yeni Sistem · Kira Masası</div>
+    <h2 class="title a" style="--d:.15">Kira dosyası <em>telefondan</em> toplanır</h2>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:26px;margin-top:34px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="card a" style="--d:0.30;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">1</div><div><h4 style="margin:0 0 4px">Giriş yap</h4><p style="margin:0;font-size:19px;line-height:1.4">Portalda Kira Masası kutusu. Şifreni gir, listeden adını seç.</p></div></div><div class="card a" style="--d:0.42;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">2</div><div><h4 style="margin:0 0 4px">Yeni kira dosyası aç</h4><p style="margin:0;font-size:19px;line-height:1.4">Site, blok, daire; kiracı, mülk sahibi ve kefil bilgileri. Kontrat bilgileri de dosyada girilir. İstenecek belgeleri seç.</p></div></div><div class="card a" style="--d:0.54;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">3</div><div><h4 style="margin:0 0 4px">Linkleri WhatsApp'tan gönder</h4><p style="margin:0;font-size:19px;line-height:1.4">Her kişi kendi formunu doldurur, belgelerini telefondan yükler. Müşteri yanındaysa formu sen doldurabilirsin.</p></div></div><div class="card a" style="--d:0.66;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">4</div><div><h4 style="margin:0 0 4px">Sözleşmeyi hazırla</h4><p style="margin:0;font-size:19px;line-height:1.4">Formlar gelince tek tuş: kira sözleşmesi taraf bilgileri ve IBAN dolu, belge ekleri arkasında hazır.</p></div></div></div>
+      <div class="card a" style="--d:.9;padding:26px 28px;border-left:6px solid var(--gold)"><div class="lbl" style="margin:0 0 14px;color:var(--gold)">Unutmayalım</div><ul class="check" style="margin:0" data-k="kira_r"><li>Belge seçimini <b>linki göndermeden önce</b> yap.</li><li>Linkler <b>72 saat</b> geçerli; dolarsa "Yeni link üret".</li><li>Hatalı T.C. no veya IBAN ile form gönderilemez.</li><li>Kefalet beyanını kefil imzada <b>kendi el yazısıyla</b> doldurur.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Kira Masası</span><span class="pg"></span></div>
+</section>
+
+<!-- kapora ================================================ -->
+<section class="slide" data-title="Kapora İste" data-notes="<b>Kapora İste:</b> Müşteriye IBAN ve hazır açıklamalı ödeme linki gönderilir. Ödeme bankadan dakikada bir kontrol edilir, gelince müşteriye ve danışmana WhatsApp, yönetime bildirim gider.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Yeni Sistem · Kapora İste</div>
+    <h2 class="title a" style="--d:.15">Kapora <em>otomatik</em> takip ediliyor</h2>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:26px;margin-top:34px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="card a" style="--d:0.30;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">1</div><div><h4 style="margin:0 0 4px">Portaldan Kapora İste</h4><p style="margin:0;font-size:19px;line-height:1.4">Müşteri adı, telefonu ve tutarı gir; müşteriye IBAN ve hazır açıklamalı ödeme linki gider.</p></div></div><div class="card a" style="--d:0.42;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">2</div><div><h4 style="margin:0 0 4px">Müşteri öder</h4><p style="margin:0;font-size:19px;line-height:1.4">Açıklamada sonda bir K kodu var. Ödeme bankadan dakikada bir kontrol edilir.</p></div></div><div class="card a" style="--d:0.54;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">3</div><div><h4 style="margin:0 0 4px">Anında haber</h4><p style="margin:0;font-size:19px;line-height:1.4">Ödeme gelince müşteriye ve sana WhatsApp, ofis yönetimine bildirim gider.</p></div></div><div class="card a" style="--d:0.66;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">4</div><div><h4 style="margin:0 0 4px">Müşteri sana bağlı kalır</h4><p style="margin:0;font-size:19px;line-height:1.4">Kapora ödeyen müşteri 7 gün içinde ofis hattına yazarsa, nöbetçiye değil doğrudan sana yönlenir.</p></div></div></div>
+      <div class="card a" style="--d:.9;padding:26px 28px;border-left:6px solid var(--gold)"><div class="lbl" style="margin:0 0 14px;color:var(--gold)">Unutmayalım</div><ul class="check" style="margin:0" data-k="kapora_r"><li>Müşteriye söyleyin: <b>açıklamadaki sondaki kodu silmesin</b>.</li><li>Kod silinse de ad ve tutar tutuyorsa ödeme yine eşleşir.</li><li>Kaporayı elle IBAN atarak değil, <b>bu linkle</b> isteyin.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Kapora İste</span><span class="pg"></span></div>
+</section>
+
+<!-- takip ================================================ -->
+<section class="slide" data-title="Müşteri Takip Notları" data-notes="<b>Takip notları:</b> Her görüşmeden sonra 30 saniyelik not. Hatırlatma telefona bildirim olarak gelir. Broker panelinde her danışmanın bu hafta kaç aktif müşterisine not yazdığı görünüyor.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Müşteri Takip</div>
+    <h2 class="title a" style="--d:.15">Her temas bir <em>takip notu</em></h2>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:26px;margin-top:34px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="card a" style="--d:0.30;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">1</div><div><h4 style="margin:0 0 4px">Ne yaptın?</h4><p style="margin:0;font-size:19px;line-height:1.4">Aradım, WhatsApp, Randevu, Gezdirdim, Pazarlık, Yetki aldım, İşlem sonuçlandı, Kayıp...</p></div></div><div class="card a" style="--d:0.42;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">2</div><div><h4 style="margin:0 0 4px">Ne oldu?</h4><p style="margin:0;font-size:19px;line-height:1.4">Görüşmenin sonucunu bir iki cümleyle yaz.</p></div></div><div class="card a" style="--d:0.54;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">3</div><div><h4 style="margin:0 0 4px">Sonraki adım</h4><p style="margin:0;font-size:19px;line-height:1.4">İsteğe bağlı: bir sonraki adımı ve kendi notunu ekle.</p></div></div><div class="card a" style="--d:0.66;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">4</div><div><h4 style="margin:0 0 4px">⏰ Hatırlat</h4><p style="margin:0;font-size:19px;line-height:1.4">Saat seç; o saatte telefonuna bildirim gelir, müşteri unutulmaz.</p></div></div></div>
+      <div class="card a" style="--d:.9;padding:26px 28px;border-left:6px solid var(--gold)"><div class="lbl" style="margin:0 0 14px;color:var(--gold)">Unutmayalım</div><ul class="check" style="margin:0" data-k="takip_r"><li>Müşteri sıcaklığı son temasa göre: <b>Sıcak</b> 7 gün, <b>Ilık</b> 30 gün, <b>Soğuk</b> 90 gün, sonrası <b>Ölü</b>.</li><li>Broker paneli her hafta "yazılan / aktif" müşteri sayısını gösteriyor.</li><li>Hedef: her aktif müşteriye <b>haftada en az 1 not</b>.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Müşteri Takip</span><span class="pg"></span></div>
+</section>
+
+<!-- kapanis ================================================ -->
+<section class="slide" data-title="Kapanış Formu" data-notes="<b>Kapanış formu:</b> Tüm bilgiler eksiksiz olmalı. Puan, sıralama, RE/MAX ciro raporu ve Google yorumlarının RE/MAX sayfasına aktarılması bu formdan besleniyor. Özellikle müşterinin kendi telefonu ve e-postası.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Kapanış Formu</div>
+    <h2 class="title a" style="--d:.15">Tüm bilgiler <em>eksiksiz</em> olmalı</h2>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:26px;margin-top:34px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="card a" style="--d:0.30;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">1</div><div><h4 style="margin:0 0 4px">Kapanış puanı ve sıralama</h4><p style="margin:0;font-size:19px;line-height:1.4">Ayın kapanış tablosu, puanlar ve bu sunumdaki rakamlar doğrudan Kapanış formundan geliyor.</p></div></div><div class="card a" style="--d:0.42;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">2</div><div><h4 style="margin:0 0 4px">RE/MAX ciro raporu</h4><p style="margin:0;font-size:19px;line-height:1.4">Her kapanış MyRE/MAX ciro raporuna bu formdaki bilgilerle giriliyor. Eksik bilgi, eksik ciro demek.</p></div></div><div class="card a" style="--d:0.54;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">3</div><div><h4 style="margin:0 0 4px">Google yorumu → RE/MAX sayfanız</h4><p style="margin:0;font-size:19px;line-height:1.4">Müşterinin Google yorumu RE/MAX danışman sayfanıza ancak müşterinin kendi e-posta ve telefonu varsa aktarılıyor.</p></div></div><div class="card a" style="--d:0.66;display:flex;gap:18px;align-items:flex-start;padding:18px 22px"><div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center">4</div><div><h4 style="margin:0 0 4px">Müşteriyle ilişki sürer</h4><p style="margin:0;font-size:19px;line-height:1.4">Doğru iletişim bilgisi; teşekkür, kira yenileme ve yeni iş için müşteriye yeniden ulaşmamızı sağlar.</p></div></div></div>
+      <div class="card a" style="--d:.9;padding:26px 28px;border-left:6px solid var(--red)"><div class="lbl" style="margin:0 0 14px;color:var(--red)">Kural</div><ul class="check" style="margin:0" data-k="kapanis_r"><li>Formdaki <b>tüm alanlar eksiksiz</b> doldurulur; boş alan bırakılmaz.</li><li>Telefon ve e-posta <b>müşterinin kendisine</b> ait olmalı, danışmanın değil.</li><li>Ortak işlemde ortak danışman mutlaka yazılır.</li><li>Form <b>işlemin yapıldığı gün</b> girilir.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Kapanış Formu</span><span class="pg"></span></div>
 </section>
 
 <!-- 9 · KİRALIK → SATIŞ =========================================== -->
@@ -500,30 +560,29 @@ document.getElementById('expect').innerHTML = EXPECT.map(function(x, i) {
    ===================================================================== */
 var DATA = null, CACHE_KEY = 'toplanti_data_' + MONTH;
 function setStatus(msg, err) { var s = document.getElementById('status'); s.innerHTML = msg; s.className = err ? 'err' : ''; if (!err) setTimeout(function() { s.style.opacity = 0; }, 3500); else s.style.opacity = 1; }
-function loadData() {
-  setStatus('Veriler uygulamadan yükleniyor…');
-  var init = fetch(API_URL + '?action=init').then(function(r) { return r.json(); });
-  var yet = fetch(API_URL + '?action=yetkiler').then(function(r) { return r.json(); }).catch(function() { return {}; });
-  Promise.all([init, yet]).then(function(res) {
-    DATA = res[0] || {};
-    DATA.yetkiler = (res[1] && res[1].yetkiler) || [];
-    if (!DATA.consultants) throw new Error(DATA.error || 'Beklenmeyen cevap');
-    renderData();
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), data: DATA })); } catch (err) {}
-    setStatus('✓ Veriler güncel · ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
-  }).catch(function(e) {
+function slim(d) { // önbelleğe sadece sunumun kullandığı kısmı yaz (localStorage sınırı)
+  return { consultants: d.consultants || [], closings: (d.closings || []).filter(function(c) { return String(c.date || '').slice(0, 4) === MONTH.slice(0, 4); }),
+    activities: (d.activities || []).filter(function(a) { return a.timestamp && localDay(a.timestamp).slice(0, 7) === MONTH; }), yetkiler: [] };
+}
+var LOADING = false;
+function loadData(sessiz) {
+  if (LOADING) return; LOADING = true;
+  if (!sessiz) {
     var cached = null;
     try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (err) {}
-    if (cached && cached.data) {
-      DATA = cached.data; renderData();
-      var t = new Date(cached.at);
-      setStatus('✓ Kayıtlı veri kullanılıyor · ' + t.toLocaleDateString('tr-TR') + ' ' + t.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
-    } else {
-      setStatus('⚠ Uygulama verisi alınamadı (' + esc(e.message) + ')<button onclick="loadData()">Tekrar dene</button>', true);
-      renderData();
-    }
-  });
+    if (cached && cached.data && !DATA) { DATA = cached.data; renderData(); setStatus('Kayıtlı veri gösteriliyor · güncelleniyor…'); }
+    else if (!DATA) setStatus('Veriler uygulamadan yükleniyor…');
+  }
+  fetch(API_URL + '?action=init').then(function(r) { return r.json(); }).then(function(d) {
+    if (!d || !d.consultants) throw new Error((d && d.error) || 'Beklenmeyen cevap');
+    DATA = slim(d); renderData();
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), data: DATA })); } catch (err) {}
+    if (!sessiz) setStatus('✓ Veriler güncel · ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
+  }).catch(function(e) {
+    if (!DATA && !sessiz) { setStatus('⚠ Uygulama verisi alınamadı (' + esc(e.message) + ')<button onclick="loadData()">Tekrar dene</button>', true); renderData(); }
+  }).then(function() { LOADING = false; });
 }
+setInterval(function() { loadData(true); }, 60000); // toplantı boyunca dakikada bir sessizce tazele
 
 function renderData() {
   var D = DATA || { consultants: [], closings: [], activities: [], yetkiler: [] };
