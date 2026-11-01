@@ -10,6 +10,7 @@
 <title>Bildirimler — RE/MAX Doğuş</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root { --bg:#f6f7f9; --line:#e3e7ee; --red:#DC1C2E; --blue:#003DA5; --text:#131a26; --dim:#68738a; }
@@ -41,6 +42,20 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
 .bos a { color:var(--blue); font-weight:600; }
 .yukleniyor { text-align:center; padding:48px 0; color:var(--dim); font-size:14px; }
 .not { font-size:12px; color:#9aa3b5; text-align:center; margin-top:22px; line-height:1.5; }
+/* Kartlı bildirim (RE/MAX Türkiye'ye işlem girildi vb.) — dokununca ekranda okunur */
+.kartarka { position:fixed; inset:0; background:rgba(5,10,48,.55); display:none; align-items:center; justify-content:center; padding:20px; z-index:50; }
+.kartarka.acik { display:flex; }
+.bkart { background:#fff; border-radius:24px; width:100%; max-width:420px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); font-family:'Plus Jakarta Sans','Inter',sans-serif; }
+.bkart .kbas { background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160); color:#fff; padding:22px 22px 20px; position:relative; }
+.bkart .kbas img { position:absolute; top:18px; right:18px; width:70px; }
+.bkart .kbas small { font-size:12px; font-weight:600; letter-spacing:.08em; opacity:.9; text-transform:uppercase; }
+.bkart .kbas h2 { font-size:22px; font-weight:800; line-height:1.2; margin-top:10px; max-width:250px; }
+.bkart .kgovde { padding:20px 22px 6px; }
+.bkart .kgovde p { font-size:15px; line-height:1.5; color:#050A30; white-space:pre-line; }
+.bkart .ksatir { display:flex; justify-content:space-between; gap:12px; border-top:1px solid #eceef3; padding:12px 0; font-size:14.5px; }
+.bkart .ksatir span { color:#68738a; } .bkart .ksatir b { color:#050A30; text-align:right; }
+.bkart .ksatir.vurgu b { color:#DC1C2E; font-size:20px; }
+.bkart .ktamam { display:block; width:calc(100% - 44px); margin:12px 22px 22px; background:#050A30; color:#fff; border:0; padding:14px; border-radius:14px; font:700 15px 'Plus Jakarta Sans','Inter',sans-serif; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -53,6 +68,8 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
   </header>
   <div class="ust"><span id="kim"></span><button class="hepsi" id="hepsi">Tümünü okundu say</button></div>
   <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
+  <div class="kartarka" id="kartarka"><div class="bkart"><div class="kbas"><img src="/assets/dogus-logo.png" alt=""><small id="kust">RE/MAX Doğuş</small><h2 id="kbaslik"></h2></div>
+    <div class="kgovde"><p id="kmetin"></p><div id="ksatirlar" style="margin-top:14px"></div></div><button class="ktamam" id="ktamam" type="button">Tamam</button></div></div>
   <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
 </main>
 <script src="/assets/bildirim-link.js"></script>
@@ -65,7 +82,7 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
   var token = ''; try { token = localStorage.getItem('bld_token') || ''; } catch (e) {}
   var ornek = /[?&]ornek=1/.test(location.search);   // önizleme: örnek verilerle
   // Linksiz bildirime dokununca sw.js buraya ?h=<kimlik> ile gelir: o bildirim vurgulanır, tam metni açılır
-  var hedef = (location.search.match(/[?&]h=(g[0-9a-f]{20})/) || [])[1] || '', acik = {};
+  var hedef = (location.search.match(/[?&]h=(g[0-9a-f]{20}|gornek)/) || [])[1] || '', acik = {};
   if (hedef) acik[hedef] = true;
   document.getElementById('geri').href = '/?cb=' + Date.now();
   function $(id) { return document.getElementById(id); }
@@ -91,6 +108,20 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
   }
   function saat(d) { d = new Date(d); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
 
+  // uzun alanı {"kart":1,...} ise bildirim ekranda kart olarak açılır
+  function kartVeri(x) { if (!x || !x.uzun || x.uzun.charAt(0) !== '{') return null; try { var k = JSON.parse(x.uzun); return k && k.kart ? k : null; } catch (e) { return null; } }
+  function kartAc(x, k) {
+    $('kust').textContent = k.ust || 'RE/MAX Doğuş';
+    $('kbaslik').textContent = k.baslik || String(x.baslik || '').replace(/^\S+\s/, function (m) { return /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(m) ? m : ''; });
+    $('kmetin').textContent = k.selam || x.metin || '';
+    $('ksatirlar').innerHTML = (k.satirlar || []).map(function (r) {
+      return '<div class="ksatir' + (r[2] ? ' vurgu' : '') + '"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>';
+    }).join('');
+    $('kartarka').classList.add('acik');
+  }
+  $('ktamam').onclick = function () { $('kartarka').classList.remove('acik'); };
+  $('kartarka').onclick = function (e) { if (e.target === this) this.classList.remove('acik'); };
+
   var veri = null;
   function ciz() {
     var l = veri.liste;
@@ -110,7 +141,11 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     $('liste').innerHTML = h;
     $('not').style.display = '';
     var v = hedef && document.querySelector('.kart.vurgu');
-    if (v && !ciz.kaydi) { ciz.kaydi = true; v.scrollIntoView({ block: 'center' }); }
+    if (v && !ciz.kaydi) {
+      ciz.kaydi = true; v.scrollIntoView({ block: 'center' });
+      var hx = veri.liste.filter(function (x) { return x.hid === hedef; })[0], hk = kartVeri(hx);
+      if (hk) kartAc(hx, hk);
+    }
   }
   $('liste').onclick = function (e) {
     var k = e.target.closest('.kart'); if (!k) return;
@@ -119,6 +154,7 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
       x.okundu = true; veri.okunmamis = Math.max(0, veri.okunmamis - 1); ciz();
       if (!ornek) post({ islem: 'okundu', hid: x.hid }).catch(function () {});
     }
+    var kv = kartVeri(x); if (kv) { kartAc(x, kv); return; }
     if (!x.link) { acik[x.hid] = !acik[x.hid]; ciz(); return; }
     if (/^https:\/\/(www\.)?dogusportal\.com(\/|$)/.test(x.link)) location.href = x.link;
     else window.open(bildirimLink(x.link).u, '_blank', 'noopener');   // iPhone ana ekran uygulamasında dış site yalnız böyle açılıyor
@@ -131,13 +167,16 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
   if (ornek) {
     var s = Date.now(), sa = 36e5;
     veri = { kisi: 'Gizem Gök', okunmamis: 3, liste: [
+      { hid: 'gornek', t: s - 0.1 * sa, baslik: '🏆 RE/MAX Türkiye\'ye işlemin girildi', metin: 'The Mandarins A Blok 151 satışı. Senin adına girilen tutar: 170.000 TL.', okundu: false,
+        uzun: JSON.stringify({ kart: 1, ust: 'RE/MAX Türkiye bildirimi', baslik: 'İşlemin RE/MAX Türkiye\'ye girildi', selam: 'Gizem, The Mandarins A Blok 151 satışın RE/MAX Türkiye\'ye bildirildi. Tebrikler!',
+          satirlar: [['İşlem', 'Satış · 30.10.2026'], ['Senin adına girilen tutar', '170.000 TL', 1], ['Rapor no', '496521'], ['Durum', 'Onaylandı']] }) },
       { t: s - 0.4 * sa, baslik: '📅 Kasım ayı nöbet takvimi oluşturuldu.', metin: 'İşte nöbet günlerin. 👇', okundu: false },
       { t: s - 2 * sa, baslik: '✉️ Yeni posta', metin: 'Ahmet Yılmaz: Daire görüşmesi', okundu: false },
       { t: s - 5 * sa, baslik: '🏠 Sahibinden yeni ilan: Fikirtepe 3+1', metin: 'Mülk sahibi ilanı, 12.500.000 TL', okundu: false },
       { t: s - 27 * sa, baslik: '📣 Kapora İste yayında', metin: 'Gizem, yeni Kapora İste özelliğini 1 dakikada anlatan videoyu izle.', okundu: true },
       { t: s - 75 * sa, baslik: '💰 REVY ödemesi alındı', metin: 'Ekim ayı ödemen alındı, teşekkürler.', okundu: true }
     ] };
-    ciz(); return;
+    ciz(); if (hedef === 'gornek') { var ox = veri.liste[0]; kartAc(ox, kartVeri(ox)); } return;
   }
   if (!token) {
     $('liste').innerHTML = '<div class="bos">Bu cihazda bildirimler kapalı, o yüzden liste burada görünmüyor.<br>Bildirimleri açtığın telefonda da bu listeyi görürsün.<br><br><a href="#" onclick="bildirimPaneli();return false;">🔔 Bu cihazda bildirimleri aç</a></div>';
