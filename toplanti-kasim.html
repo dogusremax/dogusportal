@@ -573,7 +573,7 @@ function loadData(sessiz) {
     if (cached && cached.data && !DATA) { DATA = cached.data; renderData(); setStatus('Kayıtlı veri gösteriliyor · güncelleniyor…'); }
     else if (!DATA) setStatus('Veriler uygulamadan yükleniyor…');
   }
-  fetch(API_URL + '?action=init').then(function(r) { return r.json(); }).then(function(d) {
+  fetch(API_URL + '?action=toplanti&k=dogus-performans&ay=' + MONTH + (sessiz ? '&taze=1' : '')).then(function(r) { return r.json(); }).then(function(d) {
     if (!d || !d.consultants) throw new Error((d && d.error) || 'Beklenmeyen cevap');
     DATA = slim(d); renderData();
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), data: DATA })); } catch (err) {}
