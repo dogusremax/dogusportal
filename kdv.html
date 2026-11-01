@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CRGBP7JB7P"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CRGBP7JB7P');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9">
+<title>KDV Hesaplayıcı — RE/MAX Doğuş</title>
+<link rel="icon" href="/assets/ikon3d/abacus.webp">
+<link rel="apple-touch-icon" href="/assets/app-ikon-180.png">
+<style>
+:root{--bg:#f6f7f9;--line:#e3e7ee;--red:#DC1C2E;--blue:#003DA5;--text:#131a26;--dim:#68738a}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+.wrap{max-width:520px;margin:0 auto}
+.ust{display:flex;align-items:center;gap:12px;margin:4px 0 18px}
+.geri{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--text);text-decoration:none;flex:none}
+.ust img{width:44px;height:44px;flex:none}
+h1{font-size:22px;font-weight:700;line-height:1.15}
+.alt{font-size:13px;color:var(--dim);margin-top:2px}
+.kart{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 6px 20px -12px rgba(19,26,38,.18)}
+.sec{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#eef1f6;border-radius:14px;padding:4px;margin-bottom:16px}
+.sec button{appearance:none;-webkit-appearance:none;border:0;background:transparent;border-radius:11px;padding:11px 6px;font:700 14px Arial,sans-serif;color:var(--dim);cursor:pointer;width:100%}
+.sec button.on{background:#fff;color:var(--blue);box-shadow:0 2px 8px -3px rgba(0,0,0,.18)}
+label{display:block;font-size:13px;font-weight:700;color:var(--dim);margin-bottom:8px}
+.giris{position:relative}
+.giris input{width:100%;height:64px;border:2px solid var(--line);border-radius:16px;background:#fff;padding:0 54px 0 16px;font:700 28px Arial,sans-serif;color:var(--text);outline:none;-webkit-appearance:none;appearance:none}
+.giris input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,61,165,.10)}
+.giris span{position:absolute;right:18px;top:50%;transform:translateY(-50%);font:700 24px Arial,sans-serif;color:var(--dim)}
+.oran{display:flex;gap:8px;margin-top:14px;align-items:center}
+.oran .t{font-size:13px;font-weight:700;color:var(--dim);margin-right:2px}
+.oran button{appearance:none;-webkit-appearance:none;flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 0;font:700 15px Arial,sans-serif;color:var(--text);cursor:pointer}
+.oran button.on{border-color:var(--red);background:var(--red);color:#fff}
+.sonuc{margin-top:16px;display:grid;gap:10px}
+.satir{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.satir .ad{font-size:14px;font-weight:700;color:var(--dim)}
+.satir .tut{font:700 22px Arial,sans-serif;color:var(--text);text-align:right;word-break:break-all}
+.satir.kdv .tut{color:var(--red)}
+.satir.top{background:var(--blue);border-color:var(--blue)}
+.satir.top .ad{color:rgba(255,255,255,.8)}
+.satir.top .tut{color:#fff;font-size:26px}
+.ipucu{font-size:12px;color:var(--dim);text-align:center;margin-top:12px}
+.temizle{display:block;margin:14px auto 0;appearance:none;-webkit-appearance:none;border:0;background:none;font:700 14px Arial,sans-serif;color:var(--blue);cursor:pointer;padding:6px 10px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#131a26;color:#fff;font:700 14px Arial,sans-serif;padding:11px 18px;border-radius:12px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ust">
+    <a class="geri" href="/" aria-label="Portala dön"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <img src="/assets/ikon3d/abacus.webp" alt="" width="44" height="44">
+    <div><h1>KDV Hesaplayıcı</h1><div class="alt">Tutarı yaz, KDV ve toplam anında çıksın</div></div>
+  </div>
+
+  <div class="kart">
+    <div class="sec" role="tablist">
+      <button type="button" class="on" data-mod="haric">KDV hariç tutar</button>
+      <button type="button" data-mod="dahil">KDV dahil tutar</button>
+    </div>
+    <label for="tutar" id="etiket">KDV hariç tutar</label>
+    <div class="giris">
+      <input id="tutar" type="text" inputmode="decimal" autocomplete="off" placeholder="0" autofocus>
+      <span>₺</span>
+    </div>
+    <div class="oran">
+      <span class="t">KDV</span>
+      <button type="button" data-oran="1">%1</button>
+      <button type="button" data-oran="10">%10</button>
+      <button type="button" class="on" data-oran="20">%20</button>
+    </div>
+  </div>
+
+  <div class="sonuc">
+    <div class="satir" data-k="net"><span class="ad" id="adNet">KDV hariç</span><span class="tut" id="net">0,00 ₺</span></div>
+    <div class="satir kdv" data-k="kdv"><span class="ad" id="adKdv">KDV (%20)</span><span class="tut" id="kdv">0,00 ₺</span></div>
+    <div class="satir top" data-k="top"><span class="ad">KDV dahil toplam</span><span class="tut" id="top">0,00 ₺</span></div>
+  </div>
+  <div class="ipucu">Rakama dokunursan kopyalanır.</div>
+  <button type="button" class="temizle" id="temizle">Temizle</button>
+</div>
+<div class="toast" id="toast">Kopyalandı</div>
+
+<script>
+(function(){
+  var mod='haric', oran=20, son={net:0,kdv:0,top:0};
+  var inp=document.getElementById('tutar');
+  var fmt=new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function tl(n){return fmt.format(n)+' ₺';}
+  function oku(s){s=(s||'').replace(/\./g,'').replace(',','.');var n=parseFloat(s);return isFinite(n)?n:0;}
+  function bicim(v){
+    v=v.replace(/[^\d,]/g,'');
+    var i=v.indexOf(',');
+    if(i>-1)v=v.slice(0,i+1)+v.slice(i+1).replace(/,/g,'').slice(0,2);
+    var p=v.split(','), tam=p[0].replace(/^0+(?=\d)/,'');
+    tam=tam.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    return p.length>1?tam+','+p[1]:tam;
+  }
+  function yuvarla(n){return Math.round(n*100)/100;}
+  function hesapla(){
+    var t=oku(inp.value), r=oran/100, net, kdv, top;
+    if(mod==='haric'){net=t;kdv=yuvarla(t*r);top=yuvarla(net+kdv);}
+    else{top=t;net=yuvarla(t/(1+r));kdv=yuvarla(top-net);}
+    son={net:net,kdv:kdv,top:top};
+    document.getElementById('net').textContent=tl(net);
+    document.getElementById('kdv').textContent=tl(kdv);
+    document.getElementById('top').textContent=tl(top);
+    document.getElementById('adKdv').textContent='KDV (%'+oran+')';
+  }
+  inp.addEventListener('input',function(){inp.value=bicim(inp.value);hesapla();});
+  function modSec(m){
+    mod=m;
+    document.querySelectorAll('[data-mod]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-mod')===m);});
+    document.getElementById('etiket').textContent=m==='haric'?'KDV hariç tutar':'KDV dahil tutar';
+    hesapla();
+  }
+  function oranSec(o){
+    oran=o;
+    document.querySelectorAll('[data-oran]').forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-oran')===o);});
+    hesapla();
+  }
+  document.querySelectorAll('[data-mod]').forEach(function(b){b.onclick=function(){modSec(b.getAttribute('data-mod'));inp.focus();};});
+  document.querySelectorAll('[data-oran]').forEach(function(b){b.onclick=function(){oranSec(+b.getAttribute('data-oran'));};});
+  document.getElementById('temizle').onclick=function(){inp.value='';hesapla();inp.focus();};
+  var toast=document.getElementById('toast'), tz;
+  document.querySelectorAll('.satir').forEach(function(s){s.onclick=function(){
+    var metin=fmt.format(son[s.getAttribute('data-k')]);
+    function goster(){toast.classList.add('on');clearTimeout(tz);tz=setTimeout(function(){toast.classList.remove('on');},1300);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(metin).then(goster,function(){});}
+    else{var ta=document.createElement('textarea');ta.value=metin;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');goster();}catch(e){}ta.remove();}
+  };});
+  var q=new URLSearchParams(location.search).get('tutar');
+  if(q){inp.value=bicim(q.replace('.',','));}
+  hesapla();
+})();
+</script>
+</body>
+</html>
