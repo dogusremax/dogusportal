@@ -608,8 +608,11 @@ function renderData() {
   /* --- Kapanışlar (ortak işlemler tek sayılır) --- */
   var uniq = {}, list = [];
   (D.closings || []).forEach(function(c) {
-    var key = c.originalId || c.id || (c.date + c.adres);
-    if (!uniq[key]) { uniq[key] = Object.assign({}, c, { _ids: [] }); list.push(uniq[key]); }
+    // Aynı işlemin iki tarafı (ör. alıcı + satıcı danışmanı ayrı form) tek işlem sayılır: tarih + adres + tür
+    var key = c.adres ? (c.date + '|' + String(c.adres).toLowerCase().replace(/\s+/g, ' ').trim() + '|' + c.tur) : (c.originalId || c.id);
+    if (!uniq[key]) { uniq[key] = Object.assign({}, c, { _ids: [], _orig: {}, toplamHB: 0 }); list.push(uniq[key]); }
+    var o = c.originalId || c.id;
+    if (!uniq[key]._orig[o]) { uniq[key]._orig[o] = 1; uniq[key].toplamHB += (+c.toplamHB || 0); }
     if (uniq[key]._ids.indexOf(c.consultantId) < 0) uniq[key]._ids.push(c.consultantId);
   });
   var mon = list.filter(function(c) { return String(c.date || '').slice(0, 7) === MONTH; }).sort(function(a, b) { return String(a.date).localeCompare(String(b.date)); });
