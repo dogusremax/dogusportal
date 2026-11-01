@@ -211,6 +211,7 @@ a{color:var(--acc)}
       <p class="note">Yöntem ilaçsız işliyor. Zorlandığın bir gün konuşmak istersen ALO 171 7/24 açık, sadece dinleyip yol gösteriyorlar.</p>
       <a href="tel:171"><button class="ghost full" style="margin-top:12px">📞 ALO 171</button></a></div>
     <div class="card"><h2>Son kayıtlar</h2><div id="logList"></div></div>
+    <div class="card" id="mSumCard"><h2>Ölçüm özeti</h2><p class="note">Plan bu ölçüme göre kuruldu. Kayıtlar silinmedi, burada duruyor.</p><div id="mSum" style="margin-top:8px"></div></div>
   </section>
 
   <!-- AYARLAR -->
@@ -418,6 +419,7 @@ function render(){
   $('slots').innerHTML=sm.length?sm.map(s=>`<span class="slot ${s.ts<now-5*6e4?'past':''} ${nxt&&s.ts===nxt.ts?'next':''}">${hm(new Date(s.ts))}</span>`).join(''):'<span class="note">Bugün sigara yok 🌱</span>';
   const lt=S.lastTop; $('notifInfo').innerHTML=!lt?'Henüz kurulmadı.':(lt.err?`<span style="color:var(--bad)">Son deneme hata verdi (${lt.err}).</span> `:'')+(lt.last?`Bildirimler <b>${new Date(lt.last).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</b> saatine kadar kurulu.`:'Kurulu bildirim yok.');
   // plan sekmesi
+  if(!$('vPlan').classList.contains('hide'))mSumRender();
   const bars=[];let mx=c.base;for(let i=0;i<total+3;i++){const dt=addDays(c.start,i),n=countFor(dt);bars.push(`<i class="${dt===pd?'today':(i<d?'done':'')}" style="height:${Math.max(2,n/mx*100)}%"></i>`)}
   $('bars').innerHTML=bars.join('');
   const pc=Math.min(100,Math.max(0,(d+1)/total*100));$('progBar').style.width=pc+'%';
@@ -472,6 +474,18 @@ function mStats(){
   const gaps=[];full.concat(byDay[today]?[today]:[]).forEach(k=>{const a=kn(k);for(let i=1;i<a.length;i++)gaps.push((a[i]-a[i-1])/6e4)});
   const hrs=Array(24).fill(0);full.forEach(k=>kn(k).forEach(t=>hrs[new Date(t).getHours()]++));
   return{byDay,today,days,avg,fM,lM,gap:gaps.length?gaps.reduce((a,b)=>a+b,0)/gaps.length:null,hrs};
+}
+function mSumRender(){
+  const L=S.mlog||[], el=$('mSum'); if(!el) return;
+  if(!L.length){$('mSumCard').style.display='none';return} $('mSumCard').style.display='';
+  const st=mStats(), keys=Object.keys(st.byDay).sort();
+  const row=(a,b)=>`<div class="log"><span>${a}</span><span>${b}</span></div>`;
+  const gun=k=>new Date(k+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',weekday:'short'});
+  el.innerHTML=row('Toplam',`<b>${L.length}</b> stick · ${keys.length} gün`)
+    +row('Günlük ortalama',st.avg?`<b>${Math.round(st.avg*10)/10}</b> stick (tam günler)`:'—')
+    +row('İlk stick (genelde)',mhm(st.fM))+row('Son stick (genelde)',mhm(st.lM))
+    +row('Ortalama aralık',st.gap?Math.round(st.gap)+' dk':'—')
+    +keys.map(k=>row(gun(k),st.byDay[k].length+' stick')).join('');
 }
 function isFullFirst(){const L=S.mlog||[];if(!L.length)return false;const h=new Date(L[0]).getHours();return h>=4&&h<11} // ilk gün sabah başladıysa sayılır
 const mhm=m=>m==null?'—':pad(Math.floor(m/60)%24)+':'+pad(Math.round(m%60));
