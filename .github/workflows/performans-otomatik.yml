@@ -23,7 +23,20 @@ concurrency:
   group: performans-otomatik-${{ github.event.inputs.donem }}
   cancel-in-progress: false
 jobs:
+  # Umut 01.11.2026: Ekim ayı şampiyonları bugün (1 Kasım) paylaşılmayacak. Sadece bu tarih atlanır, akış duruyor.
+  atla:
+    runs-on: ubuntu-latest
+    outputs:
+      atla: ${{ steps.k.outputs.atla }}
+    steps:
+      - id: k
+        run: |
+          if [ "${{ github.event.inputs.donem }}" = "ay" ] && [ "$(TZ=Europe/Istanbul date +%F)" = "2026-11-01" ] && [ "${{ github.event.inputs.dry_run }}" != "1" ]; then
+            echo "1 Kasım 2026: aylık paylaşım Umut'un isteğiyle atlandı."; echo "atla=1" >> $GITHUB_OUTPUT
+          else echo "atla=0" >> $GITHUB_OUTPUT; fi
   paylas:
+    needs: atla
+    if: needs.atla.outputs.atla != '1'
     runs-on: ubuntu-latest
     env:
       DRY_RUN: ${{ github.event.inputs.dry_run }}
