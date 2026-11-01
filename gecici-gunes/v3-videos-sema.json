@@ -1,0 +1,186 @@
+{
+ "summary": "Create Video",
+ "description": "Creates an avatar video: a HeyGen avatar or an image speaks your script or audio with lip-sync. Choose Avatar III, IV or V with `engine` (Avatar IV by default). To generate a whole scene from a prompt instead, use POST /v3/models/videos.",
+ "tags": [
+  "Videos"
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  },
+  {
+   "BearerAuth": []
+  }
+ ],
+ "responses": {
+  "200": {
+   "description": "Successful response",
+   "content": {
+    "application/json": {
+     "schema": {
+      "type": "object",
+      "properties": {
+       "data": {
+        "$ref": "#/components/schemas/CreateAvatarVideoResponse"
+       }
+      }
+     }
+    }
+   }
+  },
+  "400": {
+   "description": "Invalid request parameters",
+   "content": {
+    "application/json": {
+     "schema": {
+      "type": "object",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/StandardAPIError"
+       }
+      }
+     },
+     "examples": {
+      "invalid_parameter": {
+       "summary": "Invalid visual source",
+       "value": {
+        "error": {
+         "code": "invalid_parameter",
+         "message": "Exactly one visual source required: avatar_id, image_url, or image_asset_id.",
+         "param": "avatar_id",
+         "doc_url": null
+        }
+       }
+      },
+      "avatar_not_usable": {
+       "summary": "Avatar cannot be used",
+       "value": {
+        "error": {
+         "code": "avatar_not_usable",
+         "message": "This avatar cannot be used because it did not pass content moderation.",
+         "param": null,
+         "doc_url": null
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "401": {
+   "description": "Authentication failed",
+   "content": {
+    "application/json": {
+     "schema": {
+      "type": "object",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/StandardAPIError"
+       }
+      }
+     },
+     "example": {
+      "error": {
+       "code": "unauthorized",
+       "message": "Invalid or expired API key. Verify your x-api-key header.",
+       "param": null,
+       "doc_url": null
+      }
+     }
+    }
+   }
+  },
+  "429": {
+   "description": "Rate limit exceeded",
+   "content": {
+    "application/json": {
+     "schema": {
+      "type": "object",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/StandardAPIError"
+       }
+      }
+     },
+     "example": {
+      "error": {
+       "code": "rate_limit_exceeded",
+       "message": "Too many requests. Retry after the duration specified in the Retry-After header.",
+       "param": null,
+       "doc_url": null
+      }
+     }
+    }
+   },
+   "headers": {
+    "Retry-After": {
+     "description": "Seconds to wait before retrying",
+     "schema": {
+      "type": "integer"
+     }
+    }
+   }
+  },
+  "409": {
+   "description": "Conflict — `error.code` is one of: `resource_not_ready`, `request_in_progress`.",
+   "content": {
+    "application/json": {
+     "schema": {
+      "type": "object",
+      "properties": {
+       "error": {
+        "$ref": "#/components/schemas/StandardAPIError"
+       }
+      }
+     },
+     "examples": {
+      "resource_not_ready": {
+       "summary": "Avatar is still processing",
+       "value": {
+        "error": {
+         "code": "resource_not_ready",
+         "message": "This avatar is still processing. Wait for avatar creation to complete, then try again.",
+         "param": null,
+         "doc_url": null
+        }
+       }
+      },
+      "request_in_progress": {
+       "summary": "Concurrent retry with same Idempotency-Key",
+       "value": {
+        "error": {
+         "code": "request_in_progress",
+         "message": "A request with this Idempotency-Key is already in progress. Retry shortly.",
+         "param": null,
+         "doc_url": null
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "x-mint": {
+  "href": "/reference/create-video"
+ },
+ "operationId": "createVideo",
+ "parameters": [
+  {
+   "$ref": "#/components/parameters/IdempotencyKey"
+  }
+ ],
+ "requestBody": {
+  "required": true,
+  "content": {
+   "application/json": {
+    "schema": {
+     "$ref": "#/components/schemas/CreateVideoV3RequestBody"
+    }
+   }
+  }
+ },
+ "x-heygen-required-scopes": [
+  "videos:write"
+ ]
+}
