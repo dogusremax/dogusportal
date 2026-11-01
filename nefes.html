@@ -407,10 +407,12 @@ function render(){
   $('stPlan').textContent=plan;$('stDone').textContent=smoked;
   $('stInt').textContent=plan?Math.round((windowMin(c)[1]-windowMin(c)[0])/plan):'∞';
   const days=Math.max(0,diffDays(c.start,dstr(new Date()))+ (Date.now()>=new Date(c.start+'T00:00:00')?1:0));
-  const allSmoked=log.filter(l=>l.type!=='skip').length, avoided=Math.max(0,days*c.base-allSmoked);
+  // program başlamadan önceki (ölçüm/geçiş) kayıtlar program istatistiklerine girmesin
+  const progStart=new Date(c.start+'T00:00:00').getTime()+windowMin(c)[0]*6e4-60*6e4;
+  const allSmoked=log.filter(l=>l.type!=='skip'&&l.t>=progStart).length, avoided=Math.max(0,days*c.base-allSmoked);
   $('stAvoid').textContent=avoided;$('stMoney').textContent=Math.round(avoided/20*c.price).toLocaleString('tr-TR')+'₺';$('stLeft').textContent=left;
   $('stSpent').textContent=Math.round(allSmoked/20*c.price).toLocaleString('tr-TR')+'₺';
-  const onPlan=today.filter(l=>l.type==='smoke').length;$('stFit').textContent=smoked?'%'+Math.round(onPlan/smoked*100):'—';
+  const onPlan=today.filter(l=>l.type==='smoke').length;$('stFit').textContent=(d>=0&&smoked)?'%'+Math.round(onPlan/smoked*100):'—';
   const ertN=new Set((S.ertele||[]).filter(e=>e.t>=dayStart&&e.t<dayStart+864e5).map(e=>e.slot)).size;
   $('stSum').innerHTML=plan?`Hak <b>${plan}</b> · içilen <b>${smoked}</b>${ertN?` · ertelenen <b>${ertN}</b> 💪`:''}${smoked>plan?` · <span style="color:var(--warn)">${smoked-plan} fazla</span>`:''}`:'';
   $('slots').innerHTML=sm.length?sm.map(s=>`<span class="slot ${s.ts<now-5*6e4?'past':''} ${nxt&&s.ts===nxt.ts?'next':''}">${hm(new Date(s.ts))}</span>`).join(''):'<span class="note">Bugün sigara yok 🌱</span>';
