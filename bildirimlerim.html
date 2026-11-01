@@ -45,6 +45,9 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
 /* Kartlı bildirim (RE/MAX Türkiye'ye işlem girildi vb.) — dokununca ekranda okunur */
 .kartarka { position:fixed; inset:0; background:rgba(5,10,48,.55); display:none; align-items:center; justify-content:center; padding:20px; z-index:50; }
 .kartarka.acik { display:flex; }
+body.tek main { visibility:hidden; }
+body.tek .kartarka { display:flex; visibility:visible; background:linear-gradient(160deg,#1b2350,#050A30); }
+.bkart .kyuk { padding:40px 22px; text-align:center; color:#68738a; font-size:14.5px; }
 .bkart { background:#fff; border-radius:24px; width:100%; max-width:420px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); font-family:'Plus Jakarta Sans','Inter',sans-serif; }
 .bkart .kbas { background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160); color:#fff; padding:22px 22px 20px; position:relative; }
 .bkart .kbas img { position:absolute; top:18px; right:18px; width:70px; }
@@ -69,7 +72,7 @@ h1 { font-family:'Archivo',sans-serif; font-size:22px; font-weight:800; letter-s
   <div class="ust"><span id="kim"></span><button class="hepsi" id="hepsi">Tümünü okundu say</button></div>
   <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
   <div class="kartarka" id="kartarka"><div class="bkart"><div class="kbas"><img src="/assets/dogus-logo.png" alt=""><small id="kust">RE/MAX Doğuş</small><h2 id="kbaslik"></h2></div>
-    <div class="kgovde"><p id="kmetin"></p><div id="ksatirlar" style="margin-top:14px"></div></div><button class="ktamam" id="ktamam" type="button">Tamam</button></div></div>
+    <div class="kgovde"><p id="kmetin">Yükleniyor…</p><div id="ksatirlar" style="margin-top:14px"></div></div><button class="ktamam" id="ktamam" type="button">Tamam</button></div></div>
   <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
 </main>
 <script src="/assets/bildirim-link.js"></script>
@@ -83,7 +86,7 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
   var ornek = /[?&]ornek=1/.test(location.search);   // önizleme: örnek verilerle
   // Linksiz bildirime dokununca sw.js buraya ?h=<kimlik> ile gelir: o bildirim vurgulanır, tam metni açılır
   var hedef = (location.search.match(/[?&]h=(g[0-9a-f]{20}|gornek)/) || [])[1] || '', acik = {};
-  if (hedef) acik[hedef] = true;
+  if (hedef) { acik[hedef] = true; document.body.classList.add('tek'); }   // bildirime dokununca yalnız kart görünür
   document.getElementById('geri').href = '/?cb=' + Date.now();
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -119,8 +122,9 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     }).join('');
     $('kartarka').classList.add('acik');
   }
-  $('ktamam').onclick = function () { $('kartarka').classList.remove('acik'); };
-  $('kartarka').onclick = function (e) { if (e.target === this) this.classList.remove('acik'); };
+  function tekBitir() { if (document.body.classList.contains('tek')) { location.href = '/?cb=' + Date.now(); return true; } return false; }
+  $('ktamam').onclick = function () { if (!tekBitir()) $('kartarka').classList.remove('acik'); };
+  $('kartarka').onclick = function (e) { if (e.target === this && !document.body.classList.contains('tek')) this.classList.remove('acik'); };
 
   var veri = null;
   function ciz() {
@@ -144,8 +148,9 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     if (v && !ciz.kaydi) {
       ciz.kaydi = true; v.scrollIntoView({ block: 'center' });
       var hx = veri.liste.filter(function (x) { return x.hid === hedef; })[0], hk = kartVeri(hx);
-      if (hk) kartAc(hx, hk);
+      if (hk) { kartAc(hx, hk); if (!hx.okundu) { hx.okundu = true; if (!ornek) post({ islem: 'okundu', hid: hx.hid }).catch(function () {}); } }
     }
+    if (hedef && !kartVeri(veri.liste.filter(function (x) { return x.hid === hedef; })[0])) document.body.classList.remove('tek');
   }
   $('liste').onclick = function (e) {
     var k = e.target.closest('.kart'); if (!k) return;
@@ -179,18 +184,20 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     ciz(); if (hedef === 'gornek') { var ox = veri.liste[0]; kartAc(ox, kartVeri(ox)); } return;
   }
   if (!token) {
+    document.body.classList.remove('tek');
     $('liste').innerHTML = '<div class="bos">Bu cihazda bildirimler kapalı, o yüzden liste burada görünmüyor.<br>Bildirimleri açtığın telefonda da bu listeyi görürsün.<br><br><a href="#" onclick="bildirimPaneli();return false;">🔔 Bu cihazda bildirimleri aç</a></div>';
     return;
   }
   post({ islem: 'liste' }).then(function (j) {
     if (!j.ok) {
+      document.body.classList.remove('tek');
       $('liste').innerHTML = '<div class="bos">' + (j.error === 'ABONE_YOK'
         ? 'Bu telefonun bildirim kaydı bulunamadı.<br><br><a href="#" onclick="bildirimPaneli();return false;">🔔 Bildirimleri tekrar aç</a>'
         : 'Bildirimler alınamadı. Biraz sonra tekrar dene.') + '</div>';
       return;
     }
     veri = j; ciz();
-  }).catch(function () { $('liste').innerHTML = '<div class="bos">Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.</div>'; });
+  }).catch(function () { document.body.classList.remove('tek'); $('liste').innerHTML = '<div class="bos">Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.</div>'; });
 })();
 </script>
 </body>
