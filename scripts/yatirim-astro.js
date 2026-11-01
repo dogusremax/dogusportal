@@ -135,6 +135,9 @@ async function ciz() {
     await slides.nth(i).screenshot({ path: f });
     dosyalar.push(f);
   }
+  // Umut'un o hafta için hazırladığı kapak varsa (hazir/<hafta>-kapak.png, 1080×1440) 1. sayfa o olur
+  const hazirKapak = `${DIR}/hazir/${veri.hafta}-kapak.png`;
+  if (fs.existsSync(hazirKapak) && dosyalar[0]) { fs.copyFileSync(hazirKapak, dosyalar[0]); console.log('Hazır kapak kullanıldı:', hazirKapak); }
   const story = `${DIR}/${veri.hafta}-story.png`;
   await page.locator('.story').first().screenshot({ path: story });
   // Umut'un o hafta için hazırladığı story varsa (hazir/<hafta>-story.png) otomatik story yerine o kullanılır
