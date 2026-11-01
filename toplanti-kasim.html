@@ -104,6 +104,8 @@ button { font-family: inherit; cursor: pointer; }
 .tbl th { text-align: left; font-size: 12.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 2px solid rgba(255,255,255,.2); }
 .tbl td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
 #pointsTable td { padding: 9px 14px; }
+.tbl.k1 { font-size: 16px; } .tbl.k1 td { padding: 8px 14px; } .tbl.k1 th { padding: 6px 14px; }
+.tbl.k2 { font-size: 14px; } .tbl.k2 td { padding: 5px 12px; } .tbl.k2 th { padding: 4px 12px; font-size: 11px; }
 .tbl td.num, .tbl th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .tag { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .08em; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; }
 .tag.s { background: rgba(225,27,34,.18); color: #ff6a6f; } .tag.k { background: rgba(91,140,255,.18); color: #8fb0ff; } .tag.o { background: rgba(232,194,110,.18); color: var(--gold); }
@@ -584,6 +586,20 @@ function loadData(sessiz) {
 }
 setInterval(function() { loadData(true); }, 60000); // toplantı boyunca dakikada bir sessizce tazele
 
+function sigdir(cl) { // tablo kartın içine sığana kadar küçült
+  var card = cl.parentElement, t = cl.querySelector('table'); if (!t) return;
+  var steps = [[18,13,10],[17,10,8],[16,8,6],[15,6,5],[14,5,4],[13,4,3],[12,3,2]];
+  for (var i = 0; i < steps.length; i++) {
+    t.style.fontSize = steps[i][0] + 'px';
+    t.querySelectorAll('td').forEach(function(td) { td.style.paddingTop = td.style.paddingBottom = steps[i][1] + 'px'; });
+    t.querySelectorAll('th').forEach(function(th) { th.style.paddingTop = th.style.paddingBottom = steps[i][2] + 'px'; });
+    if (card.scrollHeight <= card.clientHeight + 1) return;
+  }
+  var tb = t.querySelector('tbody'), gizli = 0, note = cl.querySelector('.daha');
+  if (!note) { note = document.createElement('div'); note.className = 'daha'; note.style.cssText = 'font-size:14px;color:var(--mute);padding:8px 14px'; cl.appendChild(note); }
+  var onceki = (note.textContent.match(/\d+/) || [0])[0] * 1;
+  while (card.scrollHeight > card.clientHeight + 1 && tb.rows.length > 1) { tb.deleteRow(-1); gizli++; note.textContent = '+ ' + (gizli + onceki) + ' işlem daha'; }
+}
 function renderData() {
   var D = DATA || { consultants: [], closings: [], activities: [], yetkiler: [] };
   var C = {}; (D.consultants || []).forEach(function(c) { C[c.id] = c; });
@@ -604,12 +620,13 @@ function renderData() {
   var cl = document.getElementById('closingList');
   if (!mon.length) cl.innerHTML = '<div class="empty">' + (DATA ? monthName + ' ayında kayıtlı kapanış bulunamadı.' : 'Veri bekleniyor…') + '</div>';
   else {
-    var max = 7, shown = mon.slice(0, max);
-    cl.innerHTML = '<table class="tbl"><thead><tr><th>Tarih</th><th>Danışman</th><th>Tür</th><th>Adres</th><th class="num">Brüt HB</th></tr></thead><tbody>' +
+    var max = 14, shown = mon.slice(0, max), sk = '';
+    cl.innerHTML = '<table class="tbl' + sk + '"><thead><tr><th>Tarih</th><th>Danışman</th><th>Tür</th><th>Adres</th><th class="num">Brüt HB</th></tr></thead><tbody>' +
       shown.map(function(c) {
         var who = c._ids.map(function(id) { return esc(name(id)); }).join(' &amp; ');
         return '<tr><td style="white-space:nowrap">' + esc(String(c.date).slice(8, 10) + '.' + String(c.date).slice(5, 7)) + '</td><td style="font-weight:700">' + who + (c._ids.length > 1 ? ' <span class="tag o" style="margin-left:6px">Ortak</span>' : '') + '</td><td><span class="tag ' + (c.tur === 'Satılık' ? 's' : 'k') + '">' + esc(c.tur || '') + '</span></td><td style="color:var(--mute)">' + esc(String(c.adres || '').split(',')[0].slice(0, 34)) + '</td><td class="num">' + (c.toplamHB ? fmtTL(c.toplamHB) : '—') + '</td></tr>';
-      }).join('') + '</tbody></table>' + (mon.length > max ? '<div style="font-size:14px;color:var(--mute);padding:10px 14px">+ ' + (mon.length - max) + ' işlem daha</div>' : '');
+      }).join('') + '</tbody></table>' + (mon.length > max ? '<div class="daha" style="font-size:14px;color:var(--mute);padding:10px 14px">+ ' + (mon.length - max) + ' işlem daha</div>' : '');
+    sigdir(cl);
   }
 
   /* --- Ay içi aktiviteler --- */
