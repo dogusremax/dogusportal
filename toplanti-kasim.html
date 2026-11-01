@@ -27,8 +27,8 @@ body { background: #030b1a; color: var(--white); font-family: Montserrat, -apple
 button { font-family: inherit; cursor: pointer; }
 
 /* ---------- Stage (16:9, ölçeklenir) ---------- */
-#viewport { position: fixed; inset: 0; display: grid; place-items: center; }
-#deck { position: relative; width: 1600px; height: 900px; transform-origin: center center; flex-shrink: 0; }
+#viewport { position: fixed; inset: 0; overflow: hidden; }
+#deck { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: center center; transform: translate(-50%,-50%); }
 .slide { position: absolute; inset: 0; overflow: hidden; border-radius: 4px;
   background: radial-gradient(1200px 700px at 85% -10%, rgba(26,91,214,.35), transparent 60%),
               radial-gradient(900px 600px at -10% 110%, rgba(225,27,34,.22), transparent 60%),
@@ -690,7 +690,7 @@ function show(i) {
   try { history.replaceState(null, '', '#' + (cur + 1)); } catch (e) {}
 }
 function go(d) { show(cur + d); }
-function fit() { var s = Math.min(window.innerWidth / 1600, window.innerHeight / 900); document.getElementById('deck').style.transform = 'scale(' + s + ')'; }
+function fit() { var s = Math.min(window.innerWidth / 1600, window.innerHeight / 900); document.getElementById('deck').style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
 window.addEventListener('resize', fit);
 function hint(t) { var h = document.getElementById('hint'); h.textContent = t; h.classList.add('show'); clearTimeout(hint.t); hint.t = setTimeout(function() { h.classList.remove('show'); }, 1800); }
 function toggleNotes() { document.getElementById('notes').classList.toggle('show'); }
