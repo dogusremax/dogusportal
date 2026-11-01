@@ -157,6 +157,12 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 
 /* ---------- Yazdırma / PDF ---------- */
 @page { size: 1600px 900px; margin: 0; }
+/* Sabit logo: slayt geçişinde sallanmasın (Umut, 1 Kasım) */
+@media screen { .slide .logo { display: none; } }
+#fixLogo { z-index: 20; pointer-events: none; }
+#fixLogo .lw b, #fixLogo .lw > span { transition: color .5s ease; }
+#deck.lightbg #fixLogo .lw b { color: #0b1a33; } #deck.lightbg #fixLogo .lw b .b { color: var(--blue); } #deck.lightbg #fixLogo .lw > span { color: #5d6f8f; }
+@media print { #fixLogo { display: none; } }
 @media print {
   html, body { overflow: visible; height: auto; background: #071630; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -175,6 +181,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 
 <div id="progress"></div>
 <div id="viewport"><div id="deck">
+<div class="logo" id="fixLogo" data-logo></div>
 
 <!-- 1 · KAPAK ===================================================== -->
 <section class="slide" data-notes="<b>Açılış:</b> Herkese hoş geldiniz. Ekim'i değerlendirip Kasım ve yıl sonu için yol haritamızı konuşacağız. Ekim'de devreye giren yeni sistemleri de birlikte göreceğiz.">
@@ -1005,6 +1012,7 @@ function show(i) {
   i = Math.max(0, Math.min(slides.length - 1, i));
   slides[cur].classList.remove('active');
   cur = i;
+  document.getElementById('deck').classList.toggle('lightbg', slides[cur].classList.contains('light'));
   replay(cur);
   document.getElementById('pn').textContent = (cur + 1) + ' / ' + slides.length;
   document.getElementById('progress').style.width = ((cur + 1) / slides.length * 100) + '%';
