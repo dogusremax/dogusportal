@@ -4,10 +4,8 @@ name: Haftalık yatırım astrolojisi karuseli
 # Otomatik paylaşım yalnızca yatirim-astroloji/.canli dosyası varken yapılır (Umut örneği onaylayınca eklenir).
 # Asıl tetik Danışman Takip'ten gelir (gunlukZamanla → astrolojiTetikle, Pzt 09:00, islem=zamanli);
 # GitHub'ın kendi zamanlaması saatlerce gecikebiliyor (19.10.2026'da hiç çalışmadı), aşağıdaki cron'lar yedek.
+# İPTAL (Umut, 2026-11-02): yatırım astrolojisi / Güneş bundan sonra paylaşılmayacak. Zamanlama ve .canli kaldırıldı.
 on:
-  schedule:
-    - cron: "0 6 * * 1"    # Pzt 09:00 TR: üret; paylaşım 10:00'u bekler
-    - cron: "30 8 * * 1"   # Pzt 11:30 TR yedek (.pub kilidi sayesinde mükerrer atmaz)
   workflow_dispatch:
     inputs:
       islem:
