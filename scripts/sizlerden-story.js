@@ -47,7 +47,7 @@ function sec() {
 
   let r = null, id = null;
   const yeniler = adaylar.filter(x => (x.ilkGorulme || '') >= YENI_SINIR).sort((a, b) => a.ilkGorulme.localeCompare(b.ilkGorulme));
-  if (yeniler.length && saat >= 10 && saat < 21) {
+  if (yeniler.length && ((saat >= 10 && saat < 21) || process.env.SIMDI_PAYLAS === '1')) {
     r = yeniler[0];
     id = sirali.find(i => r.danismanlar.includes(i));
   } else if (!yeniler.length && process.env.SADECE_YENI !== '1' && carsamba && saat >= 12 && (!eskiSonGun || gunFark(bugun, eskiSonGun) >= 6)) {

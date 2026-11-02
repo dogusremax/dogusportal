@@ -8,6 +8,10 @@ on:
         description: "Sadece deneme e-postası gönder"
         type: boolean
         default: false
+      simdi_paylas:
+        description: "Yeni yorumu saat aralığına bakmadan şimdi paylaş (tek seferlik, Umut onayıyla)"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -46,6 +50,7 @@ jobs:
         if: hashFiles('sizlerden-story/.canli') != ''
         env:
           SADECE_YENI: "1"
+          SIMDI_PAYLAS: ${{ inputs.simdi_paylas && '1' || '' }}
         run: node scripts/sizlerden-story.js sec
       - name: Story ve karusel görsellerini üret
         if: hashFiles('sizlerden-story/.secim.json') != ''
