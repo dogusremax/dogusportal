@@ -48,14 +48,15 @@ const alt=(kc,kaydir=true)=>`<div class="ab alt sh" style="top:${y(1792.53,1345)
   (kaydir?`<div class="ab kaydir sh" style="top:${y(1788.9,1341)}px;color:${kc}">Kaydır ${ok(kc)}</div>`:'');
 const logo=()=>`<img class="ab logo" src="assets/dogus-logo.png" style="top:${y(106.2,80)}px;${FMT==='feed'?'width:265px':''}">`;
 
+// Kişi fotoğrafı: herkes aynı yüz boyunda (yüz genişliği YUZ px) ve gözler aynı noktada (x 770, y GOZ).
+// Foto sayfanın altına yetişmezse önce biraz aşağı iner (en çok 80 px), yetmezse o kadar büyür. Havada duran olmaz.
+const YUZ=250, GOZ=FMT==='feed'?435:900;
 function foto(k){
-  // Kişi küçük (FS), ama foto her zaman sayfanın altına oturur: gerekirse biraz aşağı iner (en çok KAY px), yetmezse daha az küçülür
-  const [el,ib]=[k.el,k.ib], ust=el[1]+DY, B=ib[0]+ib[3]-22, KAY=FMT==='feed'?40:90;
-  let kay=Math.min(KAY,Math.max(0,H-(ust+22+B*FS)));
-  const sc=Math.max(FS,(H+2-(ust+22+kay))/B);
+  const y=k.yuz; let s=YUZ/y.m, gy=GOZ;
+  const alt=()=>gy+(y.H-y.ey)*s;
+  if(alt()<H){gy=Math.min(GOZ+80,gy+(H-alt()));if(alt()<H)s=(H+2-gy)/(y.H-y.ey);}
   const sol=k.solma?';-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)':'';
-  const U=400;  // üstte kırpma olmasın (topuz/saç kesilmesin)
-  return `<div class="ab foto" style="left:${el[0]}px;top:${ust-U}px;width:${el[2]}px;height:${U+Math.max(el[3],ib[0]+ib[3])}px;transform-origin:${770-el[0]}px ${U+22}px;transform:translateY(${kay}px) scale(${sc})"><img src="${A+k.foto}" style="top:${U+ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${sol}"></div>`;
+  return `<img class="ab" src="${A+k.foto}" style="left:${770-y.ex*s}px;top:${gy-y.ey*s}px;width:${y.W*s}px;height:${y.H*s}px${sol}">`;
 }
 function kapak(d,k){
   const [el,ib]=[k.el,k.ib];
