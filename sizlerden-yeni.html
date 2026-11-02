@@ -49,9 +49,13 @@ const alt=(kc,kaydir=true)=>`<div class="ab alt sh" style="top:${y(1792.53,1345)
 const logo=()=>`<img class="ab logo" src="assets/dogus-logo.png" style="top:${y(106.2,80)}px;${FMT==='feed'?'width:265px':''}">`;
 
 function foto(k){
-  const [el,ib]=[k.el,k.ib], ust=el[1]+DY, alt=ust+22+(ib[0]+ib[3]-22)*FS;
-  const sol=k.solma||alt<H+2?';-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)':'';
-  return `<div class="ab foto" style="left:${el[0]}px;top:${ust}px;width:${el[2]}px;height:${Math.max(el[3],ib[0]+ib[3])}px;transform-origin:${770-el[0]}px 22px;transform:scale(${FS})"><img src="${A+k.foto}" style="top:${ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${sol}"></div>`;
+  // Kişi küçük (FS), ama foto her zaman sayfanın altına oturur: gerekirse biraz aşağı iner (en çok KAY px), yetmezse daha az küçülür
+  const [el,ib]=[k.el,k.ib], ust=el[1]+DY, B=ib[0]+ib[3]-22, KAY=FMT==='feed'?40:90;
+  let kay=Math.min(KAY,Math.max(0,H-(ust+22+B*FS)));
+  const sc=Math.max(FS,(H+2-(ust+22+kay))/B);
+  const sol=k.solma?';-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)':'';
+  const U=400;  // üstte kırpma olmasın (topuz/saç kesilmesin)
+  return `<div class="ab foto" style="left:${el[0]}px;top:${ust-U}px;width:${el[2]}px;height:${U+Math.max(el[3],ib[0]+ib[3])}px;transform-origin:${770-el[0]}px ${U+22}px;transform:translateY(${kay}px) scale(${sc})"><img src="${A+k.foto}" style="top:${U+ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${sol}"></div>`;
 }
 function kapak(d,k){
   const [el,ib]=[k.el,k.ib];
@@ -60,7 +64,7 @@ function kapak(d,k){
 ${foto(k)}
 ${logo()}
 <img class="ab baslik" src="${A}yeni/baslik.png" style="top:${y(405,215)}px">
-<div class="ab kutu" style="top:${1351.69+DN}px;background-image:url(${KUTU[k.renk]})"></div>
+<div class="ab kutu" style="top:${1351.69+DN}px;background-image:url(${ZEMIN[k.renk==='R'?'B':'R']});background-size:1080px 1920px;background-position:-84.27px ${-(1351.69+DN-DY)}px"></div>
 <div class="ab gd sh" style="top:${1351.8+DN}px">Gayrimenkul Danışmanı</div>
 <div class="ab cizgi" style="left:84.27px;top:${1430.8+DN}px;width:605.37px"></div>
 <div class="ab ad sh" style="top:${1446.81+DN}px">${kk(d.ad)}</div>
