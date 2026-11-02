@@ -58,10 +58,16 @@ Güveniniz için teşekkür ederiz. Satış, kiralama ve değerleme süreçlerin
 
 (async () => {
   if (!isaret('.pub-story')) {
-    await yayindaMi(m.url);
-    const sade = { media_type: 'STORIES', image_url: m.url };
-    const st = await ekliDene(`${UID}/media`, { ...sade, user_tags: [{ username: ig }] }, sade, 'Story etiketi');
-    console.log('✓ Story yayınlandı:', (await post(`${UID}/media_publish`, { creation_id: st.id })).id);
+    // Yeni tasarımda story birden çok sayfa (m.stories); her biri sırayla ayrı story. Yarıda kalırsa kaldığı sayfadan devam eder.
+    const sayfalar = m.stories && m.stories.length ? m.stories : [m.url];
+    let basla = 0; try { const [k, n] = fs.readFileSync(DIR + '/.pub-story-n', 'utf8').trim().split(' '); if (k === m.key) basla = +n; } catch (e) {}
+    for (let i = basla; i < sayfalar.length; i++) {
+      await yayindaMi(sayfalar[i]);
+      const sade = { media_type: 'STORIES', image_url: sayfalar[i] };
+      const st = i === 0 ? await ekliDene(`${UID}/media`, { ...sade, user_tags: [{ username: ig }] }, sade, 'Story etiketi') : await (async () => { const c = await post(`${UID}/media`, sade); await hazirBekle(c.id); return c; })();
+      console.log(`✓ Story ${i + 1}/${sayfalar.length} yayınlandı:`, (await post(`${UID}/media_publish`, { creation_id: st.id })).id);
+      fs.writeFileSync(DIR + '/.pub-story-n', `${m.key} ${i + 1}`);
+    }
     fs.writeFileSync(DIR + '/.pub-story', m.key);
   }
   if (m.feed && m.feed.length) {

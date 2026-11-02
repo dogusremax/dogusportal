@@ -68,11 +68,77 @@ function sec() {
   console.log('Seçildi:', r.ilkGorulme >= YENI_SINIR ? 'YENİ' : 'eski', '|', ad, '|', kisaAd(r.yazar), '|', r.metin.slice(0, 80));
 }
 
+// Yeni tasarım (sizlerden-yeni.html): kapak + yorum sayfa(lar)ı + teşekkür. Story her sayfayı ayrı story olarak,
+// gönderi aynı sayfaları 1080x1440 karusel olarak paylaşır. Sadece sizlerden-story/.yeni-tasarim dosyası varken.
+// Kapak rengi: Instagram ızgarasındaki son gönderinin TERSİ (3 sütunda dama). Okunamazsa son Sizlerden renginin tersi.
+// Fotoğraf: danışmanın o renkteki kapakları arasında sırayla (.gecmis.json → kapakSira).
+async function sonIzgaraRengi(browser) {
+  const T = process.env.IG_TOKEN, U = process.env.IG_USER_ID;
+  if (!T || !U) return null;
+  try {
+    const j = await (await fetch(`https://graph.facebook.com/v23.0/${U}/media?fields=media_url,thumbnail_url,media_type&limit=1&access_token=${T}`)).json();
+    const m = j.data && j.data[0]; const url = m && (m.thumbnail_url || m.media_url);
+    if (!url) return null;
+    const p = await browser.newPage();
+    const b64 = Buffer.from(await (await fetch(url)).arrayBuffer()).toString('base64');
+    const ort = await p.evaluate(async src => {
+      const i = new Image(); i.src = src; await i.decode();
+      const c = document.createElement('canvas'); c.width = 60; c.height = 60; const x = c.getContext('2d');
+      x.drawImage(i, 0, 0, 60, 60); const d = x.getImageData(0, 0, 60, 60).data; let r = 0, b = 0;
+      for (let k = 0; k < d.length; k += 4) { r += d[k]; b += d[k + 2]; }
+      return { r, b };
+    }, 'data:image/jpeg;base64,' + b64);
+    await p.close();
+    return ort.r > ort.b ? 'R' : 'B';
+  } catch (e) { console.log('! Izgara rengi okunamadı:', e.message); return null; }
+}
+
+async function uretYeni(secim, browser) {
+  const gecmis = oku(GECMIS, { paylasilan: [] });
+  const veri = oku('data/sizlerden-kapaklar.json', {})[secim.danisman];
+  if (!veri) throw new Error('Kapak verisi yok: ' + secim.danisman);
+  const son = await sonIzgaraRengi(browser);
+  let renk = son ? (son === 'R' ? 'B' : 'R') : (gecmis.sonRenk === 'R' ? 'B' : 'R');
+  let aday = veri.kapaklar.map((k, i) => ({ k, i })).filter(x => x.k.renk === renk);
+  if (!aday.length) { aday = veri.kapaklar.map((k, i) => ({ k, i })); renk = aday[0].k.renk; }
+  gecmis.kapakSira = gecmis.kapakSira || {};
+  const anahtar = secim.danisman + '-' + renk, sira = gecmis.kapakSira[anahtar] || 0;
+  const kapak = aday[sira % aday.length].i;
+  console.log('Izgara son:', son || '?', '→ kapak rengi', renk, '| kapak', kapak);
+  const q = `danisman=${secim.danisman}&kapak=${kapak}&yazar=${encodeURIComponent(secim.yazar)}&puan=${secim.puan}&metin=${encodeURIComponent(secim.metin)}&v=${Date.now()}`;
+  const cek = async fmt => {
+    const p = await browser.newPage({ viewport: { width: 1200, height: 2000 } });
+    await p.goto(`${SITE}/sizlerden-yeni.html?fmt=${fmt}&${q}`, { waitUntil: 'networkidle' });
+    await p.waitForSelector('body[data-ready]', { timeout: 60000 });
+    await p.waitForTimeout(800);
+    const sl = p.locator('.slide'), l = [];
+    for (let i = 0; i < await sl.count(); i++) l.push(await sl.nth(i).screenshot());
+    await p.close();
+    return l;
+  };
+  const story = await cek('story'), kareler = await cek('feed');
+  gecmis.kapakSira[anahtar] = sira + 1; gecmis.sonRenk = renk;
+  fs.writeFileSync(GECMIS, JSON.stringify(gecmis, null, 1));
+  return { story, kareler };
+}
+
 async function uret() {
   const secim = oku(SECIM, null);
   if (!secim) return console.log('Seçim yok, story üretilmedi.');
   const { chromium } = require('playwright');
   const browser = await chromium.launch();
+  if (fs.existsSync(DIR + '/.yeni-tasarim')) {
+    const { story, kareler } = await uretYeni(secim, browser);
+    await browser.close();
+    const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && /^[\d-]+\.png$/.test(f) && !/-[ks]\d\.png$/.test(f)).length + (secim.tekrar ? 0 : 1);
+    const dosya = `${DIR}/${bugun}-${Math.max(no, 1)}.png`;
+    fs.writeFileSync(dosya, story[0]);
+    const yaz = (l, h) => l.map((b, i) => { const f = dosya.replace('.png', `-${h}${i + 1}.png`); fs.writeFileSync(f, b); return 'https://dogusportal.com/' + f; });
+    const stories = yaz(story, 's'), feed = yaz(kareler, 'k');
+    fs.writeFileSync(DIR + '/.media', JSON.stringify({ date: bugun, key: secim.yorumId, isVideo: false, url: 'https://dogusportal.com/' + dosya, stories, feed, secim }, null, 1));
+    fs.writeFileSync(DIR + '/.son', `${bugun} ${secim.ad} · ${secim.yazar}`);
+    return console.log('✓ yeni tasarım', dosya, '|', stories.length, 'story,', feed.length, 'kare |', secim.ad);
+  }
   // Story: danışmanın kendi şablonu (sizlerden-gelenler.html) — sadece zemini gönderiyle aynı
   const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
   await page.addInitScript(() => sessionStorage.setItem('perfAuth', 'ok'));
@@ -107,7 +173,7 @@ async function uret() {
   const kareler = await cek('feed');
   await browser.close();
 
-  const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && /^[\d-]+\.png$/.test(f) && !/-k\d\.png$/.test(f)).length + (secim.tekrar ? 0 : 1);
+  const no = fs.readdirSync(DIR).filter(f => f.startsWith(bugun) && /^[\d-]+\.png$/.test(f) && !/-[ks]\d\.png$/.test(f)).length + (secim.tekrar ? 0 : 1);
   const dosya = `${DIR}/${bugun}-${Math.max(no, 1)}.png`;
   fs.writeFileSync(dosya, Buffer.from(png, 'base64'));
   const feed = kareler.map((b, i) => { const f = dosya.replace('.png', `-k${i + 1}.png`); fs.writeFileSync(f, b); return 'https://dogusportal.com/' + f; });

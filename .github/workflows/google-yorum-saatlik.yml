@@ -47,8 +47,17 @@ jobs:
         env:
           SADECE_YENI: "1"
         run: node scripts/sizlerden-story.js sec
+      - name: Güncel IG token'ı al
+        if: hashFiles('sizlerden-story/.canli') != '' && (hashFiles('sizlerden-story/.media') != '' || hashFiles('sizlerden-story/.secim.json') != '')
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "IG_TOKEN=$T" >> $GITHUB_ENV
       - name: Story ve karusel görsellerini üret
         if: hashFiles('sizlerden-story/.secim.json') != ''
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}   # yeni tasarım: ızgaradaki son gönderinin rengini okur (dama)
         run: |
           npm i playwright@1.47.0 && npx playwright install --with-deps chromium
           python3 -m http.server 8000 >/dev/null 2>&1 &
@@ -57,13 +66,6 @@ jobs:
           rm -f sizlerden-story/.secim.json
           git add sizlerden-story
           git diff --cached --quiet || (git commit -m "Sizlerden Gelenler: $(cat sizlerden-story/.son)" && git pull --rebase && git push)
-      - name: Güncel IG token'ı al
-        if: hashFiles('sizlerden-story/.canli') != '' && hashFiles('sizlerden-story/.media') != ''
-        run: |
-          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
-          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
-          echo "::add-mask::$T"
-          echo "IG_TOKEN=$T" >> $GITHUB_ENV
       - name: Instagram'a paylaş
         if: hashFiles('sizlerden-story/.canli') != '' && hashFiles('sizlerden-story/.media') != ''
         env:
@@ -72,7 +74,7 @@ jobs:
         run: |
           set -o pipefail
           ST=0; node scripts/sizlerden-ig.js 2>&1 | tee sizlerden-story/ig-log.txt || ST=$?
-          for f in ig-log.txt .pub .pub-story; do [ -f sizlerden-story/$f ] && git add sizlerden-story/$f; done
+          for f in ig-log.txt .pub .pub-story .pub-story-n; do [ -f sizlerden-story/$f ] && git add sizlerden-story/$f; done
           git diff --cached --quiet || (git commit -m "Sizlerden Gelenler: ig log" && git pull --rebase && git push)
           exit $ST
       - name: Paylaşım hatasını bildir
