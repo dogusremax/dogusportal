@@ -104,9 +104,9 @@ function tarihYaz(t) {
   return d.getDate() + " " + AYLAR[d.getMonth()] + " · " + GUNLER[d.getDay()];
 }
 
-function ciz(n) {
+function ciz(n, gorselsiz) {
   const anahtar = (n.tarih || "") + "|" + (n.ad || "");
-  if (anahtar === gosterilen) return;
+  if (anahtar === gosterilen && !gorselsiz) return;
   gosterilen = anahtar;
 
   const medya = document.getElementById("medya"), yazi = document.getElementById("yazi");
@@ -115,10 +115,14 @@ function ciz(n) {
 
   // Nöbetçinin hazır görseli varsa onu tam ekran göster
   const tam = document.getElementById("tamEkran"), tr = document.getElementById("tamResim");
-  if (!ofis && id && GORSEL[id]) {
+  if (!ofis && id && GORSEL[id] && !gorselsiz) {
     tam.classList.remove("gor");
-    tr.onload = () => { void tam.offsetWidth; tam.classList.add("gor"); };
-    tr.onerror = () => tam.classList.remove("gor");
+    // Görsel 20 sn'de gelmezse ya da hata verirse yazılı nöbet ekranına geç (boş ekran kalmasın)
+    let bitti = false;
+    const yedek = () => { if (bitti) return; bitti = true; tam.classList.remove("gor"); ciz(n, true); };
+    const sure = setTimeout(yedek, 20000);
+    tr.onload = () => { if (bitti) return; bitti = true; clearTimeout(sure); void tam.offsetWidth; tam.classList.add("gor"); };
+    tr.onerror = () => { clearTimeout(sure); yedek(); };
     tr.src = "assets/tv-nobet/" + id + ".jpg?v=1";
     medya.innerHTML = ""; return;
   }
@@ -152,8 +156,13 @@ async function guncelle() {
   const n = await nobetci();
   const u = document.getElementById("uyari");
   if (n) { u.style.display = "none"; ciz(n); }
-  else if (!gosterilen) { u.textContent = "Nöbet takvimine ulaşılamadı, tekrar deneniyor…"; u.style.display = "block"; }
+  else if (!gosterilen) {
+    u.textContent = "Nöbet takvimine ulaşılamadı, tekrar deneniyor…"; u.style.display = "block";
+    clearTimeout(guncelle.t); guncelle.t = setTimeout(guncelle, 60000);   // bağlantı yoksa 1 dk'da bir yeniden dene
+  }
 }
+// İnternet geri gelince hemen tekrar dene
+window.addEventListener("online", () => guncelle());
 
 function saat() {
   document.getElementById("saat").textContent =
