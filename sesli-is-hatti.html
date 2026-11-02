@@ -49,6 +49,7 @@
   </div>
   <button class="tus" id="tus"><span id="tusYazi">Konuş</span><small id="tusAlt">ilanı arıyormuş gibi</small></button>
   <p id="durum" class="durum">İlanınızı gören bir müşteri gibi arayın, randevu isteyin. Deneme: takviminize ve listenize hiçbir şey yazılmaz, kimseye mesaj gitmez.</p>
+  <div id="ilanKart"></div>
   <div class="dokum" id="dokum"></div>
   <div id="sonuc"></div>
   <p class="not">Mikrofon izni istenirse "İzin ver" deyin. Kulaklıksız denemede telefonun hoparlörü kısık olsun.</p>
@@ -166,6 +167,13 @@ const GUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', '
 const AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const gunAdi = t => { const d = new Date(t + 'T12:00:00+03:00'); return d.getDate() + ' ' + AY[d.getMonth()] + ' ' + GUN[d.getDay()]; };
 let saatler = null, alinan = null;
+/* Gerçekte bu kart arayana WhatsApp'tan gider; denemede burada gösterilir. */
+function ilanKarti(o) {
+  const satir = [['İlan no', o.no], ['Tip', o.tip], ['Site / proje', [o.site, o.etap, o.blok].filter(Boolean).join(' · ')], ['Oda', o.oda], ['m²', o.m2]]
+    .filter(r => r[1]).map(r => '<tr><td>' + r[0] + '</td><td>' + esc(r[1]) + '</td></tr>').join('');
+  $('ilanKart').innerHTML = '<div class="kart"><small style="color:#ffcf5c;font-weight:700">ARAYANA WHATSAPP\'TAN GİDECEK İLAN KARTI</small><h2>' + esc(o.baslik || 'İlan') + '</h2><table>' + satir + '</table>' +
+    (o.url ? '<a href="' + esc(o.url) + '" target="_blank" rel="noopener" style="color:#FB5160;font-size:14px">İlanı aç</a>' : '') + '</div>';
+}
 async function arac(ad, a) {
   try {
     if (ad === 'bos_saatler') {
@@ -180,6 +188,11 @@ async function arac(ad, a) {
       if (!h || h.dolu) return { sonuc: 'dolu', aciklama: 'Bu saat boş değil, bos_saatler sonucundan başka saat öner.' };
       alinan = { tarih: a.tarih, saat: a.saat, ad: a.ad || '', ilan: a.ilan || '' };
       return { sonuc: 'oluşturuldu', gun: gunAdi(a.tarih), saat: a.saat };
+    }
+    if (ad === 'ilan_bul') {
+      const j = await servis({ action: 'sesliAsistan', islem: 'is_ilan', pin: $('pin').value.trim(), no: a.no || '', ara: a.ara || '' });
+      if (j.ok && j.bulunan && j.bulunan.length) ilanKarti(j.bulunan[0]);
+      return j;
     }
     if (ad === 'gorusmeyi_bitir') return { sonuc: 'kapatılıyor' };
   } catch (e) { return { hata: e.message }; }
@@ -225,7 +238,7 @@ async function basla() {
   // iPhone: hoparlör bağlamı dokunuşun içinde açılır ve sessiz bir parça çalınarak kilidi açılır.
   cikisCtx = new AudioContext({ sampleRate: 24000 }); cikisCtx.resume();
   try { const b = cikisCtx.createBufferSource(); b.buffer = cikisCtx.createBuffer(1, 1, 24000); b.connect(cikisCtx.destination); b.start(0); } catch (e) {}
-  $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = ''; saatler = null; alinan = null; satirlar = []; sonBalon = null; sonRol = ''; kapatIstendi = false; parca = ''; acilisAtla = false;
+  $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = ''; saatler = null; alinan = null; $('ilanKart').innerHTML = ''; satirlar = []; sonBalon = null; sonRol = ''; kapatIstendi = false; parca = ''; acilisAtla = false;
   durum('Asistan hazırlanıyor…');
   try {
     mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
