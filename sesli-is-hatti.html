@@ -225,9 +225,12 @@ function baglan(url, token, setup, ilk) {
       }
       if (m.toolCall) {
         const fc = m.toolCall.functionCalls || [];
+        const kapanis = fc.some(f => f.name === 'gorusmeyi_bitir');
+        if (kapanis) kapatIstendi = true;
         const cevaplar = await Promise.all(fc.map(async f => ({ id: f.id, name: f.name, response: await arac(f.name, f.args || {}) })));
-        if (s.readyState === 1) s.send(JSON.stringify({ toolResponse: { functionResponses: cevaplar } }));
-        if (fc.some(f => f.name === 'gorusmeyi_bitir')) { kapatIstendi = true; if (STUDYO && parca) { seslendir(parca); parca = ''; } if (!kaynaklar.length && !bekleyen) setTimeout(bitti, 800); }
+        // Kapanışta araç cevabı gönderilmez: model vedadan sonra başka bir şey söylemesin.
+        if (!kapanis && s.readyState === 1) s.send(JSON.stringify({ toolResponse: { functionResponses: cevaplar } }));
+        if (kapanis) { kapatIstendi = true; if (STUDYO && parca) { seslendir(parca); parca = ''; } if (!kaynaklar.length && !bekleyen) setTimeout(bitti, 800); }
       }
       if (m.goAway) durum('Oturum süresi doluyor.');
     };
