@@ -536,6 +536,16 @@ if(q.get('durum')){
         if(g.ok){
           $('sonucBaslik').textContent='Gönderildi ✓'; $('yedek').hidden=true;
           $('ofisDurum').textContent=m+' adlı müşteriye RE/MAX Doğuş hattından ödeme bilgisi gitti.';
+          // Umut 2 Kas: WhatsApp bazen birkaç saniye sonra "ulaşmadı" döner (numara yanlış/WhatsApp yok); formda göster
+          var kod=j.kod;
+          [8000,20000].forEach(function(ms){ setTimeout(function(){
+            if(!kayit||kayit.kod!==kod||!$('yedek').hidden) return;
+            api({islem:'gonderDurum',kod:kod}).then(function(d){
+              if(!d||d.durum!=='ulasmadi'||!kayit||kayit.kod!==kod) return;
+              $('sonucBaslik').textContent='Müşteriye ulaşmadı'; $('yedek').hidden=false;
+              $('ofisDurum').textContent='WhatsApp mesajı '+m+' adlı müşteriye ulaşmadı. Numarayı kontrol et ya da linki kendi WhatsApp\'ından gönder.';
+            }).catch(function(){});
+          },ms); });
         } else {
           $('sonucBaslik').textContent='Ofis hattından gönderilemedi'; $('yedek').hidden=false;
           $('ofisDurum').textContent=(g.error||'Gönderilemedi.')+' Kayıt hazır; şimdilik linki kendi WhatsApp\'ından gönderebilirsin.';
