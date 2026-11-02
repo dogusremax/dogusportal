@@ -40,17 +40,19 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const STAR='<svg viewBox="0 0 24 24"><path fill="#FFD60F" d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5 1.4-7.1-5.3-5 7.2-.9z"/></svg>';
 const ok=c=>`<svg viewBox="0 0 46 20"><path d="M0 10h36" stroke="${c}" stroke-width="4"/><path d="M33 2l13 8-13 8z" fill="${c}"/></svg>`;
 // Gönderi (1080x1440): story düzeni 300px yukarı kaydırılır, logo/başlık/alt yazı pencereye sığacak şekilde yer değiştirir
-const DY=FMT==='feed'?-300:0, DN=FMT==='feed'?-325:0;   // DN: kutu+isim bloğu
+// Gönderide kişi biraz daha küçük (FS) ve saç çizgisi biraz aşağıda (262+FS_Y)
+const FS=0.8, FS_Y=70;
+const DY=FMT==='feed'?-300:0, DN=FMT==='feed'?-360:0;   // DN: kutu+isim bloğu
 const y=(v,feedV)=>FMT==='feed'?(feedV!==undefined?feedV:v+DY):v;
-const alt=(kc,kaydir=true)=>`<div class="ab alt sh" style="top:${y(1792.53,1386)}px">RE/MAX Doğuş  0216 315 15 15</div>`+
-  (kaydir?`<div class="ab kaydir sh" style="top:${y(1788.9,1382)}px;color:${kc}">Kaydır ${ok(kc)}</div>`:'');
-const logo=()=>`<img class="ab logo" src="assets/dogus-logo.png" style="top:${y(106.2,40)}px;${FMT==='feed'?'width:265px':''}">`;
+const alt=(kc,kaydir=true)=>`<div class="ab alt sh" style="top:${y(1792.53,1345)}px">RE/MAX Doğuş  0216 315 15 15</div>`+
+  (kaydir?`<div class="ab kaydir sh" style="top:${y(1788.9,1341)}px;color:${kc}">Kaydır ${ok(kc)}</div>`:'');
+const logo=()=>`<img class="ab logo" src="assets/dogus-logo.png" style="top:${y(106.2,80)}px;${FMT==='feed'?'width:265px':''}">`;
 
 function kapak(d,k){
   const [el,ib]=[k.el,k.ib];
   return `<div class="slide ${FMT}" data-ad="kapak">
 <img class="ab zemin" src="${ZEMIN[k.renk]}" style="top:${DY}px">
-<div class="ab foto" style="left:${el[0]}px;top:${el[1]+DY}px;width:${el[2]}px;height:${el[3]}px"><img src="${A+k.foto}" style="top:${ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${k.solma?';-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)':''}"></div>
+<div class="ab foto" style="left:${el[0]}px;top:${el[1]+DY}px;width:${el[2]}px;height:${FMT==='feed'?Math.max(el[3],ib[0]+ib[3]):el[3]}px;${FMT==='feed'?`transform-origin:${770-el[0]}px 22px;transform:translateY(${FS_Y}px) scale(${FS})`:''}"><img src="${A+k.foto}" style="top:${ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${k.solma?';-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)':''}"></div>
 ${logo()}
 <img class="ab baslik" src="${A}yeni/baslik.png" style="top:${y(405,215)}px">
 <div class="ab kutu" style="top:${1351.69+DN}px;background-image:url(${KUTU[k.renk]})"></div>
@@ -65,7 +67,7 @@ ${alt(k.kaydir||'#fff')}</div>`;
 function yorumSayfa(d,renk,m,parca,i,n){
   const bas=(m.yazar||'?').trim().charAt(0).toLocaleUpperCase('tr');
   const daire=renk==='B'?'linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160)':'linear-gradient(160deg,#0b1a4a,#1f3a8a 55%,#3456b5)';
-  const ust=FMT==='feed'?235:340, altY=FMT==='feed'?1320:1730;
+  const ust=FMT==='feed'?250:340, altY=FMT==='feed'?1290:1730;
   return `<div class="slide ${FMT}" data-ad="yorum">
 <img class="ab zemin" src="${ZEMIN[renk]}" style="top:${DY/2}px">
 ${logo()}
