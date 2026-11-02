@@ -174,6 +174,7 @@ function ilanKarti(o) {
   $('ilanKart').innerHTML = '<div class="kart"><small style="color:#ffcf5c;font-weight:700">ARAYANA WHATSAPP\'TAN GİDECEK İLAN KARTI</small><h2>' + esc(o.baslik || 'İlan') + '</h2><table>' + satir + '</table>' +
     (o.url ? '<a href="' + esc(o.url) + '" target="_blank" rel="noopener" style="color:#FB5160;font-size:14px">İlanı aç</a>' : '') + '</div>';
 }
+let kartBilgi = null;
 async function arac(ad, a) {
   try {
     if (ad === 'bos_saatler') {
@@ -194,6 +195,7 @@ async function arac(ad, a) {
       if (j.ok && j.bulunan && j.bulunan.length) ilanKarti(j.bulunan[0]);
       return j;
     }
+    if (ad === 'kart_gonder') { kartBilgi = a; const k = $('ilanKart'); if (k) { const p = document.createElement('p'); p.style.cssText = 'margin:8px 0 0;font-size:13px'; p.textContent = "WhatsApp'tan gidecek: ilan kartı + randevu takvimi bağlantısı (" + (a.konu || '') + (a.ilan ? ', ' + a.ilan : '') + ')'; k.style.display = ''; k.appendChild(p); } return { sonuc: "görüşme bitince WhatsApp'tan gidecek" }; }
     if (ad === 'gorusmeyi_bitir') return { sonuc: 'kapatılıyor' };
   } catch (e) { return { hata: e.message }; }
   return { hata: 'bilinmeyen araç' };
