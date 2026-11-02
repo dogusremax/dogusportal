@@ -40,19 +40,24 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const STAR='<svg viewBox="0 0 24 24"><path fill="#FFD60F" d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5 1.4-7.1-5.3-5 7.2-.9z"/></svg>';
 const ok=c=>`<svg viewBox="0 0 46 20"><path d="M0 10h36" stroke="${c}" stroke-width="4"/><path d="M33 2l13 8-13 8z" fill="${c}"/></svg>`;
 // Gönderi (1080x1440): story düzeni 300px yukarı kaydırılır, logo/başlık/alt yazı pencereye sığacak şekilde yer değiştirir
-// Gönderide kişi biraz daha küçük (FS) ve saç çizgisi biraz aşağıda (262+FS_Y)
-const FS=0.8, FS_Y=70;
+// Kişi fotoğrafı %80 (Umut 2 Kas): saç çizgisi ve yüz ortası (x 770) yerinde kalır; foto sayfa altına yetişmezse alt kenar yumuşak silinir
+const FS=0.8;
 const DY=FMT==='feed'?-300:0, DN=FMT==='feed'?-360:0;   // DN: kutu+isim bloğu
 const y=(v,feedV)=>FMT==='feed'?(feedV!==undefined?feedV:v+DY):v;
 const alt=(kc,kaydir=true)=>`<div class="ab alt sh" style="top:${y(1792.53,1345)}px">RE/MAX Doğuş  0216 315 15 15</div>`+
   (kaydir?`<div class="ab kaydir sh" style="top:${y(1788.9,1341)}px;color:${kc}">Kaydır ${ok(kc)}</div>`:'');
 const logo=()=>`<img class="ab logo" src="assets/dogus-logo.png" style="top:${y(106.2,80)}px;${FMT==='feed'?'width:265px':''}">`;
 
+function foto(k){
+  const [el,ib]=[k.el,k.ib], ust=el[1]+DY, alt=ust+22+(ib[0]+ib[3]-22)*FS;
+  const sol=k.solma||alt<H+2?';-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)':'';
+  return `<div class="ab foto" style="left:${el[0]}px;top:${ust}px;width:${el[2]}px;height:${Math.max(el[3],ib[0]+ib[3])}px;transform-origin:${770-el[0]}px 22px;transform:scale(${FS})"><img src="${A+k.foto}" style="top:${ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${sol}"></div>`;
+}
 function kapak(d,k){
   const [el,ib]=[k.el,k.ib];
   return `<div class="slide ${FMT}" data-ad="kapak">
 <img class="ab zemin" src="${ZEMIN[k.renk]}" style="top:${DY}px">
-<div class="ab foto" style="left:${el[0]}px;top:${el[1]+DY}px;width:${el[2]}px;height:${FMT==='feed'?Math.max(el[3],ib[0]+ib[3]):el[3]}px;${FMT==='feed'?`transform-origin:${770-el[0]}px 22px;transform:translateY(${FS_Y}px) scale(${FS})`:''}"><img src="${A+k.foto}" style="top:${ib[0]}px;left:${ib[1]}px;width:${ib[2]}px;height:${ib[3]}px${k.solma?';-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)':''}"></div>
+${foto(k)}
 ${logo()}
 <img class="ab baslik" src="${A}yeni/baslik.png" style="top:${y(405,215)}px">
 <div class="ab kutu" style="top:${1351.69+DN}px;background-image:url(${KUTU[k.renk]})"></div>
