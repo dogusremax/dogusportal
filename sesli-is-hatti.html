@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<title>İş Hattı Sesli Asistan · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b0f2a;color:#fff;min-height:100vh}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .top img{height:30px}
+  .top h1{font-size:16px;font-weight:700}
+  .rozet{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:#3a2a00;color:#ffcf5c}
+  main{max-width:520px;margin:28px auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:14px}
+  label{font-size:13px;color:rgba(255,255,255,.7)}
+  input{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111738;color:#fff;outline:none;width:100%}
+  input:focus{border-color:#FB5160}
+  .tus{width:170px;height:170px;border-radius:50%;border:0;margin:14px auto 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+       background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff;font:800 20px 'Plus Jakarta Sans',sans-serif;cursor:pointer;
+       box-shadow:0 10px 40px rgba(220,28,46,.35);transition:transform .15s}
+  .tus small{font-size:12px;font-weight:600;opacity:.85}
+  .tus:disabled{opacity:.5}
+  .tus.acik{background:#111738;border:3px solid #FB5160}
+  .tus.konusuyor{animation:nabiz 1.1s ease-in-out infinite}
+  @keyframes nabiz{50%{transform:scale(1.06)}}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8);text-align:center}
+  .durum.hata{color:#ff8a95}
+  .dokum{display:flex;flex-direction:column;gap:8px}
+  .b{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+  .b.ofis{background:#111738;align-self:flex-start}
+  .b.arayan{background:#DC1C2E;align-self:flex-end}
+  .kart{background:#111738;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .kart h2{font-size:18px;font-weight:800}
+  td{padding:4px 0;font-size:14px;vertical-align:top}
+  td:first-child{color:rgba(255,255,255,.55);width:110px;font-size:13px}
+  .not{font-size:12px;color:rgba(255,255,255,.5);text-align:center}
+</style>
+<style id="ios-zoom">/* iPhone, 16px altı yazılı kutuya dokununca sayfayı büyütür; telefonda engelle */@media (max-width:900px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}}</style>
+</head>
+<body>
+<div class="top"><img src="assets/dogus-logo.png" alt=""><h1>İş hattı sesli asistanı</h1><span class="rozet">TEST</span></div>
+<main>
+  <div id="pinKutu">
+    <label for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  </div>
+  <button class="tus" id="tus"><span id="tusYazi">Konuş</span><small id="tusAlt">ilanı arıyormuş gibi</small></button>
+  <p id="durum" class="durum">İlanınızı gören bir müşteri gibi arayın, randevu isteyin. Deneme: takviminize ve listenize hiçbir şey yazılmaz, kimseye mesaj gitmez.</p>
+  <div class="dokum" id="dokum"></div>
+  <div id="sonuc"></div>
+  <p class="not">Mikrofon izni istenirse "İzin ver" deyin. Kulaklıksız denemede telefonun hoparlörü kısık olsun.</p>
+</main>
+<script type="module">
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const WS = ['v1beta', 'v1alpha'].map(v => 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.' + v + '.GenerativeService.BidiGenerateContentConstrained?access_token=');
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function durum(t, c) { $('durum').textContent = t; $('durum').className = 'durum ' + (c || ''); }
+async function servis(govde) {
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) });
+  return r.json();
+}
+try { const p = sessionStorage.getItem('sesliPin'); if (p) $('pin').value = p; } catch (e) {}
+function tus(yazi, alt, sinif) { $('tusYazi').textContent = yazi; $('tusAlt').textContent = alt; $('tus').className = 'tus ' + (sinif || ''); }
+
+/* Döküm: Gemini sözleri parça parça gönderir; aynı kişinin parçaları tek balonda birleşir. */
+let satirlar = [], sonBalon = null, sonRol = '';
+function yaz(rol, parca) {
+  if (!parca) return;
+  if (rol !== sonRol || !sonBalon) {
+    sonBalon = document.createElement('div'); sonBalon.className = 'b ' + rol; $('dokum').appendChild(sonBalon);
+    satirlar.push({ rol, metin: '' }); sonRol = rol;
+  }
+  satirlar[satirlar.length - 1].metin += parca;
+  sonBalon.textContent = satirlar[satirlar.length - 1].metin;
+  sonBalon.scrollIntoView({ block: 'end', behavior: 'smooth' });
+}
+
+/* Mikrofon: 16 kHz, 16 bit PCM parçalar. Hoparlör: 24 kHz PCM sırayla çalınır; araya girilirse kuyruk boşaltılır. */
+const ISLEMCI = `class P extends AudioWorkletProcessor{constructor(){super();this.b=[]}process(i){const c=i[0][0];if(c){for(let k=0;k<c.length;k++)this.b.push(c[k]);if(this.b.length>=1600){const o=new Int16Array(this.b.length);for(let k=0;k<this.b.length;k++){const s=Math.max(-1,Math.min(1,this.b[k]));o[k]=s<0?s*32768:s*32767}this.port.postMessage(o.buffer,[o.buffer]);this.b=[]}}return true}}registerProcessor('p',P);`;
+let ws = null, mic = null, girisCtx = null, cikisCtx = null, siradaki = 0, kaynaklar = [], bitiyor = false, kapatIstendi = false, basZaman = 0, model = '';
+const b64 = buf => { let s = ''; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+function cal(veri, hz) {
+  const ham = atob(veri), n = ham.length >> 1, f = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let v = ham.charCodeAt(2 * i) | (ham.charCodeAt(2 * i + 1) << 8); if (v >= 32768) v -= 65536; f[i] = v / 32768; }
+  const buf = cikisCtx.createBuffer(1, n, hz || 24000); buf.copyToChannel(f, 0);
+  calBuf(buf);
+}
+function calBuf(buf) {
+  const k = cikisCtx.createBufferSource(); k.buffer = buf; k.connect(cikisCtx.destination);
+  siradaki = Math.max(siradaki, cikisCtx.currentTime + 0.05); k.start(siradaki); siradaki += buf.duration;
+  kaynaklar.push(k); k.onended = () => { sonSes = Date.now(); kaynaklar = kaynaklar.filter(x => x !== k); if (!kaynaklar.length && !bekleyen && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); if (kapatIstendi) bitti(); } };
+  tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…');
+}
+function sustur() { kusak++; bekleyen = 0; sira = Promise.resolve(); kaynaklar.forEach(k => { try { k.stop(); } catch (e) {} }); kaynaklar = []; siradaki = 0; }
+
+/* Stüdyo modu (Umut, 27 Eki: "sesi seviyorum seçiyorum, robot veriyorsun"): Live'ın kendi sesi çalınmaz. Söylediğinin yazısı
+   cümle cümle sunucuya gider, Umut'un seçtiği örnekteki modelle (stüdyo seslendirme, Sadaltager) okunur ve sırayla çalınır.
+   İstekler hemen paralel başlar, çalma sırası korunur. Adreste ?mod=canli olursa eski (Live sesi) yol kullanılır. */
+const STUDYO = new URLSearchParams(location.search).get('mod') !== 'canli';
+let sonSes = 0, kusak = 0, bekleyen = 0, sira = Promise.resolve(), parca = '', acilisAtla = false;
+function seslendir(metin) {
+  metin = metin.replace(/\s+/g, ' ').trim();
+  if (!metin || !/[\p{L}\d]/u.test(metin)) return;
+  const k = kusak; bekleyen++;
+  tus('Bitir', 'asistan konuşuyor', 'acik konusuyor'); durum('Asistan konuşuyor…');
+  const istek = servis({ action: 'sesliAsistan', islem: 'gemini_seslendir', pin: $('pin').value.trim(), metin });
+  sira = sira.then(async () => {
+    let j = null; try { j = await istek; } catch (e) { j = { ok: false, error: 'bağlantı: ' + e.message }; }
+    try {
+      if (k !== kusak || !cikisCtx) return;
+      if (!j || !j.ok) { durum('Seslendirme hatası: ' + ((j && j.error) || 'bağlantı'), 'hata'); return; }
+      await sesCal(b64Bayt(j.veri), j.mime);
+    } catch (e) { durum('Ses çalınamadı: ' + e.message, 'hata'); }
+    finally { if (k === kusak) { bekleyen = Math.max(0, bekleyen - 1); if (!kaynaklar.length && !bekleyen && !bitiyor) { tus('Bitir', 'sizi dinliyor', 'acik'); durum('Sizi dinliyor, konuşun.'); } } }
+  });
+}
+const b64Bayt = v => { const ham = atob(v), u = new Uint8Array(ham.length); for (let i = 0; i < ham.length; i++) u[i] = ham.charCodeAt(i); return u; };
+/* WAV (PCM 16 bit) elle çözülür; Live sesinin çalındığı yolla aynı (iPhone Safari'de decodeAudioData'ya güvenmiyoruz). */
+async function sesCal(u, mime) {
+  const dv = new DataView(u.buffer);
+  const metin = (o, n) => String.fromCharCode.apply(null, u.subarray(o, o + n));
+  if (metin(0, 4) === 'RIFF') {
+    let o = 12, hz = 24000, kanal = 1;
+    while (o + 8 <= u.length) {
+      const ad = metin(o, 4), boy = dv.getUint32(o + 4, true);
+      if (ad === 'fmt ') { kanal = dv.getUint16(o + 10, true); hz = dv.getUint32(o + 12, true); }
+      if (ad === 'data') {
+        const n = Math.floor(Math.min(boy, u.length - o - 8) / 2 / kanal), f = new Float32Array(n);
+        for (let i = 0; i < n; i++) f[i] = dv.getInt16(o + 8 + i * 2 * kanal, true) / 32768;
+        const buf = cikisCtx.createBuffer(1, n, hz); buf.copyToChannel(f, 0); calBuf(buf); return;
+      }
+      o += 8 + boy + (boy & 1);
+    }
+    throw new Error('WAV içinde ses yok');
+  }
+  if (/L16|pcm/i.test(mime || '')) {
+    const hz = /rate=(\d+)/.exec(mime), n = u.length >> 1, f = new Float32Array(n);
+    for (let i = 0; i < n; i++) f[i] = dv.getInt16(i * 2, true) / 32768;
+    const buf = cikisCtx.createBuffer(1, n, hz ? +hz[1] : 24000); buf.copyToChannel(f, 0); calBuf(buf); return;
+  }
+  calBuf(await new Promise((ok, red) => cikisCtx.decodeAudioData(u.buffer, ok, red)));
+}
+/* Açılış cümlesi hep aynı: stüdyo sesiyle önceden kaydedildi (assets/ses-ornek/acilis-sadaltager.wav), beklemeden çalınır. */
+async function acilisCal(ilk) {
+  const k = kusak; bekleyen++;
+  let tamam = false;
+  try {
+    const r = await fetch('assets/ses-ornek/acilis-sadaltager.wav?cb=' + Date.now());
+    if (!r.ok) throw new Error('açılış sesi ' + r.status);
+    const u = new Uint8Array(await r.arrayBuffer());
+    if (k !== kusak) return;
+    bekleyen--; tamam = true; await sesCal(u, 'audio/wav');
+  } catch (e) { if (k === kusak) { if (!tamam) bekleyen--; seslendir(ilk); } }
+}
+function parcaEkle(t) {
+  parca += t;
+  let m; while ((m = /^([\s\S]*?[.?!…])(\s+)/.exec(parca))) { seslendir(m[1]); parca = parca.slice(m[0].length); }
+}
+
+/* Araçlar: boş saatler randevu sayfasıyla aynı kaynaktan (Umut'un takvimi). Deneme: randevu yazılmaz, yalnız boş mu bakılır. */
+const GUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+const AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+const gunAdi = t => { const d = new Date(t + 'T12:00:00+03:00'); return d.getDate() + ' ' + AY[d.getMonth()] + ' ' + GUN[d.getDay()]; };
+let saatler = null, alinan = null;
+async function arac(ad, a) {
+  try {
+    if (ad === 'bos_saatler') {
+      const j = await servis({ action: 'randevu', islem: 'saatler', ilan: 'genel' });
+      if (!j.ok) return { hata: j.error || 'okunamadı' };
+      saatler = j.gunler;
+      return { bos_saatler: j.gunler.map(g => ({ tarih: g.tarih, gun: gunAdi(g.tarih), bos: g.saatler.filter(x => !x.dolu).map(x => x.saat) })).filter(g => g.bos.length) };
+    }
+    if (ad === 'randevu_al') {
+      if (!saatler) await arac('bos_saatler', {});
+      const g = (saatler || []).find(x => x.tarih === a.tarih), h = g && g.saatler.find(x => x.saat === a.saat);
+      if (!h || h.dolu) return { sonuc: 'dolu', aciklama: 'Bu saat boş değil, bos_saatler sonucundan başka saat öner.' };
+      alinan = { tarih: a.tarih, saat: a.saat, ad: a.ad || '', ilan: a.ilan || '' };
+      return { sonuc: 'oluşturuldu', gun: gunAdi(a.tarih), saat: a.saat };
+    }
+    if (ad === 'gorusmeyi_bitir') return { sonuc: 'kapatılıyor' };
+  } catch (e) { return { hata: e.message }; }
+  return { hata: 'bilinmeyen araç' };
+}
+
+function baglan(url, token, setup, ilk) {
+  return new Promise((coz, red) => {
+    const s = new WebSocket(url + encodeURIComponent(token)); let hazir = false;
+    s.onopen = () => s.send(JSON.stringify({ setup }));
+    s.onerror = () => { if (!hazir) red(new Error('bağlantı kurulamadı')); };
+    s.onclose = e => { if (!hazir) red(new Error('bağlantı kapandı ' + e.code + ' ' + e.reason)); else if (!bitiyor) { durum('Bağlantı kapandı: ' + (e.reason || e.code), 'hata'); bitti(); } };
+    s.onmessage = async ev => {
+      const m = JSON.parse(typeof ev.data === 'string' ? ev.data : await ev.data.text());
+      if (m.setupComplete) {
+        hazir = true; coz(s);
+        if (STUDYO) { acilisAtla = true; seslendir(ilk); }
+        s.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: '(Telefon açıldı, arayan hatta. Açılış cümlesini aynen söyle: "' + ilk + '")' }] }], turnComplete: true } }));
+        return;
+      }
+      const c = m.serverContent;
+      if (c) {
+        if (c.interrupted && !STUDYO) sustur();
+        if (c.inputTranscription && c.inputTranscription.text) yaz('arayan', c.inputTranscription.text);
+        if (c.outputTranscription && c.outputTranscription.text) { yaz('ofis', c.outputTranscription.text); if (STUDYO && !acilisAtla) parcaEkle(c.outputTranscription.text); }
+        if (!STUDYO) ((c.modelTurn || {}).parts || []).forEach(p => { if (p.inlineData && /audio/.test(p.inlineData.mimeType || 'audio')) cal(p.inlineData.data); });
+        if (c.turnComplete) { if (STUDYO && !acilisAtla) seslendir(parca); parca = ''; acilisAtla = false; }
+      }
+      if (m.toolCall) {
+        const fc = m.toolCall.functionCalls || [];
+        const cevaplar = await Promise.all(fc.map(async f => ({ id: f.id, name: f.name, response: await arac(f.name, f.args || {}) })));
+        if (s.readyState === 1) s.send(JSON.stringify({ toolResponse: { functionResponses: cevaplar } }));
+        if (fc.some(f => f.name === 'gorusmeyi_bitir')) { kapatIstendi = true; if (STUDYO && parca) { seslendir(parca); parca = ''; } if (!kaynaklar.length && !bekleyen) setTimeout(bitti, 800); }
+      }
+      if (m.goAway) durum('Oturum süresi doluyor.');
+    };
+  });
+}
+
+async function basla() {
+  const pin = $('pin').value.trim();
+  if (!pin) return durum('PIN girin.', 'hata');
+  // iPhone: hoparlör bağlamı dokunuşun içinde açılır ve sessiz bir parça çalınarak kilidi açılır.
+  cikisCtx = new AudioContext({ sampleRate: 24000 }); cikisCtx.resume();
+  try { const b = cikisCtx.createBufferSource(); b.buffer = cikisCtx.createBuffer(1, 1, 24000); b.connect(cikisCtx.destination); b.start(0); } catch (e) {}
+  $('tus').disabled = true; $('dokum').innerHTML = ''; $('sonuc').innerHTML = ''; saatler = null; alinan = null; satirlar = []; sonBalon = null; sonRol = ''; kapatIstendi = false; parca = ''; acilisAtla = false;
+  durum('Asistan hazırlanıyor…');
+  try {
+    mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    girisCtx = new AudioContext({ sampleRate: 16000 });
+    await cikisCtx.resume();
+    const j = await servis({ action: 'sesliAsistan', islem: 'is_baslat', pin });
+    if (!j.ok) throw new Error(j.error + (j.detay ? ' (' + j.detay + ')' : ''));
+    try { sessionStorage.setItem('sesliPin', pin); } catch (e) {}
+    $('pinKutu').style.display = 'none'; model = j.model;
+    let son;
+    for (const u of WS) { try { ws = await baglan(u, j.token, j.setup, j.ilk); break; } catch (e) { son = e; } }
+    if (!ws) throw son;
+    basZaman = Date.now();
+    await girisCtx.audioWorklet.addModule(URL.createObjectURL(new Blob([ISLEMCI], { type: 'application/javascript' })));
+    const dugum = new AudioWorkletNode(girisCtx, 'p');
+    // Stüdyo modunda asistan konuşurken mikrofon Live'a gitmez: hoparlörden gelen kendi sesini müşteri sanıp karışık (yabancı) yazı üretiyor ve konuşmayı kesiyordu.
+    dugum.port.onmessage = e => { if (STUDYO && (kaynaklar.length || bekleyen || Date.now() - sonSes < 600)) return; if (ws && ws.readyState === 1) ws.send(JSON.stringify({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=16000', data: b64(e.data) } } })); };
+    girisCtx.createMediaStreamSource(mic).connect(dugum);
+    tus('Bitir', 'bağlandı', 'acik');
+  } catch (e) {
+    durum(/Permission|NotAllowed/i.test(String(e)) ? 'Mikrofon izni verilmedi.' : 'Hata: ' + e.message, 'hata');
+    kapat();
+  }
+  $('tus').disabled = false;
+}
+
+function kapat() {
+  try { if (ws) ws.close(); } catch (e) {} ws = null;
+  try { mic && mic.getTracks().forEach(t => t.stop()); } catch (e) {} mic = null;
+  try { girisCtx && girisCtx.close(); } catch (e) {} girisCtx = null;
+  sustur(); try { cikisCtx && cikisCtx.close(); } catch (e) {} cikisCtx = null;
+}
+
+async function bitti() {
+  if (bitiyor) return; bitiyor = true;
+  kapat();
+  tus('…', 'özet hazırlanıyor'); $('tus').disabled = true;
+  durum('Görüşme bitti. Özet çıkarılıyor…');
+  try {
+    const j = await servis({ action: 'sesliAsistan', islem: 'is_bitti', pin: $('pin').value.trim(), satirlar });
+    if (j.bos) durum('Konuşma algılanmadı. Tekrar deneyin.', 'hata');
+    else if (!j.ok) durum(j.error || j.hata || 'Özet çıkarılamadı.', 'hata');
+    else {
+      const v = j.veri || {};
+      durum('Gerçekte bunlar takviminize ve listenize işlenir, size bildirim gelir. (Deneme: yazılmadı.)');
+      const rdv = alinan ? gunAdi(alinan.tarih) + ' ' + alinan.saat : (v.randevu_var ? (v.randevu_tarih ? gunAdi(v.randevu_tarih) : '') + ' ' + (v.randevu_saat || v.randevu_dilim || '') : '');
+      $('sonuc').innerHTML = '<div class="kart"><h2>' + esc(rdv ? 'Randevu: ' + rdv : 'Randevu alınmadı') + '</h2><table>' +
+        [['Ad', v.ad || (alinan && alinan.ad)], ['Tip', v.tip], ['İlan', v.ilan || (alinan && alinan.ilan)], ['Talep', v.talep], ['Bölge', v.bolge], ['Oda', v.oda],
+         ['Sıcaklık', v.sicaklik], ['Özet', v.ozet], ['Sonraki adım', v.sonraki_adim]]
+          .filter(r => r[1]).map(r => '<tr><td>' + r[0] + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div>';
+    }
+  } catch (e) { durum('Özet alınamadı: ' + e.message, 'hata'); }
+  bitiyor = false;
+  tus('Konuş', 'yeniden dene'); $('tus').disabled = false;
+}
+
+$('tus').onclick = () => ws ? bitti() : basla();
+</script>
+</body>
+</html>
