@@ -1,6 +1,6 @@
 // RE/MAX Doğuş · Fotoğraf Düzenle — Mac teslim betiği (osascript -l JavaScript).
-// LaunchAgent dakikada bir çalıştırır: Windows'ta (UMT) biten işleri danisman-takip FotoDuzenle.js'ten
-// alır, Masaüstü'ne iş adıyla klasör açıp fotoğrafları koyar ve "İşlem bitti" bildirimi gösterir.
+// LaunchAgent dakikada bir çalıştırır: biten işleri danisman-takip FotoDuzenle.js'ten
+// alır (2026-11-03'ten beri işçi de Mac'te: mac-isci.js), Masaüstü'ne iş adıyla klasör açıp fotoğrafları koyar ve "İşlem bitti" bildirimi gösterir.
 // Anahtar repoda durmaz: ~/Library/Application Support/DogusFoto/anahtar (mac-kur.sh yazar).
 ObjC.import('Foundation');
 const app = Application.currentApplication(); app.includeStandardAdditions = true;

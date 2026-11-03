@@ -101,7 +101,7 @@
 
   <div class="adimlar">
     <div class="adim"><b>1 · Yükle</b>Fotoğraflar buluta gider</div>
-    <div class="adim"><b>2 · ChatGPT</b>Windows'ta tek tek, prompt birebir</div>
+    <div class="adim"><b>2 · ChatGPT</b>Mac'te tek tek, prompt birebir</div>
     <div class="adim"><b>3 · 4:3</b>1600×1200 JPEG, sahibinden'e hazır</div>
     <div class="adim"><b>4 · Mac</b>Masaüstüne klasör + bildirim</div>
   </div>
@@ -140,7 +140,7 @@
 </main>
 
 <script>
-// danisman-takip · FotoDuzenle.js (fdYukle / fdBaslat / fdDurum). İşi Windows'taki UMT bilgisayarı yapar.
+// danisman-takip · FotoDuzenle.js (fdYukle / fdBaslat / fdDurum). İşi Mac'teki işçi (tools/foto-duzenle/mac-isci.js) yapar.
 const SERVIS = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
 const $ = id => document.getElementById(id);
 const MAX_BAYT = 8.5 * 1024 * 1024, MAX_ADET = 40;
@@ -244,7 +244,7 @@ $('gonderBtn').onclick = async () => {
     yaz('Sıraya alınıyor…', 100);
     const j = await servis({ action: 'fdBaslat', is, klasor, adet: fotolar.length });
     if (!j.success) throw new Error(j.error || 'başlatılamadı');
-    yaz('✓ Gönderildi. "' + j.durum.ad + '" sıraya alındı; Windows bilgisayar birkaç dakika içinde başlar. Bitince telefonuna bildirim gelecek ve klasör Mac masaüstüne inecek. Bu sayfayı kapatabilirsin.', 100);
+    yaz('✓ Gönderildi. "' + j.durum.ad + '" sıraya alındı; Mac birkaç dakika içinde başlar. Bitince telefonuna bildirim gelecek ve klasör Mac masaüstüne inecek. Bu sayfayı kapatabilirsin.', 100);
     fotolar.forEach(f => URL.revokeObjectURL(f.url)); fotolar = []; $('klasor').value = '';
     isleriYukle();
   } catch (e) {
@@ -253,7 +253,7 @@ $('gonderBtn').onclick = async () => {
 };
 
 /* ---------- işler ---------- */
-const ETIKET = { sirada: 'Sırada (Windows bekleniyor)', isleniyor: 'ChatGPT\'de', bitti: 'Hazır, Mac\'e iniyor', teslim: 'Masaüstünde', hata: 'Durdu' };
+const ETIKET = { sirada: 'Sırada (Mac bekleniyor)', isleniyor: 'ChatGPT\'de', bitti: 'Hazır, Mac\'e iniyor', teslim: 'Masaüstünde', hata: 'Durdu' };
 function once(t) {
   if (!t) return '—';
   const s = Math.round((Date.now() - t) / 1000);
@@ -276,8 +276,8 @@ async function isleriYukle() {
     }).join('') : 'Henüz iş yok. İlk fotoğrafları yukarıdan gönder.';
     const isci = j.isciSon, canli = isci && Date.now() - isci < 5 * 60 * 1000;
     const mac = j.macSon, macCanli = mac && Date.now() - mac < 5 * 60 * 1000;
-    $('saglik').innerHTML = '<span>Windows (UMT): <b>' + (canli ? '🟢 hazır' : isci ? '🔴 kapalı (' + once(isci) + ')' : '⚪ henüz bağlanmadı') + '</b></span>' +
-      '<span>Mac: <b>' + (macCanli ? '🟢 hazır' : mac ? '🔴 kapalı (' + once(mac) + ')' : '⚪ henüz bağlanmadı') + '</b></span>';
+    $('saglik').innerHTML = '<span>Mac · ChatGPT: <b>' + (canli ? '🟢 hazır' : isci ? '🔴 kapalı (' + once(isci) + ')' : '⚪ henüz bağlanmadı') + '</b></span>' +
+      '<span>Mac · Masaüstü: <b>' + (macCanli ? '🟢 hazır' : mac ? '🔴 kapalı (' + once(mac) + ')' : '⚪ henüz bağlanmadı') + '</b></span>';
     if (l.some(d => d.durum === 'sirada' || d.durum === 'isleniyor' || d.durum === 'bitti')) izTimer = setTimeout(isleriYukle, 15000);
   } catch (e) {
     $('isler').textContent = e.message === 'PIN' ? 'PIN geçersiz.' : 'İşler okunamadı: ' + e.message;
