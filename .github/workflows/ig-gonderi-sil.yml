@@ -1,0 +1,22 @@
+name: Instagram gönderisi sil (elle)
+# Yanlışlıkla iki kez paylaşılan bir gönderiyi siler. Sadece Umut'un istediği gönderi id'siyle elle çalıştırılır.
+on:
+  workflow_dispatch:
+    inputs:
+      media_id:
+        description: "Silinecek Instagram medya id'si"
+        required: true
+jobs:
+  sil:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sil
+        env:
+          MID: ${{ inputs.media_id }}
+        run: |
+          T=$(curl -sL "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=igToken&k=${{ secrets.PORTAL_ANAHTAR }}")
+          if [ -z "$T" ] || [ "${#T}" -lt 50 ]; then T="${{ secrets.IG_TOKEN }}"; fi
+          echo "::add-mask::$T"
+          echo "Önce:"; curl -s "https://graph.facebook.com/v23.0/$MID?fields=id,permalink,timestamp&access_token=$T"; echo
+          R=$(curl -s -X DELETE "https://graph.facebook.com/v23.0/$MID?access_token=$T"); echo "Sonuç: $R"
+          echo "$R" | grep -q '"success":true'
