@@ -184,7 +184,7 @@
   }
 </style>
 <script src="assets/broker.js"></script>
-<script src="assets/imza.js?v=4"></script>
+<script src="assets/imza.js?v=5"></script>
 <style id="ios-zoom">/* iPhone, 16px altı yazılı kutuya dokununca sayfayı büyütür; telefonda engelle */@media (max-width:900px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
@@ -1031,6 +1031,13 @@ function ayarAc() {
 // Herkesin imzası ortak formata (18 Ekim) bir kez otomatik geçer: imza yoksa ya da eski hazır imzaysa
 function imzaGecir() {
   const i = HESAP.imza || '';
+  // Ortak kutu (info@) ofis imzasıyla yazar; kişisel imza kalmışsa bir kez ofis imzasına geçer (Umut, 3 Kas)
+  if (HESAP.ortak) {
+    if (i.includes('UMT Group Gayrimenkul')) return;
+    HESAP.imza = imzaOfisHtml();
+    servis({ islem: 'imza', ad: HESAP.ad, imza: HESAP.imza }).then(j => { if (j.ok) { HESAP = j; hesapSakla(); } }).catch(() => {});
+    return;
+  }
   // 📞 (4 baytlık emoji) alıcıya \uD83D\uDCDE olarak gidiyordu; ☎ ile yeniden kurulur
   // Hazır imza cep telefonu ve e-posta satırıyla (18 Ekim) yenilendi: eski hazır imzalar bir kez yeniden kurulur
   const eskiHazir = i.includes('assets/imza/') && !i.includes('mailto:');
@@ -1043,7 +1050,7 @@ function imzaGecir() {
 }
 function imzaHazir() {
   // assets/imza.js: Umut'un formatı (yuvarlak fotoğraf, Broker · RE/MAX Doğuş, telefon, site, adres, logo)
-  $('aImza').innerHTML = imzaHtml(HESAP.kim || KIM, $('aAd').value.trim() || HESAP.ad);
+  $('aImza').innerHTML = HESAP.ortak ? imzaOfisHtml() : imzaHtml(HESAP.kim || KIM, $('aAd').value.trim() || HESAP.ad);
 }
 async function imzaKaydet() {
   const d = $('aDurum'); d.className = 'durum'; d.textContent = 'Kaydediliyor…';
