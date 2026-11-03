@@ -215,6 +215,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .dv-ad .dn{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;background:var(--navy);color:#fff;border-radius:20px;padding:1px 8px;margin-right:6px}
 .dv select{font:inherit;font-size:14px;font-weight:700;padding:7px 10px;border-radius:30px;border:0;cursor:pointer}
 .dv-bt{display:flex;gap:4px}
+.dv-ad .dn.ortak{background:var(--gold);color:var(--navy)}
 .dv-bt button{font:inherit;font-size:13px;font-weight:700;border:0;background:var(--sand);color:var(--navy);border-radius:20px;padding:7px 10px;cursor:pointer}
 .dv-bt button.emin{background:var(--red);color:#fff}
 .dv .geldi{font:inherit;font-weight:800;font-size:16px;border:0;border-radius:30px;padding:12px 20px;background:var(--ok);color:#fff;cursor:pointer}
@@ -317,6 +318,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
      <li><b>Ödül nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yaptığınız satışta. RE/MAX merkez payı düştükten sonra paylaşım %60 sizin, %40 ofisin.</li>
      <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. 19 Kasım'a kadar her teyitli davetlinizi arayıp "Son teyit alındı" yapın, lansman günü kapıda karşılayın.</li>
      <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
+     <li><b>Ortak davetli:</b> müşteriyi bir arkadaşınızla birlikte getiriyorsanız kayda "Ortak danışman" ekleyin. Davetli ikinizin listesine ve teyidine tam sayılır, puan yarı yarıya bölünür. Ortağı kaydı giren danışman ekler.</li>
      <li><b>Müşteri sahipliği:</b> davetli, telefonunu panele ilk kaydeden danışmanın müşterisidir. Aynı numarayı başka danışman giremez.</li>
      <li><b>Doğru kayıt:</b> yalnız gerçekten "geleceğim" diyen kişiyi "Teyit verdi" yapın. Gelmeyeceğini söyleyeni "Katılmayacak" olarak güncelleyin.</li>
     </ol>
@@ -334,6 +336,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
      <label class="pn-alan"><span>Tahmini bütçe</span><select id="fpButce"><option value="">Bilinmiyor</option><option>100 bin £ altı</option><option>100 – 200 bin £</option><option>200 bin £ üzeri</option></select></label>
      <label class="pn-alan"><span>İlgi düzeyi</span><select id="fpIlgi"><option value="yuksek">Yüksek</option><option value="orta">Orta</option></select></label>
      <label class="pn-alan"><span>Durum</span><select id="fpDurum"></select></label>
+     <label class="pn-alan"><span>Ortak danışman</span><select id="fpOrtak"></select></label>
      <label class="pn-alan pn-genis"><span>Not</span><input id="fpNot" autocomplete="off" placeholder="Örn. eşiyle gelecek, tatil evi arıyor"></label>
      <div class="err pn-genis" id="fpHata"></div>
      <div class="bt pn-genis"><button class="btn cp" id="fpKaydet" type="submit">Kaydet</button><button class="btn gh" id="fpVazgec" type="button">Vazgeç</button></div>
@@ -625,9 +628,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  }
  /* Danışman Takip'e puan yazıldıysa: danışmana altın jeton, brokera kime yazıldığını söyle */
  function puanGoster(r,el){
-  if(!(r.puan>0))return;
+  if(!(r.puan>0)&&!(P.v.broker&&r.puanlar&&Object.keys(r.puanlar).length))return;
   if(!P.v.broker&&window.puanJeton) puanJeton(r.puan,el);
-  else toast(ilk(r.puanKime)+' +'+r.puan+' puan kazandı');
+  else { var pl=r.puanlar||{}; var y=Object.keys(pl).map(function(a){return ilk(a)+' +'+pl[a];}).join(', '); if(y) toast(y+' puan kazandı'); }
  }
 
  /* Mesajlar bölümündeki ad seçimini girişe göre yap */
@@ -639,7 +642,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  function ozet(list,ad){
   var o={ad:ad,liste:0,listeSay:0,teyit:0,zamaninda:0,kisi:0,geldi:0,satis:0,sonBekleyen:0};
   list.forEach(function(r){
-   if(r.danisman!==ad)return;
+   if(r.danisman!==ad&&r.ortak!==ad)return;
    if(r.durum!=='vazgecti'){o.liste++;if(new Date(r.kayit).getTime()<=TS.son)o.listeSay++;}
    if(KESIN.indexOf(r.durum)>=0){o.teyit++;o.kisi+=Number(r.kisi)||1;if(r.teyit&&new Date(r.teyit).getTime()<=TS.son)o.zamaninda++;}
    if(r.durum==='teyit')o.sonBekleyen++;
@@ -666,7 +669,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   /* özet kutuları */
   if(v.broker){
    var sr=v.siralama||[], ekip=sr.filter(function(o){return (v.ekip||[]).indexOf(o.ad)>=0;});
-   var top=sr.reduce(function(a,o){a.liste+=o.liste;a.teyit+=o.teyit;a.kisi+=o.kisi;a.geldi+=o.geldi;a.satis+=o.satis;return a;},{liste:0,teyit:0,kisi:0,geldi:0,satis:0});
+   /* ofis toplamı davetli listesinden: ortak davetli iki danışmanda sayıldığı için sıralama toplanmaz */
+   var top=(v.davetliler||[]).reduce(function(a,r){if(r.durum!=='vazgecti')a.liste++;if(KESIN.indexOf(r.durum)>=0){a.teyit++;a.kisi+=Number(r.kisi)||1;}if(GELDI.indexOf(r.durum)>=0)a.geldi++;if(r.durum==='satis')a.satis++;return a;},{liste:0,teyit:0,kisi:0,geldi:0,satis:0});
    var hak=ekip.filter(function(o){return o.hak;}).length;
    $('pnKpi').innerHTML=kpi('Toplam davetli',top.liste,0,'Katılmayacaklar hariç')+kpi('Kesin teyit',top.teyit,ekip.length*HEDEF.teyit,'Hedef: danışman başı 3')+
     kpi('Beklenen kişi',top.kisi,0,'Otel için kesin sayı')+kpi(now<TS.lansman?'Ödülü kazanan':'Gelen / satış',now<TS.lansman?hak:top.geldi,now<TS.lansman?ekip.length:0,now<TS.lansman?'danışman':top.satis+' satış');
@@ -708,6 +712,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   if(v.broker&&adlar.indexOf(v.ad)<0) adlar.push(v.ad);
   $('pnFd').innerHTML='<option value="">Tüm danışmanlar</option>'+adlar.map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
   $('fpDanisman').innerHTML=adlar.map(function(a){return '<option'+(a===v.ad?' selected':'')+'>'+esc(a)+'</option>';}).join('');
+  $('fpDanisman').onchange=function(){ if(!$('fpId').value) ortakKur(null); };
   var ops=SIRA.map(function(k){return '<option value="'+k+'">'+DURUM[k]+'</option>';}).join('');
   $('pnFs').innerHTML='<option value="">Tüm durumlar</option>'+ops; $('fpDurum').innerHTML=ops;
   $('pnKime').innerHTML='<option value="geride">Hedefin gerisindekiler</option><option value="herkes">Tüm danışmanlar</option>'+(v.ekip||[]).map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
@@ -731,8 +736,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
    var sag=giris
     ?(GELDI.indexOf(r.durum)>=0?'<span class="chip ok">Geldi ✓</span>':'<button class="geldi" type="button" data-geldi>Geldi</button>')
     :'<select class="s-'+r.durum+'" data-durum aria-label="Durum">'+durumOps(r.durum)+'</select>'+
-     '<div class="dv-bt"><button type="button" data-ed>Düzenle</button><button type="button" data-sil>Sil</button></div>';
-   return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small></div>'+sag+'</div>';
+     '<div class="dv-bt"><button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
+   var etiket=(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+
+    (r.ortak?(r.ortak===v.ad?'<span class="dn ortak">Sahibi: '+esc(ilk(r.danisman))+'</span>':'<span class="dn ortak">Ortak: '+esc(ilk(r.ortak))+'</span>'):'');
+   return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+etiket+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small></div>'+sag+'</div>';
   }).join('');
  }
 
@@ -764,12 +771,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  ['pnAra','pnFd','pnFs','pnGirisModu'].forEach(function(id){$(id).addEventListener('input',listeCiz);$(id).addEventListener('change',listeCiz);});
 
  /* ---------- form ---------- */
+ /* Ortak danışman seçimi: sahibi dışındaki ekip; ortağı yalnız kaydı giren danışman ya da broker değiştirir */
+ function ortakKur(r){
+  var v=P.v, sahip=r?r.danisman:(v.broker?$('fpDanisman').value:v.ad);
+  var adlar=[].slice.call($('fpDanisman').options).map(function(o){return o.value||o.textContent;}).concat(v.ekip||[]);
+  adlar=adlar.filter(function(a,i){return a&&adlar.indexOf(a)===i&&a!==sahip;});
+  $('fpOrtak').innerHTML='<option value="">Yok</option>'+adlar.map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
+  $('fpOrtak').value=r&&r.ortak?r.ortak:'';
+  $('fpOrtak').disabled=!!(r&&!v.broker&&r.danisman!==v.ad);
+ }
  function formAc(r){
   $('pnForm').hidden=false; $('fpHata').textContent='';
   $('fpId').value=r?r.id:''; $('fpAd').value=r?r.ad:''; $('fpTel').value=r?r.telefon:'';
   $('fpKisi').value=r?String(Math.min(5,r.kisi||1)):'2'; $('fpButce').value=r?r.butce:''; $('fpIlgi').value=r?r.ilgi:'yuksek';
   $('fpDurum').innerHTML=durumOps(r?r.durum:'davet'); $('fpNot').value=r?r.not:'';
   $('fpDanisman').disabled=!!r; if(r) $('fpDanisman').value=r.danisman; else if($('pnFd').value) $('fpDanisman').value=$('pnFd').value;
+  ortakKur(r);
   $('fpKaydet').textContent=r?'Değişikliği kaydet':'Kaydet';
   $('pnForm').scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){$('fpAd').focus();},300);
  }
@@ -782,6 +799,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   if(rak.length<10){$('fpHata').textContent='Telefon numarasını eksiksiz yazın (05xx xxx xx xx).';$('fpTel').focus();return;}
   $('fpHata').textContent=''; $('fpKaydet').disabled=true; $('fpKaydet').textContent='Kaydediliyor…';
   var id=$('fpId').value, d={id:id||undefined,ad:ad,telefon:tel,kisi:$('fpKisi').value,butce:$('fpButce').value,ilgi:$('fpIlgi').value,durum:$('fpDurum').value,not:$('fpNot').value.trim()};
+  if(!$('fpOrtak').disabled) d.ortak=$('fpOrtak').value;
   istek({islem:'kaydet',davetli:d,danisman:P.v.broker&&!id?$('fpDanisman').value:null}).then(function(r){
    $('fpKaydet').disabled=false; $('fpKaydet').textContent=id?'Değişikliği kaydet':'Kaydet';
    if(!r.ok){$('fpHata').textContent=r.error||'Kaydedilemedi.';return;}
@@ -862,19 +880,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   }
   var ben=P.demo==='broker'?'Umut Tokkuş':DEMO.ekip[0], broker=P.demo==='broker';
   var durum=function(ek){var r={ok:true,ad:ben,ilkAd:ilk(ben),broker:broker,ekip:DEMO.ekip,
-   davetliler:DEMO.liste.filter(function(d){return broker||d.danisman===ben;}).map(function(d){return JSON.parse(JSON.stringify(d));}),
+   davetliler:DEMO.liste.filter(function(d){return broker||d.danisman===ben||d.ortak===ben;}).map(function(d){return JSON.parse(JSON.stringify(d));}),
    siralama:DEMO.ekip.map(function(a){return ozet(DEMO.liste,a);}),bildirimler:broker?[]:DEMO.bld};for(var k in ek)r[k]=ek[k];return r;};
   if(g.islem==='kaydet'){
    var d=g.davetli, key=String(d.telefon).replace(/\D/g,'').slice(-10), eski=DEMO.liste.filter(function(r){return r.id===d.id;})[0];
    var ayni=DEMO.liste.filter(function(r){return String(r.telefon).replace(/\D/g,'').slice(-10)===key&&r.id!==d.id;})[0];
-   var dn=eski?eski.danisman:(g.danisman||ben);
+   var dn=eski?eski.danisman:(g.danisman||ben), ort=d.ortak!==undefined?d.ortak:(eski?eski.ortak:'');
    if(ayni) return {ok:false,error:ayni.danisman===dn?'Bu numara listende zaten var: '+ayni.ad+'.':'Bu numara '+ayni.danisman+' adına '+tarih(ayni.kayit).replace(/ \d\d:\d\d$/,'')+' tarihinde kaydedilmiş. Müşteri ilk kaydeden danışmanındır.'};
    var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,
-    kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:'')};
+    kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:''),ortak:ort||''};
    if(eski) DEMO.liste[DEMO.liste.indexOf(eski)]=y; else DEMO.liste.push(y);
    var pu=0; DEMO.puan=DEMO.puan||{};
-   [['davet',3,true],['teyit',5,KESIN.indexOf(y.durum)>=0],['geldi',15,GELDI.indexOf(y.durum)>=0]].forEach(function(a){if(a[2]&&!DEMO.puan[key+a[0]]){DEMO.puan[key+a[0]]=1;pu+=a[1];}});
-   return durum({puan:pu,puanKime:dn});
+   [['davet',3,true],['teyit',5,KESIN.indexOf(y.durum)>=0],['geldi',15,GELDI.indexOf(y.durum)>=0]].forEach(function(a){if(a[2]&&!DEMO.puan[key+a[0]]){DEMO.puan[key+a[0]]=1;pu+=y.ortak?a[1]/2:a[1];}});
+   var pl={}; if(pu){pl[dn]=pu; if(y.ortak) pl[y.ortak]=pu;}
+   return durum({puan:pl[ben]||0,puanlar:pl,puanKime:dn});
   }
   if(g.islem==='sil') DEMO.liste=DEMO.liste.filter(function(r){return r.id!==g.id;});
   if(g.islem==='okundu') DEMO.bld.forEach(function(b){b.okundu=true;});
