@@ -596,10 +596,15 @@
           <div class="not" style="margin-bottom:10px">Yapay zeka (Whisper) konuşmayı bu cihazda dinler, her kelimenin söylendiği saniyeyi bulur. İlk kullanımda model bir kez indirilir.</div>
           <div class="satir">
             <button class="btn ana" id="cevirBtn" onclick="konusmayiCevir()" disabled>Konuşmayı yazıya çevir</button>
-            <select id="whModel"><option value="base">Hızlı</option><option value="small">Daha doğru (yavaş)</option></select>
+            <select id="whModel"><option value="en">En doğru (önerilen)</option><option value="small">Orta</option><option value="base">Hızlı (çok hata yapar)</option></select>
           </div>
           <div class="cerceve" id="cevirIlerleme"><div></div></div>
           <div class="not" id="cevirDurum"></div>
+          <div id="metinKutu" class="gizli" style="margin-top:12px">
+            <div class="not">Yanlış duyulan kelimeleri burada düzeltin ya da elinizdeki metni yapıştırın, sonra “Düzeltmeleri uygula”ya basın. Zamanlar ve seçtiğiniz stiller korunur.</div>
+            <textarea id="tamMetin" style="margin-top:8px;min-height:110px"></textarea>
+            <div class="satir" style="margin-top:8px"><button class="btn ana kucuk" onclick="metniUygula()">Düzeltmeleri uygula</button><span class="not" id="metinDurum"></span></div>
+          </div>
           <details style="margin-top:10px"><summary class="not" style="cursor:pointer">Yapay zeka çalışmazsa: metni yapıştırıp dokunarak zamanla</summary>
             <textarea id="elleMetin" placeholder="Konuşmanın metnini buraya yapıştırın" style="margin-top:8px"></textarea>
             <div class="satir" style="margin-top:8px">
@@ -760,6 +765,7 @@
 </div>
 
 <script src="assets/video-edit/efektler.js"></script>
+<script src="assets/video-edit/altyazi.js"></script>
 <script>
 var MP_PAKET = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 var MP_MODEL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
@@ -3384,7 +3390,22 @@ arkaDosya.addEventListener('change', function(){
 
 /* ---------- Konuşmadan yazı (Whisper) ---------- */
 var TF_PAKET = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1';
-var WH_MODELLER = { base: ['onnx-community/whisper-base_timestamped', 'onnx-community/whisper-base'], small: ['onnx-community/whisper-small_timestamped', 'onnx-community/whisper-small', 'onnx-community/whisper-base_timestamped'] };
+/* Türkçe için model sırası. "base" Türkçede neredeyse her iki kelimeden birini yanlış yazıyor; varsayılan en az "small",
+   WebGPU olan bilgisayarda "large-v3-turbo". Her aday sırayla denenir, dosyası/desteği olmayan atlanır. */
+function whAdaylari(secim, webgpu, f16){
+  var A = [], TURBO = 'onnx-community/whisper-large-v3-turbo_timestamped', SMALL = 'onnx-community/whisper-small_timestamped', BASE = 'onnx-community/whisper-base_timestamped';
+  if (secim === 'base') return [{ m: BASE, o: webgpu ? { device: 'webgpu', dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' } } : { dtype: 'q8' } }, { m: BASE, o: { dtype: 'q8' } }];
+  if (webgpu && secim === 'en') {
+    if (f16) A.push({ m: TURBO, ad: 'en doğru', o: { device: 'webgpu', dtype: { encoder_model: 'fp16', decoder_model_merged: 'q4' } } });
+    A.push({ m: TURBO, ad: 'en doğru', o: { device: 'webgpu', dtype: { encoder_model: 'q4', decoder_model_merged: 'q4' } } });
+  }
+  if (webgpu) A.push({ m: SMALL, o: { device: 'webgpu', dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' } } });
+  /* iPhone: WebGPU'suz, kodlayıcı q8 (bellek), çözücü q4 */
+  A.push({ m: SMALL, o: { dtype: { encoder_model: IOS ? 'q8' : 'fp32', decoder_model_merged: 'q4' } } });
+  A.push({ m: SMALL, o: { dtype: 'q8' } });
+  A.push({ m: BASE, ad: 'hızlı (hatalı olabilir)', o: { dtype: 'q8' } });
+  return A;
+}
 var kelimeler = [], kSecili = -1;
 function sesi16k(){
   var AC = window.AudioContext || window.webkitAudioContext, ac = new AC();
@@ -3402,44 +3423,60 @@ function konusmayiCevir(){
   var durumY = function(m){ f('cevirDurum').textContent = m; };
   /* iPhone'da model belleğe sığsın diye arka plan kişi analizi bu sırada durdurulur (bitince kendiliğinden yeniden başlar) */
   if (IOS) { analizDurdur = true; analizSifirla(); }
-  var model = null;
+  var model = null, modelAd = '';
   var bar = f('cevirIlerleme'); bar.style.display = 'block'; bar.firstElementChild.style.width = '3%';
   durumY('Ses hazırlanıyor…');
-  var ses16;
+  var ses16, f16 = false;
   sesi16k().then(function(a){
     ses16 = a; durumY('Yapay zeka modeli yükleniyor (ilk seferde biraz sürer)…');
-    return import(TF_PAKET);
-  }).then(function(tf){
-    /* iPhone Safari'de WebGPU'daki fp32 kodlayıcı ve büyük model sekmeyi bellekten çökertiyor: orada hızlı model, q8, WebGPU'suz */
-    var webgpu = !!navigator.gpu && !IOS, adaylar = WH_MODELLER[IOS ? 'base' : f('whModel').value], dosyalar = {};
+    /* fp16 kodlayıcı yalnızca GPU destekliyorsa */
+    if (!navigator.gpu || IOS) return null;
+    return navigator.gpu.requestAdapter().then(function(ad){ f16 = !!(ad && ad.features && ad.features.has('shader-f16')); return ad; }).catch(function(){ return null; });
+  }).then(function(adaptor){
+    return import(TF_PAKET).then(function(tf){ return [tf, adaptor]; });
+  }).then(function(r){
+    var tf = r[0];
+    /* iPhone Safari'de WebGPU sekmeyi bellekten çökertiyor: orada WebGPU'suz, küçük dosyalar */
+    var webgpu = !!r[1] && !IOS, adaylar = whAdaylari(f('whModel').value, webgpu, f16), dosyalar = {};
     function ilerleme(x){
-      if (x.status === 'progress' && x.file) { dosyalar[x.file] = x.progress || 0; var v = Object.keys(dosyalar).map(function(k){ return dosyalar[k]; }); bar.firstElementChild.style.width = Math.max(3, v.reduce(function(a, b){ return a + b; }, 0) / v.length * .8) + '%'; }
+      if (x.status === 'progress' && x.file) { dosyalar[x.file] = x.progress || 0; var v = Object.keys(dosyalar).map(function(k){ return dosyalar[k]; }); bar.firstElementChild.style.width = Math.max(3, v.reduce(function(a, b){ return a + b; }, 0) / v.length * .5) + '%'; }
     }
     function dene(i){
       if (i >= adaylar.length) return Promise.reject(new Error('model bulunamadı'));
-      var secenek = webgpu ? { device: 'webgpu', dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' }, progress_callback: ilerleme } : { dtype: 'q8', progress_callback: ilerleme };
-      return tf.pipeline('automatic-speech-recognition', adaylar[i], secenek).catch(function(e){
-        if (webgpu) return tf.pipeline('automatic-speech-recognition', adaylar[i], { dtype: 'q8', progress_callback: ilerleme });
-        throw e;
-      }).catch(function(e){ console.log('whisper model', adaylar[i], e); return dene(i + 1); });
+      var c = adaylar[i], o = Object.assign({ progress_callback: ilerleme }, c.o);
+      dosyalar = {};
+      return tf.pipeline('automatic-speech-recognition', c.m, o).then(function(asr){
+        modelAd = c.ad || (c.m.indexOf('small') >= 0 ? 'orta' : 'hızlı'); return asr;
+      }).catch(function(e){ console.log('whisper model', c.m, c.o, e); return dene(i + 1); });
     }
     return dene(0);
   }).then(function(asr){
     model = asr;
-    durumY('Konuşma dinleniyor…'); bar.firstElementChild.style.width = '85%';
-    return asr(ses16, { language: 'turkish', task: 'transcribe', return_timestamps: 'word', chunk_length_s: 30, stride_length_s: 5 });
-  }).then(function(cikti){
-    var p = (cikti && cikti.chunks) || [];
-    kelimeler = [];
-    p.forEach(function(c){
-      var m = (c.text || '').trim(); if (!m) return;
-      var ts = c.timestamp || [];
-      var bas = ts[0] != null ? ts[0] : (kelimeler.length ? kelimeler[kelimeler.length - 1].e : 0);
-      var son = ts[1] != null ? ts[1] : bas + .3;
-      kelimeler.push({ m: m, s: +bas.toFixed(2), e: +Math.max(bas + .08, son).toFixed(2), stil: null });
+    /* Sessiz yerlerden ≤28 sn parçalara böl, her parçayı ayrı dinle: parça sınırında kelime kaybolmaz/tekrar etmez */
+    var parcalar = altyaziParcala(ses16, 16000), konusan = parcalar.filter(function(p){ return !p.sessiz; });
+    var ham = [], sira = Promise.resolve(), bitti = 0;
+    konusan.forEach(function(p){
+      sira = sira.then(function(){
+        durumY('Konuşma dinleniyor… ' + (konusan.length > 1 ? (bitti + 1) + '/' + konusan.length : ''));
+        return asr(ses16.slice(p.bas, p.son), { language: 'turkish', task: 'transcribe', return_timestamps: 'word' });
+      }).then(function(cikti){
+        var pa = (cikti && cikti.chunks) || [], son = p.s;
+        pa.forEach(function(c){
+          var ts = c.timestamp || [];
+          var bas = ts[0] != null ? p.s + ts[0] : son, bit = ts[1] != null ? p.s + ts[1] : bas + .3;
+          bas = Math.min(bas, p.e); bit = Math.min(Math.max(bit, bas + .08), p.e);
+          ham.push({ m: c.text, s: bas, e: bit }); son = bit;
+        });
+        bitti++;
+        bar.firstElementChild.style.width = (50 + 50 * bitti / konusan.length) + '%';
+      });
     });
+    return sira.then(function(){ return altyaziTemizle(ham, ses16.length / 16000); });
+  }).then(function(k){
+    kelimeler = k; kSecili = -1;
     bar.firstElementChild.style.width = '100%';
-    durumY(kelimeler.length ? kelimeler.length + ' kelime bulundu. Vurgulamak istediklerinize dokunun.' : 'Konuşma bulunamadı.');
+    durumY(kelimeler.length ? kelimeler.length + ' kelime bulundu (' + modelAd + ' model). Yanlış kelimeleri aşağıdaki metinden düzeltin, vurgulamak istediklerinize dokunun.' : 'Konuşma bulunamadı.');
+    f('tamMetin').value = '';
     kelimeArayuz(); kaydet();
   }).catch(function(e){
     console.log('whisper', e);
@@ -3449,6 +3486,16 @@ function konusmayiCevir(){
     ses16 = model = null; analizDurdur = false;
     btn.disabled = false; setTimeout(function(){ bar.style.display = 'none'; }, 800);
   });
+}
+/* Düzeltilmiş metni eski zamanlı kelimelerle hizala */
+function metniUygula(){
+  var m = f('tamMetin').value;
+  if (!m.trim()) { f('metinDurum').textContent = 'Metin boş.'; return; }
+  var once = kelimeler.length;
+  kelimeler = altyaziHizala(kelimeler, m); kSecili = -1;
+  f('metinDurum').textContent = once ? 'Uygulandı: ' + kelimeler.length + ' kelime.' : 'Zamanlar tahmini; önce konuşmayı yazıya çevirirseniz zamanlar sesle eşleşir.';
+  f('tamMetin').blur();
+  kelimeArayuz(); kaydet();
 }
 /* Elle: metni yapıştır, oynatırken her kelimede dokun */
 var dokunDurumu = null;
@@ -3483,6 +3530,8 @@ function kelimeArayuz(){
     k.appendChild(b);
   });
   f('kelimeBos').classList.toggle('gizli', kelimeler.length > 0);
+  f('metinKutu').classList.toggle('gizli', !kelimeler.length);
+  if (document.activeElement !== f('tamMetin')) f('tamMetin').value = kelimeler.map(function(w){ return w.m; }).join(' ');
   f('olusturBtn').disabled = !kelimeler.length;
   var dz = f('kelimeDuzen'), w = kelimeler[kSecili];
   dz.classList.toggle('gizli', !w);
