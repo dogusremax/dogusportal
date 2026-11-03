@@ -223,6 +223,14 @@ function promptOku() {
   return oku(p);
 }
 
+// Prompt seçici (2026-11-03): iş "profesyonel" (ya da türsüz, eski iş) ise Mac'teki prompt.txt (SHA kontrollü);
+// başka bir türse metin işle birlikte FotoDuzenle.js'ten gelir ve yine olduğu gibi yapıştırılır.
+function promptSec(is) {
+  if (!is.tur || is.tur === 'profesyonel') return promptOku();
+  if (typeof is.prompt === 'string' && is.prompt.trim()) return is.prompt;
+  throw new Error('"' + is.tur + '" promptu sunucuda yok');
+}
+
 function isIsle(is, prompt) {
   const id = is.is, ad = dosyaAdi(is.ad) || 'Fotoğraflar', dosyalar = is.dosyalar || [], bitenler = is.bitenler || [];
   log('iş ' + id + " '" + ad + "' " + dosyalar.length + ' fotoğraf');
@@ -281,7 +289,11 @@ function run(argv) {
     const is = servis({ action: 'fdSiradaki', ilk: 0 });
     if (!is.success || !is.is) return;
     kafein = sh('/usr/bin/caffeinate -i -t 7200 >/dev/null 2>&1 & echo $!').trim(); // iş sürerken Mac uyumasın
-    isIsle(is, promptOku());
+    let prompt;
+    try { prompt = promptSec(is); }
+    catch (e) { durum(is.is, { durum: 'hata', mesaj: String(e.message || e) }); log('iş ' + is.is + ' prompt yok: ' + (e.message || e)); return; }
+    log('iş ' + is.is + ' prompt: ' + (is.tur || 'profesyonel'));
+    isIsle(is, prompt);
   } catch (e) { log('hata: ' + (e.message || e)); if (argv && argv[0] === 'test') throw e; }
   finally { if (kafein) try { sh('kill ' + kafein); } catch (e) {} }
 }
