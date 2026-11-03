@@ -81,6 +81,10 @@
   .kutu .tutamak{display:none;position:absolute;right:-15px;bottom:-15px;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--indigo);cursor:nwse-resize;touch-action:none}
   .kutu.secili .tutamak{display:block}
   .kutu.zoom .tutamak{display:none!important}
+  /* seçili öğenin köşesinde sil düğmesi: hangi sekmede olunursa olsun, telefonda da tek dokunuşla silinir */
+  .kutu .silTut{display:none;position:absolute;left:-17px;top:-17px;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;border:2px solid #fff;font:700 18px/26px system-ui,sans-serif;text-align:center;cursor:pointer;touch-action:none;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+  .kutu.secili .silTut{display:block}
+  .oge .ogeSil{border:0;background:transparent;color:var(--red);font-size:18px;line-height:1;padding:4px 6px;cursor:pointer;border-radius:8px}
   .rozet{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:9px;pointer-events:none}
 
   .oynat{display:flex;align-items:center;gap:10px;margin-top:10px}
@@ -635,7 +639,7 @@
             <select id="oKucuk"><option value="tek">Kelime kelime</option><option value="ikili">İkişer kelime</option><option value="yok">Gösterme (sadece büyükler)</option></select>
           </div>
           <label class="anahtar"><input type="checkbox" id="oSes" checked><span>Büyük kelimelere ses efekti ekle<small>Whoosh, parıltı, kaydırma gibi sesler kelimeyle birlikte gelir.</small></span></label>
-          <button class="btn ana" onclick="reelsOlustur()" id="olusturBtn" disabled>Reels yazılarını oluştur</button>
+          <div class="satir"><button class="btn ana" onclick="reelsOlustur()" id="olusturBtn" disabled>Reels yazılarını oluştur</button><button class="btn kucuk gizli" style="color:var(--red)" id="altyaziSilBtn" onclick="altyazilariSil()">Bu yazıların hepsini sil</button></div>
           <div class="not" id="olusturDurum" style="margin-top:8px"></div>
         </div>
       </div>
@@ -3179,7 +3183,7 @@ function kutulariYerlestir(){
     var k = kutular[o.id]; if (!k) return;
     if (k.zoom && o.id !== secili) return;
     var el = katman.querySelector('[data-id="' + o.id + '"]');
-    if (!el) { el = document.createElement('div'); el.className = 'kutu'; el.dataset.id = o.id; el.innerHTML = '<span class="tutamak"></span>'; katman.appendChild(el); baglaSurukle(el); }
+    if (!el) { el = document.createElement('div'); el.className = 'kutu'; el.dataset.id = o.id; el.innerHTML = '<span class="tutamak"></span><span class="silTut" title="Sil">×</span>'; katman.appendChild(el); baglaSurukle(el); }
     var_[o.id] = 1;
     el.classList.toggle('zoom', !!k.zoom);
     el.style.left = (k.x * 100) + '%'; el.style.top = (k.y * 100) + '%';
@@ -3195,6 +3199,7 @@ function baglaSurukle(el){
     if (aktariliyor) return;
     var o = bul(+el.dataset.id); if (!o) return;
     e.preventDefault(); e.stopPropagation();
+    if (e.target.classList.contains('silTut')) { secili = o.id; sil(); return; }
     if (!video.paused) video.pause();
     sec(o.id);
     if (o.tur === 'karusel' && o.takip !== false && kutular[o.id] && !e.target.classList.contains('tutamak')) { o.x = kutular[o.id].x; o.y = kutular[o.id].y; o.takip = false; formDoldur(); }
@@ -3369,6 +3374,9 @@ function listele(){
     else if (o.tur === 'efekt') d.querySelector('.mt').textContent = '✦ ' + ogeAdi(o) + (o.metin || o.kelime ? ' · ' + String(o.metin || o.kelime).replace(/\n/g, ' ') : '');
     else d.querySelector('.mt').textContent = o.metin.replace(/\n/g, ' ') || '(boş)';
     d.onclick = function(){ if (video.src) { video.pause(); video.currentTime = Math.min(sure(), o.bas + .5); } sec(o.id); };
+    var x = document.createElement('button'); x.className = 'ogeSil'; x.title = 'Sil'; x.textContent = '🗑';
+    x.onclick = function(ev){ ev.stopPropagation(); secili = o.id; sil(); };
+    d.appendChild(x);
     l.appendChild(d);
   });
   f('listeBos').classList.toggle('gizli', ogeler.length > 0);
@@ -3597,8 +3605,20 @@ function reelsOlustur(){
     say++;
   }
   if (ogeler.some(function(o){ return o.arka; })) segIste();
+  altyaziSilGoster();
   f('olusturDurum').textContent = say + ' yazı oluşturuldu. Oynatıp kontrol edin; her birini “Yazı & Resim” sekmesinden düzenleyebilirsiniz.';
   listele(); cizdir(); kaydet();
+}
+
+/* Konuşmadan oluşturulan bütün yazıları (ve onların ses efektlerini) tek seferde kaldır; geri alınabilir */
+function altyaziSilGoster(){ var b = f('altyaziSilBtn'); if (b) b.classList.toggle('gizli', !ogeler.some(function(o){ return o.oto; })); }
+function altyazilariSil(){
+  var eski = ogeler.slice(), n = ogeler.filter(function(o){ return o.oto; }).length; if (!n) return;
+  ogeler = ogeler.filter(function(o){ return !o.oto; });
+  if (bul(secili) == null) secili = null;
+  sec(secili); kaydet(); listele(); altyaziSilGoster();
+  f('olusturDurum').textContent = '';
+  bildir(n + ' otomatik yazı silindi', function(){ ogeler = eski; sec(null); kaydet(); listele(); altyaziSilGoster(); bildir('Geri getirildi'); });
 }
 
 /* ---------- Kayıt ---------- */
@@ -3641,7 +3661,7 @@ document.addEventListener('keydown', function(e){
   if ((e.key === 'b' || e.key === 'B') && !e.metaKey && !e.ctrlKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); bol(); }
   if (e.key === ' ' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName)) { e.preventDefault(); f('oynatBtn').click(); }
 });
-listele(); formDoldur(); arkaSec(arka.tur); ayarlariGoster(); kesimArayuz(); kelimeArayuz(); boyutla();
+listele(); formDoldur(); arkaSec(arka.tur); ayarlariGoster(); kesimArayuz(); kelimeArayuz(); altyaziSilGoster(); boyutla();
 if (document.fonts) document.fonts.ready.then(cizdir);
 ['800 40px "Inter Tight"', '700 40px "Oswald"', '800 40px "Plus Jakarta Sans"', '40px "Anton"', '40px "Bebas Neue"', '40px "Pacifico"', '40px "Permanent Marker"', 'italic 700 40px "Playfair Display"', 'italic 600 40px "Playfair Display"', '500 40px "Playfair Display"', '40px "Archivo Black"', '900 40px "Inter Tight"'].forEach(function(x){ if (document.fonts) document.fonts.load(x).then(cizdir).catch(function(){}); });
 
