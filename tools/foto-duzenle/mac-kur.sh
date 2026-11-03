@@ -14,12 +14,14 @@ if [ "$1" = "kaldir" ]; then
   for p in "$TESLIM" "$ISCI"; do launchctl unload "$p" 2>/dev/null || true; rm -f "$p"; done
   rm -rf "$DIZIN"; echo "Kaldırıldı."; exit 0
 fi
-[ -n "$1" ] || { echo "Anahtar eksik: ... | bash -s <ANAHTAR>"; exit 1; }
+# Anahtar: argüman, yoksa önceki kurulumdaki (27 Ekim teslim kurulumu)
+K="$1"; [ -n "$K" ] || K="$(cat "$DIZIN/anahtar" 2>/dev/null)"
+[ -n "$K" ] || { echo "Anahtar eksik: ... | bash -s <ANAHTAR>"; exit 1; }
 mkdir -p "$DIZIN" "$LA"
-printf '%s' "$1" > "$DIZIN/anahtar"; chmod 600 "$DIZIN/anahtar"
+printf '%s' "$K" > "$DIZIN/anahtar"; chmod 600 "$DIZIN/anahtar"
 
 # Umut'un promptu birebir (SHA-256 kontrolü). Verilmezse İndirilenler'deki dogus-foto-prompt.txt
-P="${2:-$HOME/Downloads/dogus-foto-prompt.txt}"
+P="${2:-$HOME/Downloads/dogus-foto-prompt.txt}"; [ -f "$P" ] || P="$HOME/Downloads/dogus-foto/prompt.txt"
 if [ ! -f "$DIZIN/prompt.txt" ] || [ "$(shasum -a 256 "$DIZIN/prompt.txt" | awk '{print $1}')" != "$PROMPT_SHA" ]; then
   [ -f "$P" ] || { echo "prompt.txt bulunamadı: $P"; exit 1; }
   [ "$(shasum -a 256 "$P" | awk '{print $1}')" = "$PROMPT_SHA" ] || { echo "prompt.txt Umut'un promptuyla birebir aynı değil"; exit 1; }
