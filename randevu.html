@@ -117,6 +117,9 @@ details.metin summary{cursor:pointer;font-weight:700}
   <div class="kart sonuc" id="sonuc" hidden></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="assets/yer-gosterme-belge.js?cb=20261103"></script>
 <script>
 var URL_ = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 var Q = new URLSearchParams(location.search);
@@ -223,12 +226,27 @@ function imzaKur() {
   $('temizle').onclick = function () { x.clearRect(0, 0, c.width, c.height); imzaVar = false; $('imzaIp').hidden = false; kontrol(); };
 }
 
+// Belge PDF'i: dijital yer gösterme uygulamasıyla birebir aynı (assets/yer-gosterme-belge.js)
+function belgePdf(g) {
+  if (!TOKEN || !window.YerGostermeBelge) return Promise.resolve('');
+  var ev = VERI.evler || [], sec = g.belge.evler;
+  if (ev.length > 1) ev = ev.filter(function (e) { return sec.indexOf(e.no) >= 0; });
+  var t = g.tarih.split('-');
+  return YerGostermeBelge.pdf({ isim: g.ad, tc: g.belge.tc, tel: VERI.tel || '', email: '',
+    evler: ev.map(function (e) { return { adres: e.adres || e.baslik, fiyat: e.fiyat || '' }; }),
+    danisman: (ev[0] && ev[0].danisman) || 'Umut Tokkuş', tarih: t[2] + '.' + t[1] + '.' + t[0], imza: g.belge.imza });
+}
+
 $('gonder').onclick = function () {
   var p = secim.split(' '), g = { islem: 'al', tarih: p[0], saat: p[1], ad: $('ad').value.trim(), web: $('web').value };
   if (TOKEN) g.belge = { tc: $('tc').value, onay: $('onay').checked, imza: $('imza').toDataURL('image/png'), evler: seciliEvler() }, g.cihaz = navigator.userAgent;
   else g.tel = $('tel').value;
-  $('gonder').disabled = true; $('gonder').textContent = 'Gönderiliyor…'; $('hata').textContent = '';
-  servis(g).then(function (j) {
+  $('gonder').disabled = true; $('gonder').textContent = TOKEN ? 'Belgeniz hazırlanıyor…' : 'Gönderiliyor…'; $('hata').textContent = '';
+  belgePdf(g).then(function (b64) {
+    if (b64) g.belge.pdf = b64;
+    $('gonder').textContent = 'Gönderiliyor…';
+    return servis(g);
+  }).then(function (j) {
     if (!j.ok) { $('hata').textContent = j.error || 'Randevu oluşturulamadı.'; if (j.dolu) { secim = null; yukle(); } else kontrol(); return; }
     var ad = $('ad').value.trim().split(' ')[0].replace(/[<>&"]/g, '');
     $('sonuc').innerHTML = '<div class="ik">&#10003;</div><h3>Randevunuz oluşturuldu</h3><p>' + etiket(p[0]) + ' saat ' + p[1] + '<br>Teşekkürler ' + ad + '.' +
