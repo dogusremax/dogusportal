@@ -194,6 +194,48 @@
   .sfx.caliyor{border-color:var(--indigo)}
   .gizli{display:none!important}
 </style>
+<style id="basit-mod">
+  /* ---------- Basit mod: tek sütun, 4 adım, gelişmiş ayarlar gizli ---------- */
+  .basitSadece{display:none!important}
+  .basit .basitSadece{display:inline-flex!important}
+  .basit .gelismis, .basit .ray, .basit .ekle, .basit .serit-arac, .basit .serit-ipucu, .basit #hizliArka, .basit #arkaSatir,
+  .basit #yaziForm > :not(#fMetin), .basit #ortakForm > .satir:first-child, .basit #ortakForm .btn:not(.basitKal),
+  .basit #resimForm > .satir:not(:first-child), .basit #eBoyutSatir{display:none!important}
+  .basit #fMetin{font-size:18px;min-height:70px}
+  @media (min-width:900px){
+    .basit .uygulama{grid-template-columns:minmax(360px,440px) minmax(0,1fr);grid-template-areas:"ust ust" "panel orta" "serit serit"}
+  }
+  .adim{display:flex;gap:14px;align-items:flex-start}
+  .adim .no{flex:none;width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center}
+  .adim.tamam .no{background:var(--green)}
+  .adim .ic{flex:1;min-width:0}
+  .adim h3{margin:4px 0 4px;font-size:18px}
+  .adim .not{margin-bottom:10px}
+  .buyukBtn{width:100%;justify-content:center;padding:16px!important;font-size:16px!important;font-weight:800;border-radius:14px!important}
+  .favoriler{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .fav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 8px;border-radius:14px;background:var(--alan);border:1px solid var(--line);font-weight:800;font-size:14px;text-align:center;min-height:84px}
+  .fav span{font-size:24px;line-height:1}
+  .fav small{font-weight:600;font-size:11.5px;color:var(--mute)}
+  .fav.tum{grid-column:1/-1;min-height:0;flex-direction:row;background:transparent;border-style:dashed;color:var(--ink-2)}
+  #basitGeri{display:none} .basit #basitGeri:not(.gizli){display:flex}
+  #basitGeri{align-items:center;gap:8px;width:100%;padding:12px 14px;margin-bottom:12px;border-radius:12px;background:var(--alan);font-weight:800;font-size:15px}
+  #basitDurum{margin-top:8px}
+  .modBtn{border:1px solid var(--line)!important;background:transparent!important}
+  .basit #ortakForm .btn{padding:12px 20px;font-size:15px}
+  .basit #pBasit .kart{padding:14px}
+  .basit .liste .oge{padding:10px}
+  @media (min-width:900px){
+    /* masaüstünde 4 adım tek ekrana sığsın */
+    .basit #pBasit .kart{margin-bottom:10px;padding:12px 14px}
+    .adim h3{font-size:16px;margin-top:5px}
+    .adim .no{width:30px;height:30px;font-size:15px}
+    .adim .not{font-size:12.5px;margin-bottom:8px}
+    .buyukBtn{padding:12px!important;font-size:15px!important}
+    .favoriler{grid-template-columns:repeat(4,1fr);gap:6px}
+    .fav{min-height:66px;padding:8px 4px;font-size:12px;gap:2px}
+    .fav span{font-size:19px} .fav small{display:none}
+  }
+</style>
 <style id="ios-zoom">/* iPhone, 16px altı yazılı kutuya dokununca sayfayı büyütür; telefonda engelle */@media (max-width:900px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
@@ -202,9 +244,10 @@
     <a class="geri" href="https://dogusportal.com/" title="Portala dön">←</a>
     <div class="baslik">Video Düzenle</div>
     <div class="bosluk"></div>
-    <button class="btn" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut<span class="uzun"> videolarım</span></button>
-    <button class="btn" onclick="dosya.click()">Video<span class="uzun"> değiştir</span></button>
-    <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻<span class="uzun"> Döndür</span></button>
+    <button class="btn modBtn" id="modBtn" onclick="basitAyarla(!document.body.classList.contains('basit'))">Gelişmiş</button>
+    <button class="btn gelismis" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut<span class="uzun"> videolarım</span></button>
+    <button class="btn gelismis" onclick="dosya.click()">Video<span class="uzun"> değiştir</span></button>
+    <button class="btn gelismis" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻<span class="uzun"> Döndür</span></button>
     <button class="btn ana" onclick="sekmeAc('pIndir');disaAktar()">İndir</button>
   </header>
 
@@ -285,6 +328,33 @@
     </div>
   </div>
   <aside class="panelalan">
+      <button type="button" id="basitGeri" class="gizli" onclick="basitAna()">← Ana menü</button>
+
+      <!-- BASİT MOD -->
+      <div class="panel" id="pBasit">
+        <div class="kart adim" id="adim1"><div class="no">1</div><div class="ic">
+          <h3>Videonu seç</h3>
+          <div class="not" id="basitVideoNot">Telefonundan çektiğin videoyu seç.</div>
+          <button class="btn ana buyukBtn" id="basitVideoBtn" onclick="dosya.click()">🎬 Video seç</button>
+        </div></div>
+        <div class="kart adim" id="adim2"><div class="no">2</div><div class="ic">
+          <h3>Tek dokunuşla düzelt</h3>
+          <div class="not">Sessiz araları keser, sesi temizler ve güçlendirir.</div>
+          <button class="btn mavi buyukBtn" id="basitDuzeltBtn" onclick="otomatikDuzelt()" disabled>✨ Otomatik düzelt</button>
+          <div class="not" id="basitDurum"></div>
+        </div></div>
+        <div class="kart adim" id="adim3"><div class="no">3</div><div class="ic">
+          <h3>Yazı ve efekt ekle</h3>
+          <div class="not">Aşağıdaki şeritte efektin çıkacağı ana gel, sonra seç. Eklediğin şeye dokunarak yazısını değiştirebilirsin.</div>
+          <div class="favoriler" id="favoriler"></div>
+          <div id="basitListe" style="margin-top:12px"></div>
+        </div></div>
+        <div class="kart adim" id="adim4"><div class="no">4</div><div class="ic">
+          <h3>İndir</h3>
+          <div class="not">Bitmiş video telefonuna kaydedilir.</div>
+          <button class="btn ana buyukBtn" id="basitIndirBtn" onclick="sekmeAc('pIndir'); disaAktar()" disabled>⬇ Videoyu indir</button>
+        </div></div>
+      </div>
       <!-- YAZI & RESİM -->
       <div class="panel aktif" id="pOge">
         <div class="kart">
@@ -506,7 +576,8 @@
               <button class="btn kucuk" onclick="kopyala()">Kopyala</button>
               <button class="btn kucuk" onclick="sirala(1)">Öne al</button>
               <button class="btn kucuk" onclick="sirala(-1)">Arkaya al</button>
-              <button class="btn kucuk" style="color:var(--red)" onclick="sil()">Sil</button>
+              <button class="btn kucuk basitKal" style="color:var(--red)" onclick="sil()">Sil</button>
+              <button class="btn ana kucuk basitKal basitSadece" onclick="sec(null)">✓ Bitti</button>
             </div>
           </div>
         </div>
@@ -3890,5 +3961,6 @@ function disaAktar2(){
   video.currentTime = ilk ? ilk.b : 0;
 }
 </script>
+<script src="assets/video-edit/basit.js"></script>
 </body>
 </html>
