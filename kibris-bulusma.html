@@ -162,6 +162,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .altmis-fark{margin:10px 0 12px;font-weight:700;color:var(--ink)}.altmis-fark b{color:var(--red);font-size:20px}
 @media (max-width:760px){.altmis-ic{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.altmis:before{animation:none;display:none}}
+.ornek-not{display:inline-block;margin-top:10px;background:#FFF4D6;border:1px solid var(--gold);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:600}
 /* DAVETLİ PANELİ */
 .pn-demo{margin-top:14px;background:#FFF4D6;border:1px dashed var(--gold);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600}
 .pn-giris{margin-top:18px;max-width:440px}
@@ -419,6 +420,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  <section class="s">
   <h2>Hazır <em>WhatsApp mesajları</em></h2>
   <p class="sub">Mesajı kopyalayın ya da "WhatsApp'ta aç"a basıp kişiyi seçin. Başına müşterinin adını yazın; isimle gelen mesaj okunur.</p>
+  <p class="ornek-not">💡 Mesajlar fikir örnekleridir. Kendi üslubunuza ve müşterinize göre değiştirebilirsiniz.</p>
   <div id="msgs"></div>
  </section>
 
@@ -430,6 +432,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 
  <section class="s scr">
   <h2>Arama <em>metni</em></h2>
+  <p class="ornek-not">💡 Konuşma ve cevaplar fikir örnekleridir. Kendi üslubunuza ve müşterinize göre değiştirebilirsiniz.</p>
   <div class="card" style="margin-top:16px">
    <ol>
     <li><q>Merhaba <b>[Ad] Bey/Hanım</b>, ben RE/MAX Doğuş'tan <span class="adv">[adınız]</span>. Sizi özel bir davet için arıyorum, iki dakikanız var mı?</q></li>
@@ -491,7 +494,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 
  function ad(){return kim?D[kim][0]:'[adınız]';}
  function tel(){return kim?D[kim][1]:'[telefonunuz]';}
- function link(){return 'https://kibrisburda.com/?seminer=1'+(kim?'&d='+kim:'');}
+ /* Danışmana özel kısa bağlantı: kibrisburda.com/seminer/ad-soyad (Türkçe harfsiz; kibrisburda reposundaki seminer/ klasörü) */
+ function slug(n){return n.replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c').toLowerCase().split(/\s+/).join('-');}
+ function link(){return 'https://kibrisburda.com/seminer'+(kim?'/'+slug(D[kim][0]):'');}
 
  /* mesajlar: müşteriye giden metinlerde emoji yok */
  function mesajlar(){
