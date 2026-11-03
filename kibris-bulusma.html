@@ -113,6 +113,105 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   .cd div{min-width:64px}.cd div b{font-size:24px}
   .lg .tg{display:none}
 }
+/* GERİ SAYIM (lansman + sıradaki teslim tarihi) */
+.geri{margin-top:26px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px 20px 16px}
+.geri-ust{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.geri-ust .k{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.canli{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.canli i{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(220,28,46,.7);animation:nabiz 1.6s infinite}
+.geri-sayi{display:flex;align-items:flex-start;gap:4px;margin-top:8px}
+.geri-sayi div{flex:1;min-width:0;text-align:center}
+.geri-sayi b{display:block;font-size:clamp(40px,10vw,92px);font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.geri-sayi .sn b{color:var(--gold)}
+.geri-sayi span{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.65}
+.geri-sayi em{font-style:normal;font-size:clamp(28px,7vw,64px);font-weight:300;line-height:1.15;opacity:.3}
+.tik{animation:tik .4s ease-out}
+@keyframes tik{from{transform:translateY(-8px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes nabiz{0%{box-shadow:0 0 0 0 rgba(220,28,46,.6)}70%{box-shadow:0 0 0 10px rgba(220,28,46,0)}100%{box-shadow:0 0 0 0 rgba(220,28,46,0)}}
+.yol{position:relative;height:6px;border-radius:6px;background:rgba(255,255,255,.14);margin:30px 8px 40px}
+.yol-dolu{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--red))}
+.yd{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--navy);border:2px solid rgba(255,255,255,.55)}
+.yd.gecti{background:var(--gold);border-color:var(--gold)}
+.yd.sira{background:var(--red);border-color:#fff;animation:nabiz 1.6s infinite}
+.yd small{position:absolute;top:18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700;opacity:.8}
+.yd:first-child small{left:0;transform:none}.yd.ust small{top:auto;bottom:18px}.yd.son small{left:auto;right:0;transform:none}
+.sonraki{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;background:#fff;color:var(--navy);border-radius:14px;padding:11px 16px;text-decoration:none}
+.sonraki .e{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.sonraki b{font-size:16px}
+.sonraki .z{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums}
+.sonraki.acil{background:var(--red);color:#fff;animation:nabiz 1.6s infinite}.sonraki.acil .e{color:#fff}
+/* DAVETLİ PANELİ */
+.pn-demo{margin-top:14px;background:#FFF4D6;border:1px dashed var(--gold);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600}
+.pn-giris{margin-top:18px;max-width:440px}
+.pn-pinrow{display:flex;gap:10px;margin-top:8px}
+.pn-pinrow input{flex:1;min-width:0;font:inherit;font-size:26px;letter-spacing:.4em;text-align:center;padding:10px 14px;border-radius:12px;border:1.5px solid var(--sand2)}
+.pn-pinrow input:focus,.pn-form input:focus,.pn-form select:focus,.pn-form textarea:focus,.pn-filtre input:focus,.pn-filtre select:focus{outline:none;border-color:var(--navy)}
+#pnAna{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+#pnAna[hidden]{display:none}
+.pn-ust{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pn-ust h3{font-size:26px;margin:2px 0 0}
+.pn-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.pn-kpi .card{padding:16px 18px;min-width:0}
+.pn-kpi .v{font-size:38px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+.pn-kpi .v small{font-size:18px;color:var(--ink2);font-weight:700}
+.pn-kpi .bar{height:7px;border-radius:7px;background:var(--sand);margin-top:10px;overflow:hidden}
+.pn-kpi .bar i{display:block;height:100%;border-radius:7px;background:var(--red);transition:width .6s}
+.pn-kpi .bar i.tam{background:var(--ok)}
+.pn-kpi .alt{font-size:13px;color:var(--ink2);margin-top:6px}
+.pn-hak{border-radius:18px;padding:14px 18px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pn-hak.ok{background:#E3F4EA;color:#14653a}.pn-hak.bek{background:var(--navy);color:#fff}.pn-hak.bek b{color:var(--gold)}.pn-hak.kac{background:var(--sand2);color:var(--ink)}
+.pn-hak .z{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:800}
+.pn-bld{background:#fff;border-radius:18px;padding:14px 18px}
+.pn-bld .bh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pn-bld ul{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.pn-bld li{font-size:15px;padding-left:16px;position:relative;color:var(--ink2)}
+.pn-bld li.yeni{color:var(--ink);font-weight:600}
+.pn-bld li.yeni:before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+.pn-bld li small{display:block;font-weight:400;font-size:12px;color:var(--ink2)}
+.pn-kart h3{margin-bottom:4px}
+.pn-bas{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pn-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px;background:var(--sand);border-radius:16px;padding:14px}
+.pn-form[hidden]{display:none}
+.pn-alan{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pn-alan span{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink2)}
+.pn-form input,.pn-form select,.pn-form textarea,.pn-filtre input,.pn-filtre select{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--sand2);background:#fff;width:100%;min-width:0}
+.pn-genis{grid-column:1/-1}
+.pn-filtre{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pn-filtre[hidden]{display:none}
+.pn-filtre input{flex:2 1 180px;width:auto}.pn-filtre select{flex:1 1 150px;width:auto}
+.pn-tik{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:0 6px;white-space:nowrap}
+.pn-tik input{width:20px;height:20px}
+#pnListe{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.dv{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;border:1.5px solid var(--sand2);border-radius:14px;padding:10px 12px}
+.dv-ad{min-width:0}
+.dv-ad b{display:block;font-size:16px;overflow-wrap:anywhere}
+.dv-ad small{display:block;font-size:13px;color:var(--ink2);overflow-wrap:anywhere}
+.dv-ad .dn{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;background:var(--navy);color:#fff;border-radius:20px;padding:1px 8px;margin-right:6px}
+.dv select{font:inherit;font-size:14px;font-weight:700;padding:7px 10px;border-radius:30px;border:0;cursor:pointer}
+.dv-bt{display:flex;gap:4px}
+.dv-bt button{font:inherit;font-size:13px;font-weight:700;border:0;background:var(--sand);color:var(--navy);border-radius:20px;padding:7px 10px;cursor:pointer}
+.dv-bt button.emin{background:var(--red);color:#fff}
+.dv .geldi{font:inherit;font-weight:800;font-size:16px;border:0;border-radius:30px;padding:12px 20px;background:var(--ok);color:#fff;cursor:pointer}
+.s-davet{background:var(--sand);color:var(--ink)}.s-teyit{background:#FDE7C8;color:#7a4300}.s-son{background:#D9ECFF;color:#0b4a8a}
+.s-geldi,.s-gorusme{background:#E3F4EA;color:#14653a}.s-satis{background:var(--gold);color:var(--navy)}.s-vazgecti{background:#eee;color:#888}
+.bos{text-align:center;color:var(--ink2);padding:22px 10px;border:1.5px dashed var(--sand2);border-radius:14px}
+.pn-tablo{overflow-x:auto;margin-top:10px}
+.pn-tablo table{width:100%;border-collapse:collapse;font-size:15px;min-width:560px}
+.pn-tablo th{text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);padding:8px 8px;border-bottom:1.5px solid var(--sand2)}
+.pn-tablo td{padding:9px 8px;border-bottom:1px solid var(--sand2);font-variant-numeric:tabular-nums}
+.pn-tablo tr.ben td{background:#FFF6E6;font-weight:700}
+.pn-tablo .sb{display:flex;align-items:center;gap:8px}
+.pn-tablo .sb i{display:block;height:8px;border-radius:8px;background:var(--red);min-width:2px}
+.pn-tablo .sb i.tam{background:var(--ok)}
+.chip{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:2px 9px}
+.chip.ok{background:#E3F4EA;color:#14653a}.chip.no{background:var(--sand);color:var(--ink2)}
+@media (max-width:860px){.pn-kpi{grid-template-columns:1fr 1fr}.pn-form{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){
+  .pn-form{grid-template-columns:1fr}.dv{grid-template-columns:minmax(0,1fr) auto}.dv-ad{grid-column:1/-1}.dv select{justify-self:start}
+  .geri{padding:14px 12px}.geri-sayi span{font-size:9px;letter-spacing:.08em}.yd small{font-size:10px}
+  .pn-kpi .v{font-size:30px}
+}
+@media (prefers-reduced-motion:reduce){.tik,.canli i,.yd.sira,.sonraki.acil{animation:none}}
 </style>
 </head>
 <body>
@@ -129,11 +228,84 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
    <div><b>Kalamış Marina</b><small><a href="https://www.google.com/maps/search/?api=1&amp;query=Kalam%C4%B1%C5%9F+Marina+Hotel+Kad%C4%B1k%C3%B6y" target="_blank" rel="noopener">Kadıköy · Yol tarifi →</a></small></div>
    <div><b>Davetiyeli</b><small>Ön kayıt → ön görüşme → davetiye</small></div>
   </div>
-  <div class="cd" id="cd"><span class="k">Buluşmaya kalan</span><div><b>--</b><span>Gün</span></div><div><b>--</b><span>Saat</span></div><div><b>--</b><span>Dakika</span></div></div>
+  <div class="geri" id="geri">
+   <div class="geri-ust"><span class="k">Buluşmaya kalan</span><span class="canli"><i></i>Geri sayım</span></div>
+   <div class="geri-sayi">
+    <div><b id="gG">--</b><span>Gün</span></div><em>:</em>
+    <div><b id="gS">--</b><span>Saat</span></div><em>:</em>
+    <div><b id="gD">--</b><span>Dakika</span></div><em>:</em>
+    <div class="sn"><b id="gN">--</b><span>Saniye</span></div>
+   </div>
+   <div class="yol" id="yol"><div class="yol-dolu" id="yolDolu"></div></div>
+   <a class="sonraki" id="sonraki" href="#panel"></a>
+  </div>
  </div>
 </header>
 
 <main class="wrap">
+
+ <section class="s" id="panel">
+  <h2>Davetli <em>panelim</em></h2>
+  <p class="sub">Davetlilerinizi buraya kaydedin. Listeniz, kesin teyitleriniz ve %60 paylaşım hakkınız burada ölçülür; hedefin gerisinde kalırsanız telefonunuza hatırlatma gelir.</p>
+  <div class="pn-demo" id="pnDemo" hidden>Örnek görünüm: bu sayfadaki davetliler ve rakamlar gerçek değil.</div>
+  <div class="card pn-giris" id="pnGiris">
+   <label class="lbl" for="pnPin">Danışman Takip PIN'i</label>
+   <div class="pn-pinrow"><input id="pnPin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••"><button class="btn cp" id="pnGir" type="button">Giriş</button></div>
+   <div class="err" id="pnHata"></div>
+   <p class="note">Koç sayfasında kullandığınız PIN. Bilmiyorsanız brokerınızdan isteyin. Bu telefonda hatırlanır.</p>
+  </div>
+  <div id="pnAna" hidden>
+   <div class="pn-ust">
+    <div><div class="lbl" id="pnRol">Danışman</div><h3 id="pnAd"></h3></div>
+    <div class="bt"><button class="btn gh" id="pnYenile" type="button">Yenile</button><button class="btn gh" id="pnCikis" type="button">Çıkış</button></div>
+   </div>
+   <div class="pn-kpi" id="pnKpi"></div>
+   <div class="pn-hak" id="pnHak"></div>
+   <div id="pnBld"></div>
+
+   <div class="card pn-kart">
+    <div class="pn-bas"><h3 id="pnListeBaslik">Davetlilerim</h3><button class="btn cp" id="pnEkleAc" type="button">+ Davetli ekle</button></div>
+    <form class="pn-form" id="pnForm" hidden>
+     <input type="hidden" id="fpId">
+     <label class="pn-alan pn-genis" id="fpDanAlan" hidden><span>Danışman</span><select id="fpDanisman"></select></label>
+     <label class="pn-alan pn-genis"><span>Ad soyad</span><input id="fpAd" autocapitalize="words" autocomplete="off" placeholder="Misafirin adı soyadı"></label>
+     <label class="pn-alan"><span>Telefon</span><input id="fpTel" inputmode="tel" autocomplete="off" placeholder="05xx xxx xx xx"></label>
+     <label class="pn-alan"><span>Kişi sayısı</span><select id="fpKisi"><option value="1">1 kişi</option><option value="2" selected>2 kişi</option><option value="3">3 kişi</option><option value="4">4 kişi</option><option value="5">5 kişi</option></select></label>
+     <label class="pn-alan"><span>Tahmini bütçe</span><select id="fpButce"><option value="">Bilinmiyor</option><option>100 bin £ altı</option><option>100 – 200 bin £</option><option>200 bin £ üzeri</option></select></label>
+     <label class="pn-alan"><span>İlgi düzeyi</span><select id="fpIlgi"><option value="yuksek">Yüksek</option><option value="orta">Orta</option></select></label>
+     <label class="pn-alan"><span>Durum</span><select id="fpDurum"></select></label>
+     <label class="pn-alan pn-genis"><span>Not</span><input id="fpNot" autocomplete="off" placeholder="Örn. eşiyle gelecek, tatil evi arıyor"></label>
+     <div class="err pn-genis" id="fpHata"></div>
+     <div class="bt pn-genis"><button class="btn cp" id="fpKaydet" type="submit">Kaydet</button><button class="btn gh" id="fpVazgec" type="button">Vazgeç</button></div>
+    </form>
+    <div class="pn-filtre" id="pnFiltre" hidden>
+     <input id="pnAra" placeholder="Ara: ad, telefon" autocomplete="off">
+     <select id="pnFd"><option value="">Tüm danışmanlar</option></select>
+     <select id="pnFs"><option value="">Tüm durumlar</option></select>
+     <label class="pn-tik"><input type="checkbox" id="pnGirisModu"> Lansman günü girişi</label>
+    </div>
+    <div id="pnListe"></div>
+   </div>
+
+   <div class="card pn-kart" id="pnBroker" hidden>
+    <h3>Danışmanlara bildirim</h3>
+    <p class="note">Telefonuna portal bildirimi açık olan danışmana anında gider; sayfadaki "Bildirimlerim" listesine de düşer.</p>
+    <div class="pn-form" style="margin-top:12px">
+     <label class="pn-alan pn-genis"><span>Kime</span><select id="pnKime"></select></label>
+     <label class="pn-alan pn-genis"><span>Mesaj</span><textarea id="pnMetin" rows="3" placeholder="Bildirim metni"></textarea></label>
+     <div class="bt pn-genis" id="pnHazir"></div>
+     <div class="err pn-genis" id="pnBHata"></div>
+     <div class="bt pn-genis"><button class="btn cp" id="pnGonder" type="button">Bildirimi gönder</button><button class="btn gh" id="pnOtel" type="button">Otel listesini kopyala</button></div>
+    </div>
+   </div>
+
+   <div class="card pn-kart">
+    <h3>Sıralama</h3>
+    <div class="pn-tablo"><table id="pnSira"></table></div>
+    <p class="note">Sıra, 13 Kasım 18.00'e kadar alınan kesin teyitlere göre. Müşteri bilgileri yalnız danışmanın kendisine ve brokerlara görünür.</p>
+   </div>
+  </div>
+ </section>
 
  <section class="s">
   <h2>Önce <em>siz kimsiniz?</em></h2>
@@ -143,17 +315,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  </section>
 
  <section class="s">
-  <h2>Hedefimiz: <em>dolu bir salon</em></h2>
+  <h2>Hedefimiz: <em>doğru yatırımcılarla dolu bir salon</em></h2>
   <div class="g3">
-   <div class="card"><div class="num">10</div><div class="lbl" style="margin-top:6px">Kişi başı kesin misafir</div><p style="margin-top:8px;font-size:15px">Her danışman en az 10 misafirle salonda olsun.</p></div>
-   <div class="card"><div class="num">30</div><div class="lbl" style="margin-top:6px">Kişi başı davet listesi</div><p style="margin-top:8px;font-size:15px">Davet ettiğiniz herkes gelemez. Listeniz en az 30 kişi olsun.</p></div>
-   <div class="card"><div class="num">10 + 10</div><div class="lbl" style="margin-top:6px">Her gün</div><p style="margin-top:8px;font-size:15px">10 arama ve 10 kişisel WhatsApp mesajı. Toplu mesaj değil, isimle.</p></div>
+   <div class="card"><div class="num">10</div><div class="lbl" style="margin-top:6px">Kişi başı davet listesi</div><p style="margin-top:8px;font-size:15px">9 Kasım Pazartesi'ye kadar en az 10 potansiyel yatırımcıyı panele girin.</p></div>
+   <div class="card"><div class="num">3</div><div class="lbl" style="margin-top:6px">Kişi başı kesin teyit</div><p style="margin-top:8px;font-size:15px">13 Kasım Cuma saat 18.00'e kadar. 3'te durmayın: her fazla teyit sizi sıralamada öne taşır.</p></div>
+   <div class="card"><div class="num">%60</div><div class="lbl" style="margin-top:6px">Lansmana özel pay</div><p style="margin-top:8px;font-size:15px">3 teyit hedefini tutturun; davetlinize 31 Ocak 2027'ye kadar satışta paylaşım %60 sizin.</p></div>
   </div>
+  <p class="note" style="margin-top:14px">Davet ettiğiniz yatırımcı sizin müşteriniz olarak kayda alınır: aynı numarayı başka danışman giremez.</p>
  </section>
 
  <section class="s">
   <h2>Bugünkü <em>sayacınız</em></h2>
-  <p class="sub">Gün içinde yaptıkça artırın. Sayaç her gün sıfırlanır, toplamınız altta görünür.</p>
+  <p class="sub">Her gün 10 arama ve 10 kişisel WhatsApp mesajı. Gün içinde yaptıkça artırın; sayaç her gün sıfırlanır, toplamınız altta görünür.</p>
   <div class="cnt" id="cnt"></div>
   <p class="note" id="cntTop"></p>
  </section>
@@ -161,10 +334,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  <section class="s">
   <h2>3 haftalık <em>plan</em></h2>
   <div class="plan" id="plan">
-   <div class="ph" data-a="2026-11-01" data-b="2026-11-09"><div class="d">1 – 9 Kasım</div><h3>Liste ve ilk davet</h3><ul class="ck"><li>30 kişilik davet listenizi çıkarın.</li><li>Önce arayın, sonra WhatsApp davetini gönderin.</li><li>İlgilenenin ön kaydını hemen yapın.</li></ul></div>
-   <div class="ph" data-a="2026-11-10" data-b="2026-11-16"><div class="d">10 – 16 Kasım</div><h3>Sosyal medya ve ikinci tur</h3><ul class="ck"><li>Kendi hesabınızda story ve gönderi paylaşın.</li><li>Cevap vermeyenleri ikinci kez arayın.</li><li>"Yanımda biriyle gelebilir miyim?" diyene evet deyin.</li></ul></div>
-   <div class="ph" data-a="2026-11-17" data-b="2026-11-21"><div class="d">17 – 21 Kasım</div><h3>Teyit</h3><ul class="ck"><li>Ön kayıtlı her misafiri arayıp katılımı teyit edin.</li><li>21 Kasım akşamı son hatırlatma mesajı.</li><li>Kesin listenizi ofise iletin.</li></ul></div>
-   <div class="ph" data-a="2026-11-22" data-b="2026-11-30"><div class="d">22 Kasım ve sonrası</div><h3>Buluşma ve takip</h3><ul class="ck"><li>13:00'te salonda olun, misafirinizi kapıda karşılayın.</li><li>Ertesi gün her misafirinizi arayın.</li><li>Keşif turu ve teklif için takip notu yazın.</li></ul></div>
+   <div class="ph" data-a="2026-11-01" data-b="2026-11-09"><div class="d">1 – 9 Kasım</div><h3>Liste ve ilk davet</h3><ul class="ck"><li>En az 10 kişilik listenizi 9 Kasım'a kadar panele girin.</li><li>Önce arayın, sonra kişisel WhatsApp davetini gönderin.</li><li>Lansman reels'ini 8 Kasım'da paylaşın.</li></ul></div>
+   <div class="ph" data-a="2026-11-10" data-b="2026-11-13"><div class="d">10 – 13 Kasım</div><h3>Kesin teyit</h3><ul class="ck"><li>13 Kasım Cuma 18.00'e kadar en az 3 kesin teyit.</li><li>"Gelirim" diyeni panelde "Teyit verdi" yapın.</li><li>Cevap vermeyenleri ikinci kez arayın.</li></ul></div>
+   <div class="ph" data-a="2026-11-14" data-b="2026-11-19"><div class="d">14 – 19 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin.</li><li>Teyit verenleri arayıp "Son teyit alındı" yapın.</li><li>19 Kasım'da liste kesinleşir.</li></ul></div>
+   <div class="ph" data-a="2026-11-20" data-b="2026-11-30"><div class="d">20 Kasım ve sonrası</div><h3>Buluşma ve takip</h3><ul class="ck"><li>21 Kasım akşamı son hatırlatma mesajı.</li><li>22 Kasım 13:00'te salonda olun.</li><li>Ertesi gün her misafirinizi arayıp durumunu güncelleyin.</li></ul></div>
   </div>
  </section>
 
@@ -191,17 +364,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  </section>
 
  <section class="s">
-  <h2>Misafirinizin <em>ön kaydını yapın</em></h2>
-  <p class="sub">Müşteriniz "gelirim" dediyse bilgilerini yazın; mesaj yurt dışı koordinatörümüz Makbule Hanım'a sizin adınızla gider. Ön görüşme ve davetiye ondan çıkar.</p>
-  <div class="card" style="margin-top:16px">
-   <div class="frm">
-    <input id="fAd" placeholder="Misafirin adı soyadı" autocapitalize="words" autocomplete="off">
-    <input id="fTel" placeholder="Telefonu" inputmode="tel" autocomplete="off">
-    <select id="fKac"><option value="1">1 kişi</option><option value="2" selected>2 kişi</option><option value="3">3 kişi</option><option value="4">4 kişi</option><option value="5+">5+ kişi</option></select>
-   </div>
-   <div class="err" id="fErr"></div>
-   <div class="bt" style="margin-top:4px"><button class="btn wa" id="fGo" type="button">Makbule Hanım'a ilet</button></div>
-  </div>
+  <h2>Misafirinizi <em>panele kaydedin</em></h2>
+  <p class="sub">Müşteriniz "gelirim" dediyse Davetli panelinize "Teyit verdi" olarak girin. Makbule Hanım yeni teyidi telefonunda görür ve ön görüşme için arar; davetiye ondan gider.</p>
+  <div class="bt" style="margin-top:14px"><a class="btn cp" href="#panel">Davetli panelime git</a></div>
  </section>
 
  <section class="s scr">
@@ -246,17 +411,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  var D={evsen:['Evşen Özazman','0532 518 11 67'],aysegul:['Ayşegül Alpay','0532 456 79 56'],gamze:['Gamze Yetkin','0538 354 41 65'],
   gizem:['Gizem Gök','0507 097 74 31'],ozlem:['Özlem Varol','0533 624 85 98'],orhan:['Orhan Özazman','0533 436 19 95'],
   aysun:['Aysun Yılmaz','0532 363 35 54'],irem:['İrem Aleyna Tetik','0546 281 91 77'],makbule:['Makbule Tokkuş','0532 478 13 31'],umut:['Umut Tokkuş','0532 472 41 48']};
- var MAKBULE='905324781331', HEDEF=new Date('2026-11-22T13:30:00+03:00');
  var kim=null; try{kim=localStorage.getItem('kb_kim');}catch(e){}
  var q=(location.search.match(/[?&]d=([a-z]+)/)||[])[1]; if(q&&D[q]) kim=q;
  if(!D[kim]) kim=null;
-
- /* geri sayım */
- function cd(){var ms=HEDEF-new Date(),b=$('cd').querySelectorAll('b');
-  if(ms<=0){$('cd').innerHTML='<span class="k" style="opacity:1;font-weight:700">Buluşma günü. Kalamış Marina Hotel\'deyiz.</span>';return;}
-  var g=Math.floor(ms/864e5),s=Math.floor(ms%864e5/36e5),d=Math.floor(ms%36e5/6e4);
-  b[0].textContent=g;b[1].textContent=s;b[2].textContent=d;}
- cd(); setInterval(cd,30000);
 
  /* plan: bugünkü aşama */
  var bugun=new Date(); bugun.setHours(12);
@@ -310,25 +467,351 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   $('cnt').querySelectorAll('button').forEach(function(b){b.onclick=function(){var o=oku(),gg=o[gun()]=o[gun()]||{};gg[b.dataset.k]=Math.max(0,(gg[b.dataset.k]||0)+(+b.dataset.v));yaz(o);cntCiz();};});
  }
 
- /* ön kayıt: Makbule Hanım'a WhatsApp */
- $('fGo').onclick=function(){
-  var a=$('fAd').value.trim(),t=$('fTel').value.replace(/[^\d+]/g,''),n=$('fKac').value;
-  if(!kim){$('fErr').textContent='Önce yukarıdan adınızı seçin.';window.scrollTo({top:$('who').offsetTop-120,behavior:'smooth'});return;}
-  if(a.split(/\s+/).length<2){$('fErr').textContent='Misafirin adını ve soyadını yazın.';$('fAd').focus();return;}
-  if(t.replace(/\D/g,'').length<10){$('fErr').textContent='Telefon numarasını eksiksiz yazın.';$('fTel').focus();return;}
-  $('fErr').textContent='';
-  var m='22 Kasım Büyük Kuzey Kıbrıs Buluşması ön kayıt\nMisafir: '+a+'\nTelefon: '+t+'\nKişi sayısı: '+n+'\nDavet eden: '+D[kim][0];
-  var o=oku(),gg=o[gun()]=o[gun()]||{};gg.kayit=(gg.kayit||0)+1;yaz(o);cntCiz();
-  window.open('https://wa.me/'+MAKBULE+'?text='+encodeURIComponent(m),'_blank');
-  $('fAd').value='';$('fTel').value='';
- };
-
  function ciz(){
   whoCiz();msgCiz();cntCiz();
   document.querySelectorAll('.adv').forEach(function(e){e.textContent=ad();});
   $('lnkTxt').textContent=link();
  }
  ciz();
+})();
+</script>
+<script src="assets/broker.js"></script>
+<script>
+/* Geri sayım + Davetli paneli. Sunucu: dogus-whatsapp-service, action:'lansman' (scripts/lansman-appscript.js).
+   Giriş Danışman Takip PIN'i ile; ?demo=1 (danışman) ya da ?demo=broker örnek verilerle açılır. */
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var SERVIS='https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+ var T={bas:'2026-11-01T00:00:00+03:00',liste:'2026-11-09T23:59:59+03:00',teyit:'2026-11-13T18:00:00+03:00',son:'2026-11-19T23:59:59+03:00',lansman:'2026-11-22T13:30:00+03:00'};
+ var TS={}; Object.keys(T).forEach(function(k){TS[k]=new Date(T[k]).getTime();});
+ var ADIM=[
+  {k:'liste',e:'9 Kas',b:'9 Kasım Pazartesi',h:'Davet listesi: en az 10 kişi'},
+  {k:'teyit',e:'13 Kas · 18.00',b:'13 Kasım Cuma 18.00',h:'Kesin teyit: en az 3 · %60 hakkı'},
+  {k:'son',e:'19 Kas',b:'19 Kasım Perşembe',h:'Son teyit: liste kesinleşir',ust:true},
+  {k:'lansman',e:'22 Kas',b:'22 Kasım Pazar 13:30',h:'Lansman · Kalamış Marina Hotel'}];
+ var HEDEF={liste:10,teyit:3};
+ var DURUM={davet:'Davet edildi',teyit:'Teyit verdi',son:'Son teyit alındı',geldi:'Lansmana geldi',gorusme:'Görüşme yapıldı',satis:'Satış',vazgecti:'Katılmayacak'};
+ var SIRA=['teyit','son','davet','geldi','gorusme','satis','vazgecti'];
+ var KESIN=['teyit','son','geldi','gorusme','satis'], GELDI=['geldi','gorusme','satis'];
+
+ function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
+ function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+ function iki(n){return (n<10?'0':'')+n;}
+ function sure(ms){if(ms<=0)return 'süre doldu';var g=Math.floor(ms/864e5),s=Math.floor(ms%864e5/36e5),d=Math.floor(ms%36e5/6e4),n=Math.floor(ms%6e4/1e3);return (g?g+'g ':'')+iki(s)+'s '+iki(d)+'d '+iki(n)+'sn';}
+ var TF=new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Istanbul'});
+ function tarih(iso){try{return TF.format(new Date(iso));}catch(e){return '';}}
+ function ilk(ad){return String(ad||'').split(' ')[0];}
+
+ /* ---------- geri sayım ---------- */
+ var onceki={}, yolHazir=false, sayac=null;
+ function yaz(id,v){if(onceki[id]===v)return;onceki[id]=v;var el=$(id);el.textContent=v;el.classList.remove('tik');void el.offsetWidth;el.classList.add('tik');}
+ function geri(){
+  var now=Date.now(), ms=TS.lansman-now, top=TS.lansman-TS.bas;
+  if(!yolHazir){yolHazir=true;$('yol').insertAdjacentHTML('beforeend',ADIM.map(function(a,i){
+   return '<span class="yd'+(a.ust?' ust':'')+(i===ADIM.length-1?' son':'')+'" data-k="'+a.k+'" style="left:'+((TS[a.k]-TS.bas)/top*100).toFixed(2)+'%"><small>'+a.e+'</small></span>';}).join(''));}
+  $('yolDolu').style.width=Math.min(100,Math.max(0,(now-TS.bas)/top*100))+'%';
+  var siradaki=ADIM.filter(function(a){return TS[a.k]>now;})[0];
+  document.querySelectorAll('.yd').forEach(function(d){d.classList.toggle('gecti',TS[d.dataset.k]<=now);d.classList.toggle('sira',!!siradaki&&d.dataset.k===siradaki.k);});
+  if(ms<=0){
+   $('geri').querySelector('.geri-sayi').innerHTML='<div style="text-align:left"><b style="font-size:clamp(30px,7vw,56px)">Buluşma günü!</b><span>Kalamış Marina Hotel · 13:30</span></div>';
+   $('sonraki').hidden=true; clearInterval(sayac); return;
+  }
+  yaz('gG',String(Math.floor(ms/864e5)));yaz('gS',iki(Math.floor(ms%864e5/36e5)));yaz('gD',iki(Math.floor(ms%36e5/6e4)));yaz('gN',iki(Math.floor(ms%6e4/1e3)));
+  var kalan=TS[siradaki.k]-now;
+  $('sonraki').classList.toggle('acil',siradaki.k!=='lansman'&&kalan<72*36e5);
+  $('sonraki').innerHTML='<span class="e">Sıradaki teslim</span><b>'+siradaki.b+'</b><span>'+siradaki.h+'</span><span class="z">'+sure(kalan)+'</span>';
+ }
+ geri(); sayac=setInterval(geri,1000);
+
+ /* ---------- panel ---------- */
+ var P={pin:'',v:null,demo:null,form:false};
+ var q=(location.search.match(/[?&]demo=([a-z0-9]+)/)||[])[1];
+ if(q){P.demo=q==='broker'?'broker':'danisman';$('pnDemo').hidden=false;}
+
+ function istek(govde){
+  if(P.demo) return Promise.resolve(demoIstek(govde));
+  govde.action='lansman'; govde.pin=P.pin;
+  return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify(govde)})
+   .then(function(r){return r.text();})
+   .then(function(t){try{return JSON.parse(t);}catch(e){return {ok:false,error:'Panel henüz açılmadı. Brokerınıza haber verin.'};}})
+   .catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});
+ }
+
+ var toastZ;
+ function toast(m){var t=$('pnToast');if(!t){t=document.createElement('div');t.id='pnToast';t.setAttribute('role','status');
+  t.style.cssText='position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;font-weight:700;padding:12px 18px;border-radius:30px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw;text-align:center';document.body.appendChild(t);}
+  t.textContent=m;t.hidden=false;clearTimeout(toastZ);toastZ=setTimeout(function(){t.hidden=true;},2600);}
+
+ function giris(pin){
+  pin=String(pin||'').trim();
+  if(!P.demo&&!/^\d{4,6}$/.test(pin)){$('pnHata').textContent='PIN 4-6 haneli olmalı.';return;}
+  P.pin=pin; $('pnGir').disabled=true; $('pnHata').textContent='Kontrol ediliyor…';
+  istek({islem:'giris'}).then(function(r){
+   $('pnGir').disabled=false;
+   if(!r.ok){$('pnHata').textContent=r.error||'Giriş yapılamadı.';$('pnPin').value='';ls('kb_pin',null);return;}
+   $('pnHata').textContent=''; if(!P.demo) ls('kb_pin',pin);
+   P.v=r; $('pnGiris').hidden=true; $('pnAna').hidden=false;
+   kimSec(r.ad); filtreKur(); ciz();
+  });
+ }
+ function cevap(r,basari){
+  if(!r.ok){toast(r.error||'İşlem yapılamadı.');return false;}
+  P.v=r; ciz(); if(basari) toast(basari); return true;
+ }
+
+ /* Mesajlar bölümündeki ad seçimini girişe göre yap */
+ function kimSec(ad){
+  var k=ilk(ad).toLocaleLowerCase('tr').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/ı/g,'i');
+  var b=document.querySelector('#who button[data-k="'+k+'"]'); if(b&&!b.classList.contains('on')) b.click();
+ }
+
+ function ozet(list,ad){
+  var o={ad:ad,liste:0,teyit:0,zamaninda:0,kisi:0,geldi:0,satis:0,sonBekleyen:0};
+  list.forEach(function(r){
+   if(r.danisman!==ad)return;
+   if(r.durum!=='vazgecti')o.liste++;
+   if(KESIN.indexOf(r.durum)>=0){o.teyit++;o.kisi+=Number(r.kisi)||1;if(r.teyit&&new Date(r.teyit).getTime()<=TS.teyit)o.zamaninda++;}
+   if(r.durum==='teyit')o.sonBekleyen++;
+   if(GELDI.indexOf(r.durum)>=0)o.geldi++;
+   if(r.durum==='satis')o.satis++;
+  });
+  o.hak=o.zamaninda>=HEDEF.teyit; return o;
+ }
+
+ function kpi(lbl,v,hedef,alt){
+  var h='<div class="card"><div class="lbl">'+lbl+'</div><div class="v">'+v+(hedef?'<small>/'+hedef+'</small>':'')+'</div>';
+  if(hedef) h+='<div class="bar"><i class="'+(v>=hedef?'tam':'')+'" style="width:'+Math.min(100,v/hedef*100)+'%"></i></div>';
+  return h+(alt?'<div class="alt">'+alt+'</div>':'')+'</div>';
+ }
+
+ function ciz(){
+  var v=P.v, now=Date.now(), list=v.davetliler||[];
+  $('pnAd').textContent=v.ad; $('pnRol').textContent=v.broker?'Broker':'Danışman';
+  $('pnListeBaslik').textContent=v.broker?'Tüm davetliler':'Davetlilerim';
+  $('pnFiltre').hidden=!v.broker; $('pnBroker').hidden=!v.broker; $('fpDanAlan').hidden=!v.broker;
+
+  /* özet kutuları */
+  if(v.broker){
+   var sr=v.siralama||[], ekip=sr.filter(function(o){return (v.ekip||[]).indexOf(o.ad)>=0;});
+   var top=sr.reduce(function(a,o){a.liste+=o.liste;a.teyit+=o.teyit;a.kisi+=o.kisi;a.geldi+=o.geldi;a.satis+=o.satis;return a;},{liste:0,teyit:0,kisi:0,geldi:0,satis:0});
+   var hak=ekip.filter(function(o){return o.hak;}).length;
+   $('pnKpi').innerHTML=kpi('Toplam davetli',top.liste,0,'Katılmayacaklar hariç')+kpi('Kesin teyit',top.teyit,ekip.length*HEDEF.teyit,'Hedef: danışman başı 3')+
+    kpi('Beklenen kişi',top.kisi,0,'Otel için kesin sayı')+kpi(now<TS.lansman?'%60 hakkı kazanan':'Gelen / satış',now<TS.lansman?hak:top.geldi,now<TS.lansman?ekip.length:0,now<TS.lansman?'danışman':top.satis+' satış');
+   var geride=ekip.filter(geridemi).length;
+   $('pnHak').className='pn-hak '+(geride?'bek':'ok');
+   $('pnHak').innerHTML=geride?'<span><b>'+geride+' danışman</b> sıradaki hedefin gerisinde.</span><button class="btn cp" type="button" id="pnGerideBtn" style="margin-left:auto;background:var(--red)">Hatırlatma yaz</button>':'<span>Bütün danışmanlar sıradaki hedefte.</span>';
+   var gb=$('pnGerideBtn'); if(gb) gb.onclick=function(){$('pnKime').value='geride';$('pnMetin').value=hazirMetin('teslim');$('pnBroker').scrollIntoView({behavior:'smooth',block:'center'});};
+  } else {
+   var o=ozet(list,v.ad);
+   $('pnKpi').innerHTML=kpi('Davet listesi',o.liste,HEDEF.liste,'9 Kasım hedefi')+
+    kpi('Kesin teyit',o.zamaninda,HEDEF.teyit,'13 Kasım 18.00 hedefi'+(o.teyit>o.zamaninda?' · +'+(o.teyit-o.zamaninda)+' sonradan':''))+
+    kpi('Beklenen kişi',o.kisi,0,'Kesin teyitlerinizle')+kpi('Gelen / satış',o.geldi+' / '+o.satis,0,'Lansman sonrası');
+   var h=$('pnHak');
+   if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>✓ %60 paylaşım hakkınız kesinleşti. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
+   else if(now<TS.teyit){var e=HEDEF.teyit-o.zamaninda;h.className='pn-hak bek';h.innerHTML='<span>%60 paylaşım için <b>'+e+' kesin teyit</b> daha</span><span class="z" id="pnHakZ">'+sure(TS.teyit-now)+'</span>';}
+   else{h.className='pn-hak kac';h.innerHTML='<span>Bu lansmanda paylaşım %50 / %50. Teyitleriniz yine sıralamaya ve otel listesine sayılıyor.</span>';}
+  }
+
+  /* bildirimler */
+  var b=(v.bildirimler||[]).slice(0,5), yeni=b.filter(function(x){return !x.okundu;}).length;
+  $('pnBld').innerHTML=b.length?'<div class="pn-bld"><div class="bh"><b>Bildirimlerim'+(yeni?' ('+yeni+' yeni)':'')+'</b>'+(yeni?'<button class="btn gh" type="button" id="pnOkundu">Okundu</button>':'')+'</div><ul>'+
+   b.map(function(x){return '<li class="'+(x.okundu?'':'yeni')+'">'+esc(x.metin)+'<small>'+esc(x.baslik)+' · '+tarih(x.zaman)+'</small></li>';}).join('')+'</ul></div>':'';
+  var ok=$('pnOkundu'); if(ok) ok.onclick=function(){istek({islem:'okundu'}).then(function(r){cevap(r);});};
+
+  listeCiz(); siraCiz(); if(v.broker) brokerCiz();
+ }
+
+ function geridemi(o){
+  var now=Date.now();
+  if(now<=TS.liste) return o.liste<HEDEF.liste;
+  if(now<=TS.teyit) return o.zamaninda<HEDEF.teyit;
+  if(now<=TS.son) return o.sonBekleyen>0;
+  return false;
+ }
+
+ /* ---------- liste ---------- */
+ function filtreKur(){
+  var v=P.v, adlar=(v.ekip||[]).slice();
+  (v.davetliler||[]).forEach(function(r){if(adlar.indexOf(r.danisman)<0)adlar.push(r.danisman);});
+  if(v.broker&&adlar.indexOf(v.ad)<0) adlar.push(v.ad);
+  $('pnFd').innerHTML='<option value="">Tüm danışmanlar</option>'+adlar.map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
+  $('fpDanisman').innerHTML=adlar.map(function(a){return '<option'+(a===v.ad?' selected':'')+'>'+esc(a)+'</option>';}).join('');
+  var ops=SIRA.map(function(k){return '<option value="'+k+'">'+DURUM[k]+'</option>';}).join('');
+  $('pnFs').innerHTML='<option value="">Tüm durumlar</option>'+ops; $('fpDurum').innerHTML=ops;
+  $('pnKime').innerHTML='<option value="geride">Hedefin gerisindekiler</option><option value="herkes">Tüm danışmanlar</option>'+(v.ekip||[]).map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
+ }
+
+ function listeCiz(){
+  var v=P.v, list=(v.davetliler||[]).slice(), giris=v.broker&&$('pnGirisModu').checked;
+  if(v.broker){
+   var a=$('pnAra').value.trim().toLocaleLowerCase('tr'), fd=$('pnFd').value, fs=$('pnFs').value, ad=a.replace(/\D/g,'');
+   list=list.filter(function(r){
+    if(fd&&r.danisman!==fd)return false; if(fs&&r.durum!==fs)return false;
+    if(giris&&KESIN.indexOf(r.durum)<0)return false;
+    if(a&&String(r.ad).toLocaleLowerCase('tr').indexOf(a)<0&&!(ad.length>=3&&String(r.telefon).replace(/\D/g,'').indexOf(ad)>=0))return false;
+    return true;});
+  }
+  list.sort(function(x,y){return giris?String(x.ad).localeCompare(y.ad,'tr'):(SIRA.indexOf(x.durum)-SIRA.indexOf(y.durum))||String(y.kayit).localeCompare(String(x.kayit));});
+  if(!list.length){
+   $('pnListe').innerHTML='<div class="bos">'+(v.broker?'Bu filtreye uyan davetli yok.':'Henüz davetliniz yok. "+ Davetli ekle" ile ilk misafirinizi kaydedin; hedef 9 Kasım\'a kadar 10 kişi.')+'</div>';return;}
+  var ops=SIRA.map(function(k){return '<option value="'+k+'">'+DURUM[k]+'</option>';}).join('');
+  $('pnListe').innerHTML=list.map(function(r){
+   var bilgi=[r.telefon,(r.kisi||1)+' kişi',r.butce,'İlgi: '+(r.ilgi==='orta'?'Orta':'Yüksek'),r.not].filter(Boolean).map(esc).join(' · ');
+   var sag=giris
+    ?(GELDI.indexOf(r.durum)>=0?'<span class="chip ok">Geldi ✓</span>':'<button class="geldi" type="button" data-geldi>Geldi</button>')
+    :'<select class="s-'+r.durum+'" data-durum aria-label="Durum">'+ops.replace('value="'+r.durum+'"','value="'+r.durum+'" selected')+'</select>'+
+     '<div class="dv-bt"><button type="button" data-ed>Düzenle</button><button type="button" data-sil>Sil</button></div>';
+   return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small></div>'+sag+'</div>';
+  }).join('');
+ }
+
+ function bul(id){return (P.v.davetliler||[]).filter(function(r){return r.id===id;})[0];}
+ function kaydet(d,danisman,basari){
+  return istek({islem:'kaydet',davetli:d,danisman:danisman}).then(function(r){return cevap(r,basari)?r:null;});
+ }
+
+ $('pnListe').addEventListener('change',function(e){
+  var s=e.target.closest('[data-durum]'); if(!s)return;
+  var r=bul(s.closest('.dv').dataset.id); if(!r)return;
+  var d=JSON.parse(JSON.stringify(r)); d.durum=s.value; s.disabled=true;
+  kaydet(d,null,DURUM[s.value]+' olarak kaydedildi').then(function(x){if(!x)listeCiz();});
+ });
+ var silBekle=null;
+ $('pnListe').addEventListener('click',function(e){
+  var dv=e.target.closest('.dv'); if(!dv)return; var r=bul(dv.dataset.id); if(!r)return;
+  if(e.target.closest('[data-ed]')) formAc(r);
+  var sb=e.target.closest('[data-sil]');
+  if(sb){
+   if(!sb.classList.contains('emin')){sb.classList.add('emin');sb.textContent='Emin misiniz?';clearTimeout(silBekle);silBekle=setTimeout(function(){sb.classList.remove('emin');sb.textContent='Sil';},3000);return;}
+   sb.disabled=true; istek({islem:'sil',id:r.id}).then(function(x){cevap(x,'Silindi');});
+  }
+  var g=e.target.closest('[data-geldi]');
+  if(g){var d=JSON.parse(JSON.stringify(r));d.durum='geldi';g.disabled=true;g.textContent='…';kaydet(d,null,r.ad+' geldi');}
+ });
+ ['pnAra','pnFd','pnFs','pnGirisModu'].forEach(function(id){$(id).addEventListener('input',listeCiz);$(id).addEventListener('change',listeCiz);});
+
+ /* ---------- form ---------- */
+ function formAc(r){
+  $('pnForm').hidden=false; $('fpHata').textContent='';
+  $('fpId').value=r?r.id:''; $('fpAd').value=r?r.ad:''; $('fpTel').value=r?r.telefon:'';
+  $('fpKisi').value=r?String(Math.min(5,r.kisi||1)):'2'; $('fpButce').value=r?r.butce:''; $('fpIlgi').value=r?r.ilgi:'yuksek';
+  $('fpDurum').value=r?r.durum:'davet'; $('fpNot').value=r?r.not:'';
+  $('fpDanisman').disabled=!!r; if(r) $('fpDanisman').value=r.danisman; else if($('pnFd').value) $('fpDanisman').value=$('pnFd').value;
+  $('fpKaydet').textContent=r?'Değişikliği kaydet':'Kaydet';
+  $('pnForm').scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){$('fpAd').focus();},300);
+ }
+ $('pnEkleAc').onclick=function(){formAc(null);};
+ $('fpVazgec').onclick=function(){$('pnForm').hidden=true;};
+ $('pnForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var ad=$('fpAd').value.trim().replace(/\s+/g,' '), tel=$('fpTel').value.trim(), rak=tel.replace(/\D/g,'');
+  if(ad.split(' ').length<2){$('fpHata').textContent='Misafirin adını ve soyadını yazın.';$('fpAd').focus();return;}
+  if(rak.length<10){$('fpHata').textContent='Telefon numarasını eksiksiz yazın (05xx xxx xx xx).';$('fpTel').focus();return;}
+  $('fpHata').textContent=''; $('fpKaydet').disabled=true; $('fpKaydet').textContent='Kaydediliyor…';
+  var id=$('fpId').value, d={id:id||undefined,ad:ad,telefon:tel,kisi:$('fpKisi').value,butce:$('fpButce').value,ilgi:$('fpIlgi').value,durum:$('fpDurum').value,not:$('fpNot').value.trim()};
+  istek({islem:'kaydet',davetli:d,danisman:P.v.broker&&!id?$('fpDanisman').value:null}).then(function(r){
+   $('fpKaydet').disabled=false; $('fpKaydet').textContent=id?'Değişikliği kaydet':'Kaydet';
+   if(!r.ok){$('fpHata').textContent=r.error||'Kaydedilemedi.';return;}
+   $('pnForm').hidden=true; P.v=r; ciz(); toast(id?'Güncellendi':ad+' kaydedildi');
+  });
+ });
+
+ /* ---------- sıralama ---------- */
+ function siraCiz(){
+  var v=P.v, now=Date.now(), sr=(v.siralama||[]).slice();
+  sr.sort(function(a,b){return (b.zamaninda-a.zamaninda)||(b.teyit-a.teyit)||(b.liste-a.liste)||a.ad.localeCompare(b.ad,'tr');});
+  $('pnSira').innerHTML='<thead><tr><th>#</th><th>Danışman</th><th>Liste</th><th>Kesin teyit</th><th>Kişi</th><th>Geldi</th><th>Satış</th><th>%60</th></tr></thead><tbody>'+
+   sr.map(function(o,i){
+    var w=Math.round(Math.min(o.zamaninda,6)/6*80);
+    var chip=o.hak?'<span class="chip ok">Kazandı</span>':(now<TS.teyit?'<span class="chip no">'+(HEDEF.teyit-o.zamaninda)+' eksik</span>':'<span class="chip no">—</span>');
+    return '<tr class="'+(o.ad===v.ad?'ben':'')+'"><td>'+(i+1)+'</td><td>'+esc(o.ad)+'</td><td>'+o.liste+'<small style="color:var(--ink2)">/'+HEDEF.liste+'</small></td>'+
+     '<td><div class="sb"><i class="'+(o.hak?'tam':'')+'" style="width:'+w+'px"></i>'+o.zamaninda+(o.teyit>o.zamaninda?' <small style="color:var(--ink2)">+'+(o.teyit-o.zamaninda)+'</small>':'')+'</div></td>'+
+     '<td>'+o.kisi+'</td><td>'+o.geldi+'</td><td>'+o.satis+'</td><td>'+chip+'</td></tr>';
+   }).join('')+'</tbody>';
+ }
+
+ /* ---------- broker: bildirim ve otel listesi ---------- */
+ function hazirMetin(t){
+  var now=Date.now(), s=ADIM.filter(function(a){return TS[a.k]>now;})[0];
+  if(t==='teslim'&&s) return s.b+' teslim tarihine '+sure(TS[s.k]-now).replace(/ \d+sn$/,'')+' kaldı. '+
+   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'%60 paylaşım için en az 3 kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
+  if(t==='tebrik') return 'Harika gidiyorsun! Teyitlerin sıralamada öne çıktı. 22 Kasım\'da salonu birlikte dolduruyoruz.';
+  return 'Sıralamaya bir göz at: dogusportal.com/kibris-bulusma.html#panel';
+ }
+ var brokerHazir=false;
+ function brokerCiz(){
+  if(brokerHazir)return; brokerHazir=true;
+  $('pnHazir').innerHTML='<span class="note" style="margin:0 6px 0 0;align-self:center">Hazır metin:</span>'+[['teslim','Teslim hatırlatması'],['tebrik','Tebrik'],['sira','Sıralamaya bak']].map(function(x){return '<button class="btn gh" type="button" data-h="'+x[0]+'">'+x[1]+'</button>';}).join('');
+  $('pnHazir').onclick=function(e){var b=e.target.closest('[data-h]');if(b)$('pnMetin').value=hazirMetin(b.dataset.h);};
+  $('pnGonder').onclick=function(){
+   var m=$('pnMetin').value.trim(); if(!m){$('pnBHata').textContent='Önce mesajı yazın.';return;}
+   $('pnBHata').textContent=''; $('pnGonder').disabled=true;
+   istek({islem:'bildir',kime:$('pnKime').value,metin:m}).then(function(r){
+    $('pnGonder').disabled=false;
+    if(cevap(r)){$('pnMetin').value='';toast(r.gonderildi?r.gonderildi+' danışmana gönderildi':'Hedefin gerisinde danışman yok, kimseye gönderilmedi');}
+   });
+  };
+  $('pnOtel').onclick=function(){
+   var k=(P.v.davetliler||[]).filter(function(r){return KESIN.indexOf(r.durum)>=0;}).sort(function(a,b){return a.danisman.localeCompare(b.danisman,'tr')||a.ad.localeCompare(b.ad,'tr');});
+   var kisi=k.reduce(function(a,r){return a+(Number(r.kisi)||1);},0);
+   var t='Ad Soyad\tKişi\tDanışman\tTelefon\n'+k.map(function(r){return [r.ad,r.kisi,r.danisman,r.telefon].join('\t');}).join('\n')+'\nToplam\t'+kisi;
+   var bitti=function(){toast(k.length+' kayıt, '+kisi+' kişi kopyalandı');};
+   (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(bitti).catch(function(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');bitti();}catch(e){toast('Kopyalanamadı');}a.remove();});
+  };
+ }
+
+ /* %60 geri sayımı panelde de saniye saniye */
+ setInterval(function(){var z=$('pnHakZ');if(z)z.textContent=sure(TS.teyit-Date.now());},1000);
+
+ $('pnGir').onclick=function(){giris($('pnPin').value);};
+ $('pnPin').addEventListener('keydown',function(e){if(e.key==='Enter')giris(this.value);});
+ $('pnPin').addEventListener('input',function(){if(this.value.length===6)giris(this.value);});
+ $('pnCikis').onclick=function(){ls('kb_pin',null);P.pin='';P.v=null;$('pnAna').hidden=true;$('pnGiris').hidden=false;$('pnPin').value='';};
+ $('pnYenile').onclick=function(){istek({islem:'durum'}).then(function(r){cevap(r,'Güncel');});};
+
+ /* ---------- örnek veri (?demo=1 / ?demo=broker) — sunucuya hiçbir şey gitmez ---------- */
+ var DEMO=null;
+ function demoIstek(g){
+  if(!DEMO){
+   var gun=function(d,s){return new Date('2026-11-'+iki(d)+'T'+iki(s||11)+':00:00+03:00').toISOString();};
+   var ekip=['Örnek Danışman A','Örnek Danışman B','Örnek Danışman C','Örnek Danışman D'];
+   var x=function(id,dn,ad,tel,kisi,durum,kayit,teyit,butce){return {id:id,danisman:dn,ad:ad,telefon:tel,kisi:kisi,butce:butce||'',ilgi:'yuksek',durum:durum,not:'',kayit:kayit,teyit:teyit||''};};
+   DEMO={ekip:ekip,liste:[
+    x('d1',ekip[0],'Örnek Misafir Bir','0532 000 00 01',2,'teyit',gun(2),gun(3),'100 – 200 bin £'),
+    x('d2',ekip[0],'Örnek Misafir İki','0532 000 00 02',1,'davet',gun(2)),
+    x('d3',ekip[0],'Örnek Misafir Üç','0532 000 00 03',2,'davet',gun(3),'','200 bin £ üzeri'),
+    x('d4',ekip[0],'Örnek Misafir Dört','0532 000 00 04',2,'vazgecti',gun(1)),
+    x('d5',ekip[1],'Örnek Misafir Beş','0532 000 00 05',2,'teyit',gun(1),gun(2)),
+    x('d6',ekip[1],'Örnek Misafir Altı','0532 000 00 06',3,'son',gun(1),gun(2)),
+    x('d7',ekip[1],'Örnek Misafir Yedi','0532 000 00 07',2,'teyit',gun(2),gun(3)),
+    x('d8',ekip[2],'Örnek Misafir Sekiz','0532 000 00 08',1,'davet',gun(3))],
+    bld:[{zaman:gun(3,10),baslik:'Kıbrıs Lansmanı',metin:'9 Kasım\'a 6 gün kaldı. Listende 3 kişi var, hedef 10.',okundu:false}]};
+  }
+  var ben=P.demo==='broker'?'Umut Tokkuş':DEMO.ekip[0], broker=P.demo==='broker';
+  var durum=function(ek){var r={ok:true,ad:ben,ilkAd:ilk(ben),broker:broker,ekip:DEMO.ekip,
+   davetliler:DEMO.liste.filter(function(d){return broker||d.danisman===ben;}).map(function(d){return JSON.parse(JSON.stringify(d));}),
+   siralama:DEMO.ekip.map(function(a){return ozet(DEMO.liste,a);}),bildirimler:broker?[]:DEMO.bld};for(var k in ek)r[k]=ek[k];return r;};
+  if(g.islem==='kaydet'){
+   var d=g.davetli, key=String(d.telefon).replace(/\D/g,'').slice(-10), eski=DEMO.liste.filter(function(r){return r.id===d.id;})[0];
+   var ayni=DEMO.liste.filter(function(r){return String(r.telefon).replace(/\D/g,'').slice(-10)===key&&r.id!==d.id;})[0];
+   var dn=eski?eski.danisman:(g.danisman||ben);
+   if(ayni) return {ok:false,error:ayni.danisman===dn?'Bu numara listende zaten var: '+ayni.ad+'.':'Bu numara '+ayni.danisman+' adına '+tarih(ayni.kayit).replace(/ \d\d:\d\d$/,'')+' tarihinde kaydedilmiş. Müşteri ilk kaydeden danışmanındır.'};
+   var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,
+    kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:'')};
+   if(eski) DEMO.liste[DEMO.liste.indexOf(eski)]=y; else DEMO.liste.push(y);
+  }
+  if(g.islem==='sil') DEMO.liste=DEMO.liste.filter(function(r){return r.id!==g.id;});
+  if(g.islem==='okundu') DEMO.bld.forEach(function(b){b.okundu=true;});
+  if(g.islem==='bildir'){var n=g.kime==='herkes'?DEMO.ekip.length:g.kime==='geride'?DEMO.ekip.filter(function(a){return geridemi(ozet(DEMO.liste,a));}).length:1;return durum({gonderildi:n});}
+  return durum();
+ }
+
+ /* açılış: bu telefonda kayıtlı PIN, Koç oturumu ya da portaldaki broker girişi */
+ if(P.demo) giris('demo');
+ else {
+  var p=ls('kb_pin')||(function(){try{return sessionStorage.getItem('koc_pin');}catch(e){return '';}})()||(window.brokerPinAl&&brokerPinAl())||'';
+  if(p){$('pnPin').value=p;giris(p);}
+ }
 })();
 </script>
 </body>
