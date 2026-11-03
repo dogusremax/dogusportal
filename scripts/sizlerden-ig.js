@@ -24,8 +24,17 @@ async function hazirBekle(id) {
   }
   throw new Error('Container zaman aşımı: ' + id);
 }
+// Görsel dogusportal.com'da yayında mı? Pages yayını sık push'larla iptal olup gecikebiliyor;
+// 3 dk içinde gelmezse aynı dosyanın GitHub ham adresi (push anında erişilir) kullanılır.
+const hamAdres = url => url.replace(/^https:\/\/dogusportal\.com\//, 'https://raw.githubusercontent.com/dogusremax/dogusportal/main/');
+const acik = async u => { try { return (await fetch(u, { method: 'HEAD' })).ok; } catch (e) { return false; } };
 async function yayindaMi(url) {
-  for (let i = 0; i < 30; i++) { if ((await fetch(url, { method: 'HEAD' })).ok) return; await wait(10000); }
+  const ham = hamAdres(url);
+  for (let i = 0; i < 18; i++) {
+    if (await acik(url)) return url;
+    if (i >= 2 && ham !== url && await acik(ham)) { console.log('Pages gecikti, ham adres kullanılıyor:', ham); return ham; }
+    await wait(10000);
+  }
   throw new Error('Medya yayında değil: ' + url);
 }
 
@@ -58,16 +67,16 @@ Güveniniz için teşekkür ederiz. Satış, kiralama ve değerleme süreçlerin
 
 (async () => {
   if (!isaret('.pub-story')) {
-    await yayindaMi(m.url);
-    const sade = { media_type: 'STORIES', image_url: m.url };
+    const sade = { media_type: 'STORIES', image_url: await yayindaMi(m.url) };
     const st = await ekliDene(`${UID}/media`, { ...sade, user_tags: [{ username: ig }] }, sade, 'Story etiketi');
     console.log('✓ Story yayınlandı:', (await post(`${UID}/media_publish`, { creation_id: st.id })).id);
     fs.writeFileSync(DIR + '/.pub-story', m.key);
   }
   if (m.feed && m.feed.length) {
-    for (const u of m.feed) await yayindaMi(u);
+    const feed = [];
+    for (const u of m.feed) feed.push(await yayindaMi(u));
     const cocuklar = [];
-    for (const u of m.feed) { const c = await post(`${UID}/media`, { image_url: u, is_carousel_item: true }); await hazirBekle(c.id); cocuklar.push(c.id); }
+    for (const u of feed) { const c = await post(`${UID}/media`, { image_url: u, is_carousel_item: true }); await hazirBekle(c.id); cocuklar.push(c.id); }
     // Ortak gönderi: danışmana collab daveti gider, kabul edince gönderi onun profilinde de görünür
     const sade = { media_type: 'CAROUSEL', children: cocuklar, caption: aciklama };
     const kap = await ekliDene(`${UID}/media`, { ...sade, collaborators: [ig] }, sade, 'Ortak gönderi');
