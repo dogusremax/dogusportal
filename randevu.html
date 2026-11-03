@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Gösterim Randevusu · RE/MAX Doğuş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#050A30;--red:#DC1C2E;--redd:#910B19;--coral:#FB5160;--bg:#F4F5F9;--line:#E2E4EC;--mut:#6B7088;--ok:#14804A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--navy);-webkit-font-smoothing:antialiased}
+.ust{background:linear-gradient(160deg,var(--redd),var(--red) 45%,var(--coral));color:#fff;padding:22px 16px 64px;position:relative}
+.ust .logo{position:absolute;top:18px;right:16px;width:84px}
+.ust small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;font-weight:700}
+.ust h1{font-size:24px;font-weight:800;margin-top:6px;max-width:70%}
+.wrap{max-width:560px;margin:-44px auto 20px;padding:0 16px;position:relative;z-index:1}
+.kart{background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(5,10,48,.08);padding:18px;margin-bottom:14px}
+.ilan{display:flex;gap:14px;align-items:center}
+.ilan .ft{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#8a9bb0,#c3ccd8) center/cover;flex-shrink:0}
+.ilan b{font-size:16px;display:block}
+.ilan span{font-size:13px;color:var(--mut);display:block;margin-top:2px}
+h2{font-size:15px;font-weight:800;margin-bottom:12px}
+.not{font-size:13px;color:var(--mut);margin:-4px 0 12px;line-height:1.5}
+.gunler{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.gunler::-webkit-scrollbar{display:none}
+.gun{flex:0 0 62px;border:1.5px solid var(--line);border-radius:14px;padding:9px 0;text-align:center;cursor:pointer;background:#fff;font-family:inherit;color:var(--navy)}
+.gun small{display:block;font-size:11px;color:var(--mut);font-weight:600}
+.gun b{font-size:19px;font-weight:800}
+.gun.sec{border-color:var(--navy);background:var(--navy);color:#fff}
+.gun.sec small{color:#C9CCE0}
+.saatler{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.saat{border:1.5px solid var(--line);border-radius:12px;padding:11px 0;text-align:center;font-weight:700;font-size:15px;cursor:pointer;background:#fff;font-family:inherit;color:var(--navy)}
+.saat.dolu{background:#F0F1F5;color:#B4B7C6;border-color:#F0F1F5;cursor:not-allowed;text-decoration:line-through;font-weight:600}
+.saat.sec{background:var(--red);border-color:var(--red);color:#fff}
+label.l{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:16px 0 6px}
+label.l i{font-style:normal;text-transform:none;letter-spacing:0;font-weight:600}
+input[type=text],input[type=tel]{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-size:15px;color:var(--navy)}
+input:focus{outline:none;border-color:var(--navy)}
+input.yanlis{border-color:var(--red)}
+.tc{letter-spacing:.18em}
+.kutu{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;margin-top:12px;cursor:pointer}
+.kutu input{width:20px;height:20px;margin-top:2px;accent-color:var(--navy);flex-shrink:0}
+.kutu a{color:var(--red)}
+.ev{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.ev b{display:block;font-size:14px}.ev span{font-size:12px;color:var(--mut)}
+.imza{position:relative;border:1.5px dashed #C9CCDA;border-radius:12px;height:150px;touch-action:none;background:#fff}
+.imza canvas{width:100%;height:100%;display:block;border-radius:12px}
+.imza .ip{position:absolute;inset:0;display:grid;place-items:center;color:#B4B7C6;font-size:13px;pointer-events:none}
+.temizle{background:none;border:0;color:var(--mut);font:inherit;font-size:12px;font-weight:700;margin-top:6px;cursor:pointer;text-decoration:underline}
+details.metin{margin-top:10px;font-size:12.5px;color:var(--mut);line-height:1.6}
+details.metin summary{cursor:pointer;font-weight:700}
+.btn{width:100%;margin-top:18px;border:0;border-radius:14px;padding:15px;font:inherit;font-weight:800;font-size:16px;background:var(--red);color:#fff;cursor:pointer}
+.btn:disabled{background:#E7C3C7;cursor:not-allowed}
+.sonuc{text-align:center;padding:26px 18px}
+.sonuc .ik{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:28px;color:#fff;background:var(--ok)}
+.sonuc h3{font-size:19px;font-weight:800;margin-bottom:8px}
+.sonuc p{font-size:14px;color:var(--mut);line-height:1.6}
+.alt{text-align:center;font-size:12px;color:var(--mut);margin-top:8px;line-height:1.5}
+.yuk{text-align:center;color:var(--mut);font-size:14px;padding:30px 0}
+.hata{color:var(--red);font-size:13px;font-weight:600;margin-top:10px}
+.gizle{position:absolute;left:-9999px;height:0;overflow:hidden}
+.bos-gun{grid-column:1/-1;text-align:center;color:var(--mut);font-size:13px;padding:14px 0}
+.testbant{background:#FFF4CC;color:#7A5B00;font-size:12px;font-weight:700;text-align:center;padding:6px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="testbant" id="testbant" hidden>TEST · randevu ve belge kaydedilmez</div>
+<div class="ust">
+  <img class="logo" src="assets/dogus-logo.png" alt="RE/MAX Doğuş">
+  <small>Daire gösterimi</small>
+  <h1>Size uygun saati seçin</h1>
+</div>
+<div class="wrap">
+  <div class="kart ilan">
+    <div class="ft" id="ilanFoto"></div>
+    <div><b id="ilanBaslik">Daire gösterimi</b><span id="ilanAlt">Umut Tokkuş · RE/MAX Doğuş</span><span>Umut Tokkuş · RE/MAX Doğuş</span></div>
+  </div>
+
+  <div class="kart" id="form">
+    <div class="yuk" id="yuk">Uygun saatler yükleniyor…</div>
+    <div id="icerik" hidden>
+      <h2 id="baslik">Hangi gün?</h2>
+      <p class="not">Gri saatler dolu. Size uyan boş saati seçin.</p>
+      <div class="gunler" id="gunler"></div>
+      <div class="saatler" id="saatler"></div>
+
+      <label class="l" for="ad">Ad soyad</label>
+      <input type="text" id="ad" autocomplete="name" maxlength="80">
+      <div id="telAlan" hidden>
+        <label class="l" for="tel">Cep telefonunuz</label>
+        <input type="tel" id="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" maxlength="20">
+      </div>
+
+      <div id="belge" hidden>
+        <div id="evlerAlan" hidden>
+          <label class="l">Görmek istediğiniz evler</label>
+          <div id="evler"></div>
+        </div>
+        <label class="l" for="tc">T.C. kimlik no <i>(yönetmelik gereği)</i></label>
+        <input type="text" id="tc" class="tc" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="11 haneli">
+        <label class="kutu"><input type="checkbox" id="onay"><span>Taşınmaz gösterme belgesi <a href="#sartlar" id="sartLink">şartlarını</a> ve <a href="gizlilik.html" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okudum, onaylıyorum.</span></label>
+        <details class="metin" id="sartlar"><summary>Belge şartları</summary><div id="sartMetin">Taşınmaz Ticareti Hakkında Yönetmelik gereği, size gösterilecek taşınmaz için yetkili işletme ile aranızda yer gösterme belgesi düzenlenir. Belgenin bir nüshası randevunuzdan sonra WhatsApp'tan size gönderilir.</div></details>
+        <label class="l">İmzanız <i>(parmağınızla)</i></label>
+        <div class="imza" id="imzaKutu"><canvas id="imza"></canvas><div class="ip" id="imzaIp">Buraya imzanızı atın</div></div>
+        <button type="button" class="temizle" id="temizle">İmzayı temizle</button>
+      </div>
+
+      <div class="gizle" aria-hidden="true"><input id="web" tabindex="-1" autocomplete="off"></div>
+      <button class="btn" id="gonder" disabled>Saat seçin</button>
+      <div class="hata" id="hata"></div>
+      <p class="alt" id="altNot">Bilgileriniz yalnızca randevunuz ve yasal belge için kullanılır.</p>
+    </div>
+  </div>
+
+  <div class="kart sonuc" id="sonuc" hidden></div>
+</div>
+
+<script>
+var URL_ = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+var Q = new URLSearchParams(location.search);
+var TOKEN = (Q.get('t') || '').replace(/[^0-9a-f]/g, '');
+var ILAN = (Q.get('i') || 'genel').replace(/[^\w-]/g, '');
+var GUN = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+var GUNU = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+var AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+var VERI = null, secGun = 0, secim = null, imzaVar = false;
+function $(id) { return document.getElementById(id); }
+function servis(g) {
+  var govde = Object.assign({ action: 'randevu' }, TOKEN ? { t: TOKEN } : { ilan: ILAN }, g);
+  return fetch(URL_ + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(govde) }).then(function (r) { return r.json(); });
+}
+function tarihD(ymd) { return new Date(ymd + 'T12:00:00'); }
+function etiket(ymd) { var d = tarihD(ymd); return d.getDate() + ' ' + AY[d.getMonth()] + ' ' + GUNU[d.getDay()]; }
+function tcGecerli(tc) {
+  if (!/^[1-9]\d{10}$/.test(tc)) return false;
+  var d = tc.split('').map(Number), t1 = (d[0]+d[2]+d[4]+d[6]+d[8])*7 - (d[1]+d[3]+d[5]+d[7]);
+  return ((t1 % 10) + 10) % 10 === d[9] && d.slice(0,10).reduce(function (a,b) { return a+b; }, 0) % 10 === d[10];
+}
+
+function yukle() {
+  $('yuk').hidden = false; $('icerik').hidden = true;
+  servis({ islem: 'saatler' }).then(function (j) {
+    if (!j.ok) { $('yuk').textContent = j.error || 'Saatler alınamadı.'; return; }
+    j.gunler = j.gunler.filter(function (g) { return g.saatler.some(function (s) { return !s.dolu; }); });
+    if (!j.gunler.length) { $('yuk').textContent = 'Önümüzdeki günlerde boş saat kalmadı, lütfen bizi arayın.'; return; }
+    VERI = j;
+    $('ilanBaslik').textContent = j.ilan.baslik; $('ilanAlt').textContent = j.ilan.alt;
+    if (j.ilan.foto) $('ilanFoto').style.backgroundImage = 'url("' + j.ilan.foto.replace(/["\\]/g, '') + '")';
+    if (TOKEN) {
+      $('belge').hidden = false; $('testbant').hidden = j.mod !== 'test';
+      if (j.ad && !$('ad').value) $('ad').value = j.ad;
+      var ev = j.evler || [];
+      if (ev.length > 1) {
+        $('evlerAlan').hidden = false;
+        $('evler').innerHTML = '';
+        ev.forEach(function (e) {
+          var l = document.createElement('label'); l.className = 'kutu ev';
+          l.innerHTML = '<input type="checkbox" checked value=""><span><b></b><span></span></span>';
+          l.querySelector('input').value = e.no; l.querySelector('b').textContent = e.baslik; l.querySelector('span span').textContent = e.alt;
+          l.querySelector('input').onchange = kontrol;
+          $('evler').appendChild(l);
+        });
+      }
+    } else { $('telAlan').hidden = false; }
+    secGun = 0; $('yuk').hidden = true; $('icerik').hidden = false; ciz();
+    if (TOKEN) imzaKur();
+  }).catch(function () { $('yuk').textContent = 'Bağlantı sorunu, sayfayı yenileyin.'; });
+}
+
+function ciz() {
+  var g = $('gunler'); g.innerHTML = '';
+  VERI.gunler.forEach(function (gn, i) {
+    var b = document.createElement('button'), d = tarihD(gn.tarih);
+    b.className = 'gun' + (i === secGun ? ' sec' : '');
+    b.innerHTML = '<small>' + GUN[d.getDay()] + '</small><b>' + d.getDate() + '</b>';
+    b.onclick = function () { secGun = i; ciz(); };
+    g.appendChild(b);
+  });
+  var gun = VERI.gunler[secGun];
+  $('baslik').textContent = etiket(gun.tarih);
+  var s = $('saatler'); s.innerHTML = '';
+  gun.saatler.forEach(function (x) {
+    var b = document.createElement('button'), k = gun.tarih + ' ' + x.saat;
+    b.className = 'saat' + (x.dolu ? ' dolu' : '') + (secim === k ? ' sec' : '');
+    b.textContent = x.saat; b.disabled = x.dolu;
+    b.onclick = function () { secim = secim === k ? null : k; ciz(); };
+    s.appendChild(b);
+  });
+  kontrol();
+}
+
+function seciliEvler() { return Array.prototype.map.call(document.querySelectorAll('#evler input:checked'), function (i) { return i.value; }); }
+function kontrol() {
+  var ad = $('ad').value.trim(), eksik = '';
+  if (!secim) eksik = 'Saat seçin';
+  else if (ad.length < 3) eksik = 'Adınızı soyadınızı yazın';
+  else if (!TOKEN && $('tel').value.replace(/\D/g, '').length < 10) eksik = 'Telefonunuzu yazın';
+  else if (TOKEN) {
+    var tc = $('tc').value.replace(/\D/g, '');
+    $('tc').classList.toggle('yanlis', tc.length === 11 && !tcGecerli(tc));
+    if ((VERI.evler || []).length > 1 && !seciliEvler().length) eksik = 'Görmek istediğiniz evi işaretleyin';
+    else if (!tcGecerli(tc)) eksik = 'T.C. kimlik no yazın';
+    else if (!$('onay').checked) eksik = 'Şartları onaylayın';
+    else if (!imzaVar) eksik = 'İmzanızı atın';
+  }
+  $('gonder').disabled = !!eksik;
+  $('gonder').textContent = eksik || (etiket(secim.split(' ')[0]).replace(/^(\d+ \S+) /, '$1 ') + ' ' + secim.split(' ')[1] + ' · Randevuyu onayla');
+}
+['ad', 'tel', 'tc'].forEach(function (id) { $(id).oninput = function () { if (id === 'tc') this.value = this.value.replace(/\D/g, ''); kontrol(); }; });
+$('onay').onchange = kontrol;
+$('sartLink').onclick = function (e) { e.preventDefault(); $('sartlar').open = true; $('sartlar').scrollIntoView({ block: 'center' }); };
+
+function imzaKur() {
+  var c = $('imza'), k = $('imzaKutu'), x = c.getContext('2d'), ciziyor = false, oran = window.devicePixelRatio || 1;
+  function boyut() { c.width = k.clientWidth * oran; c.height = k.clientHeight * oran; x.scale(oran, oran); x.lineWidth = 2.4; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#050A30'; }
+  function nokta(e) { var r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  boyut();
+  window.addEventListener('resize', function () { if (!imzaVar) { x.setTransform(1, 0, 0, 1, 0, 0); boyut(); } });
+  c.onpointerdown = function (e) { if (!c.width) boyut(); ciziyor = true; c.setPointerCapture(e.pointerId); var p = nokta(e); x.beginPath(); x.moveTo(p.x, p.y); };
+  c.onpointermove = function (e) { if (!ciziyor) return; var p = nokta(e); x.lineTo(p.x, p.y); x.stroke(); if (!imzaVar) { imzaVar = true; $('imzaIp').hidden = true; kontrol(); } };
+  c.onpointerup = c.onpointercancel = function () { ciziyor = false; };
+  $('temizle').onclick = function () { x.clearRect(0, 0, c.width, c.height); imzaVar = false; $('imzaIp').hidden = false; kontrol(); };
+}
+
+$('gonder').onclick = function () {
+  var p = secim.split(' '), g = { islem: 'al', tarih: p[0], saat: p[1], ad: $('ad').value.trim(), web: $('web').value };
+  if (TOKEN) g.belge = { tc: $('tc').value, onay: $('onay').checked, imza: $('imza').toDataURL('image/png'), evler: seciliEvler() }, g.cihaz = navigator.userAgent;
+  else g.tel = $('tel').value;
+  $('gonder').disabled = true; $('gonder').textContent = 'Gönderiliyor…'; $('hata').textContent = '';
+  servis(g).then(function (j) {
+    if (!j.ok) { $('hata').textContent = j.error || 'Randevu oluşturulamadı.'; if (j.dolu) { secim = null; yukle(); } else kontrol(); return; }
+    var ad = $('ad').value.trim().split(' ')[0].replace(/[<>&"]/g, '');
+    $('sonuc').innerHTML = '<div class="ik">&#10003;</div><h3>Randevunuz oluşturuldu</h3><p>' + etiket(p[0]) + ' saat ' + p[1] + '<br>Teşekkürler ' + ad + '.' +
+      (TOKEN ? ' Teyit mesajı ve imzalı belgenizin bir nüshası WhatsApp\'tan size gelecek.' : ' Gösterim öncesinde sizinle iletişime geçeceğiz.') +
+      (j.test ? '<br><b>(TEST: kaydedilmedi)</b>' : '') + '</p>';
+    $('form').hidden = true; $('sonuc').hidden = false; scrollTo(0, 0);
+  }).catch(function () { $('hata').textContent = 'Bağlantı sorunu, tekrar deneyin.'; kontrol(); });
+};
+yukle();
+</script>
+</body>
+</html>
