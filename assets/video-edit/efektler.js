@@ -654,16 +654,66 @@ function sahneEfektleri(ctx, W, H, t, duzenleme, kaynak){
 function efektSahneMi(o){ return o && o.tur === 'efekt' && EFEKTLER[o.alt] && EFEKTLER[o.alt].sahne; }
 
 /* ---------- Arayüz ---------- */
+var efSonra = null;
+/* uygulamadaki diğer efektler: her biri mevcut ekleme fonksiyonunu çağırır */
+var YAZI_EFEKTLERI = [['bulanik', 'Bulanıktan netleşen', 'r_beyaz'], ['renk', 'Bulanık + renk açılan', 'r_mor'], ['yanip', 'Yanıp sönen', 'r_video'], ['hizli', 'Hız izli kayan', 'r_siyah'],
+  ['yuksel', 'Bulanık yükselen', 'r_turuncu'], ['harfBelir', 'Harf harf beliren', 'r_lavanta'], ['isik', 'Altın ışıktan açılan', 'r_altin'], ['harf', 'Harf harf düşen', 'k_dev'],
+  ['karaoke', 'Kelime kelime vurgu', 'c_tiktok'], ['daktilo', 'Daktilo', 'c_beyazkutu'], ['buyu', 'Büyüyerek', 'c_sticker'], ['belir', 'Belirerek', 'k_beyazital'], ['kay', 'Aşağıdan kayan', 'c_kontur']];
+var ZOOM_TIPLERI = [['yumusak', 'Yumuşak yakınlaşma', 'Yaklaşır, bekler, geri döner'], ['vurus', 'Ani zoom vuruşu', 'Bir anda yakınlaşır'], ['yavas', 'Yavaş yakınlaşma', 'Süre boyunca yavaşça'], ['uzaklas', 'Uzaklaşma', 'Yakından başlar, açılır']];
+function efDugme(k, ust, ad, alt, tik){
+  var b = document.createElement('button'); b.className = 'efekt'; b.type = 'button'; b.innerHTML = '<i></i><b></b><small></small>';
+  b.querySelector('i').textContent = ust || ''; b.querySelector('b').textContent = ad; b.querySelector('small').textContent = alt || '';
+  b.onclick = tik; k.appendChild(b);
+}
+function efBolum(baslik, not){
+  var kart = document.createElement('div'); kart.className = 'kart';
+  var h = document.createElement('h3'); h.textContent = baslik; kart.appendChild(h);
+  if (not) { var n = document.createElement('div'); n.className = 'not'; n.style.marginBottom = '10px'; n.textContent = not; kart.appendChild(n); }
+  var g = document.createElement('div'); g.className = 'efektler'; kart.appendChild(g);
+  f('efektKatalog').appendChild(kart); return g;
+}
+function efVideoVar(){ if (video.src) return true; bildir('Önce bir video seçin'); return false; }
 function efektlerKur(){
-  var k = f('efektler'); if (!k) return;
+  if (!f('efektKatalog')) return;
+  var g = efBolum('Reels efektleri (18)', 'Referans Reels videosundaki efektler.');
   EFEKT_SIRA.forEach(function(ad){
-    var e = EFEKTLER[ad], b = document.createElement('button'); b.className = 'efekt'; b.type = 'button';
-    b.innerHTML = '<i></i><b></b><small></small>';
-    b.querySelector('i').textContent = (e.no < 10 ? '0' : '') + e.no + (e.sahne ? ' · TÜM EKRAN' : '');
-    b.querySelector('b').textContent = e.ad; b.querySelector('small').textContent = e.tr;
-    b.onclick = function(){ efektEkle(ad); };
-    k.appendChild(b);
+    var e = EFEKTLER[ad];
+    efDugme(g, (e.no < 10 ? '0' : '') + e.no + (e.sahne ? ' · TÜM EKRAN' : ''), e.ad, e.tr, function(){ efektEkle(ad); });
   });
+  g = efBolum('Yazı efektleri', 'Bu girişle yeni bir yazı ekler; metni “Yazı & Öğe”de yazın.');
+  YAZI_EFEKTLERI.forEach(function(y){
+    efDugme(g, 'YAZI', y[1], (STILLER[y[2]] || {}).ad || '', function(){
+      if (!efVideoVar()) return; yaziEkle(); var o = bul(secili); if (!o) return;
+      o.efekt = y[0]; o.stil = y[2]; if (STILLER[y[2]]) o.boyut = STILLER[y[2]].boyut;
+      formDoldur(); cizdir(); kaydet(); listele();
+    });
+  });
+  g = efBolum('Yakınlaştırma', 'Daireyi yüzün üstüne sürükleyin.');
+  ZOOM_TIPLERI.forEach(function(z){
+    efDugme(g, 'ZOOM', z[1], z[2], function(){ if (!efVideoVar()) return; zoomEkle(); var o = bul(secili); if (o) { o.tip = z[0]; if (z[0] === 'vurus') o.olcek = 1.5; formDoldur(); cizdir(); kaydet(); } });
+  });
+  g = efBolum('Kartlar ve ekranlar', 'Dokununca resim / video seçmeniz istenir.');
+  efDugme(g, 'KARTLAR', 'Etrafında dönen kartlar', 'Kartlar kişinin arkasından döner', function(){ if (!efVideoVar()) return; efSonra = function(o){ o.mod = 'don'; }; karuselDosya.click(); });
+  efDugme(g, 'KARTLAR', 'Ellerden açılan kartlar', 'Kartlar ellerden yanlara açılır', function(){ if (!efVideoVar()) return; efSonra = function(o){ o.mod = 'acil'; }; karuselDosya.click(); });
+  Object.keys(CIHAZLAR).forEach(function(ad){
+    efDugme(g, 'EKRAN', CIHAZLAR[ad].ad, 'İçine resim ya da video konur', function(){ if (!efVideoVar()) return; efSonra = function(o){ o.cihaz = ad; o.gen = CIHAZLAR[ad].gen; if (CIHAZLAR[ad].varsayilan) o.yazi = CIHAZLAR[ad].varsayilan; }; cihazDosya.click(); });
+  });
+  g = efBolum('Kesim geçişleri', 'Bütün kesimlere uygulanır. Tek bir kesimi değiştirmek için şeritteki ◆ işaretine dokunun.');
+  GECISLER.forEach(function(x){
+    efDugme(g, 'GEÇİŞ', x[1], '', function(){
+      gecis.tur = x[0]; f('gecisGenel').value = x[0]; kaydet(); cizdir(); if (typeof seritCiz === 'function') seritCiz();
+      var n = birlesik().length; bildir(x[1] + ' seçildi' + (n ? ' · ' + n + ' kesime uygulandı' : ' · henüz kesim yok, kesince bu geçiş kullanılır'));
+    });
+  });
+  g = efBolum('Ses efektleri', 'Videonun şu anki saniyesine eklenir.');
+  SFX.forEach(function(x){ efDugme(g, 'SES', x[1], '', function(){ if (!efVideoVar()) return; sfxEkle(x[0]); bildir(x[1] + ' ' + zmn(video.currentTime) + ' saniyesine eklendi'); }); });
+  g = efBolum('Renk filtreleri', 'Bütün videoya uygulanır; “Renk” sekmesinden ince ayar yapılır.');
+  Object.keys(FILTRELER).forEach(function(ad){ efDugme(g, 'FİLTRE', FILTRELER[ad].ad, '', function(){ filtreSec(ad); bildir(FILTRELER[ad].ad + ' filtresi uygulandı'); }); });
+  g = efBolum('Arka plan', 'Kişi otomatik ayrılır, arkası değişir.');
+  [['yok', 'Orijinal'], ['bulanik', 'Bulanık arka plan'], ['degrade', 'Doğuş degrade'], ['renk', 'Düz renk']].forEach(function(a){
+    efDugme(g, 'ARKA PLAN', a[1], '', function(){ if (!efVideoVar()) return; arkaSec(a[0]); bildir(a[1] + ' seçildi'); });
+  });
+  efDugme(g, 'ARKA PLAN', 'Resim seç', 'Arkaya kendi resminiz', function(){ if (!efVideoVar()) return; arkaDosya.click(); });
   f('eRenk').addEventListener('input', function(){ var o = bul(secili); if (!o || o.tur !== 'efekt') return; o.renk = f('eRenk').value; cizdir(); kaydet(); });
   f('eBoyut').addEventListener('input', function(){ var o = bul(secili); if (!o || o.tur !== 'efekt') return; o.boyut = parseFloat(f('eBoyut').value); f('eBoyutD').textContent = Math.round(o.boyut * 10) + '%'; cizdir(); kaydet(); });
   var ed = f('efektEkDosya');

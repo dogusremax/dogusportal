@@ -223,8 +223,8 @@
     <div class="ekle">
       <button class="btn" onclick="yaziEkle()"><b>+</b> Yazı</button>
       <button class="btn" onclick="resimDosya.click()"><b>+</b> Resim</button>
-      <button class="btn" onclick="cihazDosya.click()"><b>+</b> Telefon / ekran</button>
-      <button class="btn" onclick="karuselDosya.click()"><b>+</b> Dönen kartlar</button>
+      <button class="btn" onclick="efSonra = null; cihazDosya.click()"><b>+</b> Telefon / ekran</button>
+      <button class="btn" onclick="efSonra = null; karuselDosya.click()"><b>+</b> Dönen kartlar</button>
       <button class="btn" onclick="zoomEkle()"><b>+</b> Yakınlaştırma</button>
       <button class="btn" onclick="sekmeAc('pEfekt')"><b>✦</b> Hazır efekt</button>
       <button class="btn" onclick="sekmeAc('pSes')"><b>+</b> Ses efekti</button>
@@ -568,9 +568,9 @@
       <div class="panel" id="pEfekt">
         <div class="kart">
           <h3>Hazır efektler</h3>
-          <div class="not" style="margin-bottom:10px">Oynatma çizgisini efektin başlayacağı yere getirin, efekte dokunun. Yazılarını, rengini ve resimlerini “Yazı & Öğe” sekmesinde değiştirebilirsiniz.</div>
-          <div class="efektler" id="efektler"></div>
+          <div class="not">Uygulamadaki bütün efektler burada. Oynatma çizgisini efektin başlayacağı yere getirin, efekte dokunun. Eklenen öğenin ayarları “Yazı & Öğe” sekmesinde açılır.</div>
         </div>
+        <div id="efektKatalog"></div>
       </div>
 
       <!-- AYARLAR -->
@@ -1121,6 +1121,7 @@ karuselDosya.addEventListener('change', function(){
   dosyalariOku(karuselDosya.files, function(srcs){
     var z = yeniZaman(4);
     var o = { id: sayac++, tur: 'karusel', srcs: srcs, x: .5, y: .55, yaricap: 40, kart: 20, hiz: 3.2, mod: 'don', bas: z.bas, bit: z.bit, arka: true };
+    if (window.efSonra) { efSonra(o); efSonra = null; }
     ogeler.push(o); sekmeAc('pOge'); sec(o.id); kaydet(); listele();
   });
   karuselDosya.value = '';
@@ -1169,6 +1170,7 @@ function cihazIcerikOku(liste, o, cb){
 cihazDosya.addEventListener('change', function(){
   var z = yeniZaman(5);
   var o = { id: sayac++, tur: 'cihaz', cihaz: 'telefon', srcs: [], vid: false, x: .7, y: .45, gen: CIHAZLAR.telefon.gen, aci: -6, efekt: 'sagdan', ic: 'adim', yazi: '', suzul: true, bas: z.bas, bit: z.bit, arka: false };
+  if (window.efSonra) { efSonra(o); efSonra = null; }
   cihazIcerikOku(cihazDosya.files, o, function(){ ogeler.push(o); sekmeAc('pOge'); sec(o.id); kaydet(); listele(); cizdir(); });
   cihazDosya.value = '';
 });
