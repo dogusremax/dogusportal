@@ -150,6 +150,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .altmis-rakam s{font-size:clamp(28px,5vw,44px);font-weight:800;opacity:.45;text-decoration-thickness:4px;text-decoration-color:var(--red)}
 .altmis-rakam b{font-size:clamp(72px,14vw,132px);font-weight:800;line-height:.95;letter-spacing:-.04em}
 .altmis p{font-size:clamp(15px,2vw,18px);max-width:560px;margin-top:8px}
+.altmis-adim{margin:10px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:clamp(15px,2vw,17px);max-width:560px}
+.altmis-not{font-size:14px!important;opacity:.85}
 .altmis-ornek{background:#fff;border-radius:20px;padding:18px 20px;box-shadow:0 14px 34px rgba(5,10,48,.18)}
 .altmis-lbl{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink2)}
 .altmis-satir{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--sand2);font-variant-numeric:tabular-nums}
@@ -267,7 +269,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   <div class="altmis-sol">
    <div class="altmis-e">İlk kez · Yalnız bu lansmana özel</div>
    <div class="altmis-rakam"><s>%50</s><b>%60</b></div>
-   <p>Lansmana gelen davetlinize satış yaparsanız, RE/MAX merkez payı düştükten sonra paylaşım <b>%60 sizin, %40 ofisin.</b> Tek şart: <b>3 ayrı davetliden kesin teyit.</b> Fırsat 31 Ocak 2027'ye kadarki satışlarda geçerli.</p>
+   <p>Plana sadık kalın, RE/MAX merkez payı düştükten sonra paylaşım <b>%60 sizin, %40 ofisin.</b></p>
+   <ol class="altmis-adim">
+    <li><b>Listenizi kurun:</b> en az 10 potansiyel yatırımcıyı panele girin.</li>
+    <li><b>Teyidinizi alın:</b> en az 3 ayrı davetliden kesin teyit.</li>
+    <li><b>Satışı lansmanda başlatın:</b> lansmana gelen davetlinize 31 Ocak 2027'ye kadar satış.</li>
+   </ol>
+   <p class="altmis-not">Hedefler 9 ve 13 Kasım; %60 için ikisi de 19 Kasım'a kadar sayılır. Biri eksikse satış yine sizin, paylaşım %50 / %50.</p>
   </div>
   <div class="altmis-ornek">
    <div class="altmis-lbl">Örnek hesap · merkez payı sonrası 1.200.000 TL komisyon</div>
@@ -301,7 +309,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
    <details class="pn-kural" id="pnKural">
     <summary>Lansman kuralları</summary>
     <ol>
-     <li><b>%60 hakkı:</b> en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Hedefimiz 13 Kasım Cuma 18.00; 19 Kasım'a kadar alınan teyitler de sayılır.</li>
+     <li><b>%60 hakkı, plana sadık kalana:</b> en az <b>10 kişilik</b> davet listesi ve en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Hedefler 9 ve 13 Kasım; %60 için ikisi de 19 Kasım'a kadar sayılır.</li>
      <li><b>%60 nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yapılan satışta, RE/MAX merkez payı düştükten sonra %60 sizin, %40 ofisin. Lansmana gelmeyen davetliye satış 50 / 50.</li>
      <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. 19 Kasım'a kadar her teyitli davetlinizi arayıp "Son teyit alındı" yapın, lansman günü kapıda karşılayın.</li>
      <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
@@ -367,7 +375,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   <div class="g3">
    <div class="card"><div class="num">10</div><div class="lbl" style="margin-top:6px">Kişi başı davet listesi</div><p style="margin-top:8px;font-size:15px">9 Kasım Pazartesi'ye kadar en az 10 potansiyel yatırımcıyı panele girin.</p></div>
    <div class="card"><div class="num">3</div><div class="lbl" style="margin-top:6px">Ayrı davetliden kesin teyit</div><p style="margin-top:8px;font-size:15px">Hedef 13 Kasım Cuma 18.00. 3'te durmayın: her fazla teyit sizi sıralamada öne taşır.</p></div>
-   <div class="card"><div class="num">%60</div><div class="lbl" style="margin-top:6px">Lansmana özel pay</div><p style="margin-top:8px;font-size:15px">3 ayrı davetliden teyit alın; <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar satışta paylaşım %60 sizin.</p></div>
+   <div class="card"><div class="num">%60</div><div class="lbl" style="margin-top:6px">Lansmana özel pay</div><p style="margin-top:8px;font-size:15px">Plana sadık kalın: 10 kişilik liste, 3 ayrı davetliden teyit; <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar satışta paylaşım %60 sizin.</p></div>
   </div>
   <p class="note" style="margin-top:14px">Kuralların tamamı Davetli panelinizde. Davet ettiğiniz yatırımcı sizin müşteriniz olarak kayda alınır: aynı numarayı başka danışman giremez.</p>
  </section>
@@ -621,16 +629,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  }
 
  function ozet(list,ad){
-  var o={ad:ad,liste:0,teyit:0,zamaninda:0,kisi:0,geldi:0,satis:0,sonBekleyen:0};
+  var o={ad:ad,liste:0,listeSay:0,teyit:0,zamaninda:0,kisi:0,geldi:0,satis:0,sonBekleyen:0};
   list.forEach(function(r){
    if(r.danisman!==ad)return;
-   if(r.durum!=='vazgecti')o.liste++;
+   if(r.durum!=='vazgecti'){o.liste++;if(new Date(r.kayit).getTime()<=TS.son)o.listeSay++;}
    if(KESIN.indexOf(r.durum)>=0){o.teyit++;o.kisi+=Number(r.kisi)||1;if(r.teyit&&new Date(r.teyit).getTime()<=TS.son)o.zamaninda++;}
    if(r.durum==='teyit')o.sonBekleyen++;
    if(GELDI.indexOf(r.durum)>=0)o.geldi++;
    if(r.durum==='satis')o.satis++;
   });
-  o.hak=o.zamaninda>=HEDEF.teyit; return o;
+  /* %60: plana sadık kalan (19 Kasım'a kadar 10 kişilik liste + 3 ayrı davetliden kesin teyit) */
+  o.eksikListe=Math.max(0,HEDEF.liste-o.listeSay); o.eksikTeyit=Math.max(0,HEDEF.teyit-o.zamaninda);
+  o.hak=!o.eksikListe&&!o.eksikTeyit; return o;
  }
 
  function kpi(lbl,v,hedef,alt){
@@ -663,7 +673,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
     kpi('Beklenen kişi',o.kisi,0,'Kesin teyitlerinizle')+kpi('Gelen / satış',o.geldi+' / '+o.satis,0,'Lansman sonrası');
    var h=$('pnHak');
    if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>✓ %60 paylaşım hakkınız kesinleşti (normalde %50). Lansmana gelen davetlinize satışta fark sizin. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
-   else if(now<TS.son){var e=HEDEF.teyit-o.zamaninda,hdf=now<TS.teyit;h.className='pn-hak bek';h.innerHTML='<span><b>%60</b> paylaşım (normalde %50) için <b>'+e+' ayrı davetliden kesin teyit</b> daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
+   else if(now<TS.son){var hdf=now<TS.teyit,ek=[];if(o.eksikListe)ek.push('listene <b>'+o.eksikListe+' kişi</b>');if(o.eksikTeyit)ek.push('<b>'+o.eksikTeyit+' ayrı davetliden kesin teyit</b>');h.className='pn-hak bek';h.innerHTML='<span><b>%60</b> paylaşım (normalde %50) için '+ek.join(' ve ')+' daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
    else{h.className='pn-hak kac';h.innerHTML='<span>Bu lansmanda paylaşım %50 / %50. Teyitleriniz yine sıralamaya ve otel listesine sayılıyor.</span>';}
   }
 
@@ -679,7 +689,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  function geridemi(o){
   var now=Date.now();
   if(now<=TS.liste) return o.liste<HEDEF.liste;
-  if(now<=TS.son) return o.zamaninda<HEDEF.teyit||(now>TS.teyit&&o.sonBekleyen>0);
+  if(now<=TS.son) return !o.hak||(now>TS.teyit&&o.sonBekleyen>0);
   return false;
  }
 
@@ -778,7 +788,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   $('pnSira').innerHTML='<thead><tr><th>#</th><th>Danışman</th><th>Liste</th><th>Kesin teyit</th><th>Kişi</th><th>Geldi</th><th>Satış</th><th>%60</th></tr></thead><tbody>'+
    sr.map(function(o,i){
     var w=Math.round(Math.min(o.zamaninda,6)/6*80);
-    var chip=o.hak?'<span class="chip ok">Kazandı</span>':(now<TS.son?'<span class="chip no">'+(HEDEF.teyit-o.zamaninda)+' eksik</span>':'<span class="chip no">—</span>');
+    var chip=o.hak?'<span class="chip ok">Kazandı</span>':(now<TS.son?'<span class="chip no">'+[o.eksikListe?o.eksikListe+' kişi':'',o.eksikTeyit?o.eksikTeyit+' teyit':''].filter(Boolean).join(' · ')+' eksik</span>':'<span class="chip no">—</span>');
     return '<tr class="'+(o.ad===v.ad?'ben':'')+'"><td>'+(i+1)+'</td><td>'+esc(o.ad)+'</td><td>'+o.liste+'<small style="color:var(--ink2)">/'+HEDEF.liste+'</small></td>'+
      '<td><div class="sb"><i class="'+(o.hak?'tam':'')+'" style="width:'+w+'px"></i>'+o.zamaninda+(o.teyit>o.zamaninda?' <small style="color:var(--ink2)">+'+(o.teyit-o.zamaninda)+'</small>':'')+'</div></td>'+
      '<td>'+o.kisi+'</td><td>'+o.geldi+'</td><td>'+o.satis+'</td><td>'+chip+'</td></tr>';
