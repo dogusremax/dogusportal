@@ -33,7 +33,7 @@
   window.imzaOfisHtml = function () {
     var t = 'font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:#050A30;';
     return '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;' + t + '">' +
-      '<tr><td style="padding:0 0 10px 0"><img src="' + KOK + 'dogus-logo-koyu.png" height="46" alt="RE/MAX Doğuş" style="display:block;height:46px;border:0"></td></tr>' +
+      '<tr><td style="padding:0 0 8px 0"><img src="' + KOK + 'dogus-logo-koyu.png" width="104" height="37" alt="RE/MAX Doğuş" style="display:block;width:104px;height:37px;border:0"></td></tr>' +
       '<tr><td style="' + t + 'font-size:15px;line-height:21px;font-weight:bold">RE/MAX Doğuş</td></tr>' +
       '<tr><td style="' + t + 'color:#DC1C2E;font-weight:bold">UMT Group Gayrimenkul Yatırım Danışmanlık</td></tr>' +
       '<tr><td style="' + t + '">☎ <a href="tel:+902163151515" style="color:#050A30;text-decoration:none">0216 315 15 15</a></td></tr>' +
