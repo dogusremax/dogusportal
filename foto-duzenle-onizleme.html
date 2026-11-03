@@ -38,6 +38,10 @@
   .kucuk .sil{position:absolute;top:5px;right:5px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:24px;cursor:pointer;padding:0}
   .kucuk .no{position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;background:rgba(0,0,0,.55);border-radius:6px;padding:2px 6px}
   .kucuk .tik{position:absolute;inset:0;background:rgba(11,15,42,.55);display:grid;place-items:center;font-size:22px}
+  .kucuk .tik.yukl{background:transparent;inset:auto;right:6px;bottom:6px;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:don .8s linear infinite}
+  @keyframes don{to{transform:rotate(360deg)}}
+  .ybas{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:13px;color:var(--soluk)}
+  .ybas b{font-size:18px;color:#fff;font-weight:800}
   .ozet{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--soluk)}
   button.ghost{font:600 12px 'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.08);color:#fff;border:0;border-radius:8px;padding:7px 11px;cursor:pointer}
   label.et{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
@@ -130,6 +134,7 @@
       <input id="dosya" type="file" accept="image/*" multiple style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;left:0;top:0">
     </div>
     <div class="izgara" id="izgara"></div>
+    <div id="ycubukKutu" hidden><div class="ybas"><span>Yükleniyor</span><b id="yyuzde">0%</b></div><div class="cubuk" style="margin-top:6px"><i id="ycubuk"></i></div></div>
     <div class="ozet" id="ozet" hidden><span id="adetYazi"></span><button class="ghost" id="temizle">Hepsini kaldır</button></div>
   </div>
 
@@ -183,6 +188,7 @@ async function gir(p) {
   $('giris').hidden = true; $('ana').hidden = false;
   promptlariYukle();
   isleriYukle();
+  kuyruk();
 }
 $('girBtn').onclick = () => gir($('pin').value);
 $('pin').onkeydown = e => { if (e.key === 'Enter') gir($('pin').value); };
@@ -209,8 +215,35 @@ $('dosya').onchange = e => { const l = Array.from(e.target.files || []); ekle(l)
 ['dragenter', 'dragover'].forEach(t => birak.addEventListener(t, e => { e.preventDefault(); birak.classList.add('ust'); }));
 ['dragleave', 'drop'].forEach(t => birak.addEventListener(t, e => { e.preventDefault(); birak.classList.remove('ust'); }));
 birak.addEventListener('drop', e => ekle(e.dataTransfer.files));
-$('temizle').onclick = () => { if (gonderiyor) return; fotolar.forEach(f => f.url && URL.revokeObjectURL(f.url)); fotolar = []; ciz(); };
+$('temizle').onclick = () => { if (gonderiyor) return; fotolar.forEach(f => f.url && URL.revokeObjectURL(f.url)); fotolar = []; yeniIs(); ciz(); };
 $('klasor').oninput = guncelle;
+
+/* ---------- arka planda yükleme ----------
+   Fotoğraflar seçildiği anda yüklenmeye başlar (6'şar 6'şar); klasör adı yazılırken yükleme sürer.
+   Gönder yalnızca kalanları bekler ve işi başlatır. Kaldırılan fotoğrafın sunucudaki kopyası Başlat'ta atılır. */
+const PARALEL = 6;
+let IS = '', sayac = 0, aktif = 0, ilkBitti = false;
+function yeniIs() { IS = ''; sayac = 0; ilkBitti = false; }
+function kuyruk() {
+  if (!PIN) return;
+  for (const x of fotolar) {
+    if (aktif >= (ilkBitti ? PARALEL : 1)) break;   // ilk fotoğraf tek başına (sunucu iş klasörünü açar)
+    if (x.durum !== 'bekliyor') continue;
+    yukle(x);
+  }
+}
+async function yukle(x) {
+  if (!IS) IS = (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)).toLowerCase();
+  const is = IS; x.durum = 'yukleniyor'; aktif++;
+  try {
+    const blob = await hazirla(x.dosya);
+    const ad = x.dosya.name.replace(/\.(heic|heif|png|webp)$/i, '.jpg');
+    const j = await servis({ action: 'fdYukle', is, no: x.no, ad, mime: blob.type || 'image/jpeg', veri: await b64(blob) });
+    if (!j.success) throw new Error(j.error || 'yükleme');
+    if (is === IS) { x.durum = 'tamam'; ilkBitti = true; }
+  } catch (e) { if (is === IS) { x.durum = 'hata'; x.hata = e.message; } }
+  finally { aktif--; if (is === IS) { ciz(); kuyruk(); } }
+}
 
 function ekle(liste) {
   if (gonderiyor) return;
@@ -218,35 +251,40 @@ function ekle(liste) {
     if (!/^image\//.test(f.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(f.name)) continue;
     if (fotolar.length >= MAX_ADET) break;
     if (fotolar.some(x => x.dosya.name === f.name && x.dosya.size === f.size)) continue;
-    const x = { dosya: f, url: '' }; fotolar.push(x);
+    const x = { dosya: f, url: '', no: ++sayac, durum: 'bekliyor' }; fotolar.push(x);
     onizleme(f).then(u => { x.url = u; const im = document.querySelector('[data-k="' + fotolar.indexOf(x) + '"]'); if (im) im.src = u; });
   }
-  ciz();
+  ciz(); kuyruk();
 }
 function ciz() {
   $('izgara').innerHTML = '';
   fotolar.forEach((f, i) => {
     const d = document.createElement('div'); d.className = 'kucuk';
-    d.innerHTML = '<img alt=""><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' + (gonderiyor ? '' : '<button class="sil" title="Kaldır">×</button>') + (f.yuklendi ? '<div class="tik">✓</div>' : '');
+    const isaret = f.durum === 'tamam' ? '<div class="tik">✓</div>' : f.durum === 'hata' ? '<div class="tik" style="color:#ff8a95">!</div>' : '<div class="tik yukl"></div>';
+    d.innerHTML = '<img alt=""><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' + isaret + (gonderiyor ? '' : '<button class="sil" title="Kaldır">×</button>');
     const im = d.querySelector('img'); im.dataset.k = i; if (f.url) im.src = f.url;
     const s = d.querySelector('.sil'); if (s) s.onclick = ev => { ev.stopPropagation(); f.url && URL.revokeObjectURL(f.url); fotolar.splice(i, 1); ciz(); };
     $('izgara').appendChild(d);
   });
   $('ozet').hidden = !fotolar.length;
-  $('adetYazi').textContent = fotolar.length + ' fotoğraf seçildi';
+  const t = fotolar.filter(f => f.durum === 'tamam').length, yz = fotolar.length ? Math.round(t / fotolar.length * 100) : 0;
+  $('ycubukKutu').hidden = !fotolar.length;
+  $('ycubuk').style.width = yz + '%'; $('yyuzde').textContent = '%' + yz;
+  $('ycubukKutu').querySelector('span').textContent = t === fotolar.length ? 'Hepsi yüklendi ✓' : 'Yükleniyor · ' + t + ' / ' + fotolar.length;
+  $('adetYazi').textContent = fotolar.length + ' fotoğraf · ' + (t === fotolar.length ? 'hepsi yüklendi ✓' : t + ' / ' + fotolar.length + ' yüklendi');
   guncelle();
 }
 function guncelle() {
   $('gonderBtn').disabled = gonderiyor || !fotolar.length || !$('klasor').value.trim();
-  $('neden').textContent = gonderiyor ? '' : !fotolar.length ? 'Önce fotoğraf ekle.' : !$('klasor').value.trim() ? 'Gönder için klasör adını yaz.' : '';
+  $('neden').textContent = gonderiyor ? '' : !fotolar.length ? 'Önce fotoğraf ekle.' : !$('klasor').value.trim() ? 'Fotoğraflar yüklenirken klasör adını yaz.' : '';
 }
 
 /* ---------- gönder ---------- */
 function b64(blob) {
   return new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = no; r.readAsDataURL(blob); });
 }
-// Her fotoğraf yüklenmeden önce telefonda küçültülür (uzun kenar 2048, JPEG %90): Mac zaten ChatGPT'ye 2048 ile
-// gönderiyor, böylece yükleme 5-10 kat hızlanır. Tarayıcı açamazsa (eski cihaz) özgün dosya gider.
+// Her fotoğraf yüklenmeden önce telefonda küçültülür (uzun kenar 2048, JPEG %85): Mac zaten ChatGPT'ye 2048 ile
+// gönderiyor. Tarayıcı açamazsa (eski cihaz) özgün dosya gider.
 async function hazirla(f) {
   try {
     const img = await createImageBitmap(f);
@@ -254,7 +292,8 @@ async function hazirla(f) {
     const c = document.createElement('canvas'); c.width = Math.round(img.width * o); c.height = Math.round(img.height * o);
     const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(img, 0, 0, c.width, c.height);
     if (img.close) img.close();
-    const b = await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.9));
+    const b = await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.85));
+    c.width = c.height = 0;
     if (b && b.size) return b;
   } catch (e) {}
   if (f.size > MAX_BAYT) throw new Error(f.name + ' çok büyük');
@@ -280,30 +319,22 @@ $('gonderBtn').onclick = async () => {
   if (gonderiyor || !fotolar.length) return;
   const klasor = $('klasor').value.trim(); if (!klasor) return;
   gonderiyor = true; guncelle(); ciz();
-  const is = (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)).toLowerCase();
   try {
-    // aynı anda 3 fotoğraf yüklenir
-    let sira = 0, biten = 0;
-    yaz('Fotoğraflar yükleniyor: 0 / ' + fotolar.length, 0);
-    const tek = async son => {
-      while (sira < Math.min(son, fotolar.length)) {
-        const i = sira++;
-        const blob = await hazirla(fotolar[i].dosya);
-        const ad = fotolar[i].dosya.name.replace(/\.(heic|heif|png|webp)$/i, '.jpg');
-        const j = await servis({ action: 'fdYukle', is, no: i + 1, ad, mime: blob.type || 'image/jpeg', veri: await b64(blob) });
-        if (!j.success) throw new Error(j.error || 'yükleme');
-        fotolar[i].yuklendi = true; biten++; ciz();
-        yaz('Fotoğraflar yükleniyor: ' + biten + ' / ' + fotolar.length, biten / fotolar.length * 100);
-      }
-    };
-    // ilk fotoğraf tek başına (sunucu iş klasörünü açar), kalanlar 3'er 3'er
-    await tek(1);
-    await Promise.all([tek(1e9), tek(1e9), tek(1e9)]);
+    // hata alanlar bir kez daha denenir; kalan yüklemeler beklenir
+    fotolar.forEach(f => { if (f.durum === 'hata') f.durum = 'bekliyor'; });
+    kuyruk();
+    for (;;) {
+      const t = fotolar.filter(f => f.durum === 'tamam').length, h = fotolar.filter(f => f.durum === 'hata');
+      yaz('Fotoğraflar yükleniyor: ' + t + ' / ' + fotolar.length + ' (%' + Math.round(t / fotolar.length * 100) + ')', t / fotolar.length * 100);
+      if (t === fotolar.length) break;
+      if (h.length && !fotolar.some(f => f.durum === 'yukleniyor' || f.durum === 'bekliyor')) throw new Error(h.length + ' fotoğraf yüklenemedi (' + (h[0].hata || '') + ')');
+      await new Promise(ok => setTimeout(ok, 400));
+    }
     yaz('Sıraya alınıyor…', 100);
-    const j = await servis({ action: 'fdBaslat', is, klasor, adet: fotolar.length, tur: $('tur').value });
+    const j = await servis({ action: 'fdBaslat', is: IS, klasor, adet: fotolar.length, nolar: fotolar.map(f => f.no), tur: $('tur').value });
     if (!j.success) throw new Error(j.error || 'başlatılamadı');
     yaz('✓ Gönderildi. "' + j.durum.ad + '" sıraya alındı; Mac birkaç dakika içinde başlar. Bitince telefonuna bildirim gelecek ve klasör Mac masaüstüne inecek. Bu sayfayı kapatabilirsin.', 100);
-    fotolar.forEach(f => f.url && URL.revokeObjectURL(f.url)); fotolar = []; $('klasor').value = '';
+    fotolar.forEach(f => f.url && URL.revokeObjectURL(f.url)); fotolar = []; yeniIs(); $('klasor').value = '';
     isleriYukle();
   } catch (e) {
     yaz(e.message === 'PIN' ? 'PIN geçersiz, sayfayı yenileyip tekrar gir.' : 'Gönderilemedi: ' + e.message + '. Tekrar Gönder\'e basabilirsin.', null, true);
