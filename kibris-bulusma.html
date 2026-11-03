@@ -140,6 +140,24 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .sonraki b{font-size:16px}
 .sonraki .z{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums}
 .sonraki.acil{background:var(--red);color:#fff;animation:nabiz 1.6s infinite}.sonraki.acil .e{color:#fff}
+/* %60 BANDI: danışmanlar hep 50/50 gördü, bu lansmana özel %60 ilk kez (Umut, 3 Kas: "parlatmalısın") */
+.altmis{background:linear-gradient(120deg,#F3DFA8 0%,var(--gold) 45%,#B98F3E 100%);color:var(--navy);padding-block:30px;position:relative;overflow:hidden}
+.altmis:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-100%);animation:parla 5s ease-in-out 1s infinite}
+@keyframes parla{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.altmis-ic{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:center}
+.altmis-e{font-size:12px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+.altmis-rakam{display:flex;align-items:baseline;gap:16px;margin-top:4px}
+.altmis-rakam s{font-size:clamp(28px,5vw,44px);font-weight:800;opacity:.45;text-decoration-thickness:4px;text-decoration-color:var(--red)}
+.altmis-rakam b{font-size:clamp(72px,14vw,132px);font-weight:800;line-height:.95;letter-spacing:-.04em}
+.altmis p{font-size:clamp(15px,2vw,18px);max-width:560px;margin-top:8px}
+.altmis-ornek{background:#fff;border-radius:20px;padding:18px 20px;box-shadow:0 14px 34px rgba(5,10,48,.18)}
+.altmis-lbl{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink2)}
+.altmis-satir{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--sand2);font-variant-numeric:tabular-nums}
+.altmis-satir span{color:var(--ink2)}.altmis-satir b{font-size:18px}
+.altmis-satir.yeni b{color:var(--ok);font-size:22px}
+.altmis-fark{margin:10px 0 12px;font-weight:700;color:var(--ink)}.altmis-fark b{color:var(--red);font-size:20px}
+@media (max-width:760px){.altmis-ic{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.altmis:before{animation:none;display:none}}
 /* DAVETLİ PANELİ */
 .pn-demo{margin-top:14px;background:#FFF4D6;border:1px dashed var(--gold);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600}
 .pn-giris{margin-top:18px;max-width:440px}
@@ -244,6 +262,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   </div>
  </div>
 </header>
+<section class="altmis" aria-label="Lansmana özel yüzde altmış paylaşım">
+ <div class="wrap altmis-ic">
+  <div class="altmis-sol">
+   <div class="altmis-e">İlk kez · Yalnız bu lansmana özel</div>
+   <div class="altmis-rakam"><s>%50</s><b>%60</b></div>
+   <p>Lansmana gelen davetlinize satış yaparsanız, RE/MAX merkez payı düştükten sonra paylaşım <b>%60 sizin, %40 ofisin.</b> Tek şart: <b>3 ayrı davetliden kesin teyit.</b> Fırsat 31 Ocak 2027'ye kadarki satışlarda geçerli.</p>
+  </div>
+  <div class="altmis-ornek">
+   <div class="altmis-lbl">Örnek hesap · merkez payı sonrası 1.200.000 TL komisyon</div>
+   <div class="altmis-satir"><span>Normalde, %50</span><b>600.000 TL</b></div>
+   <div class="altmis-satir yeni"><span>Bu lansmanda, %60</span><b>720.000 TL</b></div>
+   <div class="altmis-fark">Tek satışta <b>+120.000 TL</b> daha fazla</div>
+   <a class="btn cp" href="#panel">Teyitlerimi panele gireyim</a>
+  </div>
+ </div>
+</section>
 
 <main class="wrap">
 
@@ -628,8 +662,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
     kpi('Kesin teyit',o.zamaninda,HEDEF.teyit,'3 ayrı davetli · hedef 13 Kasım 18.00')+
     kpi('Beklenen kişi',o.kisi,0,'Kesin teyitlerinizle')+kpi('Gelen / satış',o.geldi+' / '+o.satis,0,'Lansman sonrası');
    var h=$('pnHak');
-   if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>✓ %60 paylaşım hakkınız kesinleşti. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
-   else if(now<TS.son){var e=HEDEF.teyit-o.zamaninda,hdf=now<TS.teyit;h.className='pn-hak bek';h.innerHTML='<span>%60 paylaşım için <b>'+e+' ayrı davetliden kesin teyit</b> daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
+   if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>✓ %60 paylaşım hakkınız kesinleşti (normalde %50). Lansmana gelen davetlinize satışta fark sizin. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
+   else if(now<TS.son){var e=HEDEF.teyit-o.zamaninda,hdf=now<TS.teyit;h.className='pn-hak bek';h.innerHTML='<span><b>%60</b> paylaşım (normalde %50) için <b>'+e+' ayrı davetliden kesin teyit</b> daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
    else{h.className='pn-hak kac';h.innerHTML='<span>Bu lansmanda paylaşım %50 / %50. Teyitleriniz yine sıralamaya ve otel listesine sayılıyor.</span>';}
   }
 
