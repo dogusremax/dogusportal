@@ -140,7 +140,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .sonraki b{font-size:16px}
 .sonraki .z{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums}
 .sonraki.acil{background:var(--red);color:#fff;animation:nabiz 1.6s infinite}.sonraki.acil .e{color:#fff}
-/* %60 BANDI: danışmanlar hep 50/50 gördü, bu lansmana özel %60 ilk kez (Umut, 3 Kas: "parlatmalısın") */
+/* DANIŞMAN ÖDÜLÜ BANDI: her zamanki %50 + %10 Danışman Ödülü = %60, bu lansmana özel ilk kez (Umut, 3 Kas: "parlatmalısın",
+   "amaç motive etmek, +10 danışman ödülü"). Olumsuz cümle yok: kaybetmeyi değil kazanmayı anlatır. */
 .altmis{background:linear-gradient(120deg,#F3DFA8 0%,var(--gold) 45%,#B98F3E 100%);color:var(--navy);padding-block:30px;position:relative;overflow:hidden}
 .altmis:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-100%);animation:parla 5s ease-in-out 1s infinite}
 @keyframes parla{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
@@ -150,6 +151,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 .altmis-rakam s{font-size:clamp(28px,5vw,44px);font-weight:800;opacity:.45;text-decoration-thickness:4px;text-decoration-color:var(--red)}
 .altmis-rakam b{font-size:clamp(72px,14vw,132px);font-weight:800;line-height:.95;letter-spacing:-.04em}
 .altmis p{font-size:clamp(15px,2vw,18px);max-width:560px;margin-top:8px}
+.altmis-odul{align-self:center;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.25;background:var(--navy);color:var(--gold);border-radius:14px;padding:8px 12px;transform:rotate(-4deg)}
 .altmis-adim{margin:10px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:clamp(15px,2vw,17px);max-width:560px}
 .altmis-not{font-size:14px!important;opacity:.85}
 .altmis-ornek{background:#fff;border-radius:20px;padding:18px 20px;box-shadow:0 14px 34px rgba(5,10,48,.18)}
@@ -268,20 +270,21 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  <div class="wrap altmis-ic">
   <div class="altmis-sol">
    <div class="altmis-e">İlk kez · Yalnız bu lansmana özel</div>
-   <div class="altmis-rakam"><s>%50</s><b>%60</b></div>
-   <p>Plana sadık kalın, RE/MAX merkez payı düştükten sonra paylaşım <b>%60 sizin, %40 ofisin.</b></p>
+   <div class="altmis-rakam"><s>%50</s><b>%60</b><span class="altmis-odul">+%10<br>Danışman<br>Ödülü</span></div>
+   <p>Plana sadık kalın, her zamanki payınızın üstüne <b>+%10 Danışman Ödülü</b> sizin. RE/MAX merkez payı düştükten sonra paylaşım <b>%60 sizin.</b></p>
    <ol class="altmis-adim">
     <li><b>Listenizi kurun:</b> en az 10 potansiyel yatırımcıyı panele girin.</li>
     <li><b>Teyidinizi alın:</b> en az 3 ayrı davetliden kesin teyit.</li>
     <li><b>Satışı lansmanda başlatın:</b> lansmana gelen davetlinize 31 Ocak 2027'ye kadar satış.</li>
    </ol>
-   <p class="altmis-not">Hedefler 9 ve 13 Kasım; %60 için ikisi de 19 Kasım'a kadar sayılır. Biri eksikse satış yine sizin, paylaşım %50 / %50.</p>
+   <p class="altmis-not">Liste hedefi 9 Kasım, teyit hedefi 13 Kasım. Ödül için 19 Kasım'a kadar yetişmeniz yeterli.</p>
   </div>
   <div class="altmis-ornek">
    <div class="altmis-lbl">Örnek hesap · merkez payı sonrası 1.200.000 TL komisyon</div>
-   <div class="altmis-satir"><span>Normalde, %50</span><b>600.000 TL</b></div>
-   <div class="altmis-satir yeni"><span>Bu lansmanda, %60</span><b>720.000 TL</b></div>
-   <div class="altmis-fark">Tek satışta <b>+120.000 TL</b> daha fazla</div>
+   <div class="altmis-satir"><span>Her zamanki payınız, %50</span><b>600.000 TL</b></div>
+   <div class="altmis-satir"><span>+%10 Danışman Ödülü</span><b style="color:var(--red)">+120.000 TL</b></div>
+   <div class="altmis-satir yeni"><span>Cebinize giren, %60</span><b>720.000 TL</b></div>
+   <div class="altmis-fark">Tek satışta <b>+120.000 TL</b> ödül</div>
    <a class="btn cp" href="#panel">Teyitlerimi panele gireyim</a>
   </div>
  </div>
@@ -291,7 +294,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 
  <section class="s" id="panel">
   <h2>Davetli <em>panelim</em></h2>
-  <p class="sub">Davetlilerinizi buraya kaydedin. Listeniz, kesin teyitleriniz ve %60 paylaşım hakkınız burada ölçülür; hedefin gerisinde kalırsanız telefonunuza hatırlatma gelir.</p>
+  <p class="sub">Davetlilerinizi buraya kaydedin. Listeniz, kesin teyitleriniz ve +%10 Danışman Ödülünüz burada ölçülür; hedefin gerisinde kalırsanız telefonunuza hatırlatma gelir.</p>
   <div class="pn-demo" id="pnDemo" hidden>Örnek görünüm: bu sayfadaki davetliler ve rakamlar gerçek değil.</div>
   <div class="card pn-giris" id="pnGiris">
    <label class="lbl" for="pnPin">Danışman Takip PIN'i</label>
@@ -309,8 +312,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
    <details class="pn-kural" id="pnKural">
     <summary>Lansman kuralları</summary>
     <ol>
-     <li><b>%60 hakkı, plana sadık kalana:</b> en az <b>10 kişilik</b> davet listesi ve en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Hedefler 9 ve 13 Kasım; %60 için ikisi de 19 Kasım'a kadar sayılır.</li>
-     <li><b>%60 nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yapılan satışta, RE/MAX merkez payı düştükten sonra %60 sizin, %40 ofisin. Lansmana gelmeyen davetliye satış 50 / 50.</li>
+     <li><b>+%10 Danışman Ödülü, plana sadık kalana:</b> en az <b>10 kişilik</b> davet listesi ve en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Liste hedefi 9 Kasım, teyit hedefi 13 Kasım; ödül için 19 Kasım'a kadar yetişmeniz yeterli.</li>
+     <li><b>Ödül nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yaptığınız satışta. RE/MAX merkez payı düştükten sonra paylaşım %60 sizin, %40 ofisin.</li>
      <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. 19 Kasım'a kadar her teyitli davetlinizi arayıp "Son teyit alındı" yapın, lansman günü kapıda karşılayın.</li>
      <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
      <li><b>Müşteri sahipliği:</b> davetli, telefonunu panele ilk kaydeden danışmanın müşterisidir. Aynı numarayı başka danışman giremez.</li>
@@ -375,7 +378,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   <div class="g3">
    <div class="card"><div class="num">10</div><div class="lbl" style="margin-top:6px">Kişi başı davet listesi</div><p style="margin-top:8px;font-size:15px">9 Kasım Pazartesi'ye kadar en az 10 potansiyel yatırımcıyı panele girin.</p></div>
    <div class="card"><div class="num">3</div><div class="lbl" style="margin-top:6px">Ayrı davetliden kesin teyit</div><p style="margin-top:8px;font-size:15px">Hedef 13 Kasım Cuma 18.00. 3'te durmayın: her fazla teyit sizi sıralamada öne taşır.</p></div>
-   <div class="card"><div class="num">%60</div><div class="lbl" style="margin-top:6px">Lansmana özel pay</div><p style="margin-top:8px;font-size:15px">Plana sadık kalın: 10 kişilik liste, 3 ayrı davetliden teyit; <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar satışta paylaşım %60 sizin.</p></div>
+   <div class="card"><div class="num">+%10</div><div class="lbl" style="margin-top:6px">Danışman ödülü</div><p style="margin-top:8px;font-size:15px">Plana sadık kalın: 10 kişilik liste, 3 ayrı davetliden teyit. <b>Lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar satışta paylaşım %60 sizin.</p></div>
   </div>
   <p class="note" style="margin-top:14px">Kuralların tamamı Davetli panelinizde. Davet ettiğiniz yatırımcı sizin müşteriniz olarak kayda alınır: aynı numarayı başka danışman giremez.</p>
  </section>
@@ -392,7 +395,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   <div class="plan" id="plan">
    <div class="ph" data-a="2026-11-01" data-b="2026-11-09"><div class="d">1 – 9 Kasım</div><h3>Liste ve ilk davet</h3><ul class="ck"><li>En az 10 kişilik listenizi 9 Kasım'a kadar panele girin.</li><li>Önce arayın, sonra kişisel WhatsApp davetini gönderin.</li><li>Lansman reels'ini 8 Kasım'da paylaşın.</li></ul></div>
    <div class="ph" data-a="2026-11-10" data-b="2026-11-13"><div class="d">10 – 13 Kasım</div><h3>Kesin teyit</h3><ul class="ck"><li>13 Kasım Cuma 18.00'e kadar en az 3 ayrı davetliden kesin teyit.</li><li>"Gelirim" diyeni panelde "Teyit verdi" yapın.</li><li>Cevap vermeyenleri ikinci kez arayın.</li></ul></div>
-   <div class="ph" data-a="2026-11-14" data-b="2026-11-19"><div class="d">14 – 19 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 19 Kasım'a kadar alınanlar da %60'a sayılır.</li><li>Her teyitli davetlinizi arayıp "Son teyit alındı" yapın.</li><li>19 Kasım'da liste kesinleşir.</li></ul></div>
+   <div class="ph" data-a="2026-11-14" data-b="2026-11-19"><div class="d">14 – 19 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 19 Kasım'a kadar alınanlar da ödüle sayılır.</li><li>Her teyitli davetlinizi arayıp "Son teyit alındı" yapın.</li><li>19 Kasım'da liste kesinleşir.</li></ul></div>
    <div class="ph" data-a="2026-11-20" data-b="2026-11-30"><div class="d">20 Kasım ve sonrası</div><h3>Buluşma ve takip</h3><ul class="ck"><li>21 Kasım akşamı son hatırlatma mesajı.</li><li>22 Kasım 13:00'te salonda olun.</li><li>Ertesi gün her misafirinizi arayıp durumunu güncelleyin.</li></ul></div>
   </div>
  </section>
@@ -544,7 +547,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  var ADIM=[
   {k:'liste',e:'9 Kas',b:'9 Kasım Pazartesi',h:'Davet listesi: en az 10 kişi'},
   {k:'teyit',e:'13 Kas · 18.00',b:'13 Kasım Cuma 18.00',h:'Kesin teyit hedefi: 3 ayrı davetli'},
-  {k:'son',e:'19 Kas',b:'19 Kasım Perşembe',h:'Son teyit: liste ve %60 hakkı kesinleşir',ust:true},
+  {k:'son',e:'19 Kas',b:'19 Kasım Perşembe',h:'Son teyit: liste ve Danışman Ödülü kesinleşir',ust:true},
   {k:'lansman',e:'22 Kas',b:'22 Kasım Pazar 13:30',h:'Lansman · Kalamış Marina Hotel'}];
  var HEDEF={liste:10,teyit:3};
  var DURUM={davet:'Davet edildi',teyit:'Teyit verdi',son:'Son teyit alındı',geldi:'Lansmana geldi',gorusme:'Görüşme yapıldı',satis:'Satış',vazgecti:'Katılmayacak'};
@@ -661,7 +664,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
    var top=sr.reduce(function(a,o){a.liste+=o.liste;a.teyit+=o.teyit;a.kisi+=o.kisi;a.geldi+=o.geldi;a.satis+=o.satis;return a;},{liste:0,teyit:0,kisi:0,geldi:0,satis:0});
    var hak=ekip.filter(function(o){return o.hak;}).length;
    $('pnKpi').innerHTML=kpi('Toplam davetli',top.liste,0,'Katılmayacaklar hariç')+kpi('Kesin teyit',top.teyit,ekip.length*HEDEF.teyit,'Hedef: danışman başı 3')+
-    kpi('Beklenen kişi',top.kisi,0,'Otel için kesin sayı')+kpi(now<TS.lansman?'%60 hakkı kazanan':'Gelen / satış',now<TS.lansman?hak:top.geldi,now<TS.lansman?ekip.length:0,now<TS.lansman?'danışman':top.satis+' satış');
+    kpi('Beklenen kişi',top.kisi,0,'Otel için kesin sayı')+kpi(now<TS.lansman?'Ödülü kazanan':'Gelen / satış',now<TS.lansman?hak:top.geldi,now<TS.lansman?ekip.length:0,now<TS.lansman?'danışman':top.satis+' satış');
    var geride=ekip.filter(geridemi).length;
    $('pnHak').className='pn-hak '+(geride?'bek':'ok');
    $('pnHak').innerHTML=geride?'<span><b>'+geride+' danışman</b> sıradaki hedefin gerisinde.</span><button class="btn cp" type="button" id="pnGerideBtn" style="margin-left:auto;background:var(--red)">Hatırlatma yaz</button>':'<span>Bütün danışmanlar sıradaki hedefte.</span>';
@@ -672,9 +675,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
     kpi('Kesin teyit',o.zamaninda,HEDEF.teyit,'3 ayrı davetli · hedef 13 Kasım 18.00')+
     kpi('Beklenen kişi',o.kisi,0,'Kesin teyitlerinizle')+kpi('Gelen / satış',o.geldi+' / '+o.satis,0,'Lansman sonrası');
    var h=$('pnHak');
-   if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>✓ %60 paylaşım hakkınız kesinleşti (normalde %50). Lansmana gelen davetlinize satışta fark sizin. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
-   else if(now<TS.son){var hdf=now<TS.teyit,ek=[];if(o.eksikListe)ek.push('listene <b>'+o.eksikListe+' kişi</b>');if(o.eksikTeyit)ek.push('<b>'+o.eksikTeyit+' ayrı davetliden kesin teyit</b>');h.className='pn-hak bek';h.innerHTML='<span><b>%60</b> paylaşım (normalde %50) için '+ek.join(' ve ')+' daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
-   else{h.className='pn-hak kac';h.innerHTML='<span>Bu lansmanda paylaşım %50 / %50. Teyitleriniz yine sıralamaya ve otel listesine sayılıyor.</span>';}
+   if(o.hak){h.className='pn-hak ok';h.innerHTML='<span>🏆 +%10 Danışman Ödülünü kazandınız! Lansmana gelen davetlinize satışta paylaşım %60 sizin. Teyit getirmeye devam: sıralamada öne geçin.</span>';}
+   else if(now<TS.son){var hdf=now<TS.teyit,ek=[];if(o.eksikListe)ek.push('listene <b>'+o.eksikListe+' kişi</b>');if(o.eksikTeyit)ek.push('<b>'+o.eksikTeyit+' ayrı davetliden kesin teyit</b>');h.className='pn-hak bek';h.innerHTML='<span><b>+%10 Danışman Ödülü</b> için '+ek.join(' ve ')+' daha'+(hdf?' · hedef 13 Kasım 18.00':' · son gün 19 Kasım')+'</span><span class="z" id="pnHakZ">'+sure((hdf?TS.teyit:TS.son)-now)+'</span>';}
+   else{h.className='pn-hak kac';h.innerHTML='<span>Teyitleriniz sıralamaya, puanınıza ve otel listesine sayılıyor. 22 Kasım\'da misafirlerinizi kapıda karşılayın!</span>';}
   }
 
   /* bildirimler */
@@ -785,7 +788,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  function siraCiz(){
   var v=P.v, now=Date.now(), sr=(v.siralama||[]).slice();
   sr.sort(function(a,b){return (b.zamaninda-a.zamaninda)||(b.teyit-a.teyit)||(b.liste-a.liste)||a.ad.localeCompare(b.ad,'tr');});
-  $('pnSira').innerHTML='<thead><tr><th>#</th><th>Danışman</th><th>Liste</th><th>Kesin teyit</th><th>Kişi</th><th>Geldi</th><th>Satış</th><th>%60</th></tr></thead><tbody>'+
+  $('pnSira').innerHTML='<thead><tr><th>#</th><th>Danışman</th><th>Liste</th><th>Kesin teyit</th><th>Kişi</th><th>Geldi</th><th>Satış</th><th>Ödül</th></tr></thead><tbody>'+
    sr.map(function(o,i){
     var w=Math.round(Math.min(o.zamaninda,6)/6*80);
     var chip=o.hak?'<span class="chip ok">Kazandı</span>':(now<TS.son?'<span class="chip no">'+[o.eksikListe?o.eksikListe+' kişi':'',o.eksikTeyit?o.eksikTeyit+' teyit':''].filter(Boolean).join(' · ')+' eksik</span>':'<span class="chip no">—</span>');
@@ -799,7 +802,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  function hazirMetin(t){
   var now=Date.now(), s=ADIM.filter(function(a){return TS[a.k]>now;})[0];
   if(t==='teslim'&&s) return s.b+' teslim tarihine '+sure(TS[s.k]-now).replace(/ \d+sn$/,'')+' kaldı. '+
-   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'%60 paylaşım için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
+   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'+%10 Danışman Ödülü için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
   if(t==='tebrik') return 'Harika gidiyorsun! Teyitlerin sıralamada öne çıktı. 22 Kasım\'da salonu birlikte dolduruyoruz.';
   return 'Sıralamaya bir göz at: dogusportal.com/kibris-bulusma.html#panel';
  }
