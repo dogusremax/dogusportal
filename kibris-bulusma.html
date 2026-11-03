@@ -163,6 +163,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 @media (max-width:760px){.altmis-ic{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.altmis:before{animation:none;display:none}}
 .ornek-not{display:inline-block;margin-top:10px;background:#FFF4D6;border:1px solid var(--gold);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:600}
+/* ŞİFRE KAPISI: girişe kadar sayfanın geri kalanı görünmez */
+body.kilitli>*:not(#kapi):not(script){display:none!important}
+body:not(.kilitli) #kapi{display:none}
+.kapi{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-left,0px));
+ background:radial-gradient(900px 500px at 85% -10%,rgba(220,28,46,.35),transparent 60%),radial-gradient(700px 500px at -10% 110%,rgba(214,178,106,.18),transparent 60%),linear-gradient(160deg,var(--navy),var(--navy2));color:#fff}
+.kapi-kart{width:100%;max-width:440px;text-align:center}
+.kapi-logo{height:40px;width:auto;margin:0 auto 26px;display:block}
+.kapi .ey{margin-top:0}
+.kapi h1{font-size:clamp(30px,8vw,44px)}
+.kapi-alt{opacity:.85;margin:10px 0 22px}
+.kapi .pn-pinrow input{background:#fff;color:var(--ink)}
+.kapi .btn.cp{background:var(--red)}
+.kapi .err{color:#ffb4b4}
+.kapi-not{font-size:13px;opacity:.65;margin-top:14px}
 /* DAVETLİ PANELİ */
 .pn-demo{margin-top:14px;background:#FFF4D6;border:1px dashed var(--gold);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600}
 .pn-giris{margin-top:18px;max-width:440px}
@@ -241,7 +255,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
 @media (prefers-reduced-motion:reduce){.tik,.canli i,.yd.sira,.sonraki.acil{animation:none}}
 </style>
 </head>
-<body>
+<body class="kilitli">
+<!-- Şifre kapısı (Umut, 3 Kas: "sadece şifre ekranı olsun, şifre ile girdikten sonra açılsın") -->
+<div class="kapi" id="kapi">
+ <div class="kapi-kart">
+  <img src="assets/dogus-logo.webp" alt="RE/MAX Doğuş" class="kapi-logo">
+  <div class="ey">22 Kasım 2026 · Kalamış Marina Hotel</div>
+  <h1>Büyük Kuzey Kıbrıs <em>Buluşması</em></h1>
+  <p class="kapi-alt">Danışman çalışma sayfası. Danışman Takip PIN'inizle girin.</p>
+  <div class="pn-pinrow"><input id="kapiPin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••" aria-label="Danışman Takip PIN'i"><button class="btn cp" id="kapiGir" type="button">Giriş</button></div>
+  <div class="err" id="kapiHata"></div>
+  <p class="kapi-not">PIN'inizi bilmiyorsanız brokerınızdan isteyin. Bu telefonda hatırlanır.</p>
+ </div>
+</div>
 
 <header class="hero">
  <div class="wrap">
@@ -610,14 +636,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   t.style.cssText='position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;font-weight:700;padding:12px 18px;border-radius:30px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw;text-align:center';document.body.appendChild(t);}
   t.textContent=m;t.hidden=false;clearTimeout(toastZ);toastZ=setTimeout(function(){t.hidden=true;},2600);}
 
+ function hataYaz(m){$('pnHata').textContent=m;$('kapiHata').textContent=m;}
  function giris(pin){
   pin=String(pin||'').trim();
-  if(!P.demo&&!/^\d{4,6}$/.test(pin)){$('pnHata').textContent='PIN 4-6 haneli olmalı.';return;}
-  P.pin=pin; $('pnGir').disabled=true; $('pnHata').textContent='Kontrol ediliyor…';
+  if(!P.demo&&!/^\d{4,6}$/.test(pin)){hataYaz('PIN 4-6 haneli olmalı.');return;}
+  P.pin=pin; $('pnGir').disabled=$('kapiGir').disabled=true; hataYaz('Kontrol ediliyor…');
   istek({islem:'giris'}).then(function(r){
-   $('pnGir').disabled=false;
-   if(!r.ok){$('pnHata').textContent=r.error||'Giriş yapılamadı.';$('pnPin').value='';ls('kb_pin',null);return;}
-   $('pnHata').textContent=''; if(!P.demo) ls('kb_pin',pin);
+   $('pnGir').disabled=$('kapiGir').disabled=false;
+   if(!r.ok){hataYaz(r.error||'Giriş yapılamadı.');$('pnPin').value=$('kapiPin').value='';ls('kb_pin',null);return;}
+   hataYaz(''); if(!P.demo) ls('kb_pin',pin);
+   document.body.classList.remove('kilitli'); if(location.hash==='#panel') setTimeout(function(){$('panel').scrollIntoView();},50);
    P.v=r; $('pnGiris').hidden=true; $('pnAna').hidden=false;
    kimSec(r.ad); filtreKur(); ciz();
   });
@@ -857,7 +885,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  $('pnGir').onclick=function(){giris($('pnPin').value);};
  $('pnPin').addEventListener('keydown',function(e){if(e.key==='Enter')giris(this.value);});
  $('pnPin').addEventListener('input',function(){if(this.value.length===6)giris(this.value);});
- $('pnCikis').onclick=function(){ls('kb_pin',null);P.pin='';P.v=null;$('pnAna').hidden=true;$('pnGiris').hidden=false;$('pnPin').value='';};
+ $('pnCikis').onclick=function(){ls('kb_pin',null);P.pin='';P.v=null;$('pnAna').hidden=true;$('pnGiris').hidden=false;$('pnPin').value=$('kapiPin').value='';document.body.classList.add('kilitli');window.scrollTo(0,0);};
+ $('kapiGir').onclick=function(){giris($('kapiPin').value);};
+ $('kapiPin').addEventListener('keydown',function(e){if(e.key==='Enter')giris(this.value);});
+ $('kapiPin').addEventListener('input',function(){if(this.value.length===6)giris(this.value);});
  $('pnYenile').onclick=function(){istek({islem:'durum'}).then(function(r){cevap(r,'Güncel');});};
 
  /* ---------- örnek veri (?demo=1 / ?demo=broker) — sunucuya hiçbir şey gitmez ---------- */
@@ -906,6 +937,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
  else {
   var p=ls('kb_pin')||(function(){try{return sessionStorage.getItem('koc_pin');}catch(e){return '';}})()||(window.brokerPinAl&&brokerPinAl())||'';
   if(p){$('pnPin').value=p;giris(p);}
+  else setTimeout(function(){try{$('kapiPin').focus();}catch(e){}},200);
  }
 })();
 </script>
