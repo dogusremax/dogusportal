@@ -742,7 +742,7 @@ body:not(.kilitli) #kapi{display:none}
   $('fpDanisman').innerHTML=adlar.map(function(a){return '<option'+(a===v.ad?' selected':'')+'>'+esc(a)+'</option>';}).join('');
   $('fpDanisman').onchange=function(){ if(!$('fpId').value) ortakKur(null); };
   var ops=SIRA.map(function(k){return '<option value="'+k+'">'+DURUM[k]+'</option>';}).join('');
-  $('pnFs').innerHTML='<option value="">Tüm durumlar</option>'+ops; $('fpDurum').innerHTML=ops;
+  $('pnFs').innerHTML='<option value="">Tüm durumlar</option>'+ops; $('fpDurum').innerHTML=durumOps('davet',true);
   $('pnKime').innerHTML='<option value="geride">Hedefin gerisindekiler</option><option value="herkes">Tüm danışmanlar</option>'+(v.ekip||[]).map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
  }
 
@@ -775,7 +775,10 @@ body:not(.kilitli) #kapi{display:none}
  /* Danışman "Lansmana geldi" ve sonrasını seçemez; kapıda broker işaretler */
  function durumOps(mevcut){
   var kilit=!P.v.broker&&GELDI.indexOf(mevcut)<0;
-  return SIRA.map(function(k){var dis=kilit&&GELDI.indexOf(k)>=0;return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':'')+'</option>';}).join('');
+  /* Umut, 3 Kas: teyit adımları 10 Kasım'da açılır (sunucu da reddeder); zaten teyitli kayıt etkilenmez */
+  var tKilit=!P.v.broker&&KESIN.indexOf(mevcut)<0&&Date.now()<new Date(P.v.teyitAcilis||'2026-11-10T00:00:00+03:00').getTime();
+  return SIRA.map(function(k){var dis=kilit&&GELDI.indexOf(k)>=0,tk=tKilit&&KESIN.indexOf(k)>=0&&GELDI.indexOf(k)<0;
+   return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis||tk?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':tk?' (10 Kasım\'da açılır)':'')+'</option>';}).join('');
  }
 
  $('pnListe').addEventListener('change',function(e){
