@@ -342,8 +342,8 @@ body:not(.kilitli) #kapi{display:none}
     <ol>
      <li><b>+%10 Danışman Ödülü, plana sadık kalana:</b> en az <b>10 kişilik</b> davet listesi ve en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Liste hedefi 9 Kasım, teyit hedefi 13 Kasım; ödül için 19 Kasım'a kadar yetişmeniz yeterli.</li>
      <li><b>Ödül nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yaptığınız satışta. RE/MAX merkez payı düştükten sonra paylaşım %60 sizin, %40 ofisin.</li>
-     <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. 19 Kasım'a kadar her teyitli davetlinizi arayıp "Son teyit alındı" yapın, lansman günü kapıda karşılayın.</li>
-     <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
+     <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. "Son teyit alındı" 20 Kasım'da açılır: 20–21 Kasım'da her teyitli davetlinizi arayıp son teyidi işaretleyin, lansman günü kapıda karşılayın.</li>
+     <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, son teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
      <li><b>Ortak davetli:</b> müşteriyi bir arkadaşınızla birlikte getiriyorsanız kayda "Ortak danışman" ekleyin. Davetli ikinizin listesine ve teyidine tam sayılır, puan yarı yarıya bölünür. Ortağı kaydı giren danışman ekler.</li>
      <li><b>Müşteri sahipliği:</b> davetli, telefonunu panele ilk kaydeden danışmanın müşterisidir. Aynı numarayı başka danışman giremez.</li>
      <li><b>Doğru kayıt:</b> yalnız gerçekten "geleceğim" diyen kişiyi "Teyit verdi" yapın. Gelmeyeceğini söyleyeni "Katılmayacak" olarak güncelleyin.</li>
@@ -425,7 +425,7 @@ body:not(.kilitli) #kapi{display:none}
   <div class="plan" id="plan">
    <div class="ph" data-a="2026-11-01" data-b="2026-11-09"><div class="d">1 – 9 Kasım</div><h3>Liste ve ilk davet</h3><ul class="ck"><li>En az 10 kişilik listenizi 9 Kasım'a kadar panele girin.</li><li>Önce arayın, sonra kişisel WhatsApp davetini gönderin.</li><li>Lansman reels'ini 8 Kasım'da paylaşın.</li></ul></div>
    <div class="ph" data-a="2026-11-10" data-b="2026-11-13"><div class="d">10 – 13 Kasım</div><h3>Kesin teyit</h3><ul class="ck"><li>13 Kasım Cuma 18.00'e kadar en az 3 ayrı davetliden kesin teyit.</li><li>"Gelirim" diyeni panelde "Teyit verdi" yapın.</li><li>Cevap vermeyenleri ikinci kez arayın.</li></ul></div>
-   <div class="ph" data-a="2026-11-14" data-b="2026-11-19"><div class="d">14 – 19 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 19 Kasım'a kadar alınanlar da ödüle sayılır.</li><li>Her teyitli davetlinizi arayıp "Son teyit alındı" yapın.</li><li>19 Kasım'da liste kesinleşir.</li></ul></div>
+   <div class="ph" data-a="2026-11-14" data-b="2026-11-19"><div class="d">14 – 19 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 19 Kasım'a kadar alınanlar da ödüle sayılır.</li><li>"Son teyit alındı" 20 Kasım'da açılır; o gün teyitli davetlilerinizi arayıp işaretleyin (+5 puan).</li><li>19 Kasım'da liste kesinleşir.</li></ul></div>
    <div class="ph" data-a="2026-11-20" data-b="2026-11-30"><div class="d">20 Kasım ve sonrası</div><h3>Buluşma ve takip</h3><ul class="ck"><li>21 Kasım akşamı son hatırlatma mesajı.</li><li>22 Kasım 13:00'te salonda olun.</li><li>Ertesi gün her misafirinizi arayıp durumunu güncelleyin.</li></ul></div>
   </div>
  </section>
@@ -581,7 +581,7 @@ body:not(.kilitli) #kapi{display:none}
  var ADIM=[
   {k:'liste',e:'9 Kas',b:'9 Kasım Pazartesi',h:'Davet listesi: en az 10 kişi'},
   {k:'teyit',e:'13 Kas · 18.00',b:'13 Kasım Cuma 18.00',h:'Kesin teyit hedefi: 3 ayrı davetli'},
-  {k:'son',e:'19 Kas',b:'19 Kasım Perşembe',h:'Son teyit: liste ve Danışman Ödülü kesinleşir',ust:true},
+  {k:'son',e:'19 Kas',b:'19 Kasım Perşembe',h:'Liste ve Danışman Ödülü kesinleşir; son teyit 20 Kasım\'da açılır',ust:true},
   {k:'lansman',e:'22 Kas',b:'22 Kasım Pazar 13:30',h:'Lansman · Kalamış Marina Hotel'}];
  var HEDEF={liste:10,teyit:3};
  var DURUM={davet:'Davet edildi',teyit:'Teyit verdi',son:'Son teyit alındı',geldi:'Lansmana geldi',gorusme:'Görüşme yapıldı',satis:'Satış',vazgecti:'Katılmayacak'};
@@ -777,8 +777,10 @@ body:not(.kilitli) #kapi{display:none}
   var kilit=!P.v.broker&&GELDI.indexOf(mevcut)<0;
   /* Umut, 3 Kas: teyit adımları 10 Kasım'da açılır (sunucu da reddeder); zaten teyitli kayıt etkilenmez */
   var tKilit=!P.v.broker&&KESIN.indexOf(mevcut)<0&&Date.now()<new Date(P.v.teyitAcilis||'2026-11-10T00:00:00+03:00').getTime();
-  return SIRA.map(function(k){var dis=kilit&&GELDI.indexOf(k)>=0,tk=tKilit&&KESIN.indexOf(k)>=0&&GELDI.indexOf(k)<0;
-   return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis||tk?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':tk?' (10 Kasım\'da açılır)':'')+'</option>';}).join('');
+  /* Umut, 3 Kas: "Son teyit alındı" 20 Kasım'da açılır (+5 puan) */
+  var sKilit=!P.v.broker&&mevcut!=='son'&&GELDI.indexOf(mevcut)<0&&Date.now()<new Date(P.v.sonAcilis||'2026-11-20T00:00:00+03:00').getTime();
+  return SIRA.map(function(k){var dis=kilit&&GELDI.indexOf(k)>=0,tk=tKilit&&KESIN.indexOf(k)>=0&&GELDI.indexOf(k)<0,sk=!tk&&sKilit&&k==='son';
+   return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis||tk||sk?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':sk?' (20 Kasım\'da açılır)':tk?' ('+(k==='son'?'20':'10')+' Kasım\'da açılır)':'')+'</option>';}).join('');
  }
 
  $('pnListe').addEventListener('change',function(e){
@@ -856,7 +858,7 @@ body:not(.kilitli) #kapi{display:none}
  function hazirMetin(t){
   var now=Date.now(), s=ADIM.filter(function(a){return TS[a.k]>now;})[0];
   if(t==='teslim'&&s) return s.b+' teslim tarihine '+sure(TS[s.k]-now).replace(/ \d+sn$/,'')+' kaldı. '+
-   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'+%10 Danışman Ödülü için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
+   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'+%10 Danışman Ödülü için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini 20 Kasım\'dan itibaren arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
   if(t==='tebrik') return 'Harika gidiyorsun! Teyitlerin sıralamada öne çıktı. 22 Kasım\'da salonu birlikte dolduruyoruz.';
   return 'Sıralamaya bir göz at: dogusportal.com/kibris-bulusma.html#panel';
  }
@@ -925,7 +927,7 @@ body:not(.kilitli) #kapi{display:none}
     kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:''),ortak:ort||''};
    if(eski) DEMO.liste[DEMO.liste.indexOf(eski)]=y; else DEMO.liste.push(y);
    var pu=0; DEMO.puan=DEMO.puan||{};
-   [['davet',3,true],['teyit',5,KESIN.indexOf(y.durum)>=0],['geldi',15,GELDI.indexOf(y.durum)>=0]].forEach(function(a){if(a[2]&&!DEMO.puan[key+a[0]]){DEMO.puan[key+a[0]]=1;pu+=y.ortak?a[1]/2:a[1];}});
+   [['davet',3,true],['teyit',5,KESIN.indexOf(y.durum)>=0],['son',5,y.durum==='son'],['geldi',15,GELDI.indexOf(y.durum)>=0]].forEach(function(a){if(a[2]&&!DEMO.puan[key+a[0]]){DEMO.puan[key+a[0]]=1;pu+=y.ortak?a[1]/2:a[1];}});
    var pl={}; if(pu){pl[dn]=pu; if(y.ortak) pl[y.ortak]=pu;}
    return durum({puan:pl[ben]||0,puanlar:pl,puanKime:dn});
   }
