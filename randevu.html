@@ -101,8 +101,7 @@ details.metin summary{cursor:pointer;font-weight:700}
         </div>
         <label class="l" for="tc">T.C. kimlik no <i>(yönetmelik gereği)</i></label>
         <input type="text" id="tc" class="tc" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="11 haneli">
-        <label class="kutu"><input type="checkbox" id="onay"><span>Taşınmaz gösterme belgesi <a href="#sartlar" id="sartLink">şartlarını</a> ve <a href="gizlilik.html" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okudum, onaylıyorum.</span></label>
-        <details class="metin" id="sartlar"><summary>Belge şartları</summary><div id="sartMetin">Taşınmaz Ticareti Hakkında Yönetmelik gereği, size gösterilecek taşınmaz için yetkili işletme ile aranızda yer gösterme belgesi düzenlenir. Belgenin bir nüshası randevunuzdan sonra WhatsApp'tan size gönderilir.</div></details>
+        <label class="kutu"><input type="checkbox" id="onay"><span>Taşınmaz gösterme belgesi <a href="gosterme-belgesi.html#sartlar" target="_blank" rel="noopener">şartlarını</a> ve <a href="gosterme-belgesi.html#kvkk" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okudum, onaylıyorum.</span></label>
         <label class="l">İmzanız <i>(parmağınızla)</i></label>
         <div class="imza" id="imzaKutu"><canvas id="imza"></canvas><div class="ip" id="imzaIp">Buraya imzanızı atın</div></div>
         <button type="button" class="temizle" id="temizle">İmzayı temizle</button>
@@ -159,7 +158,7 @@ function yukle() {
         ev.forEach(function (e) {
           var l = document.createElement('label'); l.className = 'kutu ev';
           l.innerHTML = '<input type="checkbox" checked value=""><span><b></b><span></span></span>';
-          l.querySelector('input').value = e.no; l.querySelector('b').textContent = e.baslik; l.querySelector('span span').textContent = e.alt;
+          l.querySelector('input').value = e.no; l.querySelector('b').textContent = (e.adres || e.baslik) + ' için gösterme belgesini onaylıyorum.'; l.querySelector('span span').textContent = e.baslik + ' · ' + e.alt;
           l.querySelector('input').onchange = kontrol;
           $('evler').appendChild(l);
         });
@@ -211,7 +210,6 @@ function kontrol() {
 }
 ['ad', 'tel', 'tc'].forEach(function (id) { $(id).oninput = function () { if (id === 'tc') this.value = this.value.replace(/\D/g, ''); kontrol(); }; });
 $('onay').onchange = kontrol;
-$('sartLink').onclick = function (e) { e.preventDefault(); $('sartlar').open = true; $('sartlar').scrollIntoView({ block: 'center' }); };
 
 function imzaKur() {
   var c = $('imza'), k = $('imzaKutu'), x = c.getContext('2d'), ciziyor = false, oran = window.devicePixelRatio || 1;
