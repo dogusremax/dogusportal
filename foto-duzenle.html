@@ -257,8 +257,8 @@ $('gonderBtn').onclick = async () => {
     // aynı anda 3 fotoğraf yüklenir
     let sira = 0, biten = 0;
     yaz('Fotoğraflar yükleniyor: 0 / ' + fotolar.length, 0);
-    const tek = async () => {
-      while (sira < fotolar.length) {
+    const tek = async son => {
+      while (sira < Math.min(son, fotolar.length)) {
         const i = sira++;
         const blob = await hazirla(fotolar[i].dosya);
         const ad = fotolar[i].dosya.name.replace(/\.(heic|heif|png|webp)$/i, '.jpg');
@@ -268,7 +268,9 @@ $('gonderBtn').onclick = async () => {
         yaz('Fotoğraflar yükleniyor: ' + biten + ' / ' + fotolar.length, biten / fotolar.length * 100);
       }
     };
-    await Promise.all([tek(), tek(), tek()]);
+    // ilk fotoğraf tek başına (sunucu iş klasörünü açar), kalanlar 3'er 3'er
+    await tek(1);
+    await Promise.all([tek(1e9), tek(1e9), tek(1e9)]);
     yaz('Sıraya alınıyor…', 100);
     const j = await servis({ action: 'fdBaslat', is, klasor, adet: fotolar.length });
     if (!j.success) throw new Error(j.error || 'başlatılamadı');
