@@ -332,9 +332,9 @@ footer a{text-decoration:none;color:#fff}
 .arsiv{max-width:1260px;margin:0 auto;padding:10px 22px 70px}
 .arsiv h2{font-size:clamp(2rem,4.5vw,3.2rem);margin:12px 0 8px}
 .arsiv .sub{max-width:720px}
-.kareler{columns:4 260px;column-gap:14px;margin-top:28px}
-.kareler button{display:block;width:100%;margin:0 0 14px;padding:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);cursor:zoom-in;break-inside:avoid}
-.kareler img{display:block;width:100%;height:auto;transition:transform .4s}
+.kareler{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+.kareler button{display:block;width:100%;aspect-ratio:4/3;padding:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);cursor:zoom-in}
+.kareler img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .kareler button:hover img{transform:scale(1.04)}
 .kaynak{margin-top:10px;color:var(--muted);font-size:.85rem}
 .kaynak a{color:var(--gold)}
@@ -344,7 +344,7 @@ footer a{text-decoration:none;color:#fff}
 #isik button{position:absolute;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:1.6rem;width:48px;height:48px;border-radius:50%;cursor:pointer}
 #isik .kapat{top:18px;right:18px}#isik .onc{left:14px;top:50%;margin-top:-24px}#isik .snr{right:14px;top:50%;margin-top:-24px}
 #isik .say{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#fff;font-family:var(--f-mono);font-size:.8rem;letter-spacing:.15em}
-@media(max-width:960px){.arsiv{padding:0 16px 50px}.kareler{columns:2 140px;column-gap:10px}.kareler button{margin-bottom:10px;border-radius:12px}#isik .onc,#isik .snr{top:auto;bottom:60px;margin:0}}
+@media(max-width:960px){.arsiv{padding:0 16px 50px}.kareler{grid-template-columns:repeat(2,1fr);gap:10px}.kareler button{border-radius:12px}#isik .onc,#isik .snr{top:auto;bottom:60px;margin:0}}
 @media(max-width:960px){.zc{padding:0 16px 60px}.zc::before{left:24px}.olay{grid-template-columns:1fr;gap:12px;padding-left:40px;margin-bottom:36px}.olay::before{left:24px;top:10px}.olay .yil,.olay.sag .yil{order:0;text-align:left;font-size:2.4rem}.olay.sag .kutu{order:1}.olay .gor{height:190px}}
 </style>
 </head>
