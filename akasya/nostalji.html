@@ -329,6 +329,22 @@ footer a{text-decoration:none;color:#fff}
 .olay.sag .yil{order:2;text-align:left}
 .olay.sag .kutu{order:1}
 .not{max-width:1100px;margin:0 auto;padding:0 22px 40px;color:var(--muted);font-size:.85rem}
+.arsiv{max-width:1260px;margin:0 auto;padding:10px 22px 70px}
+.arsiv h2{font-size:clamp(2rem,4.5vw,3.2rem);margin:12px 0 8px}
+.arsiv .sub{max-width:720px}
+.kareler{columns:4 260px;column-gap:14px;margin-top:28px}
+.kareler button{display:block;width:100%;margin:0 0 14px;padding:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);cursor:zoom-in;break-inside:avoid}
+.kareler img{display:block;width:100%;height:auto;transition:transform .4s}
+.kareler button:hover img{transform:scale(1.04)}
+.kaynak{margin-top:10px;color:var(--muted);font-size:.85rem}
+.kaynak a{color:var(--gold)}
+#isik{position:fixed;inset:0;background:rgba(3,6,24,.94);display:none;align-items:center;justify-content:center;z-index:99999;padding:20px}
+#isik.acik{display:flex}
+#isik img{max-width:100%;max-height:86vh;border-radius:12px}
+#isik button{position:absolute;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:1.6rem;width:48px;height:48px;border-radius:50%;cursor:pointer}
+#isik .kapat{top:18px;right:18px}#isik .onc{left:14px;top:50%;margin-top:-24px}#isik .snr{right:14px;top:50%;margin-top:-24px}
+#isik .say{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#fff;font-family:var(--f-mono);font-size:.8rem;letter-spacing:.15em}
+@media(max-width:960px){.arsiv{padding:0 16px 50px}.kareler{columns:2 140px;column-gap:10px}.kareler button{margin-bottom:10px;border-radius:12px}#isik .onc,#isik .snr{top:auto;bottom:60px;margin:0}}
 @media(max-width:960px){.zc{padding:0 16px 60px}.zc::before{left:24px}.olay{grid-template-columns:1fr;gap:12px;padding-left:40px;margin-bottom:36px}.olay::before{left:24px;top:10px}.olay .yil,.olay.sag .yil{order:0;text-align:left;font-size:2.4rem}.olay.sag .kutu{order:1}.olay .gor{height:190px}}
 </style>
 </head>
@@ -361,24 +377,53 @@ footer a{text-decoration:none;color:#fff}
   <div class="ust">
     <span class="eyebrow">Nostalji</span>
     <h1>İlk günden <em class="s">bugüne.</em></h1>
-    <p class="sub">Akasya Acıbadem'in arsadan bugünkü haline yolculuğu. Eski fotoğraflar eklendikçe bu sayfa dolacak; elinizde Akasya'nın eski bir karesi varsa bize gönderin.</p>
+    <p class="sub">Akasya Acıbadem'in inşaat günlerinden bugünkü haline yolculuğu. Elinizde Akasya'nın eski bir karesi varsa bize gönderin, burada paylaşalım.</p>
   </div>
+  <section class="arsiv" id="arsiv">
+    <span class="eyebrow">Arşivden</span>
+    <h2>İnşaat günlerinden <em class="s">kareler.</em></h2>
+    <p class="sub">Göletin kazıldığı, köprünün kurulduğu, Koru'ya ilk fidanların dikildiği günler. Fotoğraflar instagram hesabımız @akasyaburada'nın "Nostalji" arşivinden.</p>
+    <div class="kareler">
+      <button type="button" data-i="0"><img src="img/nostalji/n01.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 1" loading="lazy"></button>
+      <button type="button" data-i="1"><img src="img/nostalji/n02.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 2" loading="lazy"></button>
+      <button type="button" data-i="2"><img src="img/nostalji/n03.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 3" loading="lazy"></button>
+      <button type="button" data-i="3"><img src="img/nostalji/n04.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 4" loading="lazy"></button>
+      <button type="button" data-i="4"><img src="img/nostalji/n05.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 5" loading="lazy"></button>
+      <button type="button" data-i="5"><img src="img/nostalji/n06.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 6" loading="lazy"></button>
+      <button type="button" data-i="6"><img src="img/nostalji/n07.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 7" loading="lazy"></button>
+      <button type="button" data-i="7"><img src="img/nostalji/n08.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 8" loading="lazy"></button>
+      <button type="button" data-i="8"><img src="img/nostalji/n09.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 9" loading="lazy"></button>
+      <button type="button" data-i="9"><img src="img/nostalji/n10.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 10" loading="lazy"></button>
+      <button type="button" data-i="10"><img src="img/nostalji/n11.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 11" loading="lazy"></button>
+      <button type="button" data-i="11"><img src="img/nostalji/n12.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 12" loading="lazy"></button>
+      <button type="button" data-i="12"><img src="img/nostalji/n13.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 13" loading="lazy"></button>
+      <button type="button" data-i="13"><img src="img/nostalji/n14.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 14" loading="lazy"></button>
+      <button type="button" data-i="14"><img src="img/nostalji/n15.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 15" loading="lazy"></button>
+      <button type="button" data-i="15"><img src="img/nostalji/n16.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 16" loading="lazy"></button>
+      <button type="button" data-i="16"><img src="img/nostalji/n17.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 17" loading="lazy"></button>
+      <button type="button" data-i="17"><img src="img/nostalji/n18.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 18" loading="lazy"></button>
+      <button type="button" data-i="18"><img src="img/nostalji/n19.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 19" loading="lazy"></button>
+      <button type="button" data-i="19"><img src="img/nostalji/n20.jpg" alt="Akasya Acıbadem inşaat dönemi, kare 20" loading="lazy"></button>
+    </div>
+    <p class="kaynak">Kaynak: <a href="https://www.instagram.com/akasyaburada/" target="_blank" rel="noopener">@akasyaburada</a> · Instagram'da 9 Nisan 2022'de paylaşıldı.</p>
+  </section>
+  <div id="isik" aria-hidden="true"><button class="kapat" aria-label="Kapat">×</button><button class="onc" aria-label="Önceki">‹</button><img alt=""><button class="snr" aria-label="Sonraki">›</button><div class="say"></div></div>
   <ol class="zc">
     <li class="olay">
       <div class="yil">2007</div>
-      <div class="kutu"><div class="gor"><div class="bosk"><span class="rozet">Fotoğraf eklenecek</span><small>2007 yılından kare</small></div></div><div class="yz"><b>Proje çiziliyor</b><p>Evrenol Architects, eski otomobil fabrikasının arsası için Göl, Koru ve Kent'ten oluşan projeyi tasarlıyor.</p></div></div>
+      <div class="kutu"><div class="yz"><b>Proje çiziliyor</b><p>Evrenol Architects, eski otomobil fabrikasının arsası için Göl, Koru ve Kent'ten oluşan projeyi tasarlıyor.</p></div></div>
     </li>
     <li class="olay sag">
       <div class="yil">2009</div>
-      <div class="kutu"><div class="gor"><div class="bosk"><span class="rozet">Fotoğraf eklenecek</span><small>2009 yılından kare</small></div></div><div class="yz"><b>Temel atılıyor</b><p>Satışlar baharda başlıyor, inşaat yaz aylarında hız kazanıyor.</p></div></div>
+      <div class="kutu"><div class="yz"><b>Temel atılıyor</b><p>Satışlar baharda başlıyor, inşaat yaz aylarında hız kazanıyor.</p></div></div>
     </li>
     <li class="olay">
       <div class="yil">2011</div>
-      <div class="kutu"><div class="gor"><div class="bosk"><span class="rozet">Fotoğraf eklenecek</span><small>2011 yılından kare</small></div></div><div class="yz"><b>Koru ve Göl teslim</b><p>Koru etabı ilkbaharda, Göl etabı yıl sonunda sahiplerine teslim ediliyor.</p></div></div>
+      <div class="kutu"><div class="yz"><b>Koru ve Göl teslim</b><p>Koru etabı ilkbaharda, Göl etabı yıl sonunda sahiplerine teslim ediliyor.</p></div></div>
     </li>
     <li class="olay sag">
       <div class="yil">2013</div>
-      <div class="kutu"><div class="gor"><div class="bosk"><span class="rozet">Fotoğraf eklenecek</span><small>2013 yılından kare</small></div></div><div class="yz"><b>Kent etabı tamamlanıyor</b><p>Residence Tower ve Terrace blokları ile proje son halini alıyor.</p></div></div>
+      <div class="kutu"><div class="yz"><b>Kent etabı tamamlanıyor</b><p>Residence Tower ve Terrace blokları ile proje son halini alıyor.</p></div></div>
     </li>
     <li class="olay">
       <div class="yil">2014</div>
@@ -416,5 +461,18 @@ footer a{text-decoration:none;color:#fff}
 })();
 </script>
 <script src="telif.js" defer></script>
+<script>
+(function(){var b=[].slice.call(document.querySelectorAll('.kareler button')),L=document.getElementById('isik'),im=L.querySelector('img'),sy=L.querySelector('.say'),k=0;
+function g(i){k=(i+b.length)%b.length;im.src=b[k].querySelector('img').src;sy.textContent=(k+1)+' / '+b.length;}
+b.forEach(function(x,i){x.onclick=function(){g(i);L.classList.add('acik');}});
+L.querySelector('.kapat').onclick=function(){L.classList.remove('acik')};
+L.querySelector('.onc').onclick=function(e){e.stopPropagation();g(k-1)};
+L.querySelector('.snr').onclick=function(e){e.stopPropagation();g(k+1)};
+L.onclick=function(e){if(e.target===L)L.classList.remove('acik')};
+document.addEventListener('keydown',function(e){if(!L.classList.contains('acik'))return;if(e.key==='Escape')L.classList.remove('acik');if(e.key==='ArrowLeft')g(k-1);if(e.key==='ArrowRight')g(k+1);});
+var x0=null;L.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+L.addEventListener('touchend',function(e){if(x0===null)return;var d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>40)g(k+(d<0?1:-1));x0=null;});
+})();
+</script>
 </body>
 </html>
