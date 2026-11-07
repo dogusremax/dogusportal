@@ -497,13 +497,19 @@ footer a{text-decoration:none;color:#fff}
   // Üst menüdeki Ticari > Home Ofis Kat Planları (#home-ofis): Kent'te Home Ofis grubu seçili açılsın
   function homeOfis(){ if(location.hash!=='#home-ofis') return false; sec.kent='Home Ofis'; return true; }
   var hoIlk=homeOfis();
-  window.addEventListener('hashchange',function(){ if(homeOfis()){ ciz('kent'); $('kent').scrollIntoView({behavior:'smooth'}); } });
+  window.addEventListener('hashchange',function(){ if(homeOfis()){ ciz('kent'); kenteGit(); } });
   ['gol','koru','kent'].forEach(function(e){
     ciz(e);
     $('c-'+e).addEventListener('click',function(v){var c=v.target.closest('.chip');if(!c)return;sec[e]=c.getAttribute('data-g');ciz(e);track('kat_plani_oda',{etap:e,oda:sec[e]||'tumu'});});
     $('g-'+e).addEventListener('click',function(v){var p=v.target.closest('.pl');if(!p)return;mod=v.target.closest('.b3d')?'3d':'plan';ac(e,+p.getAttribute('data-i'));});
   });
-  if(hoIlk) setTimeout(function(){ $('kent').scrollIntoView(); },60);
+  // Safari'de görseller/yazı tipleri yüklendikçe sayfa kayıyor: kullanıcı dokunana kadar birkaç kez Kent'e yeniden hizala
+  function kenteGit(){
+    var dur=false, son=Date.now()+4000;
+    ['touchstart','wheel','keydown'].forEach(function(t){ window.addEventListener(t,function(){ dur=true; },{once:true,passive:true}); });
+    (function hizala(){ if(dur) return; $('kent').scrollIntoView(); if(Date.now()<son) setTimeout(hizala,250); })();
+  }
+  if(hoIlk){ if('scrollRestoration' in history) history.scrollRestoration='manual'; kenteGit(); }
   var lb=$('plb'),sah=$('psah'),ce='gol',ci=0;
   function ac(e,i){
     ce=e;var L=gor[e];ci=(i+L.length)%L.length;var r=L[ci];
