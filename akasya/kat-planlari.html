@@ -402,7 +402,7 @@ footer a{text-decoration:none;color:#fff}
 
   <section class="kpet" id="gol">
     <div class="kpbas">
-      <div class="kpfoto"><img src="img/gol.jpg?v=2" alt="Akasya Göl etabı" loading="lazy"></div>
+      <div class="kpfoto"><img src="img/gol.jpg?v=3" alt="Akasya Göl etabı" loading="lazy"></div>
       <div><h2>Göl Etabı <em class="s">kat planları.</em></h2><p class="sub">Gölet çevresindeki teraslı alçak bloklar ve 36 katlı kule.</p></div>
     </div>
     <div class="chips" id="c-gol"></div>
@@ -412,7 +412,7 @@ footer a{text-decoration:none;color:#fff}
 
   <section class="kpet" id="koru">
     <div class="kpbas">
-      <div class="kpfoto"><img src="img/koru.jpg?v=2" alt="Akasya Koru etabı" loading="lazy"></div>
+      <div class="kpfoto"><img src="img/koru.jpg?v=3" alt="Akasya Koru etabı" loading="lazy"></div>
       <div><h2>Koru Etabı <em class="s">kat planları.</em></h2><p class="sub">Koru alanının içindeki bloklar ve 41 katlı kule.</p></div>
     </div>
     <div class="chips" id="c-koru"></div>
@@ -422,7 +422,7 @@ footer a{text-decoration:none;color:#fff}
 
   <section class="kpet" id="kent">
     <div class="kpbas">
-      <div class="kpfoto"><img src="img/kent.jpg?v=2" alt="Akasya Kent etabı" loading="lazy"></div>
+      <div class="kpfoto"><img src="img/kent.jpg?v=3" alt="Akasya Kent etabı" loading="lazy"></div>
       <div><h2>Kent Etabı <em class="s">kat planları.</em></h2><p class="sub">Akasya AVM'nin üzerindeki Residence Tower ve Terrace blokları.</p></div>
     </div>
     <div class="chips" id="c-kent"></div>
@@ -470,7 +470,7 @@ footer a{text-decoration:none;color:#fff}
   function onum(o){var a=o.split('+');return parseFloat(a[0].replace(',','.'))*10+parseFloat(a[1]);}
   function grup(o){return parseFloat(o.replace(',','.'))>=4?'4+1 ve üzeri':o;}
   function liste(e){return P.filter(function(r){return r[0]===e||(r[0]==='ortak'&&e!=='kent');}).sort(function(a,b){return onum(a[2])-onum(b[2])||parseFloat(a[3])-parseFloat(b[3])||(a[0]<b[0]?-1:a[0]>b[0]?1:0)||a[1]-b[1];});}
-  function dosya(r,k){return 'kat-planlari/'+r[0]+'/'+(k?'k/':'')+(r[1]<10?'0':'')+r[1]+'.jpg';}
+  function dosya(r,k){return 'kat-planlari/'+r[0]+'/'+(k?'k/':'')+(r[1]<10?'0':'')+r[1]+'.jpg?v=3';}
   function baslik(r){return r[2]+(r[5]?' Dubleks':'')+' · '+r[3]+' m²';}
   function wa(r,e){return 'https://wa.me/902163151515?text='+encodeURIComponent('Merhaba, akasyaburada.com\'dan yazıyorum. Akasya '+EN[e]+' '+baslik(r).replace(' · ',' ')+' ('+r[4]+') daire hakkında bilgi almak istiyorum.');}
   var M3=window.AK3D||[],B3=window.AK3D_BASE||'',V3=null,V3p=null,mod='plan';
