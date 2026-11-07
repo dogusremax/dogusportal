@@ -263,7 +263,27 @@
     document.title=document.title.replace('Daire','Ofis');
     var sj=document.querySelector('input[name="_subject"]'); if(sj) sj.value+=' (Ofis)';
     document.querySelectorAll('.group > label').forEach(function(l){ l.innerHTML=l.innerHTML.replace('Daireniz','Ofisiniz'); });
-    var o=document.querySelector('select[name="oda_sayisi"]'); if(o){ o.disabled=true; o.closest('.group').style.display='none'; }
+    // Kent kulesi: ilk 15 kat ticari kat (çeyrek / yarım / tam kat ofis), home ofisler 1+1 ve 2+1
+    var o=document.querySelector('select[name="oda_sayisi"]');
+    var kat=document.querySelector('select[name="kat"]');
+    var katlar=[].slice.call(kat.options).filter(function(op){ var n=parseInt(op.textContent,10); return n>=1 && n<=40; }).map(function(op){ return op.textContent; });
+    if(o){
+      o.closest('.group').querySelector('label').textContent='Ofis tipi';
+      o.innerHTML='<optgroup label="Home ofis"><option value="1+1 home ofis">1+1 home ofis</option><option value="2+1 home ofis" selected>2+1 home ofis</option></optgroup>'
+        +'<optgroup label="Ticari kat (1-15. katlar)"><option value="Çeyrek kat ofis">Çeyrek kat</option><option value="Yarım kat ofis">Yarım kat</option><option value="Tam kat ofis">Tam kat</option></optgroup>';
+    }
+    function katDoldur(){
+      var ticari=o && /kat ofis$/.test(o.value), secili=kat.value;
+      kat.innerHTML='<option value="" disabled selected>Seçiniz</option>';
+      katlar.forEach(function(t){ var n=parseInt(t,10); if(ticari && n>15) return; var op=document.createElement('option'); op.textContent=t+(n<=15?' (ticari kat)':''); op.value=t+(n<=15?' (ticari kat)':''); kat.appendChild(op); });
+      if(secili){ kat.value=secili; if(kat.selectedIndex<0) kat.selectedIndex=0; }
+    }
+    if(o){ var og=o.closest('.group'); og.style.marginBottom='18px'; kat.closest('.row').parentNode.insertBefore(og, kat.closest('.row')); }
+    katDoldur(); if(o) o.addEventListener('change',katDoldur);
+    var bm=document.querySelector('input[name="brut_m2"]'); if(bm) bm.placeholder='Örn. 85';
+    var k=document.querySelector('input[name="etap"][value="Kent"]'); if(k){ k.checked=true; k.closest('.group').style.display='none'; }
+    var bl=document.querySelector('input[name="blok"]'); if(bl){ bl.value='Kule (40 katlı)'; bl.closest('.group').style.display='none'; }
+    var hp=document.querySelector('.head p'); if(hp) hp.textContent='Akasya Kent etabındaki 40 katlı kulede bulunan ofisiniz (home ofis ya da ticari kat) için bilgileri doldurun, Makbule ve Umut Tokkuş güncel emsallere dayalı değerlemeyi sizinle paylaşsın.';
   })();
   var GONDERILIYOR = false;
   function submitForm(e){
@@ -286,7 +306,7 @@
       p.append('kaynak', 'akasyaburada.com \u00b7 Kiralık Değerleme' + (data.get('tip')==='Ofis' ? ' (Ofis)' : ''));
       p.append('waIzin', data.get('wa_izin') ? '1' : '0');
       p.append('bolge', ['Akasya Acıbadem', data.get('etap'), data.get('blok')].filter(Boolean).join(' '));
-      p.append('oda',   data.get('tip')==='Ofis' ? 'Ofis' : (data.get('oda_sayisi') || ''));
+      p.append('oda',   data.get('oda_sayisi') || '');
       p.append('m2',    data.get('brut_m2') || '');
       p.append('not', [data.get('kat'), data.get('cephe')].filter(Boolean).join(' \u00b7 '));
       fetch('https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec', { method:'POST', body:p, mode:'no-cors' }).catch(function(){});
