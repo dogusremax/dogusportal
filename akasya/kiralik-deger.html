@@ -165,6 +165,7 @@
       <input type="hidden" name="form-name" value="akasya-kiralik-deger">
       <input type="hidden" name="_subject" value="Akasya - Yeni Kiralık Değer Talebi">
       <input type="hidden" name="site" value="Akasya Acıbadem">
+      <input type="hidden" name="tip" value="Daire">
       <p style="display:none"><label>Boş bırakın: <input name="bot-field"></label></p>
 
       <div class="group"><label>Daireniz hangi etapta?</label><div class="etap-sec uc"><label><input type="radio" name="etap" value="Göl" required>Göl</label><label><input type="radio" name="etap" value="Koru">Koru</label><label><input type="radio" name="etap" value="Kent">Kent</label></div></div>
@@ -254,6 +255,16 @@
     var r = document.querySelector('input[name="etap"][value="' + e + '"]');
     if(r) r.checked = true;
   })();
+  // Ana sayfadaki "Ofisimin ... değeri" düğmesinden gelindiyse (?tip=ofis) form ofis için açılsın
+  (function(){
+    if((new URLSearchParams(location.search).get('tip')||'').toLowerCase()!=='ofis') return;
+    document.querySelector('input[name="tip"]').value='Ofis';
+    var h=document.querySelector('.head h1'); if(h) h.textContent=h.textContent.replace('Dairemin','Ofisimin');
+    document.title=document.title.replace('Daire','Ofis');
+    var sj=document.querySelector('input[name="_subject"]'); if(sj) sj.value+=' (Ofis)';
+    document.querySelectorAll('.group > label').forEach(function(l){ l.innerHTML=l.innerHTML.replace('Daireniz','Ofisiniz'); });
+    var o=document.querySelector('select[name="oda_sayisi"]'); if(o){ o.disabled=true; o.closest('.group').style.display='none'; }
+  })();
   var GONDERILIYOR = false;
   function submitForm(e){
     e.preventDefault();
@@ -272,10 +283,10 @@
       p.append('ad',     data.get('ad_soyad') || '');
       p.append('tel',    data.get('telefon')  || '');
       p.append('tur',    'kiralik');
-      p.append('kaynak', 'akasyaburada.com \u00b7 Kiralık Değerleme');
+      p.append('kaynak', 'akasyaburada.com \u00b7 Kiralık Değerleme' + (data.get('tip')==='Ofis' ? ' (Ofis)' : ''));
       p.append('waIzin', data.get('wa_izin') ? '1' : '0');
       p.append('bolge', ['Akasya Acıbadem', data.get('etap'), data.get('blok')].filter(Boolean).join(' '));
-      p.append('oda',   data.get('oda_sayisi') || '');
+      p.append('oda',   data.get('tip')==='Ofis' ? 'Ofis' : (data.get('oda_sayisi') || ''));
       p.append('m2',    data.get('brut_m2') || '');
       p.append('not', [data.get('kat'), data.get('cephe')].filter(Boolean).join(' \u00b7 '));
       fetch('https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec', { method:'POST', body:p, mode:'no-cors' }).catch(function(){});
