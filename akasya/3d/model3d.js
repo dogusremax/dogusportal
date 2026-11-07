@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from './vendor/three/OrbitControls.js';
 import { GLTFLoader } from './vendor/three/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/three/meshopt_decoder.module.js';
+import { create as yedek, webglVar } from './yedek360.js';
 
 var css = '.m3d{position:relative;width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,#f7f8fc,#e9edf6);border-radius:14px;font-family:"Figtree",system-ui,sans-serif;user-select:none;-webkit-user-select:none}' +
   '.m3d canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}.m3d canvas:active{cursor:grabbing}' +
@@ -22,13 +23,16 @@ function track(n, p) { try { if (typeof gtag === 'function') gtag('event', n, p 
 
 export function create(host, base) {
   base = base || 'assets/kat3d/';
+  // WebGL yoksa (eski ekran kartı, kapalı donanım hızlandırma) önceden çekilmiş karelerle yedek 360°
+  var fb = function () { return yedek(host, { base: base, font: '"Figtree",system-ui,sans-serif', ver: function (pid) { return (window.AK3D_V || {})[pid] || '1'; } }); };
+  if (!webglVar() || /[?&]yedek360=1/.test(location.search)) return fb();
   if (!injected) { var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); injected = true; }
   host.classList.add('m3d');
   host.innerHTML = '<canvas></canvas><div class="lbls"></div><div class="ld"><div><span>3D model yükleniyor</span><div class="ldt"><div class="ldb"></div></div></div></div>' +
     '<button type="button" class="rst">Başa dön</button><div class="hint">' + (matchMedia('(pointer:coarse)').matches ? 'Parmağınızla çevirin · iki parmakla yakınlaştırın' : 'Sürükleyerek her yöne çevirin · tekerlekle yakınlaştırın') + '</div>';
   var q = function (s) { return host.querySelector(s); };
   var cv = q('canvas'), L = q('.lbls');
-  var R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  var R; try { R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return fb(); }
   R.setPixelRatio(Math.min(window.devicePixelRatio || 1, matchMedia('(pointer:coarse)').matches ? 1.5 : 2)); R.outputColorSpace = THREE.SRGBColorSpace;
   var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(35, 1, 0.1, 300);
   var ctl = new OrbitControls(cam, cv);
