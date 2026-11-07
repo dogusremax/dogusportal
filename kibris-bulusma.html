@@ -808,7 +808,9 @@ body:not(.kilitli) #kapi{display:none}
  function ortakKur(r){
   var v=P.v, sahip=r?r.danisman:(v.broker?$('fpDanisman').value:v.ad);
   var adlar=[].slice.call($('fpDanisman').options).map(function(o){return o.value||o.textContent;}).concat(v.ekip||[]);
-  adlar=adlar.filter(function(a,i){return a&&adlar.indexOf(a)===i&&a!==sahip;});
+  /* Umut, 7 Kas: Aysun ve Orhan ayrı puanlanır, birbirini ortak ekleyemez */
+  var AYRI=[['Aysun Yılmaz','Orhan Özazman']], ayri=function(a){return AYRI.some(function(c){return c.indexOf(a)>-1&&c.indexOf(sahip)>-1;});};
+  adlar=adlar.filter(function(a,i){return a&&adlar.indexOf(a)===i&&a!==sahip&&!ayri(a);});
   $('fpOrtak').innerHTML='<option value="">Yok</option>'+adlar.map(function(a){return '<option>'+esc(a)+'</option>';}).join('');
   $('fpOrtak').value=r&&r.ortak?r.ortak:'';
   $('fpOrtak').disabled=!!(r&&!v.broker&&r.danisman!==v.ad);
