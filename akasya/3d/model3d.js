@@ -25,14 +25,28 @@ export function create(host, base) {
   base = base || 'assets/kat3d/';
   // WebGL yoksa (eski ekran kartı, kapalı donanım hızlandırma) önceden çekilmiş karelerle yedek 360°
   var fb = function () { return yedek(host, { base: base, font: '"Figtree",system-ui,sans-serif', ver: function (pid) { return (window.AK3D_V || {})[pid] || '1'; } }); };
-  if (!webglVar() || /[?&]yedek360=1/.test(location.search)) return fb();
+  var zorla = /[?&]yedek360=1/.test(location.search);
+  try { if (sessionStorage.getItem('m3dYedek') === '1') zorla = true; } catch (e) {}
+  if (!webglVar() || zorla) return fb();
   if (!injected) { var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); injected = true; }
   host.classList.add('m3d');
   host.innerHTML = '<canvas></canvas><div class="lbls"></div><div class="ld"><div><span>3D model yükleniyor</span><div class="ldt"><div class="ldb"></div></div></div></div>' +
     '<button type="button" class="rst">Başa dön</button><div class="hint">' + (matchMedia('(pointer:coarse)').matches ? 'Parmağınızla çevirin · iki parmakla yakınlaştırın' : 'Sürükleyerek her yöne çevirin · tekerlekle yakınlaştırın') + '</div>';
   var q = function (s) { return host.querySelector(s); };
   var cv = q('canvas'), L = q('.lbls');
-  var R; try { R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return fb(); }
+  var R; try { R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); if (!R.getContext() || R.getContext().isContextLost()) throw 0; } catch (e) { return fb(); }
+  // WebGL var görünüp çizemiyorsa (eski ekran kartı, bağlam düşmesi, model 12 sn'de gelmiyor) aynı planı yedek 360°'ta aç
+  var api = {}, yedekte = false;
+  function toYedek(neden) {
+    if (yedekte) return; yedekte = true; st.on = false;
+    try { sessionStorage.setItem('m3dYedek', '1'); } catch (e) {}
+    try { R.dispose(); } catch (e) {}
+    track('kat_plani3d_yedek', { neden: neden });
+    var pid = st.pid, acik = host.style.display !== 'none';
+    var y = fb(); api.show = y.show; api.hide = y.hide;
+    if (pid && acik) y.show(pid); else host.style.display = 'none';
+  }
+  cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); toYedek('baglam'); }, false);
   R.setPixelRatio(Math.min(window.devicePixelRatio || 1, matchMedia('(pointer:coarse)').matches ? 1.5 : 2)); R.outputColorSpace = THREE.SRGBColorSpace;
   var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(35, 1, 0.1, 300);
   var ctl = new OrbitControls(cam, cv);
@@ -74,13 +88,14 @@ export function create(host, base) {
     });
   }
   function loop() {
+    if (yedekte) return;
     requestAnimationFrame(loop);
     if (!st.on) return;
     var moved = ctl.update();
     if (moved) st.occ = false;
     // parmak/mouse bırakılınca en fazla 2.5 kez/sn duvar arkası etiket testi (sürüklerken yapılmaz: telefonda takılmasın)
     if (!st.occ && !st.drag && performance.now() - occT > 400) { st.rest = true; st.dirty = true; }
-    if (moved || st.dirty) { st.dirty = false; R.render(scene, cam); place(); }
+    if (moved || st.dirty) { st.dirty = false; try { R.render(scene, cam); } catch (e) { toYedek('cizim'); return; } place(); }
   }
   ctl.addEventListener('change', function () { st.dirty = true; });
   ctl.addEventListener('end', function () { st.drag = false; });
@@ -96,6 +111,7 @@ export function create(host, base) {
     if (st.root) { scene.remove(st.root); st.root.traverse(function (o) { if (o.isMesh) { o.geometry.dispose(); if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); st.root = null; }
     L.innerHTML = ''; st.labels = []; q('.ld').style.display = 'flex'; q('.ldb').style.width = '0%';
     var dir = base + pid + '/', ver = '?v=' + ((window.AK3D_V || {})[pid] || '1');
+    clearTimeout(st.tm); st.tm = setTimeout(function () { if (st.pid === pid && !st.root && st.on) toYedek('zaman'); }, 12000);
     fetch(dir + 'model.json' + ver).then(function (r) { return r.json(); }).then(function (j) {
       if (st.pid !== pid) return;
       st.labels = j.rooms.map(function (r) {
@@ -105,7 +121,9 @@ export function create(host, base) {
       st.dirty = true;
     }).catch(function () {});
     loader.load(dir + 'model.glb' + ver, function (g) {
-      if (st.pid !== pid) return;
+      if (st.pid !== pid || yedekte) return;
+      clearTimeout(st.tm);
+      try {
       var aniso = R.capabilities.getMaxAnisotropy();
       g.scene.traverse(function (o) {
         if (!o.isMesh) return;
@@ -117,11 +135,14 @@ export function create(host, base) {
       });
       st.root = g.scene; scene.add(g.scene); size();
       frame(new THREE.Box3().setFromObject(g.scene));
+      R.render(scene, cam); var gl = R.getContext(); if (gl.isContextLost() || gl.getError() === gl.OUT_OF_MEMORY) throw 0;
+      } catch (e) { toYedek('model'); return; }
       q('.ld').style.display = 'none'; st.dirty = true; window.__m3dReady = pid;
-    }, function (e) { if (e.total) q('.ldb').style.width = (e.loaded / e.total * 100) + '%'; });
+    }, function (e) { if (e.total) q('.ldb').style.width = (e.loaded / e.total * 100) + '%'; }, function () { if (st.pid === pid) toYedek('yukleme'); });
   }
-  return {
+  api = {
     show: function (pid) { host.style.display = 'block'; st.on = true; size(); load(pid); st.dirty = true; track('kat_plani3d_mod', { plan: pid, mod: 'model' }); },
     hide: function () { st.on = false; host.style.display = 'none'; }
   };
+  return api;
 }
