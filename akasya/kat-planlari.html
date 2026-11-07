@@ -471,11 +471,11 @@ footer a{text-decoration:none;color:#fff}
   var EN={gol:'Göl',koru:'Koru',kent:'Kent'};
   function onum(o){var a=o.split('+');return parseFloat(a[0].replace(',','.'))*10+parseFloat(a[1]);}
   function tic(r){return r[0]==='kent'&&r[1]<=10;}
-  function grup(r){return tic(r)?'Ticari':parseFloat(r[2].replace(',','.'))>=4?'4+1 ve üzeri':r[2];}
+  function grup(r){return tic(r)?'Home Ofis':parseFloat(r[2].replace(',','.'))>=4?'4+1 ve üzeri':r[2];}
   function liste(e){return P.filter(function(r){return r[0]===e||(r[0]==='ortak'&&e!=='kent');}).sort(function(a,b){return (tic(a)-tic(b))||onum(a[2])-onum(b[2])||parseFloat(a[3])-parseFloat(b[3])||(a[0]<b[0]?-1:a[0]>b[0]?1:0)||a[1]-b[1];});}
   function dosya(r,k){return 'kat-planlari/'+r[0]+'/'+(k?'k/':'')+(r[1]<10?'0':'')+r[1]+'.jpg?v=3';}
   function baslik(r){return r[2]+(r[5]?' Dubleks':'')+' · '+r[3]+' m²';}
-  function wa(r,e){return 'https://wa.me/902163151515?text='+encodeURIComponent('Merhaba, akasyaburada.com\'dan yazıyorum. Akasya '+EN[e]+' '+baslik(r).replace(' · ',' ')+' ('+r[4]+')'+(tic(r)?' ticari birim':' daire')+' hakkında bilgi almak istiyorum.');}
+  function wa(r,e){return 'https://wa.me/902163151515?text='+encodeURIComponent('Merhaba, akasyaburada.com\'dan yazıyorum. Akasya '+EN[e]+' '+baslik(r).replace(' · ',' ')+' ('+r[4]+')'+(tic(r)?' home ofis':' daire')+' hakkında bilgi almak istiyorum.');}
   var M3=window.AK3D||[],B3=window.AK3D_BASE||'',V3=null,V3p=null,mod='plan';
   function id3(r){return r[0]+'-'+r[1];}
   function has3(r){return M3.indexOf(id3(r))>=0;}
@@ -484,12 +484,12 @@ footer a{text-decoration:none;color:#fff}
   function ciz(e){
     var L=liste(e),gr=[];L.forEach(function(r){var g=grup(r);if(gr.indexOf(g)<0)gr.push(g);});
     var c='<button type="button" class="chip'+(sec[e]?'':' on')+'" data-g="">Tümü<small>'+L.length+'</small></button>';
-    gr.forEach(function(g){c+='<button type="button" class="chip'+(g==='Ticari'?' tic':'')+(sec[e]===g?' on':'')+'" data-g="'+g+'">'+(g==='Ticari'?'<i></i>':'')+g+'<small>'+L.filter(function(r){return grup(r)===g;}).length+'</small></button>';});
+    gr.forEach(function(g){c+='<button type="button" class="chip'+(g==='Home Ofis'?' tic':'')+(sec[e]===g?' on':'')+'" data-g="'+g+'">'+(g==='Home Ofis'?'<i></i>':'')+g+'<small>'+L.filter(function(r){return grup(r)===g;}).length+'</small></button>';});
     $('c-'+e).innerHTML=c;
     gor[e]=L.filter(function(r){return !sec[e]||grup(r)===sec[e];});
     $('g-'+e).innerHTML=gor[e].map(function(r,i){
       return '<button type="button" class="pl" data-i="'+i+'"><span class="im'+(r[6]?' k':'')+'">'+(has3(r)?'<span class="b3d">3D · 360°</span>':'')+'<img loading="lazy" src="'+dosya(r,1)+'" alt="Akasya '+EN[e]+' '+baslik(r)+' kat planı" width="720" height="480"></span><span class="tx"><span class="od">'+r[2]+(r[5]?' Dubleks':'')+' <span>'+r[3]+' m²</span></span><span class="bl">'+r[4]+'</span>'+
-        ((r[5]||r[0]==='ortak'||tic(r))?'<span class="rz">'+(tic(r)?'<i class="t">Ticari</i>':'')+(r[5]?'<i class="d">'+r[5]+'</i>':'')+(r[0]==='ortak'?'<i class="o">Koru &amp; Göl</i>':'')+'</span>':'')+'</span></button>';}).join('');
+        ((r[5]||r[0]==='ortak'||tic(r))?'<span class="rz">'+(tic(r)?'<i class="t">Home Ofis</i>':'')+(r[5]?'<i class="d">'+r[5]+'</i>':'')+(r[0]==='ortak'?'<i class="o">Koru &amp; Göl</i>':'')+'</span>':'')+'</span></button>';}).join('');
   }
   ['gol','koru','kent'].forEach(function(e){
     ciz(e);
@@ -501,7 +501,7 @@ footer a{text-decoration:none;color:#fff}
     ce=e;var L=gor[e];ci=(i+L.length)%L.length;var r=L[ci];
     sah.classList.remove('zoom');sah.scrollTop=0;
     $('pimg').src=dosya(r);$('pimg').alt='Akasya '+EN[e]+' '+baslik(r)+' kat planı';$('popen').href=dosya(r);
-    $('pcap').innerHTML=baslik(r)+(r[5]?' · '+r[5]:'')+'<small>Akasya '+EN[e]+' · '+r[4]+(r[0]==='ortak'?' · Koru ve Göl\'de ortak tip':'')+(tic(r)?' · Ticari birim':'')+'</small>';
+    $('pcap').innerHTML=baslik(r)+(r[5]?' · '+r[5]:'')+'<small>Akasya '+EN[e]+' · '+r[4]+(r[0]==='ortak'?' · Koru ve Göl\'de ortak tip':'')+(tic(r)?' · Home ofis':'')+'</small>';
     $('pcnt').textContent=(ci+1)+' / '+L.length;$('pwa').href=wa(r,e);
     var h3=has3(r);if(!h3)mod='plan';
     $('pseg').style.display=h3?'flex':'none';
