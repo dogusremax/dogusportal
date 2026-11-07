@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex">
+<title>FSBO · RE/MAX Doğuş</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0b0f2a;--kart:#111738;--kart2:#161c44;--cizgi:rgba(255,255,255,.08);--soluk:rgba(255,255,255,.6);--kirmizi:#DC1C2E;--yesil:#25D366;--sari:#fbbf24;--mavi:#60a5fa}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:#fff;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+button,select,input,textarea{font:600 14px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:10px;color:#fff}
+button{cursor:pointer;background:var(--kirmizi);padding:10px 14px}
+button.g{background:rgba(255,255,255,.1)}
+button.y{background:var(--yesil);color:#08301a}
+button:disabled{opacity:.45}
+.ust{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--cizgi);padding:12px 16px 10px}
+.ust .s1{display:flex;align-items:center;gap:10px}
+.ust h1{font-size:17px;font-weight:800;flex:1}
+.ust h1 small{display:block;font-size:11px;font-weight:600;color:var(--soluk);margin-top:2px}
+.mod{display:flex;background:var(--kart2);border-radius:10px;padding:3px;margin-top:10px}
+.mod button{flex:1;background:transparent;color:var(--soluk);padding:8px 6px;font-size:12.5px}
+.mod button.on{background:var(--kirmizi);color:#fff}
+.mod button.on[data-m="deneme"]{background:#7c5cff}
+.mod button.on[data-m="onayli"]{background:#d97706}
+.sekme{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.sekme::-webkit-scrollbar{display:none}
+.sekme button{background:var(--kart2);color:var(--soluk);padding:8px 12px;font-size:12.5px;white-space:nowrap;flex:0 0 auto}
+.sekme button.on{background:#fff;color:#0b0f2a}
+.sekme b{font-weight:800;margin-left:4px}
+.huni{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:12px 16px 0}
+.huni div{background:var(--kart);border:1px solid var(--cizgi);border-radius:12px;padding:9px 4px;text-align:center}
+.huni b{display:block;font-size:19px;font-weight:800}
+.huni span{font-size:10.5px;color:var(--soluk);font-weight:700}
+.bilgi{margin:10px 16px 0;padding:10px 12px;border-radius:12px;font-size:12.5px;line-height:1.5;background:rgba(124,92,255,.15);border:1px solid rgba(124,92,255,.4)}
+.bilgi.onayli{background:rgba(217,119,6,.14);border-color:rgba(217,119,6,.45)}
+.bilgi.otomatik{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.35)}
+.liste{padding:12px 16px 40px;display:flex;flex-direction:column;gap:10px}
+.k{background:var(--kart);border:1px solid var(--cizgi);border-radius:14px;padding:13px;cursor:pointer}
+.k.sicak{border-color:rgba(220,28,46,.7);box-shadow:0 0 0 1px rgba(220,28,46,.25) inset}
+.k .b{display:flex;gap:8px;align-items:flex-start}
+.k h3{font-size:14.5px;font-weight:700;flex:1;line-height:1.35}
+.k .alt{font-size:12.5px;color:var(--soluk);margin-top:5px;line-height:1.45}
+.k .oz{font-size:12.5px;margin-top:7px;background:var(--kart2);border-radius:9px;padding:8px 10px;line-height:1.45}
+.et{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;background:rgba(255,255,255,.1)}
+.et.sicak{background:rgba(220,28,46,.25);color:#ff8a95}.et.cevap{background:rgba(96,165,250,.2);color:#93c5fd}
+.et.hazir{background:rgba(37,211,102,.18);color:#6ee7a0}.et.yazildi,.et.red{background:rgba(251,191,36,.16);color:#fcd34d}
+.et.telefon_bekliyor,.et.telefonsuz{background:rgba(255,255,255,.1);color:#cbd5e1}
+.ks{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.ks span{font-size:11px;color:var(--soluk);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:7px}
+.ks span.is{color:#fcd34d}
+.bos{text-align:center;color:var(--soluk);padding:50px 20px;font-size:14px;line-height:1.6}
+/* alt sayfa */
+.perde{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:none}
+.perde.ac{display:block}
+.sayfa{position:fixed;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:#0f1433;border-radius:18px 18px 0 0;z-index:21;padding:16px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .25s}
+.sayfa.ac{transform:none}
+@media(min-width:760px){.sayfa{left:50%;width:640px;margin-left:-320px}}
+.sayfa .kapat{position:sticky;top:0;float:right;background:rgba(255,255,255,.12);width:34px;height:34px;padding:0;border-radius:50%;font-size:18px}
+.sayfa h2{font-size:16px;font-weight:800;padding-right:44px;line-height:1.35}
+.sayfa .alt{font-size:12.5px;color:var(--soluk);margin-top:5px;line-height:1.5}
+.dug{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dug a,.dug button{text-decoration:none;font:700 13px 'Plus Jakarta Sans',sans-serif;padding:10px 13px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff}
+.dug .wa{background:var(--yesil);color:#08301a}
+.blok{margin-top:16px}
+.blok>label{display:block;font-size:11px;font-weight:800;color:var(--soluk);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.sohbet{display:flex;flex-direction:column;gap:6px;background:#0b1a1f;border-radius:12px;padding:10px;max-height:46vh;overflow:auto}
+.m{max-width:85%;padding:8px 10px;border-radius:10px;font:13.5px/1.45 system-ui,-apple-system,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}
+.m.biz{align-self:flex-end;background:#005c4b}.m.o{align-self:flex-start;background:#202c33}
+.m i{display:block;font-style:normal;font-size:10.5px;opacity:.6;margin-top:3px;text-align:right}
+.gecmis{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.75)}
+.gecmis div{padding:4px 0;border-bottom:1px dashed var(--cizgi)}
+.gecmis b{color:var(--soluk);font-weight:600;margin-right:6px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form input,.form select,.form textarea{background:var(--kart2);border:1px solid rgba(255,255,255,.12);padding:10px;width:100%;font-weight:500}
+.form .tam{grid-column:1/-1}
+.onz{background:#e7fed8;color:#111b21;border-radius:10px 10px 10px 2px;padding:10px 12px;font:14px/1.5 system-ui,-apple-system,sans-serif}
+.onz .bt{display:flex;flex-direction:column;gap:1px;margin-top:8px;border-top:1px solid rgba(0,0,0,.08);padding-top:6px}
+.onz .bt span{color:#027eb5;text-align:center;padding:5px;font-weight:600;font-size:13.5px}
+.onz small{display:block;color:#667781;font-size:11.5px;margin-top:4px}
+.sss{display:flex;flex-direction:column;gap:10px}
+.sss .s{background:var(--kart);border:1px solid var(--cizgi);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.sss input,.sss textarea{background:var(--kart2);border:1px solid rgba(255,255,255,.12);padding:9px;width:100%;font-weight:500;font-size:14px}
+.sss textarea{min-height:64px;resize:vertical;line-height:1.45}
+.sss .sa{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--soluk)}
+.sss .sa button{padding:6px 10px;font-size:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:#0b0f2a;padding:11px 16px;border-radius:12px;font-weight:700;font-size:13.5px;z-index:40;display:none;max-width:90vw;text-align:center}
+.giris{max-width:340px;margin:18vh auto 0;padding:0 20px;text-align:center}
+.giris input{background:var(--kart2);padding:14px;width:100%;text-align:center;font-size:20px;letter-spacing:6px;margin:16px 0 10px}
+.giris button{width:100%}
+</style>
+<style id="ios-zoom">@media (max-width:900px){input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important}}</style>
+</head>
+<body>
+<div id="giris" class="giris" style="display:none">
+  <h1 style="font-size:20px">FSBO</h1>
+  <p style="color:var(--soluk);font-size:13px;margin-top:6px">Broker PIN'inizi girin</p>
+  <input id="pinK" type="password" inputmode="numeric" autocomplete="off">
+  <button onclick="girisYap()">Giriş</button>
+</div>
+
+<div id="uyg" style="display:none">
+  <div class="ust">
+    <div class="s1">
+      <h1>FSBO · Sahibinden ilanlar<small id="altBaslik">Yükleniyor…</small></h1>
+      <button class="g" onclick="yukle()" title="Yenile">↻</button>
+    </div>
+    <div class="mod" id="modSec">
+      <button data-m="deneme" onclick="modDegis('deneme')">Deneme</button>
+      <button data-m="onayli" onclick="modDegis('onayli')">Onaylı</button>
+      <button data-m="otomatik" onclick="modDegis('otomatik')">Otomatik</button>
+    </div>
+    <div class="sekme" id="sekme"></div>
+  </div>
+  <div class="huni" id="huni"></div>
+  <div class="bilgi" id="modBilgi"></div>
+  <div class="liste" id="liste"></div>
+</div>
+
+<div class="perde" id="perde" onclick="kapat()"></div>
+<div class="sayfa" id="sayfa"></div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/broker.js"></script>
+<script>
+const WA = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+let PIN = '', VERI = null, SEKME = 'aktif', SSS = null;
+const GRUP = {
+  aktif:  { ad: 'İş bekleyen', d: ['sicak', 'cevap', 'hazir', 'telefon_bekliyor', 'telefonsuz', 'kayitli'] },
+  sicak:  { ad: 'Sıcak', d: ['sicak'] },
+  cevap:  { ad: 'Konuşulan', d: ['cevap'] },
+  takip:  { ad: 'Takipte', d: ['yazildi', 'red'] },
+  kapali: { ad: 'Kapalı', d: ['cevapsiz', 'durdur', 'emlakci', 'satildi', 'kalkti', 'whatsappsiz', 'yetki', 'kapandi'] },
+  hepsi:  { ad: 'Hepsi', d: null },
+  sss:    { ad: 'Soru-cevap havuzu' },
+  sablon: { ad: 'Mesajlar' }
+};
+const MOD_BILGI = {
+  deneme: '<b>Deneme modu.</b> Mülk sahiplerine hiçbir mesaj gitmiyor; ilanlar toplanıyor. "Deneme ilanı ekle" ile ilk mesajı ve asistanı kendi telefonunuzda görebilirsiniz.',
+  onayli: '<b>Onaylı mod.</b> Mesai içinde yalnız sizin "Gönder"e bastığınız ilanlara ilk mesaj ve takip mesajı gider.',
+  otomatik: '<b>Otomatik mod.</b> Pzt–Cmt 10:00–19:30 arası ilk mesajlar ve takipler kendiliğinden gidiyor (günde en çok <span id="gl"></span> ilk mesaj).'
+};
+const IS_AD = { ilk: 'İlk mesaj sırada', takip: 'Takip mesajı sırada', fiyat: 'Fiyat mesajı sırada', kalkti: '"İlan kalktı" mesajı sırada' };
+
+function toast(m, sn) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toast.z); toast.z = setTimeout(() => t.style.display = 'none', sn || 2600); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+async function api(islem, ek) {
+  const r = await fetch(WA + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ action: 'fsbo', pin: PIN, islem }, ek || {})) });
+  const j = await r.json();
+  if (j.hata === 'yetkisiz') { try { localStorage.removeItem('fsbo_pin'); } catch (e) {} PIN = ''; basla(); throw new Error('PIN geçersiz'); }
+  return j;
+}
+
+function basla() {
+  PIN = (window.brokerPinAl && brokerPinAl()) || (localStorage.getItem('fsbo_pin') || '');
+  if (!PIN) { document.getElementById('giris').style.display = 'block'; document.getElementById('uyg').style.display = 'none'; return; }
+  document.getElementById('giris').style.display = 'none'; document.getElementById('uyg').style.display = 'block';
+  yukle();
+}
+async function girisYap() {
+  const p = document.getElementById('pinK').value.trim();
+  if (window.brokerDogrula && !(await brokerDogrula(p))) { toast('PIN yanlış'); return; }
+  try { localStorage.setItem('fsbo_pin', p); } catch (e) {}
+  basla();
+}
+
+async function yukle() {
+  document.getElementById('altBaslik').textContent = 'Yükleniyor…';
+  try {
+    VERI = await api('liste');
+    if (!VERI.ok) throw new Error(VERI.hata || 'okunamadı');
+    ciz();
+    const id = new URLSearchParams(location.search).get('id');
+    if (id && !yukle.acildi) { yukle.acildi = 1; ac(id); }
+  } catch (e) { document.getElementById('altBaslik').textContent = 'Hata: ' + e.message; }
+}
+
+function say(d) { return VERI.kayitlar.filter(x => !d || d.indexOf(x['Durum']) > -1).length; }
+
+function ciz() {
+  const v = VERI;
+  document.getElementById('altBaslik').textContent = `Bugün ${v.bugun}/${v.gunluk} ilk mesaj · ${v.mesai ? 'mesai içi' : 'mesai dışı (Pzt–Cmt 10:00–19:30)'}` + (v.macSon ? ' · Mac son tur ' + v.macSon.slice(5) : '');
+  document.querySelectorAll('#modSec button').forEach(b => b.classList.toggle('on', b.dataset.m === v.mod));
+  const mb = document.getElementById('modBilgi'); mb.className = 'bilgi ' + v.mod; mb.innerHTML = MOD_BILGI[v.mod] + (v.mod === 'deneme' ? ' <button class="g" style="margin-top:8px;padding:7px 11px;font-size:12px" onclick="denemeEkle()">Deneme ilanı ekle</button>' : '');
+  const gl = document.getElementById('gl'); if (gl) gl.textContent = v.gunluk;
+  const s = v.sayac || {}, n = a => a.reduce((t, k) => t + (s[k] || 0), 0);
+  const toplam = v.kayitlar.length;
+  const yaz = n(['yazildi', 'cevap', 'sicak', 'red', 'cevapsiz', 'durdur', 'satildi', 'yetki', 'emlakci']);
+  document.getElementById('huni').innerHTML = [
+    ['Yakalanan', toplam], ['Yazılan', yaz], ['Cevap', n(['cevap', 'sicak', 'red', 'durdur', 'satildi', 'yetki', 'emlakci'])], ['Sıcak', n(['sicak'])], ['Yetki', n(['yetki'])]
+  ].map(x => `<div><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+  document.getElementById('sekme').innerHTML = Object.keys(GRUP).map(g => {
+    const c = GRUP[g].d !== undefined ? `<b>${say(GRUP[g].d)}</b>` : '';
+    return `<button class="${SEKME === g ? 'on' : ''}" onclick="sekme('${g}')">${GRUP[g].ad}${c}</button>`;
+  }).join('');
+  const L = document.getElementById('liste');
+  if (SEKME === 'sss') return sssCiz();
+  if (SEKME === 'sablon') return sablonCiz();
+  const d = GRUP[SEKME].d;
+  const l = v.kayitlar.filter(x => !d || d.indexOf(x['Durum']) > -1);
+  const sira = { sicak: 0, cevap: 1, hazir: 2, kayitli: 3, telefon_bekliyor: 4, telefonsuz: 5 };
+  l.sort((a, b) => (sira[a['Durum']] ?? 9) - (sira[b['Durum']] ?? 9));
+  L.innerHTML = l.length ? l.map(kart).join('') : `<div class="bos">${SEKME === 'aktif' ? 'Bekleyen iş yok.<br>Yeni sahibinden ilanı gelince burada görünecek.' : 'Bu grupta ilan yok.'}</div>`;
+}
+
+function kart(x) {
+  const yer = [x['Site'], x['Oda'], x['m²'] ? x['m²'] + ' m²' : '', x['Fiyat']].filter(Boolean).join(' · ');
+  const kim = [x['Ad'], x['Telefon']].filter(Boolean).join(' · ');
+  const etiketler = [
+    `<span>${esc(x['Kaynak'])}</span>`,
+    x.is ? `<span class="is">${IS_AD[x.is]}${x['Durum'] !== 'hazir' && x['Sonraki'] ? '' : ''}</span>` : (x['Sonraki'] ? `<span>Sonraki: ${esc(x['Sonraki'].slice(0, 10))}</span>` : ''),
+    x.bayrak && x.bayrak.fiyatDustu ? `<span class="is">Fiyat düştü</span>` : '',
+    x['Onay'] === 'evet' ? '<span class="is">Onaylandı</span>' : '',
+    !x.hitap && ['hazir','yazildi','red'].indexOf(x['Durum']) > -1 ? '<span>İsimsiz mesaj gider</span>' : (x.hitap ? `<span>Hitap: ${esc(x.hitap)}</span>` : '')
+  ].join('');
+  return `<div class="k ${x['Durum'] === 'sicak' ? 'sicak' : ''}" onclick="ac('${esc(x.ID)}')">
+    <div class="b"><h3>${esc(x['Başlık'] || x['Site'] || x.ID)}</h3><span class="et ${esc(x['Durum'])}">${esc(x.durumAd)}</span></div>
+    <div class="alt">${esc(yer)}${kim ? '<br>' + esc(kim) : ''}</div>
+    ${x['Özet'] ? `<div class="oz">${esc(x['Özet'])}</div>` : ''}
+    <div class="ks">${etiketler}</div></div>`;
+}
+
+function sekme(g) { SEKME = g; ciz(); window.scrollTo(0, 0); }
+
+async function modDegis(m) {
+  if (m === VERI.mod) return;
+  const soru = { deneme: 'Deneme moduna geçilsin mi? Mülk sahiplerine mesaj gitmez.',
+    onayli: 'Onaylı moda geçilsin mi? Yalnız Gönder\'e bastığınız ilanlara mesaj gider.',
+    otomatik: 'OTOMATİK moda geçilsin mi? Mesai içinde 0216 315 15 15\'ten mülk sahiplerine ilk mesaj ve takipler kendiliğinden gidecek.' }[m];
+  if (!confirm(soru)) return;
+  const j = await api('mod', { mod: m }); if (!j.ok) return toast(j.hata);
+  toast('Mod: ' + { deneme: 'Deneme', onayli: 'Onaylı', otomatik: 'Otomatik' }[m]); yukle();
+}
+
+async function denemeEkle() {
+  const j = await api('deneme_ekle'); if (!j.ok) return toast(j.hata || 'olmadı');
+  toast('Deneme ilanı eklendi. Açıp "Şimdi gönder"e basın; mesaj sizin telefonunuza gelir.', 4000);
+  await yukle(); ac(j.id);
+}
+
+/* ── Kayıt sayfası ── */
+function kapat() { document.getElementById('perde').classList.remove('ac'); document.getElementById('sayfa').classList.remove('ac'); history.replaceState(null, '', location.pathname); }
+async function ac(id) {
+  const x = VERI.kayitlar.find(k => k.ID === id); if (!x) return;
+  history.replaceState(null, '', '?id=' + encodeURIComponent(id));
+  const S = document.getElementById('sayfa');
+  document.getElementById('perde').classList.add('ac'); S.classList.add('ac'); S.scrollTop = 0;
+  S.innerHTML = sayfaHtml(x, null);
+  try { const j = await api('sohbet', { id }); if (j.ok) S.innerHTML = sayfaHtml(j.kayit, j.mesajlar); } catch (e) {}
+}
+function waLink(tel) { const d = String(tel || '').replace(/\D/g, '').replace(/^0/, ''); return d ? 'https://wa.me/90' + d.slice(-10) : ''; }
+function sayfaHtml(x, mesajlar) {
+  const yer = [x['Site'], x['Oda'], x['m²'] ? x['m²'] + ' m²' : '', x['Fiyat'], x['İlk fiyat'] && x['İlk fiyat'] !== x['Fiyat'] ? 'ilk: ' + x['İlk fiyat'] : ''].filter(Boolean).join(' · ');
+  const durumlar = Object.keys(VERI.durumAd).map(d => `<option value="${d}" ${d === x['Durum'] ? 'selected' : ''}>${VERI.durumAd[d]}</option>`).join('');
+  const sohbet = mesajlar == null ? '<div style="color:var(--soluk);font-size:13px">Yükleniyor…</div>' :
+    mesajlar.length ? mesajlar.map(m => `<div class="m ${m.kim === 'asistan' ? 'biz' : 'o'}">${esc(String(m.m).replace(/^\[(Button|Reply|List): (.*)\]$/, '🔘 $2'))}<i>${esc(m.t.slice(5))}</i></div>`).join('') :
+    '<div style="color:var(--soluk);font-size:13px">Henüz yazışma yok.</div>';
+  const gonderBtn = (x.is || x['Durum'] === 'hazir') ?
+    `<button class="y" onclick="onizle('${esc(x.ID)}')">${VERI.mod === 'onayli' ? 'Önizle / onayla' : 'Önizle / şimdi gönder'}</button>` : '';
+  return `<button class="kapat" onclick="kapat()">×</button>
+  <h2>${esc(x['Başlık'] || x.ID)}</h2>
+  <div class="alt">${esc(yer)}<br>${esc([x['Ad'], x['Telefon']].filter(Boolean).join(' · ') || 'Telefon henüz okunmadı')} · <span class="et ${esc(x['Durum'])}">${esc(x.durumAd)}</span></div>
+  ${x['Özet'] ? `<div class="oz" style="margin-top:10px;background:var(--kart2);border-radius:10px;padding:9px 11px;font-size:13px">${esc(x['Özet'])}</div>` : ''}
+  <div class="dug">
+    ${x['Link'] ? `<a href="${esc(x['Link'])}" target="_blank" rel="noopener">İlanı aç</a>` : ''}
+    ${x['Telefon'] ? `<a href="tel:${esc(x['Telefon'])}">Ara</a><a class="wa" href="${waLink(x['Telefon'])}" target="_blank" rel="noopener">WhatsApp'ta yaz</a>` : ''}
+    ${gonderBtn}
+  </div>
+  <div id="onizleme"></div>
+  <div class="blok"><label>Yazışma</label><div class="sohbet" id="sohbet">${sohbet}</div>
+    <div class="alt">0216 hattından yazmak için Gelen Kutusu'nu kullanın; elle yazınca asistan bu kişiye 24 saat cevap vermez.</div></div>
+  <div class="blok"><label>Düzenle</label>
+    <div class="form">
+      <select id="fDurum">${durumlar}</select>
+      <input id="fHitap" placeholder="${esc(x.hitap ? 'Hitap: ' + x.hitap : 'Hitap (boşsa isimsiz gider)')}" value="${esc((x.bayrak && x.bayrak.hitap) || '')}">
+      <input id="fTel" placeholder="Telefon" inputmode="tel" value="${esc(x['Telefon'] || '')}">
+      <input id="fSonraki" type="date" value="${esc((x['Sonraki'] || '').slice(0, 10))}" title="Sonraki mesaj tarihi">
+      <textarea id="fNot" class="tam" rows="2" placeholder="Not ekle (geçmişe yazılır)"></textarea>
+      <button class="tam" onclick="kaydet('${esc(x.ID)}')">Kaydet</button>
+    </div></div>
+  <div class="blok"><label>Geçmiş</label><div class="gecmis">${(x['Geçmiş'] || []).slice().reverse().map(g => `<div><b>${esc(g.t.slice(5))}</b>${esc(g.o)}</div>`).join('') || '—'}</div></div>`;
+}
+
+async function onizle(id) {
+  const j = await api('onizle', { id }); if (!j.ok) return toast(j.hata);
+  const x = VERI.kayitlar.find(k => k.ID === id);
+  const deneme = VERI.mod === 'deneme' && !/905324724148|5324724148/.test(String(x['Telefon']).replace(/\D/g, ''));
+  document.getElementById('onizleme').innerHTML = `<div class="blok"><label>Gidecek mesaj (${esc(IS_AD[j.is] || j.is)})</label>
+    <div class="onz">${esc(j.metin)}<small>RE/MAX Doğuş · 0216 315 15 15</small><div class="bt">${j.butonlar.map(b => `<span>${esc(b)}</span>`).join('')}</div></div>
+    <div class="dug">
+      ${VERI.mod === 'onayli' ? `<button class="y" onclick="onayla('${esc(id)}')">Onayla (mesai içinde gider)</button>` : ''}
+      ${deneme ? '<div class="alt">Deneme modunda gerçek mülk sahibine gönderilmez.</div>' : `<button onclick="simdiGonder('${esc(id)}')">Şimdi gönder</button>`}
+    </div></div>`;
+}
+async function onayla(id) { const j = await api('guncelle', { id, onay: true }); toast(j.ok ? 'Onaylandı' : j.hata); yukle(); }
+async function simdiGonder(id) {
+  if (!confirm('Mesaj şimdi 0216 315 15 15\'ten gönderilsin mi?')) return;
+  const j = await api('simdi_gonder', { id }); toast(j.ok ? (j.deneme ? 'Gönderildi (sizin telefonunuza)' : 'Gönderildi') : ('Gönderilemedi: ' + (j.hata || '')), 4000);
+  await yukle(); ac(id);
+}
+async function kaydet(id) {
+  const x = VERI.kayitlar.find(k => k.ID === id), ek = { id };
+  const d = document.getElementById('fDurum').value; if (d !== x['Durum']) ek.durum = d;
+  const h = document.getElementById('fHitap').value.trim(); if (h !== ((x.bayrak && x.bayrak.hitap) || '')) ek.hitap = h;
+  const t = document.getElementById('fTel').value.trim(); if (t && t !== x['Telefon']) ek.tel = t;
+  const s = document.getElementById('fSonraki').value; if (s && s !== (x['Sonraki'] || '').slice(0, 10)) ek.sonraki = s;
+  const n = document.getElementById('fNot').value.trim(); if (n) ek.not = n;
+  if (Object.keys(ek).length === 1) return toast('Değişiklik yok');
+  const j = await api('guncelle', ek); toast(j.ok ? 'Kaydedildi' : j.hata);
+  await yukle(); ac(id);
+}
+
+/* ── Soru-cevap havuzu ── */
+async function sssCiz() {
+  const L = document.getElementById('liste');
+  if (!SSS) { L.innerHTML = '<div class="bos">Yükleniyor…</div>'; const j = await api('sss_liste'); SSS = j.sss || []; }
+  L.innerHTML = `<div class="alt" style="font-size:13px;color:var(--soluk);line-height:1.5">Asistan mülk sahibiyle konuşurken bu cevap yönergelerini kullanır. Değişiklik 10 dakika içinde geçerli olur.</div>
+    <div class="sss">${SSS.map((s, i) => `<div class="s">
+      <input value="${esc(s.s)}" oninput="SSS[${i}].s=this.value" placeholder="Soru / durum">
+      <textarea oninput="SSS[${i}].c=this.value" placeholder="Asistan nasıl cevaplasın">${esc(s.c)}</textarea>
+      <div class="sa"><label><input type="checkbox" style="width:auto" ${s.aktif ? 'checked' : ''} onchange="SSS[${i}].aktif=this.checked"> Aktif</label><span style="flex:1"></span><button class="g" onclick="SSS.splice(${i},1);sssCiz()">Sil</button></div>
+    </div>`).join('')}</div>
+    <div class="dug"><button class="g" onclick="SSS.push({s:'',c:'',aktif:true});sssCiz()">+ Soru ekle</button><button onclick="sssKaydet()">Kaydet</button></div>`;
+}
+async function sssKaydet() { const j = await api('sss_kaydet', { sss: SSS }); toast(j.ok ? j.sayi + ' soru kaydedildi' : j.hata); }
+
+/* ── Şablonlar ── */
+async function sablonCiz() {
+  const L = document.getElementById('liste');
+  L.innerHTML = '<div class="bos">Yükleniyor…</div>';
+  const j = await api('sablon_durum');
+  const ad = { fsbo_ilk: 'İlk mesaj', fsbo_takip: 'Takip (10./30. gün, "şimdilik hayır"a 45./90. gün)', fsbo_fiyat: 'Fiyat düştüğünde', fsbo_kalkti: 'İlan yayından kalktığında' };
+  const durumAd = s => /^APPROVED/.test(s) ? '✅ Onaylı' : /^PENDING/.test(s) ? '⏳ Meta incelemesinde' : /^REJECTED/.test(s) ? '❌ Reddedildi ' + s.replace(/^REJECTED/, '') : s === 'YOK' ? 'Henüz onaya gönderilmedi' : s;
+  const ornek = "sahibinden.com'daki Akasya Göl Etabı 3+1 satılık daire";
+  L.innerHTML = Object.keys(j.metin).map(k => `<div class="blok" style="margin-top:4px"><label>${ad[k.replace(/_x$/, '')]}${/_x$/.test(k) ? ' (isimsiz)' : ''} · ${durumAd(j.sablonlar[k])}</label>
+    <div class="onz">${esc(/_x$/.test(k) ? j.metin[k].replace('{{1}}', ornek) : j.metin[k].replace('{{1}}', 'Ahmet Bey').replace('{{2}}', ornek))}<small>RE/MAX Doğuş · 0216 315 15 15</small>
+    <div class="bt">${j.butonlar[k].map(b => `<span>${esc(b)}</span>`).join('')}</div></div></div>`).join('') +
+    (Object.values(j.sablonlar).some(s => s === 'YOK') ? `<div class="dug"><button onclick="sablonKur()">Mesajları Meta onayına gönder</button></div>` : '') +
+    `<div class="alt" style="margin-top:10px;color:var(--soluk);font-size:12.5px;line-height:1.5">"Bir daha yazmayın" diyen kişiye bir daha mesaj gitmez. Şablon metni değişirse Meta'nın yeniden onaylaması gerekir.</div>`;
+}
+async function sablonKur() {
+  if (!confirm('Eksik mesaj şablonları Meta onayına gönderilsin mi?')) return;
+  const j = await api('sablon_kur'); toast(j.ok ? 'Onaya gönderildi' : j.hata, 3500); sablonCiz();
+}
+
+basla();
+</script>
+</body>
+</html>
