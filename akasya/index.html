@@ -89,29 +89,20 @@ h1 em.s{font-size:1.02em;white-space:nowrap}
 .etaplar-mini{display:flex;gap:8px;margin-top:26px;flex-wrap:wrap}
 .etaplar-mini a{text-decoration:none;font-size:.86rem;font-weight:600;padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);display:inline-flex;align-items:center;gap:8px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .etaplar-mini a i{width:8px;height:8px;border-radius:50%}
-.menu{justify-self:end;width:100%;max-width:440px;background:linear-gradient(160deg,rgba(14,24,84,.72),rgba(5,10,48,.66));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:22px 18px 18px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-.menu .mh{font-family:var(--f-body);font-weight:800;font-size:1.32rem;letter-spacing:-.02em;line-height:1.15;margin:0 4px 6px;color:#fff}
-.menu .mh em{font-family:var(--f-display);font-style:italic;font-weight:400;color:var(--gold);font-size:1.12em;letter-spacing:0}
-.grup{padding-top:12px}
-.menu .grp{display:flex;align-items:center;gap:8px;font-family:var(--f-body);font-weight:800;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:2px 2px 9px}
-.menu .grp::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(233,194,122,.18)}
-.arayan .grp{color:#FF8A95}
-.arayan .grp::before{background:var(--red);box-shadow:0 0 0 4px rgba(220,28,46,.25)}
-.card{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;padding:14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);position:relative;transition:background .2s,border-color .2s,transform .2s}
-.card + .card{margin-top:8px}
-.card.red{background:rgba(220,28,46,.12);border-color:rgba(220,28,46,.5)}
-.card .ic{display:none}
+.menu{justify-self:end;width:100%;max-width:420px;background:rgba(5,10,48,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:6px 22px}
+.grup{padding:16px 0 6px}
+.grup + .grup{border-top:1px solid rgba(255,255,255,.16)}
+.menu .grp{display:block;font-family:var(--f-body);font-weight:800;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.arayan .grp{color:#FF7A86}
+.card{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;padding:12px 0}
 .card .tx{flex:1;min-width:0}
-.card b{display:block;font-size:1rem;font-weight:700;line-height:1.25;letter-spacing:-.005em}
-.card small{display:block;font-size:.8rem;font-weight:600;color:rgba(238,241,250,.66);margin-top:3px}
-.card .ok{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#050A30;transition:transform .25s}
-.card .ok svg{width:18px;height:18px}
-.card.red .ok{background:var(--red);color:#fff;box-shadow:0 6px 16px -4px rgba(220,28,46,.7)}
-.card:hover,.card:focus-visible{background:rgba(255,255,255,.1);border-color:var(--gold)}
-.card.red:hover,.card.red:focus-visible{background:rgba(220,28,46,.2);border-color:#FF5A68}
+.card b{display:block;font-size:1.02rem;font-weight:700;line-height:1.3}
+.card .ok{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#050A30;transition:transform .2s}
+.card .ok svg{width:17px;height:17px}
+.card.red .ok{background:var(--red);color:#fff}
 .card:hover .ok,.card:focus-visible .ok{transform:translateX(4px)}
-.card:active{transform:scale(.985)}
-@media(max-width:960px){.menu{max-width:none;padding:18px 12px 12px;border-radius:20px}.menu .mh{font-size:1.2rem}.card{padding:13px 12px}.card b{font-size:.98rem}}
+.card:active{opacity:.8}
+@media(max-width:960px){.menu{max-width:none;padding:4px 18px}.card b{font-size:1rem}}
 
 .stats{position:relative;z-index:5;max-width:1260px;margin:0 auto;padding:0 22px 40px;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid rgba(255,255,255,.18)}
 .stat{padding:22px 16px 0;border-left:1px solid rgba(255,255,255,.18)}
@@ -354,16 +345,15 @@ footer a{text-decoration:none;color:#fff}
       </div>
     </div>
     <nav class="menu" aria-label="Ne yapmak istiyorsunuz?">
-      <p class="mh">Size nasıl <em>yardımcı olalım?</em></p>
       <div class="grup sahip">
       <span class="grp">Ev sahibiyseniz</span>
-      <a href="satilik-deger.html" class="card"><span class="ic"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/></svg></span></span><span class="tx"><b>Dairemin güncel satış fiyatı ne kadar?</b><small>Ücretsiz değerleme, aynı gün dönüş</small></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
-      <a href="kiralik-deger.html" class="card"><span class="ic"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M10 13h4"/><path d="M12 11v4"/></svg></span></span><span class="tx"><b>Dairemin güncel kiralama fiyatı ne kadar?</b><small>Bölgedeki güncel kira bedelleriyle</small></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
+      <a href="satilik-deger.html" class="card"><span class="tx"><b>Dairemin güncel satış fiyatı ne kadar?</b></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
+      <a href="kiralik-deger.html" class="card"><span class="tx"><b>Dairemin güncel kiralama fiyatı ne kadar?</b></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
       </div>
       <div class="grup arayan">
       <span class="grp">Ev arıyorsanız</span>
-      <a href="almak-istiyorum.html" class="card red"><span class="ic"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span></span><span class="tx"><b>Akasya'da satılık daire arıyorum</b><small>Göl, Koru ve Kent etaplarında</small></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
-      <a href="kiralamak-istiyorum.html" class="card red"><span class="ic"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 21V10.5"/><path d="M19 21V10.5"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/></svg></span></span><span class="tx"><b>Akasya'da kiralık daire arıyorum</b><small>Size uygun daireyi birlikte bulalım</small></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
+      <a href="almak-istiyorum.html" class="card red"><span class="tx"><b>Akasya'da satılık daire arıyorum</b></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
+      <a href="kiralamak-istiyorum.html" class="card red"><span class="tx"><b>Akasya'da kiralık daire arıyorum</b></span><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></a>
       </div>
     </nav>
   </div>
