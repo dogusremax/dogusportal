@@ -368,6 +368,8 @@ footer a{text-decoration:none;color:#fff}
 .dg .btn{padding:13px 22px}
 @media(max-width:960px){.kpet{padding:44px 16px}.kpbas{grid-template-columns:1fr;gap:20px}.kpfoto{height:190px}.kp3d{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kp3d .bosk .rozet{font-size:.56rem;letter-spacing:.12em;padding:5px 8px}.dg .btn{flex:1}}
 </style>
+<script>/* Ticari > Home Ofis: yalnız Home Ofis planları, sayfa başında */if(/[?&]grup=homeofis/.test(location.search)||location.hash==='#home-ofis')document.documentElement.className+=' ho';</script>
+<style>html.ho #gol,html.ho #koru,html.ho .ust .sekme,html.ho #kent .kpbas,html.ho #c-kent{display:none!important}html.ho #kent{padding-top:0;margin-top:0}html.ho .ust .tum{display:inline-block;margin-top:14px;color:var(--gold);font-weight:700;text-decoration:none}</style>
 </head>
 <body>
 
@@ -385,8 +387,8 @@ footer a{text-decoration:none;color:#fff}
       <div class="dd"><a href="satilik-deger.html" class="ddb alt">Dairem ne kadar? <span aria-hidden="true">▾</span></a>
         <div class="ddm"><a href="satilik-deger.html">Dairemin güncel satış fiyatı ne kadar?</a><a href="kiralik-deger.html">Dairemin güncel kiralama fiyatı ne kadar?</a></div>
       </div>
-      <div class="dd"><a href="kat-planlari.html#home-ofis" class="ddb">Ticari <span aria-hidden="true">▾</span></a>
-        <div class="ddm"><a href="kat-planlari.html#home-ofis">Home Ofis Kat Planları</a></div>
+      <div class="dd"><a href="kat-planlari.html?grup=homeofis" class="ddb">Ticari <span aria-hidden="true">▾</span></a>
+        <div class="ddm"><a href="kat-planlari.html?grup=homeofis">Home Ofis Kat Planları</a></div>
       </div>
       <a href="index.html#galeri">Galeri</a>
       <a href="vr.html">360° VR</a>
@@ -494,22 +496,21 @@ footer a{text-decoration:none;color:#fff}
       return '<button type="button" class="pl" data-i="'+i+'"><span class="im'+(r[6]?' k':'')+'">'+(has3(r)?'<span class="b3d">3D · 360°</span>':'')+'<img loading="lazy" src="'+dosya(r,1)+'" alt="Akasya '+EN[e]+' '+baslik(r)+' kat planı" width="720" height="480"></span><span class="tx"><span class="od">'+r[2]+(r[5]?' Dubleks':'')+' <span>'+r[3]+' m²</span></span><span class="bl">'+r[4]+'</span>'+
         ((r[5]||r[0]==='ortak'||tic(r))?'<span class="rz">'+(tic(r)?'<i class="t">Home Ofis</i>':'')+(r[5]?'<i class="d">'+r[5]+'</i>':'')+(r[0]==='ortak'?'<i class="o">Koru &amp; Göl</i>':'')+'</span>':'')+'</span></button>';}).join('');
   }
-  // Üst menüdeki Ticari > Home Ofis Kat Planları (#home-ofis): Kent'te Home Ofis grubu seçili açılsın
-  function homeOfis(){ if(location.hash!=='#home-ofis') return false; sec.kent='Home Ofis'; return true; }
-  var hoIlk=homeOfis();
-  window.addEventListener('hashchange',function(){ if(homeOfis()){ ciz('kent'); kenteGit(); } });
+  // Ticari > Home Ofis Kat Planları (?grup=homeofis): yalnız Kent Home Ofis planları, başlık değişir, kaydırma yok
+  var HO=document.documentElement.classList.contains('ho');
+  if(HO){
+    sec.kent='Home Ofis';
+    var u=document.querySelector('.ust');
+    u.querySelector('h1').innerHTML='Home Ofis <em class="s">kat planları.</em>';
+    u.querySelector('.sub').innerHTML='Akasya Kent etabındaki 40 katlı Residence Tower\'da 1+1 ve 2+1 home ofis planları. Plana dokunup büyütün.<br><a class="tum" href="kat-planlari.html">← Tüm kat planları</a>';
+    document.title='Akasya Kent Home Ofis Kat Planları | RE/MAX Doğuş';
+    if('scrollRestoration' in history) history.scrollRestoration='manual';
+  }
   ['gol','koru','kent'].forEach(function(e){
     ciz(e);
     $('c-'+e).addEventListener('click',function(v){var c=v.target.closest('.chip');if(!c)return;sec[e]=c.getAttribute('data-g');ciz(e);track('kat_plani_oda',{etap:e,oda:sec[e]||'tumu'});});
     $('g-'+e).addEventListener('click',function(v){var p=v.target.closest('.pl');if(!p)return;mod=v.target.closest('.b3d')?'3d':'plan';ac(e,+p.getAttribute('data-i'));});
   });
-  // Safari'de görseller/yazı tipleri yüklendikçe sayfa kayıyor: kullanıcı dokunana kadar birkaç kez Kent'e yeniden hizala
-  function kenteGit(){
-    var dur=false, son=Date.now()+4000;
-    ['touchstart','wheel','keydown'].forEach(function(t){ window.addEventListener(t,function(){ dur=true; },{once:true,passive:true}); });
-    (function hizala(){ if(dur) return; $('kent').scrollIntoView(); if(Date.now()<son) setTimeout(hizala,250); })();
-  }
-  if(hoIlk){ if('scrollRestoration' in history) history.scrollRestoration='manual'; kenteGit(); }
   var lb=$('plb'),sah=$('psah'),ce='gol',ci=0;
   function ac(e,i){
     ce=e;var L=gor[e];ci=(i+L.length)%L.length;var r=L[ci];
