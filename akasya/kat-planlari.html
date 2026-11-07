@@ -385,8 +385,8 @@ footer a{text-decoration:none;color:#fff}
       <div class="dd"><a href="satilik-deger.html" class="ddb alt">Dairem ne kadar? <span aria-hidden="true">▾</span></a>
         <div class="ddm"><a href="satilik-deger.html">Dairemin güncel satış fiyatı ne kadar?</a><a href="kiralik-deger.html">Dairemin güncel kiralama fiyatı ne kadar?</a></div>
       </div>
-      <div class="dd"><a href="satilik-deger.html?tip=ofis" class="ddb">Ticari <span aria-hidden="true">▾</span></a>
-        <div class="ddm"><a href="satilik-deger.html?tip=ofis">Ofisimin satılık değeri nedir?</a><a href="kiralik-deger.html?tip=ofis">Ofisimin kiralık değeri nedir?</a></div>
+      <div class="dd"><a href="kat-planlari.html#home-ofis" class="ddb">Ticari <span aria-hidden="true">▾</span></a>
+        <div class="ddm"><a href="kat-planlari.html#home-ofis">Home Ofis Kat Planları</a></div>
       </div>
       <a href="index.html#galeri">Galeri</a>
       <a href="vr.html">360° VR</a>
@@ -494,11 +494,16 @@ footer a{text-decoration:none;color:#fff}
       return '<button type="button" class="pl" data-i="'+i+'"><span class="im'+(r[6]?' k':'')+'">'+(has3(r)?'<span class="b3d">3D · 360°</span>':'')+'<img loading="lazy" src="'+dosya(r,1)+'" alt="Akasya '+EN[e]+' '+baslik(r)+' kat planı" width="720" height="480"></span><span class="tx"><span class="od">'+r[2]+(r[5]?' Dubleks':'')+' <span>'+r[3]+' m²</span></span><span class="bl">'+r[4]+'</span>'+
         ((r[5]||r[0]==='ortak'||tic(r))?'<span class="rz">'+(tic(r)?'<i class="t">Home Ofis</i>':'')+(r[5]?'<i class="d">'+r[5]+'</i>':'')+(r[0]==='ortak'?'<i class="o">Koru &amp; Göl</i>':'')+'</span>':'')+'</span></button>';}).join('');
   }
+  // Üst menüdeki Ticari > Home Ofis Kat Planları (#home-ofis): Kent'te Home Ofis grubu seçili açılsın
+  function homeOfis(){ if(location.hash!=='#home-ofis') return false; sec.kent='Home Ofis'; return true; }
+  var hoIlk=homeOfis();
+  window.addEventListener('hashchange',function(){ if(homeOfis()){ ciz('kent'); $('kent').scrollIntoView({behavior:'smooth'}); } });
   ['gol','koru','kent'].forEach(function(e){
     ciz(e);
     $('c-'+e).addEventListener('click',function(v){var c=v.target.closest('.chip');if(!c)return;sec[e]=c.getAttribute('data-g');ciz(e);track('kat_plani_oda',{etap:e,oda:sec[e]||'tumu'});});
     $('g-'+e).addEventListener('click',function(v){var p=v.target.closest('.pl');if(!p)return;mod=v.target.closest('.b3d')?'3d':'plan';ac(e,+p.getAttribute('data-i'));});
   });
+  if(hoIlk) setTimeout(function(){ $('kent').scrollIntoView(); },60);
   var lb=$('plb'),sah=$('psah'),ce='gol',ci=0;
   function ac(e,i){
     ce=e;var L=gor[e];ci=(i+L.length)%L.length;var r=L[ci];
