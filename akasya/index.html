@@ -347,7 +347,7 @@ footer a{text-decoration:none;color:#fff}
     </nav>
   </div>
   <div class="stats" aria-label="Rakamlarla Akasya">
-    <div class="stat"><b>1.344</b><small>konut, 3 etap</small></div>
+    <div class="stat"><b>1.580</b><small>ünite, 3 etap</small></div>
     <div class="stat"><b>182<sup>bin m²</sup></b><small>proje alanı</small></div>
     <div class="stat"><b>58<sup>bin m²</sup></b><small>yeşil alan</small></div>
     <div class="stat"><b>26<sup>bin m²</sup></b><small>Central Park</small></div>
@@ -572,5 +572,22 @@ function iletisimGonder(e){
 }
 </script>
 <script src="telif.js" defer></script>
+<script>
+/* Rakamlar sayaç: görünür olunca 0'dan sayarak artar */
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.stats .stat b'));
+  if(!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var hedef=els.map(function(b){ var t=b.firstChild; var n=t&&t.nodeType===3?parseInt(t.nodeValue.replace(/\D/g,''),10):NaN; if(!isNaN(n)) t.nodeValue='0'; return n; });
+  function fmt(n){ return n.toLocaleString('tr-TR'); }
+  function bas(){
+    var t0=performance.now(), sure=1600;
+    (function ad(t){ var k=Math.min(1,(t-t0)/sure), e=1-Math.pow(1-k,3);
+      els.forEach(function(b,i){ if(!isNaN(hedef[i])) b.firstChild.nodeValue=fmt(Math.round(hedef[i]*e)); });
+      if(k<1) requestAnimationFrame(ad); })(t0);
+  }
+  var kutu=document.querySelector('.stats');
+  if('IntersectionObserver' in window){ var io=new IntersectionObserver(function(x){ if(x[0].isIntersecting){ io.disconnect(); bas(); } },{threshold:.3}); io.observe(kutu); } else bas();
+})();
+</script>
 </body>
 </html>
