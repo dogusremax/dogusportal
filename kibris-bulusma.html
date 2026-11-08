@@ -253,6 +253,9 @@ body:not(.kilitli) #kapi{display:none}
   .pn-kpi .v{font-size:30px}
 }
 @media (prefers-reduced-motion:reduce){.tik,.canli i,.yd.sira,.sonraki.acil{animation:none}}
+.lnk-kutu{border:1px solid rgba(233,194,122,.45);border-radius:14px;padding:18px;background:rgba(233,194,122,.07)}
+.lnk-kutu b{display:block;font-size:1.15rem;word-break:break-all;margin-bottom:14px;color:#050A30}
+.lnk-kutu .bt{display:flex;flex-wrap:wrap;gap:10px}
 </style>
 </head>
 <body class="kilitli">
@@ -446,6 +449,14 @@ body:not(.kilitli) #kapi{display:none}
   </div>
  </section>
 
+ <section class="s" id="linkim">
+  <h2>Müşteri <em>ön kayıt linkiniz</em></h2>
+  <p class="sub">Bu link size özel. Müşteriniz bu linkten ön kayıt yaparsa kayıt otomatik olarak sizin adınıza açılır, size bildirim gelir ve davetli listenize eklenir. Ayrıca eklemenize gerek yok.</p>
+  <div class="lnk-kutu"><b id="lnkBuyuk"></b>
+   <div class="bt"><button class="btn cp" id="lnkKop" type="button">Linki kopyala</button><a class="btn wa" id="lnkWa" target="_blank" rel="noopener" href="#">Davet mesajıyla WhatsApp'ta gönder</a></div>
+  </div>
+ </section>
+
  <section class="s">
   <h2>Hazır <em>WhatsApp mesajları</em></h2>
   <p class="sub">Mesajı kopyalayın ya da "WhatsApp'ta aç"a basıp kişiyi seçin. Başına müşterinin adını yazın; isimle gelen mesaj okunur.</p>
@@ -564,6 +575,12 @@ body:not(.kilitli) #kapi{display:none}
   whoCiz();msgCiz();cntCiz();
   document.querySelectorAll('.adv').forEach(function(e){e.textContent=ad();});
   $('lnkTxt').textContent=link();
+  $('lnkBuyuk').textContent=kim?link().replace('https://',''):'Önce yukarıdan adınızı seçin';
+  $('linkim').querySelector('.bt').style.display=kim?'':'none';
+  $('lnkWa').href='https://wa.me/?text='+encodeURIComponent(mesajlar()[0].t);
+  $('lnkKop').onclick=function(){var t=link(),b=this;
+   (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();});
+   b.textContent='Kopyalandı';b.classList.add('ok');setTimeout(function(){b.textContent='Linki kopyala';b.classList.remove('ok');},1600);};
  }
  ciz();
 })();
@@ -645,7 +662,7 @@ body:not(.kilitli) #kapi{display:none}
    $('pnGir').disabled=$('kapiGir').disabled=false;
    if(!r.ok){hataYaz(r.error||'Giriş yapılamadı.');$('pnPin').value=$('kapiPin').value='';ls('kb_pin',null);return;}
    hataYaz(''); if(!P.demo) ls('kb_pin',pin);
-   document.body.classList.remove('kilitli'); if(location.hash==='#panel') setTimeout(function(){$('panel').scrollIntoView();},50);
+   document.body.classList.remove('kilitli'); var hh=location.hash.slice(1); if(hh==='panel'||hh==='linkim') setTimeout(function(){$(hh).scrollIntoView();},50);
    P.v=r; $('pnGiris').hidden=true; $('pnAna').hidden=false;
    kimSec(r.ad); filtreKur(); ciz();
   });
