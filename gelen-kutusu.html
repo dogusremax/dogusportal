@@ -13,7 +13,7 @@
 :root{
   --lacivert:#0a2a5e; --lacivert-2:#133a7a; --kirmizi:#dc1c2e;
   --zemin:#f3f5f9; --kart:#ffffff; --cizgi:#e3e8ef; --yazi:#0f172a; --soluk:#64748b;
-  --gelen:#ffffff; --giden:#dbeafe; --yesil:#16a34a; --sari:#f59e0b;
+  --gelen:#ffffff; --giden:#d9fdd3; --yesil:#16a34a; --sari:#f59e0b;
   --golge:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -97,19 +97,27 @@ input,textarea{font:inherit;color:inherit}
 .pencere.kapali{background:#fff7ed;color:#9a3412}
 .not-alani{padding:8px 12px;background:#fffbeb;border-bottom:1px solid #fde68a}
 .not-alani textarea{width:100%;border:0;background:transparent;resize:none;outline:none;font-size:13px}
-.mesajlar{flex:1;overflow-y:auto;padding:14px 12px 8px;-webkit-overflow-scrolling:touch}
+.mesajlar{flex:1;overflow-y:auto;padding:14px 4% 8px;-webkit-overflow-scrolling:touch;background-color:#efeae2;background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1px);background-size:14px 14px}
 .gun{text-align:center;margin:10px 0}
-.gun span{font-size:11px;background:rgba(255,255,255,.85);padding:4px 10px;border-radius:8px;color:var(--soluk);font-weight:600}
-.balon{max-width:82%;padding:8px 11px 6px;border-radius:14px;margin:3px 0;font-size:14.5px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.06);word-wrap:break-word;white-space:pre-wrap;position:relative}
-.balon.gelen{background:var(--gelen);border-top-left-radius:4px}
-.balon.giden{background:var(--giden);margin-left:auto;border-top-right-radius:4px}
-.balon.oto{background:#eef2f7;color:#475569}
+.gun span{font-size:12px;background:#fff;padding:5px 11px;border-radius:8px;color:#54656f;font-weight:600;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.balon{width:fit-content;max-width:min(82%,640px);padding:6px 9px 5px;border-radius:9px;margin:2px 0;font-size:15px;line-height:1.38;color:#111b21;box-shadow:0 1px .5px rgba(11,20,26,.13);overflow-wrap:anywhere;white-space:pre-wrap;position:relative}
+.balon.gelen{background:var(--gelen)}
+.balon.giden{background:var(--giden);margin-left:auto}
+.balon.ilk{margin-top:9px}
+.balon.ilk.gelen{border-top-left-radius:0}
+.balon.ilk.giden{border-top-right-radius:0}
+.balon.ilk.gelen::before{content:'';position:absolute;top:0;left:-7px;border-top:8px solid var(--gelen);border-left:8px solid transparent}
+.balon.ilk.giden::before{content:'';position:absolute;top:0;right:-7px;border-top:8px solid var(--giden);border-right:8px solid transparent}
+.balon.form{background:#fff8e1;border:1px solid #f6d77a}
+.balon.form.ilk::before{border-top-color:#f6d77a}
+.balon.oto{color:#475569}
 .balon.hatali{background:#fee2e2}
 .balon a{color:var(--lacivert-2);word-break:break-all}
-.balon-alt{display:flex;justify-content:flex-end;gap:6px;align-items:center;font-size:10.5px;color:var(--soluk);margin-top:3px}
-.kaynak{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--soluk);margin-bottom:2px}
-.tik{font-size:12px}
-.tik.okundu{color:#2563eb}
+.balon-alt{float:right;display:flex;gap:4px;align-items:center;font-size:11px;color:#667781;margin:7px 0 -3px 12px;white-space:nowrap;line-height:1}
+.kaynak{display:block;font-size:12.5px;font-weight:700;color:#027eb5;margin-bottom:1px;white-space:normal}
+.balon.form .kaynak{color:#9a6700}
+.tik{font-size:12px;letter-spacing:-2px}
+.tik.okundu{color:#53bdeb}
 .hata-not{font-size:11px;color:var(--kirmizi);margin-top:3px}
 .yaz{display:flex;gap:8px;padding:10px 10px;background:var(--kart);border-top:1px solid var(--cizgi);align-items:flex-end;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 .yaz textarea{flex:1;resize:none;border:1px solid var(--cizgi);border-radius:20px;padding:10px 14px;max-height:140px;outline:none;font-size:15px;line-height:1.35;background:var(--zemin)}
@@ -439,18 +447,21 @@ function tikCiz(d) {
 function mesajCiz(ms) {
   var alt = $('mesajlar');
   var enAltta = alt.scrollHeight - alt.scrollTop - alt.clientHeight < 80;
-  var html = '', sonGun = '';
+  var html = '', sonGun = '', onceki = null;
   ms.forEach(function (m) {
     var g = new Date(m.t).toDateString();
-    if (g !== sonGun) { html += '<div class="gun"><span>' + gunBaslik(m.t) + '</span></div>'; sonGun = g; }
-    var giden = m.yon === 'giden';
-    var sinif = 'balon ' + (giden ? 'giden' : 'gelen') + (m.kaynak === 'oto-cevap' ? ' oto' : '') + (m.durum === 'başarısız' ? ' hatali' : '');
-    var etiket = giden && m.kaynak && m.kaynak !== 'panel' ? '<div class="kaynak">' + (m.kaynak === 'oto-cevap' ? 'Otomatik cevap' : m.kaynak === 'form' ? 'Site formu' : m.kaynak === 'asistan' ? 'Asistan' : kacis(m.kaynak)) + '</div>' : '';
+    if (g !== sonGun) { html += '<div class="gun"><span>' + gunBaslik(m.t) + '</span></div>'; sonGun = g; onceki = null; }
+    var giden = m.yon === 'giden', form = m.kaynak === 'site-formu';
+    var kim = form ? '🌐 Site formu · ' + (m.baslik || '') : giden && m.kaynak && m.kaynak !== 'panel' ? (m.kaynak === 'oto-cevap' ? 'Otomatik cevap' : m.kaynak === 'form' ? 'Site formu bildirimi' : m.kaynak === 'asistan' ? 'Asistan' : m.kaynak) : '';
+    var ilk = !onceki || onceki.yon !== m.yon || onceki.kim !== kim || (new Date(m.t) - new Date(onceki.t)) > 30 * 6e4;
+    onceki = { yon: m.yon, kim: kim, t: m.t };
+    var sinif = 'balon ' + (giden ? 'giden' : 'gelen') + (ilk ? ' ilk' : '') + (form ? ' form' : '') + (m.kaynak === 'oto-cevap' ? ' oto' : '') + (m.durum === 'başarısız' ? ' hatali' : '');
+    var etiket = ilk && kim ? '<span class="kaynak">' + kacis(kim) + '</span>' : '';
     var medya = m.medya && String(m.medya).indexOf('http') === 0 ? '<div><a href="' + kacis(m.medya) + '" target="_blank" rel="noopener">Dosyayı aç ↗</a></div>' : '';
     html += '<div class="' + sinif + '">' + etiket + linkle(m.metin) + medya +
       (m.hata ? '<div class="hata-not">' + kacis(m.hata) + '</div>' : '') +
-      '<div class="balon-alt">' + new Date(m.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) +
-      (giden ? ' ' + tikCiz(m.durum) : '') + '</div></div>';
+      '<span class="balon-alt">' + new Date(m.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) +
+      (giden ? ' ' + tikCiz(m.durum) : '') + '</span></div>';
   });
   alt.innerHTML = html || '<div class="bos">Henüz mesaj yok</div>';
   if (enAltta || alt.dataset.wa !== durum.aktif) alt.scrollTop = alt.scrollHeight;
