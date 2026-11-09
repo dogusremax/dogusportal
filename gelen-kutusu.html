@@ -109,6 +109,16 @@ input,textarea{font:inherit;color:inherit}
 .balon.ilk.gelen::before{content:'';position:absolute;top:0;left:-7px;border-top:8px solid var(--gelen);border-left:8px solid transparent}
 .balon.ilk.giden::before{content:'';position:absolute;top:0;right:-7px;border-top:8px solid var(--giden);border-right:8px solid transparent}
 .balon.form{background:#fff8e1;border:1px solid #f6d77a}
+.fb{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:4px 0 2px;font-size:14px;white-space:normal}
+.fb dt{color:#8a6d1a;font-weight:600}
+.fb dd{margin:0;color:#111b21;font-weight:600;overflow-wrap:anywhere}
+.fb-not{margin-top:6px;padding-top:6px;border-top:1px dashed #f0d27a}
+.balon.form .balon-alt{float:none;display:flex;justify-content:flex-end;margin:4px 0 0}
+.form-ozet{background:#fff8e1;border-bottom:1px solid #f6d77a;font-size:13.5px}
+.form-ozet>button{width:100%;display:flex;align-items:center;gap:8px;padding:9px 14px;text-align:left;font-weight:600;color:#7a5a00}
+.form-ozet>button span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.form-ozet>button b{flex:none;font-size:12.5px;color:#9a6700}
+.form-ozet .fo-ic{padding:0 14px 12px;max-height:46vh;overflow-y:auto}
 .balon.form.ilk::before{border-top-color:#f6d77a}
 .balon.oto{color:#475569}
 .balon.hatali{background:#fee2e2}
@@ -203,6 +213,7 @@ input,textarea{font:inherit;color:inherit}
         </a>
       </div>
       <div class="pencere" id="pencere"></div>
+      <div class="form-ozet gizli" id="formOzet"></div>
       <div class="not-alani gizli" id="notAlani">
         <textarea id="notInput" rows="2" placeholder="Bu kişiyle ilgili not (sadece siz görürsünüz)…"></textarea>
       </div>
@@ -389,6 +400,7 @@ function talepCiz() {
 /* ── Sohbet ── */
 function konusmaAc(wa) {
   durum.aktif = String(wa);
+  FORM_ACIK = false; $('formOzet').classList.add('gizli');
   $('bosSohbet').classList.add('gizli');
   $('sohbet').classList.remove('gizli');
   $('notAlani').classList.add('gizli');
@@ -418,7 +430,7 @@ function konusmaYukle(sessiz) {
     baslikCiz(r.isim, r.wa);
     if (document.activeElement !== $('notInput')) $('notInput').value = r.not || '';
     pencereCiz(r);
-    if (r.mesajlar.length !== oncekiSayi) mesajCiz(r.mesajlar);
+    if (r.mesajlar.length !== oncekiSayi) { mesajCiz(r.mesajlar); formOzetCiz(r.mesajlar); }
   });
 }
 
@@ -434,6 +446,25 @@ function pencereCiz(r) {
     p.textContent = r.sonGelen ? '24 saatlik yazışma süresi doldu' : 'Bu kişi henüz 15 15\'e yazmadı';
     $('yazAlani').classList.add('gizli'); $('sablonAlani').classList.remove('gizli');
   }
+}
+
+/* Site formu detayları (Umut, 9 Kas: "form doldurmuş detayları nasıl göreceğim, ona göre cevap yazacağım") */
+function paraYaz(v) { v = String(v || ''); return /^\d{4,}$/.test(v) ? Number(v).toLocaleString('tr-TR') : v; }
+function formTablo(m) {
+  var b = (m.bilgi || []).map(function (x) {
+    return '<dt>' + kacis(x[0]) + '</dt><dd>' + kacis(x[0] === 'Bütçe' ? x[1].split(' – ').map(paraYaz).join(' – ') + ' TL' : x[1]) + '</dd>';
+  }).join('');
+  return (b ? '<dl class="fb">' + b + '</dl>' : '') + (m.metin ? '<div class="fb-not">' + linkle(m.metin) + '</div>' : '');
+}
+var FORM_ACIK = false;
+function formOzetCiz(ms) {
+  var f = ms.filter(function (m) { return m.kaynak === 'site-formu'; }).pop(), el = $('formOzet');
+  if (!f) { el.classList.add('gizli'); el.innerHTML = ''; return; }
+  var ozet = [f.baslik].concat((f.bilgi || []).filter(function (x) { return /Bölge|Oda|m²/.test(x[0]); }).map(function (x) { return x[1]; })).join(' · ');
+  el.classList.remove('gizli');
+  el.innerHTML = '<button id="formOzetBtn"><span>📋 Site formu: ' + kacis(ozet) + '</span><b>' + (FORM_ACIK ? 'Kapat ▴' : 'Detay ▾') + '</b></button>' +
+    (FORM_ACIK ? '<div class="fo-ic">' + formTablo(f) + '<div style="font-size:12px;color:#8a6d1a;margin-top:6px">' + kacis(gunBaslik(f.t)) + ' ' + new Date(f.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + '</div></div>' : '');
+  $('formOzetBtn').onclick = function () { FORM_ACIK = !FORM_ACIK; formOzetCiz(ms); };
 }
 
 function tikCiz(d) {
@@ -458,7 +489,7 @@ function mesajCiz(ms) {
     var sinif = 'balon ' + (giden ? 'giden' : 'gelen') + (ilk ? ' ilk' : '') + (form ? ' form' : '') + (m.kaynak === 'oto-cevap' ? ' oto' : '') + (m.durum === 'başarısız' ? ' hatali' : '');
     var etiket = ilk && kim ? '<span class="kaynak">' + kacis(kim) + '</span>' : '';
     var medya = m.medya && String(m.medya).indexOf('http') === 0 ? '<div><a href="' + kacis(m.medya) + '" target="_blank" rel="noopener">Dosyayı aç ↗</a></div>' : '';
-    html += '<div class="' + sinif + '">' + etiket + linkle(m.metin) + medya +
+    html += '<div class="' + sinif + '">' + etiket + (form ? formTablo(m) : linkle(m.metin)) + medya +
       (m.hata ? '<div class="hata-not">' + kacis(m.hata) + '</div>' : '') +
       '<span class="balon-alt">' + new Date(m.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) +
       (giden ? ' ' + tikCiz(m.durum) : '') + '</span></div>';
