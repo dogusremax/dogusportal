@@ -857,7 +857,7 @@ body:not(.kilitli) #kapi{display:none}
    var kk=dv.querySelector('.dv-dav.kf'); if(kk){kk.remove();return;}
    kk=document.createElement('div'); kk.className='dv-dav kf';
    var t=String(r.telefon||'').replace(/\D/g,''); if(t.length===10)t='90'+t; else if(t.length===11&&t[0]==='0')t='9'+t;
-   var msg='Sayın '+r.ad+',\n\n22 Kasım Pazar 13:30, Kalamış Marina Hotel\'deki Kuzey Kıbrıs Yatırımcı Lansmanı için katılımınızı teyit ettiğiniz için teşekkür ederiz. Davetiyeler kişiye özel hazırlanıyor ve otele kesin sayı bildireceğiz.\n\nYanınızda gelecek misafirlerinizin adını soyadını ve telefonunu 1 dakikada bu linkten iletir misiniz?\n'+r.katilimLink+'\n\n'+(P.v.ad||'')+'\nRE/MAX Doğuş';
+   var msg='Sayın '+r.ad+',\n\n22 Kasım Pazar 13:30, Kalamış Marina Hotel\'deki Kuzey Kıbrıs Yatırımcı Lansmanı için katılımınızı teyit ettiğiniz için teşekkür ederiz. Davetiyeler kişiye özel hazırlanıyor ve otele kesin sayı bildireceğiz.\n\nYanınızda gelecek misafirlerinizin ad soyad ve telefon bilgilerini bu linkten yazmanızı rica ederiz:\n'+r.katilimLink+'\n\n'+(P.v.ad||'')+'\nRE/MAX Doğuş';
    kk.innerHTML='<small>Misafirinize gidecek mesaj: yanında gelenlerin ad soyad ve telefonunu kendisi yazar, bilgiler bu kayda işlenir.</small><div class="dr"><b>'+esc(r.ad)+'</b><span><button type="button" data-kop="'+esc(r.katilimLink)+'">Linki kopyala</button><a target="_blank" rel="noopener" href="https://wa.me/'+(t.length===12?t:'')+'?text='+encodeURIComponent(msg)+'">WhatsApp\'tan gönder</a></span></div>';
    dv.appendChild(kk);
   }
