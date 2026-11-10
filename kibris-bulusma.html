@@ -228,7 +228,7 @@ body:not(.kilitli) #kapi{display:none}
 .dv-dav .dr b{font-size:15px}
 .dv-dav .dr span{display:flex;gap:4px}
 .dv-dav a,.dv-dav button{font:inherit;font-size:13px;font-weight:700;border:0;background:#fff;color:var(--navy);border-radius:20px;padding:7px 10px;cursor:pointer;text-decoration:none}
-@media (max-width:600px){.pn-kat .kr{grid-template-columns:22px minmax(0,1fr);margin-bottom:6px}.pn-kat .kr input[data-kt]{grid-column:2}.pn-kat .kr small{display:none}.dv select{max-width:100%;min-width:0}.dv:has([data-dav]) .dv-bt{grid-column:1/-1}}
+@media (max-width:600px){.pn-kat .kr{grid-template-columns:22px minmax(0,1fr);margin-bottom:6px}.pn-kat .kr input[data-kt]{grid-column:2}.pn-kat .kr small{display:none}.dv select{max-width:100%;min-width:0}.dv:has([data-dav]) .dv-bt,.dv:has([data-kform]) .dv-bt{grid-column:1/-1;flex-wrap:wrap}}
 .pn-filtre{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .pn-filtre[hidden]{display:none}
 .pn-filtre input{flex:2 1 180px;width:auto}.pn-filtre select{flex:1 1 150px;width:auto}
@@ -358,7 +358,7 @@ body:not(.kilitli) #kapi{display:none}
     <ol>
      <li><b>+%10 Danışman Ödülü, plana sadık kalana:</b> en az <b>10 kişilik</b> davet listesi ve en az <b>3 ayrı davetliden</b> kesin teyit. Eşiyle ya da ailesiyle gelen misafir 1 davetli sayılır. Liste hedefi 9 Kasım, teyit hedefi 13 Kasım; ödül için 21 Kasım'a kadar yetişmeniz yeterli.</li>
      <li><b>Ödül nerede geçerli:</b> <b>lansmana gelen</b> davetlinize 31 Ocak 2027'ye kadar yaptığınız satışta. RE/MAX merkez payı düştükten sonra paylaşım %60 sizin, %40 ofisin.</li>
-     <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. "Son teyit alındı" 20 Kasım'da açılır: 20–21 Kasım'da her teyitli davetlinizi arayıp son teyidi işaretleyin, lansman günü kapıda karşılayın.</li>
+     <li><b>Takip sizde:</b> davetlinizi son teyide kadar siz takip edersiniz. "Son teyit alındı" 19 Kasım'da açılır: 19–21 Kasım'da her teyitli davetlinizi arayıp son teyidi işaretleyin, lansman günü kapıda karşılayın.</li>
      <li><b>Danışman Takip puanı:</b> her yeni davetli <b>3 puan</b> (günde en çok 5 davetli), kesin teyit <b>+5</b>, son teyit <b>+5</b>, lansmana gelen misafir <b>+15</b>. Her davetli için her adım bir kez puan getirir. "Lansmana geldi"yi kapıda broker işaretler.</li>
      <li><b>Ortak davetli:</b> müşteriyi bir arkadaşınızla birlikte getiriyorsanız kayda "Ortak danışman" ekleyin. Davetli ikinizin listesine ve teyidine tam sayılır, puan yarı yarıya bölünür. Ortağı kaydı giren danışman ekler.</li>
      <li><b>Müşteri sahipliği:</b> davetli, telefonunu panele ilk kaydeden danışmanın müşterisidir. Aynı numarayı başka danışman giremez.</li>
@@ -379,7 +379,7 @@ body:not(.kilitli) #kapi{display:none}
      <label class="pn-alan"><span>İlgi düzeyi</span><select id="fpIlgi"><option value="yuksek">Yüksek</option><option value="orta">Orta</option></select></label>
      <label class="pn-alan"><span>Durum</span><select id="fpDurum"></select></label>
      <label class="pn-alan"><span>Ortak danışman</span><select id="fpOrtak"></select></label>
-     <div class="pn-kat pn-genis" id="fpKat" hidden><b>Katılımcılar</b><small>Davetiye kişi başı gönderilecek: kesin teyitte gelen herkesin adını soyadını yazın.</small><div id="fpKatSatir"></div></div>
+     <div class="pn-kat pn-genis" id="fpKat" hidden><b>Katılımcılar</b><small>Biliyorsanız yazın. Bilmiyorsanız boş bırakın: listedeki "Katılımcı formu" linkini misafirinize gönderin, yanındakilerin adını ve telefonunu kendisi yazsın.</small><div id="fpKatSatir"></div></div>
      <label class="pn-alan pn-genis"><span>Not</span><input id="fpNot" autocomplete="off" placeholder="Örn. eşiyle gelecek, tatil evi arıyor"></label>
      <div class="err pn-genis" id="fpHata"></div>
      <div class="bt pn-genis"><button class="btn cp" id="fpKaydet" type="submit">Kaydet</button><button class="btn gh" id="fpVazgec" type="button">Vazgeç</button></div>
@@ -442,7 +442,7 @@ body:not(.kilitli) #kapi{display:none}
   <div class="plan" id="plan">
    <div class="ph" data-a="2026-11-01" data-b="2026-11-09"><div class="d">1 – 9 Kasım</div><h3>Liste ve ilk davet</h3><ul class="ck"><li>En az 10 kişilik listenizi 9 Kasım'a kadar panele girin.</li><li>Önce arayın, sonra kişisel WhatsApp davetini gönderin.</li><li>Lansman reels'ini 8 Kasım'da paylaşın.</li></ul></div>
    <div class="ph" data-a="2026-11-10" data-b="2026-11-13"><div class="d">10 – 13 Kasım</div><h3>Kesin teyit</h3><ul class="ck"><li>13 Kasım Cuma 18.00'e kadar en az 3 ayrı davetliden kesin teyit.</li><li>"Gelirim" diyeni panelde "Teyit verdi" yapın.</li><li>Cevap vermeyenleri ikinci kez arayın.</li></ul></div>
-   <div class="ph" data-a="2026-11-14" data-b="2026-11-21"><div class="d">14 – 21 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 21 Kasım'a kadar alınanlar da ödüle sayılır.</li><li>"Son teyit alındı" 20 Kasım'da açılır; 20–21 Kasım'da teyitli davetlilerinizi arayıp işaretleyin (+5 puan).</li><li>21 Kasım akşamı misafirlerinize son hatırlatma mesajı.</li><li>21 Kasım'da liste ve ödül kesinleşir.</li></ul></div>
+   <div class="ph" data-a="2026-11-14" data-b="2026-11-21"><div class="d">14 – 21 Kasım</div><h3>Ekleme ve son teyit</h3><ul class="ck"><li>Yeni teyitleri eklemeye devam edin; 21 Kasım'a kadar alınanlar da ödüle sayılır.</li><li>"Son teyit alındı" 19 Kasım'da açılır; 19–21 Kasım'da teyitli davetlilerinizi arayıp işaretleyin (+5 puan).</li><li>21 Kasım akşamı misafirlerinize son hatırlatma mesajı.</li><li>21 Kasım'da liste ve ödül kesinleşir.</li></ul></div>
    <div class="ph" data-a="2026-11-22" data-b="2026-11-30"><div class="d">22 Kasım ve sonrası</div><h3>Buluşma ve takip</h3><ul class="ck"><li>22 Kasım 13:00'te salonda olun.</li><li>Ertesi gün her misafirinizi arayıp durumunu güncelleyin.</li></ul></div>
   </div>
  </section>
@@ -612,7 +612,7 @@ body:not(.kilitli) #kapi{display:none}
  var ADIM=[
   {k:'liste',e:'9 Kas',b:'9 Kasım Pazartesi',h:'Davet listesi: en az 10 kişi'},
   {k:'teyit',e:'13 Kas · 18.00',b:'13 Kasım Cuma 18.00',h:'Kesin teyit hedefi: 3 ayrı davetli'},
-  {k:'son',e:'21 Kas',b:'21 Kasım Cumartesi',h:'Son teyit (20 Kasım\'da açılır); liste ve Danışman Ödülü kesinleşir',ust:true},
+  {k:'son',e:'21 Kas',b:'21 Kasım Cumartesi',h:'Son teyit (19 Kasım\'da açılır); liste ve Danışman Ödülü kesinleşir',ust:true},
   {k:'lansman',e:'22 Kas',b:'22 Kasım Pazar 13:30',h:'Lansman · Kalamış Marina Hotel'}];
  var HEDEF={liste:10,teyit:3};
  var DURUM={davet:'Davet edildi',teyit:'Teyit verdi',son:'Son teyit alındı',geldi:'Lansmana geldi',gorusme:'Görüşme yapıldı',satis:'Satış',vazgecti:'Katılmayacak'};
@@ -797,7 +797,7 @@ body:not(.kilitli) #kapi{display:none}
    var sag=giris
     ?(GELDI.indexOf(r.durum)>=0?'<span class="chip ok">Geldi ✓</span>':'<button class="geldi" type="button" data-geldi>Geldi</button>')
     :'<select class="s-'+r.durum+'" data-durum aria-label="Durum">'+durumOps(r.durum)+'</select>'+
-     '<div class="dv-bt">'+(v.broker&&KESIN.indexOf(r.durum)>=0?'<button type="button" data-dav>Davetiye</button>':'')+'<button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
+     '<div class="dv-bt">'+(KESIN.indexOf(r.durum)>=0&&r.katilimLink?'<button type="button" data-kform>Katılımcı formu</button>':'')+(v.broker&&KESIN.indexOf(r.durum)>=0?'<button type="button" data-dav>Davetiye</button>':'')+'<button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
    var etiket=(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+
     (r.ortak?(r.ortak===v.ad?'<span class="dn ortak">Sahibi: '+esc(ilk(r.danisman))+'</span>':'<span class="dn ortak">Ortak: '+esc(ilk(r.ortak))+'</span>'):'');
    return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+etiket+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small>'+katS+'</div>'+sag+'</div>';
@@ -826,17 +826,16 @@ body:not(.kilitli) #kapi{display:none}
   var kilit=!P.v.broker&&GELDI.indexOf(mevcut)<0;
   /* Umut, 3 Kas: teyit adımları 10 Kasım'da açılır (sunucu da reddeder); zaten teyitli kayıt etkilenmez */
   var tKilit=!P.v.broker&&KESIN.indexOf(mevcut)<0&&Date.now()<new Date(P.v.teyitAcilis||'2026-11-10T00:00:00+03:00').getTime();
-  /* Umut, 3 Kas: "Son teyit alındı" 20 Kasım'da açılır (+5 puan) */
-  var sKilit=!P.v.broker&&mevcut!=='son'&&GELDI.indexOf(mevcut)<0&&Date.now()<new Date(P.v.sonAcilis||'2026-11-20T00:00:00+03:00').getTime();
+  /* Umut, 10 Kas: "Son teyit alındı" 19 Kasım'da açılır (önce 20) (+5 puan) */
+  var sKilit=!P.v.broker&&mevcut!=='son'&&GELDI.indexOf(mevcut)<0&&Date.now()<new Date(P.v.sonAcilis||'2026-11-19T00:00:00+03:00').getTime();
   return SIRA.map(function(k){var dis=kilit&&GELDI.indexOf(k)>=0,tk=tKilit&&KESIN.indexOf(k)>=0&&GELDI.indexOf(k)<0,sk=!tk&&sKilit&&k==='son';
-   return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis||tk||sk?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':sk?' (20 Kasım\'da açılır)':tk?' ('+(k==='son'?'20':'10')+' Kasım\'da açılır)':'')+'</option>';}).join('');
+   return '<option value="'+k+'"'+(k===mevcut?' selected':'')+(dis||tk||sk?' disabled':'')+'>'+DURUM[k]+(dis?' (kapıda)':sk?' (19 Kasım\'da açılır)':tk?' ('+(k==='son'?'19':'10')+' Kasım\'da açılır)':'')+'</option>';}).join('');
  }
 
  $('pnListe').addEventListener('change',function(e){
   var s=e.target.closest('[data-durum]'); if(!s)return;
   var r=bul(s.closest('.dv').dataset.id); if(!r)return;
   var d=JSON.parse(JSON.stringify(r)); d.durum=s.value;
-  if(katEksik(r,d.durum,r.kisi)){s.value=r.durum;formAc(r,d.durum);toast(r.kisi+' kişi geliyor: davetiye kişi başı gideceği için diğer katılımcıların adını soyadını yazın.');return;}
   s.disabled=true;
   istek({islem:'kaydet',davetli:d}).then(function(x){if(!cevap(x,DURUM[d.durum]+' olarak kaydedildi',s))listeCiz();});
  });
@@ -853,6 +852,14 @@ body:not(.kilitli) #kapi{display:none}
     return '<div class="dr"><b>'+(i+1)+'. '+esc(x.ad)+'</b><span><button type="button" data-kop="'+esc(l)+'">Linki kopyala</button><a target="_blank" rel="noopener" href="https://wa.me/'+(t.length===12?t:'')+'?text='+encodeURIComponent(m)+'">WhatsApp</a></span></div>';}).join('')+
     (ke?'<small style="color:var(--red)">'+ke+' katılımcının adı eksik: "Düzenle" ile ekleyin.</small>':'');
    dv.appendChild(kutu);
+  }
+  if(e.target.closest('[data-kform]')){
+   var kk=dv.querySelector('.dv-dav.kf'); if(kk){kk.remove();return;}
+   kk=document.createElement('div'); kk.className='dv-dav kf';
+   var t=String(r.telefon||'').replace(/\D/g,''); if(t.length===10)t='90'+t; else if(t.length===11&&t[0]==='0')t='9'+t;
+   var msg='Sayın '+r.ad+',\n\n22 Kasım Pazar 13:30, Kalamış Marina Hotel\'deki Kuzey Kıbrıs Yatırımcı Lansmanı için katılımınızı teyit ettiğiniz için teşekkür ederiz. Davetiyeler kişiye özel hazırlanıyor ve otele kesin sayı bildireceğiz.\n\nYanınızda gelecek misafirlerinizin adını soyadını ve telefonunu 1 dakikada bu linkten iletir misiniz?\n'+r.katilimLink+'\n\n'+(P.v.ad||'')+'\nRE/MAX Doğuş';
+   kk.innerHTML='<small>Misafirinize gidecek mesaj: yanında gelenlerin ad soyad ve telefonunu kendisi yazar, bilgiler bu kayda işlenir.</small><div class="dr"><b>'+esc(r.ad)+'</b><span><button type="button" data-kop="'+esc(r.katilimLink)+'">Linki kopyala</button><a target="_blank" rel="noopener" href="https://wa.me/'+(t.length===12?t:'')+'?text='+encodeURIComponent(msg)+'">WhatsApp\'tan gönder</a></span></div>';
+   dv.appendChild(kk);
   }
   var kp=e.target.closest('[data-kop]');
   if(kp){var lt=kp.dataset.kop;(navigator.clipboard?navigator.clipboard.writeText(lt):Promise.reject()).then(function(){toast('Link kopyalandı');}).catch(function(){toast(lt);});}
@@ -912,7 +919,8 @@ body:not(.kilitli) #kapi{display:none}
   var kat=[];
   if(!$('fpKat').hidden){katTopla();var n=(Number($('fpKisi').value)||1)-1;
    for(var i=0;i<n;i++){var x=katVeri[i]||{},ka=String(x.ad||'').trim().replace(/\s+/g,' ');
-    if(ka.split(' ').length<2){$('fpHata').textContent=(i+2)+'. kişinin adını ve soyadını yazın (davetiye kişi başı gidecek).';var el=$('fpKatSatir').querySelectorAll('[data-ka]')[i];if(el)el.focus();return;}
+    if(!ka) continue;
+    if(ka.split(' ').length<2){$('fpHata').textContent=(i+2)+'. kişinin soyadını da yazın.';var el=$('fpKatSatir').querySelectorAll('[data-ka]')[i];if(el)el.focus();return;}
     kat.push({ad:ka,tel:String(x.tel||'').trim()});}}
   else kat=katVeri.filter(function(x){return x&&String(x.ad||'').trim();}).slice(0,Math.max(0,(Number($('fpKisi').value)||1)-1));
   $('fpHata').textContent=''; $('fpKaydet').disabled=true; $('fpKaydet').textContent='Kaydediliyor…';
@@ -943,7 +951,7 @@ body:not(.kilitli) #kapi{display:none}
  function hazirMetin(t){
   var now=Date.now(), s=ADIM.filter(function(a){return TS[a.k]>now;})[0];
   if(t==='teslim'&&s) return s.b+' teslim tarihine '+sure(TS[s.k]-now).replace(/ \d+sn$/,'')+' kaldı. '+
-   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'+%10 Danışman Ödülü için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini 20 Kasım\'dan itibaren arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
+   (s.k==='liste'?'En az 10 kişilik davet listeni panele gir.':s.k==='teyit'?'+%10 Danışman Ödülü için en az 3 ayrı davetliden kesin teyidini panele gir.':s.k==='son'?'Teyit veren misafirlerini 19 Kasım\'dan itibaren arayıp "Son teyit alındı" olarak işaretle.':'Misafirlerine bu akşam hatırlatma mesajı gönder.');
   if(t==='tebrik') return 'Harika gidiyorsun! Teyitlerin sıralamada öne çıktı. 22 Kasım\'da salonu birlikte dolduruyoruz.';
   return 'Sıralamaya bir göz at: dogusportal.com/kibris-bulusma.html#panel';
  }
@@ -989,7 +997,7 @@ body:not(.kilitli) #kapi{display:none}
   if(!DEMO){
    var gun=function(d,s){return new Date('2026-11-'+iki(d)+'T'+iki(s||11)+':00:00+03:00').toISOString();};
    var ekip=['Örnek Danışman A','Örnek Danışman B','Örnek Danışman C','Örnek Danışman D'];
-   var x=function(id,dn,ad,tel,kisi,durum,kayit,teyit,butce){return {id:id,danisman:dn,ad:ad,telefon:tel,kisi:kisi,butce:butce||'',ilgi:'yuksek',durum:durum,not:'',kayit:kayit,teyit:teyit||''};};
+   var x=function(id,dn,ad,tel,kisi,durum,kayit,teyit,butce){return {id:id,danisman:dn,ad:ad,telefon:tel,kisi:kisi,butce:butce||'',ilgi:'yuksek',durum:durum,not:'',kayit:kayit,teyit:teyit||'',katilimLink:'https://dogusportal.com/katilim.html?demo=1'};};
    DEMO={ekip:ekip,liste:[
     x('d1',ekip[0],'Örnek Misafir Bir','0532 000 00 01',2,'teyit',gun(2),gun(3),'100 – 200 bin £'),
     x('d2',ekip[0],'Örnek Misafir İki','0532 000 00 02',1,'davet',gun(2)),
@@ -1010,7 +1018,7 @@ body:not(.kilitli) #kapi{display:none}
    var ayni=DEMO.liste.filter(function(r){return String(r.telefon).replace(/\D/g,'').slice(-10)===key&&r.id!==d.id;})[0];
    var dn=eski?eski.danisman:(g.danisman||ben), ort=d.ortak!==undefined?d.ortak:(eski?eski.ortak:'');
    if(ayni) return {ok:false,error:ayni.danisman===dn?'Bu numara listende zaten var: '+ayni.ad+'.':'Bu numara '+ayni.danisman+' adına '+tarih(ayni.kayit).replace(/ \d\d:\d\d$/,'')+' tarihinde kaydedilmiş. Müşteri ilk kaydeden danışmanındır.'};
-   var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,katilimcilar:d.katilimcilar||[],
+   var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,katilimcilar:d.katilimcilar||[],katilimLink:'https://dogusportal.com/katilim.html?demo=1',
     kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:''),ortak:ort||''};
    if(eski) DEMO.liste[DEMO.liste.indexOf(eski)]=y; else DEMO.liste.push(y);
    var pu=0; DEMO.puan=DEMO.puan||{};
