@@ -664,7 +664,7 @@ body:not(.kilitli) #kapi{display:none}
    hataYaz(''); if(!P.demo) ls('kb_pin',pin);
    document.body.classList.remove('kilitli'); var hh=location.hash.slice(1); if(hh==='panel'||hh==='linkim') setTimeout(function(){$(hh).scrollIntoView();},50);
    P.v=r; $('pnGiris').hidden=true; $('pnAna').hidden=false;
-   kimSec(r.ad); filtreKur(); ciz();
+   kimSec(r.ad); filtreKur(); ciz(); kayitAc();
   });
  }
  function cevap(r,basari,el){
@@ -789,6 +789,16 @@ body:not(.kilitli) #kapi{display:none}
  }
 
  function bul(id){return (P.v.davetliler||[]).filter(function(r){return r.id===id;})[0];}
+ /* Umut, 10 Kas: bildirim kartındaki "Kaydı panelde aç" → #kayit=<id>: o davetlinin kaydı açılır, listede vurgulanır */
+ function kayitAc(){
+  var m=location.hash.match(/^#kayit=([\w-]+)/); if(!m)return;
+  var r=bul(decodeURIComponent(m[1]));
+  try{history.replaceState(null,'',location.pathname+location.search+'#panel');}catch(e){}
+  if(!r){toast('Kayıt bulunamadı (silinmiş olabilir).');setTimeout(function(){$('panel').scrollIntoView();},50);return;}
+  ['pnAra','pnFd','pnFs'].forEach(function(id){var el=$(id);if(el&&el.value){el.value='';}}); listeCiz();
+  formAc(r);
+  var dv=document.querySelector('.dv[data-id="'+r.id+'"]'); if(dv){dv.style.boxShadow='0 0 0 3px rgba(220,28,46,.35)';dv.style.borderRadius='12px';}
+ }
  /* Danışman "Lansmana geldi" ve sonrasını seçemez; kapıda broker işaretler */
  function durumOps(mevcut){
   var kilit=!P.v.broker&&GELDI.indexOf(mevcut)<0;
@@ -906,6 +916,7 @@ body:not(.kilitli) #kapi{display:none}
  /* %60 geri sayımı panelde de saniye saniye */
  setInterval(function(){var z=$('pnHakZ'),n=Date.now();if(z)z.textContent=sure((n<TS.teyit?TS.teyit:TS.son)-n);},1000);
 
+ window.addEventListener('hashchange',function(){if(P.v&&/^#kayit=/.test(location.hash))kayitAc();});
  $('pnGir').onclick=function(){giris($('pnPin').value);};
  $('pnPin').addEventListener('keydown',function(e){if(e.key==='Enter')giris(this.value);});
  $('pnPin').addEventListener('input',function(){if(this.value.length===6)giris(this.value);});
