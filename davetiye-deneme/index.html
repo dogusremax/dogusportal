@@ -370,26 +370,8 @@ footer p{margin-top:16px;font-size:12px}
 
   <div class="photo rv" style="background-image:url(marina.jpg);aspect-ratio:16/9"></div>
 
-  <div class="eb rv">Katılım</div>
-  <h2 class="rv">Yerinizi <b>ayırtın</b></h2>
-  <form id="f" class="rv" novalidate>
-    <label for="ad">Ad soyad<input type="text" id="ad" autocomplete="name" required></label>
-    <label for="tel">Cep telefonu<input type="tel" id="tel" autocomplete="tel" inputmode="tel" placeholder="05xx xxx xx xx" required></label>
-    <div><label style="margin-bottom:6px">Katılım</label>
-      <div class="seg"><input type="radio" name="kisi" id="k1" value="1" checked><label for="k1">Yalnız ben</label><input type="radio" name="kisi" id="k2" value="2"><label for="k2">2 kişi</label><input type="radio" name="kisi" id="k3" value="3"><label for="k3">3 kişi</label><input type="radio" name="kisi" id="k4" value="4+"><label for="k4">Grup (4+)</label></div>
-      <label id="grupL" for="grup" hidden style="margin-top:10px">Grupta kaç kişi olacaksınız?<input type="number" id="grup" inputmode="numeric" min="4" max="30" placeholder="Örn. 6"></label></div>
-    <label class="ok" for="kvkk"><input type="checkbox" id="kvkk">Bilgilerimin lansman organizasyonu ve bu etkinlikle ilgili bilgilendirme için RE/MAX Doğuş tarafından kullanılmasını kabul ediyorum.</label>
-    <div class="err" id="err" role="alert"></div>
-    <button class="btn solid" type="submit">Yerimi ayırt</button>
-  </form>
-  <div id="done" hidden>
-    <h3>Teşekkürler, <b id="d-ad"></b></h3>
-    <p>Son adım: onay mesajını WhatsApp’tan gönderin, yeriniz kesinleşsin. Giriş kartınız lansmandan önce telefonunuza gelecek.</p>
-    <a class="btn solid" id="wa" target="_blank" rel="noopener" href="#">WhatsApp’tan onayla</a>
-  </div>
-
   <footer class="rv">
-    Bilgi ve kayıt
+    Bilgi için
     <b>0216 315 15 15</b>
     <a class="w" href="https://www.kibrisburda.com" target="_blank" rel="noopener">www.kibrisburda.com</a>
     <p>RE/MAX Doğuş</p>
@@ -402,7 +384,7 @@ footer p{margin-top:16px;font-size:12px}
   try{ name=new URLSearchParams(location.search).get('ad')||''; }catch(e){}
   if(!name && location.hash.length>1){ try{ name=decodeURIComponent(location.hash.slice(1)).replace(/[-_]+/g,' '); }catch(e){} }
   name=name.trim().slice(0,40);
-  if(name){ document.getElementById('guest').textContent=name; document.getElementById('ad').value=name; }
+  if(name){ document.getElementById('guest').textContent=name; }
 
   var gate=document.getElementById('gate'), body=document.body;
   body.classList.add('locked','pre');
@@ -570,23 +552,8 @@ footer p{margin-top:16px;font-size:12px}
     ['d','h','m','s'].forEach(function(u){ for(var i=0;i<2;i++){ var c=cells[u][i]; if(c._v!==vals[u][i]&&c._v!==undefined) k++; setD(c,vals[u][i],k); } });
   }
   tick(); setInterval(tick,1000);
-  document.querySelectorAll('input[name=kisi]').forEach(function(r){ r.addEventListener('change',function(){ document.getElementById('grupL').hidden=r.value!=='4+'||!r.checked; }); });
   addEventListener('scroll',function(){ var sc=scrollY>40; body.classList.toggle('scrolled',sc); if(sc!==muzKis){ muzKis=sc; muzSet(); } },{passive:true});
 
-  document.getElementById('f').addEventListener('submit', function(e){
-    e.preventDefault();
-    var ad=document.getElementById('ad').value.trim(), tel=document.getElementById('tel').value.trim();
-    var kisi=document.querySelector('input[name=kisi]:checked').value; if(kisi==='4+'){ var g=parseInt(document.getElementById('grup').value,10); kisi=g>=4?String(g)+' (grup)':'4 veya daha fazla (grup)'; } var ok=document.getElementById('kvkk').checked;
-    var err=document.getElementById('err');
-    if(ad.length<3){ err.textContent='Lütfen adınızı ve soyadınızı yazın.'; return; }
-    if(tel.replace(/\D/g,'').length<10){ err.textContent='Lütfen 10 haneli cep telefonunuzu yazın.'; return; }
-    if(!ok){ err.textContent='Devam etmek için bilgilendirme onayını işaretleyin.'; return; }
-    err.textContent='';
-    var txt='Merhaba, 22 Kasım Kuzey Kıbrıs Yatırımcı Lansmanı için katılımımı onaylıyorum.\nAd soyad: '+ad+'\nTelefon: '+tel+'\nKişi sayısı: '+kisi;
-    document.getElementById('wa').href='https://wa.me/902163151515?text='+encodeURIComponent(txt);
-    document.getElementById('d-ad').textContent=ad.split(' ')[0];
-    this.hidden=true; document.getElementById('done').hidden=false;
-  });
 })();
 </script>
 </body>
