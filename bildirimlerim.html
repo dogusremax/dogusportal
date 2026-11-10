@@ -58,6 +58,8 @@ body.tek .kartarka { display:flex; visibility:visible; background:linear-gradien
 .bkart .ksatir { display:flex; justify-content:space-between; gap:12px; border-top:1px solid #eceef3; padding:12px 0; font-size:14.5px; }
 .bkart .ksatir span { color:#68738a; } .bkart .ksatir b { color:#050A30; text-align:right; }
 .bkart .ksatir.vurgu b { color:#DC1C2E; font-size:20px; }
+.bkart .kgit { display:block; width:calc(100% - 44px); margin:12px 22px 0; background:#DC1C2E; color:#fff; text-align:center; text-decoration:none; padding:14px; border-radius:14px; font:700 15px 'Plus Jakarta Sans','Inter',sans-serif; box-sizing:border-box; }
+.bkart .kgit[hidden] { display:none; }
 .bkart .ktamam { display:block; width:calc(100% - 44px); margin:12px 22px 22px; background:#050A30; color:#fff; border:0; padding:14px; border-radius:14px; font:700 15px 'Plus Jakarta Sans','Inter',sans-serif; cursor:pointer; }
 </style>
 </head>
@@ -72,7 +74,7 @@ body.tek .kartarka { display:flex; visibility:visible; background:linear-gradien
   <div class="ust"><span id="kim"></span><button class="hepsi" id="hepsi">Tümünü okundu say</button></div>
   <div id="liste"><div class="yukleniyor">Yükleniyor…</div></div>
   <div class="kartarka" id="kartarka"><div class="bkart"><div class="kbas"><img src="/assets/dogus-logo.png" alt=""><small id="kust">RE/MAX Doğuş</small><h2 id="kbaslik"></h2></div>
-    <div class="kgovde"><p id="kmetin">Yükleniyor…</p><div id="ksatirlar" style="margin-top:14px"></div></div><button class="ktamam" id="ktamam" type="button">Tamam</button></div></div>
+    <div class="kgovde"><p id="kmetin">Yükleniyor…</p><div id="ksatirlar" style="margin-top:14px"></div></div><a class="kgit" id="kgit" href="#" hidden></a><button class="ktamam" id="ktamam" type="button">Tamam</button></div></div>
   <p class="not" id="not" style="display:none">Son 30 günün bildirimleri burada durur. Okumadıkların kırmızı noktalı.</p>
 </main>
 <script src="/assets/bildirim-link.js"></script>
@@ -120,6 +122,10 @@ try { window.__bldIlk = localStorage.getItem('bld_token') || ''; } catch (e) {}<
     $('ksatirlar').innerHTML = (k.satirlar || []).map(function (r) {
       return '<div class="ksatir' + (r[2] ? ' vurgu' : '') + '"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>';
     }).join('');
+    // Umut, 10 Kas: lansman kayıt kartında "Kaydı panelde aç" (yalnız portal içi bağlantı)
+    var g = $('kgit'), gl = String(k.link || '');
+    var ic = false; try { var gu = new URL(gl, location.href); ic = gl && (gu.origin === location.origin || gu.origin === 'https://dogusportal.com'); } catch (e) {}
+    if (ic) { g.href = gl; g.textContent = k.linkYazi || 'Aç'; g.hidden = false; } else g.hidden = true;
     $('kartarka').classList.add('acik');
   }
   function tekBitir() { if (document.body.classList.contains('tek')) { location.href = '/?cb=' + Date.now(); return true; } return false; }
