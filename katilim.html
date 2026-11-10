@@ -102,7 +102,7 @@ footer b{display:block;color:#fff;font-size:18px;margin-top:2px}
  var $=function(id){return document.getElementById(id);};
  var kayit=null, kisi=2, veri=[];
  function istek(g){
-  if(DEMO){ if(g.islem==='katilimAl')return Promise.resolve({ok:true,ad:'Ayşe Yılmaz',kisi:2,katilimcilar:[]});
+  if(DEMO){ if(g.islem==='katilimAl')return Promise.resolve({ok:true,ad:(q.get('ad')||'Ayşe Yılmaz').slice(0,40),kisi:2,katilimcilar:[]});
    return Promise.resolve({ok:true,ad:'Ayşe Yılmaz',kisi:g.kisi}); }
   g.action='lansman'; g.t=T;
   return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify(g)}).then(function(r){return r.text();})
