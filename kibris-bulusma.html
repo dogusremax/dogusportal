@@ -216,6 +216,19 @@ body:not(.kilitli) #kapi{display:none}
 .pn-alan span{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink2)}
 .pn-form input,.pn-form select,.pn-form textarea,.pn-filtre input,.pn-filtre select{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--sand2);background:#fff;width:100%;min-width:0}
 .pn-genis{grid-column:1/-1}
+.pn-kat{background:#fff;border:1.5px solid var(--gold);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.pn-kat[hidden]{display:none}
+.pn-kat>b{font-size:14px}.pn-kat>small{font-size:13px;color:var(--ink2);margin-top:-4px}
+.pn-kat .kr{display:grid;grid-template-columns:28px minmax(0,2fr) minmax(0,1.3fr);gap:8px;align-items:center}
+.pn-kat .kr i{font-style:normal;font-weight:800;color:var(--ink2);text-align:center}
+.pn-kat .kr .ana{font-weight:700;padding:10px 4px;overflow-wrap:anywhere}
+.dv-ad small.kt{color:var(--navy);font-weight:600}
+.dv-dav{grid-column:1/-1;background:var(--sand);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.dv-dav .dr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:space-between}
+.dv-dav .dr b{font-size:15px}
+.dv-dav .dr span{display:flex;gap:4px}
+.dv-dav a,.dv-dav button{font:inherit;font-size:13px;font-weight:700;border:0;background:#fff;color:var(--navy);border-radius:20px;padding:7px 10px;cursor:pointer;text-decoration:none}
+@media (max-width:600px){.pn-kat .kr{grid-template-columns:22px minmax(0,1fr);margin-bottom:6px}.pn-kat .kr input[data-kt]{grid-column:2}.pn-kat .kr small{display:none}.dv select{max-width:100%;min-width:0}.dv:has([data-dav]) .dv-bt{grid-column:1/-1}}
 .pn-filtre{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .pn-filtre[hidden]{display:none}
 .pn-filtre input{flex:2 1 180px;width:auto}.pn-filtre select{flex:1 1 150px;width:auto}
@@ -366,6 +379,7 @@ body:not(.kilitli) #kapi{display:none}
      <label class="pn-alan"><span>İlgi düzeyi</span><select id="fpIlgi"><option value="yuksek">Yüksek</option><option value="orta">Orta</option></select></label>
      <label class="pn-alan"><span>Durum</span><select id="fpDurum"></select></label>
      <label class="pn-alan"><span>Ortak danışman</span><select id="fpOrtak"></select></label>
+     <div class="pn-kat pn-genis" id="fpKat" hidden><b>Katılımcılar</b><small>Davetiye kişi başı gönderilecek: kesin teyitte gelen herkesin adını soyadını yazın.</small><div id="fpKatSatir"></div></div>
      <label class="pn-alan pn-genis"><span>Not</span><input id="fpNot" autocomplete="off" placeholder="Örn. eşiyle gelecek, tatil evi arıyor"></label>
      <div class="err pn-genis" id="fpHata"></div>
      <div class="bt pn-genis"><button class="btn cp" id="fpKaydet" type="submit">Kaydet</button><button class="btn gh" id="fpVazgec" type="button">Vazgeç</button></div>
@@ -778,17 +792,25 @@ body:not(.kilitli) #kapi{display:none}
    $('pnListe').innerHTML='<div class="bos">'+(v.broker?'Bu filtreye uyan davetli yok.':'Henüz davetliniz yok. "+ Davetli ekle" ile ilk misafirinizi kaydedin; hedef 9 Kasım\'a kadar 10 kişi.')+'</div>';return;}
   $('pnListe').innerHTML=list.map(function(r){
    var bilgi=[r.telefon,(r.kisi||1)+' kişi',r.butce,'İlgi: '+(r.ilgi==='orta'?'Orta':'Yüksek'),r.not].filter(Boolean).map(esc).join(' · ');
+   var kl=katListe(r).slice(0,Math.max(0,(r.kisi||1)-1)), ke=katEksik(r,r.durum,r.kisi);
+   var katS=kl.length||ke?'<small class="kt">'+(kl.length?'Katılımcılar: '+esc(r.ad)+', '+kl.map(function(x){return esc(x.ad);}).join(', '):'')+(ke?(kl.length?' · ':'')+'<span style="color:var(--red)">'+ke+' katılımcının adı eksik</span>':'')+'</small>':'';
    var sag=giris
     ?(GELDI.indexOf(r.durum)>=0?'<span class="chip ok">Geldi ✓</span>':'<button class="geldi" type="button" data-geldi>Geldi</button>')
     :'<select class="s-'+r.durum+'" data-durum aria-label="Durum">'+durumOps(r.durum)+'</select>'+
-     '<div class="dv-bt"><button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
+     '<div class="dv-bt">'+(v.broker&&KESIN.indexOf(r.durum)>=0?'<button type="button" data-dav>Davetiye</button>':'')+'<button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
    var etiket=(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+
     (r.ortak?(r.ortak===v.ad?'<span class="dn ortak">Sahibi: '+esc(ilk(r.danisman))+'</span>':'<span class="dn ortak">Ortak: '+esc(ilk(r.ortak))+'</span>'):'');
-   return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+etiket+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small></div>'+sag+'</div>';
+   return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+etiket+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small>'+katS+'</div>'+sag+'</div>';
   }).join('');
  }
 
  function bul(id){return (P.v.davetliler||[]).filter(function(r){return r.id===id;})[0];}
+ /* Umut, 10 Kas: davetiye kişi başı gidecek; kesin teyitte 2+ kişide herkesin ad soyadı alınır (katilimcilar: ana davetli hariç diğerleri) */
+ function katListe(r){var k=r&&r.katilimcilar;if(typeof k==='string'){try{k=JSON.parse(k||'[]');}catch(e){k=[];}}return Array.isArray(k)?k:[];}
+ function katEksik(r,durum,kisi){kisi=Number(kisi)||1;if(KESIN.indexOf(durum)<0||kisi<2)return 0;
+  var n=katListe(r).filter(function(x){return String(x.ad||'').trim().split(/\s+/).length>=2;}).length;return Math.max(0,kisi-1-n);}
+ function davLink(ad){return 'https://dogusportal.com/d?a='+encodeURIComponent(String(ad).trim().replace(/\s+/g,'-'));}
+ function davKisiler(r){return [{ad:r.ad,tel:r.telefon}].concat(katListe(r).slice(0,Math.max(0,(Number(r.kisi)||1)-1)));}
  /* Umut, 10 Kas: bildirim kartındaki "Kaydı panelde aç" → #kayit=<id>: o davetlinin kaydı açılır, listede vurgulanır */
  function kayitAc(){
   var m=location.hash.match(/^#kayit=([\w-]+)/); if(!m)return;
@@ -813,13 +835,27 @@ body:not(.kilitli) #kapi{display:none}
  $('pnListe').addEventListener('change',function(e){
   var s=e.target.closest('[data-durum]'); if(!s)return;
   var r=bul(s.closest('.dv').dataset.id); if(!r)return;
-  var d=JSON.parse(JSON.stringify(r)); d.durum=s.value; s.disabled=true;
+  var d=JSON.parse(JSON.stringify(r)); d.durum=s.value;
+  if(katEksik(r,d.durum,r.kisi)){s.value=r.durum;formAc(r,d.durum);toast(r.kisi+' kişi geliyor: davetiye kişi başı gideceği için diğer katılımcıların adını soyadını yazın.');return;}
+  s.disabled=true;
   istek({islem:'kaydet',davetli:d}).then(function(x){if(!cevap(x,DURUM[d.durum]+' olarak kaydedildi',s))listeCiz();});
  });
  var silBekle=null;
  $('pnListe').addEventListener('click',function(e){
   var dv=e.target.closest('.dv'); if(!dv)return; var r=bul(dv.dataset.id); if(!r)return;
   if(e.target.closest('[data-ed]')) formAc(r);
+  if(e.target.closest('[data-dav]')){
+   var kutu=dv.querySelector('.dv-dav'); if(kutu){kutu.remove();return;}
+   kutu=document.createElement('div'); kutu.className='dv-dav';
+   var ke=katEksik(r,r.durum,r.kisi);
+   kutu.innerHTML=davKisiler(r).map(function(x,i){var l=davLink(x.ad),t=String(x.tel||'').replace(/\D/g,'');if(t.length===10)t='90'+t;else if(t.length===11&&t[0]==='0')t='9'+t;
+    var m='Sayın '+x.ad+', 22 Kasım Pazar 13:30 Kuzey Kıbrıs Yatırımcı Lansmanı davetiyeniz: '+l;
+    return '<div class="dr"><b>'+(i+1)+'. '+esc(x.ad)+'</b><span><button type="button" data-kop="'+esc(l)+'">Linki kopyala</button><a target="_blank" rel="noopener" href="https://wa.me/'+(t.length===12?t:'')+'?text='+encodeURIComponent(m)+'">WhatsApp</a></span></div>';}).join('')+
+    (ke?'<small style="color:var(--red)">'+ke+' katılımcının adı eksik: "Düzenle" ile ekleyin.</small>':'');
+   dv.appendChild(kutu);
+  }
+  var kp=e.target.closest('[data-kop]');
+  if(kp){var lt=kp.dataset.kop;(navigator.clipboard?navigator.clipboard.writeText(lt):Promise.reject()).then(function(){toast('Link kopyalandı');}).catch(function(){toast(lt);});}
   var sb=e.target.closest('[data-sil]');
   if(sb){
    if(!sb.classList.contains('emin')){sb.classList.add('emin');sb.textContent='Emin misiniz?';clearTimeout(silBekle);silBekle=setTimeout(function(){sb.classList.remove('emin');sb.textContent='Sil';},3000);return;}
@@ -842,16 +878,30 @@ body:not(.kilitli) #kapi{display:none}
   $('fpOrtak').value=r&&r.ortak?r.ortak:'';
   $('fpOrtak').disabled=!!(r&&!v.broker&&r.danisman!==v.ad);
  }
- function formAc(r){
+ function formAc(r,durumYeni){
   $('pnForm').hidden=false; $('fpHata').textContent='';
   $('fpId').value=r?r.id:''; $('fpAd').value=r?r.ad:''; $('fpTel').value=r?r.telefon:'';
   $('fpKisi').value=r?String(Math.min(5,r.kisi||1)):'2'; $('fpButce').value=r?r.butce:''; $('fpIlgi').value=r?r.ilgi:'yuksek';
-  $('fpDurum').innerHTML=durumOps(r?r.durum:'davet'); $('fpNot').value=r?r.not:'';
+  $('fpDurum').innerHTML=durumOps(r?r.durum:'davet'); if(durumYeni)$('fpDurum').value=durumYeni; $('fpNot').value=r?r.not:'';
+  katVeri=katListe(r).slice(); katCiz();
   $('fpDanisman').disabled=!!r; if(r) $('fpDanisman').value=r.danisman; else if($('pnFd').value) $('fpDanisman').value=$('pnFd').value;
   ortakKur(r);
   $('fpKaydet').textContent=r?'Değişikliği kaydet':'Kaydet';
   $('pnForm').scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){$('fpAd').focus();},300);
  }
+ var katVeri=[];
+ function katTopla(){$('fpKatSatir').querySelectorAll('.kr[data-i]').forEach(function(k){var i=+k.dataset.i;katVeri[i]={ad:k.querySelector('[data-ka]').value,tel:k.querySelector('[data-kt]').value};});}
+ function katCiz(){
+  if($('fpKatSatir').children.length) katTopla();
+  var n=Number($('fpKisi').value)||1, ac=KESIN.indexOf($('fpDurum').value)>=0&&n>=2;
+  $('fpKat').hidden=!ac; if(!ac){$('fpKatSatir').innerHTML='';return;}
+  var h='<div class="kr"><i>1</i><div class="ana">'+(esc($('fpAd').value.trim())||'Ana davetli')+'</div><small style="color:var(--ink2)">yukarıdaki kişi</small></div>';
+  for(var i=0;i<n-1;i++){var x=katVeri[i]||{};
+   h+='<div class="kr" data-i="'+i+'"><i>'+(i+2)+'</i><input data-ka autocapitalize="words" autocomplete="off" placeholder="'+(i+2)+'. kişinin adı soyadı" value="'+esc(x.ad||'')+'"><input data-kt inputmode="tel" autocomplete="off" placeholder="Telefonu (varsa)" value="'+esc(x.tel||'')+'"></div>';}
+  $('fpKatSatir').innerHTML=h;
+ }
+ ['fpKisi','fpDurum'].forEach(function(id){$(id).addEventListener('change',katCiz);});
+ $('fpAd').addEventListener('input',function(){var a=$('fpKatSatir').querySelector('.ana');if(a)a.textContent=this.value.trim()||'Ana davetli';});
  $('pnEkleAc').onclick=function(){formAc(null);};
  $('fpVazgec').onclick=function(){$('pnForm').hidden=true;};
  $('pnForm').addEventListener('submit',function(e){
@@ -859,8 +909,14 @@ body:not(.kilitli) #kapi{display:none}
   var ad=$('fpAd').value.trim().replace(/\s+/g,' '), tel=$('fpTel').value.trim(), rak=tel.replace(/\D/g,'');
   if(ad.split(' ').length<2){$('fpHata').textContent='Misafirin adını ve soyadını yazın.';$('fpAd').focus();return;}
   if(rak.length<10){$('fpHata').textContent='Telefon numarasını eksiksiz yazın (05xx xxx xx xx).';$('fpTel').focus();return;}
+  var kat=[];
+  if(!$('fpKat').hidden){katTopla();var n=(Number($('fpKisi').value)||1)-1;
+   for(var i=0;i<n;i++){var x=katVeri[i]||{},ka=String(x.ad||'').trim().replace(/\s+/g,' ');
+    if(ka.split(' ').length<2){$('fpHata').textContent=(i+2)+'. kişinin adını ve soyadını yazın (davetiye kişi başı gidecek).';var el=$('fpKatSatir').querySelectorAll('[data-ka]')[i];if(el)el.focus();return;}
+    kat.push({ad:ka,tel:String(x.tel||'').trim()});}}
+  else kat=katVeri.filter(function(x){return x&&String(x.ad||'').trim();}).slice(0,Math.max(0,(Number($('fpKisi').value)||1)-1));
   $('fpHata').textContent=''; $('fpKaydet').disabled=true; $('fpKaydet').textContent='Kaydediliyor…';
-  var id=$('fpId').value, d={id:id||undefined,ad:ad,telefon:tel,kisi:$('fpKisi').value,butce:$('fpButce').value,ilgi:$('fpIlgi').value,durum:$('fpDurum').value,not:$('fpNot').value.trim()};
+  var id=$('fpId').value, d={id:id||undefined,ad:ad,telefon:tel,kisi:$('fpKisi').value,butce:$('fpButce').value,ilgi:$('fpIlgi').value,durum:$('fpDurum').value,not:$('fpNot').value.trim(),katilimcilar:kat};
   if(!$('fpOrtak').disabled) d.ortak=$('fpOrtak').value;
   istek({islem:'kaydet',davetli:d,danisman:P.v.broker&&!id?$('fpDanisman').value:null}).then(function(r){
    $('fpKaydet').disabled=false; $('fpKaydet').textContent=id?'Değişikliği kaydet':'Kaydet';
@@ -907,7 +963,8 @@ body:not(.kilitli) #kapi{display:none}
   $('pnOtel').onclick=function(){
    var k=(P.v.davetliler||[]).filter(function(r){return KESIN.indexOf(r.durum)>=0;}).sort(function(a,b){return a.danisman.localeCompare(b.danisman,'tr')||a.ad.localeCompare(b.ad,'tr');});
    var kisi=k.reduce(function(a,r){return a+(Number(r.kisi)||1);},0);
-   var t='Ad Soyad\tKişi\tDanışman\tTelefon\n'+k.map(function(r){return [r.ad,r.kisi,r.danisman,r.telefon].join('\t');}).join('\n')+'\nToplam\t'+kisi;
+   var t='Ad Soyad\tGrup (ana davetli)\tDanışman\tTelefon\n'+k.map(function(r){var g=davKisiler(r);for(var j=g.length;j<(Number(r.kisi)||1);j++)g.push({ad:'(adı eksik)',tel:''});
+    return g.map(function(x,i){return [x.ad,i?r.ad:r.ad+' ('+(r.kisi||1)+' kişi)',r.danisman,x.tel||(i?'':r.telefon)].join('\t');}).join('\n');}).join('\n')+'\nToplam\t'+kisi+' kişi';
    var bitti=function(){toast(k.length+' kayıt, '+kisi+' kişi kopyalandı');};
    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(bitti).catch(function(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');bitti();}catch(e){toast('Kopyalanamadı');}a.remove();});
   };
@@ -953,7 +1010,7 @@ body:not(.kilitli) #kapi{display:none}
    var ayni=DEMO.liste.filter(function(r){return String(r.telefon).replace(/\D/g,'').slice(-10)===key&&r.id!==d.id;})[0];
    var dn=eski?eski.danisman:(g.danisman||ben), ort=d.ortak!==undefined?d.ortak:(eski?eski.ortak:'');
    if(ayni) return {ok:false,error:ayni.danisman===dn?'Bu numara listende zaten var: '+ayni.ad+'.':'Bu numara '+ayni.danisman+' adına '+tarih(ayni.kayit).replace(/ \d\d:\d\d$/,'')+' tarihinde kaydedilmiş. Müşteri ilk kaydeden danışmanındır.'};
-   var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,
+   var simdi=new Date().toISOString(), y={id:eski?eski.id:'d'+Date.now(),danisman:dn,ad:d.ad,telefon:d.telefon,kisi:Number(d.kisi)||1,butce:d.butce,ilgi:d.ilgi,durum:d.durum,not:d.not,katilimcilar:d.katilimcilar||[],
     kayit:eski?eski.kayit:simdi,teyit:eski&&eski.teyit?eski.teyit:(KESIN.indexOf(d.durum)>=0?simdi:''),ortak:ort||''};
    if(eski) DEMO.liste[DEMO.liste.indexOf(eski)]=y; else DEMO.liste.push(y);
    var pu=0; DEMO.puan=DEMO.puan||{};
