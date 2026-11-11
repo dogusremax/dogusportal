@@ -2,7 +2,7 @@
    Soru değiştirmek için yalnız bu dosyayı düzenleyin. dogru: 0=A 1=B 2=C 3=D.
    Sunucu ekranında "Yedek sorular" menüsünden bir soru yedekle değiştirilebilir. */
 window.YARISMA = {
- "sure": 30,
+ "sure": 20,
  "sorular": [
   {
    "no": "1",
