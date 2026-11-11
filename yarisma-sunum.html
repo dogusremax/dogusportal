@@ -203,7 +203,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   <button id="kSira">Sıralama (L)</button>
   <button id="kYedek">Soruyu değiştir (Y)</button>
   <button id="kEsit" style="display:none">Eşitlik sorusu (E)</button>
-  <button id="kSure">Cevap süresi: 30 sn (S)</button>
+  <button id="kSure">Cevap süresi: 20 sn (S)</button>
   <button id="kSes">Efekt: açık (M)</button>
   <button id="kMuzik">Müzik: açık (N)</button>
   <button id="kTam">Tam ekran (F)</button>
@@ -220,8 +220,8 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var KATIL_URL = 'https://dogusportal.com/y';
-  var OKUMA = 6000;               // soru önce okunur, şıklar 6 sn sonra açılır
-  var SURELER = [20, 30, 45];      // cevap süresi seçenekleri (sn), varsayılan 30
+  var OKUMA = 10000;              // soru önce okunur, şıklar 10 sn sonra açılır (Umut: okuma kısa, cevap uzun)
+  var SURELER = [15, 20, 30];      // cevap süresi seçenekleri (sn), varsayılan 20
   var CEVAP_SIRA = 6;             // her 6 soruda bir otomatik sıralama
   var KAYIT = 'yzSunucu';
   var H = null;                   // oyun durumu (localStorage'da saklanır)
@@ -267,7 +267,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   function yeniOyun() {
     var Y = window.YARISMA;
     H = { o: YZ.rastgele(6, 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'), k: YZ.rastgele(24), faz: 'lobi', i: -1, qid: 0,
-          sure: 30, sorular: Y.sorular.slice(), yedek: Y.yedek.slice(), oyuncu: {}, haric: {}, puan: {}, son: {}, onceSira: {}, v: 0 };
+          sure: 20, sorular: Y.sorular.slice(), yedek: Y.yedek.slice(), oyuncu: {}, haric: {}, puan: {}, son: {}, onceSira: {}, v: 0 };
     durum('Yarışma açılıyor…');
     return YZ.post({ yz: 'yeni', o: H.o, k: H.k }).then(function (j) {
       if (!j.ok) throw new Error(j.hata);
@@ -328,7 +328,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     $('sure').style.display = 'none'; $('cvsay').style.display = 'none'; $('cvSayi').textContent = '0';
     $('soruIpucu').innerHTML = 'Süre bitince cevap kendiliğinden açılır · Erken açmak için <kbd>Boşluk</kbd>';
     goster('soru'); YZS.durdur(); YZS.efekt('soru'); setTimeout(function () { if (H.faz === 'soru') YZS.muzik('soru'); }, 900);
-    S.sure_ = H.sure || S.sure || window.YARISMA.sure || 30;
+    S.sure_ = H.sure || S.sure || window.YARISMA.sure || 20;
     H.t0 = YZ.simdi() + OKUMA; H.bit = H.t0 + S.sure_ * 1000; // yayın dönene kadar tahmini
     yayinla({ f: 'soru', q: H.qid, no: H.i + 1, n: H.sorular.length, soru: S.soru, siklar: S.siklar, etiket: S.etiket, sure: S.sure_, okuma: OKUMA }).then(function (j) {
       if (!j.s || j.s.q !== H.qid) return;
@@ -512,10 +512,10 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   $('kSira').onclick = function () { if (H && (H.faz === 'cevap' || H.faz === 'siralama')) siralama(); };
   $('kYedek').onclick = yedekPanel;
   $('kEsit').onclick = esitlik;
-  function sesYaz() { $('kSes').textContent = 'Efekt: ' + (YZS.durum.efektAcik ? 'açık' : 'kapalı') + ' (M)'; $('kMuzik').textContent = 'Müzik: ' + (YZS.durum.muzikAcik ? 'açık' : 'kapalı') + ' (N)'; $('kSure').textContent = 'Cevap süresi: ' + ((H && H.sure) || 30) + ' sn (S)'; }
+  function sesYaz() { $('kSes').textContent = 'Efekt: ' + (YZS.durum.efektAcik ? 'açık' : 'kapalı') + ' (M)'; $('kMuzik').textContent = 'Müzik: ' + (YZS.durum.muzikAcik ? 'açık' : 'kapalı') + ' (N)'; $('kSure').textContent = 'Cevap süresi: ' + ((H && H.sure) || 20) + ' sn (S)'; }
   $('kSes').onclick = function () { YZS.efektAyar(!YZS.durum.efektAcik); sesYaz(); };
   $('kMuzik').onclick = function () { YZS.muzikAyar(!YZS.durum.muzikAcik); sesYaz(); };
-  $('kSure').onclick = function () { if (!H) return; var i = SURELER.indexOf(H.sure || 30); H.sure = SURELER[(i + 1) % SURELER.length]; kaydet(); sesYaz(); durum('Cevap süresi ' + H.sure + ' sn (sıradaki sorudan itibaren)'); setTimeout(function () { durum(''); }, 2500); };
+  $('kSure').onclick = function () { if (!H) return; var i = SURELER.indexOf(H.sure || 20); H.sure = SURELER[(i + 1) % SURELER.length]; kaydet(); sesYaz(); durum('Cevap süresi ' + H.sure + ' sn (sıradaki sorudan itibaren)'); setTimeout(function () { durum(''); }, 2500); };
   sesYaz();
   $('kTam').onclick = tamEkran;
   $('kYeni').onclick = function () { if (H && !confirm('Mevcut yarışma kapanır, puanlar silinir. Yeni yarışma açılsın mı?')) return; localStorage.removeItem(KAYIT); location.reload(); };
