@@ -134,9 +134,15 @@
     tikSon: function (h, t) { osc(h, t, 1250, 0.09, 'square', 0.16); osc(h, t, 2500, 0.05, 'sine', 0.1); },
     // saat tik-tak'ı (tahta blok): ek = [yüksek mi, ses]
     tiktak: function (h, t, ek) { var y = ek && ek[0], v = (ek && ek[1]) || 0.1; osc(h, t, y ? 1320 : 990, 0.06, 'sine', v); osc(h, t, y ? 2640 : 1980, 0.025, 'triangle', v * 0.5); grlt(h, t, 0.02, v * 0.6, 'bandpass', y ? 3500 : 2600, 4); },
-    kalp: function (h, t, ek) { // ek = ses ya da [ses, lub-dub arası sn]
+    kalp: function (h, t, ek) { // ek = ses ya da [ses, lub-dub arası sn]; derin bas + küçük hoparlörde duyulsun diye üst katman
       var v = (ek && ek.length ? ek[0] : ek) || 0.7, ara = (ek && ek[1]) || 0.2;
-      osc(h, t, 70, 0.16, 'sine', v, 0.004, 40); osc(h, t + ara, 64, Math.min(0.2, ara + 0.04), 'sine', v * 0.75, 0.004, 38); },
+      function vur(t, v) {
+        osc(h, t, 62, 0.32, 'sine', v, 0.004, 32);              // alt bas (salon hoparlörü)
+        osc(h, t, 120, 0.17, 'sine', v * 0.7, 0.003, 55);       // gövde (laptop hoparlöründe de duyulur)
+        osc(h, t, 210, 0.05, 'triangle', v * 0.28, 0.002, 90);  // vuruş
+        grlt(h, t, 0.09, v * 0.3, 'lowpass', 380, 1);           // tok darbe
+      }
+      vur(t, v); vur(t + ara, v * 0.8); },
     gerilim: function (h, t, sure) { // son saniyelerde yükselen gerilim
       sure = sure || 5; var o = AC.createOscillator(), o2 = AC.createOscillator(), f = AC.createBiquadFilter(), g = AC.createGain();
       o.type = 'sawtooth'; o2.type = 'sawtooth'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(440, t + sure);
