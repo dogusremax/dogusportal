@@ -129,12 +129,12 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
     p.then(function (j) {
       hataSay = 0; $('bag').style.display = 'none';
       // Katıldığı oyuna bağlı kalır; yalnız henüz katılmadıysa ya da oyunu kapandıysa etkin oyuna geçer.
-      if (!oyun || (j.aktif && j.aktif !== oyun && !qs.get('o') && (!kayitliAd() || !j.ok))) {
+      if (!oyun || (j.aktif && j.aktif !== oyun && !qs.get('o') && (!kayitliAd() || !j.ok || (j.s && (j.s.f === 'final' || j.s.f === 'bitti'))))) {
         var yeni = j.o || j.aktif || '';
         if (yeni && yeni !== oyun) { oyun = yeni; s = null; sv = ''; ad = kayitliAd(); return yokla(); }
         if (!oyun) { goster('yok'); return sonrakiYoklama(4000); }
       }
-      if (!j.ok || !j.s) { goster('yok'); return sonrakiYoklama(4000); }
+      if (!j.ok || !j.s || j.s.f === 'bitti') { goster('yok'); return sonrakiYoklama(4000); }
       isle(j);
       // Katılım kaydı kaybolduysa (aynı anda çok kişi katılınca olabilir) sessizce yeniden yaz
       if (j.kayit === false && kayitliAd() && Date.now() - sonYeniden > 2500) { sonYeniden = Date.now(); YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: kayitliAd() }).catch(function () {}); }
@@ -157,7 +157,7 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
     s = j.s;
     if (j.ben) $('ustPuan').innerHTML = j.ben[0] + '<small>' + (j.ben[1] ? j.ben[1] + '. sıra' : 'puan') + '</small>';
     ad = kayitliAd();
-    if (!ad) { goster('ad'); return; }
+    if (!ad) { if (!$('ad').value) $('ad').value = localStorage.getItem('yzSonAd') || ''; goster('ad'); return; }
     if (yeni === sv && s.f !== 'soru') return; sv = yeni;
     if (s.f === 'lobi') { $('lobiAd').textContent = ad; goster('lobi'); return; }
     if (s.f === 'soru') {
@@ -242,7 +242,7 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
     YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: v }).then(function (j) {
       $('katilBtn').disabled = false;
       if (!j.ok) { $('adHata').textContent = j.hata === 'oyun' ? 'Yarışma kapanmış görünüyor.' : 'Kaydedilemedi, tekrar deneyin.'; return; }
-      localStorage.setItem('yzAd:' + oyun, v); ad = v; sv = ''; titret(30); yokla();
+      localStorage.setItem('yzAd:' + oyun, v); localStorage.setItem('yzSonAd', v); ad = v; sv = ''; titret(30); yokla();
     }).catch(function () { $('katilBtn').disabled = false; $('adHata').textContent = 'Bağlantı sorunu, tekrar deneyin.'; });
   });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { clearTimeout(zam); yokla(); } });

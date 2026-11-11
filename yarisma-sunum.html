@@ -251,16 +251,25 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   function kaydet() { try { H.zaman = Date.now(); localStorage.setItem(KAYIT, JSON.stringify(H)); } catch (e) {} }
   function durum(m, hata) { var d = $('durum'); d.textContent = m || ''; d.className = 'durum' + (hata ? ' hata' : ''); }
 
-  function yayinla(s, r, deneme) {
+  // Yayınlar SIRAYLA gider (önceki bitmeden sonraki gönderilmez) ve her birinin sürüm numarası var.
+  // Daha yenisi kuyruğa girdiyse eskisi hiç gönderilmez / yeniden denenmez; sunucu da eski sürümü reddeder.
+  // (11 Kas: geç ulaşan "cevap" yayını yeni soruyu eziyordu, telefonda soru çıkmıyordu.)
+  var yayinZinciri = Promise.resolve();
+  function yayinla(s, r) {
     H.v = (H.v || 0) + 1; s.v = H.v;
     var b = { yz: 'yayinla', o: H.o, k: H.k, s: s }; if (r) b.r = r;
+    var p = yayinZinciri.then(function () { return gonder(b, 0); });
+    yayinZinciri = p.catch(function () {});
+    return p;
+  }
+  function gonder(b, deneme) {
+    if (b.s.v < H.v) return Promise.resolve({ ok: true, atlandi: true });
     return YZ.post(b).then(function (j) {
       if (!j.ok) throw new Error(j.hata || 'yayin');
       durum(''); return j;
-    }).catch(function (e) {
+    }).catch(function () {
       durum('Bağlantı sorunu, yeniden deneniyor…', true);
-      deneme = (deneme || 0) + 1;
-      return new Promise(function (ok) { setTimeout(ok, Math.min(1000 * deneme, 4000)); }).then(function () { return yayinla(s, r, deneme); });
+      return new Promise(function (ok) { setTimeout(ok, Math.min(1000 * (deneme + 1), 4000)); }).then(function () { return gonder(b, deneme + 1); });
     });
   }
 
