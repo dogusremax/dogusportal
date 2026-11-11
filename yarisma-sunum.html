@@ -363,17 +363,31 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       if (!j.s || j.s.q !== H.qid) return;
       H.t0 = j.s.t0; H.bit = j.s.bit; kaydet();
     });
-    sonTik = -1; sonOkuma = -1; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
+    sonTik = -1; sonOkuma = -1; kalpT = null; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
     clearInterval(cvZam); cvZam = setInterval(cevapYokla, 1500);
   }
-  // Geri sayım sesi: >10 sn yumuşak tik-tak; 10-6 sn tik-tak + kalp atışı; son 5 sn sert tik, yarım saniyede bir tak, yükselen gerilim
+  // Kalp atışı son 10 sn: dakikada 60'tan ~190'a hızlanır, sesi de giderek artar. kalpT = sıradaki atışın kalan saniyesi
+  var kalpT = null;
+  function kalpAraligi(k) { return 1 / (1 + (10 - k) * 0.24); }
+  function kalpAtislari(sn) { // bu saniyeye (sn..sn-1) düşen atışlar: [[gecikme, ses, lub-dub arası], ...]
+    if (kalpT == null || kalpT > sn) kalpT = sn;
+    var out = [];
+    while (kalpT > sn - 1 && kalpT > 0.05) {
+      var a = kalpAraligi(kalpT);
+      out.push([sn - kalpT, Math.min(1.05, 0.42 + (10 - kalpT) * 0.068), Math.min(0.2, a * 0.38)]);
+      kalpT -= a;
+    }
+    return out;
+  }
+  // Geri sayım sesi: >10 sn yumuşak tik-tak; son 10 sn hızlanan kalp atışı; son 5 sn sert tik + yükselen gerilim
   function gerilimSesi(sn) {
     if (sn <= 0) return;
     var el = $('sure'); el.classList.remove('vur'); void el.offsetWidth; if (sn <= 10) el.classList.add('vur');
     if (sn > 10) return YZS.efekt('tiktak', 0, [sn % 2, 0.05]);
-    if (sn > 5) { YZS.efekt('tiktak', 0, [sn % 2, 0.12]); YZS.efekt('kalp', 0, 0.5); return; }
+    kalpAtislari(sn).forEach(function (k) { YZS.efekt('kalp', k[0], [k[1], k[2]]); });
+    if (sn > 5) return YZS.efekt('tiktak', 0, [sn % 2, 0.08]);
     if (sn === 5) { YZS.efekt('gerilim', 0, 5); YZS.hizlan(); YZS.seviye(0.55, 1); }
-    YZS.efekt('tikSon'); YZS.efekt('tiktak', 0.5, [1, 0.14]); YZS.efekt('kalp', 0, 0.8);
+    YZS.efekt('tikSon');
   }
   function soruTik() {
     if (H.faz !== 'soru') return clearInterval(tikZam);
