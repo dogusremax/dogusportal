@@ -114,7 +114,7 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
   var qs = new URLSearchParams(location.search);
   var pid = localStorage.getItem('yzPid');
   if (!pid) { pid = YZ.rastgele(14); localStorage.setItem('yzPid', pid); }
-  var oyun = qs.get('o') || '', ad = '', s = null, sv = '', ekran = '', hataSay = 0, gonderilen = {}, sonucQ = null, zam = null, raf = 0;
+  var sonYeniden = 0, oyun = qs.get('o') || '', ad = '', s = null, sv = '', ekran = '', hataSay = 0, gonderilen = {}, sonucQ = null, zam = null, raf = 0;
 
   function goster(id) {
     if (ekran === id) return; ekran = id;
@@ -136,6 +136,8 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
       }
       if (!j.ok || !j.s) { goster('yok'); return sonrakiYoklama(4000); }
       isle(j);
+      // Katılım kaydı kaybolduysa (aynı anda çok kişi katılınca olabilir) sessizce yeniden yaz
+      if (j.kayit === false && kayitliAd() && Date.now() - sonYeniden > 2500) { sonYeniden = Date.now(); YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: kayitliAd() }).catch(function () {}); }
       sonrakiYoklama(sonrakiAralik());
     }).catch(function () {
       hataSay++; if (hataSay > 1) $('bag').style.display = 'block';
