@@ -15,8 +15,8 @@
       w.onmessage = function (e) { var f = fn[e.data]; if (f) try { f(); } catch (x) { if (window.console) console.error(x); } };
     } catch (e) { w = null; }
     return {
-      kur: function (f, ms) { if (!w) return { y: setInterval(f, ms) }; no++; fn[no] = f; w.postMessage(['b', no, ms]); return { w: no }; },
-      sil: function (h) { if (!h) return; if (h.y) clearInterval(h.y); else if (fn[h.w]) { delete fn[h.w]; w.postMessage(['s', h.w]); } }
+      kur: function (f, ms) { var h = { y: setInterval(f, ms) }; if (w) { no++; fn[no] = f; h.w = no; w.postMessage(['b', no, ms]); } return h; }, // yedek setInterval her zaman çalışır
+      sil: function (h) { if (!h) return; clearInterval(h.y); if (h.w && fn[h.w]) { delete fn[h.w]; w.postMessage(['s', h.w]); } }
     };
   })();
   var calisti = false; // ses bir kez kullanıcı tıklamasıyla açıldıysa, kendiliğinden durursa yeniden açılır
@@ -233,6 +233,7 @@
     dosyaAdi: function () { return dosyaAd; },
     _dosya: function () { return dosyaEl && { paused: dosyaEl.paused, t: dosyaEl.currentTime, g: dosyaGain.gain.value }; },
     efekt: efekt,
+    sesDurum: function () { return AC ? AC.state : 'yok'; },
     aralik: function (f, ms) { return tik.kur(f, ms); }, aralikSil: function (h) { tik.sil(h); },
     efektAyar: function (v) { S.efektAcik = v; localStorage.setItem('yzSes', v ? '1' : '0'); if (efektBus) efektBus.gain.value = v ? 1 : 0; },
     muzikAyar: function (v) { S.muzikAcik = v; localStorage.setItem('yzMuzik', v ? '1' : '0'); if (muzikBus) muzikBus.gain.value = v ? taban() : 0; },

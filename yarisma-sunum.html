@@ -149,6 +149,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
 .kontrol button.ana{background:var(--kir)}
 .durum{position:fixed;right:12px;top:10px;font-size:13px;color:rgba(255,255,255,.5);z-index:20;font-family:system-ui}
 .durum.hata{color:#ff8a95}
+.sesUyari{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:60;background:#DC1C2E;color:#fff;font:600 18px system-ui;padding:10px 18px;border-radius:10px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .panel{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:30;font-family:'Inter Tight',system-ui}
 .panel.on{display:flex}
 .panel .kutu{background:#0f1a55;border-radius:18px;padding:28px;max-width:760px;width:90%;max-height:80vh;overflow:auto;font-size:17px}
@@ -229,12 +230,13 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   <button id="kYeni">Yeni yarışma</button>
 </div>
 <div class="durum" id="durum"></div>
+<div class="sesUyari" id="sesUyari" style="display:none"></div>
 <div class="panel" id="panel"><div class="kutu" id="panelIc"></div></div>
 
-<script src="assets/yarisma/qrcode.js"></script>
-<script src="assets/yarisma/sorular.js"></script>
-<script src="assets/yarisma/yz.js"></script>
-<script src="assets/yarisma/ses.js"></script>
+<script src="assets/yarisma/qrcode.js?v=20261111s"></script>
+<script src="assets/yarisma/sorular.js?v=20261111s"></script>
+<script src="assets/yarisma/yz.js?v=20261111s"></script>
+<script src="assets/yarisma/ses.js?v=20261111s"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -264,6 +266,20 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
 
   /* ---------- ses: assets/yarisma/ses.js (YZS) ---------- */
   function ac() { YZS.ac(); }
+  // Sayaç: ses.js'teki Worker sayacı (arka planda yavaşlamaz); eski önbellekli ses.js gelirse düz setInterval
+  function aralik(f, ms) { return YZS.aralik ? YZS.aralik(f, ms) : setInterval(f, ms); }
+  function aralikSil(h) { if (h == null) return; if (YZS.aralikSil && typeof h === 'object') YZS.aralikSil(h); else clearInterval(h); }
+  // Ses göstergesi: ses kapalıysa ya da tarayıcı sesi başlatmadıysa ekranın köşesinde uyarır; tıklayınca açar
+  function sesKontrol() {
+    var el = $('sesUyari'), st = YZS.sesDurum ? YZS.sesDurum() : 'running', m = '';
+    if (!YZS.durum.efektAcik && !YZS.durum.muzikAcik) m = '🔇 Efekt ve müzik kapalı (M / N)';
+    else if (!YZS.durum.efektAcik) m = '🔇 Efektler kapalı (M)';
+    else if (!YZS.durum.muzikAcik) m = '🔇 Müzik kapalı (N)';
+    else if (st !== 'running' && st !== 'yok') m = '🔇 Ses başlamadı — açmak için buraya tıklayın';
+    el.textContent = m; el.style.display = m ? 'block' : 'none';
+  }
+  setInterval(sesKontrol, 1000);
+  document.addEventListener('pointerdown', function () { ac(); setTimeout(sesKontrol, 300); }, true);
 
   /* ---------- kayıt ---------- */
   function kaydet() { try { H.zaman = Date.now(); localStorage.setItem(KAYIT, JSON.stringify(H)); } catch (e) {} }
@@ -363,7 +379,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       if (!j.s || j.s.q !== H.qid) return;
       H.t0 = j.s.t0; H.bit = j.s.bit; kaydet();
     });
-    sonTik = -1; sonOkuma = -1; kalpT = null; YZS.aralikSil(tikZam); tikZam = YZS.aralik(soruTik, 100);
+    sonTik = -1; sonOkuma = -1; kalpT = null; aralikSil(tikZam); tikZam = aralik(soruTik, 100);
     clearInterval(cvZam); cvZam = setInterval(cevapYokla, 1500);
   }
   // Kalp atışı son 10 sn: dakikada 60'tan ~190'a hızlanır, sesi de giderek artar. kalpT = sıradaki atışın kalan saniyesi
@@ -391,7 +407,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     YZS.efekt('tikSon');
   }
   function soruTik() {
-    if (H.faz !== 'soru') return YZS.aralikSil(tikZam);
+    if (H.faz !== 'soru') return aralikSil(tikZam);
     var S = H.sorular[H.i], t = YZ.simdi();
     if (t >= H.t0 && $('siklar').classList.contains('gizli')) {
       $('siklar').className = 'siklar'; YZS.efekt('siklar'); YZS.seviye(0.35, 1.2); $('okuma').style.display = 'none'; $('sure').className = 'sure'; $('sureEt').textContent = 'SANİYE'; $('cvsay').style.display = 'block';
@@ -420,7 +436,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   }
   var YZ_kapatT = 0;
   function kapat(bekle) {
-    if (kapaniyor) return; kapaniyor = true; YZS.aralikSil(tikZam); clearInterval(cvZam);
+    if (kapaniyor) return; kapaniyor = true; aralikSil(tikZam); clearInterval(cvZam);
     $('sureNo').textContent = '0';
     // süre bitti: müzik kesilir, gong, ardından trampet; cevap trampet bitince açılır
     YZ_kapatT = Date.now(); YZS.durdur(0.3); YZS.efekt('bitti'); YZS.efekt('davul', 0.9, 1.3);
@@ -489,7 +505,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
 
   /* ---------- final ---------- */
   function finalGoster() {
-    H.faz = 'final'; kaydet(); YZS.aralikSil(tikZam); clearInterval(cvZam);
+    H.faz = 'final'; kaydet(); aralikSil(tikZam); clearInterval(cvZam);
     var ids = aktifler().sort(function (a, b) { return (H.puan[b] || 0) - (H.puan[a] || 0); }), sira = siraHarita();
     var yer = [[ids[1], 'p2', 2], [ids[0], 'p1', 1], [ids[2], 'p3', 3]], h = '';
     yer.forEach(function (y) { if (!y[0]) { h += '<div class="pd ' + y[1] + '" style="visibility:hidden"><div class="kut"></div></div>'; return; }
@@ -543,7 +559,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       var b = e.target.closest('button[data-j]'); if (!b) return; $('panel').classList.remove('on');
       var j = +b.dataset.j; if (j < 0) return;
       H.sorular[hedef] = H.yedek.splice(j, 1)[0]; kaydet();
-      if (H.faz === 'soru') { kapaniyor = true; YZS.aralikSil(tikZam); clearInterval(cvZam); H.i--; soruBaslat(); }
+      if (H.faz === 'soru') { kapaniyor = true; aralikSil(tikZam); clearInterval(cvZam); H.i--; soruBaslat(); }
     };
   }
   $('panel').addEventListener('click', function (e) { if (e.target === $('panel')) $('panel').classList.remove('on'); });
