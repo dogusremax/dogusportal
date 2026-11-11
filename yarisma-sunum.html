@@ -374,7 +374,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     var out = [];
     while (kalpT > sn - 1 && kalpT > 0.05) {
       var a = kalpAraligi(kalpT);
-      out.push([sn - kalpT, Math.min(1.05, 0.42 + (10 - kalpT) * 0.068), Math.min(0.2, a * 0.38)]);
+      out.push([sn - kalpT, Math.min(0.88, 0.4 + (10 - kalpT) * 0.055), Math.min(0.2, a * 0.38)]);
       kalpT -= a;
     }
     return out;
@@ -385,8 +385,9 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     var el = $('sure'); el.classList.remove('vur'); void el.offsetWidth; if (sn <= 10) el.classList.add('vur');
     if (sn > 10) return YZS.efekt('tiktak', 0, [sn % 2, 0.05]);
     kalpAtislari(sn).forEach(function (k) { YZS.efekt('kalp', k[0], [k[1], k[2]]); });
-    if (sn > 5) return YZS.efekt('tiktak', 0, [sn % 2, 0.08]);
-    if (sn === 5) { YZS.efekt('gerilim', 0, 5); YZS.hizlan(); YZS.seviye(0.55, 1); }
+    YZS.seviye(Math.max(0.06, 0.2 - (10 - sn) * 0.016), sn === 10 ? 1.2 : 0.9); // müzik kısılır, kalp öne çıkar
+    if (sn > 5) return YZS.efekt('tiktak', 0, [sn % 2, 0.06]);
+    if (sn === 5) { YZS.efekt('gerilim', 0, 5); YZS.hizlan(); }
     YZS.efekt('tikSon');
   }
   function soruTik() {
