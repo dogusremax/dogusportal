@@ -65,9 +65,32 @@
       } }
   };
   var calan = null, zam = null, sonraki = 0, adimNo = 0, hizli = false, muzikGain = null;
+  /* ---------- kendi müzik dosyanız (bilgisayardan seçilir, siteye yüklenmez; IndexedDB'de bu tarayıcıda saklanır) ---------- */
+  var dosyaEl = null, dosyaGain = null, dosyaAd = '', dosyaZam = null;
+  function dosyaKur(blob, ad) {
+    if (!hazirla()) return;
+    if (dosyaEl) { try { dosyaEl.pause(); } catch (e) {} }
+    if (!dosyaGain) { dosyaGain = AC.createGain(); dosyaGain.gain.value = 0; dosyaGain.connect(muzikBus); }
+    dosyaEl = new Audio(); dosyaEl.loop = true; dosyaEl.preload = 'auto'; dosyaEl.src = URL.createObjectURL(blob); dosyaAd = ad || 'müzik';
+    AC.createMediaElementSource(dosyaEl).connect(dosyaGain);
+    var c = calan; calan = null; if (c) muzik(c);
+  }
+  function db(fn) {
+    try { var r = indexedDB.open('yzMuzik', 1); r.onupgradeneeded = function () { r.result.createObjectStore('d'); };
+      r.onsuccess = function () { fn(r.result.transaction('d', 'readwrite').objectStore('d')); }; } catch (e) {}
+  }
   function muzik(ad) {
     if (!hazirla()) return;
     if (calan === ad) return;
+    if (dosyaEl) { // seçilen şarkı: duraklatılmaz, kaldığı yerden sürer; lobi/sıralamada daha kısık
+      clearInterval(zam); zam = null; if (muzikGain) durdurSentez(0.15);
+      calan = ad; clearTimeout(dosyaZam);
+      if (!ad) return durdur();
+      var t = AC.currentTime; dosyaGain.gain.cancelScheduledValues(t); dosyaGain.gain.setValueAtTime(dosyaGain.gain.value, t);
+      dosyaGain.gain.linearRampToValueAtTime(ad === 'soru' ? 0.9 : 0.45, t + 0.8);
+      var p = dosyaEl.play(); if (p && p.catch) p.catch(function () {});
+      return;
+    }
     durdur();
     if (!ad || !DESEN[ad]) return;
     calan = ad; adimNo = 0; hizli = false; sonraki = AC.currentTime + 0.08;
@@ -85,6 +108,14 @@
   }
   function durdur(yavas) {
     clearInterval(zam); zam = null; calan = null;
+    if (dosyaEl && dosyaGain) {
+      var t0 = AC.currentTime; dosyaGain.gain.cancelScheduledValues(t0); dosyaGain.gain.setValueAtTime(dosyaGain.gain.value, t0);
+      dosyaGain.gain.linearRampToValueAtTime(0.0001, t0 + (yavas || 0.4));
+      clearTimeout(dosyaZam); dosyaZam = setTimeout(function () { if (!calan && dosyaEl) dosyaEl.pause(); }, ((yavas || 0.4) + 0.2) * 1000);
+    }
+    durdurSentez(yavas);
+  }
+  function durdurSentez(yavas) {
     if (muzikGain) { var g = muzikGain, t = AC.currentTime; g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0.0001, t + (yavas || 0.15)); setTimeout(function () { try { g.disconnect(); } catch (e) {} }, 1500); muzikGain = null; }
   }
 
@@ -147,6 +178,11 @@
     muzik: muzik,
     durdur: function (yavas) { if (AC) durdur(yavas); },
     hizlan: function () { hizli = true; },
+    dosyaSec: function (file) { dosyaKur(file, file.name); db(function (st) { st.put({ blob: file, ad: file.name }, 'sarki'); }); },
+    dosyaYukle: function (cb) { db(function (st) { var r = st.get('sarki'); r.onsuccess = function () { if (r.result) { dosyaKur(r.result.blob, r.result.ad); cb && cb(r.result.ad); } }; }); },
+    dosyaSil: function () { if (dosyaEl) { dosyaEl.pause(); dosyaEl = null; } dosyaAd = ''; db(function (st) { st.delete('sarki'); }); var c = calan; calan = null; if (c) muzik(c); },
+    dosyaAdi: function () { return dosyaAd; },
+    _dosya: function () { return dosyaEl && { paused: dosyaEl.paused, t: dosyaEl.currentTime, g: dosyaGain.gain.value }; },
     efekt: efekt,
     efektAyar: function (v) { S.efektAcik = v; localStorage.setItem('yzSes', v ? '1' : '0'); if (efektBus) efektBus.gain.value = v ? 1 : 0; },
     muzikAyar: function (v) { S.muzikAcik = v; localStorage.setItem('yzMuzik', v ? '1' : '0'); if (muzikBus) muzikBus.gain.value = v ? 0.55 : 0; },
