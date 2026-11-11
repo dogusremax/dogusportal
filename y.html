@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#050A30">
+<title>Canlı Kıbrıs Yarışması</title>
+<meta property="og:title" content="Canlı Kıbrıs Yarışması">
+<meta property="og:description" content="RE/MAX Doğuş · Kuzey Kıbrıs lansmanı">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--lac:#050A30;--kart:#0B1442;--kir:#DC1C2E;--alt:#E9C27A;--c0:#DC1C2E;--c1:#2F6BEA;--c2:#E3A21A;--c3:#14A37F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--lac);color:#fff;font-family:'Inter Tight',system-ui,-apple-system,sans-serif}
+body{display:flex;flex-direction:column;min-height:100dvh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+header img{height:26px}
+header .t{font-weight:700;font-size:14px;letter-spacing:.02em;flex:1;line-height:1.15}
+header .t small{display:block;font-weight:500;color:var(--alt);font-size:11px;letter-spacing:.06em}
+header .pt{font-weight:800;font-size:15px;color:var(--alt);text-align:right;line-height:1.1}
+header .pt small{display:block;color:rgba(255,255,255,.55);font-weight:500;font-size:10.5px}
+main{flex:1;display:flex;flex-direction:column;padding:18px 16px 22px;gap:14px}
+.ekr{display:none;flex:1;flex-direction:column;gap:14px}
+.ekr.on{display:flex}
+.orta{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px}
+h1{font-size:27px;font-weight:800;margin:0;line-height:1.15}
+h2{font-size:21px;font-weight:700;margin:0;line-height:1.25}
+p{margin:0;color:rgba(255,255,255,.75);font-size:16px;line-height:1.45}
+.kirmizi{color:var(--kir)}.altin{color:var(--alt)}
+input{width:100%;font:inherit;font-size:19px;padding:16px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:var(--kart);color:#fff;outline:none}
+input:focus{border-color:var(--alt)}
+button.ana{width:100%;font:inherit;font-size:19px;font-weight:800;padding:17px;border:0;border-radius:14px;background:var(--kir);color:#fff}
+button.ana:disabled{opacity:.5}
+.not{font-size:13px;color:rgba(255,255,255,.5)}
+.hata{color:#ff8a95;font-size:14px;min-height:18px}
+.sekiller{display:flex;gap:12px;font-size:30px}
+.sekiller span:nth-child(1){color:var(--c0)}.sekiller span:nth-child(2){color:var(--c1)}.sekiller span:nth-child(3){color:var(--c2)}.sekiller span:nth-child(4){color:var(--c3)}
+.nefes{animation:nf 2.2s ease-in-out infinite}@keyframes nf{50%{transform:scale(1.08);opacity:.75}}
+.sno{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--alt);letter-spacing:.05em}
+.soru{font-size:20px;font-weight:700;line-height:1.3}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--alt);transform-origin:left}
+.siklar{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:280px}
+.sik{border:0;border-radius:16px;color:#fff;font:inherit;font-weight:700;font-size:16.5px;line-height:1.25;padding:12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;transition:transform .12s,opacity .2s,filter .2s}
+.sik b{font-size:30px;line-height:1}
+.sik:active{transform:scale(.96)}
+.sik:disabled{filter:saturate(.35) brightness(.7)}
+.s0{background:var(--c0)}.s1{background:var(--c1)}.s2{background:var(--c2)}.s3{background:var(--c3)}
+.hazir{font-size:15px;font-weight:600;color:var(--alt);text-align:center}
+.buyuk{font-size:76px;line-height:1}
+.rozet{display:inline-flex;align-items:center;justify-content:center;width:120px;height:120px;border-radius:50%;font-size:60px;font-weight:800}
+.rozet.ok{background:#14A37F}.rozet.no{background:var(--kir)}.rozet.bos{background:#39406a}
+.puan{font-size:40px;font-weight:800;color:var(--alt)}
+.kutu{background:var(--kart);border-radius:16px;padding:16px;width:100%}
+.kutu .s{display:flex;justify-content:space-between;font-size:16px;padding:4px 0}
+.kutu .s b{color:var(--alt)}
+footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,255,255,.4)}
+.baglanti{position:fixed;top:0;left:0;right:0;background:#8a6d1c;color:#fff;font-size:13px;text-align:center;padding:5px;display:none;z-index:9}
+</style>
+</head><body>
+<div class="baglanti" id="bag">Bağlantı zayıf, yeniden deneniyor…</div>
+<header><img src="/assets/dogus-logo.png" alt="RE/MAX Doğuş"><div class="t">Canlı Kıbrıs Yarışması<small>KUZEY KIBRIS LANSMANI</small></div><div class="pt" id="ustPuan"></div></header>
+<main>
+  <section class="ekr on" id="e-yuk"><div class="orta"><div class="sekiller nefes"><span>▲</span><span>◆</span><span>●</span><span>■</span></div><p>Bağlanıyor…</p></div></section>
+
+  <section class="ekr" id="e-yok"><div class="orta"><div class="sekiller nefes"><span>▲</span><span>◆</span><span>●</span><span>■</span></div>
+    <h2>Yarışma henüz başlamadı</h2><p>Bu sayfayı açık tutun; sunucu yarışmayı açınca kendiliğinden bağlanırsınız.</p></div></section>
+
+  <section class="ekr" id="e-ad"><div class="orta" style="justify-content:flex-start;padding-top:6vh">
+    <div class="sekiller"><span>▲</span><span>◆</span><span>●</span><span>■</span></div>
+    <h1>Hoş geldiniz!</h1><p>Sıralamada görünecek adınızı ve soyadınızı yazın.</p>
+    <form id="adForm" style="width:100%;display:flex;flex-direction:column;gap:12px;margin-top:8px">
+      <input id="ad" autocomplete="name" maxlength="40" placeholder="Ad Soyad" enterkeyhint="go">
+      <button class="ana" id="katilBtn">Yarışmaya katıl</button>
+      <div class="hata" id="adHata"></div>
+    </form>
+    <p class="not">Her misafir tek telefonla katılır. Hem doğru hem hızlı olan kazanır.</p></div></section>
+
+  <section class="ekr" id="e-lobi"><div class="orta">
+    <div class="sekiller nefes"><span>▲</span><span>◆</span><span>●</span><span>■</span></div>
+    <h1 id="lobiAd"></h1><h2 class="altin">Yarışmaya katıldınız</h2>
+    <p>Gözünüz dev ekranda olsun. Soru gelince şıklar burada belirecek, doğru şıkka dokunun.</p></div></section>
+
+  <section class="ekr" id="e-soru">
+    <div class="sno"><span id="sNo"></span><span id="sSure"></span></div>
+    <div class="bar"><i id="sBar"></i></div>
+    <div class="soru" id="sMetin"></div>
+    <div class="hazir" id="sHazir">Hazır olun…</div>
+    <div class="siklar" id="siklar"></div>
+  </section>
+
+  <section class="ekr" id="e-bekle"><div class="orta">
+    <div class="rozet" id="bRozet" style="background:var(--kart)"></div>
+    <h2>Cevabınız alındı</h2><p id="bMetin">Süre bitince doğru cevap ekranda açıklanacak.</p></div></section>
+
+  <section class="ekr" id="e-sonuc"><div class="orta">
+    <div class="rozet" id="rRozet"></div>
+    <h1 id="rBaslik"></h1>
+    <div class="puan" id="rPuan"></div>
+    <div class="kutu"><div class="s"><span>Toplam puan</span><b id="rTop"></b></div><div class="s"><span>Sıranız</span><b id="rSira"></b></div></div>
+    <p class="not" id="rNot">Sıradaki soru için ekrana bakın.</p></div></section>
+
+  <section class="ekr" id="e-final"><div class="orta">
+    <div class="buyuk" id="fIkon">🏆</div>
+    <h1 id="fBaslik">Yarışma bitti</h1>
+    <div class="kutu"><div class="s"><span>Sıranız</span><b id="fSira"></b></div><div class="s"><span>Toplam puan</span><b id="fTop"></b></div></div>
+    <p id="fNot">Katıldığınız için teşekkür ederiz. Kazanan ekranda açıklanıyor.</p></div></section>
+</main>
+<footer>RE/MAX Doğuş · Kuzey Kıbrıs Yatırım · 0216 315 15 15</footer>
+<script src="/assets/yarisma/yz.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var qs = new URLSearchParams(location.search);
+  var pid = localStorage.getItem('yzPid');
+  if (!pid) { pid = YZ.rastgele(14); localStorage.setItem('yzPid', pid); }
+  var oyun = qs.get('o') || '', ad = '', s = null, sv = '', ekran = '', hataSay = 0, gonderilen = {}, sonucQ = null, zam = null, raf = 0;
+
+  function goster(id) {
+    if (ekran === id) return; ekran = id;
+    [].forEach.call(document.querySelectorAll('.ekr'), function (e) { e.classList.toggle('on', e.id === 'e-' + id); });
+  }
+  function kayitliAd() { return localStorage.getItem('yzAd:' + oyun) || ''; }
+  function titret(p) { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} }
+
+  function sonrakiYoklama(ms) { clearTimeout(zam); zam = setTimeout(yokla, document.hidden ? Math.max(ms, 5000) : ms); }
+  function yokla() {
+    var p = oyun ? YZ.get({ yz: 'durum', o: oyun, pid: pid }) : YZ.get({ yz: 'aktif' });
+    p.then(function (j) {
+      hataSay = 0; $('bag').style.display = 'none';
+      // Katıldığı oyuna bağlı kalır; yalnız henüz katılmadıysa ya da oyunu kapandıysa etkin oyuna geçer.
+      if (!oyun || (j.aktif && j.aktif !== oyun && !qs.get('o') && (!kayitliAd() || !j.ok))) {
+        var yeni = j.o || j.aktif || '';
+        if (yeni && yeni !== oyun) { oyun = yeni; s = null; sv = ''; ad = kayitliAd(); return yokla(); }
+        if (!oyun) { goster('yok'); return sonrakiYoklama(4000); }
+      }
+      if (!j.ok || !j.s) { goster('yok'); return sonrakiYoklama(4000); }
+      isle(j);
+      sonrakiYoklama(sonrakiAralik());
+    }).catch(function () {
+      hataSay++; if (hataSay > 1) $('bag').style.display = 'block';
+      sonrakiYoklama(Math.min(2000 * hataSay, 8000));
+    });
+  }
+  function sonrakiAralik() {
+    if (!s) return 4000;
+    if (s.f === 'lobi') return 3000;
+    if (s.f === 'soru') { var kalan = s.bit - YZ.simdi(); return kalan > 4000 ? 2500 : 1500; }
+    if (s.f === 'final') return 6000;
+    return 2000;
+  }
+
+  function isle(j) {
+    var yeni = JSON.stringify(j.s) + '|' + JSON.stringify(j.ben || '') + '|' + (j.cevap || '');
+    s = j.s;
+    if (j.ben) $('ustPuan').innerHTML = j.ben[0] + '<small>' + (j.ben[1] ? j.ben[1] + '. sıra' : 'puan') + '</small>';
+    ad = kayitliAd();
+    if (!ad) { goster('ad'); return; }
+    if (yeni === sv && s.f !== 'soru') return; sv = yeni;
+    if (s.f === 'lobi') { $('lobiAd').textContent = ad; goster('lobi'); return; }
+    if (s.f === 'soru') {
+      if (j.cevap || gonderilen[s.q] != null) { bekle(j.cevap ? +String(j.cevap).split('|')[0] : gonderilen[s.q]); return; }
+      if (YZ.simdi() > s.bit) { bekle(null); return; }
+      soruKur(); return;
+    }
+    if (s.f === 'cevap' || s.f === 'siralama') { sonucGoster(j.ben); return; }
+    if (s.f === 'final') { finalGoster(j.ben); return; }
+  }
+
+  var kurulanQ = null;
+  function soruKur() {
+    if (kurulanQ === s.q && ekran === 'soru') return;
+    kurulanQ = s.q;
+    $('sNo').textContent = 'SORU ' + s.no + ' / ' + s.n;
+    $('sMetin').textContent = s.soru;
+    var h = '';
+    s.siklar.forEach(function (t, i) { h += '<button class="sik s' + i + '" data-i="' + i + '" disabled><b>' + YZ.SEKIL[i] + '</b><span>' + esc(t) + '</span></button>'; });
+    $('siklar').innerHTML = h;
+    [].forEach.call($('siklar').children, function (b) { b.addEventListener('click', function () { cevapla(+b.dataset.i); }); });
+    goster('soru'); cancelAnimationFrame(raf); tik();
+  }
+  function tik() {
+    if (!s || s.f !== 'soru' || ekran !== 'soru') return;
+    var t = YZ.simdi(), acik = t >= s.t0, kalan = Math.max(0, s.bit - t);
+    $('sHazir').style.display = acik ? 'none' : 'block';
+    $('sHazir').textContent = 'Hazır olun… ' + Math.ceil((s.t0 - t) / 1000);
+    [].forEach.call($('siklar').children, function (b) { b.disabled = !acik || kalan <= 0; });
+    $('sSure').textContent = acik ? Math.ceil(kalan / 1000) + ' sn' : '';
+    $('sBar').style.transform = 'scaleX(' + (acik ? kalan / (s.sure * 1000) : 1) + ')';
+    if (kalan <= 0) { bekle(null); return; }
+    raf = requestAnimationFrame(tik);
+  }
+  function cevapla(i) {
+    if (!s || s.f !== 'soru' || gonderilen[s.q] != null) return;
+    var q = s.q, ms = Math.max(0, Math.round(YZ.simdi() - s.t0));
+    gonderilen[q] = i; titret(30); bekle(i);
+    var dene = function (n) {
+      YZ.post({ yz: 'cevap', o: oyun, pid: pid, q: q, c: i, ms: ms }).then(function (j) {
+        if (!j.ok && j.hata === 'sure') $('bMetin').textContent = 'Üzgünüz, cevabınız süre bittikten sonra ulaştı.';
+        if (!j.ok && j.hata === 'kapali') $('bMetin').textContent = 'Bu soru kapandı.';
+      }).catch(function () { if (n < 3) setTimeout(function () { dene(n + 1); }, 700); else $('bMetin').textContent = 'Bağlantı sorunu: cevabınız gönderilemedi.'; });
+    };
+    dene(0);
+  }
+  function bekle(i) {
+    cancelAnimationFrame(raf);
+    var r = $('bRozet');
+    if (i == null) { r.textContent = '⏱'; r.style.background = '#39406a'; $('bMetin').textContent = 'Süre doldu. Doğru cevap ekranda açıklanacak.'; }
+    else { r.textContent = YZ.SEKIL[i]; r.style.background = 'var(--c' + i + ')'; if (ekran !== 'bekle') $('bMetin').textContent = 'Süre bitince doğru cevap ekranda açıklanacak.'; }
+    goster('bekle');
+  }
+  function sonucGoster(ben) {
+    var r = $('rRozet');
+    if (!ben) { r.className = 'rozet bos'; r.textContent = '…'; $('rBaslik').textContent = 'Sonuçlar hesaplanıyor'; $('rPuan').textContent = ''; $('rTop').textContent = '-'; $('rSira').textContent = '-'; goster('sonuc'); return; }
+    var d = ben[3];
+    r.className = 'rozet ' + (d === 1 ? 'ok' : d === 0 ? 'no' : 'bos'); r.textContent = d === 1 ? '✓' : d === 0 ? '✕' : '–';
+    $('rBaslik').textContent = d === 1 ? 'Doğru!' : d === 0 ? 'Yanlış' : 'Cevap vermediniz';
+    $('rPuan').textContent = d === 1 ? '+' + ben[2] : '+0';
+    $('rTop').textContent = ben[0]; $('rSira').textContent = ben[1] ? ben[1] + '. / ' + ben[4] : '-';
+    $('rNot').textContent = s.dogru != null ? 'Doğru cevap: ' + YZ.SEKIL[s.dogru] + ' ' + s.siklar[s.dogru] : 'Sıradaki soru için ekrana bakın.';
+    if (sonucQ !== s.q) { sonucQ = s.q; titret(d === 1 ? [40, 60, 40] : 120); }
+    goster('sonuc');
+  }
+  function finalGoster(ben) {
+    $('fSira').textContent = ben && ben[1] ? ben[1] + '. / ' + ben[4] : '-';
+    $('fTop').textContent = ben ? ben[0] : '-';
+    var bir = ben && ben[1] === 1;
+    $('fIkon').textContent = bir ? '🏆' : ben && ben[1] <= 3 ? '🎉' : '👏';
+    $('fBaslik').textContent = bir ? 'Tebrikler, birincisiniz!' : 'Yarışma bitti';
+    $('fNot').textContent = bir ? 'Lütfen salondan ayrılmayın, ödülünüz için sizi sahneye davet edeceğiz.' : 'Katıldığınız için teşekkür ederiz. Kazanan ekranda açıklanıyor.';
+    goster('final');
+  }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  $('adForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var v = $('ad').value.replace(/\s+/g, ' ').trim();
+    if (v.length < 3 || v.indexOf(' ') < 0) { $('adHata').textContent = 'Lütfen adınızı ve soyadınızı yazın.'; return; }
+    $('katilBtn').disabled = true; $('adHata').textContent = '';
+    YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: v }).then(function (j) {
+      $('katilBtn').disabled = false;
+      if (!j.ok) { $('adHata').textContent = j.hata === 'oyun' ? 'Yarışma kapanmış görünüyor.' : 'Kaydedilemedi, tekrar deneyin.'; return; }
+      localStorage.setItem('yzAd:' + oyun, v); ad = v; sv = ''; titret(30); yokla();
+    }).catch(function () { $('katilBtn').disabled = false; $('adHata').textContent = 'Bağlantı sorunu, tekrar deneyin.'; });
+  });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { clearTimeout(zam); yokla(); } });
+  yokla();
+})();
+</script>
+</body></html>
