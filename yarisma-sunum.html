@@ -71,6 +71,9 @@ html,body{margin:0;height:100%;background:#02041a;overflow:hidden;font-family:'I
 .sure .zemin{stroke:rgba(255,255,255,.12)}.sure .yay{stroke:var(--alt);transition:stroke .3s}
 .sure b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:124px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
 .sure.az .yay{stroke:var(--kir)}
+.sure .et{position:absolute;left:-60px;right:-60px;top:262px;text-align:center;font-size:24px;font-weight:800;letter-spacing:.16em;color:var(--alt);white-space:nowrap}
+.sure.okumada .yay{stroke:#fff}
+.sure.okumada b{color:#fff}
 .sure.az b{color:#ff4d5e;text-shadow:0 0 30px rgba(220,28,46,.8)}
 .sure.vur{animation:vur .45s cubic-bezier(.2,1.8,.4,1)}
 @keyframes vur{0%{transform:scale(1.18)}100%{transform:scale(1)}}
@@ -183,7 +186,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     <div class="smetin" id="sMetin"></div>
     <div class="okuma" id="okuma"><i id="okumaBar"></i></div>
     <div class="aciklama" id="aciklama"></div>
-    <div class="sure" id="sure"><svg viewBox="0 0 100 100"><circle class="ic" cx="50" cy="50" r="40"/><circle class="zemin" cx="50" cy="50" r="44" fill="none" stroke-width="9"/><circle class="yay" id="yay" cx="50" cy="50" r="44" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><b id="sureNo">20</b></div>
+    <div class="sure" id="sure"><svg viewBox="0 0 100 100"><circle class="ic" cx="50" cy="50" r="40"/><circle class="zemin" cx="50" cy="50" r="44" fill="none" stroke-width="9"/><circle class="yay" id="yay" cx="50" cy="50" r="44" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><b id="sureNo">20</b><span class="et" id="sureEt"></span></div>
     <div id="kizil"></div>
     <div class="cvsay" id="cvsay"><b id="cvSayi">0</b>cevap</div>
     <div class="siklar gizli" id="siklar"></div>
@@ -332,7 +335,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   }
 
   /* ---------- soru ---------- */
-  var tikZam = null, cvZam = null, kapaniyor = false, okumaBasla = 0, sonTik = -1;
+  var tikZam = null, cvZam = null, kapaniyor = false, okumaBasla = 0, sonTik = -1, sonOkuma = -1;
   function soruBaslat() {
     clearInterval(oyZam); H.i++; H.qid++;
     var S = H.sorular[H.i]; if (!S) return finalGoster();
@@ -342,8 +345,9 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     $('sMetin').textContent = S.soru; $('aciklama').className = 'aciklama'; $('aciklama').textContent = S.aciklama;
     var h = ''; S.siklar.forEach(function (t, i) { h += '<div class="sik s' + i + '" style="--i:' + i + '"><span class="sk">' + YZ.SEKIL[i] + '</span><span class="ad">' + esc(t) + '</span><span class="adet" id="adet' + i + '"></span><span class="tik">✓</span><i class="dag" id="dag' + i + '"></i></div>'; });
     $('siklar').innerHTML = h; $('siklar').className = 'siklar gizli';
-    $('okuma').style.display = 'block'; $('okumaBar').style.transition = 'none'; $('okumaBar').style.transform = 'scaleX(0)';
-    $('sure').style.display = 'none'; $('cvsay').style.display = 'none'; $('cvSayi').textContent = '0';
+    $('okuma').style.display = 'none'; // okuma süresi artık ortadaki sayaçla gösterilir (Umut: çubuk anlaşılmıyordu)
+    $('sure').className = 'sure okumada'; $('sure').style.display = 'block'; $('sureEt').textContent = 'ŞIKLAR AÇILIYOR'; $('sureNo').textContent = Math.ceil(OKUMA / 1000); $('yay').style.strokeDashoffset = 0;
+    $('cvsay').style.display = 'none'; $('cvSayi').textContent = '0';
     $('soruIpucu').innerHTML = 'Süre bitince cevap kendiliğinden açılır · Erken açmak için <kbd>Boşluk</kbd>';
     goster('soru'); YZS.durdur(); YZS.seviye(0.18, 0.4); YZS.efekt('soru'); setTimeout(function () { if (H.faz === 'soru') YZS.muzik('soru'); }, 900);
     S.sure_ = H.sure || S.sure || window.YARISMA.sure || 20;
@@ -352,8 +356,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       if (!j.s || j.s.q !== H.qid) return;
       H.t0 = j.s.t0; H.bit = j.s.bit; kaydet();
     });
-    requestAnimationFrame(function () { $('okumaBar').style.transition = 'transform ' + OKUMA + 'ms linear'; $('okumaBar').style.transform = 'scaleX(1)'; });
-    sonTik = -1; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
+    sonTik = -1; sonOkuma = -1; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
     clearInterval(cvZam); cvZam = setInterval(cevapYokla, 1500);
   }
   // Geri sayım sesi: >10 sn yumuşak tik-tak; 10-6 sn tik-tak + kalp atışı; son 5 sn sert tik, yarım saniyede bir tak, yükselen gerilim
@@ -369,9 +372,14 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     if (H.faz !== 'soru') return clearInterval(tikZam);
     var S = H.sorular[H.i], t = YZ.simdi();
     if (t >= H.t0 && $('siklar').classList.contains('gizli')) {
-      $('siklar').className = 'siklar'; YZS.efekt('siklar'); YZS.seviye(0.35, 1.2); $('okuma').style.display = 'none'; $('sure').style.display = 'block'; $('cvsay').style.display = 'block';
+      $('siklar').className = 'siklar'; YZS.efekt('siklar'); YZS.seviye(0.35, 1.2); $('okuma').style.display = 'none'; $('sure').className = 'sure'; $('sureEt').textContent = 'SANİYE'; $('cvsay').style.display = 'block';
     }
-    if (t < H.t0) return;
+    if (t < H.t0) { // okuma sayacı: şıklar açılana kadar geri sayar
+      var ko = H.t0 - t, so = Math.ceil(ko / 1000);
+      $('sureNo').textContent = so; $('yay').style.strokeDashoffset = 276.46 * (1 - ko / OKUMA);
+      if (so !== sonOkuma) { sonOkuma = so; if (so <= 3) YZS.efekt('tiktak', 0, [so % 2, 0.06]); }
+      return;
+    }
     var kalan = Math.max(0, H.bit - t), sn = Math.ceil(kalan / 1000);
     $('sureNo').textContent = sn; $('yay').style.strokeDashoffset = 276.46 * (1 - kalan / (S.sure_ * 1000));
     $('sure').classList.toggle('az', sn <= 5); $('kizil').classList.toggle('on', sn <= 5 && sn > 0);
