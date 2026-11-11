@@ -65,12 +65,19 @@ html,body{margin:0;height:100%;background:#02041a;overflow:hidden;font-family:'I
 .smetin{font-size:64px;font-weight:800;line-height:1.14;margin:26px 0 0;max-width:1520px;letter-spacing:-.01em;min-height:150px}
 .okuma{margin-top:40px;height:10px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;max-width:1520px}
 .okuma i{display:block;height:100%;background:var(--alt);transform-origin:left;transform:scaleX(0)}
-.sure{position:absolute;right:70px;top:26px;width:180px;height:180px}
-.sure svg{width:100%;height:100%;transform:rotate(-90deg)}
-.sure .zemin{stroke:rgba(255,255,255,.1)}.sure .yay{stroke:var(--alt);transition:stroke .3s}
-.sure b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:72px;font-weight:900}
+.sure{position:absolute;left:calc(50% - 125px);top:236px;width:250px;height:250px;z-index:2}
+.sure svg{width:100%;height:100%;transform:rotate(-90deg);filter:drop-shadow(0 10px 30px rgba(0,0,0,.45))}
+.sure .ic{fill:rgba(5,10,48,.85)}
+.sure .zemin{stroke:rgba(255,255,255,.12)}.sure .yay{stroke:var(--alt);transition:stroke .3s}
+.sure b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:124px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
 .sure.az .yay{stroke:var(--kir)}
-.cvsay{position:absolute;right:70px;top:224px;width:180px;text-align:center;font-size:20px;color:rgba(255,255,255,.7)}
+.sure.az b{color:#ff4d5e;text-shadow:0 0 30px rgba(220,28,46,.8)}
+.sure.vur{animation:vur .45s cubic-bezier(.2,1.8,.4,1)}
+@keyframes vur{0%{transform:scale(1.18)}100%{transform:scale(1)}}
+#kizil{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0;background:radial-gradient(ellipse at center,rgba(220,28,46,0) 45%,rgba(220,28,46,.35) 100%)}
+#kizil.on{animation:kizil 1s ease-out infinite}
+@keyframes kizil{0%{opacity:.9}100%{opacity:0}}
+.cvsay{position:absolute;right:70px;top:30px;width:180px;text-align:center;font-size:20px;color:rgba(255,255,255,.7)}
 .cvsay b{display:block;font-size:52px;color:#fff;font-weight:900;line-height:1.05}
 .siklar{position:absolute;left:70px;right:70px;bottom:60px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .sik{position:relative;height:170px;border-radius:22px;display:flex;align-items:center;gap:26px;padding:0 34px;font-size:40px;font-weight:700;line-height:1.15;overflow:hidden;transition:opacity .4s,filter .4s,transform .4s;box-shadow:0 14px 36px rgba(0,0,0,.25)}
@@ -176,7 +183,8 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     <div class="smetin" id="sMetin"></div>
     <div class="okuma" id="okuma"><i id="okumaBar"></i></div>
     <div class="aciklama" id="aciklama"></div>
-    <div class="sure" id="sure"><svg viewBox="0 0 100 100"><circle class="zemin" cx="50" cy="50" r="44" fill="none" stroke-width="9"/><circle class="yay" id="yay" cx="50" cy="50" r="44" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><b id="sureNo">20</b></div>
+    <div class="sure" id="sure"><svg viewBox="0 0 100 100"><circle class="ic" cx="50" cy="50" r="40"/><circle class="zemin" cx="50" cy="50" r="44" fill="none" stroke-width="9"/><circle class="yay" id="yay" cx="50" cy="50" r="44" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><b id="sureNo">20</b></div>
+    <div id="kizil"></div>
     <div class="cvsay" id="cvsay"><b id="cvSayi">0</b>cevap</div>
     <div class="siklar gizli" id="siklar"></div>
     <div class="ipucu" id="soruIpucu"></div>
@@ -317,7 +325,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   $('liste').addEventListener('click', function (e) { var t = e.target.closest('.satir'); if (t) haricDegis(t.dataset.id); });
 
   function lobi() {
-    H.faz = 'lobi'; kaydet(); goster('lobi'); adlariCiz(); sayiGuncelle(); YZS.muzik('lobi');
+    H.faz = 'lobi'; kaydet(); goster('lobi'); adlariCiz(); sayiGuncelle(); YZS.muzik('lobi'); YZS.seviye(0.6);
     yayinla({ f: 'lobi' });
     clearInterval(oyZam); oyZam = setInterval(function () { if (H && H.faz === 'lobi') oyunculariAl().catch(function () {}); }, 2000);
     oyunculariAl().catch(function () {});
@@ -337,7 +345,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     $('okuma').style.display = 'block'; $('okumaBar').style.transition = 'none'; $('okumaBar').style.transform = 'scaleX(0)';
     $('sure').style.display = 'none'; $('cvsay').style.display = 'none'; $('cvSayi').textContent = '0';
     $('soruIpucu').innerHTML = 'Süre bitince cevap kendiliğinden açılır · Erken açmak için <kbd>Boşluk</kbd>';
-    goster('soru'); YZS.durdur(); YZS.efekt('soru'); setTimeout(function () { if (H.faz === 'soru') YZS.muzik('soru'); }, 900);
+    goster('soru'); YZS.durdur(); YZS.seviye(0.18, 0.4); YZS.efekt('soru'); setTimeout(function () { if (H.faz === 'soru') YZS.muzik('soru'); }, 900);
     S.sure_ = H.sure || S.sure || window.YARISMA.sure || 20;
     H.t0 = YZ.simdi() + OKUMA; H.bit = H.t0 + S.sure_ * 1000; // yayın dönene kadar tahmini
     yayinla({ f: 'soru', q: H.qid, no: H.i + 1, n: H.sorular.length, soru: S.soru, siklar: S.siklar, etiket: S.etiket, sure: S.sure_, okuma: OKUMA }).then(function (j) {
@@ -348,17 +356,26 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     sonTik = -1; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
     clearInterval(cvZam); cvZam = setInterval(cevapYokla, 1500);
   }
+  // Geri sayım sesi: >10 sn yumuşak tik-tak; 10-6 sn tik-tak + kalp atışı; son 5 sn sert tik, yarım saniyede bir tak, yükselen gerilim
+  function gerilimSesi(sn) {
+    if (sn <= 0) return;
+    var el = $('sure'); el.classList.remove('vur'); void el.offsetWidth; if (sn <= 10) el.classList.add('vur');
+    if (sn > 10) return YZS.efekt('tiktak', 0, [sn % 2, 0.05]);
+    if (sn > 5) { YZS.efekt('tiktak', 0, [sn % 2, 0.12]); YZS.efekt('kalp', 0, 0.5); return; }
+    if (sn === 5) { YZS.efekt('gerilim', 0, 5); YZS.hizlan(); YZS.seviye(0.55, 1); }
+    YZS.efekt('tikSon'); YZS.efekt('tiktak', 0.5, [1, 0.14]); YZS.efekt('kalp', 0, 0.8);
+  }
   function soruTik() {
     if (H.faz !== 'soru') return clearInterval(tikZam);
     var S = H.sorular[H.i], t = YZ.simdi();
     if (t >= H.t0 && $('siklar').classList.contains('gizli')) {
-      $('siklar').className = 'siklar'; YZS.efekt('siklar'); $('okuma').style.display = 'none'; $('sure').style.display = 'block'; $('cvsay').style.display = 'block';
+      $('siklar').className = 'siklar'; YZS.efekt('siklar'); YZS.seviye(0.35, 1.2); $('okuma').style.display = 'none'; $('sure').style.display = 'block'; $('cvsay').style.display = 'block';
     }
     if (t < H.t0) return;
     var kalan = Math.max(0, H.bit - t), sn = Math.ceil(kalan / 1000);
     $('sureNo').textContent = sn; $('yay').style.strokeDashoffset = 276.46 * (1 - kalan / (S.sure_ * 1000));
-    $('sure').classList.toggle('az', sn <= 5);
-    if (sn !== sonTik) { sonTik = sn; if (sn <= 5 && sn > 0) { YZS.efekt('tikSon'); YZS.hizlan(); } else if (sn > 5) YZS.efekt('tik'); }
+    $('sure').classList.toggle('az', sn <= 5); $('kizil').classList.toggle('on', sn <= 5 && sn > 0);
+    if (sn !== sonTik) { sonTik = sn; gerilimSesi(sn); }
     var n = aktifler().length, c = Object.keys(H.cev).filter(function (id) { return !H.haric[id]; }).length;
     if (kalan <= 0) kapat(1800);
     else if (n > 0 && c >= n && t > H.t0 + 1500) kapat(400);
@@ -415,7 +432,8 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     $('cvSayi').textContent = dag.reduce(function (a, b) { return a + b; }, 0); $('cvsay').style.display = 'block';
     var sonMu = H.i >= H.sorular.length - 1;
     $('soruIpucu').innerHTML = sonMu ? 'Sonuçlar için <kbd>Boşluk</kbd>' : ((H.i + 1) % CEVAP_SIRA === 0 ? 'Sıralama için <kbd>Boşluk</kbd>' : 'Sıradaki soru için <kbd>Boşluk</kbd> · Sıralama <kbd>L</kbd>');
-    YZS.efekt('dogru'); setTimeout(function () { if (H.faz === 'cevap') YZS.muzik('lobi'); }, 2200);
+    $('kizil').classList.remove('on');
+    YZS.efekt('dogru'); setTimeout(function () { if (H.faz === 'cevap') { YZS.seviye(0.3, 0.1); YZS.muzik('lobi'); } }, 2200); // açıklamayı okurken kısık
     yayinla({ f: 'cevap', q: H.qid, no: H.i + 1, n: H.sorular.length, soru: S.soru, siklar: S.siklar, dogru: S.dogru }, sonucHarita());
   }
 
@@ -433,7 +451,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     if (yenidenYayinlama) yayinla({ f: H.faz === 'final' ? 'final' : 'siralama', q: H.qid }, sonucHarita());
   }
   function siralama() {
-    H.faz = 'siralama'; kaydet(); siralamaCiz(); goster('siralama');
+    H.faz = 'siralama'; kaydet(); siralamaCiz(); goster('siralama'); YZS.seviye(0.8);
     YZS.efekt('siralama'); for (var r = 0; r < Math.min(10, aktifler().length); r++) YZS.efekt('satir', 0.25 + r * 0.08);
     yayinla({ f: 'siralama', q: H.qid, no: H.i + 1, n: H.sorular.length }, sonucHarita());
   }
@@ -450,7 +468,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     H.esit = esit.length > 1 ? esit : null;
     $('finalBaslik').textContent = H.esit ? 'Birincilikte eşitlik var!' : 'Kazananlar';
     $('kEsit').style.display = H.esit ? '' : 'none';
-    goster('final'); YZS.durdur(); YZS.efekt('final'); setTimeout(konfeti, 2300); setTimeout(function () { if (H.faz === 'final') YZS.muzik('lobi'); }, 9000);
+    goster('final'); YZS.durdur(); YZS.seviye(1, 0.2); YZS.efekt('final'); setTimeout(konfeti, 2300); setTimeout(function () { if (H.faz === 'final') YZS.muzik('lobi'); }, 9000);
     yayinla({ f: 'final', q: H.qid }, sonucHarita());
   }
   var esAdim = 0;
@@ -547,6 +565,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     else if (k === 'e') esitlik();
     else if (k === 'm') $('kSes').onclick();
     else if (k === 'n') $('kMuzik').onclick();
+    else if (k === 'arrowup' || k === 'arrowdown') { e.preventDefault(); var yz = YZS.muzikSes(k === 'arrowup' ? 0.08 : -0.08); durum('Müzik sesi %' + yz); clearTimeout(window.__dz); window.__dz = setTimeout(function () { durum(''); }, 1500); }
     else if (k === 'o') $('kDosya').onclick();
     else if (k === 's') $('kSure').onclick();
     else if (k === 'f') tamEkran();
