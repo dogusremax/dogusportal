@@ -363,7 +363,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       if (!j.s || j.s.q !== H.qid) return;
       H.t0 = j.s.t0; H.bit = j.s.bit; kaydet();
     });
-    sonTik = -1; sonOkuma = -1; kalpT = null; clearInterval(tikZam); tikZam = setInterval(soruTik, 100);
+    sonTik = -1; sonOkuma = -1; kalpT = null; YZS.aralikSil(tikZam); tikZam = YZS.aralik(soruTik, 100);
     clearInterval(cvZam); cvZam = setInterval(cevapYokla, 1500);
   }
   // Kalp atışı son 10 sn: dakikada 60'tan ~190'a hızlanır, sesi de giderek artar. kalpT = sıradaki atışın kalan saniyesi
@@ -391,7 +391,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     YZS.efekt('tikSon');
   }
   function soruTik() {
-    if (H.faz !== 'soru') return clearInterval(tikZam);
+    if (H.faz !== 'soru') return YZS.aralikSil(tikZam);
     var S = H.sorular[H.i], t = YZ.simdi();
     if (t >= H.t0 && $('siklar').classList.contains('gizli')) {
       $('siklar').className = 'siklar'; YZS.efekt('siklar'); YZS.seviye(0.35, 1.2); $('okuma').style.display = 'none'; $('sure').className = 'sure'; $('sureEt').textContent = 'SANİYE'; $('cvsay').style.display = 'block';
@@ -420,7 +420,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   }
   var YZ_kapatT = 0;
   function kapat(bekle) {
-    if (kapaniyor) return; kapaniyor = true; clearInterval(tikZam); clearInterval(cvZam);
+    if (kapaniyor) return; kapaniyor = true; YZS.aralikSil(tikZam); clearInterval(cvZam);
     $('sureNo').textContent = '0';
     // süre bitti: müzik kesilir, gong, ardından trampet; cevap trampet bitince açılır
     YZ_kapatT = Date.now(); YZS.durdur(0.3); YZS.efekt('bitti'); YZS.efekt('davul', 0.9, 1.3);
@@ -489,7 +489,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
 
   /* ---------- final ---------- */
   function finalGoster() {
-    H.faz = 'final'; kaydet(); clearInterval(tikZam); clearInterval(cvZam);
+    H.faz = 'final'; kaydet(); YZS.aralikSil(tikZam); clearInterval(cvZam);
     var ids = aktifler().sort(function (a, b) { return (H.puan[b] || 0) - (H.puan[a] || 0); }), sira = siraHarita();
     var yer = [[ids[1], 'p2', 2], [ids[0], 'p1', 1], [ids[2], 'p3', 3]], h = '';
     yer.forEach(function (y) { if (!y[0]) { h += '<div class="pd ' + y[1] + '" style="visibility:hidden"><div class="kut"></div></div>'; return; }
@@ -543,7 +543,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
       var b = e.target.closest('button[data-j]'); if (!b) return; $('panel').classList.remove('on');
       var j = +b.dataset.j; if (j < 0) return;
       H.sorular[hedef] = H.yedek.splice(j, 1)[0]; kaydet();
-      if (H.faz === 'soru') { kapaniyor = true; clearInterval(tikZam); clearInterval(cvZam); H.i--; soruBaslat(); }
+      if (H.faz === 'soru') { kapaniyor = true; YZS.aralikSil(tikZam); clearInterval(cvZam); H.i--; soruBaslat(); }
     };
   }
   $('panel').addEventListener('click', function (e) { if (e.target === $('panel')) $('panel').classList.remove('on'); });
