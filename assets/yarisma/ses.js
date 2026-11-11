@@ -5,6 +5,26 @@
   function taban() { var v = parseFloat(localStorage.getItem('yzMuzikSes')); return isNaN(v) ? 0.55 : v; } // ↑/↓ ile ayarlanan müzik sesi
   var S = { efektAcik: localStorage.getItem('yzSes') !== '0', muzikAcik: localStorage.getItem('yzMuzik') !== '0' };
 
+  // Zamanlayıcı: tarayıcı, arkada kalan / üstü örtülen pencerede setInterval'i saniyede bire (5 dk sonra dakikada bire) düşürür;
+  // müzik o zaman kesik kesik çalıyor ya da susuyordu. Worker içindeki sayaç bu kısıtlamaya takılmaz.
+  var tik = (function () {
+    var w = null, fn = {}, no = 0;
+    try {
+      w = new Worker(URL.createObjectURL(new Blob(['var z={};onmessage=function(e){var d=e.data;clearInterval(z[d[1]]);delete z[d[1]];' +
+        'if(d[0]==="b")z[d[1]]=setInterval(function(){postMessage(d[1])},d[2])}'], { type: 'text/javascript' })));
+      w.onmessage = function (e) { var f = fn[e.data]; if (f) try { f(); } catch (x) { if (window.console) console.error(x); } };
+    } catch (e) { w = null; }
+    return {
+      kur: function (f, ms) { if (!w) return { y: setInterval(f, ms) }; no++; fn[no] = f; w.postMessage(['b', no, ms]); return { w: no }; },
+      sil: function (h) { if (!h) return; if (h.y) clearInterval(h.y); else if (fn[h.w]) { delete fn[h.w]; w.postMessage(['s', h.w]); } }
+    };
+  })();
+  var calisti = false; // ses bir kez kullanıcı tıklamasıyla açıldıysa, kendiliğinden durursa yeniden açılır
+  function canlandir() {
+    if (!AC || AC.state === 'closed') return;
+    if (AC.state !== 'running') { var p = AC.resume(); if (p && p.catch) p.catch(function () {}); }
+    if (dosyaEl && calan && dosyaEl.paused) { var q = dosyaEl.play(); if (q && q.catch) q.catch(function () {}); }
+  }
   function hazirla() {
     if (!AC) {
       try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
@@ -16,7 +36,14 @@
       var n = AC.sampleRate * 2; gurultu = AC.createBuffer(1, n, AC.sampleRate);
       var d = gurultu.getChannelData(0); for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
     }
-    if (AC.state === 'suspended') AC.resume();
+    if (!AC.__bekci) { // bekçi: ses aygıtı değişirse (HDMI/Bluetooth) ya da tarayıcı askıya alırsa geri aç
+      AC.__bekci = true;
+      AC.onstatechange = function () { if (AC.state === 'running') calisti = true; else if (calisti) setTimeout(canlandir, 300); };
+      tik.kur(function () { if (calisti) canlandir(); }, 1000);
+      document.addEventListener('visibilitychange', function () { if (calisti) canlandir(); });
+    }
+    if (AC.state !== 'running' && AC.state !== 'closed') { var p = AC.resume(); if (p && p.then) p.then(function () { calisti = true; }, function () {}); }
+    else if (AC.state === 'running') calisti = true;
     return AC;
   }
 
@@ -85,7 +112,7 @@
     if (!hazirla()) return;
     if (calan === ad) return;
     if (dosyaEl) { // seçilen şarkı: duraklatılmaz, kaldığı yerden sürer; lobi/sıralamada daha kısık
-      clearInterval(zam); zam = null; if (muzikGain) durdurSentez(0.15);
+      tik.sil(zam); zam = null; if (muzikGain) durdurSentez(0.15);
       calan = ad; clearTimeout(dosyaZam);
       if (!ad) return durdur();
       var t = AC.currentTime; dosyaGain.gain.cancelScheduledValues(t); dosyaGain.gain.setValueAtTime(dosyaGain.gain.value, t);
@@ -98,10 +125,11 @@
     calan = ad; adimNo = 0; hizli = false; sonraki = AC.currentTime + 0.08;
     muzikGain = AC.createGain(); muzikGain.gain.value = 1; muzikGain.connect(muzikBus);
     var g = muzikGain;
-    zam = setInterval(function () {
+    zam = tik.kur(function () {
       var D = DESEN[calan]; if (!D) return;
-      var d = 60 / (hizli ? 150 : D.bpm) / 4;
-      while (sonraki < AC.currentTime + 0.12) {
+      var d = 60 / (hizli ? 150 : D.bpm) / 4, simdi = AC.currentTime;
+      if (sonraki < simdi - 0.02) { var atla = Math.ceil((simdi - sonraki) / d); sonraki += atla * d; adimNo += atla; }
+      while (sonraki < simdi + 0.3) {
         var bar = (adimNo / 16 | 0) % 4, i = adimNo % 16;
         D.adim(g, sonraki, D.akor[bar], D.kok[bar], i, d, hizli);
         sonraki += d; adimNo++;
@@ -109,7 +137,7 @@
     }, 25);
   }
   function durdur(yavas) {
-    clearInterval(zam); zam = null; calan = null;
+    tik.sil(zam); zam = null; calan = null;
     if (dosyaEl && dosyaGain) {
       var t0 = AC.currentTime; dosyaGain.gain.cancelScheduledValues(t0); dosyaGain.gain.setValueAtTime(dosyaGain.gain.value, t0);
       dosyaGain.gain.linearRampToValueAtTime(0.0001, t0 + (yavas || 0.4));
@@ -205,6 +233,7 @@
     dosyaAdi: function () { return dosyaAd; },
     _dosya: function () { return dosyaEl && { paused: dosyaEl.paused, t: dosyaEl.currentTime, g: dosyaGain.gain.value }; },
     efekt: efekt,
+    aralik: function (f, ms) { return tik.kur(f, ms); }, aralikSil: function (h) { tik.sil(h); },
     efektAyar: function (v) { S.efektAcik = v; localStorage.setItem('yzSes', v ? '1' : '0'); if (efektBus) efektBus.gain.value = v ? 1 : 0; },
     muzikAyar: function (v) { S.muzikAcik = v; localStorage.setItem('yzMuzik', v ? '1' : '0'); if (muzikBus) muzikBus.gain.value = v ? taban() : 0; },
     // Müzik seviyesi (konuşma için kısma): 0..1, yumuşak geçiş
