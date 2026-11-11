@@ -1,7 +1,8 @@
 /* Canlı Kıbrıs Yarışması — sunucu ekranı sesleri. Dosya yok, hepsi Web Audio ile üretilir (telifsiz).
    YZS.muzik('lobi'|'soru'|null), YZS.hizlan(), YZS.efekt(ad), YZS.efektAcik / YZS.muzikAcik */
 (function () {
-  var AC = null, ana, komp, muzikBus, efektBus, gurultu = null;
+  var AC = null, ana, komp, muzikBus, duck, efektBus, gurultu = null;
+  function taban() { var v = parseFloat(localStorage.getItem('yzMuzikSes')); return isNaN(v) ? 0.55 : v; } // ↑/↓ ile ayarlanan müzik sesi
   var S = { efektAcik: localStorage.getItem('yzSes') !== '0', muzikAcik: localStorage.getItem('yzMuzik') !== '0' };
 
   function hazirla() {
@@ -9,7 +10,8 @@
       try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
       komp = AC.createDynamicsCompressor(); komp.threshold.value = -14; komp.ratio.value = 4; komp.connect(AC.destination);
       ana = AC.createGain(); ana.gain.value = 1.6; ana.connect(komp); // salon hoparlörü için yüksek, kompresör tepeleri tutar
-      muzikBus = AC.createGain(); muzikBus.gain.value = S.muzikAcik ? 0.55 : 0; muzikBus.connect(ana);
+      muzikBus = AC.createGain(); muzikBus.gain.value = S.muzikAcik ? taban() : 0;
+      duck = AC.createGain(); duck.gain.value = 1; muzikBus.connect(duck); duck.connect(ana); // duck: sunucu konuşurken kısma
       efektBus = AC.createGain(); efektBus.gain.value = S.efektAcik ? 1 : 0; efektBus.connect(ana);
       var n = AC.sampleRate * 2; gurultu = AC.createBuffer(1, n, AC.sampleRate);
       var d = gurultu.getChannelData(0); for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
@@ -130,6 +132,17 @@
     siklar: function (h, t) { [76, 79, 83, 88].forEach(function (m, j) { pluck(h, t + j * 0.07, N(m), 0.14, 0.3); }); },
     tik: function (h, t) { osc(h, t, 1800, 0.035, 'square', 0.05); },
     tikSon: function (h, t) { osc(h, t, 1250, 0.09, 'square', 0.16); osc(h, t, 2500, 0.05, 'sine', 0.1); },
+    // saat tik-tak'ı (tahta blok): ek = [yüksek mi, ses]
+    tiktak: function (h, t, ek) { var y = ek && ek[0], v = (ek && ek[1]) || 0.1; osc(h, t, y ? 1320 : 990, 0.06, 'sine', v); osc(h, t, y ? 2640 : 1980, 0.025, 'triangle', v * 0.5); grlt(h, t, 0.02, v * 0.6, 'bandpass', y ? 3500 : 2600, 4); },
+    kalp: function (h, t, v) { v = v || 0.7; osc(h, t, 70, 0.16, 'sine', v, 0.004, 40); osc(h, t + 0.2, 64, 0.2, 'sine', v * 0.75, 0.004, 38); },
+    gerilim: function (h, t, sure) { // son saniyelerde yükselen gerilim
+      sure = sure || 5; var o = AC.createOscillator(), o2 = AC.createOscillator(), f = AC.createBiquadFilter(), g = AC.createGain();
+      o.type = 'sawtooth'; o2.type = 'sawtooth'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(440, t + sure);
+      o2.frequency.setValueAtTime(116.5, t); o2.frequency.exponentialRampToValueAtTime(466, t + sure);
+      f.type = 'lowpass'; f.Q.value = 6; f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(4000, t + sure);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + sure * 0.9); g.gain.linearRampToValueAtTime(0.0001, t + sure + 0.05);
+      o.connect(f); o2.connect(f); f.connect(g); g.connect(h); o.start(t); o2.start(t); o.stop(t + sure + 0.1); o2.stop(t + sure + 0.1);
+    },
     bitti: function (h, t) { // süre doldu gongu
       [196, 247, 294].forEach(function (f) { osc(h, t, f, 1.6, 'sawtooth', 0.09, 0.005); });
       kick(h, t, 0.7); grlt(h, t, 1.2, 0.16, 'bandpass', 3000, 0.6);
@@ -167,7 +180,7 @@
     muzikBus = ctx.createGain(); muzikBus.gain.value = 0.55; muzikBus.connect(ana); efektBus = ctx.createGain(); efektBus.connect(ana);
     var n = ctx.sampleRate * 2; gurultu = ctx.createBuffer(1, n, ctx.sampleRate); var dd = gurultu.getChannelData(0); for (var i = 0; i < n; i++) dd[i] = Math.random() * 2 - 1;
     plan.forEach(function (p) {
-      if (p.muzik) { var D = DESEN[p.muzik], t = p.t, k = 0; while (t < p.t + p.sure) { var hz = p.hizli != null && t >= p.hizli, d = 60 / (hz ? 150 : D.bpm) / 4, bar = (k / 16 | 0) % 4; D.adim(muzikBus, t, D.akor[bar], D.kok[bar], k % 16, d, hz); t += d; k++; } }
+      if (p.muzik) { var D = DESEN[p.muzik], t = p.t, k = 0, mg = ctx.createGain(); mg.gain.value = p.vol || 1; mg.connect(muzikBus); while (t < p.t + p.sure) { var hz = p.hizli != null && t >= p.hizli, d = 60 / (hz ? 150 : D.bpm) / 4, bar = (k / 16 | 0) % 4; D.adim(mg, t, D.akor[bar], D.kok[bar], k % 16, d, hz); t += d; k++; } }
       else E[p.efekt](efektBus, p.t, p.ek);
     });
   }
@@ -185,7 +198,10 @@
     _dosya: function () { return dosyaEl && { paused: dosyaEl.paused, t: dosyaEl.currentTime, g: dosyaGain.gain.value }; },
     efekt: efekt,
     efektAyar: function (v) { S.efektAcik = v; localStorage.setItem('yzSes', v ? '1' : '0'); if (efektBus) efektBus.gain.value = v ? 1 : 0; },
-    muzikAyar: function (v) { S.muzikAcik = v; localStorage.setItem('yzMuzik', v ? '1' : '0'); if (muzikBus) muzikBus.gain.value = v ? 0.55 : 0; },
+    muzikAyar: function (v) { S.muzikAcik = v; localStorage.setItem('yzMuzik', v ? '1' : '0'); if (muzikBus) muzikBus.gain.value = v ? taban() : 0; },
+    // Müzik seviyesi (konuşma için kısma): 0..1, yumuşak geçiş
+    seviye: function (x, sure) { if (!AC || !duck) return; var t = AC.currentTime; duck.gain.cancelScheduledValues(t); duck.gain.setValueAtTime(duck.gain.value, t); duck.gain.linearRampToValueAtTime(Math.max(0.0001, x), t + (sure || 0.6)); },
+    muzikSes: function (d) { var v = Math.max(0.05, Math.min(1, Math.round((taban() + d) * 100) / 100)); localStorage.setItem('yzMuzikSes', v); if (muzikBus && S.muzikAcik) muzikBus.gain.value = v; return Math.round(v / 0.55 * 100); },
     durum: S
   };
 })();
