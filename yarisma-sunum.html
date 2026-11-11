@@ -206,6 +206,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   <button id="kSure">Cevap süresi: 20 sn (S)</button>
   <button id="kSes">Efekt: açık (M)</button>
   <button id="kMuzik">Müzik: açık (N)</button>
+  <button id="kDosya">Şarkı seç (O)</button><input type="file" id="dosyaGir" accept="audio/*,.mp3,.m4a,.wav" style="display:none">
   <button id="kTam">Tam ekran (F)</button>
   <button id="kYeni">Yeni yarışma</button>
 </div>
@@ -515,6 +516,14 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
   function sesYaz() { $('kSes').textContent = 'Efekt: ' + (YZS.durum.efektAcik ? 'açık' : 'kapalı') + ' (M)'; $('kMuzik').textContent = 'Müzik: ' + (YZS.durum.muzikAcik ? 'açık' : 'kapalı') + ' (N)'; $('kSure').textContent = 'Cevap süresi: ' + ((H && H.sure) || 20) + ' sn (S)'; }
   $('kSes').onclick = function () { YZS.efektAyar(!YZS.durum.efektAcik); sesYaz(); };
   $('kMuzik').onclick = function () { YZS.muzikAyar(!YZS.durum.muzikAcik); sesYaz(); };
+  function dosyaYaz() { var a = YZS.dosyaAdi(); $('kDosya').textContent = a ? '♪ ' + (a.length > 22 ? a.slice(0, 21) + '…' : a) + ' (O)' : 'Şarkı seç (O)'; }
+  $('kDosya').onclick = function () {
+    if (YZS.dosyaAdi() && confirm('Şu an çalan şarkı: ' + YZS.dosyaAdi() + '\n\nTamam: başka şarkı seç   ·   İptal: şarkıyı kaldır, hazır müziğe dön')) return $('dosyaGir').click();
+    if (YZS.dosyaAdi()) { YZS.dosyaSil(); dosyaYaz(); return; }
+    $('dosyaGir').click();
+  };
+  $('dosyaGir').onchange = function () { var f = this.files[0]; if (!f) return; ac(); YZS.dosyaSec(f); dosyaYaz(); this.value = ''; };
+  YZS.dosyaYukle(dosyaYaz);
   $('kSure').onclick = function () { if (!H) return; var i = SURELER.indexOf(H.sure || 20); H.sure = SURELER[(i + 1) % SURELER.length]; kaydet(); sesYaz(); durum('Cevap süresi ' + H.sure + ' sn (sıradaki sorudan itibaren)'); setTimeout(function () { durum(''); }, 2500); };
   sesYaz();
   $('kTam').onclick = tamEkran;
@@ -529,6 +538,7 @@ body.fare .kontrol,.kontrol:hover{opacity:1}
     else if (k === 'e') esitlik();
     else if (k === 'm') $('kSes').onclick();
     else if (k === 'n') $('kMuzik').onclick();
+    else if (k === 'o') $('kDosya').onclick();
     else if (k === 's') $('kSure').onclick();
     else if (k === 'f') tamEkran();
     else if (k === 'escape') $('panel').classList.remove('on');
