@@ -4,12 +4,14 @@
   var PROD = 'https://script.google.com/macros/s/AKfycbwnyN9V87vndjSd2KIohl2XO6h_gn72W8fGSvjHoaCjDETSbrAmOJQH3Dgx0OLrc8dO/exec';
   var qs = new URLSearchParams(location.search);
   var API = qs.get('api') || PROD; // ?api= yalnız yerel test için
-  var ofs = 0, ofsOk = false;        // sunucu saati - yerel saat
+  var ofs = 0, enIyi = 1e9;          // sunucu saati - yerel saat; en kısa gidiş-dönüşlü ölçüm esas alınır
 
   function saat(t0, sn) {
     if (!sn) return;
-    var t1 = Date.now(), o = sn - (t0 + t1) / 2;
-    if (!ofsOk || t1 - t0 < 800) { ofs = ofsOk ? (ofs * 0.6 + o * 0.4) : o; ofsOk = true; }
+    var t1 = Date.now(), rtt = t1 - t0, o = sn - (t0 + t1) / 2;
+    // İlk istek (soğuk açılış) 3-5 sn sürebilir; o ölçümle saat kayar ve soru "süre doldu" görünürdü.
+    if (rtt <= enIyi + 150) { ofs = rtt < enIyi ? o : (ofs * 0.7 + o * 0.3); enIyi = Math.min(enIyi, rtt); }
+    else enIyi += 20; // ağ koşulları değişirse yavaşça yeni ölçümlere izin ver
   }
   function zamanAsimi(ms) {
     var c = typeof AbortController !== 'undefined' ? new AbortController() : null;
