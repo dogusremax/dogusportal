@@ -3,7 +3,7 @@ const fs = require('fs');
 const URL = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
 (async () => {
   const metin = fs.readFileSync(process.argv[3], 'utf8');
-  const r = await fetch(URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'yorumBildir', y: (process.env.YONETIM_ANAHTARI || '').replace(/\s+/g, ''), konu: process.argv[2], metin }) });
+  const r = await fetch(URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'yorumBildir', y: (process.env.YONETIM_ANAHTARI || '').replace(/\s+/g, ''), k: 'dogus-performans' /* GECIS_YEDEGI: A1 öncesi sunucu k ister; A1 sunucusu k'yi yok sayar */, konu: process.argv[2], metin }) });
   const t = await r.text();
   console.log('Bildirim:', t.slice(0, 200));
   if (!/"success":\s*true/.test(t)) process.exit(1);

@@ -15,14 +15,20 @@
     localStorage.setItem(A, JSON.stringify({ bilet: r.bilet, bitis: r.bitis }));
     return r.bilet;
   }
-  /** fetch(url,{method:'POST',body:JSON.stringify(govde)}) yerine: bileti ekler, geçersizse bir kez yeniden ister. */
+  function sakli() {
+    try { var v = JSON.parse(localStorage.getItem(A) || 'null'); if (v && v.bitis > Date.now() + 60000) return v.bilet; } catch (e) {}
+    return '';
+  }
+  /** fetch(url,{method:'POST',body:JSON.stringify(govde)}) yerine.
+   *  Önce saklı biletle (yoksa biletsiz) gönderir; sunucu YAYIN_BILETI derse PIN ister ve bir kez yeniden dener.
+   *  Geçiş uyumu: A1 öncesi sunucu bilet istemez, YAYIN_BILETI demez, PIN sorulmaz. */
   window.yayinPost = async function (url, govde) {
+    var bilet = sakli();
     for (var deneme = 0; deneme < 2; deneme++) {
-      var bilet = await yayinBileti(deneme > 0);
-      var r = await fetch(url, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({}, govde, { bilet: bilet })) });
+      var r = await fetch(url, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({}, govde, bilet ? { bilet: bilet } : {})) });
       var t = await r.text(), j = null;
       try { j = JSON.parse(t); } catch (e) {}
-      if (j && j.error === 'YAYIN_BILETI' && deneme === 0) { localStorage.removeItem(A); continue; }
+      if (j && j.error === 'YAYIN_BILETI' && deneme === 0) { localStorage.removeItem(A); bilet = await yayinBileti(true); continue; }
       return new Response(t, { status: r.status, headers: { 'Content-Type': 'application/json' } });
     }
   };
