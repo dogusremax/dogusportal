@@ -53,7 +53,7 @@ jobs:
           git config user.email "bot@dogusremax.com"
           git add performans/oto 2>/dev/null || true
           git diff --cached --quiet || git commit -m "Performans ${{ github.event.inputs.donem }}: $(node -p "require('./$PAYLASIM_DIR/.media').q" 2>/dev/null)"
-          git pull --rebase -q && git push
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push && break; sleep $((5*i)); done; git status -sb | head -1 | grep -qv ahead
       - name: Güncel IG token'ı al
         if: hashFiles(format('{0}/.media', env.PAYLASIM_DIR)) != '' && env.DRY_RUN != '1'
         run: |
@@ -69,7 +69,7 @@ jobs:
         run: |
           S=0; node scripts/ceyrek-ig.js 2>&1 | tee "$PAYLASIM_DIR/log.txt" || S=$?
           git add "$PAYLASIM_DIR" 2>/dev/null
-          git diff --cached --quiet || { git commit -m "Performans ${{ github.event.inputs.donem }} paylaşım kaydı" && git pull --rebase -q && git push; }
+          git diff --cached --quiet || { git commit -m "Performans ${{ github.event.inputs.donem }} paylaşım kaydı" && for i in 1 2 3 4 5; do git pull --rebase -q && git push && break; sleep $((5*i)); done; }
           exit $S
       - name: Haftalık kaydı kapat ve özet maili
         # Danışman Takip'teki HAFTA_PUB_<hafta> kaydı "tamam" olur (mükerrer yayın kilidi), Umut'a özet maili gider
