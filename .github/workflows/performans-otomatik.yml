@@ -83,3 +83,10 @@ jobs:
             sleep $((10 * i))
           done
           echo "::warning::Haftalık kayıt kapatılamadı (13:00 denetimi repo kaydından kapatır): $R"
+      - name: Hata alarmı (hemen mail)
+        # Akış herhangi bir adımda düşerse Umut'a o anda tek tuşlu devam maili gider (13:00'ü beklemez)
+        if: failure() && github.event.inputs.donem == 'hafta' && env.DRY_RUN != '1'
+        run: |
+          Q="${{ github.event.inputs.anahtar }}"
+          [ -n "$Q" ] || Q=$(TZ=Europe/Istanbul date -d "-$(( ($(TZ=Europe/Istanbul date +%u) + 6) % 7 + 7 )) days" +%F)
+          curl -sSL --max-time 90 "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=haftaKilit&k=dogus-performans&islem=hata&hafta=$Q&id=${{ github.run_id }}" || true
