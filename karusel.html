@@ -630,7 +630,7 @@ async function publish(){
   try{
     const images=[]; for(const c of canvases()){ const b=await blobOf(c); images.push(await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(fr.result.split(',')[1]); fr.readAsDataURL(b);})); }
     st.textContent='📤 Gönderiliyor… (1-2 dakika sürebilir)'; btn.textContent='📤 Yayınlanıyor…';
-    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',body:JSON.stringify({action:'instagramYayinla',ay:'portfoy-'+Date.now(),set:'karusel',images,caption:document.getElementById('caption').value,facebook:true})});
+    const resp=await yayinPost(APPS_SCRIPT_URL,{action:'instagramYayinla',ay:'portfoy-'+Date.now(),set:'karusel',images,caption:document.getElementById('caption').value,facebook:true});
     const r=await resp.json();
     if(r.success){ btn.textContent='✅ Yayınlandı'; st.textContent='Instagram'+(r.fbPostId?' + Facebook':'')+' yayınlandı.'+(r.fbPostId?'':(r.fbError?' Facebook: '+r.fbError:' (Facebook sunucu güncellemesi bekliyor)')); }
     else throw new Error(r.error||'bilinmeyen hata');
@@ -701,5 +701,6 @@ async function paylas(){
   window.__ready=true;
 })();
 </script>
+<script src="/assets/yayin-bileti.js"></script>
 </body>
 </html>

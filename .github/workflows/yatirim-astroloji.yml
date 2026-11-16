@@ -85,9 +85,13 @@ jobs:
           exit $ST
       - name: Story görselini ve gönderi linkini Umut'a mail at
         if: steps.karar.outputs.paylas == '1' && hashFiles('yatirim-astroloji/story-mail.txt') != ''
+        env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
         run: node scripts/bildir.js "Yatırım astrolojisi story'si (link çıkartmasıyla paylaş)" yatirim-astroloji/story-mail.txt
       - name: Paylaşım hatasını bildir
         if: failure() && steps.karar.outputs.paylas == '1'
+        env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
         run: |
           { echo "Haftalık yatırım astrolojisi karuseli paylaşılamadı."; echo; echo "Çalışma: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; echo; tail -20 yatirim-astroloji/ig-log.txt 2>/dev/null; } > hata.txt
           node scripts/bildir.js "Yatırım astrolojisi paylaşım hatası" hata.txt

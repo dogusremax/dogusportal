@@ -189,8 +189,7 @@ async function sh(){
     const du=await new Promise(r=>cv.toBlob(b=>{const rd=new FileReader();rd.onload=()=>r(rd.result);rd.readAsDataURL(b);},'image/jpeg',0.95));
     const images=[du.split(',')[1]];
     btn.innerHTML='📤 Yayinlaniyor...';
-    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',
-      body:JSON.stringify({action:'storyYayinla',ay:'sizlerden-'+Date.now(),images,ghToken:getTok()})});
+    const resp=await yayinPost(APPS_SCRIPT_URL,{action:'storyYayinla',ay:'sizlerden-'+Date.now(),images,ghToken:getTok()});
     const r=await resp.json();
     if(r.success){btn.innerHTML='✅ Yayinlandi!';btn.style.background='#22c55e';}
     else if(r.retry){btn.innerHTML='⏳ 2 dk sonra tekrar bas';}
@@ -216,5 +215,6 @@ function ck(e){
 }
 (function(){var q=new URLSearchParams(location.search),k=q.get('k')||(window.brokerPinAl&&brokerPinAl());if(sessionStorage.getItem('perfAuth')==='ok'){document.getElementById('pin').style.display='none';return;}if(k)brokerDogrula(k).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');document.getElementById('pin').style.display='none';}q.delete('k');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));});})();
 </script>
+<script src="/assets/yayin-bileti.js"></script>
 </body>
 </html>

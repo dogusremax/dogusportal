@@ -295,7 +295,7 @@ async function paylas(){
       images.push((await canvasOf(els[i])).toDataURL('image/jpeg',.92).split(',')[1]);
     }
     st.textContent='📤 Gönderiliyor… (1-2 dakika sürebilir)'; btn.textContent='📤 Yayınlanıyor…';
-    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',redirect:'follow',body:JSON.stringify({action:'instagramYayinla',ay:'sizlerden-'+Date.now(),set:'karusel',images,caption:cap,facebook:true})});
+    const resp=await yayinPost(APPS_SCRIPT_URL,{action:'instagramYayinla',ay:'sizlerden-'+Date.now(),set:'karusel',images,caption:cap,facebook:true});
     const r=await resp.json();
     if(r.success){btn.textContent='✅ Yayınlandı';st.textContent='Instagram'+(r.fbPostId?' + Facebook':'')+' yayınlandı.'+(r.fbPostId?'':(r.fbError?' Facebook: '+r.fbError:''));}
     else throw new Error(r.error||'bilinmeyen hata');
@@ -349,5 +349,6 @@ async function downloadAll(){
   document.body.dataset.ready='1';
 })();
 </script>
+<script src="/assets/yayin-bileti.js"></script>
 </body>
 </html>

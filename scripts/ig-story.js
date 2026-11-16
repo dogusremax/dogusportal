@@ -10,11 +10,11 @@ try { if (fs.readFileSync('nobet-story/.pub', 'utf8').trim() === media.date) { c
 const wait = ms => new Promise(r => setTimeout(r, ms));
 // "Bugün paylaşıldı" kaydının repodan AYRI kopyası Danışman Takip'te (Script Properties + LockService) tutulur.
 // Repoya aynı anda commit gelince .pub kaybolabiliyor (17 Ekim'de story iki kez atıldı); bu kilit ondan etkilenmez.
-const KILIT = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=nobetKilit&k=dogus-performans&tarih=' + media.date;
+const DT = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';  // nobetKilit: yönetim eylemi, yalnız POST + YONETIM_ANAHTARI (A1)
 async function kilit(islem, id) {
   for (let i = 1; i <= 3; i++) {
     try {
-      const j = await (await fetch(KILIT + '&islem=' + islem + (id ? '&id=' + id : ''))).json();
+      const j = await (await fetch(DT, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'nobetKilit', y: (process.env.YONETIM_ANAHTARI || '').replace(/\s+/g, ''), tarih: media.date, islem, id: id || '' }) })).json();
       if (j && 'durum' in j) return j;
       console.log('Kilit cevabı beklenmedik:', JSON.stringify(j).slice(0, 200));
     } catch (e) { console.log('Kilit erişilemedi:', e.message); }

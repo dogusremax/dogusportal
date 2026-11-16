@@ -26,6 +26,8 @@ jobs:
         with: { node-version: 20 }
       - name: Deneme e-postası
         if: inputs.bildirim_deneme
+        env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
         run: |
           echo "Bu bir deneme e-postasıdır. Otomatik paylaşılmayan yeni Google yorumları ve Sizlerden Gelenler paylaşım hataları bu adrese gelecek." > deneme.txt
           node scripts/bildir.js "Deneme: Google yorumu bildirimi" deneme.txt
@@ -43,6 +45,8 @@ jobs:
       - name: Paylaşılmayan yeni yorumu bildir
         if: hashFiles('yorum-bildirim.txt') != ''
         continue-on-error: true   # bildirim gitmese de paylaşım adımları durmasın
+        env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
         run: node scripts/bildir.js "Yeni Google yorumu (otomatik paylaşılmadı)" yorum-bildirim.txt
 
       # Sizlerden Gelenler: yeni 4-5★ yorum → story + karusel. Sadece sizlerden-story/.canli dosyası varken çalışır.
@@ -82,6 +86,8 @@ jobs:
           exit $ST
       - name: Paylaşım hatasını bildir
         if: failure()
+        env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
         run: |
           # Aynı yorum için tek e-posta (15 dk'da bir tekrar denenirken her seferinde mail gelmesin)
           K=$(node -e "try{console.log(JSON.parse(require('fs').readFileSync('sizlerden-story/.media','utf8')).key)}catch(e){console.log('genel-'+new Date().toISOString().slice(0,10))}")

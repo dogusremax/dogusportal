@@ -36,6 +36,7 @@ jobs:
       - name: Instagram'a paylaş
         if: hashFiles('nobet-story/.media') != ''
         env:
+          YONETIM_ANAHTARI: ${{ secrets.YONETIM_ANAHTARI }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
         shell: bash
         run: |
