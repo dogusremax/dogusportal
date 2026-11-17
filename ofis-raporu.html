@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Ofis Performans Raporu — RE/MAX Doğuş</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f6f3;color:#0b0b0b;font-family:Arial,"Liberation Sans",Helvetica,sans-serif;font-weight:700;-webkit-text-size-adjust:100%}
+.w{max-width:1040px;margin:0 auto;padding:22px 16px 60px}
+.ust{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.ust img{height:30px}
+h1{font-size:26px;line-height:1.2}
+.alt{color:#52514e;font-size:14px;margin:6px 0 18px;line-height:1.45}
+h2{font-size:20px;margin:30px 0 10px}
+.kartlar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:720px){.kartlar{grid-template-columns:1fr}}
+.k{background:#fff;border:2px solid #e3e2dc;border-radius:14px;padding:14px 16px}
+.k .b{font-size:15px;color:#52514e}
+.k .s{font-size:24px;margin:6px 0 2px}
+.k .d{font-size:14px;color:#52514e;line-height:1.4}
+.up{color:#0a7d33}.dn{color:#c8102e}.fl{color:#52514e}
+.grafik{background:#fff;border:2px solid #e3e2dc;border-radius:14px;padding:14px 12px 10px;margin-top:12px}
+.grafik h3{font-size:16px;margin:0 4px 10px}
+.bars{display:flex;align-items:flex-end;gap:6px;height:180px;border-bottom:2px solid #d8d7d0;padding:0 2px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.bar i{display:block;width:100%;max-width:56px;border-radius:5px 5px 0 0;background:#b8b7b0}
+.bar.s i{background:#003da5}.bar.p i{background:repeating-linear-gradient(45deg,#003da5 0 6px,#5f86c9 6px 12px)}
+.bar span{font-size:12px;margin-bottom:3px;white-space:nowrap}
+.ayl{display:flex;gap:6px;padding:6px 2px 0}.ayl div{flex:1;text-align:center;font-size:12px;color:#52514e;min-width:0}
+.lej{font-size:13px;color:#52514e;margin:8px 4px 0;display:flex;gap:14px;flex-wrap:wrap}
+.lej b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border:2px solid #e3e2dc;border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:#003da5;color:#fff;padding:9px 8px;font-size:13px;text-align:center;white-space:nowrap}
+td{padding:8px;text-align:center;border-bottom:1px solid #ecebe6;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:inherit}
+th:first-child{background:#003da5}
+tr{background:#fff}tr:nth-child(even){background:#f6f6f3}
+tr.ozet{background:#eef3fb}td.kas{color:#52514e}tr.gri td{color:#9a9990}
+.not{font-size:13px;color:#52514e;margin-top:10px;line-height:1.55}
+#durum{padding:40px 0;text-align:center;color:#52514e;font-size:16px}
+.kay{display:none;font-size:13px;color:#52514e;margin:0 0 6px}@media(max-width:720px){.kay{display:block}}
+.yenile{margin-top:22px;font-size:13px;color:#52514e}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="ust"><h1>Ofis Performans Raporu</h1></div>
+  <p class="alt">Danışman Takip öncesi ve sonrası · ciro, işlem, sosyal medya ve danışman aktiviteleri<br>Veriler her açılışta kapanış formu ve Danışman Takip'ten canlı okunur.</p>
+  <div id="durum">Veriler yükleniyor…</div>
+  <div id="icerik" hidden>
+    <h2>Önce / sonra (aylık ortalama)</h2>
+    <div class="kartlar" id="kartlar"></div>
+    <div id="grafikler"></div>
+    <h2>Danışman Takip · ofis aylık tablosu</h2>
+    <div class="kay">Tabloyu sağa kaydırın →</div><div class="tw"><table id="aylik"></table></div>
+    <div class="not" id="aylikNot"></div>
+    <h2>Danışman bazında</h2>
+    <div class="kay">Tabloyu sağa kaydırın →</div><div class="tw"><table id="kisi"></table></div>
+    <div class="not" id="kisiNot"></div>
+    <div class="yenile" id="zaman"></div>
+  </div>
+</div>
+<script src="assets/broker.js"></script>
+<script>
+brokerKapi();
+var U = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+var BASLANGIC = "2026-06";             // Danışman Takip'in ilk kaydı: 1 Haziran 2026
+var ONCE = ["2026-01","2026-02","2026-03","2026-04","2026-05"];
+// @remaxdogus Instagram gönderi sayıları (apps-script data/ig-medya.json, 17 Kasım 2026)
+var IG = {"2026-01":3,"2026-02":1,"2026-03":10,"2026-04":15,"2026-05":14,"2026-06":7,"2026-07":8,"2026-08":7,"2026-09":12,"2026-10":26,"2026-11":15};
+var IG_TARIH = "17 Kasım 2026";
+var AY = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+var AYTAM = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+var KALEM = [
+  ["Yer gösterme", ["gosterim","gosterim_imza","gosterim_coop"]],
+  ["FSBO araması", ["fzbo"]],
+  ["Etki çevresi araması", ["etki"]],
+  ["1. sunum", ["sunum1"]],
+  ["2. sunum", ["sunum2"]],
+  ["Alınan yetki", ["yetki"]],
+  ["Kapora", ["kapora","kapora_ortak"]],
+  ["Gönderi / Reels", ["sosyal_medya","sosyal_medya_ortak"]],
+  ["Story", ["story","story_ortak"]],
+  ["Google yorumu", ["yorum"]],
+  ["Broşür", ["brosur"]],
+  ["Emlak Konut nöbeti", ["emlak_nobet"]],
+  ["Müşteri kaydı", ["musteri_kayit"]],
+  ["Kıbrıs lansman daveti", ["kibris_davet","kibris_davet_ortak"]]
+];
+var KISI_KALEM = ["Yer gösterme","FSBO araması","Etki çevresi araması","1. sunum","2. sunum","Alınan yetki","Kapora","Gönderi / Reels","Story","Google yorumu"];
+
+function ayKodu(d){ return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); }
+function ayAdi(k){ return AY[+k.slice(5, 7) - 1]; }
+function mTL(v){ return (v / 1e6).toFixed(2).replace(".", ",") + " M"; }
+function sayi(v){ return Math.round(v).toLocaleString("tr-TR"); }
+function yuzde(a, b){ if (!a) return b ? null : 0; return (b - a) / a * 100; }
+function ok(p, yeniMi){
+  if (p === null) return '<span class="up">▲ yeni</span>';
+  if (Math.abs(p) < 10) return '<span class="fl">● ' + (p >= 0 ? "+" : "") + p.toFixed(0) + '%</span>';
+  return p > 0 ? '<span class="up">▲ +' + p.toFixed(0) + '%</span>' : '<span class="dn">▼ ' + p.toFixed(0) + '%</span>';
+}
+function getir(ay){
+  return fetch(U + "?action=toplanti&k=dogus-performans&ay=" + ay).then(function(r){ return r.json(); });
+}
+
+var bugun = new Date(), buAy = ayKodu(bugun);
+var aylar = [];   // Danışman Takip ayları
+for (var d = new Date(2026, 5, 1); ayKodu(d) <= buAy; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) aylar.push(ayKodu(d));
+
+Promise.all(aylar.map(getir)).then(function(cevaplar){
+  var veri = {}; aylar.forEach(function(a, i){ veri[a] = cevaplar[i]; });
+  var son = cevaplar[cevaplar.length - 1];
+  if (!son || !son.closings) throw new Error("veri yok");
+  var kisiler = {}; (son.consultants || []).forEach(function(c){ kisiler[c.id] = c; });
+
+  // Kapanışlar (yılın tamamı, broker dahil): işlem = originalId tekil, ciro = Toplam HB
+  var grup = {};
+  son.closings.forEach(function(c){ (grup[c.originalId] = grup[c.originalId] || []).push(c); });
+  var isl = {}, ciro = {}, kisiKap = {};
+  Object.keys(grup).forEach(function(id){
+    var cs = grup[id], a = String(cs[0].date || "").slice(0, 7);
+    isl[a] = (isl[a] || 0) + 1;
+    ciro[a] = (ciro[a] || 0) + Math.max.apply(null, cs.map(function(c){ return c.toplamHB || 0; }));
+    if (a >= BASLANGIC) cs.forEach(function(c){ kisiKap[c.consultantId] = (kisiKap[c.consultantId] || 0) + 1; });
+  });
+
+  // Tam aylar (içinde bulunulan ay hariç)
+  var tamSonra = aylar.filter(function(a){ return a < buAy; });
+  function ort(o, liste){ return liste.reduce(function(t, a){ return t + (o[a] || 0); }, 0) / liste.length; }
+  var sonraAd = ayAdi(tamSonra[0]) + "–" + ayAdi(tamSonra[tamSonra.length - 1]);
+  var kartlar = [
+    ["Kapanan işlem", isl, sayi], ["Ciro (hizmet bedeli)", ciro, function(v){ return mTL(v) + " TL"; }], ["@remaxdogus Instagram gönderisi", IG, sayi]
+  ].map(function(k){
+    var a = ort(k[1], ONCE), b = ort(k[1], tamSonra), p = yuzde(a, b);
+    return '<div class="k"><div class="b">' + k[0] + '</div><div class="s">' + ok(p) + '</div><div class="d">Önce (Oca–May): ' + k[2](a) +
+      ' / ay<br>Danışman Takip (' + sonraAd + '): ' + k[2](b) + ' / ay</div></div>';
+  }).join("");
+  document.getElementById("kartlar").innerHTML = kartlar;
+
+  // Aylık grafikler: Ocak → bu ay
+  var tumAy = ONCE.concat(aylar);
+  function grafik(baslik, o, fmt){
+    var mx = Math.max.apply(null, tumAy.map(function(a){ return o[a] || 0; })) || 1;
+    return '<div class="grafik"><h3>' + baslik + '</h3><div class="bars">' + tumAy.map(function(a){
+      var v = o[a] || 0, cl = a === buAy ? "bar p" : (a >= BASLANGIC ? "bar s" : "bar");
+      return '<div class="' + cl + '"><span>' + fmt(v) + '</span><i style="height:' + Math.max(2, v / mx * 150) + 'px"></i></div>';
+    }).join("") + '</div><div class="ayl">' + tumAy.map(function(a){ return "<div>" + ayAdi(a) + "</div>"; }).join("") + '</div>' +
+      '<div class="lej"><span><b style="background:#b8b7b0"></b>Önce</span><span><b style="background:#003da5"></b>Danışman Takip</span><span><b style="background:repeating-linear-gradient(45deg,#003da5 0 3px,#5f86c9 3px 6px)"></b>' + AYTAM[bugun.getMonth()] + ' (devam ediyor)</span></div></div>';
+  }
+  document.getElementById("grafikler").innerHTML =
+    grafik("Kapanan işlem (aylık)", isl, sayi) +
+    grafik("Ciro (aylık, TL)", ciro, function(v){ return (v / 1e6).toFixed(1).replace(".", ",") + "M"; }) +
+    grafik("@remaxdogus Instagram gönderisi (aylık)", IG, sayi);
+
+  // Aktiviteler
+  var ayTur = {}, kisiTur = {};
+  aylar.forEach(function(a){
+    var c = ayTur[a] = {};
+    (veri[a].activities || []).forEach(function(x){
+      c[x.type] = (c[x.type] || 0) + 1;
+      var k = kisiTur[x.consultantId] = kisiTur[x.consultantId] || {};
+      k[x.type] = (k[x.type] || 0) + 1;
+    });
+  });
+  function topla(o, turler){ return turler.reduce(function(t, x){ return t + ((o || {})[x] || 0); }, 0); }
+
+  // Gidişat: ilk 3 ay ortalaması ↔ son 2 tam ay ortalaması
+  var ilk = tamSonra.slice(0, 3), sonIki = tamSonra.slice(-2);
+  var satirlar = [["Kapanan işlem", aylar.map(function(a){ return isl[a] || 0; }), sayi, true],
+                  ["Ciro (TL)", aylar.map(function(a){ return ciro[a] || 0; }), mTL, true]]
+    .concat(KALEM.map(function(k){ return [k[0], aylar.map(function(a){ return topla(ayTur[a], k[1]); }), sayi, false]; }));
+  var h = '<tr><th>Kalem</th>' + aylar.map(function(a){ return "<th>" + ayAdi(a) + (a === buAy ? "*" : "") + "</th>"; }).join("") + '<th>Gidişat</th></tr>';
+  satirlar.forEach(function(s){
+    var deger = {}; aylar.forEach(function(a, i){ deger[a] = s[1][i]; });
+    var a = ort(deger, ilk), b = ort(deger, sonIki);
+    h += '<tr' + (s[3] ? ' class="ozet"' : '') + '><td>' + s[0] + '</td>' + s[1].map(function(v, i){
+      return '<td' + (aylar[i] === buAy ? ' class="kas"' : '') + '>' + s[2](v) + '</td>';
+    }).join("") + '<td>' + (a === 0 && b === 0 ? "–" : ok(yuzde(a, b))) + '</td></tr>';
+  });
+  document.getElementById("aylik").innerHTML = h;
+  document.getElementById("aylikNot").innerHTML = "* " + AYTAM[bugun.getMonth()] + ": 1–" + bugun.getDate() + " " + AYTAM[bugun.getMonth()] + " (ay bitmedi).<br>" +
+    "Gidişat: " + ayAdi(ilk[0]) + "–" + ayAdi(ilk[ilk.length - 1]) + " aylık ortalaması ile " + ayAdi(sonIki[0]) + "–" + ayAdi(sonIki[sonIki.length - 1]) + " aylık ortalaması karşılaştırması.<br>" +
+    "Yer gösterme: 28 Eylül'den beri yalnız imzalı yer gösterme belgesiyle sayılıyor; Ekim'deki düşüşün bir kısmı bu kuraldan.<br>" +
+    "Story ve Google yorumu sayımı Eylül sonu / Ekim'de başladı; öncesi 0 görünür. Ofis toplamlarında broker işlemleri dahildir.";
+
+  // Danışman bazında
+  var ids = Object.keys(kisiler).filter(function(i){
+    var c = kisiler[i]; if (c.isAdmin) return false;
+    var t = kisiTur[i] || {}; return Object.keys(t).length || kisiKap[i];
+  });
+  var tablo = ids.map(function(i){
+    return { ad: kisiler[i].name, gri: !!kisiler[i].hiddenFromLogin, v: [kisiKap[i] || 0].concat(KISI_KALEM.map(function(ad){
+      var k = KALEM.filter(function(x){ return x[0] === ad; })[0]; return topla(kisiTur[i], k[1]); })) };
+  }).sort(function(a, b){ return (b.v[1] - a.v[1]) || (b.v[0] - a.v[0]); });
+  var kh = '<tr><th>Danışman</th><th>Kapanış</th>' + KISI_KALEM.map(function(k){ return "<th>" + k + "</th>"; }).join("") + '</tr>';
+  var top = tablo[0] ? tablo[0].v.map(function(_, j){ return tablo.reduce(function(t, r){ return t + r.v[j]; }, 0); }) : [];
+  tablo.forEach(function(r){ kh += '<tr' + (r.gri ? ' class="gri"' : '') + '><td>' + r.ad + '</td>' + r.v.map(function(v){ return "<td>" + v + "</td>"; }).join("") + '</tr>'; });
+  kh += '<tr class="ozet"><td>Toplam</td>' + top.map(function(v){ return "<td>" + v + "</td>"; }).join("") + '</tr>';
+  document.getElementById("kisi").innerHTML = kh;
+  document.getElementById("kisiNot").innerHTML = "1 Haziran – " + bugun.getDate() + " " + AYTAM[bugun.getMonth()] + " " + bugun.getFullYear() + " toplamı, yer gösterme sayısına göre sıralı.<br>" +
+    "Kapanış: danışmanın tarafı olduğu işlem sayısı (ortak işlem iki danışmana da sayılır); broker işlemleri bu tabloda yok.<br>" +
+    "Gri satırlar: Danışman Takip girişi kapalı danışmanlar.";
+
+  document.getElementById("zaman").textContent = "Güncelleme: " + bugun.toLocaleString("tr-TR") + " · Instagram gönderi sayıları " + IG_TARIH + " itibarıyla.";
+  document.getElementById("durum").hidden = true;
+  document.getElementById("icerik").hidden = false;
+}).catch(function(e){
+  document.getElementById("durum").textContent = "Veriler okunamadı, sayfayı yenileyin. (" + e.message + ")";
+});
+</script>
+</body>
+</html>
