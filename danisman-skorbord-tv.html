@@ -35,7 +35,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 .bas h2{font:800 3vh Archivo,sans-serif}
 .bas span{font-size:1.8vh;color:var(--dim)}
 .satirlar{display:grid;grid-template-rows:repeat(8,1fr);gap:.9vh;min-height:0}
-.satir{position:relative;display:grid;grid-template-columns:4.2vh 6.4vh 1fr 22vw 9vw;align-items:center;gap:1.1vw;padding:0 1.2vw;background:var(--kart);border:1px solid var(--cizgi);border-radius:1.4vh;overflow:hidden;transition:background .6s}
+.satir{position:relative;display:grid;grid-template-columns:4.2vh 6.4vh minmax(0,1fr) 22vw 9vw;align-items:center;gap:1.1vw;padding:0 1.2vw;background:var(--kart);border:1px solid var(--cizgi);border-radius:1.4vh;overflow:hidden;transition:background .6s}
 .satir.s1{background:linear-gradient(90deg,rgba(220,28,46,.35),rgba(220,28,46,.08))}
 .satir.s2{background:linear-gradient(90deg,rgba(59,111,216,.32),rgba(59,111,216,.06))}
 .satir.s3{background:linear-gradient(90deg,rgba(245,194,17,.22),rgba(245,194,17,.05))}
@@ -44,6 +44,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 .no{font:800 3vh Archivo,sans-serif;text-align:center;color:var(--dim)}
 .s1 .no{color:#ff8a96}.s2 .no{color:#9fbaff}.s3 .no{color:#ffd35c}
 .yuz{width:6.4vh;height:6.4vh;border-radius:50%;object-fit:cover;background:#1b2a55;border:.3vh solid rgba(255,255,255,.85)}
+.ad{min-width:0}
 .ad strong{display:block;font:700 2.9vh Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ad span{font-size:1.7vh;color:var(--dim)}
 .metrik{display:grid;grid-template-columns:repeat(4,1fr);gap:.5vw;text-align:center}
@@ -79,7 +80,9 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 .bant-et{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:.6vh;padding:0 1.8vw;background:var(--red);font:800 2.4vh Inter,sans-serif;letter-spacing:.16em;z-index:2;box-shadow:1vw 0 2vw rgba(0,0,0,.5)}
 .bant-et small{font:600 1.5vh Inter,sans-serif;letter-spacing:.04em;opacity:.85}
 .bant-yol{flex:1;min-width:0;overflow:hidden;display:flex;align-items:center;-webkit-mask-image:linear-gradient(90deg,transparent,#000 3vw,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 3vw,#000 95%,transparent)}
-.bant-ic{display:flex;width:max-content;animation:kay var(--sure,80s) linear infinite;will-change:transform}
+.bant-ic{display:-webkit-box;display:flex;width:-webkit-max-content;width:max-content;-webkit-animation:kay var(--sure,80s) linear infinite;animation:kay var(--sure,80s) linear infinite;will-change:transform}
+.bant-ic.js{-webkit-animation:none;animation:none}
+@-webkit-keyframes kay{to{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}}
 @keyframes kay{to{transform:translate3d(-50%,0,0)}}
 .ti{--r:#7fa6ff;display:flex;align-items:center;gap:1vw;padding:0 2.4vw;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)}
 .ti .yuz{width:8.6vh;height:8.6vh;border:.45vh solid var(--r)}
@@ -260,7 +263,26 @@ function bantCiz(l){
   var ic = $('bantIc');
   ic.innerHTML = parca + parca;
   requestAnimationFrame(function(){ ic.style.setProperty('--sure', Math.max(40, ic.scrollWidth / 2 / (window.innerWidth / 14)) + 's'); });
+  bantBaslat();
 }
+/* Bant kaydırma: requestAnimationFrame ile (bazı TV tarayıcıları tam ekranda CSS animasyonunu durduruyor) */
+var BANT_X = 0, BANT_SON = 0, BANT_DONGU = false;
+function bantBaslat(){
+  var ic = $('bantIc'); ic.classList.add('js');
+  if (BANT_DONGU) return; BANT_DONGU = true;
+  function adim(t){
+    var yarim = ic.scrollWidth / 2, dt = BANT_SON ? Math.min(t - BANT_SON, 100) : 0; BANT_SON = t;
+    if (yarim > 0) {
+      BANT_X -= dt / 1000 * Math.max(60, window.innerWidth / 14);
+      if (BANT_X <= -yarim) BANT_X += yarim;
+      var v = 'translate3d(' + BANT_X.toFixed(1) + 'px,0,0)';
+      ic.style.webkitTransform = v; ic.style.transform = v;
+    }
+    (window.requestAnimationFrame || function(f){ return setTimeout(function(){ f(Date.now()); }, 16); })(adim);
+  }
+  (window.requestAnimationFrame || function(f){ return setTimeout(function(){ f(Date.now()); }, 16); })(adim);
+}
+['resize','fullscreenchange','webkitfullscreenchange'].forEach(function(t){ (t === 'resize' ? window : document).addEventListener(t, function(){ BANT_SON = 0; }); });
 var KUTLANIYOR = false;
 function kutlaSiradaki(){
   if (KUTLANIYOR || !KUYRUK.length) return;
