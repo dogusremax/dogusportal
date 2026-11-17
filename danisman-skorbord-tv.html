@@ -77,7 +77,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 
 /* Borsa bandı */
 .bant{display:flex;align-items:stretch;min-width:0;overflow:hidden;background:#04091a;border-top:.4vh solid var(--red);min-height:0}
-.bant-et{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:.6vh;padding:0 1.8vw;background:var(--red);font:800 2.4vh Inter,sans-serif;letter-spacing:.16em;z-index:2;box-shadow:1vw 0 2vw rgba(0,0,0,.5)}
+.bant-et{flex:0 0 auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 2.4vw;background:var(--red);font:800 4.2vh Archivo,sans-serif;letter-spacing:.12em;z-index:2;box-shadow:1vw 0 2vw rgba(0,0,0,.5)}
 .bant-et small{font:600 1.5vh Inter,sans-serif;letter-spacing:.04em;opacity:.85}
 .bant-yol{flex:1;min-width:0;overflow:hidden;display:flex;align-items:center;-webkit-mask-image:linear-gradient(90deg,transparent,#000 3vw,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 3vw,#000 95%,transparent)}
 .bant-ic{display:-webkit-box;display:flex;width:-webkit-max-content;width:max-content;-webkit-animation:kay var(--sure,80s) linear infinite;animation:kay var(--sure,80s) linear infinite;will-change:transform}
@@ -132,7 +132,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
   </aside>
 </main>
 <footer class="bant">
-  <div class="bant-et">CANLI<small>son hareketler</small></div>
+  <div class="bant-et">CANLI</div>
   <div class="bant-yol"><div class="bant-ic" id="bantIc"></div></div>
 </footer>
 <div class="kutlama" id="kutlama"><div class="kutlama-ic" id="kutlamaIc"></div></div>
