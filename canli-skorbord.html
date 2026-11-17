@@ -8,7 +8,6 @@
 <link rel="apple-touch-icon" href="assets/app-ikon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/broker.js"></script>
-<script>brokerKapi();</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#f4f6fa;--card:#fff;--line:#e3e7ee;--red:#DC1C2E;--blue:#003DA5;--navy:#0b1636;--text:#131a26;--dim:#68738a;--ok:#0f9d58}
@@ -169,9 +168,30 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
   .lider strong{font-size:22px}
 }
 
+
+.pin-ekran{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 90% at 100% 0%,#1d3a8a 0%,rgba(29,58,138,0) 55%),var(--navy);display:flex;align-items:center;justify-content:center;padding:24px}
+.pin-ekran[hidden]{display:none}
+.pin-kutu{width:100%;max-width:340px;text-align:center;color:#fff}
+.pin-kutu img{height:40px;margin-bottom:22px}
+.pin-kutu h2{font:800 24px Archivo,sans-serif}
+.pin-kutu p{color:rgba(255,255,255,.7);font-size:14px;margin:6px 0 20px}
+.pin-kutu input{width:100%;font:700 26px Archivo,sans-serif;letter-spacing:.5em;text-align:center;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;outline:none}
+.pin-kutu input:focus{border-color:#fff}
+.pin-kutu button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:14px;background:var(--red);color:#fff;font:700 16px Inter,sans-serif;cursor:pointer}
+.pin-hata{min-height:20px;margin-top:10px;color:#ff9aa5;font-size:13px}
 </style>
 </head>
 <body>
+<div class="pin-ekran" id="pinEkran" hidden>
+  <form class="pin-kutu" id="pinForm" autocomplete="off">
+    <img src="assets/dogus-logo.webp" alt="RE/MAX Doğuş">
+    <h2>Canlı Skorbord</h2>
+    <p>Kapanış Formu'na girdiğin PIN ile giriş yap</p>
+    <input id="pinGir" type="password" inputmode="numeric" maxlength="8" placeholder="••••" aria-label="PIN">
+    <button type="submit">Giriş</button>
+    <div class="pin-hata" id="pinHata"></div>
+  </form>
+</div>
 <header class="hero">
   <div class="bar">
     <img src="assets/dogus-logo.webp" alt="RE/MAX Doğuş">
@@ -279,7 +299,7 @@ function ortakMi(r){
   var ref = String(r.ref || '');
   return /^Co-op/.test(ref) || ref === 'Broker Referral' || kibrisMi(r);
 }
-function kibrisMi(r){ return /kıbrıs/i.test(String(r.address || '').toLocaleLowerCase('tr')); }
+function kibrisMi(r){ return r.kibris === true || /k[ıiIİ]br[ıiIİ]s/i.test(String(r.address || '')); }
 
 function hesapla(){
   var aylar = donemAylari(), ayN = gecenAy(aylar);
@@ -407,22 +427,40 @@ function yukle(){
     $('alt').textContent = KAYIT.length + ' kapanış kaydı ve ' + YORUM.length + ' Google yorumu okundu.';
     ciz();
   }).catch(function(e){
+    if (e && e.message === 'pin') { durum('hata', 'Giriş gerekli'); return; }
     durum('hata', 'Bağlantı hatası · tekrar dene');
     if (!KAYIT) $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>';
   });
 }
 /*VERIAL*/
+function pinAl(){ try { return localStorage.getItem('skorbordPin') || (window.brokerPinAl && brokerPinAl()) || ''; } catch(e){ return ''; } }
 function veriAl(){
-  var pin = (window.brokerPinAl && brokerPinAl()) || '';
+  var pin = pinAl();
+  if (!pin) { pinSor(''); return Promise.reject(new Error('pin')); }
   return Promise.all([
-    fetch(KAPANIS_API + '?action=getRecords&pin=' + encodeURIComponent(pin), {redirect:'follow'}).then(function(r){ return r.json(); }),
+    fetch(KAPANIS_API + '?action=skorbord&pin=' + encodeURIComponent(pin), {redirect:'follow'}).then(function(r){ return r.json(); }),
     fetch('data/google-yorumlar.json?t=' + Date.now()).then(function(r){ return r.json(); })
   ]).then(function(x){
-    var k = x[0] && (x[0].records || x[0].data || x[0]);
-    if (!Array.isArray(k)) throw new Error('kayıt yok');
-    return {kayit: k, yorum: (x[1] && x[1].yorumlar) || []};
+    if (x[0] && x[0].ok === false) {
+      try { localStorage.removeItem('skorbordPin'); } catch(e){}
+      pinSor(x[0].error === 'kilit' ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.' : 'PIN hatalı.');
+      throw new Error('pin');
+    }
+    if (!x[0] || !Array.isArray(x[0].records)) throw new Error('kayıt yok');
+    return {kayit: x[0].records, yorum: (x[1] && x[1].yorumlar) || []};
   });
 }
+function pinSor(hata){
+  $('pinEkran').hidden = false; $('pinHata').textContent = hata || '';
+  setTimeout(function(){ $('pinGir').focus(); }, 50);
+}
+$('pinForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var p = $('pinGir').value.trim(); if (!p) return;
+  try { localStorage.setItem('skorbordPin', p); } catch(e){}
+  $('pinEkran').hidden = true; $('pinGir').value = '';
+  yukle();
+});
 /*/VERIAL*/
 $('canli').addEventListener('click', yukle);
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) yukle(); });
