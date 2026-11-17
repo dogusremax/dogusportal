@@ -178,6 +178,26 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .pin-kutu button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:14px;background:var(--red);color:#fff;font:700 16px Inter,sans-serif;cursor:pointer}
 .pin-hata{min-height:20px;margin-top:10px;color:#ff9aa5;font-size:13px}
 @media(min-width:1000px){.liste{display:none}.tablo-kutu{display:block}}
+
+.ust-sag{display:flex;gap:8px;align-items:center}
+.tam-btn{display:none;align-items:center;gap:6px;font:600 12px Inter,sans-serif;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#fff;padding:7px 11px;border-radius:999px;cursor:pointer}
+@media(min-width:900px){.tam-btn.var{display:inline-flex}}
+/* Borsa bandı */
+.borsa{display:none;position:fixed;left:0;right:0;bottom:0;z-index:40;background:#060d22;color:#fff;border-top:2px solid var(--red);height:58px;overflow:hidden;align-items:center}
+.borsa .etiket{flex:0 0 auto;height:100%;display:flex;align-items:center;gap:8px;padding:0 18px;background:var(--red);font:800 15px Archivo,sans-serif;letter-spacing:.06em;position:relative;z-index:2;box-shadow:12px 0 18px #060d22}
+.borsa .etiket i{width:8px;height:8px;border-radius:50%;background:#fff;animation:nabiz 2s infinite}
+.borsa .serit{flex:1;overflow:hidden;height:100%;display:flex;align-items:center}
+.borsa .akis{display:flex;white-space:nowrap;will-change:transform;animation:akis var(--sure,60s) linear infinite}
+.borsa .oge{display:inline-flex;align-items:baseline;gap:10px;padding:0 28px;font:600 18px Inter,sans-serif;border-right:1px solid rgba(255,255,255,.12)}
+.borsa .oge strong{font:800 18px Archivo,sans-serif;letter-spacing:.03em;text-transform:uppercase}
+.borsa .oge b{font:700 18px Archivo,sans-serif;font-variant-numeric:tabular-nums}
+.borsa .oge small{font-size:13px;color:rgba(255,255,255,.6)}
+.borsa .yuk{color:#33d17a}.borsa .dus{color:#ff6b7a}.borsa .sabit{color:rgba(255,255,255,.55)}
+@keyframes akis{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.borsa .akis{animation-duration:calc(var(--sure,60s) * 3)}}
+body.tv .borsa{display:flex}
+body.tv{padding-bottom:70px}
+body.tv{--w:1640px}
 </style>
 </head>
 <body>
@@ -194,7 +214,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 <header class="hero">
   <div class="bar">
     <img src="assets/dogus-logo.webp" alt="RE/MAX Doğuş">
-    <button class="canli" id="canli" type="button" title="Yenile"><i></i><span id="canliYazi">Yükleniyor…</span></button>
+    <div class="ust-sag">
+      <button class="tam-btn" id="tamBtn" type="button" title="Tam ekran (F)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="tamYazi">Tam ekran</span></button>
+      <button class="canli" id="canli" type="button" title="Yenile"><i></i><span id="canliYazi">Yükleniyor…</span></button>
+    </div>
   </div>
   <div class="baslik">
     <div><small>RE/MAX Doğuş · 2026</small>
@@ -213,6 +236,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
     <div class="cipler gizli" id="cipCeyrek"></div>
     <div class="cipler gizli" id="cipAy"></div>
   </div>
+</div>
+
+<div class="borsa" id="borsa" aria-hidden="true">
+  <div class="etiket"><i></i>DOĞUŞ BORSA</div>
+  <div class="serit"><div class="akis" id="akis"></div></div>
 </div>
 
 <main>
@@ -381,6 +409,60 @@ function ciz(){
   $('donemYazi').textContent = TUR === 'yil' ? '1 Ocak – bugün · 2026' : TUR === 'ceyrek' ? SECIM + '. çeyrek · ' + AYLAR[(SECIM-1)*3] + '–' + AYLAR[(SECIM-1)*3+2] + ' 2026' : AYLAR[SECIM-1] + ' 2026';
 }
 
+/* Borsa bandı: yıl cirosu + bu ayın cirosunun geçen ayın aynı günlerine göre değişimi */
+function borsaCiz(){
+  if (!KAYIT) return;
+  var b = bugun(), y = b.getUTCFullYear(), m = b.getUTCMonth() + 1, g = b.getUTCDate();
+  var buAy = y + '-' + ('0'+m).slice(-2);
+  var py = m === 1 ? y - 1 : y, pm = m === 1 ? 12 : m - 1, gecenAy = py + '-' + ('0'+pm).slice(-2);
+  var T = TUR, S = SECIM; TUR = 'yil'; var yilSatir = hesapla(); TUR = T; SECIM = S;
+  var ix = {}; EKIP.forEach(function(e){ ix[e.ad] = {bu:0, onceki:0, buKap:0}; });
+  KAYIT.forEach(function(r){
+    var o = ix[String(r.advisor || '').trim()]; if (!o) return;
+    var t = gun(r.date), ay = t.slice(0,7), gn = +t.slice(8,10), hb = Number(r.totalHB) || Number(r.amount) || 0;
+    if (ay === buAy && gn <= g) { o.bu += hb; o.buKap++; }
+    else if (ay === gecenAy && gn <= g) o.onceki += hb;
+  });
+  var sirali = yilSatir.slice().sort(function(a,b){ return b.ciro - a.ciro; });
+  var ogeler = sirali.map(function(s, i){
+    var o = ix[s.e.ad], fark = o.onceki ? (o.bu - o.onceki) / o.onceki * 100 : (o.bu ? 100 : 0);
+    var cls = o.bu > o.onceki ? 'yuk' : o.bu < o.onceki ? 'dus' : 'sabit';
+    var ok = cls === 'yuk' ? '▲' : cls === 'dus' ? '▼' : '■';
+    return '<span class="oge"><small>#' + (i+1) + '</small><strong>' + esc(s.e.gorunen || s.e.ad) + '</strong>' +
+      '<b>' + tl(s.ciro) + '</b><span class="' + cls + '">' + ok + ' ' + (!o.onceki && !o.bu ? '—' : !o.onceki ? 'yeni' : '%' + Math.abs(Math.round(fark))) + '</span>' +
+      '<small>bu ay ' + o.buKap + ' kapanış · yıl ' + s.kapanis + '</small></span>';
+  });
+  var top = sirali.reduce(function(t,s){ return t + s.ciro; }, 0);
+  ogeler.unshift('<span class="oge"><strong>Ofis 2026</strong><b>' + tl(top) + '</b><small>' + sirali.reduce(function(t,s){ return t + s.kapanis; }, 0) + ' kapanış</small></span>');
+  var tek = ogeler.join('');
+  var akis = $('akis'); akis.innerHTML = tek + tek;
+  requestAnimationFrame(function(){ akis.style.setProperty('--sure', Math.max(30, Math.round(akis.scrollWidth / 2 / 70)) + 's'); });
+}
+function tamMi(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+/* TV ve tarayıcı tam ekranı (F11, TV'nin kendi tam ekranı) Fullscreen API'yi tetiklemez: ekran boyutundan ve TV tarayıcısından anlaşılır */
+function tarayiciTam(){
+  try { if (matchMedia('(display-mode: fullscreen)').matches) return true; } catch(e){}
+  return screen.width >= 900 && innerWidth >= screen.width - 4 && innerHeight >= screen.height - 4;
+}
+var TV_CIHAZ = /Tizen|SMART-TV|SmartTV|Web0S|WebOS|HbbTV|NetCast|BRAVIA|AFT|CrKey|GoogleTV|Android TV/i.test(navigator.userAgent);
+function tvAyarla(){
+  var tv = tamMi() || tarayiciTam() || TV_CIHAZ || /[?&]tv=1/.test(location.search);
+  document.body.classList.toggle('tv', tv);
+  $('tamYazi').textContent = tamMi() ? 'Çık' : 'Tam ekran';
+  if (tv) borsaCiz();
+}
+function tamGec(){
+  var d = document.documentElement;
+  if (tamMi()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+  else { var f = d.requestFullscreen || d.webkitRequestFullscreen; if (f) { var p = f.call(d); if (p && p.catch) p.catch(function(){}); } }
+}
+if (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) $('tamBtn').classList.add('var');
+$('tamBtn').addEventListener('click', tamGec);
+document.addEventListener('fullscreenchange', tvAyarla);
+document.addEventListener('webkitfullscreenchange', tvAyarla);
+window.addEventListener('resize', function(){ clearTimeout(window.__tvT); window.__tvT = setTimeout(tvAyarla, 250); });
+document.addEventListener('keydown', function(ev){ if ((ev.key === 'f' || ev.key === 'F') && !/INPUT|TEXTAREA/.test(ev.target.tagName)) tamGec(); });
+
 /* Dönem seçici */
 function cipKur(){
   var b = bugun(), bm = b.getUTCFullYear() === YIL ? b.getUTCMonth() + 1 : 12, bq = Math.ceil(bm/3);
@@ -425,6 +507,7 @@ function yukle(){
     durum('', 'Canlı · ' + ('0'+s.getUTCHours()).slice(-2) + ':' + ('0'+s.getUTCMinutes()).slice(-2));
     $('alt').textContent = KAYIT.length + ' kapanış kaydı ve ' + YORUM.length + ' Google yorumu okundu.';
     ciz();
+    if (document.body.classList.contains('tv')) borsaCiz();
   }).catch(function(e){
     if (e && e.message === 'pin') { durum('hata', 'Giriş gerekli'); return; }
     durum('hata', 'Bağlantı hatası · tekrar dene');
@@ -465,6 +548,7 @@ $('canli').addEventListener('click', yukle);
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) yukle(); });
 setInterval(function(){ if (!document.hidden) yukle(); }, 5 * 60 * 1000);
 cipKur();
+tvAyarla();
 yukle();
 })();
 </script>
