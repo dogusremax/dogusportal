@@ -165,6 +165,28 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 @keyframes parla{0%{box-shadow:0 0 0 3px rgba(245,194,17,.55)}100%{box-shadow:0 0 0 0 rgba(245,194,17,0)}}
 .k-gos{--r:#0f8a4f;--z:#e1f5ea}.k-ara{--r:#003DA5;--z:#e6edf9}.k-sun{--r:#6b3fd4;--z:#efe9fd}.k-yet{--r:#DC1C2E;--z:#fde7ea}
 .k-ic{--r:#d6246e;--z:#fde6ef}.k-yor{--r:#b26a00;--z:#fff1d6}.k-kib{--r:#0a8484;--z:#dff4f4}.k-mus{--r:#5b6475;--z:#eef1f6}
+/* Borsa bandı: yatay kayan son hareketler */
+.bant{max-width:var(--w);margin:14px auto 0;padding:0 14px}
+.bant-kutu{position:relative;display:flex;align-items:stretch;background:#0b1636;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(11,22,54,.18)}
+.bant-etiket{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:0 14px;background:var(--red);color:#fff;font:800 12px Inter,sans-serif;letter-spacing:.12em}
+.bant-etiket i{width:8px;height:8px;border-radius:50%;background:#fff;animation:yanip 1.2s infinite}
+.bant-etiket::after{content:"";position:absolute;right:-12px;top:0;bottom:0;width:12px;background:linear-gradient(90deg,var(--red),transparent)}
+.bant-yol{flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 30px),transparent)}
+.bant-ic{display:flex;width:max-content;animation:bantKay var(--sure,60s) linear infinite;will-change:transform}
+.bant-yol:hover .bant-ic,.bant-yol:active .bant-ic{animation-play-state:paused}
+@keyframes bantKay{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+.ti{--r:#7fa6ff;display:flex;align-items:center;gap:8px;padding:9px 18px 9px 14px;color:#fff;white-space:nowrap;border-right:1px solid rgba(255,255,255,.08)}
+.ti .yuz{width:30px;height:30px;border:2px solid var(--r);box-shadow:none}
+.ti b{font:700 14px Inter,sans-serif}
+.ti em{font-style:normal;font-size:13px;color:var(--r);font-weight:600}
+.ti .yuk{font:800 14px Archivo,sans-serif;color:#33d17a}
+.ti .yuk::before{content:"▲ ";font-size:10px;vertical-align:1px}
+.ti time{font-size:11.5px;color:rgba(255,255,255,.5)}
+.ti.buyuk{background:linear-gradient(90deg,rgba(245,194,17,.16),transparent)}
+.ti.buyuk .yuk{color:#f5c211}
+.ti.k-gos{--r:#4fd18b}.ti.k-ara{--r:#7fa6ff}.ti.k-sun{--r:#b39bff}.ti.k-yet{--r:#ff6b7a}.ti.k-ic{--r:#ff7fb0}.ti.k-yor{--r:#ffc24d}.ti.k-kib{--r:#4fd6d6}.ti.k-mus{--r:#aab3c5}
+@media (prefers-reduced-motion:reduce){.bant-ic{animation:none}.bant-yol{overflow-x:auto}}
+@media(min-width:1000px){.bant{padding:0 32px;margin-top:18px}.ti{padding:11px 22px 11px 16px}.ti .yuz{width:34px;height:34px}.ti b{font-size:15px}}
 .bos-durum{background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:28px;text-align:center;color:var(--dim);font-size:14px}
 .iskelet{height:130px;border-radius:18px;background:linear-gradient(90deg,#eef1f6 25%,#f6f8fb 50%,#eef1f6 75%);background-size:200% 100%;animation:isk 1.2s infinite}
 @keyframes isk{to{background-position:-200% 0}}
@@ -239,6 +261,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
     <div class="cipler gizli" id="cipCeyrek"></div>
   </div>
 </div>
+<section class="bant" id="bant" hidden><div class="bant-kutu"><div class="bant-etiket"><i></i>CANLI</div><div class="bant-yol"><div class="bant-ic" id="bantIc"></div></div></div></section>
 <main>
   <section class="ozet" id="ozet">
     <div class="kpi ana"><div><span>Ofis toplam puanı</span><b id="kPuan">—</b><em id="kPuanNot">—</em></div>
@@ -406,7 +429,9 @@ function yukle(donemDegisti){
     else { $('liste').innerHTML = '<div class="iskelet"></div><div class="iskelet"></div><div class="iskelet"></div>'; $('tbody').innerHTML = ''; $('tfoot').innerHTML = ''; }
   }
   if (!girisVar()) return;
-  akisYukle();
+  if (ILK) { ILK = false; dtSkorAl(false); }   // son görüntü: anında
+  dtSkorAl(true);                               // taze: son hareketler + bu ay
+  if (buAyMi()) { if (!VERI) durum('yukleniyor', 'Yükleniyor…'); return; }
   if (SURUYOR[k]) return;               // aynı dönem zaten yükleniyor: üst üste istek açma
   SURUYOR[k] = true;
   if (!VERI) durum('yukleniyor', 'Yükleniyor…'); else if (!donemDegisti) durum('yukleniyor', 'Güncelleniyor…');
@@ -423,9 +448,32 @@ function yukle(donemDegisti){
     else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
   }).then(function(){ SURUYOR[k] = false; });
 }
-function akisYukle(){
-  if (AKIS_SURUYOR) return; AKIS_SURUYOR = true;
-  akisAl().then(function(a){ onbellekYaz('dtSkor:akis', {akt:a, kisi:KISILER}); akisCiz(a); }).catch(function(){}).then(function(){ AKIS_SURUYOR = false; });
+var ILK = true, DT_SURUYOR = {}, SON_URETIM = '';
+function buAyMi(){ return TUR === 'ay' && SECIM === ayKod(tr()); }
+/* Tek istek: bu ayın sıralaması + son hareketler. taze=false → sunucudaki son görüntü (anında) */
+function dtSkorAl(taze){
+  var t = taze ? 1 : 0; if (DT_SURUYOR[t]) return; DT_SURUYOR[t] = true;
+  getJSON(DT_API + '?action=dtSkor&k=' + KEY + (taze ? '&taze=1' : ''), taze ? 30 : 15).then(function(d){
+    if (!d || !d.aylik || !d.uretim) throw new Error('veri yok');
+    if (d.uretim < SON_URETIM) return;          // daha yenisi zaten geldi
+    SON_URETIM = d.uretim;
+    (d.consultants || []).forEach(function(k){ KISILER[k.id] = k; });
+    onbellekYaz('dtSkor:akis', {akt: d.activities, kisi: KISILER});
+    onbellekYaz('dtSkor:ay:' + d.ay, d.aylik);
+    akisCiz(d.activities || []);
+    if (buAyMi() && SECIM === d.ay) {
+      if (VERI) VERI.siralama.forEach(function(r){ ONCEKI[r.id] = r.puan; }); else ONCEKI = {};
+      VERI = d.aylik; SON_GUNCEL = Date.parse(d.uretim);
+      var yas = (Date.now() - SON_GUNCEL) / 60000;
+      if (yas < 3) durum('', 'Canlı · ' + saat(SON_GUNCEL)); else durum('yukleniyor', 'Son veri ' + saat(SON_GUNCEL) + ' · yenileniyor…');
+      ciz();
+    }
+  }).catch(function(){
+    if (taze && buAyMi()) {
+      if (VERI) durum('hata', 'Bağlantı yavaş · ' + (SON_GUNCEL ? saat(SON_GUNCEL) : 'son') + ' verisi');
+      else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
+    }
+  }).then(function(){ DT_SURUYOR[t] = false; });
 }
 
 /* ---- Çizim ---- */
@@ -532,7 +580,27 @@ var PUAN = {gosterim:3,gosterim_imza:5,gosterim_coop:3,fzbo:1,etki:2,sunum1:5,su
   kibris_davet_ortak:1.5,kibris_teyit_ortak:2.5,kibris_son_ortak:2.5,kibris_geldi_ortak:7.5,yorum:15};
 var BUYUK = {yetki:1,kapora:1,kapora_ortak:1,yorum:1,sunum2:1,kibris_geldi:1,kibris_geldi_ortak:1};
 var AKIS_SON = null, GORULEN = null;
+var BANT_IMZA = '';
+function bantCiz(l){
+  var imza = l.map(function(a){ return a.timestamp + a.type; }).join('|');
+  if (!l.length) { $('bant').hidden = true; return; }
+  if (imza === BANT_IMZA) return;           // aynı veri: bant yeniden başlamasın
+  BANT_IMZA = imza;
+  var parca = l.map(function(a){
+    var t = TUR_AD[a.type] || ['•', a.type], k = KISILER[a.consultantId] || {}, pu = PUAN[a.type];
+    var dk = (Date.now() - new Date(a.timestamp).getTime()) / 60000;
+    return '<span class="ti k-' + (KAT[a.type] || 'ara') + (BUYUK[a.type] ? ' buyuk' : '') + '">' + yuz(a.consultantId) +
+      '<b>' + esc(String(k.name || a.consultantId).split(' ')[0]) + '</b><em>' + t[0] + ' ' + esc(t[1]) + '</em>' +
+      (pu ? '<span class="yuk">+' + p(pu) + '</span>' : '') + '<time>' + (dk < 2 ? 'az önce' : once(a.timestamp)) + '</time></span>';
+  }).join('');
+  var ic = $('bantIc');
+  ic.innerHTML = parca + parca;              // iki kopya: kesintisiz döngü
+  ic.style.setProperty('--sure', Math.max(30, l.length * 4.5) + 's');
+  $('bant').hidden = false;
+}
+
 function akisCiz(akt){
+  var yeniVeri = !!akt;
   if (akt) AKIS_SON = akt; akt = AKIS_SON || [];
   var gecerli = function(a){ var k = KISILER[a.consultantId]; return k && !k.isAdmin && !k.hiddenFromRanking; };
   var liste = akt.filter(gecerli).sort(function(a,b){ return String(b.timestamp).localeCompare(String(a.timestamp)); });
@@ -560,6 +628,7 @@ function akisCiz(akt){
       '<div class="sag">' + (pu ? '<span class="pp">+' + p(pu) + '</span>' : '') + '<time' + (dk < 15 ? ' class="simdi"' : '') + '>' + (dk < 2 ? 'az önce' : once(a.timestamp)) + '</time></div></li>';
   }).join('');
   $('akisListe').innerHTML = html || '<li class="gun">Bu ay henüz hareket yok.</li>';
+  if (yeniVeri) bantCiz(liste.slice(0, 24));
   GORULEN = ust[0] ? String(ust[0].timestamp) : (GORULEN || '');
 }
 setInterval(function(){ if (!document.hidden && AKIS_SON) { var g = GORULEN; akisCiz(); GORULEN = g; } }, 30 * 1000);   // "x dk önce" yazıları tazelensin
