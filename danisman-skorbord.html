@@ -267,7 +267,7 @@ var TUR_AD = {
   kibris_davet_ortak:['🌴','Kıbrıs daveti (ortak)'], kibris_teyit_ortak:['🌴','Kıbrıs teyidi (ortak)'], kibris_son_ortak:['🌴','Kıbrıs hatırlatma (ortak)'], kibris_geldi_ortak:['🌴','Kıbrıs lansmanı (ortak)'],
   yorum:['⭐','Google yorumu aldı']
 };
-var TUR = 'ay', SECIM = null, SIRA = 'puan', VERI = null, ONCEKI = {}, KISILER = {}, SON_AKIS = null, ISTEK = 0;
+var TUR = 'ay', SECIM = null, SIRA = 'puan', VERI = null, ONCEKI = {}, KISILER = {}, SON_AKIS = null;
 var $ = function(id){ return document.getElementById(id); };
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
 var p = function(v){ v = Math.round(v * 10) / 10; return v.toLocaleString('tr-TR'); };
@@ -321,7 +321,16 @@ function siralaAyarla(k){
 }
 
 /* ---- Veri ---- */
-function al(q){ return fetch(DT_API + '?' + q + '&k=' + KEY, {redirect:'follow'}).then(function(r){ return r.json(); }).then(function(d){ if (!d || d.error || !d.siralama) throw new Error((d && d.error) || 'veri yok'); return d; }); }
+function getJSON(u, sn){
+  /* Zaman aşımlı istek: takılan bağlantı sayfayı "Güncelleniyor"da bırakmasın */
+  var ctl = window.AbortController ? new AbortController() : null;
+  var t = setTimeout(function(){ if (ctl) ctl.abort(); }, (sn || 25) * 1000);
+  return Promise.race([
+    fetch(u, ctl ? {redirect:'follow', signal:ctl.signal} : {redirect:'follow'}).then(function(r){ return r.json(); }),
+    new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('zaman aşımı')); }, (sn || 25) * 1000 + 500); })
+  ]).then(function(d){ clearTimeout(t); return d; }, function(e){ clearTimeout(t); throw e; });
+}
+function al(q){ return getJSON(DT_API + '?' + q + '&k=' + KEY).then(function(d){ if (!d || d.error || !d.siralama) throw new Error((d && d.error) || 'veri yok'); return d; }); }
 function siralamaAl(){
   if (TUR === 'hafta') return al('action=haftalik&hafta=' + SECIM);
   if (TUR === 'ay') return al('action=aylik&ay=' + SECIM);
@@ -343,7 +352,7 @@ function akisAl(){
   /* Son hareketler: bu ayın aktiviteleri (ayın ilk günlerinde geçen ayınkiler de) */
   var d = tr(), aylar = [ayKod(d)];
   if (d.getUTCDate() <= 3) aylar.push(ayKod(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 1, 1))));
-  return Promise.all(aylar.map(function(a){ return fetch(DT_API + '?action=toplanti&k=' + KEY + '&ay=' + a, {redirect:'follow'}).then(function(r){ return r.json(); }); }))
+  return Promise.all(aylar.map(function(a){ return getJSON(DT_API + '?action=toplanti&k=' + KEY + '&ay=' + a); }))
     .then(function(c){
       var akt = [];
       c.forEach(function(x){
@@ -354,26 +363,40 @@ function akisAl(){
     });
 }
 function durum(cls, yazi){ $('canli').className = 'canli' + (cls ? ' ' + cls : ''); $('canliYazi').textContent = yazi; }
+function saat(ms){ var d = new Date(ms + 3*3600e3); return ('0'+d.getUTCHours()).slice(-2) + ':' + ('0'+d.getUTCMinutes()).slice(-2); }
+function anahtar(){ return 'dtSkor:' + TUR + ':' + (SECIM || ''); }
+function onbellekOku(k){ try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v && v.d ? v : null; } catch(e){ return null; } }
+function onbellekYaz(k, d){ try { localStorage.setItem(k, JSON.stringify({t: Date.now(), d: d})); } catch(e){} }
+var SURUYOR = {}, AKIS_SURUYOR = false, SON_GUNCEL = 0;
 function yukle(donemDegisti){
-  var no = ++ISTEK;
-  if (donemDegisti) { VERI = null; ONCEKI = {}; $('liste').innerHTML = '<div class="iskelet"></div><div class="iskelet"></div><div class="iskelet"></div>'; $('tbody').innerHTML = ''; $('tfoot').innerHTML = ''; }
-  durum('yukleniyor', 'Güncelleniyor…');
-  return girisKontrol().then(function(){
-    return Promise.all([siralamaAl(), akisAl().catch(function(){ return null; })]);
-  }).then(function(x){
-    if (no !== ISTEK) return;
+  var k = anahtar();
+  if (donemDegisti) {
+    VERI = null; ONCEKI = {};
+    var ob = onbellekOku(k);
+    if (ob) { VERI = ob.d; ciz(); durum('yukleniyor', 'Son veri ' + saat(ob.t) + ' · yenileniyor…'); }
+    else { $('liste').innerHTML = '<div class="iskelet"></div><div class="iskelet"></div><div class="iskelet"></div>'; $('tbody').innerHTML = ''; $('tfoot').innerHTML = ''; }
+  }
+  if (!girisVar()) return;
+  akisYukle();
+  if (SURUYOR[k]) return;               // aynı dönem zaten yükleniyor: üst üste istek açma
+  SURUYOR[k] = true;
+  if (!VERI) durum('yukleniyor', 'Yükleniyor…'); else if (!donemDegisti) durum('yukleniyor', 'Güncelleniyor…');
+  siralamaAl().then(function(d){
+    onbellekYaz(k, d);
+    if (k !== anahtar()) return;         // bu arada başka döneme geçildi
     if (VERI) VERI.siralama.forEach(function(r){ ONCEKI[r.id] = r.puan; }); else ONCEKI = {};
-    VERI = x[0];
-    if (x[1]) akisCiz(x[1]);
-    var s = tr();
-    durum('', 'Canlı · ' + ('0'+s.getUTCHours()).slice(-2) + ':' + ('0'+s.getUTCMinutes()).slice(-2));
+    VERI = d; SON_GUNCEL = Date.now();
+    durum('', 'Canlı · ' + saat(SON_GUNCEL));
     ciz();
-  }).catch(function(e){
-    if (no !== ISTEK) return;
-    if (e && e.message === 'pin') { durum('hata', 'Giriş gerekli'); return; }
-    durum('hata', 'Bağlantı hatası · tekrar dene');
-    if (!VERI) $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>';
-  });
+  }).catch(function(){
+    if (k !== anahtar()) return;
+    if (VERI) durum('hata', 'Bağlantı yavaş · ' + (SON_GUNCEL ? saat(SON_GUNCEL) : 'son') + ' verisi');
+    else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
+  }).then(function(){ SURUYOR[k] = false; });
+}
+function akisYukle(){
+  if (AKIS_SURUYOR) return; AKIS_SURUYOR = true;
+  akisAl().then(function(a){ onbellekYaz('dtSkor:akis', {akt:a, kisi:KISILER}); akisCiz(a); }).catch(function(){}).then(function(){ AKIS_SURUYOR = false; });
 }
 
 /* ---- Çizim ---- */
@@ -490,22 +513,29 @@ function akisCiz(akt){
 
 /* ---- Giriş (Canlı Skorbord ile aynı PIN; bir kez girilir) ---- */
 function pinAl(){ try { return localStorage.getItem('skorbordPin') || (window.brokerPinAl && brokerPinAl()) || ''; } catch(e){ return ''; } }
-function girisKontrol(){
-  try { if (sessionStorage.getItem('dtSkorGiris') === 'ok') return Promise.resolve(); } catch(e){}
+function girisVar(){
+  try { if (localStorage.getItem('dtSkorGiris') === 'ok' && pinAl()) return true; } catch(e){}
   var pin = pinAl();
-  if (!pin) { pinSor(''); return Promise.reject(new Error('pin')); }
-  var broker = window.brokerDogrula ? brokerDogrula(pin) : Promise.resolve(false);
-  return broker.then(function(ok){
+  if (!pin) { pinSor(''); durum('hata', 'Giriş gerekli'); return false; }
+  /* PIN var ama bu cihazda henüz doğrulanmadı: arka planda doğrula, veri beklemesin */
+  girisDogrula(pin);
+  return true;
+}
+var DOGRULANIYOR = false;
+function girisDogrula(pin){
+  if (DOGRULANIYOR) return; DOGRULANIYOR = true;
+  var broker = window.brokerDogrula ? brokerDogrula(pin).catch(function(){ return false; }) : Promise.resolve(false);
+  broker.then(function(ok){
     if (ok) return {ok:true};
-    return fetch(KAPANIS_API + '?action=skorbord&pin=' + encodeURIComponent(pin), {redirect:'follow'}).then(function(r){ return r.json(); });
+    return getJSON(KAPANIS_API + '?action=skorbord&pin=' + encodeURIComponent(pin), 30);
   }).then(function(d){
     if (!d || d.ok === false) {
-      try { localStorage.removeItem('skorbordPin'); } catch(e){}
+      try { localStorage.removeItem('skorbordPin'); localStorage.removeItem('dtSkorGiris'); } catch(e){}
       pinSor(d && d.error === 'kilit' ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.' : 'PIN hatalı.');
-      throw new Error('pin');
+      return;
     }
-    try { sessionStorage.setItem('dtSkorGiris', 'ok'); } catch(e){}
-  });
+    try { localStorage.setItem('dtSkorGiris', 'ok'); } catch(e){}
+  }).catch(function(){ /* ağ hatası: bir dahaki açılışta yeniden denenir */ }).then(function(){ DOGRULANIYOR = false; });
 }
 function pinSor(hata){
   $('pinEkran').hidden = false; $('pinHata').textContent = hata || '';
@@ -515,13 +545,15 @@ $('pinForm').addEventListener('submit', function(ev){
   ev.preventDefault();
   var v = $('pinGir').value.trim(); if (!v) return;
   try { localStorage.setItem('skorbordPin', v); } catch(e){}
+  try { localStorage.removeItem('dtSkorGiris'); } catch(e){}
   $('pinEkran').hidden = true; $('pinGir').value = '';
-  yukle();
+  yukle(true);
 });
 
 $('canli').addEventListener('click', function(){ yukle(); });
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) yukle(); });
 setInterval(function(){ if (!document.hidden) yukle(); }, 60 * 1000);
+(function(){ var a = onbellekOku('dtSkor:akis'); if (a && a.d && a.d.akt) { KISILER = a.d.kisi || {}; akisCiz(a.d.akt); } })();
 cipKur();
 })();
 </script>
