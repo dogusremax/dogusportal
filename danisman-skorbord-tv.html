@@ -25,7 +25,8 @@ header h1 small{font:600 2.1vh Inter,sans-serif;color:var(--dim);margin-left:1vw
 .yayin i{width:1.3vh;height:1.3vh;border-radius:50%;background:#fff;animation:yanip 1.2s infinite}
 .yayin.hata{background:#8a5a00}
 @keyframes yanip{50%{opacity:.25}}
-.saat{font:800 4.2vh Archivo,sans-serif;font-variant-numeric:tabular-nums;min-width:9vw;text-align:right}
+.saat{font:800 4.2vh Archivo,sans-serif;font-variant-numeric:tabular-nums;min-width:12vw;text-align:right;white-space:nowrap}
+.saat .sn{color:#ff5a6a}
 
 /* Orta */
 main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw;padding:2vh 2.4vw;min-height:0}
@@ -271,11 +272,12 @@ function kutlaSiradaki(){
 }
 
 /* ---- Saat, uyanık kalma, kendini toparlama ---- */
-function saatYaz(){ var d = tr(); $('saat').textContent = iki(d.getUTCHours()) + ':' + iki(d.getUTCMinutes()); }
+function saatYaz(){ var d = tr(); $('saat').innerHTML = iki(d.getUTCHours()) + ':' + iki(d.getUTCMinutes()) + '<span class="sn">:' + iki(d.getUTCSeconds()) + '</span>'; }
+function saatDongu(){ saatYaz(); setTimeout(saatDongu, 1000 - (Date.now() % 1000) + 5); }
 var kilit = null;
 function uyanik(){ try { if (navigator.wakeLock && !kilit) navigator.wakeLock.request('screen').then(function(k){ kilit = k; k.addEventListener('release', function(){ kilit = null; }); }).catch(function(){}); } catch(e){} }
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) { uyanik(); yenile(); } });
-setInterval(saatYaz, 5000); saatYaz();
+saatDongu();
 setInterval(yenile, 60 * 1000);
 setInterval(function(){ [].forEach.call(document.querySelectorAll('.ti time'), function(t){ t.textContent = once(t.dataset.ts); }); }, 60 * 1000);
 setInterval(uyanik, 5 * 60 * 1000);
