@@ -1,0 +1,30 @@
+name: Danışman Takip skorbordu hızlı açılış dosyası
+# dogusportal.com/danisman-skorbord.html önce bu dosyayı gösterir (Google'ı beklemeden), sonra canlı veriyle yeniler.
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # 5 dakikada bir (GitHub zamanlaması birkaç dakika gecikebilir)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dt-skor
+  cancel-in-progress: false
+jobs:
+  yaz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Veriyi al
+        run: |
+          U="https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec?action=dtSkor&k=dogus-performans&taze=1"
+          for i in 1 2 3; do curl -sSL --max-time 120 "$U" -o yeni.json && jq -e '.aylik.siralama and .uretim' yeni.json >/dev/null && break; sleep 10; done
+          jq -e '.aylik.siralama' yeni.json >/dev/null || { echo "Geçersiz yanıt"; head -c 300 yeni.json; exit 1; }
+          # Yalnız üretim saati değiştiyse yazma (gereksiz yayın olmasın)
+          if [ -f data/dt-skor.json ] && [ "$(jq -S 'del(.uretim, .aylik.uretim)' yeni.json)" = "$(jq -S 'del(.uretim, .aylik.uretim)' data/dt-skor.json)" ]; then
+            echo "Değişiklik yok"; exit 0; fi
+          jq -c . yeni.json > data/dt-skor.json
+      - run: |
+          git config user.name "dogus-bot"
+          git config user.email "bot@dogusremax.com"
+          git add data/dt-skor.json
+          git diff --cached --quiet || (git commit -m "Danışman Takip skorbordu hızlı açılış dosyası" && git pull --rebase && git push)
