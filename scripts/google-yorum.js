@@ -3,6 +3,7 @@
 // Secret adı eski Places denemesinden kaldı; workflow dosyasını değiştirmemek için aynı ad kullanılıyor.
 const fs = require('fs');
 const yanitYaz = require('./google-yanit');
+const { duzelt: imlaDuzelt } = require('./imla-duzelt');   // yorumdaki imla hatalarını düzeltir (yalnız imla; metinOrijinal saklanır)
 
 const DOSYA = 'data/google-yorumlar.json';
 const GORULEN = 'data/google-yorum-gorulen.json';
@@ -81,8 +82,10 @@ const orijinal = s => {
   const temiz = s => norm(s).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   const imza = (yazar, metin) => temiz(yazar) + '|' + temiz(metin).slice(0, 40);
   const map = new Map(eski.yorumlar.map(y => [y.id, y]));
-  const imzalar = new Map(eski.yorumlar.map(y => [imza(y.yazar, y.metin), y.id]));
-  const metinler = new Map(eski.yorumlar.filter(y => temiz(y.metin).length >= 25).map(y => [temiz(y.metin).slice(0, 60), y.id]));
+  // Eşleştirme Google'ın verdiği orijinal metinle yapılır (yayındaki metin imla düzeltmeli olabilir)
+  const orjMetin = y => y.metinOrijinal || y.metin;
+  const imzalar = new Map(eski.yorumlar.map(y => [imza(y.yazar, orjMetin(y)), y.id]));
+  const metinler = new Map(eski.yorumlar.filter(y => temiz(orjMetin(y)).length >= 25).map(y => [temiz(orjMetin(y)).slice(0, 60), y.id]));
   let gorulen = [];
   try { gorulen = JSON.parse(fs.readFileSync(GORULEN, 'utf8')); } catch {}
   const gorulenSet = new Set(gorulen);
@@ -140,17 +143,27 @@ const orijinal = s => {
       // Bilinen yorum: kesin tarih ve güncel yanıtı yaz, id ve geri kalanı koru
       Object.assign(varolan, { tarih: rv.createTime || varolan.tarih, tarihYaklasik: false, yanit, puan: puan || varolan.puan });
       delete varolan.once;
+      // Son 3 günde gelmiş, imlası henüz kontrol edilmemiş yorum: bir kez kontrol et (Gamze/Nurullah vakası 17.11)
+      if (!varolan.imla && (varolan.ilkGorulme || '') >= ucGunOnce && varolan.puan >= 4) {
+        const duz = await imlaDuzelt(k.gemini, varolan.metinOrijinal || varolan.metin);
+        if (duz) { varolan.metinOrijinal = varolan.metinOrijinal || varolan.metin; varolan.metin = duz; console.log('İmla düzeltildi:', varolan.yazar); }
+        varolan.imla = 1;
+      }
       continue;
     }
     // Sadece 4★ ve üzeri, danışmanlarımızdan birinin adı geçen, bilerek dışarıda bırakılmamış yorumlar
     if (puan < 4 || !eslestir(metin).length || haric.includes(id)) continue;
+    const duz = await imlaDuzelt(k.gemini, metin);   // yalnız imla; olmazsa/şüpheliyse null → orijinal
+    if (duz) console.log('İmla düzeltildi:', yazar);
     map.set(id, {
       id,
       yazar,
       yazarUrl: '',
       foto: rv.reviewer?.profilePhotoUrl || '',
       puan,
-      metin,
+      metin: duz || metin,
+      ...(duz ? { metinOrijinal: metin } : {}),
+      imla: 1,
       yanit,
       tarih: rv.createTime || '',
       tarihYaklasik: false,
