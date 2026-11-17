@@ -114,7 +114,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 </header>
 <main>
   <section class="sira">
-    <div class="bas"><h2>Ayın sıralaması</h2><span id="guncel"></span></div>
+    <div class="bas"><h2 id="sirBaslik">Haftanın sıralaması</h2><span id="guncel"></span></div>
     <div class="satirlar" id="satirlar"><div class="bekle">Veriler yükleniyor…</div></div>
   </section>
   <aside class="sag">
@@ -122,7 +122,7 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
       <div class="bugun"><div><b id="bHar">0</b><span>hareket</span></div><div><b id="bKisi">0</b><span>danışman</span></div><div class="p"><b id="bPuan">+0</b><span>puan</span></div></div>
       <div class="kim" id="bKim"></div></div>
     <div class="kutu lider" id="yildizKutu"><h3>Bugünün yıldızı</h3><div class="yildiz" id="yildiz"></div></div>
-    <div class="kutu" id="ayKutu"><h3>Ayın lideri</h3><div class="yildiz" id="ayLider"></div></div>
+    <div class="kutu" id="ayKutu"><h3 id="liderBaslik">Haftanın lideri</h3><div class="yildiz" id="ayLider"></div></div>
   </aside>
 </main>
 <footer class="bant">
@@ -196,11 +196,19 @@ function yenile(){
 }
 
 /* ---- Çizim ---- */
+function haftaEtiket(h){
+  var b = new Date(h + 'T12:00:00Z'), s = new Date(b.getTime() + 6*864e5);
+  var a1 = AYLAR[b.getUTCMonth()].slice(0,3), a2 = AYLAR[s.getUTCMonth()].slice(0,3);
+  return 'Bu hafta · ' + b.getUTCDate() + (a1 !== a2 ? ' ' + a1 : '') + '–' + s.getUTCDate() + ' ' + a2;
+}
 function ciz(d){
-  var rows = d.aylik.siralama.slice().sort(function(a,b){ return b.puan - a.puan || a.name.localeCompare(b.name, 'tr'); }).slice(0, 8);
+  var hf = !!(d.haftalik && d.haftalik.siralama), kay = hf ? d.haftalik : d.aylik;
+  $('sirBaslik').textContent = hf ? 'Haftanın sıralaması' : 'Ayın sıralaması';
+  $('liderBaslik').textContent = hf ? 'Haftanın lideri' : 'Ayın lideri';
+  var rows = kay.siralama.slice().sort(function(a,b){ return b.puan - a.puan || a.name.localeCompare(b.name, 'tr'); }).slice(0, 8);
   var maks = Math.max.apply(null, rows.map(function(r){ return r.puan; }).concat([1]));
   var ay = +d.ay.slice(5) - 1;
-  $('ayAdi').textContent = AYLAR[ay] + ' ' + d.ay.slice(0,4);
+  $('ayAdi').textContent = hf ? haftaEtiket(d.hafta) : AYLAR[ay] + ' ' + d.ay.slice(0,4);
   $('satirlar').innerHTML = rows.map(function(r, i){
     var o = ONCEKI[r.id], art = (o != null && r.puan > o) ? '<span class="art">+' + p(r.puan - o) + '</span>' : '';
     return '<div class="satir' + (i < 3 ? ' s' + (i+1) : '') + (art ? ' parla' : '') + '">' +
@@ -211,7 +219,7 @@ function ciz(d){
       '<div class="puan"><b>' + p(r.puan) + '</b>' + art + '</div>' +
       '<div class="cubuk" style="width:' + (r.puan / maks * 100).toFixed(1) + '%"></div></div>';
   }).join('');
-  ONCEKI = {}; d.aylik.siralama.forEach(function(r){ ONCEKI[r.id] = r.puan; });
+  ONCEKI = {}; kay.siralama.forEach(function(r){ ONCEKI[r.id] = r.puan; });
   var u = new Date(new Date(d.uretim).getTime() + 3*3600e3);
   $('guncel').textContent = 'Son güncelleme ' + iki(u.getUTCHours()) + ':' + iki(u.getUTCMinutes());
 
