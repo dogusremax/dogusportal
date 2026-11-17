@@ -128,7 +128,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
 .panel h3{font:800 17px Archivo,sans-serif;font-stretch:95%}
 /* Son hareketler: canlı akış */
-#akis{padding:0;overflow:hidden}
+#akis{padding:0;overflow:hidden}#akis[hidden]{display:none}
 .akis-ust{padding:16px 16px 12px;background:linear-gradient(135deg,#0b1636,#1d3a8a);color:#fff;position:relative}
 .akis-ust::after{content:"";position:absolute;right:-30px;top:-40px;width:140px;height:140px;border-radius:50%;border:20px solid rgba(255,255,255,.05)}
 .akis-bas{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -205,11 +205,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
   .sekme{flex:0 0 400px}
   .cipler{padding:0;flex:1;flex-wrap:wrap}
   main{padding:22px 32px 0;gap:18px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"ozet ozet" "sira sira" "lider akis"; align-items:start}
+    grid-template-areas:"ozet ozet" "sira sira" "lider lider"; align-items:start}
   .kpi{padding:18px}.kpi b{font-size:30px}.kpi.ana b{font-size:38px}
   .liste,.ipucu{display:none}
   .tablo-kutu{display:block}
-  .lider{flex-direction:column;align-items:flex-start;padding:18px}
+  .lider{padding:18px 22px}
   .lider .yuz{width:76px;height:76px}
   .lider strong{font-size:22px}
 }
@@ -293,7 +293,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
       <tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot>
     </table></div>
   </section>
-  <section class="panel" id="akis">
+  <section class="panel" id="akis" hidden>
     <div class="akis-ust"><div class="akis-bas"><h3>Son hareketler</h3><span class="yayin"><i></i>CANLI</span></div>
       <div class="akis-ozet" id="akisNot">Yükleniyor…</div><div class="bugun-kim" id="bugunKim"></div></div>
     <ul class="akis" id="akisListe"><li><div class="iskelet" style="height:120px;width:100%;margin-top:10px"></div></li></ul></section>
