@@ -103,6 +103,8 @@ main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.6vw
 .kutlama .yuk{display:inline-block;margin-top:2vh;font:800 7vh Archivo,sans-serif;color:#33d17a}
 .kutlama-ic.k-gos{--r:#4fd18b}.kutlama-ic.k-ara{--r:#7fa6ff}.kutlama-ic.k-sun{--r:#b39bff}.kutlama-ic.k-yet{--r:#ff6b7a}.kutlama-ic.k-ic{--r:#ff7fb0}.kutlama-ic.k-yor{--r:#ffc24d}.kutlama-ic.k-kib{--r:#4fd6d6}.kutlama-ic.k-mus{--r:#aab3c5}
 .bekle{grid-column:1/-1;display:grid;place-items:center;font-size:3vh;color:var(--dim)}
+.tamIpucu{position:fixed;left:50%;top:11vh;transform:translateX(-50%);z-index:60;background:rgba(0,0,0,.8);color:#fff;font:700 2.6vh Archivo,sans-serif;padding:1.6vh 3.4vh;border-radius:5vh;border:.25vh solid rgba(255,255,255,.25);display:none}
+.tamIpucu b{color:#FFB547}
 </style>
 </head>
 <body>
@@ -291,6 +293,21 @@ setInterval(function(){
 try { var ob = JSON.parse(localStorage.getItem('dtTv') || 'null'); if (ob) { (ob.consultants || []).forEach(function(k){ KISILER[k.id] = k; }); SON_URETIM = ''; ciz(ob); SON_URETIM = ob.uretim; } } catch(e){}
 getJSON('data/dt-skor.json?t=' + Date.now(), 10).then(uygula).catch(function(){}).then(yenile);
 uyanik();
+})();
+</script>
+<div class="tamIpucu" id="tamIpucu">Tam ekran için kumandada <b>OK</b> tuşuna bas</div>
+<script>
+/* Tam ekran: tarayıcılar ancak bir tuşa basılınca izin veriyor; TV kumandasında OK yeterli (nöbet ekranıyla aynı) */
+(function(){
+  var tv = false; try { tv = localStorage.getItem('tvEkran') === '1'; } catch (e) {}
+  function tamMi(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function tamYap(){ var e = document.documentElement, f = e.requestFullscreen || e.webkitRequestFullscreen;
+    if (f && !tamMi()) { try { var p = f.call(e); if (p && p.catch) p.catch(function(){}); } catch (x) {} } }
+  function ipucu(){ document.getElementById('tamIpucu').style.display = tv && !tamMi() ? 'block' : 'none'; }
+  ['keydown','click','touchend'].forEach(function(t){ document.addEventListener(t, function(){ tamYap(); setTimeout(ipucu, 600); }); });
+  document.addEventListener('fullscreenchange', ipucu); document.addEventListener('webkitfullscreenchange', ipucu);
+  setTimeout(function(){ tamYap(); ipucu(); }, 800);   // bazı TV tarayıcıları kendiliğinden izin verir
+  setInterval(ipucu, 5000);
 })();
 </script>
 <script src="/assets/tv-sec.js" data-ben="skorbord"></script>
