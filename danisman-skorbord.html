@@ -429,7 +429,7 @@ function yukle(donemDegisti){
     else { $('liste').innerHTML = '<div class="iskelet"></div><div class="iskelet"></div><div class="iskelet"></div>'; $('tbody').innerHTML = ''; $('tfoot').innerHTML = ''; }
   }
   if (!girisVar()) return;
-  if (ILK) { ILK = false; dtSkorAl(false); }   // son görüntü: anında
+  if (ILK) { ILK = false; dtStatikAl(); dtSkorAl(false); }   // hazır dosya + son görüntü: anında
   dtSkorAl(true);                               // taze: son hareketler + bu ay
   if (buAyMi()) { if (!VERI) durum('yukleniyor', 'Yükleniyor…'); return; }
   if (SURUYOR[k]) return;               // aynı dönem zaten yükleniyor: üst üste istek açma
@@ -453,7 +453,16 @@ function buAyMi(){ return TUR === 'ay' && SECIM === ayKod(tr()); }
 /* Tek istek: bu ayın sıralaması + son hareketler. taze=false → sunucudaki son görüntü (anında) */
 function dtSkorAl(taze){
   var t = taze ? 1 : 0; if (DT_SURUYOR[t]) return; DT_SURUYOR[t] = true;
-  getJSON(DT_API + '?action=dtSkor&k=' + KEY + (taze ? '&taze=1' : ''), taze ? 30 : 15).then(function(d){
+  getJSON(DT_API + '?action=dtSkor&k=' + KEY + (taze ? '&taze=1' : ''), taze ? 30 : 15).then(dtUygula).catch(function(){
+    if (taze && buAyMi()) {
+      if (VERI) durum('hata', 'Bağlantı yavaş · ' + (SON_GUNCEL ? saat(SON_GUNCEL) : 'son') + ' verisi');
+      else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
+    }
+  }).then(function(){ DT_SURUYOR[t] = false; });
+}
+/* Sitedeki hazır dosya (GitHub Actions 5 dk'da bir yazar): Google'ı beklemeden anında açılış */
+function dtStatikAl(){ return getJSON('data/dt-skor.json?t=' + Date.now(), 8).then(dtUygula).catch(function(){}); }
+function dtUygula(d){
     if (!d || !d.aylik || !d.uretim) throw new Error('veri yok');
     if (d.uretim < SON_URETIM) return;          // daha yenisi zaten geldi
     SON_URETIM = d.uretim;
@@ -468,12 +477,6 @@ function dtSkorAl(taze){
       if (yas < 3) durum('', 'Canlı · ' + saat(SON_GUNCEL)); else durum('yukleniyor', 'Son veri ' + saat(SON_GUNCEL) + ' · yenileniyor…');
       ciz();
     }
-  }).catch(function(){
-    if (taze && buAyMi()) {
-      if (VERI) durum('hata', 'Bağlantı yavaş · ' + (SON_GUNCEL ? saat(SON_GUNCEL) : 'son') + ' verisi');
-      else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
-    }
-  }).then(function(){ DT_SURUYOR[t] = false; });
 }
 
 /* ---- Çizim ---- */
