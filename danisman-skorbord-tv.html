@@ -244,7 +244,8 @@ function ciz(d){
   $('yildiz').innerHTML = y ? yuz(y) + '<div><strong>' + esc(kisaAd((KISILER[y] || {}).name || y)) + '</strong><p>Bugün <b>+' + p(kisi[y]) + '</b> puan · <b>' + bg.filter(function(a){ return a.consultantId === y; }).length + '</b> hareket</p></div>'
     : '<div><strong style="font-size:3vh">Henüz hareket yok</strong><p>Günün ilk hamlesi kimden gelecek?</p></div>';
 
-  bantCiz(akt.slice(0, 24));
+  /* Bant: sütunlarda zaten görünen gösterim, yetki, kapora ve kapanış hareketleri bantta yer almaz (Umut 17.11) */
+  bantCiz(akt.filter(function(a){ return !/^(gosterim|yetki|kapanis)|^kapora(_ortak)?$/.test(String(a.type)); }).slice(0, 24));
   /* Yeni gelen hareketleri ekranın ortasında kutla (ilk yüklemede değil) */
   if (SON_HAREKET !== null) akt.filter(function(a){ return String(a.timestamp) > SON_HAREKET && Date.now() - Date.parse(a.timestamp) < 20 * 60 * 1000; })
     .slice(0, 5).reverse().forEach(function(a){ KUYRUK.push(a); });   // yalnız son 20 dk, en çok 5 kutlama
