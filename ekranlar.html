@@ -419,6 +419,7 @@ function tvKarti(t) {
       <button class="hap" aria-label="${t.sessiz ? "Sesi aç" : "Sessize al"}" onclick="komut('${t.id}','${t.sessiz ? "sesAc" : "sessiz"}',null,this)">${t.sessiz ? IKON_SESSIZ : IKON_SES}</button>
       ${t.youtubeDestek ? `<button class="hap yt" onclick="komut('${t.id}','youtube',null,this)">${IKON_YT} YouTube</button>` : ""}
       ${t.youtubeDestek ? `<button class="hap" onclick="komut('${t.id}','${veri && veri.tvSayfa === "nobet" ? "tarayici" : "skorbord"}',null,this)">${veri && veri.tvSayfa === "nobet" ? "📅 Nöbet ekranı" : "🏆 Skorbord"}</button>` : ""}
+      ${t.youtubeDestek ? `<button class="hap" onclick="komut('${t.id}','tamEkran',null,this)">⛶ Tam ekran</button>` : ""}
       ${kaynaklar ? `<div class="kaynaklar">${kaynaklar}</div>` : ""}
     </div>
     ${t.ytBagli
@@ -454,6 +455,7 @@ async function komut(tv, ne, deger, btn) {
   try {
     await api({ islem: "komut", tv, ne, deger });
     if (ne === "youtube") toast("YouTube açılıyor");
+    if (ne === "tamEkran") toast("Tam ekran tuşu gönderildi");
     if (ne === "tarayici" || ne === "skorbord") toast((veri && veri.tvSayfa === "nobet" ? "Nöbet ekranı" : "Skorbord") + " açılıyor");
     const tv0 = veri.tvler.find(x => x.id === tv);
     if (ne === "ac" && tv0 && tv0.youtube) toast("TV açıldı, YouTube başlıyor", 3500);
