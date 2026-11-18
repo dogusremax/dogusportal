@@ -797,7 +797,7 @@ body:not(.kilitli) #kapi{display:none}
    var sag=giris
     ?(GELDI.indexOf(r.durum)>=0?'<span class="chip ok">Geldi ✓</span>':'<button class="geldi" type="button" data-geldi>Geldi</button>')
     :'<select class="s-'+r.durum+'" data-durum aria-label="Durum">'+durumOps(r.durum)+'</select>'+
-     '<div class="dv-bt">'+(KESIN.indexOf(r.durum)>=0&&r.katilimLink?'<button type="button" data-kform>Katılımcı formu</button>':'')+(v.broker&&KESIN.indexOf(r.durum)>=0?'<button type="button" data-dav>Davetiye</button>':'')+'<button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
+     '<div class="dv-bt">'+(KESIN.indexOf(r.durum)>=0&&r.katilimLink?'<button type="button" data-kform>Katılımcı formu</button>':'')+(KESIN.indexOf(r.durum)>=0?'<button type="button" data-dav>Davetiye</button>':'')+'<button type="button" data-ed>Düzenle</button>'+(v.broker||r.danisman===v.ad?'<button type="button" data-sil>Sil</button>':'')+'</div>';
    var etiket=(v.broker?'<span class="dn">'+esc(ilk(r.danisman))+'</span>':'')+
     (r.ortak?(r.ortak===v.ad?'<span class="dn ortak">Sahibi: '+esc(ilk(r.danisman))+'</span>':'<span class="dn ortak">Ortak: '+esc(ilk(r.ortak))+'</span>'):'');
    return '<div class="dv" data-id="'+esc(r.id)+'"><div class="dv-ad">'+etiket+'<b>'+esc(r.ad)+'</b><small>'+bilgi+'</small>'+katS+'</div>'+sag+'</div>';
@@ -805,6 +805,7 @@ body:not(.kilitli) #kapi{display:none}
  }
 
  function bul(id){return (P.v.davetliler||[]).filter(function(r){return r.id===id;})[0];}
+ /* Umut, 18 Kas: "tüm danışmanlara davetiye gönder aç" → Davetiye düğmesi (kişi başı d?a= linkleri) artık her danışmanda, kesin teyitli kayıtlarında */
  /* Umut, 10 Kas: davetiye kişi başı gidecek; kesin teyitte 2+ kişide herkesin ad soyadı alınır (katilimcilar: ana davetli hariç diğerleri) */
  function katListe(r){var k=r&&r.katilimcilar;if(typeof k==='string'){try{k=JSON.parse(k||'[]');}catch(e){k=[];}}return Array.isArray(k)?k:[];}
  function katEksik(r,durum,kisi){kisi=Number(kisi)||1;if(KESIN.indexOf(durum)<0||kisi<2)return 0;
