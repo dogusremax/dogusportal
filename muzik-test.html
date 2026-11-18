@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Müzik testi</title>
+<style>body{margin:0;background:#0b0c10;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center}
+#d{font-size:5vw;margin:2vh}#s{font-size:3vw;color:#9aa}
+button{font-size:4vw;padding:2vh 4vw;border-radius:3vw;border:0;background:#e1251b;color:#fff}
+#p{position:absolute;left:-9999px;width:320px;height:180px}</style></head><body>
+<div id="d">Müzik testi</div><div id="s">Durum: yükleniyor</div>
+<button id="b" onclick="p.playVideo();p.unMute();p.setVolume(60)">Müziği başlat</button>
+<div id="p"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+var p,s=document.getElementById('s');
+function onYouTubeIframeAPIReady(){p=new YT.Player('p',{videoId:'dm73E5mCauw',playerVars:{autoplay:1,loop:1,playlist:'dm73E5mCauw'},
+events:{onReady:function(e){s.textContent='Durum: hazır, otomatik başlatma deneniyor';e.target.unMute();e.target.setVolume(60);e.target.playVideo()},
+onStateChange:function(e){s.textContent='Durum: '+({'-1':'başlamadı',0:'bitti',1:'ÇALIYOR',2:'durdu',3:'yükleniyor',5:'hazır'}[e.data]||e.data)},
+onError:function(e){s.textContent='Hata: '+e.data}}})}
+</script></body></html>
