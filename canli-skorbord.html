@@ -546,7 +546,7 @@ $('pinForm').addEventListener('submit', function(ev){
 /*/VERIAL*/
 $('canli').addEventListener('click', yukle);
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) yukle(); });
-setInterval(function(){ if (!document.hidden) yukle(); }, 5 * 60 * 1000);
+setInterval(function(){ if (!document.hidden) yukle(); }, 60 * 1000);   // 5 dk → 1 dk (Umut 19.11: veriler geç geliyor)
 cipKur();
 tvAyarla();
 yukle();

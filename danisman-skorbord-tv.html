@@ -203,9 +203,12 @@ function bayatKontrol(){
   $('yayin').lastChild.nodeValue = bayat ? 'ESKİ VERİ' : 'CANLI';
   $('guncel').style.color = bayat ? '#ffb547' : '';
 }
+var ISTEKTE = 0;
 function yenile(){
-  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1', 40).then(function(d){ HATA = 0; SON_CANLI = Date.now(); uygula(d); bayatKontrol(); })
-    .catch(function(){ HATA++; bayatKontrol(); setTimeout(yenile, 15 * 1000); });   // hata olursa 15 sn sonra yeniden dene (dakikalık döngüyü bekleme)
+  if (ISTEKTE && Date.now() - ISTEKTE < 45 * 1000) return;   // önceki istek sürerken yenisini başlatma
+  ISTEKTE = Date.now();
+  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1', 40).then(function(d){ HATA = 0; SON_CANLI = Date.now(); uygula(d); bayatKontrol(); ISTEKTE = 0; })
+    .catch(function(){ ISTEKTE = 0; HATA++; bayatKontrol(); setTimeout(yenile, 15 * 1000); });   // hata olursa 15 sn sonra yeniden dene (dakikalık döngüyü bekleme)
 }
 
 /* ---- Çizim ---- */
@@ -310,7 +313,7 @@ var kilit = null;
 function uyanik(){ try { if (navigator.wakeLock && !kilit) navigator.wakeLock.request('screen').then(function(k){ kilit = k; k.addEventListener('release', function(){ kilit = null; }); }).catch(function(){}); } catch(e){} }
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) { uyanik(); yenile(); } });
 saatDongu(); bayatKontrol();
-setInterval(yenile, 60 * 1000);
+setInterval(yenile, 20 * 1000);   // 60 sn → 20 sn (Umut 19.11: veriler geç geliyor)
 setInterval(bayatKontrol, 30 * 1000);
 setInterval(function(){ [].forEach.call(document.querySelectorAll('.ti time'), function(t){ t.textContent = once(t.dataset.ts); }); }, 60 * 1000);
 setInterval(uyanik, 5 * 60 * 1000);
