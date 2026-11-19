@@ -195,10 +195,17 @@ function uygula(d){
   try { localStorage.setItem('dtTv', JSON.stringify(d)); } catch(e){}
   ciz(d);
 }
-var HATA = 0;
+var HATA = 0, SON_CANLI = 0, BASLA = Date.now();   // SON_CANLI: sunucudan taze veri alınan son an (hazır dosya / önbellek sayılmaz)
+function bayatKontrol(){
+  /* Taze veri 3 dk'dır gelmediyse ekranda görünür uyarı: "eski veri" (Ayşegül 19.11: TV'de eski rakamlar sessizce kalıyordu) */
+  var bayat = Date.now() - SON_CANLI > 3 * 60 * 1000;   // açılışta hazır dosya gösterilirken de 'eski veri' yazar, canlı veri gelince düzelir
+  $('yayin').className = 'yayin' + (bayat || HATA >= 3 ? ' hata' : '');
+  $('yayin').lastChild.nodeValue = bayat ? 'ESKİ VERİ' : 'CANLI';
+  $('guncel').style.color = bayat ? '#ffb547' : '';
+}
 function yenile(){
-  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1', 40).then(function(d){ HATA = 0; $('yayin').className = 'yayin'; uygula(d); })
-    .catch(function(){ if (++HATA >= 3) $('yayin').className = 'yayin hata'; });
+  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1', 40).then(function(d){ HATA = 0; SON_CANLI = Date.now(); uygula(d); bayatKontrol(); })
+    .catch(function(){ HATA++; bayatKontrol(); setTimeout(yenile, 15 * 1000); });   // hata olursa 15 sn sonra yeniden dene (dakikalık döngüyü bekleme)
 }
 
 /* ---- Çizim ---- */
@@ -302,15 +309,20 @@ function saatDongu(){ saatYaz(); setTimeout(saatDongu, 1000 - (Date.now() % 1000
 var kilit = null;
 function uyanik(){ try { if (navigator.wakeLock && !kilit) navigator.wakeLock.request('screen').then(function(k){ kilit = k; k.addEventListener('release', function(){ kilit = null; }); }).catch(function(){}); } catch(e){} }
 document.addEventListener('visibilitychange', function(){ if (!document.hidden) { uyanik(); yenile(); } });
-saatDongu();
+saatDongu(); bayatKontrol();
 setInterval(yenile, 60 * 1000);
+setInterval(bayatKontrol, 30 * 1000);
 setInterval(function(){ [].forEach.call(document.querySelectorAll('.ti time'), function(t){ t.textContent = once(t.dataset.ts); }); }, 60 * 1000);
 setInterval(uyanik, 5 * 60 * 1000);
 /* Her gece 04:00'te ve takılırsa sayfayı baştan yükle (yeni sürüm + bellek temizliği) */
 setInterval(function(){
   var d = tr();
   if (d.getUTCHours() === 4 && d.getUTCMinutes() < 2) location.reload();
-  if (SON_URETIM && Date.now() - Date.parse(SON_URETIM) > 30 * 60 * 1000 && navigator.onLine !== false) location.reload();
+  /* 10 dk taze veri gelmediyse sayfayı baştan yükle; en çok 10 dk'da bir (yeniden yükleme döngüsü olmasın) */
+  if (Date.now() - Math.max(SON_CANLI, BASLA) > 10 * 60 * 1000 && navigator.onLine !== false) {
+    var son = 0; try { son = +sessionStorage.getItem('dtYuk') || 0; } catch (e) {}
+    if (Date.now() - son > 10 * 60 * 1000) { try { sessionStorage.setItem('dtYuk', String(Date.now())); } catch (e) {} location.reload(); }
+  }
 }, 60 * 1000);
 
 try { var ob = JSON.parse(localStorage.getItem('dtTv') || 'null'); if (ob) { (ob.consultants || []).forEach(function(k){ KISILER[k.id] = k; }); SON_URETIM = ''; ciz(ob); SON_URETIM = ob.uretim; } } catch(e){}
