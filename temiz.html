@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1417">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Temiz">
+<title>Temiz — Sigarasız Yaşam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1417;--card:#172026;--card2:#1e2a31;--line:#26343c;
+  --tx:#eef3f5;--mute:#8fa3ad;--ok:#3ddc97;--ok2:#1fa673;--warn:#ffb547;--bad:#ff6b6b;--sky:#5ec8ff;
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font-family:Inter,system-ui,-apple-system,sans-serif}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 calc(84px + env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:17px;font-weight:700;margin-bottom:12px}
+.mute{color:var(--mute);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.hero{background:linear-gradient(160deg,#173a2d,#172026 70%);text-align:center;padding:24px 16px}
+.hero .lbl{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ok)}
+.timer{display:flex;justify-content:center;gap:10px;margin:14px 0 6px}
+.timer div{min-width:62px}
+.timer b{display:block;font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.timer span{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--mute)}
+.stat.money b{color:var(--ok)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:600 15px Inter,sans-serif;cursor:pointer;color:#06140e;background:var(--ok)}
+.btn.ghost{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+.btn.warn{background:var(--warn)}
+.btn.sm{padding:10px;font-size:13px;width:auto;display:inline-block}
+.btn+.btn{margin-top:10px}
+.sos{background:linear-gradient(135deg,#ff6b6b,#ff8f5a);color:#fff;font-size:18px;font-weight:800;padding:20px;box-shadow:0 8px 28px rgba(255,107,107,.3)}
+label{display:block;font-size:13px;color:var(--mute);margin:12px 0 6px}
+input,textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--tx);font:500 16px Inter,sans-serif}
+textarea{min-height:70px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card2);border:1px solid var(--line);color:var(--tx);border-radius:999px;padding:9px 13px;font:500 14px Inter,sans-serif;cursor:pointer}
+.chip.on{background:var(--ok);color:#06140e;border-color:var(--ok)}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(15,20,23,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:10}
+nav button{background:none;border:0;color:var(--mute);font:600 11px Inter,sans-serif;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;min-width:58px}
+nav button .ic{font-size:20px}
+nav button.on{color:var(--ok)}
+nav button.sosnav .ic{background:var(--bad);color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-22px;box-shadow:0 4px 16px rgba(255,107,107,.45);font-size:22px}
+.view{display:none}.view.on{display:block}
+.ms{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.ms:last-child{border:0}
+.ms .dot{flex:0 0 34px;height:34px;border-radius:50%;background:var(--card2);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ms.done .dot{background:var(--ok);border-color:var(--ok);color:#06140e}
+.ms .t{font-weight:700;font-size:14px}
+.ms .d{font-size:13px;color:var(--mute);margin-top:2px}
+.bar{height:6px;background:var(--card2);border-radius:9px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:9px}
+.next{border-left:3px solid var(--sky)}
+/* crisis overlay */
+#crisis{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#16323f,#0b1013 70%);z-index:50;display:none;flex-direction:column;align-items:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));overflow:auto}
+#crisis.on{display:flex}
+.cx{align-self:flex-end;background:none;border:0;color:var(--mute);font-size:26px;cursor:pointer}
+.ctime{font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}
+.breath{width:200px;height:200px;margin:22px 0;position:relative;display:flex;align-items:center;justify-content:center}
+.breath .c{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(94,200,255,.55),rgba(61,220,151,.2));transform:scale(.55);transition:transform 4s ease-in-out}
+.breath .w{position:relative;font-size:18px;font-weight:700}
+.tip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;text-align:center;font-size:16px;line-height:1.45;max-width:420px;width:100%;min-height:76px}
+.cbtns{width:100%;max-width:420px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ok);color:#06140e;font-weight:700;padding:12px 18px;border-radius:12px;opacity:0;transition:.3s;z-index:60;pointer-events:none;max-width:90%;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.row:last-child{border:0}
+.hbar{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px}
+.hbar .n{width:110px;flex-shrink:0}
+.hbar .b{flex:1;height:10px;background:var(--card2);border-radius:9px;overflow:hidden}
+.hbar .b i{display:block;height:100%;background:var(--warn)}
+.hbar .v{width:26px;text-align:right;color:var(--mute)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+a{color:var(--sky)}
+.quote{font-size:15px;line-height:1.5;text-align:center;padding:4px 6px}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup" class="wrap" style="display:none">
+  <div style="text-align:center;margin:30px 0 20px">
+    <div style="font-size:52px">🌱</div>
+    <h1 style="margin-top:8px">Temiz</h1>
+    <p class="mute" style="margin-top:6px">Bugün bırakıyorsun. Birkaç bilgi yeter.</p>
+  </div>
+  <div class="card">
+    <label>Günde kaç sigara içiyordun?</label>
+    <input id="s_perDay" type="number" inputmode="numeric" value="20" min="1">
+    <label>Bir paketin fiyatı (₺)</label>
+    <input id="s_price" type="number" inputmode="decimal" placeholder="örn. 100">
+    <label>Pakette kaç sigara var?</label>
+    <input id="s_perPack" type="number" inputmode="numeric" value="20" min="1">
+    <label>Son sigaranı ne zaman içtin?</label>
+    <input id="s_date" type="datetime-local">
+    <label>Neden bırakıyorsun? (zor anda sana bunu göstereceğim)</label>
+    <textarea id="s_why" placeholder="örn. Kızım için. Nefesim için. Kendime söz verdim."></textarea>
+  </div>
+  <button class="btn" onclick="saveSetup()">Başla 💪</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+
+  <!-- HOME -->
+  <section class="view on wrap" id="v-home">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h1>Temiz 🌱</h1>
+      <button class="btn ghost sm" onclick="openSettings()">⚙️</button>
+    </div>
+    <div class="card hero">
+      <div class="lbl">Sigarasız</div>
+      <div class="timer">
+        <div><b id="t_d">0</b><span>gün</span></div>
+        <div><b id="t_h">00</b><span>saat</span></div>
+        <div><b id="t_m">00</b><span>dk</span></div>
+        <div><b id="t_s">00</b><span>sn</span></div>
+      </div>
+      <div class="mute" id="sinceSlip"></div>
+    </div>
+    <div class="grid">
+      <div class="stat money"><b id="st_money">₺0</b><span>cebinde kaldı</span></div>
+      <div class="stat"><b id="st_cigs">0</b><span>içilmeyen sigara</span></div>
+      <div class="stat"><b id="st_crisis">0</b><span>atlatılan kriz</span></div>
+      <div class="stat"><b id="st_life">0 sa</b><span>geri kazanılan zaman*</span></div>
+    </div>
+    <button class="btn sos" onclick="startCrisis()">🆘 Canım çekiyor</button>
+    <div class="card next" style="margin-top:12px" id="nextMs"></div>
+    <div class="card" id="whyCard" style="display:none">
+      <div class="mute" style="margin-bottom:6px">Neden bırakıyorsun</div>
+      <div class="quote" id="whyText"></div>
+    </div>
+    <div class="card" id="moneyGoals"></div>
+    <button class="btn ghost" onclick="openSlip()">Bir tane içtim…</button>
+    <p class="mute" style="margin-top:12px;font-size:11px">* Kabaca sigara başına ~11 dk tahmini; kesin değil, motivasyon amaçlı.</p>
+  </section>
+
+  <!-- LOG / INSIGHTS -->
+  <section class="view wrap" id="v-log">
+    <h1 style="margin-bottom:14px">Tetikleyiciler</h1>
+    <div class="card">
+      <h2>Şu an canın çekiyorsa, neden?</h2>
+      <div class="chips" id="logChips"></div>
+      <button class="btn" style="margin-top:14px" onclick="quickLog()">Kaydet</button>
+    </div>
+    <div class="card">
+      <h2>Senin örüntün</h2>
+      <div id="insights"></div>
+    </div>
+    <div class="card">
+      <h2>Son kayıtlar</h2>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <section class="view wrap" id="v-body">
+    <h1 style="margin-bottom:6px">Vücudun iyileşiyor</h1>
+    <p class="mute" style="margin-bottom:14px">Genel bilimsel kaynaklara göre ortalama süreler; kişiden kişiye değişir.</p>
+    <div class="card" id="milestones"></div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="view wrap" id="v-help">
+    <h1 style="margin-bottom:14px">Destek</h1>
+    <div class="card">
+      <h2>📞 ALO 171</h2>
+      <p style="font-size:14px;line-height:1.5">Sigara Bırakma Danışma Hattı — ücretsiz. Uzmanla konuşup bir plan yapabilirsin.</p>
+      <p style="margin-top:10px"><a href="tel:171">171'i ara</a> <span class="mute">(telefondan: 171)</span></p>
+    </div>
+    <div class="card">
+      <h2>🩺 Doktor desteği</h2>
+      <p style="font-size:14px;line-height:1.5">Aile hekimin ya da hastanelerdeki sigara bırakma polikliniği (MHRS'den randevu) nikotin bandı veya ilaç desteğini değerlendirebilir. Destekle bırakanların başarı şansı belirgin şekilde daha yüksek.</p>
+    </div>
+    <div class="card">
+      <h2>🧠 İlk 2 haftanın gerçekleri</h2>
+      <div style="font-size:14px;line-height:1.6">
+        • Bir kriz genelde <b>3–5 dakika</b> sürer, sonra söner.<br>
+        • En zor günler genelde <b>2.–5. gün</b>. Sonra her gün biraz daha kolay.<br>
+        • Uykusuzluk, sinirlilik, iştah artışı normal; geçici.<br>
+        • "Sadece bir tane" düşüncesi en büyük tuzak.<br>
+        • Kahve/çay alışkanlığını ilk günlerde değiştirmek (yer, saat, bardak) çok işe yarar.
+      </div>
+    </div>
+    <div class="card">
+      <h2>Verilerim</h2>
+      <p class="mute" style="margin-bottom:10px">Her şey sadece bu telefonda saklanır.</p>
+      <button class="btn ghost" onclick="openSettings()">Ayarlar</button>
+    </div>
+  </section>
+</div>
+
+<nav id="nav" style="display:none">
+  <button class="on" data-v="home"><span class="ic">🏠</span>Ana</button>
+  <button data-v="log"><span class="ic">📝</span>Kayıt</button>
+  <button class="sosnav" onclick="startCrisis()"><span class="ic">🆘</span>Kriz</button>
+  <button data-v="body"><span class="ic">🫁</span>Vücut</button>
+  <button data-v="help"><span class="ic">🤝</span>Destek</button>
+</nav>
+
+<!-- CRISIS -->
+<div id="crisis">
+  <button class="cx" onclick="endCrisis(null)">✕</button>
+  <div class="mute">Bu dalga geçecek. Sadece 5 dakika.</div>
+  <div class="ctime" id="c_time">5:00</div>
+  <div class="breath"><div class="c" id="c_circle"></div><div class="w" id="c_word">Nefes al</div></div>
+  <div class="tip" id="c_tip"></div>
+  <div style="width:100%;max-width:420px;margin-top:16px">
+    <div class="mute" style="margin-bottom:8px;text-align:center">Ne tetikledi? (isteğe bağlı)</div>
+    <div class="chips" id="c_chips" style="justify-content:center"></div>
+  </div>
+  <div class="cbtns">
+    <button class="btn" onclick="endCrisis(true)">Geçti, kazandım 💪</button>
+    <button class="btn ghost" onclick="openSlip(true)">Dayanamadım</button>
+  </div>
+</div>
+
+<!-- SLIP MODAL -->
+<div class="modal" id="slipModal" onclick="if(event.target===this)closeModal('slipModal')">
+  <div class="sheet">
+    <h2>Sorun değil. Kaydedelim, devam edelim.</h2>
+    <p class="mute" style="margin-bottom:10px">Tek bir sigara süreci bitirmez. Asıl tehlike "nasılsa bozuldu" demek.</p>
+    <label>Kaç tane?</label>
+    <input id="slipN" type="number" inputmode="numeric" value="1" min="1">
+    <label>Ne oldu?</label>
+    <div class="chips" id="slipChips"></div>
+    <label>Not (isteğe bağlı)</label>
+    <textarea id="slipNote" placeholder="Bir dahaki sefere ne farklı yapabilirim?"></textarea>
+    <button class="btn warn" style="margin-top:14px" onclick="saveSlip()">Kaydet ve devam et</button>
+    <button class="btn ghost" onclick="closeModal('slipModal')">Vazgeç</button>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal" id="setModal" onclick="if(event.target===this)closeModal('setModal')">
+  <div class="sheet">
+    <h2>Ayarlar</h2>
+    <label>Günde kaç sigara içiyordun?</label>
+    <input id="e_perDay" type="number" inputmode="numeric">
+    <label>Paket fiyatı (₺)</label>
+    <input id="e_price" type="number" inputmode="decimal">
+    <label>Pakette kaç sigara</label>
+    <input id="e_perPack" type="number" inputmode="numeric">
+    <label>Bırakma zamanı</label>
+    <input id="e_date" type="datetime-local">
+    <label>Neden bırakıyorsun?</label>
+    <textarea id="e_why"></textarea>
+    <button class="btn" style="margin-top:14px" onclick="saveSettings()">Kaydet</button>
+    <button class="btn ghost" onclick="closeModal('setModal')">Kapat</button>
+    <button class="btn ghost" style="color:var(--bad);margin-top:24px" onclick="askReset()" id="resetBtn">Tüm verileri sil</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='temiz_v1';
+const TRIGGERS=['☕ Kahve/çay','🍽️ Yemek sonrası','😤 Stres','📞 Telefon','🚗 Araba','⏳ Bekleme','🍺 Alkol','👥 Sigara içen biri','😴 Sıkılma','🌅 Sabah ilk iş'];
+const TIPS=[
+ 'Bir bardak soğuk su iç. Yavaş yavaş, yudum yudum.',
+ 'Kalk ve yürü. Ofiste bir tur, merdiven, balkon değil — farklı bir yer.',
+ 'Ellerini meşgul et: kalem, stres topu, telefonla birine mesaj at.',
+ 'Ağzına bir şey al: sakız, tarçın çubuğu, havuç, nane şekeri.',
+ 'Kendine söyle: "Bu istek bir dalga. Yükselir, tepe yapar, söner."',
+ 'Bu krizi atlatırsan bir sonraki daha zayıf gelir. Beynin yeniden öğreniyor.',
+ 'Yüzünü soğuk suyla yıka.',
+ 'Biri ile konuş — eşin, bir arkadaş, ya da ALO 171.',
+ 'Son sigaranı düşün: gerçekten o kadar iyi miydi, yoksa sadece eksikliği mi kapatıyordu?'
+];
+const MILESTONES=[
+ [20*60,'20 dakika','Kalp atışı ve tansiyon düşmeye başlar.'],
+ [8*3600,'8 saat','Kandaki oksijen seviyesi normale yaklaşır.'],
+ [12*3600,'12 saat','Kandaki karbonmonoksit normal seviyeye iner.'],
+ [24*3600,'1 gün','Kalp krizi riski azalmaya başlar.'],
+ [48*3600,'2 gün','Sinir uçları toparlanır; tat ve koku keskinleşir.'],
+ [72*3600,'3 gün','Nikotin vücuttan büyük ölçüde atılır. Nefes almak kolaylaşır. (En zor dönem genelde burası — sonrası rahatlar.)'],
+ [14*86400,'2 hafta','Dolaşım iyileşir, yürümek kolaylaşır.'],
+ [30*86400,'1 ay','Akciğer fonksiyonu artmaya başlar; öksürük azalır.'],
+ [90*86400,'3 ay','Akciğer kapasitesi belirgin şekilde iyileşir.'],
+ [270*86400,'9 ay','Öksürük ve nefes darlığı belirgin azalır; akciğerin temizlenme mekanizması güçlenir.'],
+ [365*86400,'1 yıl','Koroner kalp hastalığı riski sigara içen birinin yaklaşık yarısına iner.'],
+ [5*365*86400,'5 yıl','İnme riski belirgin şekilde düşer.'],
+ [10*365*86400,'10 yıl','Akciğer kanseri riski içmeye devam edenlerin yaklaşık yarısına iner.'],
+ [15*365*86400,'15 yıl','Koroner kalp hastalığı riski hiç içmemiş birine yakındır.']
+];
+const GOALS=[[500,'🍽️ Güzel bir akşam yemeği'],[2000,'👟 Yeni ayakkabı'],[5000,'🏨 Bir hafta sonu kaçamağı'],[15000,'📱 Yeni telefon'],[40000,'✈️ Yurtdışı tatil'],[100000,'🚗 Araba peşinatına katkı']];
+
+let S=null, mem=null;
+function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):mem}catch(e){return mem}}
+function save(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const fmtTL=n=>'₺'+Math.round(n).toLocaleString('tr-TR');
+function toLocalInput(ts){const d=new Date(ts);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2600)}
+function chips(el,multi){const c=$(el);c.innerHTML=TRIGGERS.map(t=>`<button class="chip" type="button">${t}</button>`).join('');c.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{if(!multi)c.querySelectorAll('.chip').forEach(x=>x!==b&&x.classList.remove('on'));b.classList.toggle('on')})}
+const picked=el=>[...$(el).querySelectorAll('.chip.on')].map(b=>b.textContent);
+const clearChips=el=>$(el).querySelectorAll('.chip').forEach(b=>b.classList.remove('on'));
+
+function init(){
+  S=load();
+  $('s_date').value=toLocalInput(Date.now());
+  if(!S){$('setup').style.display='block';return}
+  showApp();
+}
+function saveSetup(){
+  const perDay=+$('s_perDay').value||20, price=+$('s_price').value||0, perPack=+$('s_perPack').value||20;
+  const q=$('s_date').value?new Date($('s_date').value).getTime():Date.now();
+  S={perDay,price,perPack,quit:Math.min(q,Date.now()),why:$('s_why').value.trim(),crises:[],logs:[],slips:[]};
+  save();$('setup').style.display='none';showApp();toast('Yolculuk başladı 🌱');
+}
+function showApp(){
+  $('app').style.display='block';$('nav').style.display='flex';
+  chips('logChips',true);chips('c_chips',true);chips('slipChips',true);
+  render();setInterval(tick,1000);tick();
+}
+document.querySelectorAll('nav button[data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
+function go(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$('v-'+v).classList.add('on');
+  document.querySelectorAll('nav button[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));
+  window.scrollTo(0,0);render();
+}
+function stats(){
+  const now=Date.now(), el=Math.max(0,now-S.quit)/1000;
+  const slipped=S.slips.reduce((a,s)=>a+s.n,0);
+  const cigs=Math.max(0,Math.floor(el/86400*S.perDay)-slipped);
+  const money=cigs*(S.price/S.perPack);
+  return{el,cigs,money,slipped};
+}
+function tick(){
+  if(!S)return;
+  const {el,cigs,money}=stats();
+  $('t_d').textContent=Math.floor(el/86400);
+  $('t_h').textContent=pad(Math.floor(el%86400/3600));
+  $('t_m').textContent=pad(Math.floor(el%3600/60));
+  $('t_s').textContent=pad(Math.floor(el%60));
+  $('st_money').textContent=fmtTL(money);
+  $('st_cigs').textContent=cigs.toLocaleString('tr-TR');
+  const mins=cigs*11;$('st_life').textContent=mins<60?mins+' dk':mins<1440?Math.floor(mins/60)+' sa':(mins/1440).toFixed(1)+' gün';
+  // next milestone
+  const nx=MILESTONES.find(m=>m[0]>el);
+  if(nx){const prev=[...MILESTONES].reverse().find(m=>m[0]<=el);const from=prev?prev[0]:0;const p=Math.min(100,(el-from)/(nx[0]-from)*100);
+    const left=nx[0]-el;const ls=left>86400?Math.ceil(left/86400)+' gün':left>3600?Math.ceil(left/3600)+' saat':Math.ceil(left/60)+' dk';
+    $('nextMs').innerHTML=`<div class="mute">Sıradaki kazanım · ${ls} kaldı</div><div style="font-weight:700;margin-top:4px">${nx[1]}: ${nx[2]}</div><div class="bar"><i style="width:${p}%"></i></div>`;}
+  else $('nextMs').innerHTML='<div style="font-weight:700">Tüm kazanımlar açıldı 🏆</div>';
+}
+function render(){
+  if(!S)return;
+  $('st_crisis').textContent=S.crises.filter(c=>c.won).length;
+  if(S.why){$('whyCard').style.display='block';$('whyText').textContent='“'+S.why+'”'}else $('whyCard').style.display='none';
+  const last=S.slips.length?S.slips[S.slips.length-1].t:null;
+  $('sinceSlip').textContent=last?'Son kaymadan beri: '+dur((Date.now()-last)/1000):'Bırakma: '+new Date(S.quit).toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  // goals
+  const {money}=stats();
+  if(S.price>0){const g=GOALS.find(x=>x[0]>money)||GOALS[GOALS.length-1];const p=Math.min(100,money/g[0]*100);
+    const perMonth=30*S.perDay*S.price/S.perPack, perYear=perMonth*12.17;
+    $('moneyGoals').innerHTML=`<div class="mute">Sıradaki para hedefi</div><div style="font-weight:700;margin-top:4px">${g[1]} · ${fmtTL(g[0])}</div><div class="bar"><i style="width:${p}%"></i></div><div class="mute" style="margin-top:10px">Ayda ~${fmtTL(perMonth)}, yılda ~${fmtTL(perYear)} cebinde kalacak.</div>`;
+    $('moneyGoals').style.display='block';}
+  else $('moneyGoals').style.display='none';
+  // milestones
+  const el=stats().el;
+  $('milestones').innerHTML=MILESTONES.map(m=>{const done=el>=m[0];return `<div class="ms ${done?'done':''}"><div class="dot">${done?'✓':'🔒'}</div><div><div class="t">${m[1]}</div><div class="d">${m[2]}</div></div></div>`}).join('');
+  renderInsights();
+}
+function dur(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return d?`${d} gün ${h} sa`:h?`${h} sa ${m} dk`:`${m} dk`}
+function renderInsights(){
+  const all=[...S.logs.map(l=>({...l,k:'İstek'})),...S.crises.map(c=>({...c,k:c.won?'Kriz atlatıldı':'Kriz'})),...S.slips.map(s=>({...s,k:'Kayma ('+s.n+')'}))].sort((a,b)=>b.t-a.t);
+  if(all.length<3){$('insights').innerHTML='<p class="mute">Birkaç kayıt sonra burada en riskli anlarını ve tetikleyicilerini göstereceğim.</p>'}
+  else{
+    const cnt={};all.forEach(e=>(e.tr||[]).forEach(t=>cnt[t]=(cnt[t]||0)+1));
+    const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,6);const mx=top.length?top[0][1]:1;
+    const hrs=Array(24).fill(0);all.forEach(e=>hrs[new Date(e.t).getHours()]++);
+    const slots=[['Sabah (6–11)',6,11],['Öğle (11–14)',11,14],['Öğleden sonra (14–18)',14,18],['Akşam (18–22)',18,22],['Gece (22–6)',22,30]].map(s=>{let n=0;for(let h=s[1];h<s[2];h++)n+=hrs[h%24];return[s[0],n]});
+    const smx=Math.max(...slots.map(s=>s[1]),1);const worst=slots.slice().sort((a,b)=>b[1]-a[1])[0];
+    $('insights').innerHTML=(top.length?`<div class="mute" style="margin-bottom:4px">En sık tetikleyiciler</div>`+top.map(([n,v])=>`<div class="hbar"><div class="n">${n}</div><div class="b"><i style="width:${v/mx*100}%"></i></div><div class="v">${v}</div></div>`).join(''):'')+
+      `<div class="mute" style="margin:14px 0 4px">Günün saatleri</div>`+slots.map(([n,v])=>`<div class="hbar"><div class="n">${n}</div><div class="b"><i style="width:${v/smx*100}%;background:var(--sky)"></i></div><div class="v">${v}</div></div>`).join('')+
+      `<p style="margin-top:12px;font-size:14px">⚠️ En riskli zamanın: <b>${worst[0]}</b>${top.length?' · en güçlü tetikleyicin: <b>'+top[0][0]+'</b>':''}. Bu ana önceden bir plan yap.</p>`;
+  }
+  $('history').innerHTML=all.length?all.slice(0,15).map(e=>`<div class="row"><div><b style="font-size:13px">${e.k}</b><div class="mute" style="font-size:12px">${(e.tr||[]).join(', ')||'—'}${e.note?' · '+esc(e.note):''}</div></div><div class="mute" style="font-size:12px;text-align:right">${new Date(e.t).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`).join(''):'<p class="mute">Henüz kayıt yok.</p>';
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function quickLog(){const tr=picked('logChips');if(!tr.length){toast('Bir tetikleyici seç');return}S.logs.push({t:Date.now(),tr});save();clearChips('logChips');render();toast('Kaydedildi. Şimdi 🆘 ile krizi atlat.')}
+
+// crisis
+let cInt=null,bInt=null,cEnd=0,tipI=0,cStart=0;
+function startCrisis(){
+  clearChips('c_chips');$('crisis').classList.add('on');cStart=Date.now();cEnd=cStart+300000;tipI=Math.floor(Math.random()*TIPS.length);
+  showTip();breathe();
+  cInt=setInterval(()=>{const l=Math.max(0,cEnd-Date.now());$('c_time').textContent=Math.floor(l/60000)+':'+pad(Math.floor(l%60000/1000));
+    if(Math.floor((Date.now()-cStart)/1000)%30===0)showTip();
+    if(l<=0){clearInterval(cInt);$('c_time').textContent='Bitti 🎉';$('c_tip').innerHTML='<b>5 dakikayı geçirdin.</b> Dalga söndü mü?'}},1000);
+}
+function showTip(){const t=(S.why&&tipI%4===3)?'Hatırla: “'+esc(S.why)+'”':TIPS[tipI%TIPS.length];$('c_tip').innerHTML=t;tipI++}
+function breathe(){const c=$('c_circle'),w=$('c_word');let inhale=true;
+  const step=()=>{if(inhale){c.style.transition='transform 4s ease-in-out';c.style.transform='scale(1)';w.textContent='Nefes al';bInt=setTimeout(()=>{inhale=false;step()},4000)}
+  else{c.style.transition='transform 6s ease-in-out';c.style.transform='scale(.55)';w.textContent='Yavaşça ver';bInt=setTimeout(()=>{inhale=true;step()},6000)}};step()}
+function stopCrisisUI(){clearInterval(cInt);clearTimeout(bInt);$('crisis').classList.remove('on')}
+function endCrisis(won){
+  const tr=picked('c_chips');stopCrisisUI();
+  if(won===true){S.crises.push({t:Date.now(),tr,won:true});save();render();
+    const n=S.crises.filter(c=>c.won).length;toast(n===1?'İlk krizini yendin! 💪':n+'. krizini yendin! Her biri bir sonrakini zayıflatıyor.')}
+  else if(tr.length){S.logs.push({t:Date.now(),tr});save();render()}
+}
+// slip
+let slipFromCrisis=false;
+function openSlip(fromCrisis){slipFromCrisis=!!fromCrisis;const pre=fromCrisis?picked('c_chips'):[];if(fromCrisis)stopCrisisUI();
+  clearChips('slipChips');$('slipChips').querySelectorAll('.chip').forEach(b=>{if(pre.includes(b.textContent))b.classList.add('on')});
+  $('slipN').value=1;$('slipNote').value='';$('slipModal').classList.add('on')}
+function saveSlip(){S.slips.push({t:Date.now(),n:Math.max(1,+$('slipN').value||1),tr:picked('slipChips'),note:$('slipNote').value.trim()});
+  if(slipFromCrisis)S.crises.push({t:Date.now(),tr:picked('slipChips'),won:false});
+  save();closeModal('slipModal');render();toast('Kaydedildi. Sayaç devam ediyor — sen de devam et.')}
+function closeModal(id){$(id).classList.remove('on')}
+// settings
+let resetArm=false;
+function openSettings(){$('e_perDay').value=S.perDay;$('e_price').value=S.price||'';$('e_perPack').value=S.perPack;$('e_date').value=toLocalInput(S.quit);$('e_why').value=S.why||'';resetArm=false;$('resetBtn').textContent='Tüm verileri sil';$('setModal').classList.add('on')}
+function saveSettings(){S.perDay=+$('e_perDay').value||S.perDay;S.price=+$('e_price').value||0;S.perPack=+$('e_perPack').value||S.perPack;
+  if($('e_date').value)S.quit=Math.min(new Date($('e_date').value).getTime(),Date.now());S.why=$('e_why').value.trim();save();closeModal('setModal');render();tick();toast('Kaydedildi')}
+function askReset(){if(!resetArm){resetArm=true;$('resetBtn').textContent='Emin misin? Tekrar dokun';return}
+  try{localStorage.removeItem(KEY)}catch(e){}mem=null;location.reload()}
+init();
+</script>
+</body>
+</html>
