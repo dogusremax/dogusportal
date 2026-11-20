@@ -105,7 +105,7 @@ tr.n td.t{font-size:17px}
     <div class="kart">
       <h2>Bilgileri girin</h2>
       <p class="acik">Toplam hizmet bedelini yazın, tablo kendiliğinden hesaplanır. Oranları değiştirebilirsiniz.</p>
-      <div class="alan"><label for="dSec">Danışman</label><div class="giris"><select id="dSec"><option value="">Danışman seçin</option></select></div></div>
+      <div class="alan"><label for="dSec">Danışman</label><div class="giris"><select id="dSec"><option value="">Örnek Danışman (seçin)</option></select></div></div>
       <div class="alan gizli" id="dAdAlan"><label for="dAd">Danışmanın adı soyadı</label><div class="giris"><input id="dAd" class="yazi" type="text" autocomplete="off" placeholder="Ad Soyad"></div></div>
       <div class="alan"><label for="tur">İşlem türü</label><div class="giris"><input id="tur" class="yazi" type="text" autocomplete="off" value="Tamamı faturalı, resmi işlem"></div></div>
       <div class="alan"><label for="tutar">Toplam hizmet bedeli</label><div class="giris"><input id="tutar" type="text" inputmode="decimal" autocomplete="off" placeholder="0"><span>₺</span></div></div>
@@ -120,7 +120,7 @@ tr.n td.t{font-size:17px}
 
     <div class="sag">
       <div class="kart tablo-kart" id="tabloKart">
-        <div class="tbas" id="baslik">Hizmet bedeli hesaplama tablosu</div>
+        <div class="tbas" id="baslik">ÖRNEK DANIŞMAN – HİZMET BEDELİ HESAPLAMA TABLOSU</div>
         <div class="ttur"><b>İşlem Türü:</b> <span id="turYaz"></span></div>
         <table id="tablo">
           <thead><tr><th>Açıklama</th><th>Oran</th><th>Tutar</th></tr></thead>
@@ -128,12 +128,12 @@ tr.n td.t{font-size:17px}
             <tr><td>Toplam hizmet bedeli (KDV dahil)</td><td class="o"></td><td class="t" id="rTop">0 TL</td></tr>
             <tr class="k"><td>KDV</td><td class="o" id="rKdvO"></td><td class="t" id="rKdv">0 TL</td></tr>
             <tr class="b"><td>KDV hariç hizmet bedeli</td><td class="o"></td><td class="t" id="rHaric">0 TL</td></tr>
-            <tr><td id="rPayAd">Danışman hizmet bedeli payı</td><td class="o" id="rPayO"></td><td class="t" id="rPay">0 TL</td></tr>
+            <tr><td id="rPayAd">Örnek Danışman hizmet bedeli payı</td><td class="o" id="rPayO"></td><td class="t" id="rPay">0 TL</td></tr>
             <tr class="k"><td>Gelir vergisi kesintisi</td><td class="o" id="rGvO"></td><td class="t" id="rGv">0 TL</td></tr>
             <tr><td>Gelir vergisi sonrası kalan</td><td class="o"></td><td class="t" id="rKalan">0 TL</td></tr>
             <tr class="k"><td>Stopaj kesintisi</td><td class="o" id="rStO"></td><td class="t" id="rSt">0 TL</td></tr>
             <tr class="b k"><td>Toplam kesinti</td><td class="o"></td><td class="t" id="rKes">0 TL</td></tr>
-            <tr class="n"><td id="rNetAd">Danışman net hizmet bedeli</td><td class="o"></td><td class="t" id="rNet">0 TL</td></tr>
+            <tr class="n"><td id="rNetAd">ÖRNEK DANIŞMAN NET hizmet bedeli</td><td class="o"></td><td class="t" id="rNet">0 TL</td></tr>
           </tbody>
         </table>
         <div class="net"><small>Net ödenecek hizmet bedeli</small><strong id="netBuyuk">0 TL</strong><p>Belirtilen kesinti yöntemine göre hesaplanmıştır. Vergisel uygunluk ayrıca teyit edilmelidir.</p></div>
@@ -205,7 +205,7 @@ tr.n td.t{font-size:17px}
     var st=y2(kalan*oS/100);
     var kes=y2(gv+st);
     var net=y2(pay-kes);
-    var a=ad(), etiket=a||'Danışman';
+    var a=ad(), etiket=a||'Örnek Danışman';
     $('rTop').textContent=tl(dahil);
     $('rKdvO').textContent=oran(oK);$('rKdv').textContent=eksi(kdv);
     $('rHaric').textContent=tl(haric);
@@ -218,7 +218,7 @@ tr.n td.t{font-size:17px}
     $('rNetAd').textContent=trBuyuk(etiket)+' NET HİZMET BEDELİ';
     $('rNet').textContent=tl(net);
     $('netBuyuk').textContent=tl(net);
-    $('baslik').textContent=(a?trBuyuk(a)+' – ':'')+'HİZMET BEDELİ HESAPLAMA TABLOSU';
+    $('baslik').textContent=trBuyuk(etiket)+' – HİZMET BEDELİ HESAPLAMA TABLOSU';
     $('turYaz').textContent=$('tur').value.trim()||'—';
     son={ad:a,net:net,dahil:dahil};
     try{localStorage.setItem('hbOranlar',JSON.stringify({k:$('oKdv').value,p:$('oPay').value,g:$('oGv').value,s:$('oSt').value}));}catch(e){}
