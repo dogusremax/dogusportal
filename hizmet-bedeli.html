@@ -45,7 +45,7 @@ label,.lbl{display:block;font-size:13px;font-weight:700;color:var(--dim);margin-
 /* hesap tablosu */
 .tablo-kart{padding:18px 18px 16px}
 .tbas{font:700 17px Arial,sans-serif;line-height:1.3;text-transform:uppercase;letter-spacing:.01em}
-.ttur{font-size:14px;margin:6px 0 12px;color:var(--text)}
+.ttur{font-size:14px;margin:6px 0 0;color:var(--text)}
 .ttur b{font-weight:700}
 table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif}
 th{font:700 13px Arial,sans-serif;color:var(--text);text-align:right;padding:8px 0 9px;border-bottom:2px solid var(--line)}
@@ -98,7 +98,7 @@ tr.n td.t{font-size:17px}
   <div class="ust">
     <a class="geri" href="/" aria-label="Portala dön"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></a>
     <img src="/assets/ikon3d/money-bag.webp" alt="" width="44" height="44">
-    <div><h1>Hizmet Bedeli Paylaşımı</h1><div class="alt">Şirketi olmayan danışmanın net hizmet bedeli</div></div>
+    <div><h1>Hizmet Bedeli Paylaşımı</h1><div class="alt">Şirketi henüz açılmayan danışmanın net hizmet bedeli</div></div>
   </div>
 
   <div class="ikili">
@@ -120,8 +120,9 @@ tr.n td.t{font-size:17px}
 
     <div class="sag">
       <div class="kart tablo-kart" id="tabloKart">
-        <div class="tbas" id="baslik">ÖRNEK DANIŞMAN – HİZMET BEDELİ HESAPLAMA TABLOSU</div>
-        <div class="ttur"><b>İşlem Türü:</b> <span id="turYaz"></span></div>
+        <div class="tbas" id="baslik">ŞİRKETİ HENÜZ AÇILMAYAN DANIŞMAN – HİZMET BEDELİ HESAPLAMA TABLOSU</div>
+        <div class="ttur gizli" id="dYazSatir"><b>Danışman:</b> <span id="dYaz"></span></div>
+        <div class="ttur" style="margin-bottom:12px"><b>İşlem Türü:</b> <span id="turYaz"></span></div>
         <table id="tablo">
           <thead><tr><th>Açıklama</th><th>Oran</th><th>Tutar</th></tr></thead>
           <tbody>
@@ -152,6 +153,7 @@ tr.n td.t{font-size:17px}
 <div id="belge" aria-hidden="true">
   <div class="bust"><img src="/assets/dogus-logo-koyu.png" alt="" crossorigin="anonymous"><div>RE/MAX DOĞUŞ<br><span id="bTarih"></span></div></div>
   <h3 id="bBaslik"></h3>
+  <div class="btur" id="bDanSatir" style="margin-bottom:6px"><b>Danışman:</b> <span id="bDan"></span></div>
   <div class="btur"><b>İşlem Türü:</b> <span id="bTur"></span></div>
   <div id="bTablo"></div>
   <div class="bayak"><span>RE/MAX Doğuş · dogusportal.com</span><span>Bu tablo bilgilendirme amaçlıdır.</span></div>
@@ -218,7 +220,7 @@ tr.n td.t{font-size:17px}
     $('rNetAd').textContent=trBuyuk(etiket)+' NET HİZMET BEDELİ';
     $('rNet').textContent=tl(net);
     $('netBuyuk').textContent=tl(net);
-    $('baslik').textContent=trBuyuk(etiket)+' – HİZMET BEDELİ HESAPLAMA TABLOSU';
+    $('dYaz').textContent=a;$('dYazSatir').classList.toggle('gizli',!a);
     $('turYaz').textContent=$('tur').value.trim()||'—';
     son={ad:a,net:net,dahil:dahil};
     try{localStorage.setItem('hbOranlar',JSON.stringify({k:$('oKdv').value,p:$('oPay').value,g:$('oGv').value,s:$('oSt').value}));}catch(e){}
@@ -286,7 +288,7 @@ tr.n td.t{font-size:17px}
     var t=new Date();
     $('bTarih').textContent=t.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
     $('bBaslik').textContent=$('baslik').textContent;
-    $('bTur').textContent=$('turYaz').textContent;
+    $('bTur').textContent=$('turYaz').textContent;$('bDan').textContent=son.ad||'';$('bDanSatir').style.display=son.ad?'':'none';
     var k=$('tablo').cloneNode(true);k.removeAttribute('id');
     Array.prototype.forEach.call(k.querySelectorAll('[id]'),function(e){e.removeAttribute('id');});
     var n=document.querySelector('#tabloKart .net').cloneNode(true);
