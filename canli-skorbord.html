@@ -132,6 +132,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl tr:last-child td{border-bottom:0}
 .tbl tbody tr{transition:background .15s}
 .tbl tbody tr:hover{background:#f8fafc}
+#tablo tr.brokerSatir td{border-top:2px solid #c9d2e3;background:#f5f8fd}
+#tablo tr.brokerSatir td.bos{color:#9aa6bb}
+.sira.bsira{background:#0b1636;color:#fff}
+.kisi strong small{display:block;font-size:11.5px;font-weight:600;color:var(--dim);letter-spacing:.02em}
+.kart.brokerKart{border-top:2px solid #c9d2e3;background:#f5f8fd}
+body.tv .brokerSatir,body.tv .brokerKart{display:none!important}
 .tbl .kisi{display:flex;align-items:center;gap:12px}
 .tbl .kisi .yuzler img{width:38px;height:38px}
 .tbl .kisi strong{font-size:14.5px}
@@ -199,23 +205,6 @@ body.tv .borsa{display:flex}
 body.tv{padding-bottom:70px}
 body.tv{--w:1640px}
 /* Broker Üretimi · Yarış Dışı (Umut 20.11): sıra/puan yok, yalnız işlem + ciro; ofis toplamına dahil. TV modunda gösterilmez. */
-.broker{margin-top:22px;padding-top:18px;border-top:1px solid #c9d2e3}
-.broker .bb{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.broker h2{font-family:Archivo,sans-serif;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin:0}
-.broker h2 i{font-style:normal;color:var(--red)}
-.broker .bn{font-size:12.5px;color:var(--dim)}
-.bkart{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0b1636,#13265c);color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px -10px rgba(11,22,54,.6)}
-.bkart img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7);flex:none}
-.bkart .ad{flex:1;min-width:0}
-.bkart .ad strong{display:block;font-size:16px}
-.bkart .ad span{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#9fb3e0}
-.bkart .say{display:flex;gap:18px;text-align:right}
-.bkart .say b{display:block;font:800 20px Archivo,sans-serif;font-variant-numeric:tabular-nums;color:#fff}
-.bkart .say span{font-size:11px;color:#b9c6e6}
-.broker .top{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 16px;font-size:13.5px;color:var(--dim)}
-.broker .top b{color:var(--text)}
-.broker .top .t b{color:var(--navy);font-size:16px}
-body.tv .broker{display:none!important}
 </style>
 </head>
 <body>
@@ -289,7 +278,6 @@ body.tv .broker{display:none!important}
     </tr></thead>
     <tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot>
   </table></div>
-  <section class="broker" id="broker" hidden></section>
   </section>
 
   <section class="panel" id="dagilim"><h3>Ciro dağılımı</h3><div class="yigin" id="yigin"></div><ul class="lejant" id="lejant"></ul></section>
@@ -380,14 +368,18 @@ function brokerHesapla(){
   });
   return o;
 }
-function brokerCiz(danCiro){
-  var b = brokerHesapla(), B = $('broker');
-  B.innerHTML = '<div class="bb"><h2>Broker Üretimi <i>·</i> Yarış Dışı</h2><span class="bn">Bilgilendirme · sıralamaya ve ödüllere dahil değil</span></div>' +
-    '<div class="bkart"><img src="assets/ekip/yuz/umut.webp" alt=""><div class="ad"><strong>Umut Tokkuş</strong><span>Broker</span></div>' +
-    '<div class="say"><div><b>' + b.kapanis + '</b><span>işlem</span></div><div><b>' + kisaTL(b.ciro) + '</b><span>ciro</span></div></div></div>' +
-    '<div class="top"><span>Danışmanlar <b>' + tl(danCiro) + '</b> + Broker <b>' + tl(b.ciro) + '</b></span><span class="t">Ofis toplam ciro <b>' + tl(danCiro + b.ciro) + '</b></span></div>';
-  B.hidden = false;
-  return b;
+var UMUT_YUZ = '<div class="yuzler"><img src="assets/ekip/yuz/umut.webp" alt=""></div>';
+function brokerSatir(b, maks){
+  return '<tr class="brokerSatir"><td><div class="sira bsira">B</div></td>' +
+    '<td class="sol"><div class="kisi">' + UMUT_YUZ + '<strong>Umut Tokkuş<small>Broker · yarış dışı</small></strong></div></td>' +
+    '<td class="sol ciroH"><b>' + tl(b.ciro) + '</b><div class="cubuk"><i style="width:' + Math.min(100, b.ciro / maks * 100).toFixed(1) + '%"></i></div></td>' +
+    '<td class="g">' + b.kapanis + '</td><td>' + b.satilik + '</td><td>' + b.kiralik + '</td><td class="bos">–</td><td class="bos">–</td><td class="bos">–</td></tr>';
+}
+function brokerKart(b){
+  return '<article class="kart brokerKart"><div class="ust"><div class="sira bsira">B</div>' + UMUT_YUZ +
+    '<div class="ad"><strong>Umut Tokkuş</strong><span>Broker · yarış dışı</span></div>' +
+    '<div class="ciro"><b>' + kisaTL(b.ciro) + '</b><span>toplam ciro</span></div></div>' +
+    '<div class="metrik"><div><b>' + b.kapanis + '</b><span>Kapanış</span></div><div><b>' + b.satilik + '</b><span>Satılık</span></div><div><b>' + b.kiralik + '</b><span>Kiralık</span></div></div></article>';
 }
 function yuzler(e){
   return '<div class="yuzler">' + e.foto.map(function(f){ return '<img src="' + f + '" alt="" loading="lazy">'; }).join('') + '</div>';
@@ -398,11 +390,11 @@ function ciz(){
   var anahtar = {ciro:'ciro', kapanis:'kapanis', yorum:'yorum', kazanc:'aylik', satilik:'satilik', kiralik:'kiralik', ortak:'ortak'}[SIRA];
   satir.sort(function(a,b){ return b[anahtar] - a[anahtar] || b.ciro - a.ciro; });
   var top = satir.reduce(function(t,s){ t.ciro+=s.ciro; t.kap+=s.kapanis; t.sat+=s.satilik; t.kir+=s.kiralik; t.ort+=s.ortak; t.yor+=s.yorum; return t; }, {ciro:0,kap:0,sat:0,kir:0,ort:0,yor:0});
-  var br = brokerCiz(top.ciro);
+  var br = brokerHesapla();
   $('kCiro').textContent = tl(top.ciro + br.ciro);
   $('kCiroNot').textContent = br.ciro ? '7 danışman + broker' : '7 danışman';
-  $('kKap').textContent = top.kap;
-  $('kKapNot').textContent = top.sat + ' satılık · ' + top.kir + ' kiralık';
+  $('kKap').textContent = top.kap + br.kapanis;
+  $('kKapNot').textContent = (top.sat + br.satilik) + ' satılık · ' + (top.kir + br.kiralik) + ' kiralık';
   $('kOrt').textContent = top.ort;
   $('kYor').textContent = top.yor;
 
@@ -432,7 +424,7 @@ function ciz(){
       '</div>' +
       '<div class="kazanc"><span>' + (TUR === 'ay' ? 'Bu ayki kazanç' : 'Aylık ortalama kazanç') + '</span><b>' + tl(s.aylik) + '</b></div>' +
     '</article>';
-  }).join('') : '<div class="bos-durum">Bu dönemde kapanış ya da yorum yok.</div>';
+  }).join('') + brokerKart(br) : '<div class="bos-durum">Bu dönemde kapanış ya da yorum yok.</div>' + brokerKart(br);
 
   var RENK = ['#003DA5','#DC1C2E','#3b6fd8','#f0566a','#0b1636','#8aa9e6','#f4a3ad'];
   $('tbody').innerHTML = satir.map(function(s, i){
@@ -440,8 +432,8 @@ function ciz(){
       '<td class="sol"><div class="kisi">' + yuzler(s.e) + '<strong>' + ad(s) + '</strong></div></td>' +
       '<td class="sol ciroH"><b>' + tl(s.ciro) + '</b><div class="cubuk"><i style="width:' + (s.ciro / maks * 100).toFixed(1) + '%"></i></div></td>' +
       '<td class="g">' + s.kapanis + '</td><td>' + s.satilik + '</td><td>' + s.kiralik + '</td><td>' + s.ortak + '</td><td>' + s.yorum + '</td><td class="k">' + tl(s.aylik) + '</td></tr>';
-  }).join('');
-  $('tfoot').innerHTML = '<tr><td></td><td class="sol">Toplam</td><td class="sol">' + tl(top.ciro) + '</td><td>' + top.kap + '</td><td>' + top.sat + '</td><td>' + top.kir + '</td><td>' + top.ort + '</td><td>' + top.yor + '</td><td></td></tr>';
+  }).join('') + brokerSatir(br, maks);
+  $('tfoot').innerHTML = '<tr><td></td><td class="sol">Toplam</td><td class="sol">' + tl(top.ciro + br.ciro) + '</td><td>' + (top.kap + br.kapanis) + '</td><td>' + (top.sat + br.satilik) + '</td><td>' + (top.kir + br.kiralik) + '</td><td>' + top.ort + '</td><td>' + top.yor + '</td><td></td></tr>';
   [].forEach.call(document.querySelectorAll('#tablo th[data-s]'), function(th){ th.classList.toggle('on', th.dataset.s === SIRA); });
   var payli = satir.slice().sort(function(a,b){ return b.ciro - a.ciro; });
   $('yigin').innerHTML = top.ciro ? payli.map(function(s, i){ return '<i title="' + ad(s) + '" style="width:' + (s.ciro / top.ciro * 100).toFixed(2) + '%;background:' + RENK[i % RENK.length] + '"></i>'; }).join('') : '';
