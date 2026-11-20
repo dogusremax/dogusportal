@@ -224,6 +224,25 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .pin-kutu input:focus{border-color:#fff}
 .pin-kutu button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:14px;background:var(--red);color:#fff;font:700 16px Inter,sans-serif;cursor:pointer}
 .pin-hata{min-height:20px;margin-top:10px;color:#ff9aa5;font-size:13px}
+/* Broker Üretimi · Yarış Dışı (Umut 20.11): sıra/puan yok, yalnız işlem + ciro; kurumsal, nötr */
+.broker{margin-top:22px;padding-top:18px;border-top:1px solid #c9d2e3}
+.broker .bb{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.broker h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin:0}
+.broker h2 i{font-style:normal;color:var(--red)}
+.broker .bn{font-size:12.5px;color:var(--dim)}
+.broker .bk{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:620px){.broker .bk{grid-template-columns:1fr 1fr}}
+.bkart{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0b1636,#13265c);color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px -10px rgba(11,22,54,.6)}
+.bkart .yuz{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7);flex:none}
+.bkart .ad{flex:1;min-width:0}
+.bkart .ad strong{display:block;font-size:16px}
+.bkart .ad span{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#9fb3e0}
+.bkart .say{display:flex;gap:16px;text-align:right}
+.bkart .say b{display:block;font-size:20px;font-variant-numeric:tabular-nums;background:none;color:#fff;padding:0;border-radius:0;box-shadow:none}
+.bkart .say span{font-size:11px;color:#b9c6e6}
+.broker .top{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 16px;font-size:13.5px;color:var(--dim)}
+.broker .top b{color:var(--text)}
+.broker .top .t b{color:var(--navy);font-size:16px}
 </style>
 </head>
 <body>
@@ -292,6 +311,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
       </tr></thead>
       <tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot>
     </table></div>
+    <section class="broker" id="broker" hidden></section>
   </section>
   <section class="panel" id="akis" hidden>
     <div class="akis-ust"><div class="akis-bas"><h3>Son hareketler</h3><span class="yayin"><i></i>CANLI</span></div>
@@ -448,7 +468,7 @@ function yukle(donemDegisti){
     else { durum('hata', 'Bağlantı hatası · tekrar dene'); $('liste').innerHTML = '<div class="bos-durum">Veriler alınamadı. Üstteki düğmeye dokunup tekrar deneyin.</div>'; }
   }).then(function(){ SURUYOR[k] = false; });
 }
-var ILK = true, DT_SURUYOR = {}, SON_URETIM = '';
+var ILK = true, DT_SURUYOR = {}, SON_URETIM = ''; var SON_DT = null;
 function buAyMi(){ return TUR === 'ay' && SECIM === ayKod(tr()); }
 /* Tek istek: bu ayın sıralaması + son hareketler. taze=false → sunucudaki son görüntü (anında) */
 function dtSkorAl(taze){
@@ -466,6 +486,7 @@ function dtUygula(d){
     if (!d || !d.aylik || !d.uretim) throw new Error('veri yok');
     if (d.uretim < SON_URETIM) return;          // daha yenisi zaten geldi
     SON_URETIM = d.uretim;
+    SON_DT = d;
     (d.consultants || []).forEach(function(k){ KISILER[k.id] = k; });
     onbellekYaz('dtSkor:akis', {akt: d.activities, kisi: KISILER});
     onbellekYaz('dtSkor:ay:' + d.ay, d.aylik);
@@ -496,6 +517,21 @@ function donemYazisi(){
   if (TUR === 'ay') return AYLAR[+SECIM.slice(5) - 1] + ' ' + SECIM.slice(0,4) + (SECIM === ayKod(tr()) ? ' · devam ediyor' : '');
   if (TUR === 'ceyrek') return SECIM.slice(6) + '. çeyrek ' + SECIM.slice(0,4);
   return '1 Haziran 2026 – bugün';
+}
+function brokerCiz(){
+  var B = $('broker'), d = SON_DT;
+  var donem = d && d.brokerlar ? (TUR === 'ay' && SECIM === d.ay ? 'ay' : TUR === 'hafta' && SECIM === d.hafta ? 'hafta' : null) : null;
+  if (!donem || !VERI) { B.hidden = true; return; }
+  var tl = function(v){ return '₺' + Math.round(v).toLocaleString('tr-TR'); };
+  var danCiro = VERI.siralama.reduce(function(t, r){ return t + (r.ciro || 0); }, 0);
+  var brCiro = d.brokerlar.reduce(function(t, b){ return t + b[donem].ciro; }, 0);
+  B.innerHTML = '<div class="bb"><h2>Broker Üretimi <i>·</i> Yarış Dışı</h2><span class="bn">Bilgilendirme · sıralamaya ve ödüllere dahil değil</span></div>' +
+    '<div class="bk">' + d.brokerlar.map(function(b){
+      return '<div class="bkart">' + yuz(b.id) + '<div class="ad"><strong>' + esc(b.name) + '</strong><span>Broker</span></div>' +
+        '<div class="say"><div><b>' + p(b[donem].islem) + '</b><span>işlem</span></div><div><b>' + tl(b[donem].ciro) + '</b><span>ciro</span></div></div></div>';
+    }).join('') + '</div>' +
+    '<div class="top"><span>Danışmanlar <b>' + tl(danCiro) + '</b> + Brokerlar <b>' + tl(brCiro) + '</b></span><span class="t">Ofis toplam ciro <b>' + tl(danCiro + brCiro) + '</b></span></div>';
+  B.hidden = false;
 }
 function ciz(){
   if (!VERI) return;
@@ -567,6 +603,7 @@ function ciz(){
     .map(function(f){ return '<td>' + p(t(f)) + '</td>'; }).join('') + '</tr>';
   [].forEach.call(document.querySelectorAll('#tablo th[data-s]'), function(th){ th.classList.toggle('on', th.dataset.s === SIRA); });
   $('alt').innerHTML = 'Puanlar Danışman Takip ile birebir aynı kurallarla hesaplanır; her dakika kendiliğinden yenilenir.<br>Broker hesapları sıralamada yer almaz.';
+  brokerCiz();
 }
 function once(ts){
   var dk = Math.max(0, Math.round((Date.now() - new Date(ts).getTime()) / 60000));
