@@ -231,7 +231,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .broker h2 i{font-style:normal;color:var(--red)}
 .broker .bn{font-size:12.5px;color:var(--dim)}
 .broker .bk{display:grid;grid-template-columns:1fr;gap:10px}
-@media(min-width:620px){.broker .bk{grid-template-columns:1fr 1fr}}
+
 .bkart{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0b1636,#13265c);color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px -10px rgba(11,22,54,.6)}
 .bkart .yuz{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7);flex:none}
 .bkart .ad{flex:1;min-width:0}
@@ -524,13 +524,14 @@ function brokerCiz(){
   if (!donem || !VERI) { B.hidden = true; return; }
   var tl = function(v){ return '₺' + Math.round(v).toLocaleString('tr-TR'); };
   var danCiro = VERI.siralama.reduce(function(t, r){ return t + (r.ciro || 0); }, 0);
-  var brCiro = d.brokerlar.reduce(function(t, b){ return t + b[donem].ciro; }, 0);
+  var BR = d.brokerlar.filter(function(b){ return b.id !== 'makbule'; });
+  var brCiro = BR.reduce(function(t, b){ return t + b[donem].ciro; }, 0);
   B.innerHTML = '<div class="bb"><h2>Broker Üretimi <i>·</i> Yarış Dışı</h2><span class="bn">Bilgilendirme · sıralamaya ve ödüllere dahil değil</span></div>' +
-    '<div class="bk">' + d.brokerlar.map(function(b){
+    '<div class="bk">' + BR.map(function(b){
       return '<div class="bkart">' + yuz(b.id) + '<div class="ad"><strong>' + esc(b.name) + '</strong><span>Broker</span></div>' +
         '<div class="say"><div><b>' + p(b[donem].islem) + '</b><span>işlem</span></div><div><b>' + tl(b[donem].ciro) + '</b><span>ciro</span></div></div></div>';
     }).join('') + '</div>' +
-    '<div class="top"><span>Danışmanlar <b>' + tl(danCiro) + '</b> + Brokerlar <b>' + tl(brCiro) + '</b></span><span class="t">Ofis toplam ciro <b>' + tl(danCiro + brCiro) + '</b></span></div>';
+    '<div class="top"><span>Danışmanlar <b>' + tl(danCiro) + '</b> + Broker <b>' + tl(brCiro) + '</b></span><span class="t">Ofis toplam ciro <b>' + tl(danCiro + brCiro) + '</b></span></div>';
   B.hidden = false;
 }
 function ciz(){

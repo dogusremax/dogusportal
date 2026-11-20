@@ -282,9 +282,9 @@ function brokerCiz(d, donem, kay){
   var B = $('broker');
   if (!d.brokerlar) { B.hidden = true; return; }
   var tl = function(v){ return '₺' + Math.round(v).toLocaleString('tr-TR'); };
-  var dan = kay.siralama.reduce(function(t, r){ return t + (r.ciro || 0); }, 0), br = d.brokerlar.reduce(function(t, b){ return t + b[donem].ciro; }, 0);
-  B.innerHTML = '<div class="bt">BROKER ÜRETİMİ<i>YARIŞ DIŞI</i></div>' + d.brokerlar.map(function(b){
-    return '<div class="bk">' + yuz(b.id) + '<strong>' + esc(b.name.split(' ')[0]) + '</strong><div><b>' + p(b[donem].islem) + '</b><span>işlem</span></div><div><b>' + tl(b[donem].ciro) + '</b><span>ciro</span></div></div>';
+  var dan = kay.siralama.reduce(function(t, r){ return t + (r.ciro || 0); }, 0), BR = d.brokerlar.filter(function(b){ return b.id !== 'makbule'; }), br = BR.reduce(function(t, b){ return t + b[donem].ciro; }, 0);
+  B.innerHTML = '<div class="bt">BROKER ÜRETİMİ<i>YARIŞ DIŞI</i></div>' + BR.map(function(b){
+    return '<div class="bk">' + yuz(b.id) + '<strong>' + esc(b.name) + '</strong><div><b>' + p(b[donem].islem) + '</b><span>işlem</span></div><div><b>' + tl(b[donem].ciro) + '</b><span>ciro</span></div></div>';
   }).join('') + '<div class="ot"><b>' + tl(dan + br) + '</b><span>ofis toplam ciro</span></div>';
   B.hidden = false;
 }
