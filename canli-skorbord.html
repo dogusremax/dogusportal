@@ -454,7 +454,7 @@ function ciz(){
       '<td class="sol ciroH"><b>' + tl(s.ciro) + '</b><div class="cubuk"><i style="width:' + (s.ciro / maks * 100).toFixed(1) + '%"></i></div></td>' +
       '<td class="g">' + s.kapanis + '</td><td>' + s.satilik + '</td><td>' + s.kiralik + '</td><td>' + s.ortak + '</td><td>' + s.yorum + '</td><td class="k">' + tl(s.aylik) + '</td></tr>';
   }).join('') + brokerSatir(br, maks);
-  $('tfoot').innerHTML = (dg.kapanis ? '<tr class="digerSatir"><td></td><td class="sol">Ayrılan danışman<small>' + esc(dg.adlar.join(', ')) + '</small></td><td class="sol">' + tl(dg.ciro) + '</td><td>' + dg.kapanis + '</td><td>' + dg.satilik + '</td><td>' + dg.kiralik + '</td><td>' + dg.ortak + '</td><td>–</td><td></td></tr>' : '') +
+  $('tfoot').innerHTML = (dg.kapanis ? '<tr class="digerSatir"><td></td><td class="sol">Ayrılan danışman</td><td class="sol">' + tl(dg.ciro) + '</td><td>' + dg.kapanis + '</td><td>' + dg.satilik + '</td><td>' + dg.kiralik + '</td><td>' + dg.ortak + '</td><td>–</td><td></td></tr>' : '') +
     '<tr><td></td><td class="sol">Toplam</td><td class="sol">' + tl(top.ciro + br.ciro + dg.ciro) + '</td><td>' + (top.kap + br.kapanis + dg.kapanis) + '</td><td>' + (top.sat + br.satilik + dg.satilik) + '</td><td>' + (top.kir + br.kiralik + dg.kiralik) + '</td><td>' + (top.ort + br.ortak + dg.ortak) + '</td><td>' + (top.yor + br.yorum) + '</td><td></td></tr>';
   [].forEach.call(document.querySelectorAll('#tablo th[data-s]'), function(th){ th.classList.toggle('on', th.dataset.s === SIRA); });
   var payli = satir.slice().sort(function(a,b){ return b.ciro - a.ciro; });
