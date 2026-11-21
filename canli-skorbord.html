@@ -497,8 +497,6 @@ function borsaCiz(){
       '<small>bu ay ' + o.buKap + ' kapanış · ' + y + '\'da ' + s.kapanis + ' kapanış</small></span>';
   });
   var T2 = TUR, S2 = SECIM; TUR = 'yil'; var ub = brokerHesapla(), dg = digerHesapla(); TUR = T2; SECIM = S2;
-  ogeler.push('<span class="oge"><small>Broker</small><strong>Umut Tokkuş</strong><b>' + tl(ub.ciro) + '</b>' + egilim(UB) +
-    '<small>bu ay ' + UB.buKap + ' kapanış · ' + y + '\'da ' + ub.kapanis + ' kapanış · yarış dışı</small></span>');
   var top = sirali.reduce(function(t,s){ return t + s.ciro; }, 0) + ub.ciro + dg.ciro;
   var topKap = sirali.reduce(function(t,s){ return t + s.kapanis; }, 0) + ub.kapanis + dg.kapanis;
   ogeler.unshift('<span class="oge"><strong>Ofis ' + y + '</strong><b>' + tl(top) + '</b><small>' + y + '\'da ' + topKap + ' kapanış · broker dahil</small></span>');
