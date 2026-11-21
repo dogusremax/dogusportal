@@ -137,7 +137,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .sira.bsira{background:#0b1636;color:#fff}
 .kisi strong small{display:block;font-size:11.5px;font-weight:600;color:var(--dim);letter-spacing:.02em}
 .kart.brokerKart{border-top:2px solid #c9d2e3;background:#f5f8fd}
-body.tv .brokerSatir,body.tv .brokerKart,body.tv .digerSatir{display:none!important}
+body.tv .tbl td{padding-top:6px;padding-bottom:6px}
+body.tv .tbl .kisi .yuzler img{width:32px;height:32px}
+@media (max-height:960px){body.tv .tbl td{padding-top:2px;padding-bottom:2px}body.tv .tbl th{padding-top:7px;padding-bottom:7px}body.tv .tbl .kisi .yuzler img{width:26px;height:26px}body.tv .kpi{padding-top:8px;padding-bottom:8px}}
 #tfoot tr.digerSatir td{font-weight:600;color:var(--dim);font-size:13px}
 #tfoot tr.digerSatir small{display:block;font-size:11.5px;font-weight:500}
 .tbl .kisi{display:flex;align-items:center;gap:12px}
@@ -472,23 +474,34 @@ function borsaCiz(){
   var py = m === 1 ? y - 1 : y, pm = m === 1 ? 12 : m - 1, gecenAy = py + '-' + ('0'+pm).slice(-2);
   var T = TUR, S = SECIM; TUR = 'yil'; var yilSatir = hesapla(); TUR = T; SECIM = S;
   var ix = {}; EKIP.forEach(function(e){ ix[e.ad] = {bu:0, onceki:0, buKap:0}; });
+  var UB = {bu:0, onceki:0, buKap:0};
   KAYIT.forEach(function(r){
-    var o = ix[String(r.advisor || '').trim()]; if (!o) return;
+    var o = /umut\s*tokku/i.test(String(r.advisor || '')) ? UB : ix[String(r.advisor || '').trim()]; if (!o) return;
     var t = gun(r.date), ay = t.slice(0,7), gn = +t.slice(8,10), hb = Number(r.totalHB) || Number(r.amount) || 0;
     if (ay === buAy && gn <= g) { o.bu += hb; o.buKap++; }
     else if (ay === gecenAy && gn <= g) o.onceki += hb;
   });
   var sirali = yilSatir.slice().sort(function(a,b){ return b.ciro - a.ciro; });
+  function egilim(o){
+    var fark = o.onceki ? (o.bu - o.onceki) / o.onceki * 100 : (o.bu ? 100 : 0);
+    var cls = o.bu > o.onceki ? 'yuk' : o.bu < o.onceki ? 'dus' : 'sabit';
+    var ok = cls === 'yuk' ? '▲' : cls === 'dus' ? '▼' : '■';
+    return '<span class="' + cls + '">' + ok + ' ' + (!o.onceki && !o.bu ? '—' : !o.onceki ? 'yeni' : '%' + Math.abs(Math.round(fark))) + '</span>';
+  }
   var ogeler = sirali.map(function(s, i){
     var o = ix[s.e.ad], fark = o.onceki ? (o.bu - o.onceki) / o.onceki * 100 : (o.bu ? 100 : 0);
     var cls = o.bu > o.onceki ? 'yuk' : o.bu < o.onceki ? 'dus' : 'sabit';
     var ok = cls === 'yuk' ? '▲' : cls === 'dus' ? '▼' : '■';
     return '<span class="oge"><small>#' + (i+1) + '</small><strong>' + esc(s.e.gorunen || s.e.ad) + '</strong>' +
       '<b>' + tl(s.ciro) + '</b><span class="' + cls + '">' + ok + ' ' + (!o.onceki && !o.bu ? '—' : !o.onceki ? 'yeni' : '%' + Math.abs(Math.round(fark))) + '</span>' +
-      '<small>bu ay ' + o.buKap + ' kapanış · yıl ' + s.kapanis + '</small></span>';
+      '<small>bu ay ' + o.buKap + ' kapanış · ' + y + '\'da ' + s.kapanis + ' kapanış</small></span>';
   });
-  var top = sirali.reduce(function(t,s){ return t + s.ciro; }, 0);
-  ogeler.unshift('<span class="oge"><strong>Ofis 2026</strong><b>' + tl(top) + '</b><small>' + sirali.reduce(function(t,s){ return t + s.kapanis; }, 0) + ' kapanış</small></span>');
+  var T2 = TUR, S2 = SECIM; TUR = 'yil'; var ub = brokerHesapla(), dg = digerHesapla(); TUR = T2; SECIM = S2;
+  ogeler.push('<span class="oge"><small>Broker</small><strong>Umut Tokkuş</strong><b>' + tl(ub.ciro) + '</b>' + egilim(UB) +
+    '<small>bu ay ' + UB.buKap + ' kapanış · ' + y + '\'da ' + ub.kapanis + ' kapanış · yarış dışı</small></span>');
+  var top = sirali.reduce(function(t,s){ return t + s.ciro; }, 0) + ub.ciro + dg.ciro;
+  var topKap = sirali.reduce(function(t,s){ return t + s.kapanis; }, 0) + ub.kapanis + dg.kapanis;
+  ogeler.unshift('<span class="oge"><strong>Ofis ' + y + '</strong><b>' + tl(top) + '</b><small>' + y + '\'da ' + topKap + ' kapanış · broker dahil</small></span>');
   var tek = ogeler.join('');
   var akis = $('akis'); akis.innerHTML = tek + tek;
   requestAnimationFrame(function(){ akis.style.setProperty('--sure', Math.max(30, Math.round(akis.scrollWidth / 2 / 70)) + 's'); });
