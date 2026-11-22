@@ -32,6 +32,7 @@ input:focus{border-color:var(--alt)}
 button.ana{width:100%;font:inherit;font-size:19px;font-weight:800;padding:17px;border:0;border-radius:14px;background:var(--kir);color:#fff}
 button.ana:disabled{opacity:.5}
 .not{font-size:13px;color:rgba(255,255,255,.5)}
+.kvkk{font-size:11.5px;line-height:1.4;color:rgba(255,255,255,.42);margin-top:-4px}
 .hata{color:#ff8a95;font-size:14px;min-height:18px}
 .sekiller{display:flex;gap:12px;font-size:30px}
 .sekiller span:nth-child(1){color:var(--c0)}.sekiller span:nth-child(2){color:var(--c1)}.sekiller span:nth-child(3){color:var(--c2)}.sekiller span:nth-child(4){color:var(--c3)}
@@ -68,13 +69,15 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
 
   <section class="ekr" id="e-ad"><div class="orta" style="justify-content:flex-start;padding-top:6vh">
     <div class="sekiller"><span>▲</span><span>◆</span><span>●</span><span>■</span></div>
-    <h1>Hoş geldiniz!</h1><p>Sıralamada görünecek adınızı ve soyadınızı yazın.</p>
+    <h1>Hoş geldiniz!</h1><p>Adınızı, soyadınızı ve telefon numaranızı yazın.</p>
     <form id="adForm" style="width:100%;display:flex;flex-direction:column;gap:12px;margin-top:8px">
-      <input id="ad" autocomplete="name" maxlength="40" placeholder="Ad Soyad" enterkeyhint="go">
+      <input id="ad" autocomplete="name" maxlength="40" placeholder="Ad Soyad" enterkeyhint="next">
+      <input id="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="Telefon (05xx xxx xx xx)" enterkeyhint="go">
       <button class="ana" id="katilBtn">Yarışmaya katıl</button>
       <div class="hata" id="adHata"></div>
     </form>
-    <p class="not">Her misafir tek telefonla katılır. Hem doğru hem hızlı olan kazanır.</p></div></section>
+    <p class="not">Her misafir tek telefonla katılır. Hem doğru hem hızlı olan kazanır.</p>
+    <p class="not kvkk">Telefon numaranız; ödül iletişimi ve RE/MAX Doğuş’un Kuzey Kıbrıs projeleriyle ilgili sizinle iletişime geçmesi amacıyla, 6698 sayılı KVKK kapsamında işlenir ve üçüncü kişilerle paylaşılmaz. Katılarak bunu kabul etmiş olursunuz.</p></div></section>
 
   <section class="ekr" id="e-lobi"><div class="orta">
     <div class="sekiller nefes"><span>▲</span><span>◆</span><span>●</span><span>■</span></div>
@@ -137,7 +140,7 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
       if (!j.ok || !j.s || j.s.f === 'bitti') { goster('yok'); return sonrakiYoklama(4000); }
       isle(j);
       // Katılım kaydı kaybolduysa (aynı anda çok kişi katılınca olabilir) sessizce yeniden yaz
-      if (j.kayit === false && kayitliAd() && Date.now() - sonYeniden > 2500) { sonYeniden = Date.now(); YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: kayitliAd() }).catch(function () {}); }
+      if (j.kayit === false && kayitliAd() && Date.now() - sonYeniden > 2500) { sonYeniden = Date.now(); YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: kayitliAd(), tel: localStorage.getItem('yzTel') || '' }).catch(function () {}); }
       sonrakiYoklama(sonrakiAralik());
     }).catch(function () {
       hataSay++; if (hataSay > 1) $('bag').style.display = 'block';
@@ -157,7 +160,7 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
     s = j.s;
     if (j.ben) $('ustPuan').innerHTML = j.ben[0] + '<small>' + (j.ben[1] ? j.ben[1] + '. sıra' : 'puan') + '</small>';
     ad = kayitliAd();
-    if (!ad) { if (!$('ad').value) $('ad').value = localStorage.getItem('yzSonAd') || ''; goster('ad'); return; }
+    if (!ad) { if (!$('ad').value) $('ad').value = localStorage.getItem('yzSonAd') || ''; if (!$('tel').value) $('tel').value = localStorage.getItem('yzTel') || ''; goster('ad'); return; }
     if (yeni === sv && s.f !== 'soru') return; sv = yeni;
     if (s.f === 'lobi') { $('lobiAd').textContent = ad; goster('lobi'); return; }
     if (s.f === 'soru') {
@@ -232,19 +235,32 @@ footer{padding:10px 16px 14px;text-align:center;font-size:11.5px;color:rgba(255,
     $('fNot').textContent = bir ? 'Lütfen salondan ayrılmayın, ödülünüz için sizi sahneye davet edeceğiz.' : 'Katıldığınız için teşekkür ederiz. Kazanan ekranda açıklanıyor.';
     goster('final');
   }
+  // Türkiye cep: 5xx xxx xx xx → 05xxxxxxxxx; yurt dışı: + ile 8-15 hane
+  function telDuzelt(t) {
+    t = String(t || '').replace(/[^0-9+]/g, '');
+    if (/^\+\d{8,15}$/.test(t)) return t.indexOf('+90') === 0 ? telDuzelt(t.slice(3)) : t;
+    t = t.replace(/\+/g, '');
+    if (/^90\d{10}$/.test(t)) t = t.slice(2);
+    if (/^00\d{8,15}$/.test(t)) return '+' + t.slice(2);
+    if (/^5\d{9}$/.test(t)) t = '0' + t;
+    return /^0\d{10}$/.test(t) ? t : '';
+  }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   $('adForm').addEventListener('submit', function (ev) {
     ev.preventDefault();
     var v = $('ad').value.replace(/\s+/g, ' ').trim();
     if (v.length < 3 || v.indexOf(' ') < 0) { $('adHata').textContent = 'Lütfen adınızı ve soyadınızı yazın.'; return; }
+    var tel = telDuzelt($('tel').value);
+    if (!tel) { $('adHata').textContent = 'Lütfen telefon numaranızı yazın (örn. 0532 123 45 67).'; $('tel').focus(); return; }
     $('katilBtn').disabled = true; $('adHata').textContent = '';
-    YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: v }).then(function (j) {
+    YZ.post({ yz: 'katil', o: oyun, pid: pid, ad: v, tel: tel }).then(function (j) {
       $('katilBtn').disabled = false;
       if (!j.ok) { $('adHata').textContent = j.hata === 'oyun' ? 'Yarışma kapanmış görünüyor.' : 'Kaydedilemedi, tekrar deneyin.'; return; }
-      localStorage.setItem('yzAd:' + oyun, v); localStorage.setItem('yzSonAd', v); ad = v; sv = ''; titret(30); yokla();
+      localStorage.setItem('yzAd:' + oyun, v); localStorage.setItem('yzSonAd', v); localStorage.setItem('yzTel', tel); ad = v; sv = ''; titret(30); yokla();
     }).catch(function () { $('katilBtn').disabled = false; $('adHata').textContent = 'Bağlantı sorunu, tekrar deneyin.'; });
   });
+  $('ad').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !$('tel').value) { e.preventDefault(); $('tel').focus(); } });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { clearTimeout(zam); yokla(); } });
   yokla();
 })();
