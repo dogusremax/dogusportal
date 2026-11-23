@@ -195,7 +195,8 @@ function uygula(d){
   try { localStorage.setItem('dtTv', JSON.stringify(d)); } catch(e){}
   ciz(d);
 }
-var HATA = 0, SON_CANLI = 0, BASLA = Date.now();   // SON_CANLI: sunucudan taze veri alınan son an (hazır dosya / önbellek sayılmaz)
+var HATA = 0, SON_CANLI = 0, BASLA = Date.now();
+var TV_UA = /Tizen|SMART-TV|SmartTV|Web0S|HbbTV|NetCast|BRAVIA|CrKey|GoogleTV|Android TV/i.test(navigator.userAgent) || /[?&]tv=1/.test(location.search);   // TV açık sinyali (sunucu son TV isteğini tutar)   // SON_CANLI: sunucudan taze veri alınan son an (hazır dosya / önbellek sayılmaz)
 function bayatKontrol(){
   /* Taze veri 3 dk'dır gelmediyse ekranda görünür uyarı: "eski veri" (Ayşegül 19.11: TV'de eski rakamlar sessizce kalıyordu) */
   var bayat = Date.now() - SON_CANLI > 3 * 60 * 1000;   // açılışta hazır dosya gösterilirken de 'eski veri' yazar, canlı veri gelince düzelir
@@ -207,7 +208,7 @@ var ISTEKTE = 0;
 function yenile(){
   if (ISTEKTE && Date.now() - ISTEKTE < 45 * 1000) return;   // önceki istek sürerken yenisini başlatma
   ISTEKTE = Date.now();
-  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1', 40).then(function(d){ HATA = 0; SON_CANLI = Date.now(); uygula(d); bayatKontrol(); ISTEKTE = 0; })
+  getJSON(DT_API + '?action=dtSkor&k=' + KEY + '&taze=1' + (TV_UA ? '&tv=1' : ''), 40).then(function(d){ HATA = 0; SON_CANLI = Date.now(); uygula(d); bayatKontrol(); ISTEKTE = 0; })
     .catch(function(){ ISTEKTE = 0; HATA++; bayatKontrol(); setTimeout(yenile, 15 * 1000); });   // hata olursa 15 sn sonra yeniden dene (dakikalık döngüyü bekleme)
 }
 
