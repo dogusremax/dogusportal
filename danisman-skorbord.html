@@ -484,7 +484,13 @@ function yuz(id, cls){
   var f = YUZ[id] ? 'assets/ekip/yuz/' + YUZ[id] + '.webp' : ((KISILER[id] || {}).photo || '');
   return f ? '<img class="yuz' + (cls ? ' ' + cls : '') + '" src="' + esc(f) + '" alt="" loading="lazy">' : '<span class="yuz"></span>';
 }
-function c(r, k){ return (r.counts || {})[k] || 0; }
+function c(r, k){
+  var n = (r.counts || {});
+  // 1 puanlık gönderi/Reels kayıtları story türünde tutulur; sütunlarda Gönderi sayılır (puan değişmez)
+  if (k === 'sosyal_medya') return (n.sosyal_medya || 0) + (n.story_gonderi || 0);
+  if (k === 'story') return Math.max(0, (n.story || 0) - (n.story_gonderi || 0));
+  return n[k] || 0;
+}
 function deger(r, k){
   if (k === 'puan' || k === 'aktifGun' || k === 'kapanis') return r[k] || 0;
   if (k === 'sunum') return c(r,'sunum1') + c(r,'sunum2');
