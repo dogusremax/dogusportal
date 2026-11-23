@@ -37,23 +37,25 @@ var API_VERSION = 'v23.0';
 var WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
 
 var oturum = {};
+var hamMesajlar = [];
 function log(m){ document.getElementById('log').textContent = m; }
 function bekle(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
+// Facebook'tan gelen TUM mesajlari yakala (kaynak ne olursa olsun facebook.com alt alanlari)
 window.addEventListener('message', function(ev){
-  if (!ev.origin || !/facebook\.com$/.test(ev.origin)) return;
-  try {
-    var d = JSON.parse(ev.data);
-    if (d.type === 'WA_EMBEDDED_SIGNUP') {
-      if (d.event === 'FINISH' || d.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
-        oturum.waba_id = d.data.waba_id;
-        oturum.phone_number_id = d.data.phone_number_id;
-        oturum.event = d.event;
-      } else if (d.event === 'CANCEL') {
-        log('Iptal edildi. Adim: ' + (d.data && d.data.current_step));
-      }
-    }
-  } catch(e) {}
+  if (!ev.origin || !/(^|\.)facebook\.com$/.test(ev.origin.replace(/^https?:\/\//,''))) return;
+  var d = ev.data;
+  try { if (typeof d === 'string') d = JSON.parse(d); } catch(e) {}
+  try { hamMesajlar.push(typeof ev.data === 'string' ? ev.data.slice(0, 400) : JSON.stringify(ev.data).slice(0, 400)); } catch(e) {}
+  window.__MESAJLAR = hamMesajlar;
+  if (!d || typeof d !== 'object') return;
+  if (d.type === 'WA_EMBEDDED_SIGNUP') {
+    var x = d.data || {};
+    if (x.waba_id) oturum.waba_id = x.waba_id;
+    if (x.phone_number_id) oturum.phone_number_id = x.phone_number_id;
+    if (d.event) oturum.event = d.event;
+    if (d.event === 'CANCEL') log('Iptal edildi. Adim: ' + (x.current_step || ''));
+  }
 });
 
 window.fbAsyncInit = function(){
@@ -63,16 +65,17 @@ window.fbAsyncInit = function(){
 };
 
 async function sunucuyaGonder(pin){
-  // waba_id / phone_number_id mesaji girisle ayni anda gelmeyebilir: 15 sn'ye kadar bekle
-  for (var i = 0; i < 30 && !(oturum.waba_id && oturum.phone_number_id); i++) await bekle(500);
-  if (!oturum.waba_id || !oturum.phone_number_id) { log('Facebook numara bilgisini vermedi. Tekrar dene.'); return; }
+  // waba_id / phone_number_id mesaji girisle ayni anda gelmeyebilir: 10 sn'ye kadar bekle,
+  // gelmezse sunucu code'dan kendisi bulsun diye yine de gonder.
+  for (var i = 0; i < 20 && !(oturum.waba_id && oturum.phone_number_id); i++) await bekle(500);
   log('Sunucuya gonderiliyor...');
   try {
     var zaman = new AbortController(); setTimeout(function(){ zaman.abort(); }, 90000);
     var r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), {
       method: 'POST', redirect: 'follow', signal: zaman.signal,
       body: JSON.stringify({action:'anahtarKaydet', tur:'isHattiBaglan', pin:pin, islem:'baglan',
-        code: oturum.code, waba_id: oturum.waba_id, phone_number_id: oturum.phone_number_id})
+        code: oturum.code, waba_id: oturum.waba_id || '', phone_number_id: oturum.phone_number_id || '',
+        olaylar: oturum.event || '', mesaj_sayisi: hamMesajlar.length})
     });
     var j = await r.json();
     log(JSON.stringify(j, null, 1).replace(/[{}"\[\]]/g,''));
@@ -85,6 +88,7 @@ document.getElementById('btn').addEventListener('click', function(){
   var pin = document.getElementById('pin').value.trim();
   if (!pin) { log('Once PIN yaz.'); return; }
   document.getElementById('btn').disabled = true;
+  hamMesajlar = []; oturum = {};
   log('Facebook penceresi aciliyor...');
   FB.login(function(resp){
     if (resp.authResponse && resp.authResponse.code) {
