@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yarışma katılımcı listesi</title>
+<style>
+body{margin:0;background:#050A30;color:#fff;font:16px/1.45 system-ui,-apple-system,sans-serif;padding:28px}
+h1{margin:0 0 6px;font-size:26px}p{color:rgba(255,255,255,.75);margin:0 0 18px}
+button{font:inherit;font-weight:700;background:#DC1C2E;color:#fff;border:0;border-radius:10px;padding:12px 20px;cursor:pointer}
+table{border-collapse:collapse;margin-top:18px;min-width:420px;background:#0B1442;border-radius:10px;overflow:hidden}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}th{color:#E9C27A}td.p{text-align:right}
+</style></head><body>
+<h1>Canlı Kıbrıs Yarışması · katılımcı listesi</h1>
+<p id="bilgi">Bu sayfa, yarışmayı bu bilgisayarda ve bu tarayıcıda yönettiyseniz sunucu ekranının sakladığı listeyi gösterir. Hiçbir şey silinmez.</p>
+<button id="indir" style="display:none">Excel listesi indir (CSV)</button>
+<div id="tablo"></div>
+<script>
+(function () {
+  var H = null; try { H = JSON.parse(localStorage.getItem('yzSunucu') || 'null'); } catch (e) {}
+  var b = document.getElementById('bilgi');
+  if (!H || !H.oyuncu || !Object.keys(H.oyuncu).length) { b.textContent = 'Bu tarayıcıda kayıtlı yarışma bulunamadı. Yarışmayı başka bir bilgisayarda ya da tarayıcıda açtıysanız sayfayı orada açın.'; return; }
+  var ids = Object.keys(H.oyuncu).sort(function (a, b) { return (H.puan[b] || 0) - (H.puan[a] || 0); });
+  var tel = H.tel || {}, haric = H.haric || {};
+  var tarih = H.zaman ? new Date(H.zaman).toLocaleString('tr-TR') : '';
+  b.textContent = ids.length + ' katılımcı · son kayıt ' + tarih + ' · ' + (H.i + 1) + '. soruya kadar oynandı';
+  var esc = function (t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  var h = '<table><tr><th>Sıra</th><th>Ad Soyad</th><th>Telefon</th><th>Puan</th><th></th></tr>';
+  ids.forEach(function (id, i) { h += '<tr><td>' + (i + 1) + '</td><td>' + esc(H.oyuncu[id]) + '</td><td>' + esc(tel[id] || '') + '</td><td class="p">' + (H.puan[id] || 0) + '</td><td>' + (haric[id] ? 'ekip (sıralama dışı)' : '') + '</td></tr>'; });
+  document.getElementById('tablo').innerHTML = h + '</table>';
+  var btn = document.getElementById('indir'); btn.style.display = '';
+  btn.onclick = function () {
+    var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    var rows = [['Sıra', 'Ad Soyad', 'Telefon', 'Puan', 'Not'].map(q).join(';')];
+    ids.forEach(function (id, i) { rows.push([i + 1, H.oyuncu[id], tel[id] || '', H.puan[id] || 0, haric[id] ? 'ekip' : ''].map(q).join(';')); });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'yarisma-katilimcilari.csv'; document.body.appendChild(a); a.click(); a.remove();
+  };
+})();
+</script></body></html>
