@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Is hatti baglantisi</title>
+<style>
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#050A30;color:#fff;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .card{background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);border-radius:20px;padding:32px;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  h1{font-size:22px;margin:0 0 8px}
+  p{font-size:15px;line-height:1.5;margin:8px 0}
+  button{background:#fff;color:#910B19;font-weight:700;font-size:16px;border:0;border-radius:12px;padding:14px 20px;width:100%;margin-top:16px;cursor:pointer}
+  button:disabled{opacity:.6}
+  #log{font-size:13px;margin-top:14px;word-break:break-word;opacity:.95}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Is hatti baglantisi</h1>
+  <p>0533 038 74 85 numarasi hem telefonda hem asistanda calisacak.</p>
+  <p>Butona bas, Facebook penceresinde Umut Tokkus hesabini sec, telefondaki onayi ver.</p>
+  <button id="btn" disabled>Numarayi bagla</button>
+  <div id="log">Yukleniyor...</div>
+</div>
+
+<script>
+// Ayarlar (gizli bilgi yok; config_id ve app_id herkese acik tanimlayicilardir)
+var APP_ID = '2386105761921849';
+var CONFIG_ID = '1568594528364922';
+var API_VERSION = 'v23.0';
+
+var oturum = {};  // message event ile gelen waba_id / phone_number_id
+function log(m){ document.getElementById('log').textContent = m; }
+
+window.addEventListener('message', function(ev){
+  if (!ev.origin || !/facebook\.com$/.test(ev.origin)) return;
+  try {
+    var d = JSON.parse(ev.data);
+    if (d.type === 'WA_EMBEDDED_SIGNUP') {
+      if (d.event === 'FINISH' || d.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
+        oturum.waba_id = d.data.waba_id;
+        oturum.phone_number_id = d.data.phone_number_id;
+        oturum.event = d.event;
+      } else if (d.event === 'CANCEL') {
+        log('Iptal edildi. Adim: ' + (d.data && d.data.current_step));
+      }
+    }
+  } catch(e) {}
+});
+
+window.fbAsyncInit = function(){
+  FB.init({appId: APP_ID, autoLogAppEvents: true, xfbml: true, version: API_VERSION});
+  document.getElementById('btn').disabled = false;
+  log('Hazir.');
+};
+
+document.getElementById('btn').addEventListener('click', function(){
+  log('Facebook penceresi aciliyor...');
+  FB.login(function(resp){
+    if (resp.authResponse && resp.authResponse.code) {
+      oturum.code = resp.authResponse.code;
+      // Kod sunucuya henuz gonderilmiyor: sunucu tarafi (Apps Script) hazir olunca buraya baglanacak.
+      log('Facebook onayi alindi. waba_id=' + (oturum.waba_id||'?') + ' phone_number_id=' + (oturum.phone_number_id||'?') + ' (Claude bu sonucu okuyacak, sen bir sey yapma)');
+      window.__SONUC = {waba_id: oturum.waba_id, phone_number_id: oturum.phone_number_id, event: oturum.event, kod_alindi: true};
+    } else {
+      log('Giris tamamlanmadi.');
+    }
+  }, {
+    config_id: CONFIG_ID,
+    response_type: 'code',
+    override_default_response_type: true,
+    extras: { setup: {}, featureType: 'whatsapp_business_app_onboarding', sessionInfoVersion: '3' }
+  });
+});
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/tr_TR/sdk.js"></script>
+</body>
+</html>
