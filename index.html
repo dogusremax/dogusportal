@@ -189,6 +189,16 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
       <div><div class="app-name">Kıbrıs · Müşteri ön kayıt linkim</div>
       <div class="app-desc">Size özel link: müşteri bu linkten kayıt olursa sizin müşteriniz olur</div></div>
     </a>
+    <a data-ara="kıbrıs lansman yoklama geldi oyuna katıldı misafir" class="app wide" id="yoklamaKart" href="https://dogusportal.com/kibris-yoklama.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/kibris-yoklama.html?cb='+Date.now()">
+      <div class="ik"><img src="/assets/ikon3d/clipboard.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div><div class="app-name">Kıbrıs Lansmanı · Misafir yoklaması</div>
+      <div class="app-desc">Misafirlerinden hangileri geldi, hangileri oyuna katıldı: kutucukları işaretle</div></div>
+    </a>
+    <a data-ara="kıbrıs lansman yoklama sonucu gelen oyuna katılan sayı" class="app wide" data-broker id="yoklamaSonucKart" href="https://dogusportal.com/kibris-yoklama-sonuc.html" target="_blank" rel="noopener" onclick="this.href='https://dogusportal.com/kibris-yoklama-sonuc.html?cb='+Date.now()">
+      <div class="ik"><img src="/assets/ikon3d/bar-chart.webp" alt="" width="42" height="42" decoding="async"></div>
+      <div><div class="app-name">Kıbrıs Lansmanı · Yoklama sonucu</div>
+      <div class="app-desc">Gelen ve oyuna katılan sayısı, danışmana göre canlı liste</div></div>
+    </a>
     <script>(function(){var d=document.getElementById('lansmanDesc'),k=document.getElementById('lansmanKart'),L=new Date('2026-11-22T13:30:00+03:00').getTime(),T=new Date('2026-11-13T18:00:00+03:00').getTime();
       function y(){var n=Date.now(),g=function(t){return Math.ceil((t-n)/864e5);};if(n>L+864e5){k.style.display='none';return;}
         d.textContent=n>L?'Bugün lansman günü · Kalamış 39 Marina Hotel 13:30':'+%10 Danışman Ödülü · '+(n<T?'kesin teyit için '+g(T)+' gün · ':'')+'lansmana '+g(L)+' gün kaldı';}
