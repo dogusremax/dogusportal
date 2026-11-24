@@ -114,13 +114,17 @@ td.z{color:#9AA0B8;font-weight:500}
    .catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});
  }
  function ciz(){
-  var G=0,O=0,T=0,B=0,dan={};
-  function ekle(dn,x){var o=dan[dn]||(dan[dn]={g:0,o:0,b:0});
-   if(x.islendi===false){B++;o.b++;return;} T++; if(x.geldi){G++;o.g++;} if(x.oyun){O++;o.o++;}}
+  var G=0,O=0,T=0,B=0,dan={}, say={};
+  /* Aynı ad + danışman iki kayıt olarak girilmişse (ör. aynı misafir iki kez eklenmiş) tek kişi sayılır; işaretler birleşir. */
+  function anahtar(ad,dn){return String(ad).toLocaleLowerCase('tr').replace(/\s+/g,' ').trim()+'|'+dn;}
+  function topla(ad,dn,x){var k=anahtar(ad,dn),o=say[k]||(say[k]={ad:ad,dn:dn,g:false,o:false,i:false});
+   if(x.islendi!==false)o.i=true; if(x.geldi)o.g=true; if(x.oyun)o.o=true;}
+  veri.liste.forEach(function(d){d.kisiler.forEach(function(x){topla(x.ad,d.danisman,x);});});
+  (veri.ek||[]).forEach(function(x){topla(x.ad,x.danisman,{geldi:x.geldi,oyun:x.oyun,islendi:true});});
   satirlar=[];
-  veri.liste.forEach(function(d){d.kisiler.forEach(function(x){ekle(d.danisman,x);
-   if(x.islendi!==false) satirlar.push({ad:x.ad,dn:d.danisman,g:!!x.geldi,o:!!x.oyun});});});
-  (veri.ek||[]).forEach(function(x){ekle(x.danisman,{geldi:x.geldi,oyun:x.oyun,islendi:true});satirlar.push({ad:x.ad+' (listede yoktu)',dn:x.danisman,g:!!x.geldi,o:!!x.oyun});});
+  Object.keys(say).forEach(function(k){var x=say[k],o=dan[x.dn]||(dan[x.dn]={g:0,o:0,b:0});
+   if(!x.i){B++;o.b++;return;} T++; if(x.g){G++;o.g++;} if(x.o){O++;o.o++;}
+   satirlar.push({ad:x.ad,dn:x.dn,g:x.g,o:x.o});});
   $('top').innerHTML='<span><b>'+G+'</b>geldi</span><span><b>'+O+'</b>oyuna katıldı</span><span><b>'+T+'</b>girilen</span>';
   $('nG').textContent=G;$('nO').textContent=O;$('nT').textContent=T;$('nB').textContent=B;
   $('dan').innerHTML=Object.keys(dan).sort().map(function(k){var o=dan[k];
