@@ -53,6 +53,8 @@ td.z{color:#9AA0B8;font-weight:500}
 .rz.g{background:#E3F4EA;color:var(--ok)}
 .rz.o{background:#FDECEE;color:var(--red)}
 .not{font-size:13px;color:#4A5070;margin-top:12px}
+.top{display:flex;justify-content:space-between;gap:8px;margin-top:6px;padding:12px;border-radius:12px;background:var(--navy);color:#fff;font-weight:800;font-size:14.5px}
+.top span b{color:var(--gold);font-size:17px;margin-right:3px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -83,6 +85,7 @@ td.z{color:#9AA0B8;font-weight:500}
   <div class="card">
    <div class="sek" id="sek"><button data-f="g" aria-pressed="true">Gelenler</button><button data-f="o" aria-pressed="false">Oyuna katılanlar</button><button data-f="h" aria-pressed="false">Hepsi</button></div>
    <div id="liste"></div>
+   <div class="top" id="top"></div>
   </div>
   <p class="not" style="color:#B9BEDC"><span id="son">Canlı</span> · danışmanlar kaydettikçe sayılar kendiliğinden yenilenir.</p>
  </div>
@@ -118,6 +121,7 @@ td.z{color:#9AA0B8;font-weight:500}
   veri.liste.forEach(function(d){d.kisiler.forEach(function(x){ekle(d.danisman,x);
    if(x.islendi!==false) satirlar.push({ad:x.ad,dn:d.danisman,g:!!x.geldi,o:!!x.oyun});});});
   (veri.ek||[]).forEach(function(x){ekle(x.danisman,{geldi:x.geldi,oyun:x.oyun,islendi:true});satirlar.push({ad:x.ad+' (listede yoktu)',dn:x.danisman,g:!!x.geldi,o:!!x.oyun});});
+  $('top').innerHTML='<span><b>'+G+'</b>geldi</span><span><b>'+O+'</b>oyuna katıldı</span><span><b>'+T+'</b>girilen</span>';
   $('nG').textContent=G;$('nO').textContent=O;$('nT').textContent=T;$('nB').textContent=B;
   $('dan').innerHTML=Object.keys(dan).sort().map(function(k){var o=dan[k];
    return '<tr><td>'+esc(k)+'</td><td>'+o.g+'</td><td>'+o.o+'</td><td class="'+(o.b?'':'z')+'">'+(o.b||'-')+'</td></tr>';}).join('');
