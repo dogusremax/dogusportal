@@ -4,18 +4,19 @@
 <div class="cd" id="cd" data-end="2026-12-07T23:59:59+03:00"><div><b id="cg">0</b><span>GÜN</span></div><div><b id="cs">0</b><span>SAAT</span></div><div><b id="cm">0</b><span>DAKİKA</span></div><div><b id="cn">0</b><span>SANİYE</span></div></div><div class="cdl">Kampanya ve fırsatlar için kalan süre (7 Aralık 2026, 23:59)</div><button class="snd" id="snd" type="button">Sesi aç</button>
 <script src="sayac.js?v=3"></script>
 <div class="card"><div class="tag">1 · ORGANİZASYON</div><h2>Buluşmayı nasıl buldunuz?</h2>
-<div class="q">Genel memnuniyetiniz<div class="stars"><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span><span>★</span></div></div>
-<div class="q">Sunum ve soru-cevap bölümü<div class="stars"><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span></div></div>
-<div class="q">Mekan ve ikramlar<div class="stars"><span class="on">★</span><span class="on">★</span><span class="on">★</span><span>★</span><span>★</span></div></div></div>
+<div class="q">Genel memnuniyetiniz<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div>
+<div class="q">Sunum ve soru-cevap bölümü<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div>
+<div class="q">Mekan ve ikramlar<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div></div>
 <div class="card"><div class="tag">2 · KAMPANYA VE FIRSATLAR</div><h2>Kuzey Kıbrıs'ta yatırım düşünüyor musunuz?</h2>
-<span class="opt on" data-g="yatirim" data-v="yakinda">Evet, yakında</span><span class="opt" data-g="yatirim" data-v="arastiriyorum">Araştırıyorum</span><span class="opt" data-g="yatirim" data-v="hayir">Şimdilik hayır</span>
+<span class="opt" data-g="yatirim" data-v="yakinda">Evet, yakında</span><span class="opt" data-g="yatirim" data-v="arastiriyorum">Araştırıyorum</span><span class="opt" data-g="yatirim" data-v="hayir">Şimdilik hayır</span>
 <div id="proje"><div class="q" style="margin-top:12px">Size en çok hangisi hitap etti?<br><span class="note">Birden fazla seçebilirsiniz.</span><br><span class="opt" data-g="proje" data-multi="1">Courtyard Platinum</span><span class="opt" data-g="proje" data-multi="1">La Casalia</span><span class="opt" data-g="proje" data-multi="1">Quarencia</span><span class="opt" data-g="proje" data-multi="1">D-Point</span></div>
 <div class="q">Bütçe aralığı (isteğe bağlı)<br><span class="opt" data-g="butce">100.000 £ altı</span><span class="opt" data-g="butce">100.000 – 200.000 £</span><span class="opt" data-g="butce">200.000 £ üstü</span></div></div></div>
-<div class="card"><div class="tag">3 · İLETİŞİM</div><h2>Size nasıl ulaşalım?</h2><span class="opt on" data-g="ilet">Beni arayın</span><span class="opt" data-g="ilet">WhatsApp'tan yazın</span><span class="opt" data-g="ilet">Şimdilik gerek yok</span></div>
+<div class="card"><div class="tag">3 · İLETİŞİM</div><h2>Size nasıl ulaşalım?</h2><span class="opt" data-g="ilet">Beni arayın</span><span class="opt" data-g="ilet">WhatsApp'tan yazın</span><span class="opt" data-g="ilet">Şimdilik gerek yok</span></div>
 <div class="card"><div class="tag">4 · GÖRÜŞ VE ÖNERİLER</div><h2>Eklemek istedikleriniz</h2>
 <textarea placeholder="Yazmak isterseniz..."></textarea></div>
 <div class="card" style="border-color:#DC1C2E"><div class="tag">KIBRIS TUR PROGRAMI</div><h2>Gezide sizi neler bekliyor?</h2><ul><li>Döveç merkez binasında ağırlama</li><li>Proje turu</li><li>Pera Mackenzie'de kahvaltı</li><li>Kapalı Maraş turu</li><li>Körfez Restoran'da akşam yemeği</li></ul></div>
 <a class="btn" href="#">Anketi gönder</a></div>
 <script>(function(){var opts=document.querySelectorAll('.opt[data-g]');function upd(){var s=document.querySelector('.opt[data-g="yatirim"].on');var p=document.getElementById('proje');if(p)p.style.display=(s&&s.getAttribute('data-v')==='hayir')?'none':'';}
 for(var i=0;i<opts.length;i++){opts[i].style.cursor='pointer';opts[i].addEventListener('click',function(){var el=this,g=el.getAttribute('data-g');if(el.getAttribute('data-multi')){el.classList.toggle('on');}else{var sib=document.querySelectorAll('.opt[data-g="'+g+'"]');for(var j=0;j<sib.length;j++)sib[j].classList.remove('on');el.classList.add('on');}upd();});}
+var rows=document.querySelectorAll('.stars');for(var r=0;r<rows.length;r++){(function(row){var st=row.querySelectorAll('span');for(var k=0;k<st.length;k++){(function(n){st[n].style.cursor='pointer';st[n].addEventListener('click',function(){for(var m=0;m<st.length;m++){if(m<=n)st[m].classList.add('on');else st[m].classList.remove('on');}});})(k);}})(rows[r]);}
 upd();})();</script></body></html>
