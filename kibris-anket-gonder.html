@@ -10,6 +10,6 @@ $('ls').innerHTML=r.liste.length?r.liste.map(function(x,i){return '<div class="c
 [].forEach.call(document.querySelectorAll('.c[data-i]'),function(card){var x=r.liste[+card.dataset.i];var m=card.querySelector('.m'),a=card.querySelector('a.b'),k='hitap:'+x.ad;
 function ciz(h){var ilk=x.ad.split(' ').filter(function(w){return !/\.$/.test(w)})[0]||x.ad,t=x.metin.replace(/^Merhaba [^,]+,/,'Merhaba '+ilk+(h?' '+h:'')+',');m.textContent=t;m.style.display=h?'':'none';[].forEach.call(card.querySelectorAll('[data-h]'),function(b){b.className=(h&&b.dataset.h===h)?'on':''});
 if(h){a.style.display='';a.href=(x.wa||'https://wa.me/').split('?text=')[0]+'?text='+encodeURIComponent(t);}else a.style.display='none';}
-a.addEventListener('click',function(){try{fetch(S,{method:'POST',redirect:'follow',keepalive:true,body:JSON.stringify({action:'lansman',islem:'anketTikla',pin:$('pin').value.trim(),k:x.k})});}catch(e){}});
+a.addEventListener('click',function(){var b=JSON.stringify({action:'lansman',islem:'anketTikla',pin:$('pin').value.trim(),k:x.k});var ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(S,b);}catch(e){}if(!ok){try{fetch(S,{method:'POST',redirect:'follow',keepalive:true,body:b});}catch(e){}}});
 card.addEventListener('click',function(e){var b=e.target.closest('[data-h]');if(!b)return;localStorage.setItem(k,b.dataset.h);ciz(b.dataset.h);});ciz(localStorage.getItem(k)||'');});}).catch(function(){$('h').textContent='Bağlantı hatası'})}
 $('gir').onclick=yukle;if($('pin').value)yukle();</script></body></html>
