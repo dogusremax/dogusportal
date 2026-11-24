@@ -51,7 +51,7 @@ td.z{color:#9AA0B8;font-weight:500}
 .k .ad small{display:block;font-weight:500;font-size:12.5px;color:#4A5070}
 .rz{font-size:12px;font-weight:800;padding:5px 10px;border-radius:20px;white-space:nowrap}
 .rz.g{background:#E3F4EA;color:var(--ok)}
-.rz.o{background:#FDECEE;color:var(--red)}
+.rz.a0{background:#eef0f5;color:#68738a}.rz.a1{background:#FFF4D6;color:#8a6100}.rz.a2{background:#E4EEFF;color:#1b4fb0}.rz.a3{background:#E3F4EA;color:var(--ok)}.k{flex-wrap:wrap}.rz.o{background:#FDECEE;color:var(--red)}
 .not{font-size:13px;color:#4A5070;margin-top:12px}
 .top{display:flex;justify-content:space-between;gap:8px;margin-top:6px;padding:12px;border-radius:12px;background:var(--navy);color:#fff;font-weight:800;font-size:14.5px}
 .top span b{color:var(--gold);font-size:17px;margin-right:3px}
@@ -103,9 +103,19 @@ td.z{color:#9AA0B8;font-weight:500}
  }
  function istek(){
   if(DEMO) return Promise.resolve(demo());
-  return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify({action:'lansman',islem:'yoklamaAl',pin:pin})}).then(function(r){return r.text();})
+  function al(islem){return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify({action:'lansman',islem:islem,pin:pin})}).then(function(r){return r.text();})
    .then(function(t){try{return JSON.parse(t);}catch(e){return {ok:false,error:'Şu an bağlanılamadı, birazdan tekrar deneyin.'};}})
-   .catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});
+   .catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});}
+  /* Anket durumu (gönderildi / açtı / doldurdu) ayrı uçtan gelir; gelmezse liste yine görünür. */
+  return al('yoklamaAl').then(function(r){ if(!r.ok) return r;
+   return al('anketDurum').then(function(d){ r.durum=(d&&d.ok)?d.liste:[]; return r; }); });
+ }
+  function anketRozet(t){
+  if(!t) return '';
+  if(t.doldurdu) return '<span class="rz a3">Anketi doldurdu</span>';
+  if(t.acildi) return '<span class="rz a2">Anketi açtı</span>';
+  if(t.gonderildi) return '<span class="rz a1">Anket gönderildi</span>';
+  return '<span class="rz a0">Anket gitmedi</span>';
  }
  function ciz(){
   /* Aynı ad + danışman iki kayıt olarak girilmişse tek kişi sayılır; işaretler birleşir. */
@@ -113,6 +123,7 @@ td.z{color:#9AA0B8;font-weight:500}
   function anahtar(ad,dn){return String(ad).toLocaleLowerCase('tr').replace(/\s+/g,' ').trim()+'|'+dn;}
   function topla(ad,dn,x){var k=anahtar(ad,dn),o=say[k]||(say[k]={ad:ad,dn:dn,g:false,o:false});
    if(x.geldi||x.oyun)o.g=true; if(x.oyun)o.o=true;}
+  var dm={}; (veri.durum||[]).forEach(function(x){dm[anahtar(x.ad,x.danisman)]=x;});
   veri.liste.forEach(function(d){d.kisiler.forEach(function(x){topla(x.ad,d.danisman,x);});});
   (veri.ek||[]).forEach(function(x){topla(x.ad,x.danisman,x);});
   var l=Object.keys(say).map(function(k){return say[k];}).filter(function(x){return x.g;});
@@ -121,7 +132,7 @@ td.z{color:#9AA0B8;font-weight:500}
   $('nG').textContent=G;$('nO').textContent=O;
   $('top').innerHTML='<span><b>'+G+'</b>lansmana gelen</span><span><b>'+O+'</b>oyuna katılan</span>';
   $('liste').innerHTML=l.length?l.map(function(s){
-   return '<div class="k"><div class="ad">'+esc(s.ad)+'<small>'+esc(s.dn)+'</small></div>'+(s.o?'<span class="rz o">Oyuna katıldı</span>':'')+'</div>';}).join(''):'<p class="not">Henüz kimse işaretlenmedi.</p>';
+   return '<div class="k"><div class="ad">'+esc(s.ad)+'<small>'+esc(s.dn)+'</small></div>'+(s.o?'<span class="rz o">Oyuna katıldı</span>':'')+anketRozet(dm[anahtar(s.ad,s.dn)])+'</div>';}).join(''):'<p class="not">Henüz kimse işaretlenmedi.</p>';
  }
  var veri=null;
  function giris(p){
