@@ -72,18 +72,12 @@ td.z{color:#9AA0B8;font-weight:500}
 
  <div id="ana" hidden>
   <div class="sayi">
-   <div class="b1"><b id="nG">0</b><span>lansmana geldi</span></div>
-   <div class="b1"><b id="nO">0</b><span>oyuna katıldı</span></div>
-   <div class="tam"><span>Yoklaması girilen kişi</span><b id="nT">0</b></div>
-   <div class="tam"><span>Henüz işaretlenmemiş kişi</span><b id="nB">0</b></div>
+   <div class="b1"><b id="nG">0</b><span>lansmana gelen</span></div>
+   <div class="b1"><b id="nO">0</b><span>oyuna katılan</span></div>
   </div>
 
-  <h2>Danışmana göre</h2>
-  <div class="card"><table><thead><tr><th>Danışman</th><th>Geldi</th><th>Oyun</th><th>Bekleyen</th></tr></thead><tbody id="dan"></tbody></table></div>
-
-  <h2>Liste</h2>
+  <h2>Lansmana gelenler</h2>
   <div class="card">
-   <div class="sek" id="sek"><button data-f="g" aria-pressed="true">Gelenler</button><button data-f="o" aria-pressed="false">Oyuna katılanlar</button><button data-f="h" aria-pressed="false">Hepsi</button></div>
    <div id="liste"></div>
    <div class="top" id="top"></div>
   </div>
@@ -95,7 +89,7 @@ td.z{color:#9AA0B8;font-weight:500}
  var SERVIS='https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
  var q=new URLSearchParams(location.search), DEMO=q.get('demo');
  var $=function(id){return document.getElementById(id);};
- var pin='', satirlar=[], filtre='g';
+ var pin='';
  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
  function demo(){
@@ -114,33 +108,22 @@ td.z{color:#9AA0B8;font-weight:500}
    .catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});
  }
  function ciz(){
-  var G=0,O=0,T=0,B=0,dan={}, say={};
-  /* Aynı ad + danışman iki kayıt olarak girilmişse (ör. aynı misafir iki kez eklenmiş) tek kişi sayılır; işaretler birleşir. */
+  /* Aynı ad + danışman iki kayıt olarak girilmişse tek kişi sayılır; işaretler birleşir. */
+  var say={};
   function anahtar(ad,dn){return String(ad).toLocaleLowerCase('tr').replace(/\s+/g,' ').trim()+'|'+dn;}
-  function topla(ad,dn,x){var k=anahtar(ad,dn),o=say[k]||(say[k]={ad:ad,dn:dn,g:false,o:false,i:false});
-   if(x.islendi!==false)o.i=true; if(x.geldi)o.g=true; if(x.oyun)o.o=true;}
+  function topla(ad,dn,x){var k=anahtar(ad,dn),o=say[k]||(say[k]={ad:ad,dn:dn,g:false,o:false});
+   if(x.geldi||x.oyun)o.g=true; if(x.oyun)o.o=true;}
   veri.liste.forEach(function(d){d.kisiler.forEach(function(x){topla(x.ad,d.danisman,x);});});
-  (veri.ek||[]).forEach(function(x){topla(x.ad,x.danisman,{geldi:x.geldi,oyun:x.oyun,islendi:true});});
-  satirlar=[];
-  Object.keys(say).forEach(function(k){var x=say[k],o=dan[x.dn]||(dan[x.dn]={g:0,o:0,b:0});
-   if(!x.i){B++;o.b++;return;} T++; if(x.g){G++;o.g++;} if(x.o){O++;o.o++;}
-   satirlar.push({ad:x.ad,dn:x.dn,g:x.g,o:x.o});});
-  $('top').innerHTML='<span><b>'+G+'</b>geldi</span><span><b>'+O+'</b>oyuna katıldı</span><span><b>'+T+'</b>girilen</span>';
-  $('nG').textContent=G;$('nO').textContent=O;$('nT').textContent=T;$('nB').textContent=B;
-  $('dan').innerHTML=Object.keys(dan).sort().map(function(k){var o=dan[k];
-   return '<tr><td>'+esc(k)+'</td><td>'+o.g+'</td><td>'+o.o+'</td><td class="'+(o.b?'':'z')+'">'+(o.b||'-')+'</td></tr>';}).join('');
-  liste();
- }
- function liste(){
-  var l=satirlar.filter(function(s){return filtre==='h'||(filtre==='g'&&s.g)||(filtre==='o'&&s.o);});
+  (veri.ek||[]).forEach(function(x){topla(x.ad,x.danisman,x);});
+  var l=Object.keys(say).map(function(k){return say[k];}).filter(function(x){return x.g;});
   l.sort(function(a,b){return a.ad.localeCompare(b.ad,'tr');});
+  var G=l.length,O=l.filter(function(x){return x.o;}).length;
+  $('nG').textContent=G;$('nO').textContent=O;
+  $('top').innerHTML='<span><b>'+G+'</b>lansmana gelen</span><span><b>'+O+'</b>oyuna katılan</span>';
   $('liste').innerHTML=l.length?l.map(function(s){
-   return '<div class="k"><div class="ad">'+esc(s.ad)+'<small>'+esc(s.dn)+'</small></div>'+
-    (s.g?'<span class="rz g">Geldi</span>':'')+(s.o?'<span class="rz o">Oyun</span>':'')+'</div>';}).join(''):'<p class="not">Bu listede henüz kimse yok.</p>';
+   return '<div class="k"><div class="ad">'+esc(s.ad)+'<small>'+esc(s.dn)+'</small></div>'+(s.o?'<span class="rz o">Oyuna katıldı</span>':'')+'</div>';}).join(''):'<p class="not">Henüz kimse işaretlenmedi.</p>';
  }
  var veri=null;
- $('sek').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(!b)return;filtre=b.dataset.f;
-  [].forEach.call($('sek').children,function(x){x.setAttribute('aria-pressed',x===b);});liste();});
  function giris(p){
   p=String(p||'').trim(); if(!DEMO&&!/^\d{4,6}$/.test(p)){$('hata').textContent='PIN 4-6 haneli olmalı.';return;}
   pin=p; $('gir').disabled=true; $('hata').textContent='Kontrol ediliyor…';
