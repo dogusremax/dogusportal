@@ -1,0 +1,34 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kampanya ve Organizasyon Anketi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="kibris-anket-onizleme/style.css?v=2"></head><body><div class="wrap">
+<div class="hero"><img src="https://dogusportal.com/assets/dogus-logo.png" alt=""><small>KIBRIS BULUŞMASI · 22 KASIM</small><h1 id="bsl">Bizimle olduğunuz için teşekkürler</h1><p>22 Kasım fırsatları 7 Aralık 2026'ya kadar geçerlidir. Yaklaşık 2 dakika sürer.</p></div>
+<div class="cd" id="cd" data-end="2026-12-07T23:59:59+03:00"><div><b id="cg">0</b><span>GÜN</span></div><div><b id="cs">0</b><span>SAAT</span></div><div><b id="cm">0</b><span>DAKİKA</span></div><div><b id="cn">0</b><span>SANİYE</span></div></div><div class="cdl">Kampanya ve fırsatlar için kalan süre (7 Aralık 2026, 23:59)</div><button class="snd" id="snd" type="button">Sesi aç</button>
+<script src="kibris-anket-onizleme/sayac.js?v=3"></script>
+<div class="card"><div class="tag">1 · ORGANİZASYON</div><h2>Buluşmayı nasıl buldunuz?</h2>
+<div class="q">Genel memnuniyetiniz<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div>
+<div class="q">Sunum ve soru-cevap bölümü<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div>
+<div class="q">Mekan ve ikramlar<div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div></div>
+<div class="card"><div class="tag">2 · KAMPANYA VE FIRSATLAR</div><h2>Kuzey Kıbrıs'ta yatırım düşünüyor musunuz?</h2>
+<span class="opt" data-g="yatirim" data-v="yakinda">Evet, yakında</span><span class="opt" data-g="yatirim" data-v="arastiriyorum">Araştırıyorum</span><span class="opt" data-g="yatirim" data-v="hayir">Şimdilik hayır</span>
+<div id="proje"><div class="q" style="margin-top:12px">Size en çok hangisi hitap etti?<br><span class="note">Birden fazla seçebilirsiniz.</span><br><span class="opt" data-g="proje" data-multi="1">Courtyard Platinum</span><span class="opt" data-g="proje" data-multi="1">La Casalia</span><span class="opt" data-g="proje" data-multi="1">Quarencia</span><span class="opt" data-g="proje" data-multi="1">D-Point</span></div>
+<div class="q">Bütçe aralığı (isteğe bağlı)<br><span class="opt" data-g="butce">100.000 £ altı</span><span class="opt" data-g="butce">100.000 – 200.000 £</span><span class="opt" data-g="butce">200.000 £ üstü</span></div></div></div>
+<div class="card"><div class="tag">3 · İLETİŞİM</div><h2>Size nasıl ulaşalım?</h2><span class="opt" data-g="ilet">Beni arayın</span><span class="opt" data-g="ilet">WhatsApp'tan yazın</span><span class="opt" data-g="ilet">Şimdilik gerek yok</span></div>
+<div class="card"><div class="tag">4 · GÖRÜŞ VE ÖNERİLER</div><h2>Eklemek istedikleriniz</h2>
+<textarea placeholder="Yazmak isterseniz..."></textarea></div>
+<div class="card" style="border-color:#DC1C2E"><div class="tag">KIBRIS TUR PROGRAMI</div><h2>Gezide sizi neler bekliyor?</h2><ul><li>Döveç merkez binasında ağırlama</li><li>Proje turu</li><li>Pera Mackenzie'de kahvaltı</li><li>Kapalı Maraş turu</li><li>Körfez Restoran'da akşam yemeği</li></ul></div>
+<div id="hata" style="color:#DC1C2E;font-weight:700;margin:8px 0"></div><a class="btn" id="gnd" href="#">Anketi gönder</a></div>
+<script>(function(){var opts=document.querySelectorAll('.opt[data-g]');function upd(){var s=document.querySelector('.opt[data-g="yatirim"].on');var p=document.getElementById('proje');if(p)p.style.display=(s&&s.getAttribute('data-v')==='hayir')?'none':'';}
+for(var i=0;i<opts.length;i++){opts[i].style.cursor='pointer';opts[i].addEventListener('click',function(){var el=this,g=el.getAttribute('data-g');if(el.getAttribute('data-multi')){el.classList.toggle('on');}else{var sib=document.querySelectorAll('.opt[data-g="'+g+'"]');for(var j=0;j<sib.length;j++)sib[j].classList.remove('on');el.classList.add('on');}upd();});}
+var rows=document.querySelectorAll('.stars');for(var r=0;r<rows.length;r++){(function(row){var st=row.querySelectorAll('span');for(var k=0;k<st.length;k++){(function(n){st[n].style.cursor='pointer';st[n].addEventListener('click',function(){for(var m=0;m<st.length;m++){if(m<=n)st[m].classList.add('on');else st[m].classList.remove('on');}});})(k);}})(rows[r]);}
+upd();})();</script><script>(function(){var SERVIS='https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec';
+var T=new URLSearchParams(location.search).get('t')||'';
+function ist(g){g.action='lansman';g.t=T;return fetch(SERVIS,{method:'POST',redirect:'follow',body:JSON.stringify(g)}).then(function(r){return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){return {ok:false,error:'Şu an bağlanılamadı, birazdan tekrar deneyin.'};}}).catch(function(){return {ok:false,error:'Bağlantı hatası, tekrar deneyin.'};});}
+var hata=document.getElementById('hata'),btn=document.getElementById('gnd'),ad='';
+ist({islem:'anketAl'}).then(function(r){if(!r.ok){document.querySelector('.wrap').innerHTML='<div class="card"><h2>'+(r.error||'Hata')+'</h2></div>';return;}ad=r.ad;document.getElementById('bsl').textContent='Merhaba '+r.ad.split(' ')[0]+', bizimle olduğunuz için teşekkürler';if(r.gonderildi)hata.style.color='#333',hata.textContent='Daha önce cevapladınız. Yeniden gönderirseniz cevabınız güncellenir.';});
+function sec(g){var e=document.querySelector('.opt[data-g="'+g+'"].on');return e?(e.getAttribute('data-v')||e.textContent.trim()):'';}
+btn.addEventListener('click',function(ev){ev.preventDefault();hata.style.color='#DC1C2E';
+var puan=[].map.call(document.querySelectorAll('.stars'),function(s){return s.querySelectorAll('span.on').length;});
+if(puan.some(function(x){return !x;})){hata.textContent='Lütfen üç soruyu da yıldızla puanlayın.';return;}
+var proje=[].map.call(document.querySelectorAll('.opt[data-g="proje"].on'),function(e){return e.textContent.trim();});
+btn.textContent='Gönderiliyor...';
+ist({islem:'anketKaydet',cevap:{puan:puan,yatirim:sec('yatirim'),proje:proje,butce:sec('butce'),ilet:sec('ilet'),not:(document.querySelector('textarea')||{}).value||''}}).then(function(r){
+if(r.ok){document.querySelector('.wrap').innerHTML='<div class="card"><h2>Teşekkürler'+(ad?' '+ad.split(' ')[0]:'')+'</h2><p>Cevaplarınız bize ulaştı.</p></div>';}else{btn.textContent='Anketi gönder';hata.textContent=r.error||'Gönderilemedi.';}});});})();</script></body></html>
