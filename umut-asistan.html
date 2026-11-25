@@ -167,7 +167,7 @@
       <div class="satir"><div><label>Süre (dk)</label><input id="d_sure" type="number" inputmode="numeric"></div><div><label>Yer</label><input id="d_yer"></div></div>
       <div class="dokum" id="d_aciklama"></div>
       <button class="btn" id="dKaydet">Kaydet</button>
-      <button class="btn ikincil" id="dIptal">Randevuyu iptal et</button>
+      <button class="btn ikincil" id="dIptal" style="color:#ff8a95">Randevuyu sil</button>
       <button class="btn ikincil" id="dGeri">Geri</button>
       <p class="durum" id="dDurum"></p>
     </div>
@@ -386,7 +386,7 @@ $('dKaydet').onclick = async () => {
   $('dKaydet').disabled = false;
 };
 $('dIptal').onclick = async () => {
-  if (!confirm('"' + ACIK_E.baslik + '" iptal edilsin mi? (Takvimde üstü çizili kalır, silinmez.)')) return;
+  if (!confirm('"' + ACIK_E.baslik + '" silinsin mi? Google Takvim\'den de silinir.')) return;
   try { const j = await servis({ islem: 'iptal', id: ACIK_E.id }); if (!j.ok) yaz('dDurum', j.error || 'Olmadı.', true); else { goster('kayitEkran'); ajanda(); gecmis(); } }
   catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
 };
@@ -430,6 +430,10 @@ function demo(g) {
   $('bugunYazi').textContent = sel + ' · ' + d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', timeZone: 'Europe/Istanbul' }); })();
 if (DEMO) { PIN = 'demo'; }
 if (PIN || ANAHTAR) gir(); else goster('giris');
+// Uygulamaya geri dönünce (ör. Google Takvim'de değişiklik yaptıktan sonra) ajanda ve son kayıtlar tazelenir
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !$('kayitEkran').classList.contains('gizli')) { ajanda(); gecmis(); }
+});
 </script>
 </body>
 </html>
