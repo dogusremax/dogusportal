@@ -91,16 +91,28 @@
   .bosA{text-align:center;color:rgba(255,255,255,.45);font-size:14px;padding:18px 0}
   .lejant{display:flex;gap:14px;margin-top:4px;font-size:12px;color:rgba(255,255,255,.5);justify-content:center}
   .lejant i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-  .hk{text-align:center;gap:10px}
-  .hk-ust{font-size:12px;font-weight:800;letter-spacing:2px;color:#ff6b78}
-  .hk-saat{font:800 52px/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-1px}
-  .hk-gun{font-size:13px;color:rgba(255,255,255,.55)}
-  .hk h2{font-size:20px;line-height:1.35;margin-top:4px}
-  .hk-bilgi{font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)}
-  .hk-btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
-  .hk-btn a{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;color:#fff;font:700 14px 'Plus Jakarta Sans',sans-serif;
-       background:#1c2350;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px 8px}
-  .hk-btn a.ana{background:#DC1C2E;border-color:#DC1C2E}
+  /* Hatırlatma kartı — portal bildirim kartıyla aynı dil (bildirimlerim.html .bkart) */
+  body.hkmod{background:linear-gradient(160deg,#1b2350,#050A30) fixed}
+  body.hkmod .top{display:none}
+  body.hkmod main{min-height:100vh;justify-content:center;padding:24px 18px}
+  .bkart{background:#fff;border-radius:24px;width:100%;max-width:420px;margin:0 auto;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.55);color:#050A30}
+  .bkart .kbas{background:linear-gradient(160deg,#910B19,#DC1C2E 45%,#FB5160);color:#fff;padding:22px 22px 20px;position:relative}
+  .bkart .kbas img{position:absolute;top:18px;right:18px;width:70px}
+  .bkart .kbas small{font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.92;text-transform:uppercase}
+  .bkart .kbas h2{font-size:22px;font-weight:800;line-height:1.25;margin-top:10px;max-width:260px}
+  .bkart .kbas .ksaat{font:800 40px/1 'Plus Jakarta Sans',sans-serif;margin-top:14px;letter-spacing:-.5px}
+  .bkart .kbas .ksaat span{font-size:18px;font-weight:700;opacity:.85;margin-left:4px}
+  .bkart .kgovde{padding:16px 22px 4px}
+  .bkart .kgovde p{font-size:15px;line-height:1.5;color:#050A30;white-space:pre-line;margin-bottom:6px}
+  .bkart .ksatir{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #eceef3;padding:12px 0;font-size:14.5px}
+  .bkart .ksatir span{color:#68738a}.bkart .ksatir b{color:#050A30;text-align:right}
+  .bkart .kdugme{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 22px 0}
+  .bkart .kdugme a{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font:700 14px 'Plus Jakarta Sans',sans-serif;
+       color:#050A30;background:#f1f3f8;border-radius:14px;padding:13px 8px}
+  .bkart .kdugme a.ana{background:#DC1C2E;color:#fff}
+  .bkart .kdugme a.tek{grid-column:1/-1}
+  .bkart .ktamam{display:block;width:calc(100% - 44px);margin:12px 22px 22px;background:#050A30;color:#fff;border:0;padding:14px;border-radius:14px;
+       font:700 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
   h3{font-size:13px;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.5px;margin-top:6px}
 </style>
 </head>
@@ -190,15 +202,12 @@
 
   <!-- Hatırlatma kartı (bildirime dokununca) -->
   <section id="hatirlatEkran" class="gizli">
-    <div class="kart hk">
-      <div class="hk-ust" id="h_ne">⏰ HATIRLATMA</div>
-      <div class="hk-saat" id="h_saat"></div>
-      <div class="hk-gun" id="h_gun"></div>
-      <h2 id="h_baslik"></h2>
-      <div class="hk-bilgi" id="h_bilgi"></div>
-      <div class="dokum gizli" id="h_aciklama"></div>
-      <div class="hk-btn" id="h_btn"></div>
-      <button class="btn ikincil" id="hTamam">Tamam</button>
+    <div class="bkart">
+      <div class="kbas"><img src="assets/dogus-logo.png" alt=""><small id="h_ne">Hatırlatma</small><h2 id="h_baslik"></h2>
+        <div class="ksaat" id="h_saat"></div></div>
+      <div class="kgovde"><p id="h_aciklama"></p><div id="h_satirlar"></div></div>
+      <div class="kdugme" id="h_btn"></div>
+      <button class="ktamam" id="hTamam" type="button">Tamam</button>
     </div>
   </section>
 
@@ -486,23 +495,27 @@ if (DEMO) { PIN = 'demo'; }
 function hatirlatKarti(veri) {
   let k = null;
   try { const b = atob(veri.replace(/-/g, '+').replace(/_/g, '/')); k = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return false; }
-  $('h_ne').textContent = k.dk ? '⏰ ' + (k.dk >= 60 ? (k.dk / 60) + ' SAAT' : k.dk + ' DK') + ' SONRA' : '⏰ ŞİMDİ';
-  $('h_saat').textContent = k.s + (k.bt ? '–' + k.bt : '');
-  $('h_gun').textContent = k.t ? gunAd(k.t) : '';
+  $('h_ne').textContent = k.dk ? 'Hatırlatma · ' + (k.dk >= 60 ? (k.dk / 60) + ' saat' : k.dk + ' dk') + ' sonra' : 'Hatırlatma · şimdi';
   $('h_baslik').textContent = k.b || '';
-  $('h_bilgi').innerHTML = [k.y ? '📍 ' + esc(k.y) : '', k.k ? '👤 ' + esc(k.k) : ''].filter(Boolean).join('<br>');
-  $('h_aciklama').textContent = k.a || ''; $('h_aciklama').classList.toggle('gizli', !k.a);
+  $('h_saat').innerHTML = esc(k.s || '') + (k.bt ? '<span>– ' + esc(k.bt) + '</span>' : '');
+  $('h_aciklama').textContent = k.a || ''; $('h_aciklama').style.display = k.a ? '' : 'none';
+  const telG = (t => { const d = String(t || '').replace(/\D/g, '').slice(-10); return d.length === 10 ? '0' + d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6,8) + ' ' + d.slice(8) : (t || ''); })(k.tel);
+  $('h_satirlar').innerHTML = [['Tarih', k.t ? gunAd(k.t) : ''], ['Yer', k.y], ['Kişi', k.k], ['Telefon', telG]]
+    .filter(r => r[1]).map(r => '<div class="ksatir"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>').join('');
   const tel = String(k.tel || '').replace(/\D/g, ''), wa = tel ? (tel.startsWith('90') ? tel : '9' + (tel.startsWith('0') ? tel : '0' + tel)) : '';
-  $('h_btn').innerHTML = [
+  const d = [
     tel ? '<a class="ana" href="tel:' + esc(k.tel) + '">📞 Ara</a>' : '',
     wa ? '<a href="https://wa.me/' + esc(wa) + '">💬 WhatsApp</a>' : '',
     k.y ? '<a href="https://maps.apple.com/?q=' + encodeURIComponent(k.y) + '">🧭 Yol tarifi</a>' : '',
     '<a href="' + location.pathname + '">🎙️ Asistan</a>'
-  ].filter(Boolean).join('');
+  ].filter(Boolean);
+  if (d.length % 2) d[d.length - 1] = d[d.length - 1].replace('<a ', '<a class="tek" ').replace('class="tek" class="', 'class="tek ');
+  $('h_btn').innerHTML = d.join('');
+  document.body.classList.add('hkmod');
   goster('hatirlatEkran');
   return true;
 }
-$('hTamam').onclick = () => { history.replaceState(null, '', location.pathname); if (PIN || ANAHTAR) gir(); else goster('giris'); };
+$('hTamam').onclick = () => { document.body.classList.remove('hkmod'); history.replaceState(null, '', location.pathname); if (PIN || ANAHTAR) gir(); else goster('giris'); };
 const HK = new URLSearchParams(location.search).get('h');
 if (HK && hatirlatKarti(HK)) {}
 else if (PIN || ANAHTAR) gir(); else goster('giris');
