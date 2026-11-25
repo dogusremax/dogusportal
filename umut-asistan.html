@@ -94,14 +94,17 @@
 </style>
 </head>
 <body>
-<header class="top"><img src="assets/dogus-logo.png" alt="Doğuş"><h1>Umut Tokkuş</h1><div class="alt">KİŞİSEL ASİSTAN</div><div class="tarih" id="bugunYazi"></div><button id="cikisBtn" class="gizli">Çıkış</button></header>
+<header class="top"><img src="assets/dogus-logo.png" alt="Doğuş"><h1>Umut Tokkuş</h1><div class="alt">KİŞİSEL ASİSTAN</div><div class="tarih" id="bugunYazi"></div><button id="cikisBtn" class="gizli" style="display:none">Çıkış</button></header>
 <main>
   <!-- Giriş -->
   <section id="giris" class="kart">
-    <h2>Hoş geldiniz</h2>
-    <div><label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"></div>
-    <button class="btn" id="girBtn">Aç</button>
-    <p class="durum" id="girDurum"></p>
+    <h2>Size özel sayfa</h2>
+    <p class="durum" id="girDurum">Bu sayfa e-postanıza gelen özel bağlantıyla açılır.</p>
+    <button class="yazarak" id="pinGoster" style="align-self:center">PIN ile aç</button>
+    <div id="pinKutu" class="gizli" style="display:flex;flex-direction:column;gap:10px">
+      <div><label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"></div>
+      <button class="btn" id="girBtn">Aç</button>
+    </div>
   </section>
 
   <!-- Kayıt -->
@@ -185,8 +188,12 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;
 const TURLER = [['randevu','📅 Randevu'],['hatirlatma','⏰ Hatırlatma'],['gorev','✅ Görev'],['musteri','👤 Müşteri'],['not','📝 Not']];
 const MUDURLER = ['', 'Genel Müdür','Yönetici Asistanı','Satış','Finans','Recruitment','Pazarlama','Operasyon','Eğitim','Teknoloji','İş Geliştirme','Müşteri İlişkileri'];
 const ALANLAR = ['baslik','tarih','saat','kisi','sure_dk','telefon','yer','konu','mudur','son_tarih'];
-let PIN = '', OGE = null;
-try { PIN = localStorage.getItem('ua_pin') || ''; } catch (e) {}
+let PIN = '', ANAHTAR = '', OGE = null;
+try { PIN = localStorage.getItem('ua_pin') || ''; ANAHTAR = localStorage.getItem('ua_anahtar') || ''; } catch (e) {}
+(function () {   // özel bağlantı: dogusportal.com/umut-asistan.html#k=...  → cihazda saklanır, adres çubuğundan silinir
+  const m = location.hash.match(/k=([0-9a-f]{16,64})/i);
+  if (m) { ANAHTAR = m[1]; try { localStorage.setItem('ua_anahtar', ANAHTAR); } catch (e) {} history.replaceState(null, '', location.pathname); }
+})();
 
 function goster(e) { ['giris','kayitEkran','kartEkran','duzeltEkran','sonucEkran'].forEach(x => $(x).classList.toggle('gizli', x !== e)); window.scrollTo(0,0); }
 function yaz(id, t, hata) { $(id).textContent = t || ''; $(id).className = 'durum' + (hata ? ' hata' : ''); }
@@ -194,7 +201,7 @@ function yaz(id, t, hata) { $(id).textContent = t || ''; $(id).className = 'duru
 async function servis(govde) {
   if (DEMO) return demo(govde);
   const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
-    body: JSON.stringify(Object.assign({ action: 'umutAsistan', pin: PIN }, govde)) });
+    body: JSON.stringify(Object.assign({ action: 'umutAsistan', pin: PIN, anahtar: ANAHTAR }, govde)) });
   return r.json();
 }
 
@@ -204,13 +211,14 @@ async function gir() {
   try {
     const j = await servis({ islem: 'giris' });
     if (!j.ok) { yaz('girDurum', j.error || 'Açılamadı.', true); PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} goster('giris'); }
-    else { try { localStorage.setItem('ua_pin', PIN); } catch (e) {} $('cikisBtn').classList.remove('gizli'); goster('kayitEkran'); gecmis(); ajanda(); }
+    else { try { if (PIN) localStorage.setItem('ua_pin', PIN); } catch (e) {} $('cikisBtn').classList.remove('gizli'); goster('kayitEkran'); gecmis(); ajanda(); }
   } catch (e) { yaz('girDurum', 'Bağlantı hatası, tekrar deneyin.', true); goster('giris'); }
   $('girBtn').disabled = false;
 }
 $('girBtn').onclick = () => { PIN = $('pin').value.trim(); if (PIN) gir(); };
 $('pin').onkeydown = e => { if (e.key === 'Enter') $('girBtn').click(); };
-$('cikisBtn').onclick = () => { PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} $('cikisBtn').classList.add('gizli'); $('pin').value = ''; goster('giris'); };
+$('pinGoster').onclick = () => { $('pinKutu').classList.remove('gizli'); $('pinGoster').classList.add('gizli'); $('pin').focus(); };
+$('cikisBtn').onclick = () => { PIN = ''; ANAHTAR = ''; try { localStorage.removeItem('ua_pin'); localStorage.removeItem('ua_anahtar'); } catch (e) {} $('cikisBtn').classList.add('gizli'); $('pin').value = ''; goster('giris'); };
 
 /* ── Basılı tut, konuş ── */
 let mic = null, kayitci = null, parcalar = [], basla = 0, sayac = null, mesgul = false;
@@ -421,7 +429,7 @@ function demo(g) {
   const sel = s < 12 ? 'Günaydın' : s < 18 ? 'İyi günler' : 'İyi akşamlar';
   $('bugunYazi').textContent = sel + ' · ' + d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', timeZone: 'Europe/Istanbul' }); })();
 if (DEMO) { PIN = 'demo'; }
-if (PIN) gir(); else goster('giris');
+if (PIN || ANAHTAR) gir(); else goster('giris');
 </script>
 </body>
 </html>
