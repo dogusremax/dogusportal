@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Asistanım">
+<link rel="apple-touch-icon" href="assets/dogus-logo.png">
+<meta name="theme-color" content="#0b0f2a">
+<title>Umut Tokkuş · Kişisel Asistan</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#fff;min-height:100vh;
+       background:radial-gradient(120% 60% at 50% -10%,#1d2766 0%,#0b0f2a 55%) fixed,#0b0f2a;
+       padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+  .top{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 16px 0;text-align:center}
+  .top img{height:32px;filter:drop-shadow(0 6px 16px rgba(0,0,0,.45))}
+  .top h1{font-size:19px;font-weight:800;letter-spacing:.2px;margin-top:6px}
+  .top .alt{font-size:11px;font-weight:700;letter-spacing:3px;color:#ff6b78}
+  .top .tarih{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+  .top button{position:absolute;right:14px;top:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;
+       padding:6px 11px;color:rgba(255,255,255,.6);font:600 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+  main{max-width:560px;margin:0 auto;padding:14px 16px 40px;display:flex;flex-direction:column;gap:14px}
+  label{font-size:12px;color:rgba(255,255,255,.6);display:block;margin-bottom:4px}
+  input,select,textarea{font:600 16px 'Plus Jakarta Sans',sans-serif;padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+       background:#111738;color:#fff;outline:none;width:100%}
+  textarea{min-height:64px;resize:vertical;font-weight:500}
+  input:focus,select:focus,textarea:focus{border-color:#FB5160}
+  .btn{font:700 15px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;padding:13px 14px;cursor:pointer;background:#DC1C2E;color:#fff;width:100%}
+  .btn.ikincil{background:#1c2350;border:1px solid rgba(255,255,255,.15)}
+  .btn:disabled{opacity:.45}
+  .satir{display:flex;gap:8px}.satir>*{flex:1}
+  .durum{font-size:14px;line-height:1.5;color:rgba(255,255,255,.75);text-align:center;min-height:21px}
+  .durum.hata{color:#ff8a95}
+  .gizli{display:none!important}
+
+  /* Büyük buton */
+  .sahne{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
+  .ipucu{font-size:13px;color:rgba(255,255,255,.5);text-align:center;line-height:1.5;max-width:280px}
+  .halka{padding:10px;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.02));
+       border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 40px rgba(0,0,0,.35)}
+  .mik{width:136px;height:136px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 28%,#ff6b78,#DC1C2E 52%,#8e0f1c);
+       box-shadow:0 12px 30px rgba(220,28,46,.45),inset 0 2px 0 rgba(255,255,255,.25),inset 0 -6px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;
+       cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;position:relative;transition:transform .15s}
+  .mik svg{width:52px;height:52px;fill:#fff;pointer-events:none}
+  .mik.kayit{transform:scale(1.07);animation:nabiz 1.2s infinite}
+  .mik.mesgul{opacity:.6;animation:none}
+  @keyframes nabiz{0%{box-shadow:0 0 0 0 rgba(255,90,105,.55),0 18px 50px rgba(220,28,46,.45)}70%{box-shadow:0 0 0 34px rgba(255,90,105,0),0 18px 50px rgba(220,28,46,.45)}100%{box-shadow:0 0 0 0 rgba(255,90,105,0),0 18px 50px rgba(220,28,46,.45)}}
+  .sure{font:800 16px 'Plus Jakarta Sans',sans-serif;letter-spacing:1px;color:#ff8a95}
+  .sure:empty{display:none}
+  .yazarak{display:inline-flex;align-items:center;gap:8px;font:700 13px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.85);
+       background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:9px 16px;cursor:pointer;
+       backdrop-filter:blur(6px);transition:background .15s,border-color .15s}
+  .yazarak svg{width:16px;height:16px;fill:currentColor;opacity:.8}
+  .yazarak.acik,.yazarak:active{background:rgba(220,28,46,.18);border-color:rgba(220,28,46,.55)}
+
+  /* Kart */
+  .kart{background:rgba(17,23,56,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .kart h2{font-size:18px;font-weight:800}
+  .dokum{font-size:14px;line-height:1.55;color:rgba(255,255,255,.8);background:#0d1333;border-radius:12px;padding:10px 12px}
+  .dokum b{display:block;font-size:11px;letter-spacing:.6px;color:rgba(255,255,255,.45);margin-bottom:4px}
+  .turlar{display:flex;gap:6px;overflow-x:auto}
+  .tur{flex:none;font:700 13px 'Plus Jakarta Sans',sans-serif;padding:8px 12px;border-radius:20px;background:#0d1333;border:1px solid rgba(255,255,255,.15);color:#fff;cursor:pointer}
+  .tur.secili{background:#DC1C2E;border-color:#DC1C2E}
+  .uyari{background:#3a2a00;color:#ffcf5c;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5}
+  .hedef{font-size:13px;color:rgba(255,255,255,.6);text-align:center}
+  .tamam{background:#0f3a24;color:#8ff0b8;border-radius:14px;padding:14px;font-size:15px;line-height:1.5;text-align:center;font-weight:600}
+  .gecmis{display:flex;flex-direction:column;gap:6px}
+  .g{background:#111738;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;color:rgba(255,255,255,.8)}
+  .g span{color:rgba(255,255,255,.45);margin-right:6px}
+  .sekmeler{display:flex;gap:6px;background:#0d1333;border-radius:14px;padding:4px}
+  .sekme{flex:1;font:700 14px 'Plus Jakarta Sans',sans-serif;padding:9px 0;border-radius:10px;border:0;background:none;color:rgba(255,255,255,.65);cursor:pointer}
+  .sekme.secili{background:#1c2350;color:#fff}
+  .ajanda{display:flex;flex-direction:column;gap:6px}
+  .gun{font-size:12px;font-weight:800;letter-spacing:.5px;color:rgba(255,255,255,.5);margin:8px 2px 2px}
+  .e{display:flex;gap:12px;align-items:flex-start;background:rgba(17,23,56,.8);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px 13px;cursor:pointer}
+  .e .s{font:800 15px 'Plus Jakarta Sans',sans-serif;min-width:50px;color:#fff}
+  .e .s small{display:block;font-weight:600;font-size:11px;color:rgba(255,255,255,.45)}
+  .e .b{flex:1;font-size:14px;line-height:1.4}
+  .e .b small{display:block;color:rgba(255,255,255,.5);font-size:12px;margin-top:2px}
+  .e.ofis{border-left:4px solid #5b7cff;cursor:default}
+  .e.umut{border-left:4px solid #DC1C2E}
+  .e.iptal{opacity:.45;text-decoration:line-through}
+  .e.cak{box-shadow:0 0 0 1px #ffcf5c inset}
+  .bosA{text-align:center;color:rgba(255,255,255,.45);font-size:14px;padding:18px 0}
+  .lejant{display:flex;gap:14px;margin-top:4px;font-size:12px;color:rgba(255,255,255,.5);justify-content:center}
+  .lejant i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  h3{font-size:13px;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.5px;margin-top:6px}
+</style>
+</head>
+<body>
+<header class="top"><img src="assets/dogus-logo.png" alt="Doğuş"><h1>Umut Tokkuş</h1><div class="alt">KİŞİSEL ASİSTAN</div><div class="tarih" id="bugunYazi"></div><button id="cikisBtn" class="gizli">Çıkış</button></header>
+<main>
+  <!-- Giriş -->
+  <section id="giris" class="kart">
+    <h2>Hoş geldiniz</h2>
+    <div><label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"></div>
+    <button class="btn" id="girBtn">Aç</button>
+    <p class="durum" id="girDurum"></p>
+  </section>
+
+  <!-- Kayıt -->
+  <section id="kayitEkran" class="gizli">
+    <div class="sahne">
+      <div class="halka"><button class="mik" id="mik" aria-label="Basılı tut ve konuş">
+        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+      </button></div>
+      <div class="sure" id="sure"></div>
+      <button class="yazarak" id="yazBtn"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zm17.7-10.2a1 1 0 0 0 0-1.42l-2.33-2.33a1 1 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>Yazarak söyle</button>
+    </div>
+    <div id="yazKutu" class="kart gizli">
+      <textarea id="yazMetin" placeholder="Örn. Cuma 10:30 Döveç toplantısı, sunum hazır olsun"></textarea>
+      <button class="btn ikincil" id="yazGonder">Anlat</button>
+    </div>
+    <p class="durum" id="kDurum"></p>
+    <div class="sekmeler" id="sekmeler">
+      <button class="sekme secili" data-a="bugun">Bugün</button><button class="sekme" data-a="yarin">Yarın</button><button class="sekme" data-a="hafta">Bu hafta</button>
+    </div>
+    <div class="ajanda" id="ajanda"><p class="bosA">Yükleniyor…</p></div>
+    <div class="lejant"><span><i style="background:#DC1C2E"></i>Randevularım</span><span><i style="background:#5b7cff"></i>Ofis Takvimi</span></div>
+    <h3 id="gecmisBaslik" class="gizli">SON KAYITLAR</h3>
+    <div class="gecmis" id="gecmis"></div>
+  </section>
+
+  <!-- Onay kartı -->
+  <section id="kartEkran" class="gizli">
+    <div class="kart">
+      <div class="dokum"><b>DUYDUĞUM</b><span id="dokum"></span></div>
+      <div class="turlar" id="turlar"></div>
+      <div><label>Başlık</label><input id="f_baslik"></div>
+      <div class="satir" id="zamanSatir">
+        <div><label>Tarih</label><input id="f_tarih" type="date"></div>
+        <div><label>Saat</label><input id="f_saat" type="time"></div>
+      </div>
+      <div class="satir">
+        <div><label>Kişi</label><input id="f_kisi"></div>
+        <div id="sureKutu"><label>Süre (dk)</label><input id="f_sure_dk" type="number" inputmode="numeric" min="5" max="600"></div>
+      </div>
+      <div id="telKutu"><label>Telefon</label><input id="f_telefon" inputmode="tel"></div>
+      <div id="yerKutu"><label>Yer</label><input id="f_yer"></div>
+      <div><label>Konu / yapılacak</label><textarea id="f_konu"></textarea></div>
+      <div id="mudurKutu"><label>Kime verilsin</label><select id="f_mudur"></select></div>
+      <div id="sonKutu"><label>Son gün</label><input id="f_son_tarih" type="date"></div>
+      <div id="ekKutu" class="uyari gizli"></div>
+      <div id="cakisma" class="uyari gizli"></div>
+      <p class="hedef" id="hedef"></p>
+      <button class="btn" id="kaydetBtn">Kaydet</button>
+      <button class="btn ikincil" id="vazgecBtn">Vazgeç</button>
+      <p class="durum" id="sDurum"></p>
+    </div>
+  </section>
+
+  <!-- Randevu düzelt -->
+  <section id="duzeltEkran" class="gizli">
+    <div class="kart">
+      <h2>Randevu</h2>
+      <div><label>Başlık</label><input id="d_baslik"></div>
+      <div class="satir"><div><label>Tarih</label><input id="d_tarih" type="date"></div><div><label>Saat</label><input id="d_saat" type="time"></div></div>
+      <div class="satir"><div><label>Süre (dk)</label><input id="d_sure" type="number" inputmode="numeric"></div><div><label>Yer</label><input id="d_yer"></div></div>
+      <div class="dokum" id="d_aciklama"></div>
+      <button class="btn" id="dKaydet">Kaydet</button>
+      <button class="btn ikincil" id="dIptal">Randevuyu iptal et</button>
+      <button class="btn ikincil" id="dGeri">Geri</button>
+      <p class="durum" id="dDurum"></p>
+    </div>
+  </section>
+
+  <!-- Sonuç -->
+  <section id="sonucEkran" class="gizli">
+    <div class="tamam" id="sonuc"></div>
+    <div style="height:12px"></div>
+    <button class="btn" id="yeniBtn">Yeni not</button>
+  </section>
+</main>
+<script>
+const WA_SERVICE_URL = "https://script.google.com/macros/s/AKfycbwqxxXftJ_b1TrF_GFYfus6dtBe6lp4gDWTZVl9QuXAjYxjHfSvl2Ni_X3mJKm6zAss_w/exec";
+const DEMO = new URLSearchParams(location.search).has('demo');
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TURLER = [['randevu','📅 Randevu'],['hatirlatma','⏰ Hatırlatma'],['gorev','✅ Görev'],['musteri','👤 Müşteri'],['not','📝 Not']];
+const MUDURLER = ['', 'Genel Müdür','Yönetici Asistanı','Satış','Finans','Recruitment','Pazarlama','Operasyon','Eğitim','Teknoloji','İş Geliştirme','Müşteri İlişkileri'];
+const ALANLAR = ['baslik','tarih','saat','kisi','sure_dk','telefon','yer','konu','mudur','son_tarih'];
+let PIN = '', OGE = null;
+try { PIN = localStorage.getItem('ua_pin') || ''; } catch (e) {}
+
+function goster(e) { ['giris','kayitEkran','kartEkran','duzeltEkran','sonucEkran'].forEach(x => $(x).classList.toggle('gizli', x !== e)); window.scrollTo(0,0); }
+function yaz(id, t, hata) { $(id).textContent = t || ''; $(id).className = 'durum' + (hata ? ' hata' : ''); }
+
+async function servis(govde) {
+  if (DEMO) return demo(govde);
+  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
+    body: JSON.stringify(Object.assign({ action: 'umutAsistan', pin: PIN }, govde)) });
+  return r.json();
+}
+
+/* ── Giriş ── */
+async function gir() {
+  $('girBtn').disabled = true; yaz('girDurum', 'Açılıyor…');
+  try {
+    const j = await servis({ islem: 'giris' });
+    if (!j.ok) { yaz('girDurum', j.error || 'Açılamadı.', true); PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} goster('giris'); }
+    else { try { localStorage.setItem('ua_pin', PIN); } catch (e) {} $('cikisBtn').classList.remove('gizli'); goster('kayitEkran'); gecmis(); ajanda(); }
+  } catch (e) { yaz('girDurum', 'Bağlantı hatası, tekrar deneyin.', true); goster('giris'); }
+  $('girBtn').disabled = false;
+}
+$('girBtn').onclick = () => { PIN = $('pin').value.trim(); if (PIN) gir(); };
+$('pin').onkeydown = e => { if (e.key === 'Enter') $('girBtn').click(); };
+$('cikisBtn').onclick = () => { PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} $('cikisBtn').classList.add('gizli'); $('pin').value = ''; goster('giris'); };
+
+/* ── Basılı tut, konuş ── */
+let mic = null, kayitci = null, parcalar = [], basla = 0, sayac = null, mesgul = false;
+function mimeSec() {
+  const adaylar = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
+  for (const m of adaylar) if (window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m;
+  return '';
+}
+async function kayitBasla(e) {
+  e.preventDefault();
+  if (mesgul || kayitci) return;
+  try {
+    if (!mic) mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+  } catch (err) { yaz('kDurum', 'Mikrofon izni verilmedi. Ayarlar > Safari > Mikrofon.', true); return; }
+  const mime = mimeSec();
+  parcalar = [];
+  kayitci = new MediaRecorder(mic, mime ? { mimeType: mime } : undefined);
+  kayitci.ondataavailable = ev => { if (ev.data && ev.data.size) parcalar.push(ev.data); };
+  kayitci.onstop = gonder;
+  kayitci.start();
+  basla = Date.now();
+  $('mik').classList.add('kayit'); yaz('kDurum', 'Dinliyorum… bırakınca gönderirim.');
+  if (navigator.vibrate) navigator.vibrate(30);
+  sayac = setInterval(() => { const s = Math.floor((Date.now() - basla) / 1000); $('sure').textContent = '0:' + String(s).padStart(2, '0'); if (s >= 120) kayitBitir(); }, 250);
+}
+function kayitBitir(e) {
+  if (e) e.preventDefault();
+  if (!kayitci) return;
+  clearInterval(sayac); $('sure').textContent = '';
+  $('mik').classList.remove('kayit');
+  const k = kayitci; kayitci = null;
+  if (Date.now() - basla < 700) { k.onstop = null; k.stop(); yaz('kDurum', 'Basılı tutarak konuş.', true); return; }
+  k.stop();
+}
+const mik = $('mik');
+mik.addEventListener('pointerdown', kayitBasla);
+['pointerup','pointercancel','pointerleave'].forEach(t => mik.addEventListener(t, kayitBitir));
+mik.addEventListener('contextmenu', e => e.preventDefault());
+
+function b64(blob) {
+  return new Promise((ok, red) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = red; r.readAsDataURL(blob); });
+}
+async function gonder() {
+  const tur = (parcalar[0] && parcalar[0].type) || mimeSec() || 'audio/mp4';
+  const blob = new Blob(parcalar, { type: tur });
+  await anla({ ses: await b64(blob), mime: tur.split(';')[0] });
+}
+async function anla(govde) {
+  mesgul = true; $('mik').classList.add('mesgul'); yaz('kDurum', 'Anlıyorum…');
+  try {
+    const j = await servis(Object.assign({ islem: 'anla' }, govde));
+    if (!j.ok) { yaz('kDurum', j.error || 'Anlaşılamadı.', true); if (j.dokum) yaz('kDurum', (j.error || '') + ' Duyduğum: "' + j.dokum + '"', true); }
+    else { yaz('kDurum', ''); kartAc(j); }
+  } catch (e) { yaz('kDurum', 'Bağlantı hatası, tekrar dene.', true); }
+  mesgul = false; $('mik').classList.remove('mesgul');
+}
+$('yazBtn').onclick = () => { const acik = $('yazKutu').classList.toggle('gizli') === false; $('yazBtn').classList.toggle('acik', acik); if (acik) $('yazMetin').focus(); };
+$('yazGonder').onclick = () => { const m = $('yazMetin').value.trim(); if (m) anla({ metin: m }); };
+
+/* ── Kart ── */
+function kartAc(j) {
+  OGE = j.oge;
+  $('dokum').textContent = j.dokum;
+  ALANLAR.forEach(k => { const el = $('f_' + k); if (el) el.value = OGE[k] || ''; });
+  $('f_mudur').innerHTML = MUDURLER.map(m => '<option value="' + esc(m) + '">' + (m ? esc(m) : 'Yönetici Asistanı takip etsin') + '</option>').join('');
+  $('f_mudur').value = OGE.mudur || '';
+  $('ekKutu').classList.toggle('gizli', !OGE.ek_is);
+  $('ekKutu').textContent = OGE.ek_is ? 'Bir iş daha duydum: ' + OGE.ek_is + ' — kaydettikten sonra onu ayrıca söyle.' : '';
+  const c = j.cakisma || [];
+  $('cakisma').classList.toggle('gizli', !c.length);
+  $('cakisma').innerHTML = c.length ? '⚠️ Aynı saatte: ' + c.map(x => esc(x.saat + ' ' + x.baslik + ' (' + x.kaynak + ')')).join(' · ') : '';
+  turCiz(); goster('kartEkran'); yaz('sDurum', '');
+}
+function turCiz() {
+  $('turlar').innerHTML = TURLER.map(([k, ad]) => '<button class="tur' + (OGE.tur === k ? ' secili' : '') + '" data-t="' + k + '">' + ad + '</button>').join('');
+  $('turlar').querySelectorAll('.tur').forEach(b => b.onclick = () => { OGE.tur = b.dataset.t; turCiz(); });
+  const t = OGE.tur, takvim = t === 'randevu' || t === 'hatirlatma';
+  $('sureKutu').classList.toggle('gizli', t !== 'randevu');
+  $('yerKutu').classList.toggle('gizli', !(t === 'randevu' || t === 'musteri'));
+  $('telKutu').classList.toggle('gizli', !(t === 'musteri' || t === 'randevu'));
+  $('mudurKutu').classList.toggle('gizli', t !== 'gorev');
+  $('sonKutu').classList.toggle('gizli', !(t === 'gorev' || t === 'musteri'));
+  $('zamanSatir').classList.toggle('gizli', !(takvim || t === 'not'));
+  hedefYaz();
+}
+function hedefYaz() {
+  const t = OGE.tur, m = $('f_mudur').value;
+  $('hedef').textContent = {
+    randevu: 'Google Takvim · Umut Randevular (1 saat ve 15 dk önce hatırlatır)',
+    hatirlatma: 'Google Takvim · Umut Randevular (tam saatinde hatırlatır)',
+    gorev: m && m !== 'Yönetici Asistanı' ? m + ' görevi olur; saatlik sistem yürütür' : 'Yönetici Asistanının takip listesine (YA Takip)',
+    musteri: 'Müşterilerim listesine', not: 'Yönetici Asistanının takip listesine not olarak'
+  }[t] || '';
+}
+$('f_mudur').onchange = hedefYaz;
+$('vazgecBtn').onclick = () => { OGE = null; goster('kayitEkran'); };
+$('kaydetBtn').onclick = async () => {
+  ALANLAR.forEach(k => { const el = $('f_' + k); if (el) OGE[k] = el.value.trim(); });
+  if ((OGE.tur === 'randevu' || OGE.tur === 'hatirlatma') && (!OGE.tarih || !OGE.saat)) { yaz('sDurum', 'Takvime yazmak için tarih ve saat gerekli.', true); return; }
+  $('kaydetBtn').disabled = true; yaz('sDurum', 'Kaydediyorum…');
+  try {
+    const j = await servis({ islem: 'kaydet', oge: OGE });
+    if (!j.ok) yaz('sDurum', j.error || 'Kaydedilemedi.', true);
+    else { $('sonuc').innerHTML = '✓ ' + esc(j.sonuc) + (j.link ? '<br><a href="' + esc(j.link) + '" style="color:#8ff0b8">Kartı aç</a>' : ''); goster('sonucEkran'); if (navigator.vibrate) navigator.vibrate([20, 40, 20]); }
+  } catch (e) { yaz('sDurum', 'Bağlantı hatası, tekrar dene.', true); }
+  $('kaydetBtn').disabled = false;
+};
+$('yeniBtn').onclick = () => { $('yazMetin').value = ''; goster('kayitEkran'); gecmis(); ajanda(); };
+
+/* ── Ajanda ── */
+const ist = (d) => new Date(d.getTime() + 3 * 3600e3).toISOString().slice(0, 10);
+const gunEkle = (ymd, n) => { const d = new Date(ymd + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const GUNLER = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const gunAd = ymd => { const d = new Date(ymd + 'T12:00:00Z'); return d.getUTCDate() + ' ' + AYLAR[d.getUTCMonth()] + ' ' + GUNLER[d.getUTCDay()]; };
+let SEKME = 'bugun', OLAYLAR = [], ACIK_E = null;
+function aralik() {
+  const b = ist(new Date());
+  if (SEKME === 'yarin') return [gunEkle(b, 1), gunEkle(b, 1)];
+  if (SEKME === 'hafta') return [b, gunEkle(b, 6)];
+  return [b, b];
+}
+$('sekmeler').querySelectorAll('.sekme').forEach(x => x.onclick = () => {
+  SEKME = x.dataset.a; $('sekmeler').querySelectorAll('.sekme').forEach(y => y.classList.toggle('secili', y === x)); ajanda();
+});
+async function ajanda() {
+  const [bas, bit] = aralik();
+  $('ajanda').innerHTML = '<p class="bosA">Yükleniyor…</p>';
+  try {
+    const j = await servis({ islem: 'ajanda', bas, bit });
+    if (!j.ok) { $('ajanda').innerHTML = '<p class="bosA">' + esc(j.error || 'Ajanda açılamadı.') + '</p>'; return; }
+    OLAYLAR = j.olaylar || []; ajandaCiz(bas, bit);
+  } catch (e) { $('ajanda').innerHTML = '<p class="bosA">Bağlantı hatası.</p>'; }
+}
+function ajandaCiz(bas, bit) {
+  if (!OLAYLAR.length) { $('ajanda').innerHTML = '<p class="bosA">' + (SEKME === 'hafta' ? 'Bu hafta' : SEKME === 'yarin' ? 'Yarın' : 'Bugün') + ' takvim boş.</p>'; return; }
+  const dk = s => s ? Number(s.slice(0,2)) * 60 + Number(s.slice(3)) : -1;
+  let h = '', son = '';
+  OLAYLAR.forEach((o, i) => {
+    if (o.tarih !== son && (SEKME === 'hafta' || bas !== bit)) { h += '<div class="gun">' + esc(gunAd(o.tarih)) + '</div>'; }
+    son = o.tarih;
+    const cak = !o.tumGun && !o.iptal && OLAYLAR.some((x, k) => k !== i && x.tarih === o.tarih && !x.tumGun && !x.iptal && dk(x.bas) < dk(o.bit || o.bas) && dk(x.bit || x.bas) > dk(o.bas));
+    h += '<div class="e ' + o.kaynak + (o.iptal ? ' iptal' : '') + (cak ? ' cak' : '') + '" data-i="' + i + '"><div class="s">' + (o.tumGun ? 'Gün<small>boyu</small>' : esc(o.bas) + '<small>' + esc(o.bit) + '</small>') +
+         '</div><div class="b">' + esc(o.baslik) + (o.yer ? '<small>📍 ' + esc(o.yer) + '</small>' : '') + (cak ? '<small style="color:#ffcf5c">⚠️ Çakışıyor</small>' : '') + '</div></div>';
+  });
+  $('ajanda').innerHTML = h;
+  $('ajanda').querySelectorAll('.e.umut').forEach(el => el.onclick = () => duzeltAc(OLAYLAR[Number(el.dataset.i)]));
+}
+function duzeltAc(o) {
+  ACIK_E = o;
+  $('d_baslik').value = o.baslik.replace(/^İPTAL:\s*/, ''); $('d_tarih').value = o.tarih; $('d_saat').value = o.bas || '';
+  const dk = s => s ? Number(s.slice(0,2)) * 60 + Number(s.slice(3)) : 0;
+  $('d_sure').value = o.bas && o.bit ? Math.max(dk(o.bit) - dk(o.bas), 5) : 60; $('d_yer').value = o.yer || '';
+  $('d_aciklama').textContent = o.aciklama || ''; $('d_aciklama').classList.toggle('gizli', !o.aciklama);
+  $('dIptal').classList.toggle('gizli', !!o.iptal);
+  yaz('dDurum', ''); goster('duzeltEkran');
+}
+$('dGeri').onclick = () => goster('kayitEkran');
+$('dKaydet').onclick = async () => {
+  $('dKaydet').disabled = true; yaz('dDurum', 'Kaydediyorum…');
+  try {
+    const j = await servis({ islem: 'duzelt', id: ACIK_E.id, baslik: $('d_baslik').value.trim(), tarih: $('d_tarih').value, saat: $('d_saat').value, sure_dk: $('d_sure').value, yer: $('d_yer').value.trim() });
+    if (!j.ok) yaz('dDurum', j.error || 'Kaydedilemedi.', true); else { goster('kayitEkran'); ajanda(); gecmis(); }
+  } catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
+  $('dKaydet').disabled = false;
+};
+$('dIptal').onclick = async () => {
+  if (!confirm('"' + ACIK_E.baslik + '" iptal edilsin mi? (Takvimde üstü çizili kalır, silinmez.)')) return;
+  try { const j = await servis({ islem: 'iptal', id: ACIK_E.id }); if (!j.ok) yaz('dDurum', j.error || 'Olmadı.', true); else { goster('kayitEkran'); ajanda(); gecmis(); } }
+  catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
+};
+
+async function gecmis() {
+  try {
+    const j = await servis({ islem: 'son' });
+    const l = (j.ok && j.kayitlar) || [];
+    $('gecmisBaslik').classList.toggle('gizli', !l.length);
+    $('gecmis').innerHTML = l.slice(0, 6).map(x => '<div class="g"><span>' + esc(x.z) + '</span>' + esc(x.sonuc) + '</div>').join('');
+  } catch (e) {}
+}
+
+/* ── Önizleme (?demo) ── */
+function demo(g) {
+  const bekle = v => new Promise(ok => setTimeout(() => ok(v), 700));
+  const yarin = new Date(Date.now() + 27 * 3600e3).toISOString().slice(0, 10);
+  if (g.islem === 'giris') return bekle({ ok: true });
+  if (g.islem === 'son') return bekle({ ok: true, kayitlar: [{ z: '25.11 21:50', sonuc: 'Takvime eklendi: 26 Kasım Perşembe 10:00' }] });
+  if (g.islem === 'anla') return bekle({ ok: true, dokum: g.metin || "Yarın öğleden sonra üçte Ahmet Yılmaz'la Akasya Göl Etabı 3+1 gösterimi, numarası 0532 111 22 33.",
+    oge: { tur: 'randevu', baslik: 'Akasya Göl Etabı 3+1 gösterimi · Ahmet Yılmaz', kisi: 'Ahmet Yılmaz', telefon: '05321112233', tarih: yarin, saat: '15:00',
+           sure_dk: '60', yer: 'Akasya Göl Etabı', konu: '3+1 daire gösterimi', mudur: '', son_tarih: '', ek_is: '' },
+    cakisma: [{ kaynak: 'Ofis Takvimi', baslik: 'Haftalık satış toplantısı', saat: '15:00–16:00' }] });
+  if (g.islem === 'kaydet') return bekle({ ok: true, sonuc: 'Takvime eklendi (önizleme — gerçek kayıt yapılmadı)' });
+  if (g.islem === 'duzelt' || g.islem === 'iptal') return bekle({ ok: true, sonuc: 'Önizleme' });
+  if (g.islem === 'ajanda') {
+    const t = g.bas, t2 = gunEkle(g.bas, 1);
+    const hepsi = [
+      { kaynak: 'ofis', baslik: 'Haftalık satış toplantısı', tarih: t, bas: '10:00', bit: '11:00', yer: 'Toplantı Odası' },
+      { kaynak: 'umut', id: 'd1', baslik: 'Tapu · Merdivenköy 2+1 · Selin Kaya', tarih: t, bas: '14:00', bit: '15:00', yer: 'Kadıköy Tapu', aciklama: 'Satıcı vekaletnamesi kontrol edilecek.' },
+      { kaynak: 'umut', id: 'd2', baslik: '⏰ Döveç fiyat listesini iste', tarih: t, bas: '17:30', bit: '17:45' },
+      { kaynak: 'umut', id: 'd3', baslik: 'Akasya Göl Etabı 3+1 gösterimi · Ahmet Yılmaz', tarih: t2, bas: '15:00', bit: '16:00', yer: 'Akasya Göl Etabı' },
+      { kaynak: 'ofis', baslik: 'Eğitim: FSBO ilk temas', tarih: t2, bas: '15:30', bit: '16:30', yer: 'Ofis' }
+    ];
+    return bekle({ ok: true, olaylar: hepsi.filter(o => o.tarih >= g.bas && o.tarih <= g.bit) });
+  }
+}
+
+(function () { const d = new Date(), s = d.getHours();
+  const sel = s < 12 ? 'Günaydın' : s < 18 ? 'İyi günler' : 'İyi akşamlar';
+  $('bugunYazi').textContent = sel + ' · ' + d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', timeZone: 'Europe/Istanbul' }); })();
+if (DEMO) { PIN = 'demo'; }
+if (PIN) gir(); else goster('giris');
+</script>
+</body>
+</html>
