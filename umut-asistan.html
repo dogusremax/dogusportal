@@ -91,6 +91,16 @@
   .bosA{text-align:center;color:rgba(255,255,255,.45);font-size:14px;padding:18px 0}
   .lejant{display:flex;gap:14px;margin-top:4px;font-size:12px;color:rgba(255,255,255,.5);justify-content:center}
   .lejant i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .hk{text-align:center;gap:10px}
+  .hk-ust{font-size:12px;font-weight:800;letter-spacing:2px;color:#ff6b78}
+  .hk-saat{font:800 52px/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-1px}
+  .hk-gun{font-size:13px;color:rgba(255,255,255,.55)}
+  .hk h2{font-size:20px;line-height:1.35;margin-top:4px}
+  .hk-bilgi{font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)}
+  .hk-btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .hk-btn a{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;color:#fff;font:700 14px 'Plus Jakarta Sans',sans-serif;
+       background:#1c2350;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px 8px}
+  .hk-btn a.ana{background:#DC1C2E;border-color:#DC1C2E}
   h3{font-size:13px;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.5px;margin-top:6px}
 </style>
 </head>
@@ -148,6 +158,9 @@
       <div id="telKutu"><label>Telefon</label><input id="f_telefon" inputmode="tel"></div>
       <div id="yerKutu"><label>Yer</label><input id="f_yer"></div>
       <div><label>Konu / yapılacak</label><textarea id="f_konu"></textarea></div>
+      <div id="hatirlatKutu"><label>Hatırlat</label><select id="f_hatirlat">
+        <option value="60">1 saat önce</option><option value="30">30 dk önce</option><option value="15">15 dk önce</option>
+        <option value="0">Tam saatinde</option><option value="yok">Hatırlatma yok</option></select></div>
       <div id="mudurKutu"><label>Kime verilsin</label><select id="f_mudur"></select></div>
       <div id="sonKutu"><label>Son gün</label><input id="f_son_tarih" type="date"></div>
       <div id="ekKutu" class="uyari gizli"></div>
@@ -166,11 +179,26 @@
       <div><label>Başlık</label><input id="d_baslik"></div>
       <div class="satir"><div><label>Tarih</label><input id="d_tarih" type="date"></div><div><label>Saat</label><input id="d_saat" type="time"></div></div>
       <div class="satir"><div><label>Süre (dk)</label><input id="d_sure" type="number" inputmode="numeric"></div><div><label>Yer</label><input id="d_yer"></div></div>
+      <div><label>Hatırlat</label><select id="d_hatirlat"><option value="60">1 saat önce</option><option value="30">30 dk önce</option><option value="15">15 dk önce</option><option value="0">Tam saatinde</option><option value="yok">Hatırlatma yok</option></select></div>
       <div class="dokum" id="d_aciklama"></div>
       <button class="btn" id="dKaydet">Kaydet</button>
       <button class="btn ikincil" id="dIptal" style="color:#ff8a95">Randevuyu sil</button>
       <button class="btn ikincil" id="dGeri">Geri</button>
       <p class="durum" id="dDurum"></p>
+    </div>
+  </section>
+
+  <!-- Hatırlatma kartı (bildirime dokununca) -->
+  <section id="hatirlatEkran" class="gizli">
+    <div class="kart hk">
+      <div class="hk-ust" id="h_ne">⏰ HATIRLATMA</div>
+      <div class="hk-saat" id="h_saat"></div>
+      <div class="hk-gun" id="h_gun"></div>
+      <h2 id="h_baslik"></h2>
+      <div class="hk-bilgi" id="h_bilgi"></div>
+      <div class="dokum gizli" id="h_aciklama"></div>
+      <div class="hk-btn" id="h_btn"></div>
+      <button class="btn ikincil" id="hTamam">Tamam</button>
     </div>
   </section>
 
@@ -188,7 +216,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const TURLER = [['randevu','📅 Randevu'],['hatirlatma','⏰ Hatırlatma'],['gorev','✅ Görev'],['musteri','👤 Müşteri'],['not','📝 Not']];
 const MUDURLER = ['', 'Genel Müdür','Yönetici Asistanı','Satış','Finans','Recruitment','Pazarlama','Operasyon','Eğitim','Teknoloji','İş Geliştirme','Müşteri İlişkileri'];
-const ALANLAR = ['baslik','tarih','saat','kisi','sure_dk','telefon','yer','konu','mudur','son_tarih'];
+const ALANLAR = ['baslik','tarih','saat','kisi','sure_dk','telefon','yer','konu','mudur','son_tarih','hatirlat'];
 let PIN = '', ANAHTAR = '', OGE = null;
 try { PIN = localStorage.getItem('ua_pin') || ''; ANAHTAR = localStorage.getItem('ua_anahtar') || ''; } catch (e) {}
 (function () {   // özel bağlantı: dogusportal.com/umut-asistan.html#k=...  → cihazda saklanır, adres çubuğundan silinir
@@ -196,24 +224,45 @@ try { PIN = localStorage.getItem('ua_pin') || ''; ANAHTAR = localStorage.getItem
   if (m) { ANAHTAR = m[1]; try { localStorage.setItem('ua_anahtar', ANAHTAR); } catch (e) {} history.replaceState(null, '', location.pathname); }
 })();
 
-function goster(e) { ['giris','kayitEkran','kartEkran','duzeltEkran','sonucEkran'].forEach(x => $(x).classList.toggle('gizli', x !== e)); window.scrollTo(0,0); }
+function goster(e) { ['giris','kayitEkran','kartEkran','duzeltEkran','hatirlatEkran','sonucEkran'].forEach(x => $(x).classList.toggle('gizli', x !== e)); window.scrollTo(0,0); }
 function yaz(id, t, hata) { $(id).textContent = t || ''; $(id).className = 'durum' + (hata ? ' hata' : ''); }
 
-async function servis(govde) {
+async function servis(govde, deneme) {
   if (DEMO) return demo(govde);
-  const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow',
-    body: JSON.stringify(Object.assign({ action: 'umutAsistan', pin: PIN, anahtar: ANAHTAR }, govde)) });
-  return r.json();
+  const ctl = new AbortController(), zs = setTimeout(() => ctl.abort(), 90000);
+  let metin = '';
+  try {
+    const r = await fetch(WA_SERVICE_URL + '?cb=' + Date.now(), { method: 'POST', redirect: 'follow', signal: ctl.signal,
+      body: JSON.stringify(Object.assign({ action: 'umutAsistan', pin: PIN, anahtar: ANAHTAR }, govde)) });
+    metin = await r.text();
+  } catch (e) {
+    clearTimeout(zs);
+    if (!deneme) { await new Promise(ok => setTimeout(ok, 800)); return servis(govde, 1); }   // ağ koptuysa bir kez daha
+    return { ok: false, error: e.name === 'AbortError' ? 'Sunucu geç cevap verdi, tekrar dene.' : 'İnternet bağlantısı yok gibi, tekrar dene.' };
+  }
+  clearTimeout(zs);
+  try { return JSON.parse(metin); }
+  catch (e) {
+    if (!deneme) return servis(govde, 1);
+    const ip = (metin.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').match(/(Exception|Hata|Error)[^.]{0,120}/) || [])[0];
+    return { ok: false, error: 'Sunucu hatası' + (ip ? ': ' + ip : '') + '. Tekrar dene.' };
+  }
 }
 
 /* ── Giriş ── */
 async function gir() {
   $('girBtn').disabled = true; yaz('girDurum', 'Açılıyor…');
+  goster('kayitEkran');   // ekran hemen açılır, ajanda arkadan gelir
   try {
-    const j = await servis({ islem: 'giris' });
-    if (!j.ok) { yaz('girDurum', j.error || 'Açılamadı.', true); PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} goster('giris'); }
-    else { try { if (PIN) localStorage.setItem('ua_pin', PIN); } catch (e) {} $('cikisBtn').classList.remove('gizli'); goster('kayitEkran'); gecmis(); ajanda(); }
-  } catch (e) { yaz('girDurum', 'Bağlantı hatası, tekrar deneyin.', true); goster('giris'); }
+    const [bas, bit] = aralik();
+    const [j, g] = await Promise.all([servis({ islem: 'ajanda', bas, bit }), servis({ islem: 'son' })]);
+    if (j.ok) { OLAYLAR = j.olaylar || []; ajandaCiz(bas, bit); gecmisCiz(g); }
+    if (!j.ok && /özel bağlantı|PIN/.test(j.error || '')) { yaz('girDurum', j.error || 'Açılamadı.', true); PIN = ''; try { localStorage.removeItem('ua_pin'); } catch (e) {} goster('giris'); }
+    else {
+      try { if (PIN) localStorage.setItem('ua_pin', PIN); } catch (e) {}
+      if (!j.ok) $('ajanda').innerHTML = '<p class="bosA">' + esc(j.error) + '</p>';
+    }
+  } catch (e) { $('ajanda').innerHTML = '<p class="bosA">Ajanda açılamadı. Bugün sekmesine dokunup yenileyin.</p>'; }
   $('girBtn').disabled = false;
 }
 $('girBtn').onclick = () => { PIN = $('pin').value.trim(); if (PIN) gir(); };
@@ -236,7 +285,8 @@ async function kayitBasla(e) {
   } catch (err) { yaz('kDurum', 'Mikrofon izni verilmedi. Ayarlar > Safari > Mikrofon.', true); return; }
   const mime = mimeSec();
   parcalar = [];
-  kayitci = new MediaRecorder(mic, mime ? { mimeType: mime } : undefined);
+  const sec = { audioBitsPerSecond: 32000 }; if (mime) sec.mimeType = mime;
+  kayitci = new MediaRecorder(mic, sec);
   kayitci.ondataavailable = ev => { if (ev.data && ev.data.size) parcalar.push(ev.data); };
   kayitci.onstop = gonder;
   kayitci.start();
@@ -271,7 +321,7 @@ async function anla(govde) {
   mesgul = true; $('mik').classList.add('mesgul'); yaz('kDurum', 'Anlıyorum…');
   try {
     const j = await servis(Object.assign({ islem: 'anla' }, govde));
-    if (!j.ok) { yaz('kDurum', j.error || 'Anlaşılamadı.', true); if (j.dokum) yaz('kDurum', (j.error || '') + ' Duyduğum: "' + j.dokum + '"', true); }
+    if (!j.ok) yaz('kDurum', (j.error || 'Anlaşılamadı.') + (j.dokum ? ' Duyduğum: "' + j.dokum + '"' : ''), true);
     else { yaz('kDurum', ''); kartAc(j); }
   } catch (e) { yaz('kDurum', 'Bağlantı hatası, tekrar dene.', true); }
   mesgul = false; $('mik').classList.remove('mesgul');
@@ -295,12 +345,14 @@ function kartAc(j) {
 }
 function turCiz() {
   $('turlar').innerHTML = TURLER.map(([k, ad]) => '<button class="tur' + (OGE.tur === k ? ' secili' : '') + '" data-t="' + k + '">' + ad + '</button>').join('');
-  $('turlar').querySelectorAll('.tur').forEach(b => b.onclick = () => { OGE.tur = b.dataset.t; turCiz(); });
+  $('turlar').querySelectorAll('.tur').forEach(b => b.onclick = () => { OGE.tur = b.dataset.t; $('f_hatirlat').value = OGE.tur === 'hatirlatma' ? '0' : '60'; turCiz(); });
   const t = OGE.tur, takvim = t === 'randevu' || t === 'hatirlatma';
   $('sureKutu').classList.toggle('gizli', t !== 'randevu');
   $('yerKutu').classList.toggle('gizli', !(t === 'randevu' || t === 'musteri'));
   $('telKutu').classList.toggle('gizli', !(t === 'musteri' || t === 'randevu'));
   $('mudurKutu').classList.toggle('gizli', t !== 'gorev');
+  $('hatirlatKutu').classList.toggle('gizli', !takvim);
+  if (takvim && !$('f_hatirlat').value) $('f_hatirlat').value = t === 'hatirlatma' ? '0' : '60';
   $('sonKutu').classList.toggle('gizli', !(t === 'gorev' || t === 'musteri'));
   $('zamanSatir').classList.toggle('gizli', !(takvim || t === 'not'));
   hedefYaz();
@@ -308,8 +360,8 @@ function turCiz() {
 function hedefYaz() {
   const t = OGE.tur, m = $('f_mudur').value;
   $('hedef').textContent = {
-    randevu: 'Google Takvim · Umut Randevular (1 saat ve 15 dk önce hatırlatır)',
-    hatirlatma: 'Google Takvim · Umut Randevular (tam saatinde hatırlatır)',
+    randevu: 'Google Takvim · Umut Randevular · bildirimi Doğuş uygulamasından gelir',
+    hatirlatma: 'Google Takvim · Umut Randevular · bildirimi Doğuş uygulamasından gelir',
     gorev: m && m !== 'Yönetici Asistanı' ? m + ' görevi olur; saatlik sistem yürütür' : 'Yönetici Asistanının takip listesine (YA Takip)',
     musteri: 'Müşterilerim listesine', not: 'Yönetici Asistanının takip listesine not olarak'
   }[t] || '';
@@ -373,6 +425,7 @@ function duzeltAc(o) {
   $('d_baslik').value = o.baslik.replace(/^İPTAL:\s*/, ''); $('d_tarih').value = o.tarih; $('d_saat').value = o.bas || '';
   const dk = s => s ? Number(s.slice(0,2)) * 60 + Number(s.slice(3)) : 0;
   $('d_sure').value = o.bas && o.bit ? Math.max(dk(o.bit) - dk(o.bas), 5) : 60; $('d_yer').value = o.yer || '';
+  $('d_hatirlat').value = o.hatirlat || (/^⏰/.test(o.baslik) ? '0' : '60');
   $('d_aciklama').textContent = o.aciklama || ''; $('d_aciklama').classList.toggle('gizli', !o.aciklama);
   $('dIptal').classList.toggle('gizli', !!o.iptal);
   yaz('dDurum', ''); goster('duzeltEkran');
@@ -381,7 +434,7 @@ $('dGeri').onclick = () => goster('kayitEkran');
 $('dKaydet').onclick = async () => {
   $('dKaydet').disabled = true; yaz('dDurum', 'Kaydediyorum…');
   try {
-    const j = await servis({ islem: 'duzelt', id: ACIK_E.id, baslik: $('d_baslik').value.trim(), tarih: $('d_tarih').value, saat: $('d_saat').value, sure_dk: $('d_sure').value, yer: $('d_yer').value.trim() });
+    const j = await servis({ islem: 'duzelt', id: ACIK_E.id, baslik: $('d_baslik').value.trim(), tarih: $('d_tarih').value, saat: $('d_saat').value, sure_dk: $('d_sure').value, yer: $('d_yer').value.trim(), hatirlat: $('d_hatirlat').value });
     if (!j.ok) yaz('dDurum', j.error || 'Kaydedilemedi.', true); else { goster('kayitEkran'); ajanda(); gecmis(); }
   } catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
   $('dKaydet').disabled = false;
@@ -392,10 +445,10 @@ $('dIptal').onclick = async () => {
   catch (e) { yaz('dDurum', 'Bağlantı hatası.', true); }
 };
 
-async function gecmis() {
+async function gecmis() { try { gecmisCiz(await servis({ islem: 'son' })); } catch (e) {} }
+function gecmisCiz(j) {
   try {
-    const j = await servis({ islem: 'son' });
-    const l = (j.ok && j.kayitlar) || [];
+    const l = (j && j.ok && j.kayitlar) || [];
     $('gecmisBaslik').classList.toggle('gizli', !l.length);
     $('gecmis').innerHTML = l.slice(0, 6).map(x => '<div class="g"><span>' + esc(x.z) + '</span>' + esc(x.sonuc) + '</div>').join('');
   } catch (e) {}
@@ -409,7 +462,7 @@ function demo(g) {
   if (g.islem === 'son') return bekle({ ok: true, kayitlar: [{ z: '25.11 21:50', sonuc: 'Takvime eklendi: 26 Kasım Perşembe 10:00' }] });
   if (g.islem === 'anla') return bekle({ ok: true, dokum: g.metin || "Yarın öğleden sonra üçte Ahmet Yılmaz'la Akasya Göl Etabı 3+1 gösterimi, numarası 0532 111 22 33.",
     oge: { tur: 'randevu', baslik: 'Akasya Göl Etabı 3+1 gösterimi · Ahmet Yılmaz', kisi: 'Ahmet Yılmaz', telefon: '05321112233', tarih: yarin, saat: '15:00',
-           sure_dk: '60', yer: 'Akasya Göl Etabı', konu: '3+1 daire gösterimi', mudur: '', son_tarih: '', ek_is: '' },
+           sure_dk: '60', yer: 'Akasya Göl Etabı', konu: '3+1 daire gösterimi', mudur: '', son_tarih: '', ek_is: '', hatirlat: '60' },
     cakisma: [{ kaynak: 'Ofis Takvimi', baslik: 'Haftalık satış toplantısı', saat: '15:00–16:00' }] });
   if (g.islem === 'kaydet') return bekle({ ok: true, sonuc: 'Takvime eklendi (önizleme — gerçek kayıt yapılmadı)' });
   if (g.islem === 'duzelt' || g.islem === 'iptal') return bekle({ ok: true, sonuc: 'Önizleme' });
@@ -430,7 +483,29 @@ function demo(g) {
   const sel = s < 12 ? 'Günaydın' : s < 18 ? 'İyi günler' : 'İyi akşamlar';
   $('bugunYazi').textContent = sel + ' · ' + d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', timeZone: 'Europe/Istanbul' }); })();
 if (DEMO) { PIN = 'demo'; }
-if (PIN || ANAHTAR) gir(); else goster('giris');
+function hatirlatKarti(veri) {
+  let k = null;
+  try { const b = atob(veri.replace(/-/g, '+').replace(/_/g, '/')); k = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return false; }
+  $('h_ne').textContent = k.dk ? '⏰ ' + (k.dk >= 60 ? (k.dk / 60) + ' SAAT' : k.dk + ' DK') + ' SONRA' : '⏰ ŞİMDİ';
+  $('h_saat').textContent = k.s + (k.bt ? '–' + k.bt : '');
+  $('h_gun').textContent = k.t ? gunAd(k.t) : '';
+  $('h_baslik').textContent = k.b || '';
+  $('h_bilgi').innerHTML = [k.y ? '📍 ' + esc(k.y) : '', k.k ? '👤 ' + esc(k.k) : ''].filter(Boolean).join('<br>');
+  $('h_aciklama').textContent = k.a || ''; $('h_aciklama').classList.toggle('gizli', !k.a);
+  const tel = String(k.tel || '').replace(/\D/g, ''), wa = tel ? (tel.startsWith('90') ? tel : '9' + (tel.startsWith('0') ? tel : '0' + tel)) : '';
+  $('h_btn').innerHTML = [
+    tel ? '<a class="ana" href="tel:' + esc(k.tel) + '">📞 Ara</a>' : '',
+    wa ? '<a href="https://wa.me/' + esc(wa) + '">💬 WhatsApp</a>' : '',
+    k.y ? '<a href="https://maps.apple.com/?q=' + encodeURIComponent(k.y) + '">🧭 Yol tarifi</a>' : '',
+    '<a href="' + location.pathname + '">🎙️ Asistan</a>'
+  ].filter(Boolean).join('');
+  goster('hatirlatEkran');
+  return true;
+}
+$('hTamam').onclick = () => { history.replaceState(null, '', location.pathname); if (PIN || ANAHTAR) gir(); else goster('giris'); };
+const HK = new URLSearchParams(location.search).get('h');
+if (HK && hatirlatKarti(HK)) {}
+else if (PIN || ANAHTAR) gir(); else goster('giris');
 // Uygulamaya geri dönünce (ör. Google Takvim'de değişiklik yaptıktan sonra) ajanda ve son kayıtlar tazelenir
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && !$('kayitEkran').classList.contains('gizli')) { ajanda(); gecmis(); }
