@@ -10,7 +10,7 @@
 <script>brokerKapi();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Inter+Tight:wght@500;700;800;900&family=Oswald:wght@600;700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@1,600;1,700&family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Inter+Tight:wght@500;700;800;900&family=Oswald:wght@600;700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,500;0,600;1,600;1,700&family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0B0C10; --ink:#F1F2F6; --ink-2:#C5C8D4; --mute:#8A8EA0;
@@ -183,6 +183,9 @@
   .not{font-size:12.5px;color:var(--mute)}
   .cerceve{height:6px;background:var(--alan-2);border-radius:3px;overflow:hidden;margin-top:10px;display:none}
   .cerceve div{height:100%;width:0;background:var(--red)}
+  .efektler{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+  .efekt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;background:var(--alan);border:1px solid var(--line);cursor:pointer}
+  .efekt b{font-size:13.5px}.efekt small{font-size:11.5px;color:var(--ink-2);line-height:1.3}.efekt i{font-style:normal;font-size:11px;font-weight:800;color:#FFC93C;letter-spacing:.04em}
   .sfxler{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
   .sfx{display:flex;align-items:center;gap:4px;background:var(--alan);border:1px solid var(--line);border-radius:12px;padding:4px 4px 4px 4px}
   .sfx .dinle{flex:1;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:6px 6px;text-align:left;border-radius:9px}
@@ -190,6 +193,48 @@
   .sfx .ekle{width:34px;height:34px;border-radius:9px;background:var(--indigo);color:#fff;font-weight:800;font-size:18px;line-height:1}
   .sfx.caliyor{border-color:var(--indigo)}
   .gizli{display:none!important}
+</style>
+<style id="basit-mod">
+  /* ---------- Basit mod: tek sütun, 4 adım, gelişmiş ayarlar gizli ---------- */
+  .basitSadece{display:none!important}
+  .basit .basitSadece{display:inline-flex!important}
+  .basit .gelismis, .basit .ray, .basit .ekle, .basit .serit-arac, .basit .serit-ipucu, .basit #hizliArka, .basit #arkaSatir,
+  .basit #yaziForm > :not(#fMetin), .basit #ortakForm > .satir:first-child, .basit #ortakForm .btn:not(.basitKal),
+  .basit #resimForm > .satir:not(:first-child), .basit #eBoyutSatir{display:none!important}
+  .basit #fMetin{font-size:18px;min-height:70px}
+  @media (min-width:900px){
+    .basit .uygulama{grid-template-columns:minmax(360px,440px) minmax(0,1fr);grid-template-areas:"ust ust" "panel orta" "serit serit"}
+  }
+  .adim{display:flex;gap:14px;align-items:flex-start}
+  .adim .no{flex:none;width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center}
+  .adim.tamam .no{background:var(--green)}
+  .adim .ic{flex:1;min-width:0}
+  .adim h3{margin:4px 0 4px;font-size:18px}
+  .adim .not{margin-bottom:10px}
+  .buyukBtn{width:100%;justify-content:center;padding:16px!important;font-size:16px!important;font-weight:800;border-radius:14px!important}
+  .favoriler{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .fav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 8px;border-radius:14px;background:var(--alan);border:1px solid var(--line);font-weight:800;font-size:14px;text-align:center;min-height:84px}
+  .fav span{font-size:24px;line-height:1}
+  .fav small{font-weight:600;font-size:11.5px;color:var(--mute)}
+  .fav.tum{grid-column:1/-1;min-height:0;flex-direction:row;background:transparent;border-style:dashed;color:var(--ink-2)}
+  #basitGeri{display:none} .basit #basitGeri:not(.gizli){display:flex}
+  #basitGeri{align-items:center;gap:8px;width:100%;padding:12px 14px;margin-bottom:12px;border-radius:12px;background:var(--alan);font-weight:800;font-size:15px}
+  #basitDurum{margin-top:8px}
+  .modBtn{border:1px solid var(--line)!important;background:transparent!important}
+  .basit #ortakForm .btn{padding:12px 20px;font-size:15px}
+  .basit #pBasit .kart{padding:14px}
+  .basit .liste .oge{padding:10px}
+  @media (min-width:900px){
+    /* masaüstünde 4 adım tek ekrana sığsın */
+    .basit #pBasit .kart{margin-bottom:10px;padding:12px 14px}
+    .adim h3{font-size:16px;margin-top:5px}
+    .adim .no{width:30px;height:30px;font-size:15px}
+    .adim .not{font-size:12.5px;margin-bottom:8px}
+    .buyukBtn{padding:12px!important;font-size:15px!important}
+    .favoriler{grid-template-columns:repeat(4,1fr);gap:6px}
+    .fav{min-height:66px;padding:8px 4px;font-size:12px;gap:2px}
+    .fav span{font-size:19px} .fav small{display:none}
+  }
 </style>
 <style id="ios-zoom">/* iPhone, 16px altı yazılı kutuya dokununca sayfayı büyütür; telefonda engelle */@media (max-width:900px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
@@ -199,15 +244,17 @@
     <a class="geri" href="https://dogusportal.com/" title="Portala dön">←</a>
     <div class="baslik">Video Düzenle</div>
     <div class="bosluk"></div>
-    <button class="btn" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut<span class="uzun"> videolarım</span></button>
-    <button class="btn" onclick="dosya.click()">Video<span class="uzun"> değiştir</span></button>
-    <button class="btn" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻<span class="uzun"> Döndür</span></button>
+    <button class="btn modBtn" id="modBtn" onclick="basitAyarla(!document.body.classList.contains('basit'))">Gelişmiş</button>
+    <button class="btn gelismis" onclick="sekmeAc('pIndir'); bulutSonlar(); setTimeout(function(){ f('bulutSonListe').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);">☁ Bulut<span class="uzun"> videolarım</span></button>
+    <button class="btn gelismis" onclick="dosya.click()">Video<span class="uzun"> değiştir</span></button>
+    <button class="btn gelismis" onclick="yonDegistir()" title="Video yan görünüyorsa dokunun">↻<span class="uzun"> Döndür</span></button>
     <button class="btn ana" onclick="sekmeAc('pIndir');disaAktar()">İndir</button>
   </header>
 
   <nav class="ray" id="sekmeler">
     <button class="sekme aktif" data-p="pOge"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span>Yazı & Öğe</span></button>
     <button class="sekme" data-p="pKonus"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Konuşma</span></button>
+    <button class="sekme" data-p="pEfekt"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>Efektler</span></button>
     <button class="sekme" data-p="pAyar"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Renk</span></button>
     <button class="sekme" data-p="pSes"><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Ses</span></button>
     <button class="sekme" data-p="pKes"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg><span>Kes & Geçiş</span></button>
@@ -219,9 +266,10 @@
     <div class="ekle">
       <button class="btn" onclick="yaziEkle()"><b>+</b> Yazı</button>
       <button class="btn" onclick="resimDosya.click()"><b>+</b> Resim</button>
-      <button class="btn" onclick="cihazDosya.click()"><b>+</b> Telefon / ekran</button>
-      <button class="btn" onclick="karuselDosya.click()"><b>+</b> Dönen kartlar</button>
+      <button class="btn" onclick="efSonra = null; cihazDosya.click()"><b>+</b> Telefon / ekran</button>
+      <button class="btn" onclick="efSonra = null; karuselDosya.click()"><b>+</b> Dönen kartlar</button>
       <button class="btn" onclick="zoomEkle()"><b>+</b> Yakınlaştırma</button>
+      <button class="btn" onclick="sekmeAc('pEfekt')"><b>✦</b> Hazır efekt</button>
       <button class="btn" onclick="sekmeAc('pSes')"><b>+</b> Ses efekti</button>
       <button class="btn gizli" id="hizliArka" onclick="var o = bul(secili); if (o) katmanAyarla(!o.arka);">Kişinin arkasına al</button>
     </div>
@@ -280,6 +328,33 @@
     </div>
   </div>
   <aside class="panelalan">
+      <button type="button" id="basitGeri" class="gizli" onclick="basitAna()">← Ana menü</button>
+
+      <!-- BASİT MOD -->
+      <div class="panel" id="pBasit">
+        <div class="kart adim" id="adim1"><div class="no">1</div><div class="ic">
+          <h3>Videonu seç</h3>
+          <div class="not" id="basitVideoNot">Telefonundan çektiğin videoyu seç.</div>
+          <button class="btn ana buyukBtn" id="basitVideoBtn" onclick="dosya.click()">🎬 Video seç</button>
+        </div></div>
+        <div class="kart adim" id="adim2"><div class="no">2</div><div class="ic">
+          <h3>Tek dokunuşla düzelt</h3>
+          <div class="not">Sessiz araları keser, sesi temizler ve güçlendirir.</div>
+          <button class="btn mavi buyukBtn" id="basitDuzeltBtn" onclick="otomatikDuzelt()" disabled>✨ Otomatik düzelt</button>
+          <div class="not" id="basitDurum"></div>
+        </div></div>
+        <div class="kart adim" id="adim3"><div class="no">3</div><div class="ic">
+          <h3>Yazı ve efekt ekle</h3>
+          <div class="not">Aşağıdaki şeritte efektin çıkacağı ana gel, sonra seç. Eklediğin şeye dokunarak yazısını değiştirebilirsin.</div>
+          <div class="favoriler" id="favoriler"></div>
+          <div id="basitListe" style="margin-top:12px"></div>
+        </div></div>
+        <div class="kart adim" id="adim4"><div class="no">4</div><div class="ic">
+          <h3>İndir</h3>
+          <div class="not">Bitmiş video telefonuna kaydedilir.</div>
+          <button class="btn ana buyukBtn" id="basitIndirBtn" onclick="sekmeAc('pIndir'); disaAktar()" disabled>⬇ Videoyu indir</button>
+        </div></div>
+      </div>
       <!-- YAZI & RESİM -->
       <div class="panel aktif" id="pOge">
         <div class="kart">
@@ -459,6 +534,16 @@
             <div class="kaydirici"><label>Seviye</label><input type="range" id="xHacim" min="0" max="1.5" step="0.01"><span id="xHacimD"></span></div>
           </div>
 
+          <div id="efektForm" class="gizli">
+            <div class="not" id="eTanim" style="margin-bottom:10px"></div>
+            <div id="eAlanlar"></div>
+            <div class="satir" id="eRenkSatir"><label>Renk</label><input type="color" id="eRenk"></div>
+            <div class="kaydirici" id="eBoyutSatir"><label>Boyut</label><input type="range" id="eBoyut" min="4" max="20" step="0.1"><span id="eBoyutD"></span></div>
+            <div id="eResimSatir"><div class="not" id="eResimEt" style="margin:6px 0"></div>
+              <div class="satir"><div id="eResimler" style="display:flex;gap:4px;flex-wrap:wrap"></div><button class="btn kucuk" onclick="efektEkDosya.click()">+ Resim ekle</button><input type="file" id="efektEkDosya" accept="image/*" multiple class="gizli"></div>
+            </div>
+          </div>
+
           <div id="zoomForm" class="gizli">
             <div class="not" style="margin-bottom:10px">Videodaki daireyi sürükleyerek yakınlaşılacak noktayı seçin (genelde yüz).</div>
             <div class="satir">
@@ -491,7 +576,8 @@
               <button class="btn kucuk" onclick="kopyala()">Kopyala</button>
               <button class="btn kucuk" onclick="sirala(1)">Öne al</button>
               <button class="btn kucuk" onclick="sirala(-1)">Arkaya al</button>
-              <button class="btn kucuk" style="color:var(--red)" onclick="sil()">Sil</button>
+              <button class="btn kucuk basitKal" style="color:var(--red)" onclick="sil()">Sil</button>
+              <button class="btn ana kucuk basitKal basitSadece" onclick="sec(null)">✓ Bitti</button>
             </div>
           </div>
         </div>
@@ -547,6 +633,15 @@
           <button class="btn ana" onclick="reelsOlustur()" id="olusturBtn" disabled>Reels yazılarını oluştur</button>
           <div class="not" id="olusturDurum" style="margin-top:8px"></div>
         </div>
+      </div>
+
+      <!-- HAZIR EFEKTLER -->
+      <div class="panel" id="pEfekt">
+        <div class="kart">
+          <h3>Hazır efektler</h3>
+          <div class="not">Uygulamadaki bütün efektler burada. Oynatma çizgisini efektin başlayacağı yere getirin, efekte dokunun. Eklenen öğenin ayarları “Yazı & Öğe” sekmesinde açılır.</div>
+        </div>
+        <div id="efektKatalog"></div>
       </div>
 
       <!-- AYARLAR -->
@@ -664,6 +759,7 @@
   </aside>
 </div>
 
+<script src="assets/video-edit/efektler.js"></script>
 <script>
 var MP_PAKET = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 var MP_MODEL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
@@ -1096,6 +1192,7 @@ karuselDosya.addEventListener('change', function(){
   dosyalariOku(karuselDosya.files, function(srcs){
     var z = yeniZaman(4);
     var o = { id: sayac++, tur: 'karusel', srcs: srcs, x: .5, y: .55, yaricap: 40, kart: 20, hiz: 3.2, mod: 'don', bas: z.bas, bit: z.bit, arka: true };
+    if (window.efSonra) { efSonra(o); efSonra = null; }
     ogeler.push(o); sekmeAc('pOge'); sec(o.id); kaydet(); listele();
   });
   karuselDosya.value = '';
@@ -1144,6 +1241,7 @@ function cihazIcerikOku(liste, o, cb){
 cihazDosya.addEventListener('change', function(){
   var z = yeniZaman(5);
   var o = { id: sayac++, tur: 'cihaz', cihaz: 'telefon', srcs: [], vid: false, x: .7, y: .45, gen: CIHAZLAR.telefon.gen, aci: -6, efekt: 'sagdan', ic: 'adim', yazi: '', suzul: true, bas: z.bas, bit: z.bit, arka: false };
+  if (window.efSonra) { efSonra(o); efSonra = null; }
   cihazIcerikOku(cihazDosya.files, o, function(){ ogeler.push(o); sekmeAc('pOge'); sec(o.id); kaydet(); listele(); cizdir(); });
   cihazDosya.value = '';
 });
@@ -2801,6 +2899,7 @@ function ogeCiz(ctx, o, W, H, t, duzenleme, kaynak, yari){
   if (o.tur === 'sfx') return;
   if (o.tur === 'cihaz') { var kc = cihazCiz(ctx, o, W, H, t, duzenleme); if (duzenleme && kc) kutular[o.id] = kc; return; }
   if (o.tur === 'zoom') { if (duzenleme) kutular[o.id] = { x: o.x, y: o.y, w: .14, h: .14 * W / H, zoom: true }; return; }
+  if (o.tur === 'efekt') { if (efektSahneMi(o)) return; var ke = efektCiz(ctx, o, W, H, t, duzenleme, kaynak); if (duzenleme && ke) kutular[o.id] = ke; return; }
   if (o.tur === 'karusel') { var kk = karuselCiz(ctx, o, W, H, t, yari || 'hepsi', duzenleme); if (duzenleme && kk) kutular[o.id] = kk; return; }
   var a = giris(o, t), hayalet = false;
   if (!a) { if (duzenleme && o.id === secili && video.paused) { a = { op: .5, sc: 1, dx: 0, dy: 0 }; hayalet = true; } else return; }
@@ -2865,6 +2964,7 @@ function sahneyiCiz(ctx, W, H, t, disa){
     ogeler.forEach(function(o){ ogeCiz(ctx, o, W, H, t, duzenleme, kaynak, 'on'); });
   }
   if (gc && gc.onceki) oncekiCiz(ctx, W, H, gc);
+  sahneEfektleri(ctx, W, H, t, duzenleme, kaynak);
   if (gc) {
     var q = 1 - gc.p;
     if (gc.tur === 'flas') { ctx.fillStyle = 'rgba(255,255,255,' + (q * q * .95) + ')'; ctx.fillRect(0, 0, W, H); }
@@ -3126,9 +3226,10 @@ function formDoldur(){
   f('karuselForm').classList.toggle('gizli', !o || o.tur !== 'karusel');
   f('cihazForm').classList.toggle('gizli', !o || o.tur !== 'cihaz');
   f('sfxForm').classList.toggle('gizli', !o || o.tur !== 'sfx');
+  f('efektForm').classList.toggle('gizli', !o || o.tur !== 'efekt');
   f('ortakForm').classList.toggle('gizli', !o);
-  f('arkaSatir').classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx');
-  f('secimBaslik').textContent = !o ? 'Seçili öğe' : { resim: 'Seçili resim', yazi: 'Seçili yazı', zoom: 'Yakınlaştırma', karusel: 'Dönen kartlar', cihaz: 'Telefon / ekran', sfx: 'Ses efekti' }[o.tur];
+  f('arkaSatir').classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx' || efektSahneMi(o));
+  f('secimBaslik').textContent = !o ? 'Seçili öğe' : o.tur === 'efekt' ? '✦ ' + ((EFEKTLER[o.alt] || {}).ad || 'Efekt') : { resim: 'Seçili resim', yazi: 'Seçili yazı', zoom: 'Yakınlaştırma', karusel: 'Dönen kartlar', cihaz: 'Telefon / ekran', sfx: 'Ses efekti' }[o.tur];
   if (!o) return;
   if (o.tur === 'yazi') {
     if (document.activeElement !== f('fMetin')) f('fMetin').value = o.metin;
@@ -3160,6 +3261,8 @@ function formDoldur(){
     var cr = f('cResimler'); cr.innerHTML = '';
     if (o.vid) { var sp = document.createElement('span'); sp.className = 'etiket'; sp.textContent = icVideolar[o.id] ? 'VİDEO' : 'VİDEO YOK'; cr.appendChild(sp); }
     (o.srcs || []).forEach(function(src, i){ var im = document.createElement('img'); im.src = src; im.style.cssText = 'width:30px;height:52px;object-fit:cover;object-position:top;border-radius:6px;cursor:pointer'; im.title = 'Kaldırmak için dokunun'; im.onclick = function(){ o.srcs.splice(i, 1); formDoldur(); cizdir(); kaydet(); }; cr.appendChild(im); });
+  } else if (o.tur === 'efekt') {
+    efektFormDoldur(o);
   } else if (o.tur === 'sfx') {
     f('xSes').value = o.ses; f('xHacim').value = o.hacim; f('xHacimD').textContent = Math.round(o.hacim * 100) + '%';
   } else {
@@ -3218,7 +3321,7 @@ setInterval(function(){
 }, 250);
 function katmanGoster(){
   var o = bul(secili), a = !!(o && o.arka), hb = f('hizliArka');
-  hb.classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx');
+  hb.classList.toggle('gizli', !o || o.tur === 'zoom' || o.tur === 'karusel' || o.tur === 'sfx' || efektSahneMi(o));
   hb.classList.toggle('ana', a); hb.textContent = a ? '✓ Kişinin arkasında (öne al)' : 'Kişinin arkasına al';
   f('katOn').classList.toggle('aktif', !a); f('katArka').classList.toggle('aktif', a);
   f('katArka').textContent = a ? '✓ Kişinin arkasında' : 'Kişinin arkasına gönder';
@@ -3235,7 +3338,7 @@ function bildir(m, geriAl){
   if (geriAl) { var g = document.createElement('button'); g.textContent = 'Geri al'; g.onclick = function(){ geriAl(); b.classList.remove('acik'); }; b.appendChild(g); }
   b.classList.add('acik'); bildir.z = setTimeout(function(){ b.classList.remove('acik'); }, geriAl ? 6000 : 2600);
 }
-function ogeAdi(o){ return { resim: 'Resim', yazi: 'Yazı', zoom: 'Yakınlaştırma', karusel: 'Dönen kartlar', cihaz: 'Telefon', sfx: 'Ses efekti' }[o && o.tur] || 'Öğe'; }
+function ogeAdi(o){ if (o && o.tur === 'efekt') return (EFEKTLER[o.alt] || {}).ad || 'Efekt'; return { resim: 'Resim', yazi: 'Yazı', zoom: 'Yakınlaştırma', karusel: 'Dönen kartlar', cihaz: 'Telefon', sfx: 'Ses efekti' }[o && o.tur] || 'Öğe'; }
 function sil(){
   var i = ogeler.findIndex(function(o){ return o.id === secili; }); if (i < 0) return;
   var o = ogeler[i]; sonSilinen = { o: o, i: i };
@@ -3257,6 +3360,7 @@ function listele(){
     else if (o.tur === 'sfx') d.querySelector('.mt').textContent = '♪ ' + sfxBilgi(o.ses)[1];
     else if (o.tur === 'zoom') d.querySelector('.mt').textContent = 'Yakınlaştırma ' + o.olcek.toFixed(2) + '×';
     else if (o.tur === 'karusel') d.querySelector('.mt').textContent = 'Dönen kartlar (' + o.srcs.length + ' resim)';
+    else if (o.tur === 'efekt') d.querySelector('.mt').textContent = '✦ ' + ogeAdi(o) + (o.metin || o.kelime ? ' · ' + String(o.metin || o.kelime).replace(/\n/g, ' ') : '');
     else d.querySelector('.mt').textContent = o.metin.replace(/\n/g, ' ') || '(boş)';
     d.onclick = function(){ if (video.src) { video.pause(); video.currentTime = Math.min(sure(), o.bas + .5); } sec(o.id); };
     l.appendChild(d);
@@ -3450,7 +3554,7 @@ function reelsOlustur(){
 
 /* ---------- Kayıt ---------- */
 function durum(resimli){
-  return { ogeler: resimli ? ogeler : ogeler.filter(function(o){ return o.tur !== 'resim' && o.tur !== 'karusel' && o.tur !== 'cihaz' && !o.dokuSrc; }),
+  return { ogeler: resimli ? ogeler : ogeler.filter(function(o){ return o.tur !== 'resim' && o.tur !== 'karusel' && o.tur !== 'cihaz' && !o.dokuSrc && !(o.tur === 'efekt' && o.srcs && o.srcs.length); }),
            arka: resimli ? arka : { tur: arka.tur === 'resim' ? 'yok' : arka.tur, renk: arka.renk },
            ayar: ayar, filtreAd: filtreAd, ses: ses, gecis: gecis, kesimler: kesimler, bolmeler: bolmeler, kelimeler: kelimeler };
 }
@@ -3458,7 +3562,7 @@ function kaydet(){
   try { localStorage.setItem(KAYIT, JSON.stringify(durum(true))); }
   catch(e) { try { localStorage.setItem(KAYIT, JSON.stringify(durum(false))); } catch(e2){} }
 }
-stilleriKur(); ayarlarKur(); sfxKur(); cihazlarKur();
+stilleriKur(); ayarlarKur(); sfxKur(); cihazlarKur(); efektlerKur();
 function projeYukle(k0){
   if (Array.isArray(k0.ogeler)) { ogeler = k0.ogeler; ogeler.forEach(function(o){ sayac = Math.max(sayac, o.id + 1); }); }
   if (k0.arka) { arka = k0.arka; f('arkaRenk').value = arka.renk || '#050A30'; }
@@ -3490,7 +3594,7 @@ document.addEventListener('keydown', function(e){
 });
 listele(); formDoldur(); arkaSec(arka.tur); ayarlariGoster(); kesimArayuz(); kelimeArayuz(); boyutla();
 if (document.fonts) document.fonts.ready.then(cizdir);
-['800 40px "Inter Tight"', '700 40px "Oswald"', '800 40px "Plus Jakarta Sans"', '40px "Anton"', '40px "Bebas Neue"', '40px "Pacifico"', '40px "Permanent Marker"', 'italic 700 40px "Playfair Display"', '40px "Archivo Black"', '900 40px "Inter Tight"'].forEach(function(x){ if (document.fonts) document.fonts.load(x).then(cizdir).catch(function(){}); });
+['800 40px "Inter Tight"', '700 40px "Oswald"', '800 40px "Plus Jakarta Sans"', '40px "Anton"', '40px "Bebas Neue"', '40px "Pacifico"', '40px "Permanent Marker"', 'italic 700 40px "Playfair Display"', 'italic 600 40px "Playfair Display"', '500 40px "Playfair Display"', '40px "Archivo Black"', '900 40px "Inter Tight"'].forEach(function(x){ if (document.fonts) document.fonts.load(x).then(cizdir).catch(function(){}); });
 
 /* ---------- Dışa aktarma ---------- */
 function bicim(){
@@ -3857,5 +3961,6 @@ function disaAktar2(){
   video.currentTime = ilk ? ilk.b : 0;
 }
 </script>
+<script src="assets/video-edit/basit.js"></script>
 </body>
 </html>
