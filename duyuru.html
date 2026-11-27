@@ -354,5 +354,6 @@ document.querySelectorAll('.tm-nav a:not(.on)').forEach(function(a){a.addEventLi
 window.addEventListener('load',function(){var t='';try{t=sessionStorage.getItem('duyuru_taslak')||'';sessionStorage.removeItem('duyuru_taslak');}catch(e){}var m=document.getElementById('metin');if(!t||!m)return;
 if(m.value!==undefined){if(!m.value){m.value=t.slice(0,m.maxLength>0?m.maxLength:t.length);m.dispatchEvent(new Event('input'));}}else if(!m.innerText.trim()){m.innerText=t;m.dispatchEvent(new Event('input'));}});
 </script>
+<script src="/assets/geri.js?v=1" defer></script>
 </body>
 </html>

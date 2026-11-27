@@ -177,7 +177,7 @@ function telWa(v){
 function markaYaz(){ var m = $('marka'); if (m) m.textContent = 'RE/MAX Doğuş' + (pin && benim ? ' · ' + benim : ''); }
 var girisSonrasiAcildi = false;
 function girisEkrani(mesaj){
-  pin = ''; benim = ''; markaYaz();
+  pin = ''; benim = ''; KD_GIRISLI = false; markaYaz();
   $('cikis').style.display='none';
   $('onizleKart').style.display='none';
   $('icerik').innerHTML =
@@ -200,7 +200,13 @@ function girisEkrani(mesaj){
 
 /* ---------- dosya listesi ---------- */
 var LISTE_ANAHTAR = function(){ return 'kd_liste_' + benim; };
+/* Telefonun geri tuşu / kaydırması dosyadan listeye dönsün (27 Kas) */
+var KD_GIRISLI = false;
+function kdIleri(ad){ KD_GIRISLI = true; try{ if(history.state && history.state.kd) history.replaceState({kd:ad},''); else history.pushState({kd:ad},''); }catch(e){} }
+window.addEventListener('popstate', function(){ if(KD_GIRISLI && !(history.state && history.state.kd)) listeEkrani(); });
 function listeEkrani(){
+  if(history.state && history.state.kd){ history.back(); return; }
+  KD_GIRISLI = true;
   markaYaz();
   $('cikis').style.display='block';
   $('onizleKart').style.display='';
@@ -311,6 +317,7 @@ function siteDegisti(){
 }
 
 function yeniEkrani(){
+  kdIleri('yeni');
   var secenek = function(n, birim){
     var h = '';
     for (var i = 1; i <= 3; i++) h += '<option value="' + i + '">' + i + ' ' + birim + '</option>';
@@ -594,6 +601,7 @@ function haricOku(no, rol){ try{ return JSON.parse(localStorage.getItem('kd_hari
 function haricYaz(no, rol, x){ try{ localStorage.setItem('kd_haric_'+no+'_'+rol, JSON.stringify(x)); }catch(e){} }
 
 function dosyaEkrani(no){
+  kdIleri('dosya');
   $('icerik').innerHTML = '<div class="bos">Dosya açılıyor…</div>';
   dosyaCiz(no);
 }
@@ -800,5 +808,6 @@ $('cikis').onclick = function(){
 /* açılış */
 girisEkrani();
 </script>
+<script src="/assets/geri.js?v=1" defer></script>
 </body>
 </html>

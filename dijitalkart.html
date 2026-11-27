@@ -412,5 +412,6 @@ async function brokerList(){
 const _fill=fill; fill=c=>{ c._slug=c._slug||slugify(c.name); _fill(c); };
 function slugify(s){ const m={"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","Ç":"c","Ğ":"g","İ":"i","Ö":"o","Ş":"s","Ü":"u"}; return String(s).replace(/[çğıöşüÇĞİÖŞÜ]/g,c=>m[c]).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
 </script>
+<script src="/assets/geri.js?v=1" defer></script>
 </body>
 </html>

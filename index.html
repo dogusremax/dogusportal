@@ -481,11 +481,11 @@ footer .sep { margin: 0 7px; opacity: 0.4; }
 </div>
 <script>
 var _perfUrl='';
-function perfPinOpen(url,baslik){if(url&&sessionStorage.getItem('perfAuth')==='ok'){window.open(url,'_blank');return;}_perfUrl=url;document.getElementById('pinTitle').textContent=baslik||'Broker girişi';var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
+function perfPinOpen(url,baslik){if(url&&sessionStorage.getItem('perfAuth')==='ok'){location.href=url;return;}_perfUrl=url;document.getElementById('pinTitle').textContent=baslik||'Broker girişi';var m=document.getElementById('pinModal');m.style.display='flex';document.getElementById('pinInput').value='';document.getElementById('pinError').textContent='';setTimeout(function(){document.getElementById('pinInput').focus()},200);}
 function icerikAc(){var acik=document.body.classList.toggle('icerik-acik');document.getElementById('icerikKart').setAttribute('aria-expanded',acik);try{sessionStorage.setItem('icerikAcik',acik?'1':'');}catch(e){}}
 try{if(sessionStorage.getItem('icerikAcik'))document.body.classList.add('icerik-acik');}catch(e){}
 function perfPinClose(){document.getElementById('pinModal').style.display='none';_perfUrl='';}
-function perfPinCheck(){var p=document.getElementById('pinInput').value;brokerDogrula(p).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)window.open(_perfUrl,'_blank');}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}});}
+function perfPinCheck(){var p=document.getElementById('pinInput').value;brokerDogrula(p).then(function(ok){if(ok){sessionStorage.setItem('perfAuth','ok');brokerAc();document.getElementById('pinModal').style.display='none';if(_perfUrl)location.href=_perfUrl;}else{document.getElementById('pinError').textContent='Yanlış PIN';document.getElementById('pinInput').value='';document.getElementById('pinInput').style.borderColor='#e74c3c';setTimeout(function(){document.getElementById('pinInput').style.borderColor='#ddd';document.getElementById('pinError').textContent='';},2000);}});}
 document.addEventListener('DOMContentLoaded',function(){var pi=document.getElementById('pinInput');if(pi){pi.addEventListener('keyup',function(e){if(e.key==='Enter')perfPinCheck();if(this.value.length===6)perfPinCheck();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')perfPinClose();});var m=document.getElementById('pinModal');if(m)m.addEventListener('click',function(e){if(e.target===m)perfPinClose();});});
 // Broker modu: gizli kartları göster, bu cihazda hatırla
 /* Broker modunda Apps Script uygulamalarına PIN'i adresin # kısmında götür (sunucuya gitmez); uygulama şifre sormaz */
@@ -496,6 +496,24 @@ function brokerToggle(){if(document.body.classList.contains('broker')){try{local
 try{if(localStorage.getItem('dogusBroker')==='ok'){if(window.brokerPinAl&&brokerPinAl())brokerAc();else localStorage.removeItem('dogusBroker');}}catch(e){}
 // Google Yorumları kartı: canlı puan
 fetch('data/google-yorumlar.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.toplam)return;var el=document.getElementById('gYorumDesc');if(el)el.textContent='★ '+d.puan.toLocaleString('tr-TR',{minimumFractionDigits:1})+' · '+d.toplam+' yorum';}).catch(function(){});
+</script>
+<script>
+/* Uygulamalar aynı sekmede açılsın: telefonda geri / kaydırma ile portala dönülebilsin (27 Kas) */
+(function(){
+  try{sessionStorage.setItem('dpPortal','1');}catch(e){}
+  document.querySelectorAll('a.app[target="_blank"]').forEach(function(a){a.removeAttribute('target');a.removeAttribute('rel');});
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a.app');
+    if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey)return;
+    var h=a.getAttribute('href')||'';
+    if(!h||h==='#')return;
+    var u;try{u=new URL(a.href,location.href);}catch(x){return;}
+    /* Posta: soldan kaydırma menüyü açtığı için arkasında geri geçmişi bırakma */
+    var yerine=u.origin===location.origin&&/\/posta\.html$/.test(u.pathname);
+    try{sessionStorage.setItem('dpAcilis',JSON.stringify({yol:u.pathname,mod:yerine?'replace':'push'}));}catch(x){}
+    if(yerine){e.preventDefault();location.replace(u.href);}
+  });
+})();
 </script>
 </body>
 </html>

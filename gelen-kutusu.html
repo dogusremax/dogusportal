@@ -414,8 +414,10 @@ function konusmaAc(wa) {
   $('mesajlar').innerHTML = '<div class="bos">Yükleniyor…</div>';
   var k = durum.kisiler.find(function (x) { return x.wa === durum.aktif; });
   baslikCiz(k ? k.isim : '', durum.aktif);
+  /* Telefonda geri tuşu / kaydırma sohbeti kapatıp listeye dönsün (27 Kas) */
+  if (!document.body.classList.contains('sohbette') && !(history.state && history.state.sohbet)) history.pushState({ sohbet: 1 }, '', '?wa=' + durum.aktif);
+  else history.replaceState(history.state, '', '?wa=' + durum.aktif);
   document.body.classList.add('sohbette');
-  history.replaceState(null, '', '?wa=' + durum.aktif);
   konusmaYukle().then(function () { listeYukle(true); });
 }
 
@@ -547,12 +549,14 @@ $('notInput').addEventListener('blur', function () {
 });
 
 /* Geri (mobil) */
-$('geriBtn').onclick = function () {
+function sohbetKapat() {
   document.body.classList.remove('sohbette');
   durum.aktif = null; durum.konusma = null;
   history.replaceState(null, '', location.pathname);
   listeCiz();
-};
+}
+$('geriBtn').onclick = function () { if (history.state && history.state.sohbet) history.back(); else sohbetKapat(); };
+window.addEventListener('popstate', function () { if (document.body.classList.contains('sohbette') && !(history.state && history.state.sohbet)) sohbetKapat(); });
 
 /* Açılış */
 (function () {
@@ -561,5 +565,6 @@ $('geriBtn').onclick = function () {
   $('pinInput').focus();
 })();
 </script>
+<script src="/assets/geri.js?v=1" defer></script>
 </body>
 </html>
