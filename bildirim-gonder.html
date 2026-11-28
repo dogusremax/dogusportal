@@ -150,6 +150,9 @@ async function giris(p) {
     if (!j.ok) { $('girisHata').textContent = j.error || 'Giriş başarısız'; return; }
     KISILER = j.kisiler || [];
     KISILER.forEach(k => { k.sec = k.cihaz > 0; });
+    // ?kimler=Umut,Makbule ile açılırsa yalnız onlar işaretli gelir (yanlışlıkla herkese gitmesin diye)
+    { const on = (new URLSearchParams(location.search).get('kimler') || '').toLocaleLowerCase('tr').split(',').map(x => x.trim()).filter(Boolean);
+      if (on.length) KISILER.forEach(k => { k.sec = k.cihaz > 0 && on.some(x => k.ad.toLocaleLowerCase('tr').startsWith(x)); }); }
     $('giris').hidden = true; $('ana').hidden = false;
     if (!j.anahtarVar) durum('Gönderme anahtarı yüklü değil, bildirim gitmez.', true);
     ciz(); onizle(); rapor();
